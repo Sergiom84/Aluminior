@@ -987,3 +987,76 @@ scripts/selector-variante.mjs         el histórico usa .2 en el 100% de los cas
 scripts/validar-oraculo.mjs           v1: demostró que las instancias guardan el genérico
 scripts/validar-oraculo2.mjs          v2: validación real, 96,5% de coincidencia
 ```
+
+---
+---
+
+# ANEXO K — Asociados: fuentes identificadas, selección pendiente (18/07/2026)
+
+**Continúa el anexo J. Los perfiles están resueltos; esto cubre el resto de
+piezas: escuadras, herrajes, juntas, junquillos, mano de obra.**
+
+## Descomposición por fuente (medida contra el oráculo)
+
+Sobre 66.046 piezas asociadas de 1.658 líneas reales de documentos
+(`scripts/medir-categorias-restantes.mjs`):
+
+| Fuente | Piezas | % |
+|---|---|---|
+| `ConjuntosAsoc` / `ConfigSeriesAsoc` (cadena de la serie) | 47.127 | 71,4% |
+| `TAcristalamiento`/`TAcristalamientoLin` (junquillo + juntas por grosor de vidrio, vía `TablaHojas`/`TablaFijos`) | 10.730 | 16,2% |
+| Mano de obra (artículos `MO`, `MOCOL`, `MOCOMP`, en minutos) | 6.571 | 9,9% |
+| Sin fuente identificada | 1.618 | 2,4% |
+
+El 2,4% restante: compactos de persiana (elección del usuario: `COM009`,
+`PSH100`, `PSESQCOM`), acoples de inversora (variante de apertura) y
+artefactos del propio GAIA (el artículo `135` se llama literalmente
+"¡HAY PERFILES SIN PRECIO!").
+
+Para eso servía `TablaHojas`: el anexo J ya descartó que resolviera
+perfiles; es la tabla de acristalamiento que da junquillo, junta exterior e
+interior según el grosor del vidrio elegido (`TAcristalamientoLin`:
+`TAcris + Grosor -> Junquillo/JuntaExt/JuntaInt`, más gomas y listas de
+junquillos en la ficha `TAcristalamiento`).
+
+## La selección es multifactor — NO implementada a propósito
+
+Tener la fuente no basta: hay que saber qué filas entran en cada línea.
+Examinando `ConjuntosAsoc` contra un documento real
+(`scripts/seleccion-asociados.mjs`, doc 764, serie GMA350):
+
+- **`ComponenteAsoc`**: ranura de la plantilla a la que se asocia la pieza
+  (58/59 escuadras, 52–57 hojas, 71 zona apertura, `OBM`/`OBC` oscilo,
+  `A`/`L` = una por ancho/alto — las patillas de anclaje).
+- **`AsociadoA`**: texto del elemento padre ("TRAVESAÑO", "BATIENTES",
+  "HOJAS"…) cuando `ComponenteAsoc` es `!`.
+- **`nOpcion`**: opción de herraje (1, 2, 4, 11–16…) — exige la dimensión
+  de opciones del configurador (origen `VOpcionesHerraje`, 25.335 filas).
+- **`ArticuloAsoc`**: condicionado a que un perfil concreto esté presente.
+- **`MedidaMin`/`MedidaMax`**: por tamaño (bisagra GM5002 solo 1100–1800 mm;
+  compases de oscilo por tramos de altura).
+- **`Cantidad` negativa**: correcciones que restan.
+
+Hay además contradicciones aún sin explicar (filas con el mismo
+`ComponenteAsoc` donde una entra y otra no). **Decisión: no construir la
+valoración de asociados sobre esta comprensión parcial.** Un asociado de más
+infla el precio en silencio; uno de menos lo acorta. Ambos son peores que el
+"sin valorar" honesto que muestra hoy la interfaz.
+
+## Qué hace falta para cerrarlo
+
+1. Modelar las **opciones de herraje** en la línea (grupo/opción, origen
+   `ConfigSeriesHerraje` + `VOpcionesHerraje`) — desbloquea `nOpcion`.
+2. Modelar el **acristalamiento** de la línea (vidrio por slot y su grosor)
+   — desbloquea junquillos/juntas por `TAcristalamientoLin` y la variante
+   `.1`/`.2` del anexo J.
+3. Con 1 y 2, validar la selección contra el oráculo igual que los perfiles
+   (predicción exacta línea a línea) antes de activarla en la valoración.
+
+## Scripts
+
+```
+scripts/oraculo-asociados.mjs            cobertura de fuentes: 77,9% con las Asoc
+scripts/medir-categorias-restantes.mjs   descomposición 71,4/16,2/9,9/2,4
+scripts/seleccion-asociados.mjs          semántica de selección, doc real
+```

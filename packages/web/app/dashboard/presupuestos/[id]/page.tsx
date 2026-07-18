@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { eq, asc } from 'drizzle-orm'
+import { eq, asc, inArray } from 'drizzle-orm'
 import { crearDb, schema } from '@aluminior/db'
 import { Shell } from '../../_components/shell.tsx'
 import { AnyadirLinea, BotonBorrarLinea } from './_components/anyadir-linea.tsx'
@@ -35,6 +35,24 @@ export default async function DetallePresupuesto({
   const series = await db.select({ codigo: schema.series.codigo })
     .from(schema.series).orderBy(asc(schema.series.codigo))
 
+  const acabados = await db.select({
+    codigo: schema.acabados.codigo,
+    descripcion: schema.acabados.descripcion,
+  }).from(schema.acabados).orderBy(asc(schema.acabados.codigo))
+
+  // Despiece persistido de cada línea (perfiles ya resueltos por la serie).
+  const idsLineas = lineas.map((l) => l.id)
+  const piezas = idsLineas.length
+    ? await db.select().from(schema.lineasDespiece)
+        .where(inArray(schema.lineasDespiece.lineaId, idsLineas))
+    : []
+  const despiecePorLinea = new Map<string, typeof piezas>()
+  for (const pz of piezas) {
+    const lista = despiecePorLinea.get(pz.lineaId) ?? []
+    lista.push(pz)
+    despiecePorLinea.set(pz.lineaId, lista)
+  }
+
   return (
     <Shell moduloActivo="presupuestos">
       <div className="mb-6">
@@ -59,7 +77,8 @@ export default async function DetallePresupuesto({
       </div>
 
       <div className="mb-6">
-        <AnyadirLinea presupuestoId={id} series={series.map((s) => s.codigo)} />
+        <AnyadirLinea presupuestoId={id} series={series.map((s) => s.codigo)}
+          acabados={acabados} />
       </div>
 
       <div className="overflow-hidden rounded-lg border"
@@ -85,7 +104,60 @@ export default async function DetallePresupuesto({
               </tr>
             ) : (
               lineas.map((l) => (
-                <tr key={l.id} className="border-b" style={{ borderColor: 'var(--al-border)' }}>
+                <LineaConDespiece key={l.id} linea={l} presupuestoId={id}
+                  despiece={despiecePorLinea.get(l.id) ?? []} />
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="mt-5 flex justify-end">
+        <dl className="w-72 rounded-lg border p-4 text-sm"
+          style={{ background: 'var(--al-surface)', borderColor: 'var(--al-border)' }}>
+          <div className="flex justify-between py-1">
+            <dt style={{ color: 'var(--al-text-muted)' }}>Base imponible</dt>
+            <dd className="cifra">{eur.format(Number(p.baseImponible))}</dd>
+          </div>
+          <div className="flex justify-between py-1">
+            <dt style={{ color: 'var(--al-text-muted)' }}>IVA {Number(p.tipoIva)}%</dt>
+            <dd className="cifra">{eur.format(Number(p.cuotaIva))}</dd>
+          </div>
+          <div className="mt-2 flex justify-between border-t pt-2 text-base font-semibold"
+            style={{ borderColor: 'var(--al-border)' }}>
+            <dt>Total</dt>
+            <dd className="cifra">{eur.format(Number(p.total))}</dd>
+          </div>
+        </dl>
+      </div>
+    </Shell>
+  )
+}
+
+/**
+ * Fila de línea con su despiece desplegable: los perfiles ya resueltos por la
+ * serie, con medida de corte y coste (o "sin coste" honesto si falta).
+ */
+function LineaConDespiece({
+  linea: l, presupuestoId, despiece,
+}: {
+  linea: {
+    id: string; orden: number; tipo: string; descripcion: string
+    referencia: string | null; anchoMm: number | null; altoMm: number | null
+    cantidad: string; precioUnitario: string; total: string
+  }
+  presupuestoId: string
+  despiece: {
+    id: string; articuloCodigo: string; cantidad: string
+    largoCorteMm: string | null; funcion: string | null
+    costeUnitario: string | null; costeTotal: string | null
+  }[]
+}) {
+  const costeTotal = despiece.reduce((acc, pz) => acc + (pz.costeTotal ? Number(pz.costeTotal) : 0), 0)
+  const sinCoste = despiece.filter((pz) => pz.costeTotal === null).length
+  return (
+    <>
+      <tr className="border-b" style={{ borderColor: 'var(--al-border)' }}>
                   <td className="cifra px-3 py-2" style={{ textAlign: 'left', color: 'var(--al-text-faint)' }}>
                     {l.orden}
                   </td>
@@ -116,33 +188,53 @@ export default async function DetallePresupuesto({
                     {Number(l.total) === 0 ? '—' : eur.format(Number(l.total))}
                   </td>
                   <td className="px-3 py-2 text-right">
-                    <BotonBorrarLinea lineaId={l.id} presupuestoId={id} />
+                    <BotonBorrarLinea lineaId={l.id} presupuestoId={presupuestoId} />
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="mt-5 flex justify-end">
-        <dl className="w-72 rounded-lg border p-4 text-sm"
-          style={{ background: 'var(--al-surface)', borderColor: 'var(--al-border)' }}>
-          <div className="flex justify-between py-1">
-            <dt style={{ color: 'var(--al-text-muted)' }}>Base imponible</dt>
-            <dd className="cifra">{eur.format(Number(p.baseImponible))}</dd>
-          </div>
-          <div className="flex justify-between py-1">
-            <dt style={{ color: 'var(--al-text-muted)' }}>IVA {Number(p.tipoIva)}%</dt>
-            <dd className="cifra">{eur.format(Number(p.cuotaIva))}</dd>
-          </div>
-          <div className="mt-2 flex justify-between border-t pt-2 text-base font-semibold"
-            style={{ borderColor: 'var(--al-border)' }}>
-            <dt>Total</dt>
-            <dd className="cifra">{eur.format(Number(p.total))}</dd>
-          </div>
-        </dl>
-      </div>
-    </Shell>
+      {despiece.length > 0 && (
+        <tr className="border-b" style={{ borderColor: 'var(--al-border)' }}>
+          <td colSpan={8} className="px-3 py-1" style={{ background: 'var(--al-surface-muted)' }}>
+            <details>
+              <summary className="cursor-pointer py-1 text-xs" style={{ color: 'var(--al-text-muted)' }}>
+                Despiece: {despiece.length} piezas · coste de perfiles {eur.format(costeTotal)}
+                {sinCoste > 0 && ` · ${sinCoste} piezas sin coste`}
+              </summary>
+              <table className="mb-2 mt-1 w-full text-xs">
+                <thead>
+                  <tr style={{ color: 'var(--al-text-muted)' }}>
+                    <th className="px-2 py-1 text-left font-medium">Artículo</th>
+                    <th className="px-2 py-1 text-left font-medium">Función</th>
+                    <th className="px-2 py-1 text-right font-medium">Cdad.</th>
+                    <th className="px-2 py-1 text-right font-medium">Corte (mm)</th>
+                    <th className="px-2 py-1 text-right font-medium">Coste ud.</th>
+                    <th className="px-2 py-1 text-right font-medium">Coste</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {despiece.map((pz) => (
+                    <tr key={pz.id}>
+                      <td className="px-2 py-0.5">{pz.articuloCodigo}</td>
+                      <td className="px-2 py-0.5" style={{ color: 'var(--al-text-muted)' }}>{pz.funcion ?? '—'}</td>
+                      <td className="cifra px-2 py-0.5 text-right">{Number(pz.cantidad)}</td>
+                      <td className="cifra px-2 py-0.5 text-right">
+                        {pz.largoCorteMm !== null ? Number(pz.largoCorteMm).toLocaleString('es-ES') : '—'}
+                      </td>
+                      <td className="cifra px-2 py-0.5 text-right">
+                        {pz.costeUnitario !== null ? eur.format(Number(pz.costeUnitario)) : (
+                          <span style={{ color: 'var(--al-warn)' }}>sin coste</span>
+                        )}
+                      </td>
+                      <td className="cifra px-2 py-0.5 text-right">
+                        {pz.costeTotal !== null ? eur.format(Number(pz.costeTotal)) : '—'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </details>
+          </td>
+        </tr>
+      )}
+    </>
   )
 }

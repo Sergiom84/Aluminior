@@ -13,8 +13,12 @@ const estilo = { background: 'var(--al-surface)', borderColor: 'var(--al-border-
  *               despiece y el precio a partir de sus componentes
  */
 export function AnyadirLinea({
-  presupuestoId, series,
-}: { presupuestoId: string; series: string[] }) {
+  presupuestoId, series, acabados,
+}: {
+  presupuestoId: string
+  series: string[]
+  acabados: { codigo: string; descripcion: string }[]
+}) {
   const [tipo, setTipo] = useState<'ARTICULO' | 'ESTRUCTURA'>('ESTRUCTURA')
   const [estado, accion, enviando] = useActionState<Estado, FormData>(anyadirLinea, null)
 
@@ -82,6 +86,18 @@ export function AnyadirLinea({
               {err.serieCodigo && (
                 <p className="mt-1 text-xs" style={{ color: 'var(--al-error)' }}>{err.serieCodigo.join('. ')}</p>
               )}
+            </div>
+
+            {/* El coste real depende del acabado; sin él, las piezas con coste
+                distinto por acabado quedan "sin coste" en vez de adivinarse. */}
+            <div className="col-span-2">
+              <label htmlFor="acabadoCodigo" className="mb-1 block text-sm font-medium">Acabado</label>
+              <select id="acabadoCodigo" name="acabadoCodigo" defaultValue="" className={entrada} style={estilo}>
+                <option value="">— sin acabado —</option>
+                {acabados.map((a) => (
+                  <option key={a.codigo} value={a.codigo}>{a.codigo} · {a.descripcion}</option>
+                ))}
+              </select>
             </div>
             <div className="col-span-2">
               <label htmlFor="anchoMm" className="mb-1 block text-sm font-medium">Ancho (mm)</label>

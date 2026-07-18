@@ -119,6 +119,18 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
     let precioUnitario = 0
     let aviso: string | null = null
 
+    /** Despiece resuelto a persistir en lineas_despiece (trazabilidad + coste). */
+    let piezasAPersistir: {
+      articuloCodigo: string
+      cantidad: string
+      largoCorteMm: string | null
+      anguloIzquierdo: string | null
+      anguloDerecho: string | null
+      funcion: string | null
+      costeUnitario: string | null
+      costeTotal: string | null
+    }[] = []
+
     if (d.tipo === 'ARTICULO') {
       const [art] = await db.select()
         .from(schema.articulos).where(eq(schema.articulos.codigo, d.codigo)).limit(1)
@@ -255,7 +267,8 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
               SELECT p.precio FROM articulos_pvp p
               WHERE p.articulo_codigo = ${schema.articulos.codigo}
                 AND p.tarifa = ${presupuesto.tarifa}
-              ORDER BY p.acabado_codigo LIMIT 1
+              ORDER BY (p.acabado_codigo = ${d.acabadoCodigo ?? ''}) DESC, p.acabado_codigo
+              LIMIT 1
             )`,
           }).from(schema.articulos).where(inArray(schema.articulos.codigo, codigos))
         : []
@@ -272,6 +285,60 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
 
       const valoracion = valorarDespiece(despiece.piezas, mapa)
       precioUnitario = valoracion.importe
+
+      // --- Coste real por pieza, para persistir el despiece con trazabilidad ---
+      // El coste depende del acabado. Si la línea no fija acabado y el
+      // artículo tiene costes distintos por acabado, se deja null: un coste
+      // ambiguo no se adivina.
+      const costes = codigos.length
+        ? await db.select({
+            articuloCodigo: schema.articulosCoste.articuloCodigo,
+            acabadoCodigo: schema.articulosCoste.acabadoCodigo,
+            coste: schema.articulosCoste.coste,
+          }).from(schema.articulosCoste)
+            .where(inArray(schema.articulosCoste.articuloCodigo, codigos))
+        : []
+      const costePorArticulo = new Map<string, number | null>()
+      {
+        const porArt = new Map<string, Map<string, number>>()
+        for (const c of costes) {
+          let m = porArt.get(c.articuloCodigo)
+          if (!m) porArt.set(c.articuloCodigo, (m = new Map()))
+          const v = Number(c.coste)
+          if (!m.has(c.acabadoCodigo)) m.set(c.acabadoCodigo, v)
+        }
+        for (const [art, porAcabado] of porArt) {
+          if (d.acabadoCodigo && porAcabado.has(d.acabadoCodigo)) {
+            costePorArticulo.set(art, porAcabado.get(d.acabadoCodigo)!)
+            continue
+          }
+          const distintos = new Set(porAcabado.values())
+          costePorArticulo.set(art, distintos.size === 1 ? [...distintos][0] : null)
+        }
+      }
+
+      piezasAPersistir = despiece.piezas.map((pz) => {
+        const art = mapa.get(pz.articuloCodigo)
+        const coste = costePorArticulo.get(pz.articuloCodigo) ?? null
+        let costeTotal: number | null = null
+        if (coste !== null) {
+          if (art?.tipoMetraje === 'ML') {
+            costeTotal = pz.largoMm !== null ? coste * (pz.largoMm / 1000) * pz.cantidad : null
+          } else {
+            costeTotal = coste * pz.cantidad
+          }
+        }
+        return {
+          articuloCodigo: pz.articuloCodigo,
+          cantidad: String(pz.cantidad),
+          largoCorteMm: pz.largoMm !== null ? String(pz.largoMm) : null,
+          anguloIzquierdo: pz.anguloIzquierdo !== null ? String(pz.anguloIzquierdo) : null,
+          anguloDerecho: pz.anguloDerecho !== null ? String(pz.anguloDerecho) : null,
+          funcion: pz.funcion,
+          costeUnitario: coste !== null ? String(coste) : null,
+          costeTotal: costeTotal !== null ? String(Math.round(costeTotal * 10000) / 10000) : null,
+        }
+      })
 
       const problemas: string[] = []
       if (sinResolver.size) {
@@ -325,6 +392,12 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
           estructuraCodigo: d.codigo,
           acabadoCodigo: d.acabadoCodigo,
         })
+
+        if (piezasAPersistir.length) {
+          await db.insert(schema.lineasDespiece).values(
+            piezasAPersistir.map((pz) => ({ lineaId: linea.id, ...pz })),
+          )
+        }
       }
     }
 
