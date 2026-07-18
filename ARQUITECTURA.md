@@ -85,7 +85,8 @@ principio.
 | Capa | Elección | Motivo |
 |---|---|---|
 | Base de datos | **PostgreSQL** (Supabase, región UE) | Es un modelo relacional pesado |
-| Backend | **Node + TypeScript + Fastify** | El cálculo debe estar en servidor |
+| Backend | **Node + TypeScript + Express 5** | El cálculo debe estar en servidor |
+| Validación | **Zod** | Esquemas compartidos entre API y frontend |
 | Acceso a datos | **Drizzle ORM** | SQL explícito, migraciones versionadas |
 | Frontend | **React + TypeScript + Vite** | Envolvible en Electron después |
 | Despliegue | **Render** (API + estáticos) | Como propuso el usuario |
@@ -97,6 +98,23 @@ encaja con la dirección que marcaste (Electron y Supabase son ambos ecosistema 
 Esto sustituye a la propuesta de .NET del plan original: aquella era razonable por el
 origen Windows del sistema, pero TypeScript encaja mejor con las herramientas que has
 elegido y con quien va a mantener esto.
+
+### 5a. Express en lugar de Fastify — decidido el 18/07/2026
+
+La propuesta inicial de este documento era Fastify. Se optó por Express, y el
+razonamiento queda aquí para no revisitarlo:
+
+- **El rendimiento no es el criterio.** El cuello de botella será PostgreSQL y
+  el motor de despiece, no el enrutado HTTP. Con una decena de usuarios
+  concurrentes la diferencia es indetectable.
+- **Ecosistema y familiaridad** pesan más a largo plazo: cualquiera que herede
+  este código conoce Express.
+- **Lo que Fastify aportaba** —validación por esquema integrada— se cubre con
+  Zod, que se quiere igualmente para compartir tipos entre API y frontend.
+
+Si algún día el enrutado fuese medible como cuello de botella (no lo será a
+esta escala), migrar es cuestión de horas: la lógica vive en `core`, no en la
+capa HTTP.
 
 ## 6. Estructura del repositorio
 

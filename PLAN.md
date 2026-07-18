@@ -577,3 +577,84 @@ presupuestos reales y con dinero de por medio.
 Regla operativa: ninguna regla de negocio inferida entra en el motor sin
 haberse contrastado antes contra el catálogo o contra las 468.838 líneas
 históricas.
+
+---
+---
+
+# ANEXO F — El motor de despiece es un lenguaje de fórmulas (18/07/2026)
+
+**El hallazgo técnico más importante del proyecto hasta ahora.**
+
+Al perfilar `EstructurasArticulos` (27.952 filas, 132 columnas) aparecieron
+dos columnas que no contienen datos sino **expresiones**:
+`FormulaLargo` y `FormulaLargoCorte`.
+
+El sistema original no tabula las medidas de corte. Las calcula evaluando
+fórmulas con las medidas del hueco.
+
+## El lenguaje completo
+
+| | |
+|---|---|
+| Fórmulas distintas | **417** |
+| Identificadores (variables) | **23** |
+| Operadores | **7**: `+ - * / ( )` y la coma decimal |
+| Condicionales | ninguno |
+| Funciones | ninguna |
+
+Variables, por frecuencia de uso:
+
+```
+L (31.409)  A (21.316)  REF (17.168)  FI (4.196)  FS (3.568)  FD (1.109)
+TD (589)  FZ (431)  F (208)  II (190)  ZO (142)  VS (138)  CAJ (128)
+DV (126)  LB (80)  TR (50)  HO (50)  TI (45)  CVI (31)  CVD (31)
+CGC (28)  FT (16)  HB (4)
+```
+
+Fórmulas reales, de más simple a más compleja:
+
+```
+L                 23.084 usos
+REF               10.288
+(A)/2              4.985
+L-FS               1.480
+L-FS-FI              651
+(REF-FI-FD)/2         70
+L+CAJ+2*30,00         44     <- la coma es separador DECIMAL, no de argumentos
+```
+
+## Por qué importa tanto
+
+Lo que temía que fuera el trabajo más duro del proyecto —reconstruir el motor
+de despiece— resulta ser **un evaluador de expresiones aritméticas sobre 23
+variables**. Es un problema acotado y resuelto, no una investigación abierta.
+
+## Estado
+
+Evaluador implementado en `packages/core/src/despiece/formula.ts` y validado:
+
+- **417 de 417 fórmulas del catálogo evaluadas correctamente (100%)**
+- 8 casos concretos con resultado numérico verificado
+- Falla con error explícito si falta una variable, en lugar de asumir cero.
+  Un cero silencioso en una medida de corte es una pieza mal cortada y
+  material perdido.
+
+## Lo que queda por averiguar
+
+El evaluador funciona. Lo que aún no sabemos es **qué significa cada variable
+y de dónde sale su valor**:
+
+- `L` y `A` son casi con certeza largo y alto del hueco.
+- `REF` es una medida de referencia que depende del contexto de la pieza.
+- `FI`, `FS`, `FD`, `FZ` parecen holguras o descuentos por posición
+  (inferior, superior, derecha…), pero hay que confirmarlo.
+- `CAJ` apunta a cajón de persiana.
+
+Esto se resuelve contrastando contra las 468.838 líneas históricas: se toman
+casos con despiece ya calculado, se despejan los valores y se verifica la
+hipótesis. Es exactamente el método del anexo E, que ya demostró su utilidad.
+
+## Nota sobre `TipoCorte`
+
+Valores observados: `!!`, `/\`, `!\`. Son representaciones ASCII del corte:
+`!` recto, `/` y `\` a inglete. Pendiente de confirmar contra el histórico.
