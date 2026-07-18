@@ -1357,6 +1357,13 @@ marco y travesaño, 68,5/86 mm.
 - El núcleo resuelve marco, travesaño, división invisible y hoja exacta con
   pruebas automatizadas.
 
-La migración 0011 está aplicada. La recarga destructiva del ETL queda pendiente
-de autorización explícita. La valoración web mixta permanece cerrada hasta que
-esas filas estén cargadas; los 72 casos no cubiertos continúan sin valorar.
+La migración 0011 y la recarga completa del ETL están aplicadas. La valoración
+web usa estas reglas ranura a ranura, persiste por separado vidrio de hoja y de
+fijo y calcula sus junquillos y juntas según el contexto. Si falta cualquiera
+de las dos reglas de una ranura, toda la línea queda sin valorar; los 72 casos
+no cubiertos continúan protegidos por esa guarda.
+
+Prueba real reversible: `2OFI + ELEGANTPVC + V420AGS4`, 1795×1770 con cotas por
+defecto, produjo dos vidrios de hoja de 1319,9×716,5 y un fijo de 231,5×1684,
+con tres slots correctamente clasificados. La línea siguió sin total por 13
+genéricos ajenos al vidrio que la serie no resuelve; no por el acristalamiento.

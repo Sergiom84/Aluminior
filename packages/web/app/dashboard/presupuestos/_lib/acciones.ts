@@ -12,7 +12,10 @@ import { z } from 'zod'
 import { eq, sql, and, inArray, asc, gte } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { crearDb, schema } from '@aluminior/db'
-import { calcularDespiece, evaluar, type ComponentePlantilla, type PiezaCortada } from '@aluminior/core/despiece'
+import {
+  calcularDespiece, evaluar, calcularVidriosPorAlojamiento,
+  type ComponentePlantilla, type PiezaCortada, type NodoDisenyo,
+} from '@aluminior/core/despiece'
 import {
   valorarDespiece, medidasVidrio, metrajeVidrioM2, type DatosArticuloPrecio,
 } from '@aluminior/core/precios'
@@ -22,6 +25,63 @@ export type Estado =
   | { ok: true; id: string }
   | { ok: false; errores: Record<string, string[]>; mensaje?: string }
   | null
+
+interface CristalAcris {
+  slot: number
+  contexto: 'HOJA' | 'FIJO'
+  largoMm: number
+  anchoMm: number
+  moduloLargoMm: number
+  moduloAnchoMm: number
+}
+
+async function piezasAcristalamiento(
+  db: ReturnType<typeof crearDb>,
+  serieCodigo: string,
+  tamJunquillo: number,
+  cristales: CristalAcris[],
+): Promise<{ piezas: PiezaCortada[]; avisos: string[] }> {
+  const [conjunto] = await db.select({
+    tablaHojas: schema.conjuntos.tablaHojas,
+    tablaFijos: schema.conjuntos.tablaFijos,
+  }).from(schema.conjuntos).where(eq(schema.conjuntos.codigo, serieCodigo)).limit(1)
+  const piezas: PiezaCortada[] = []
+  const avisos: string[] = []
+  const anyadir = (articulo: string | null, largoMm: number, funcion: string) => {
+    if (!articulo || largoMm <= 0) return
+    piezas.push({
+      articuloCodigo: articulo, cantidad: 2, largoMm: Math.round(largoMm * 100) / 100,
+      formula: null, tipoCorte: null, anguloIzquierdo: null, anguloDerecho: null,
+      funcion, incidencia: null,
+    })
+  }
+  for (const cristal of cristales) {
+    const tabla = (cristal.contexto === 'FIJO' ? conjunto?.tablaFijos : conjunto?.tablaHojas) || null
+    const [fila] = tabla && tamJunquillo > 0
+      ? await db.select().from(schema.tacrisFilas)
+          .where(and(eq(schema.tacrisFilas.tabla, tabla), gte(schema.tacrisFilas.grosor, String(tamJunquillo))))
+          .orderBy(asc(schema.tacrisFilas.grosor)).limit(1)
+      : []
+    if (!fila) {
+      avisos.push(`ranura ${cristal.slot}: sin tabla de acristalamiento aplicable`)
+      continue
+    }
+    const tablaAjustes = cristal.contexto === 'FIJO' ? schema.junquilloAjustesFijo : schema.junquilloAjustes
+    const [ajuste] = await db.select().from(tablaAjustes)
+      .where(eq(tablaAjustes.serieCodigo, serieCodigo)).limit(1)
+    anyadir(fila.juntaExterior, cristal.moduloLargoMm, 'JEXT')
+    anyadir(fila.juntaExterior, cristal.moduloAnchoMm, 'JEXT')
+    anyadir(fila.juntaInterior, cristal.moduloLargoMm, 'JINT')
+    anyadir(fila.juntaInterior, cristal.moduloAnchoMm, 'JINT')
+    if (fila.junquillo && ajuste) {
+      anyadir(fila.junquillo, cristal.largoMm + Number(ajuste.ajusteLargoMm), 'JUNQ')
+      anyadir(fila.junquillo, cristal.anchoMm + Number(ajuste.ajusteAnchoMm), 'JUNQ')
+    } else if (fila.junquillo) {
+      avisos.push(`ranura ${cristal.slot}: sin ajuste medido de junquillo ${cristal.contexto.toLowerCase()}`)
+    }
+  }
+  return { piezas, avisos }
+}
 
 /** Siguiente número, con el patrón AASSSS del original: 260418 = nº 418 de 2026. */
 async function siguienteNumero(db: ReturnType<typeof crearDb>): Promise<number> {
@@ -136,6 +196,12 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
       funcion: string | null
       costeUnitario: string | null
       costeTotal: string | null
+    }[] = []
+    let acristalamientoAPersistir: {
+      slot: number
+      vidrioHojas: string | null
+      vidrioFijos: string | null
+      variante: '1' | '2'
     }[] = []
 
     if (d.tipo === 'ARTICULO') {
@@ -361,12 +427,87 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
       let tamJunqVidrio = 0
       /** HOJA = vidrio alojado en hojas; FIJO = en cerco fijo. */
       let contextoVidrio: 'HOJA' | 'FIJO' | null = null
+      let cristalesAcris: CristalAcris[] = []
+      let avisoAcris: string | null = null
       if (d.vidrioCodigo) {
         const [vidrio] = await db.select()
           .from(schema.articulos).where(eq(schema.articulos.codigo, d.vidrioCodigo)).limit(1)
         if (!vidrio || vidrio.familiaCodigo !== '050' || vidrio.tipoMetraje !== 'M2') {
           return { ok: false, errores: { vidrioCodigo: ['Vidrio no válido (debe ser familia 050, facturable por m²)'] } }
         }
+        const ranuras = plantillaResuelta.filter((c) => c.componenteDisenyo === '1')
+        acristalamientoAPersistir = ranuras.map((r, i) => ({
+          slot: i + 1,
+          vidrioHojas: r.tipoHojaDisenyo === -1 ? null : d.vidrioCodigo,
+          vidrioFijos: r.tipoHojaDisenyo === -1 ? d.vidrioCodigo : null,
+          variante: d.varianteAcristalamiento,
+        }))
+        const tipos = new Set(ranuras.map((r) => r.tipoHojaDisenyo === -1 ? 'FIJO' : 'HOJA'))
+        const esMixta = tipos.size > 1
+        tamJunqVidrio = Number((vidrio.tamJunquilloGoma ?? '').replace(',', '.')) || 0
+
+        if (esMixta) {
+          const nodosFilas = await db.select().from(schema.estructuraDisenoNodos)
+            .where(eq(schema.estructuraDisenoNodos.estructuraCodigo, d.codigo))
+          const nodos = new Map<number, NodoDisenyo>(nodosFilas.map((n) => [n.idItem, {
+            idItem: n.idItem, tipo: n.tipo, contenidoEn: n.contenidoEn,
+            idTravesano: n.idTravesano, posicionHueco: n.posicionHueco,
+            tipoTravesano: n.tipoTravesano, invisible: n.invisible,
+          }]))
+          const reglasFilas = await db.select().from(schema.vidrioDescuentosAlojamiento)
+          const calculo = calcularVidriosPorAlojamiento(
+            ranuras.map((r) => ({
+              idItemDisenyo: r.idItemDisenyo,
+              formulaLargo: r.formulaLargo,
+              formulaAncho: r.formulaAncho,
+            })),
+            { L: d.anchoMm, A: d.altoMm, ...cotas }, nodos,
+            despiece.piezas.filter((pieza) => !genericos.has(pieza.articuloCodigo)),
+            reglasFilas.map((r) => ({
+              eje: r.eje as 'L' | 'A', limite1: r.limite1, limite2: r.limite2,
+              perfilHoja: r.perfilHoja, deltaMm: Number(r.deltaMm),
+            })),
+          )
+          if (!calculo.ok) {
+            avisoVidrio = `vidrio sin calcular: ranura ${calculo.slot}, ${calculo.motivo}`
+          } else {
+            cristalesAcris = calculo.vidrios
+            const opcionesMetraje = {
+              metrajeMinimo: vidrio.metrajeMinimo === null ? null : Number(vidrio.metrajeMinimo),
+              multiploLargoCm: vidrio.metrajeMultiploLargo === null ? null : Number(vidrio.metrajeMultiploLargo),
+              multiploAnchoCm: vidrio.metrajeMultiploAncho === null ? null : Number(vidrio.metrajeMultiploAncho),
+            }
+            const metrajes = calculo.vidrios.map((v) => metrajeVidrioM2(v.largoMm, v.anchoMm, opcionesMetraje))
+            const [pvpVidrio] = (await db.execute<{ precio: string }>(sql`
+              SELECT precio FROM articulos_pvp
+              WHERE articulo_codigo = ${d.vidrioCodigo} AND tarifa = ${presupuesto.tarifa}
+              ORDER BY (acabado_codigo = ${d.acabadoCodigo ?? ''}) DESC,
+                       (acabado_codigo = '*') DESC, acabado_codigo
+              LIMIT 1
+            `)) as unknown as { precio: string }[]
+            if (!pvpVidrio) {
+              avisoVidrio = `vidrio sin valorar: ${d.vidrioCodigo} no tiene precio en la tarifa ${presupuesto.tarifa}`
+            } else {
+              precioUnitario = Math.round((precioUnitario + metrajes.reduce((a, b) => a + b, 0) * Number(pvpVidrio.precio)) * 100) / 100
+              const [costeVidrio] = (await db.execute<{ coste: string }>(sql`
+                SELECT coste FROM articulos_coste WHERE articulo_codigo = ${d.vidrioCodigo}
+                ORDER BY (acabado_codigo = ${d.acabadoCodigo ?? ''}) DESC,
+                         (acabado_codigo = '*') DESC, acabado_codigo LIMIT 1
+              `)) as unknown as { coste: string }[]
+              const costeM2 = costeVidrio ? Number(costeVidrio.coste) : null
+              for (let i = 0; i < calculo.vidrios.length; i++) {
+                const v = calculo.vidrios[i]
+                piezasAPersistir.push({
+                  articuloCodigo: d.vidrioCodigo, cantidad: '1',
+                  largoCorteMm: String(v.largoMm), anchoCorteMm: String(v.anchoMm),
+                  anguloIzquierdo: null, anguloDerecho: null, funcion: 'VIDRIO',
+                  costeUnitario: costeM2 === null ? null : String(costeM2),
+                  costeTotal: costeM2 === null ? null : String(Math.round(costeM2 * metrajes[i] * 10000) / 10000),
+                })
+              }
+            }
+          }
+        } else {
 
         // Emparejamiento inequívoco del vidrio con su alojamiento:
         //  - con hojas (HV/HH): vidrio de HOJA, descontado del corte de hoja
@@ -429,7 +570,20 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
               avisoVidrio = 'vidrio sin calcular: el descuento de galce no cabe en la medida'
             } else {
               dimsVidrio = dims
-              tamJunqVidrio = Number((vidrio.tamJunquilloGoma ?? '').replace(',', '.')) || 0
+              const contextoModulo = { L: d.anchoMm, A: d.altoMm, ...cotas }
+              cristalesAcris = ranuras.flatMap((r, i) => {
+                try {
+                  if (!r.formulaLargo || !r.formulaAncho) return []
+                  return [{
+                    slot: i + 1, contexto: contextoVidrio!, largoMm: dims.largoMm, anchoMm: dims.anchoMm,
+                    moduloLargoMm: evaluar(r.formulaLargo, contextoModulo),
+                    moduloAnchoMm: evaluar(r.formulaAncho, contextoModulo),
+                  }]
+                } catch { return [] }
+              })
+              if (cristalesAcris.length !== ranuras.length) {
+                avisoAcris = 'junquillos/juntas sin calcular: fórmulas de módulo incompletas'
+              }
               const metraje = metrajeVidrioM2(dims.largoMm, dims.anchoMm, {
                 metrajeMinimo: vidrio.metrajeMinimo === null ? null : Number(vidrio.metrajeMinimo),
                 multiploLargoCm: vidrio.metrajeMultiploLargo === null ? null : Number(vidrio.metrajeMultiploLargo),
@@ -473,6 +627,7 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
             }
           }
         }
+        }
       }
 
       // --- Junquillos y juntas por grosor del vidrio (PLAN.md anexo M) ---
@@ -481,64 +636,12 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
       // del módulo del cristal (fórmulas de la ranura); junquillo = medida
       // del vidrio + ajuste MEDIDO del histórico. Artículos fuera del
       // catálogo (marcador V1000 "sin junquillos") no generan pieza.
-      let avisoAcris: string | null = null
-      if (dimsVidrio && contextoVidrio) {
-        const [cjSerie] = await db.select({
-          tablaHojas: schema.conjuntos.tablaHojas,
-          tablaFijos: schema.conjuntos.tablaFijos,
-        }).from(schema.conjuntos).where(eq(schema.conjuntos.codigo, d.serieCodigo)).limit(1)
-        const tablaAcris = (contextoVidrio === 'FIJO' ? cjSerie?.tablaFijos : cjSerie?.tablaHojas) || null
-        const [filaAcris] = tablaAcris && tamJunqVidrio > 0
-          ? await db.select().from(schema.tacrisFilas)
-              .where(and(
-                eq(schema.tacrisFilas.tabla, tablaAcris),
-                gte(schema.tacrisFilas.grosor, String(tamJunqVidrio)),
-              ))
-              .orderBy(asc(schema.tacrisFilas.grosor)).limit(1)
-          : []
-
-        if (!filaAcris) {
-          avisoAcris = 'junquillos/juntas sin calcular: sin tabla de acristalamiento aplicable'
-        } else {
-          // Dimensiones del módulo de cada ranura de cristal, por sus fórmulas
-          const contexto = { L: d.anchoMm, A: d.altoMm, ...cotas }
-          const modulos: { l: number; a: number }[] = []
-          for (const c of plantillaResuelta.filter((x) => x.componenteDisenyo === '1')) {
-            try {
-              const l = c.formulaLargo ? evaluar(c.formulaLargo, contexto) : NaN
-              const a = c.formulaAncho ? evaluar(c.formulaAncho, contexto) : NaN
-              if (Number.isFinite(l) && Number.isFinite(a) && l > 0 && a > 0) modulos.push({ l, a })
-            } catch { /* fórmula no evaluable: cuenta como módulo ausente */ }
+      if (cristalesAcris.length) {
+          const calculoAcris = await piezasAcristalamiento(db, d.serieCodigo, tamJunqVidrio, cristalesAcris)
+          const piezasAcris = calculoAcris.piezas
+          if (calculoAcris.avisos.length) {
+            avisoAcris = `junquillos/juntas sin calcular: ${calculoAcris.avisos.join('; ')}`
           }
-          const tablaAjustes = contextoVidrio === 'FIJO' ? schema.junquilloAjustesFijo : schema.junquilloAjustes
-          const [ajuste] = await db.select().from(tablaAjustes)
-            .where(eq(tablaAjustes.serieCodigo, d.serieCodigo)).limit(1)
-
-          const piezasAcris: PiezaCortada[] = []
-          const anyadir = (articulo: string | null, largoMm: number, funcion: string) => {
-            if (!articulo || largoMm <= 0) return
-            piezasAcris.push({
-              articuloCodigo: articulo, cantidad: 2, largoMm: Math.round(largoMm * 100) / 100,
-              formula: null, tipoCorte: null, anguloIzquierdo: null, anguloDerecho: null,
-              funcion, incidencia: null,
-            })
-          }
-          for (const m of modulos) {
-            anyadir(filaAcris.juntaExterior, m.l, 'JEXT')
-            anyadir(filaAcris.juntaExterior, m.a, 'JEXT')
-            anyadir(filaAcris.juntaInterior, m.l, 'JINT')
-            anyadir(filaAcris.juntaInterior, m.a, 'JINT')
-            if (filaAcris.junquillo && ajuste) {
-              anyadir(filaAcris.junquillo, dimsVidrio.largoMm + Number(ajuste.ajusteLargoMm), 'JUNQ')
-              anyadir(filaAcris.junquillo, dimsVidrio.anchoMm + Number(ajuste.ajusteAnchoMm), 'JUNQ')
-            }
-          }
-          if (modulos.length === 0) {
-            avisoAcris = 'juntas sin calcular: fórmulas del módulo de cristal no evaluables'
-          } else if (filaAcris.junquillo && !ajuste) {
-            avisoAcris = `junquillo sin calcular: sin ajuste medido para la serie ${d.serieCodigo}`
-          }
-
           if (piezasAcris.length) {
             const codigosAcris = [...new Set(piezasAcris.map((p) => p.articuloCodigo))]
             const artsAcris = await db.select({
@@ -614,7 +717,6 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
             }
           }
         }
-      }
 
       const problemas: string[] = []
       if (avisoVidrio) problemas.push(avisoVidrio)
@@ -688,13 +790,10 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
           )
         }
 
-        if (d.vidrioCodigo) {
-          await db.insert(schema.lineasAcristalamiento).values({
-            lineaId: linea.id,
-            slot: 1,
-            vidrioHojas: d.vidrioCodigo,
-            variante: d.varianteAcristalamiento,
-          })
+        if (acristalamientoAPersistir.length) {
+          await db.insert(schema.lineasAcristalamiento).values(
+            acristalamientoAPersistir.map((a) => ({ lineaId: linea.id, ...a })),
+          )
         }
       }
     }

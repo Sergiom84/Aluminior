@@ -1,5 +1,7 @@
 /** GeometrÃ­a limpia de EstructurasDiseÃ±o para localizar los lÃ­mites de un hueco. */
 
+import { evaluar, type Contexto } from './formula.ts'
+
 export interface NodoDisenyo {
   idItem: number
   /** 1=marco, 2=hueco, 3=hoja, 5=vidrio, 6=travesaÃ±o/divisiÃ³n. */
@@ -126,4 +128,90 @@ export function articuloDeHoja(
       .filter(Boolean),
   )
   return articulos.size === 1 ? [...articulos][0] : null
+}
+
+export interface RanuraVidrio {
+  idItemDisenyo: number | null
+  formulaLargo: string | null
+  formulaAncho: string | null
+}
+
+export interface ReglaAlojamiento {
+  eje: 'L' | 'A'
+  limite1: string
+  limite2: string
+  perfilHoja: string
+  deltaMm: number
+}
+
+export interface VidrioDeAlojamiento {
+  slot: number
+  contexto: 'HOJA' | 'FIJO'
+  largoMm: number
+  anchoMm: number
+  moduloLargoMm: number
+  moduloAnchoMm: number
+}
+
+export type ResultadoVidriosAlojamiento =
+  | { ok: true; vidrios: VidrioDeAlojamiento[] }
+  | { ok: false; slot: number; motivo: string }
+
+/** Calcula cada vidrio por sus límites. Una ranura incierta invalida el conjunto. */
+export function calcularVidriosPorAlojamiento(
+  ranuras: RanuraVidrio[],
+  contexto: Contexto,
+  nodos: Map<number, NodoDisenyo>,
+  piezas: PiezaGeometria[],
+  reglas: ReglaAlojamiento[],
+): ResultadoVidriosAlojamiento {
+  const porFirma = new Map(reglas.map((r) => [
+    JSON.stringify([r.eje, r.limite1, r.limite2, r.perfilHoja]), r.deltaMm,
+  ]))
+  const firma = (eje: 'L' | 'A', x: string, y: string, perfil: string) => {
+    const [limite1, limite2] = [x, y].sort()
+    return JSON.stringify([eje, limite1, limite2, perfil])
+  }
+  const vidrios: VidrioDeAlojamiento[] = []
+  for (let i = 0; i < ranuras.length; i++) {
+    const slot = i + 1
+    const r = ranuras[i]
+    if (r.idItemDisenyo === null || !r.formulaLargo || !r.formulaAncho) {
+      return { ok: false, slot, motivo: 'ranura sin geometría completa' }
+    }
+    let moduloLargoMm: number, moduloAnchoMm: number
+    try {
+      moduloLargoMm = evaluar(r.formulaLargo, contexto)
+      moduloAnchoMm = evaluar(r.formulaAncho, contexto)
+    } catch {
+      return { ok: false, slot, motivo: 'fórmula de módulo no evaluable' }
+    }
+    const alojamiento = alojamientoDeVidrio(nodos, r.idItemDisenyo)
+    const limites = alojamiento ? limitesDeHueco(nodos, alojamiento.huecoId) : null
+    if (!alojamiento || !limites) return { ok: false, slot, motivo: 'hueco no reconstruible' }
+    const sup = articuloDeLimite(piezas, limites.superior)
+    const inf = articuloDeLimite(piezas, limites.inferior)
+    const izq = articuloDeLimite(piezas, limites.izquierdo)
+    const der = articuloDeLimite(piezas, limites.derecho)
+    const hh = alojamiento.hojaId === null ? '' : articuloDeHoja(piezas, alojamiento.hojaId, 'HH')
+    const hv = alojamiento.hojaId === null ? '' : articuloDeHoja(piezas, alojamiento.hojaId, 'HV')
+    if (!sup || !inf || !izq || !der || hh === null || hv === null) {
+      return { ok: false, slot, motivo: 'perfil delimitador ambiguo' }
+    }
+    const deltaL = porFirma.get(firma('L', sup, inf, hh))
+    const deltaA = porFirma.get(firma('A', izq, der, hv))
+    if (deltaL === undefined || deltaA === undefined) {
+      return { ok: false, slot, motivo: 'sin regla histórica estable' }
+    }
+    const largoMm = moduloLargoMm - deltaL
+    const anchoMm = moduloAnchoMm - deltaA
+    if (largoMm <= 0 || anchoMm <= 0) {
+      return { ok: false, slot, motivo: 'el descuento no cabe en el módulo' }
+    }
+    vidrios.push({
+      slot, contexto: alojamiento.hojaId === null ? 'FIJO' : 'HOJA',
+      largoMm, anchoMm, moduloLargoMm, moduloAnchoMm,
+    })
+  }
+  return { ok: true, vidrios }
 }

@@ -730,10 +730,10 @@ Lo que queda de la valoración:
 2. **Acristalamiento**: el vidrio se elige y se valora tanto en HOJAS
    (anexo L) como en FIJOS (anexo N), con junquillos y juntas por grosor de
    las tablas de la serie y longitudes medidas del histórico (anexo M).
-   Mixtas hoja+fijo: **modelo geométrico HECHO** (anexo Q: 21 reglas estables,
-   49/121 casos completos); pendiente recargar el ETL con autorización y
-   conectar la valoración web segura. Correderas y slots con vidrios distintos
-   siguen pendientes. **Mano de obra**: sin modelar.
+   Mixtas hoja+fijo: **HECHO** para los casos demostrados (anexo Q: 21 reglas,
+   49/121 casos completos). ETL cargado y web conectada ranura a ranura; los
+   casos no cubiertos quedan sin valorar. Correderas y la elección de vidrios
+   distintos por slot siguen pendientes. **Mano de obra**: sin modelar.
 3. **Variante de acristalamiento** (`.1`/`.2`): **HECHO**. El configurador
    permite elegir cristal sencillo o doble, usa la variante al resolver los
    perfiles y la persiste. Doble queda como valor inicial porque es el 100%

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   alojamientoDeVidrio, limitesDeHueco, articuloDeLimite, articuloDeHoja,
+  calcularVidriosPorAlojamiento,
   type NodoDisenyo,
 } from './huecos.ts'
 
@@ -54,5 +55,31 @@ describe('geometrÃ­a de huecos', () => {
     expect(articuloDeLimite(piezas, limite)).toBe('TRAV-7')
     expect(articuloDeHoja(piezas, 4, 'HH')).toBe('HOJA')
     expect(articuloDeHoja(piezas, 5, 'HH')).toBeNull()
+  })
+
+  it('calcula todas las ranuras o rechaza el conjunto completo', () => {
+    const nodos = mapa([
+      base({ idItem: 0, tipo: 1 }),
+      base({ idItem: 1, tipo: 6, contenidoEn: 0, tipoTravesano: 'HB' }),
+      base({ idItem: 3, tipo: 2, contenidoEn: 0, idTravesano: 1, posicionHueco: 2 }),
+      base({ idItem: 15, tipo: 5, contenidoEn: 3 }),
+    ])
+    const piezas = [
+      { articuloCodigo: 'M', funcion: 'MH' },
+      { articuloCodigo: 'M', funcion: 'MV' },
+      { articuloCodigo: 'T', funcion: 'TM', idItemDisenyo: 1 },
+    ]
+    const ranuras = [{ idItemDisenyo: 15, formulaLargo: 'L/2', formulaAncho: 'A' }]
+    const reglas = [
+      { eje: 'L' as const, limite1: 'M', limite2: 'T', perfilHoja: '', deltaMm: 50 },
+      { eje: 'A' as const, limite1: 'M', limite2: 'M', perfilHoja: '', deltaMm: 80 },
+    ]
+    expect(calcularVidriosPorAlojamiento(ranuras, { L: 1600, A: 1200 }, nodos, piezas, reglas)).toEqual({
+      ok: true,
+      vidrios: [{ slot: 1, contexto: 'FIJO', largoMm: 750, anchoMm: 1120, moduloLargoMm: 800, moduloAnchoMm: 1200 }],
+    })
+    expect(calcularVidriosPorAlojamiento(ranuras, { L: 1600, A: 1200 }, nodos, piezas, reglas.slice(0, 1))).toMatchObject({
+      ok: false, slot: 1, motivo: 'sin regla histórica estable',
+    })
   })
 })

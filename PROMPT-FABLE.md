@@ -164,6 +164,6 @@ La medición de 5/121 citada arriba ha sido corregida y queda sustituida por el
 anexo Q de `PLAN.md`. Ya se modelan los límites físicos de cada hueco mediante
 el árbol de `EstructurasDiseño`: marco, travesaño exacto, hoja exacta y división
 invisible. El contraste obtiene 21 reglas estables, reproduce 421/540
-dimensiones y 49/121 casos mixtos completos. La migración 0011 está aplicada;
-falta autorizar la recarga destructiva del ETL y conectar después sólo los
-casos completamente cubiertos. Los demás deben continuar sin valorar.
+dimensiones y 49/121 casos mixtos completos. La migración 0011 y el ETL están
+aplicados y la web calcula cada ranura cubierta, incluyendo junquillos y juntas.
+Los demás casos continúan sin valorar.
