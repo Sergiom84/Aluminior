@@ -96,6 +96,9 @@ export const estructuraComponentes = pgTable('estructura_componentes', {
   formulaLargo: text('formula_largo'),
   formulaLargoCorte: text('formula_largo_corte'),
   formulaRefLargo: text('formula_ref_largo'),
+  /** Fórmulas de la segunda dimensión (piezas de superficie: cristal, panel). */
+  formulaAncho: text('formula_ancho'),
+  formulaAnchoCorte: text('formula_ancho_corte'),
 
   tipoCorte: text('tipo_corte'),
   anguloIzquierdo: numeric('angulo_izquierdo', { precision: 8, scale: 4 }),

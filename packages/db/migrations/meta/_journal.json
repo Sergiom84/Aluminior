@@ -50,6 +50,13 @@
       "when": 1784404531010,
       "tag": "0006_vidrio_galce",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1784405685709,
+      "tag": "0007_acristalamiento",
+      "breakpoints": true
     }
   ]
 }

@@ -1126,3 +1126,65 @@ scripts/analizar-cristal.mjs         ranuras de cristal, vidrios reales, redonde
 scripts/medir-descuento-vidrio.mjs   delta por (serie, perfil): 100% consistente
 scripts/validar-metraje-vidrio.mjs   regla de metraje: 98,7% exacto
 ```
+
+---
+---
+
+# ANEXO M — Junquillos y juntas por grosor de vidrio (18/07/2026)
+
+**Segunda pieza del acristalamiento (tras el vidrio del anexo L). Implementada.**
+
+## El mecanismo, validado contra el oráculo
+
+**R1 — Artículos.** La serie declara `TablaHojas` -> tabla de
+`TAcristalamiento`; `TAcristalamientoLin` da por grosor el junquillo, la
+junta exterior y la interior. La clave es el **`TamJunqGoma` del vidrio**
+(no `GrosorPesoVid`), y la fila elegida es la de **menor `Grosor` >= TamJunqGoma**:
+V420AGS4 (28) -> fila 28,5 -> GM8827+GM4057+GM4091; V48CG4 (16) -> fila 17,5
+-> GM8207+GM4057+GM4089. Sobre 990 líneas reales: 76% con los tres artículos
+presentes — y el 21,4% de "ninguno" son correderas cuya tabla es
+literalmente "SIN JUNQUILLOS" (GM01, junquillo=0, juntas=V1000, un marcador
+que ni existe en el catálogo). Excluidas éstas, la regla acierta ~95%+.
+
+**R2 — Longitudes de juntas.** Junta exterior e interior = dimensiones del
+MÓDULO del cristal (las fórmulas de la ranura: `L` y `(A)/2`), 2 unidades
+por dimensión y por cristal. Verificado en documentos (1200/525, 1284,5/614,5).
+
+**R3 — Longitudes de junquillo.** junqVertical = vidrioLargo + ajusteL;
+junqHorizontal = vidrioAncho + ajusteA, con ajustes CONSTANTES por serie
+(medidos del histórico, 91–100% de consistencia): ELEGANTPVC −28/+16,
+GMA350 −28/+12, GMA65OPT −34/+10, GMA60RL −28/+12…
+
+## Implementación
+
+- `tacris_filas` (2.488 filas de TAcristalamientoLin; artículos '0' o V1000
+  se limpian a null) y `conjuntos.tabla_hojas`/`tabla_fijos`.
+- `junquillo_ajustes` (serie, ajusteL, ajusteA): lo mide el ETL del
+  histórico con el mismo criterio que el galce (≥3 muestras, ≥90% en ambas
+  dimensiones): 9 series emitidas, 3 excluidas (GMA65OHS entre ellas, 88%).
+- `estructura_componentes` gana `formula_ancho`/`formula_ancho_corte`
+  (necesarias para el módulo del cristal).
+- En la línea: si el vidrio se calculó, junquillos y juntas entran como
+  piezas ML normales (misma valoración con mínimos y múltiplos), se suman al
+  PVP y se persisten con funciones JUNQ/JEXT/JINT. Sin fila de tabla, sin
+  ajuste medido o fórmulas no evaluables -> aviso "sin calcular".
+
+Verificado en vivo (1+1 + ELEGANTPVC + V420AGS4, 1600×1230): junquillo
+GM8827 2×1441,4 + 2×500,4 por cristal (= vidrio −28/+16), juntas GM4057 y
+GM4091 2×1600 + 2×615, línea 447,84 -> 507,64 €.
+
+## Pendiente
+
+- Correderas: sin junquillos por tabla (correcto), pero sus felpudos/zócalos
+  van por otra vía (probablemente ConjuntosAsoc con los componentes .1/.2).
+- Fijos: `TablaFijos` cargada pero sin explotar (los fijos usan su propia
+  tabla y su galce contra marco, no medido).
+- GMA60RL: la fila elegida no coincide en 17 líneas (junq GM8414 predicho,
+  real otro) — grosor límite; revisar cuando se aborden los fijos.
+
+## Scripts
+
+```
+scripts/analizar-junquillos.mjs   mecanismo y claves de grosor
+scripts/validar-junquillos.mjs    R1 76%/95%, R3 constantes por serie
+```

@@ -9,10 +9,10 @@
  */
 
 import { z } from 'zod'
-import { eq, sql, and, inArray } from 'drizzle-orm'
+import { eq, sql, and, inArray, asc, gte } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { crearDb, schema } from '@aluminior/db'
-import { calcularDespiece, type ComponentePlantilla } from '@aluminior/core/despiece'
+import { calcularDespiece, evaluar, type ComponentePlantilla, type PiezaCortada } from '@aluminior/core/despiece'
 import {
   valorarDespiece, medidasVidrio, metrajeVidrioM2, type DatosArticuloPrecio,
 } from '@aluminior/core/precios'
@@ -177,6 +177,7 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
         articuloCodigo: schema.estructuraComponentes.articuloCodigo,
         cantidad: schema.estructuraComponentes.cantidad,
         formulaLargo: schema.estructuraComponentes.formulaLargo,
+        formulaAncho: schema.estructuraComponentes.formulaAncho,
         tipoCorte: schema.estructuraComponentes.tipoCorte,
         anguloIzquierdo: schema.estructuraComponentes.anguloIzquierdo,
         anguloDerecho: schema.estructuraComponentes.anguloDerecho,
@@ -351,6 +352,9 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
       // múltiplos (cm) y mínimo del artículo; precio por m² de la tarifa.
       // Cualquier ambigüedad -> "vidrio sin calcular", nunca un precio a ojo.
       let avisoVidrio: string | null = null
+      /** Medidas del vidrio si se pudieron calcular (para junquillos/juntas). */
+      let dimsVidrio: { largoMm: number; anchoMm: number } | null = null
+      let tamJunqVidrio = 0
       if (d.vidrioCodigo) {
         const [vidrio] = await db.select()
           .from(schema.articulos).where(eq(schema.articulos.codigo, d.vidrioCodigo)).limit(1)
@@ -386,6 +390,8 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
             if (!dims) {
               avisoVidrio = 'vidrio sin calcular: el descuento de galce no cabe en la medida'
             } else {
+              dimsVidrio = dims
+              tamJunqVidrio = Number((vidrio.tamJunquilloGoma ?? '').replace(',', '.')) || 0
               const metraje = metrajeVidrioM2(dims.largoMm, dims.anchoMm, {
                 metrajeMinimo: vidrio.metrajeMinimo === null ? null : Number(vidrio.metrajeMinimo),
                 multiploLargoCm: vidrio.metrajeMultiploLargo === null ? null : Number(vidrio.metrajeMultiploLargo),
@@ -431,8 +437,147 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
         }
       }
 
+      // --- Junquillos y juntas por grosor del vidrio (PLAN.md anexo M) ---
+      // La TablaHojas de la serie da, para el menor grosor >= TamJunqGoma del
+      // vidrio, el junquillo y las juntas. Longitudes: juntas = dimensiones
+      // del módulo del cristal (fórmulas de la ranura); junquillo = medida
+      // del vidrio + ajuste MEDIDO del histórico. Artículos fuera del
+      // catálogo (marcador V1000 "sin junquillos") no generan pieza.
+      let avisoAcris: string | null = null
+      if (dimsVidrio) {
+        const [cjSerie] = await db.select({ tablaHojas: schema.conjuntos.tablaHojas })
+          .from(schema.conjuntos).where(eq(schema.conjuntos.codigo, d.serieCodigo)).limit(1)
+        const tablaAcris = cjSerie?.tablaHojas || null
+        const [filaAcris] = tablaAcris && tamJunqVidrio > 0
+          ? await db.select().from(schema.tacrisFilas)
+              .where(and(
+                eq(schema.tacrisFilas.tabla, tablaAcris),
+                gte(schema.tacrisFilas.grosor, String(tamJunqVidrio)),
+              ))
+              .orderBy(asc(schema.tacrisFilas.grosor)).limit(1)
+          : []
+
+        if (!filaAcris) {
+          avisoAcris = 'junquillos/juntas sin calcular: sin tabla de acristalamiento aplicable'
+        } else {
+          // Dimensiones del módulo de cada ranura de cristal, por sus fórmulas
+          const contexto = { L: d.anchoMm, A: d.altoMm, ...cotas }
+          const modulos: { l: number; a: number }[] = []
+          for (const c of plantillaResuelta.filter((x) => x.componenteDisenyo === '1')) {
+            try {
+              const l = c.formulaLargo ? evaluar(c.formulaLargo, contexto) : NaN
+              const a = c.formulaAncho ? evaluar(c.formulaAncho, contexto) : NaN
+              if (Number.isFinite(l) && Number.isFinite(a) && l > 0 && a > 0) modulos.push({ l, a })
+            } catch { /* fórmula no evaluable: cuenta como módulo ausente */ }
+          }
+          const [ajuste] = await db.select().from(schema.junquilloAjustes)
+            .where(eq(schema.junquilloAjustes.serieCodigo, d.serieCodigo)).limit(1)
+
+          const piezasAcris: PiezaCortada[] = []
+          const anyadir = (articulo: string | null, largoMm: number, funcion: string) => {
+            if (!articulo || largoMm <= 0) return
+            piezasAcris.push({
+              articuloCodigo: articulo, cantidad: 2, largoMm: Math.round(largoMm * 100) / 100,
+              formula: null, tipoCorte: null, anguloIzquierdo: null, anguloDerecho: null,
+              funcion, incidencia: null,
+            })
+          }
+          for (const m of modulos) {
+            anyadir(filaAcris.juntaExterior, m.l, 'JEXT')
+            anyadir(filaAcris.juntaExterior, m.a, 'JEXT')
+            anyadir(filaAcris.juntaInterior, m.l, 'JINT')
+            anyadir(filaAcris.juntaInterior, m.a, 'JINT')
+            if (filaAcris.junquillo && ajuste) {
+              anyadir(filaAcris.junquillo, dimsVidrio.largoMm + Number(ajuste.ajusteLargoMm), 'JUNQ')
+              anyadir(filaAcris.junquillo, dimsVidrio.anchoMm + Number(ajuste.ajusteAnchoMm), 'JUNQ')
+            }
+          }
+          if (modulos.length === 0) {
+            avisoAcris = 'juntas sin calcular: fórmulas del módulo de cristal no evaluables'
+          } else if (filaAcris.junquillo && !ajuste) {
+            avisoAcris = `junquillo sin calcular: sin ajuste medido para la serie ${d.serieCodigo}`
+          }
+
+          if (piezasAcris.length) {
+            const codigosAcris = [...new Set(piezasAcris.map((p) => p.articuloCodigo))]
+            const artsAcris = await db.select({
+              codigo: schema.articulos.codigo,
+              tipoMetraje: schema.articulos.tipoMetraje,
+              metrajeMinimo: schema.articulos.metrajeMinimo,
+              metrajeMultiploLargo: schema.articulos.metrajeMultiploLargo,
+              precio: sql<string | null>`(
+                SELECT p.precio FROM articulos_pvp p
+                WHERE p.articulo_codigo = ${schema.articulos.codigo}
+                  AND p.tarifa = ${presupuesto.tarifa}
+                ORDER BY (p.acabado_codigo = ${d.acabadoCodigo ?? ''}) DESC,
+                         (p.acabado_codigo = '*') DESC, p.acabado_codigo
+                LIMIT 1
+              )`,
+            }).from(schema.articulos).where(inArray(schema.articulos.codigo, codigosAcris))
+            const mapaAcris = new Map<string, DatosArticuloPrecio>(
+              artsAcris.map((a) => [a.codigo, {
+                codigo: a.codigo,
+                tipoMetraje: a.tipoMetraje,
+                precio: a.precio === null ? null : Number(a.precio),
+                metrajeMinimo: a.metrajeMinimo === null ? null : Number(a.metrajeMinimo),
+                metrajeMultiploLargo: a.metrajeMultiploLargo === null ? null : Number(a.metrajeMultiploLargo),
+              }]),
+            )
+            // El marcador "sin junquillos" no existe en el catálogo: se omite.
+            const valorables = piezasAcris.filter((p) => mapaAcris.has(p.articuloCodigo))
+            const valAcris = valorarDespiece(valorables, mapaAcris)
+            precioUnitario = Math.round((precioUnitario + valAcris.importe) * 100) / 100
+            if (valAcris.sinPrecio.length) {
+              avisoAcris = `${valAcris.sinPrecio.length} artículos de acristalamiento sin precio en la tarifa`
+            }
+
+            const costesAcris = await db.select({
+              articuloCodigo: schema.articulosCoste.articuloCodigo,
+              acabadoCodigo: schema.articulosCoste.acabadoCodigo,
+              coste: schema.articulosCoste.coste,
+            }).from(schema.articulosCoste)
+              .where(inArray(schema.articulosCoste.articuloCodigo, codigosAcris))
+            const costeAcris = new Map<string, number | null>()
+            {
+              const porArt = new Map<string, Map<string, number>>()
+              for (const c of costesAcris) {
+                let m = porArt.get(c.articuloCodigo)
+                if (!m) porArt.set(c.articuloCodigo, (m = new Map()))
+                if (!m.has(c.acabadoCodigo)) m.set(c.acabadoCodigo, Number(c.coste))
+              }
+              for (const [art, porAcabado] of porArt) {
+                if (d.acabadoCodigo && porAcabado.has(d.acabadoCodigo)) {
+                  costeAcris.set(art, porAcabado.get(d.acabadoCodigo)!)
+                  continue
+                }
+                const distintos = new Set(porAcabado.values())
+                costeAcris.set(art, distintos.size === 1 ? [...distintos][0] : null)
+              }
+            }
+            for (const pz of valorables) {
+              const coste = costeAcris.get(pz.articuloCodigo) ?? null
+              const esML = mapaAcris.get(pz.articuloCodigo)?.tipoMetraje === 'ML'
+              const costeTotal = coste !== null && pz.largoMm !== null
+                ? (esML ? coste * (pz.largoMm / 1000) * pz.cantidad : coste * pz.cantidad)
+                : null
+              piezasAPersistir.push({
+                articuloCodigo: pz.articuloCodigo,
+                cantidad: String(pz.cantidad),
+                largoCorteMm: pz.largoMm !== null ? String(pz.largoMm) : null,
+                anguloIzquierdo: null,
+                anguloDerecho: null,
+                funcion: pz.funcion,
+                costeUnitario: coste !== null ? String(coste) : null,
+                costeTotal: costeTotal !== null ? String(Math.round(costeTotal * 10000) / 10000) : null,
+              })
+            }
+          }
+        }
+      }
+
       const problemas: string[] = []
       if (avisoVidrio) problemas.push(avisoVidrio)
+      if (avisoAcris) problemas.push(avisoAcris)
       if (!d.vidrioCodigo) problemas.push('sin vidrio elegido: el acristalamiento no se valora')
       if (sinResolver.size) {
         problemas.push(

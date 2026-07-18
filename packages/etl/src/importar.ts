@@ -109,7 +109,7 @@ async function vaciarDestino() {
     'lineas_estructura', 'lineas', 'presupuestos', 'obras',
     'clientes_potenciales', 'clientes', 'proveedores',
     'estructura_componentes', 'estructura_cotas',
-    'vidrio_galce',
+    'vidrio_galce', 'junquillo_ajustes', 'tacris_filas',
     'conjunto_resoluciones', 'conjunto_delegaciones', 'conjuntos', 'series',
     'articulos_coste', 'articulos_pvp', 'articulos', 'estructuras',
     'subfamilias', 'tonalidades', 'acabados', 'familias',
@@ -294,6 +294,8 @@ resultados.push(await cargar('EstructurasArticulos', 'estructura_componentes', (
     formula_largo: txt(f.FormulaLargo),
     formula_largo_corte: txt(f.FormulaLargoCorte),
     formula_ref_largo: txt(f.DisFRefLargo),
+    formula_ancho: txt(f.FormulaAncho),
+    formula_ancho_corte: txt(f.FormulaAnchoCorte),
     tipo_corte: txt(f.TipoCorte),
     angulo_izquierdo: num(f.AnguloI),
     angulo_derecho: num(f.AnguloD),
@@ -323,7 +325,35 @@ resultados.push(await cargar('ConfigSeries', 'series', (f, r) => {
 resultados.push(await cargar('Conjuntos', 'conjuntos', (f, r) => {
   const codigo = txt(f.Codigo)
   if (!codigo) { descartar(r, 'sin código'); return null }
-  return { codigo, serie_codigo: txt(f.CodSerie) }
+  return {
+    codigo,
+    serie_codigo: txt(f.CodSerie),
+    tabla_hojas: txt(f.TablaHojas),
+    tabla_fijos: txt(f.TablaFijos),
+  }
+}))
+
+/**
+ * Tablas de acristalamiento: junquillo y juntas por grosor de galce.
+ * La selección en tiempo de cálculo es "menor grosor >= TamJunqGoma del
+ * vidrio" (anexo M).
+ */
+resultados.push(await cargar('TAcristalamientoLin', 'tacris_filas', (f, r) => {
+  const tabla = txt(f.TAcris)
+  const grosor = num(f.Grosor)
+  if (!tabla || grosor === null) { descartar(r, 'clave incompleta'); return null }
+  const limpiar = (v: unknown) => {
+    const t = txt(v)
+    return t && t !== '0' ? t : null
+  }
+  return {
+    tabla,
+    posicion: txt(f.Pos) ?? '*',
+    grosor,
+    junquillo: limpiar(f.Junquillo),
+    junta_exterior: limpiar(f.JuntaExt),
+    junta_interior: limpiar(f.JuntaInt),
+  }
 }))
 
 /**
@@ -433,15 +463,43 @@ resultados.push(await cargar('ConjuntosLin', 'conjunto_resoluciones', (f, r) => 
   if (rutaVLin && rutaDatos) {
     const aNum = (v: string | undefined) => Number((v ?? '').replace(',', '.')) || 0
 
-    // Familia y tipo de metraje por artículo (para reconocer vidrios M2)
-    const famArt = new Map<string, { familia: string; m2: boolean }>()
+    // Familia, tipo de metraje y tamaño de junquillo/goma por artículo
+    const famArt = new Map<string, { familia: string; m2: boolean; tamJunq: number }>()
     for await (const lote of leerLotes(rutaTabla(ORIGEN, 'Articulos')!, 1000)) {
       for (const f of lote) {
         famArt.set((f.Codigo ?? '').trim(), {
           familia: (f.Familia ?? '').trim(),
           m2: (f.TipoMetraje ?? '').trim() === 'M2',
+          tamJunq: Number((f.TamJunqGoma ?? '').replace(',', '.')) || 0,
         })
       }
+    }
+    // TablaHojas por conjunto y filas de acristalamiento, para saber qué
+    // junquillo esperar en cada línea (anexo M).
+    const tablaHojasPorConjunto = new Map<string, string>()
+    for await (const lote of leerLotes(rutaTabla(ORIGEN, 'Conjuntos')!, 1000)) {
+      for (const f of lote) {
+        tablaHojasPorConjunto.set((f.Codigo ?? '').trim(), (f.TablaHojas ?? '').trim())
+      }
+    }
+    const filasTacris = new Map<string, { grosor: number; junq: string }[]>()
+    for await (const lote of leerLotes(rutaTabla(ORIGEN, 'TAcristalamientoLin')!, 1000)) {
+      for (const f of lote) {
+        const t = (f.TAcris ?? '').trim()
+        if (!filasTacris.has(t)) filasTacris.set(t, [])
+        filasTacris.get(t)!.push({
+          grosor: Number((f.Grosor ?? '').replace(',', '.')) || 0,
+          junq: (f.Junquillo ?? '').trim(),
+        })
+      }
+    }
+    for (const lista of filasTacris.values()) lista.sort((a, b) => a.grosor - b.grosor)
+    const junquilloEsperado = (serie: string, tamJunq: number): string | null => {
+      const lista = filasTacris.get(tablaHojasPorConjunto.get(serie) ?? '') ?? []
+      for (const f of lista) {
+        if (f.grosor >= tamJunq - 1e-9) return f.junq && f.junq !== '0' ? f.junq : null
+      }
+      return null
     }
     // Serie por línea de documento
     const seriePorLinea = new Map<string, string>()
@@ -451,7 +509,11 @@ resultados.push(await cargar('ConjuntosLin', 'conjunto_resoluciones', (f, r) => 
       }
     }
     // Agrupar hijas por línea padre
-    interface Hoja { hv: Set<number>; hh: Set<number>; artHV: Set<string>; vidrios: { l: number; a: number }[] }
+    interface Hoja {
+      hv: Set<number>; hh: Set<number>; artHV: Set<string>
+      vidrios: { l: number; a: number; art: string }[]
+      cortes: Map<string, number[]>
+    }
     const padres = new Map<string, string>() // nLinea -> serie
     const grupos = new Map<string, Hoja>()
     for await (const lote of leerLotes(rutaVLin, 1000)) {
@@ -464,7 +526,7 @@ resultados.push(await cargar('ConjuntosLin', 'conjunto_resoluciones', (f, r) => 
         const nEstr = (f.nEstr ?? '').trim()
         if (!nEstr || nEstr === '0') continue
         let g = grupos.get(nEstr)
-        if (!g) grupos.set(nEstr, (g = { hv: new Set(), hh: new Set(), artHV: new Set(), vidrios: [] }))
+        if (!g) grupos.set(nEstr, (g = { hv: new Set(), hh: new Set(), artHV: new Set(), vidrios: [], cortes: new Map() }))
         const fn = (f.Funcion ?? '').trim()
         const art = (f.Articulo ?? '').trim()
         if (fn === 'HV') {
@@ -474,7 +536,13 @@ resultados.push(await cargar('ConjuntosLin', 'conjunto_resoluciones', (f, r) => 
           g.hh.add(aNum(f.LargoCorte))
         } else {
           const info = famArt.get(art)
-          if (info?.familia === '050' && info.m2) g.vidrios.push({ l: aNum(f.Largo), a: aNum(f.Ancho) })
+          if (info?.familia === '050' && info.m2) {
+            g.vidrios.push({ l: aNum(f.Largo), a: aNum(f.Ancho), art })
+          } else if (art && art !== '0') {
+            const lista = g.cortes.get(art) ?? []
+            lista.push(aNum(f.LargoCorte))
+            g.cortes.set(art, lista)
+          }
         }
       }
     }
@@ -510,6 +578,67 @@ resultados.push(await cargar('ConjuntosLin', 'conjunto_resoluciones', (f, r) => 
       await sql`INSERT INTO vidrio_galce ${sql(filas)} ON CONFLICT DO NOTHING`
       r.insertadas = filas.length
     }
+
+    // --- Ajustes de longitud del junquillo, con los mismos datos (anexo M) ---
+    // Cada corte del junquillo esperado se asigna a la dimensión del vidrio
+    // más próxima; el ajuste es la diferencia. Se emite la moda por serie si
+    // hay ≥3 muestras y ≥90% de consistencia en ambas dimensiones.
+    const ajustes = new Map<string, { largo: Map<number, number>; ancho: Map<number, number> }>()
+    for (const [nLinea, serie] of padres) {
+      const g = grupos.get(nLinea)
+      if (!g || !g.vidrios.length) continue
+      const artsVid = new Set(g.vidrios.map((v) => v.art))
+      if (artsVid.size !== 1) continue
+      const medidas = new Set(g.vidrios.map((v) => `${v.l}|${v.a}`))
+      if (medidas.size !== 1) continue
+      const v = g.vidrios[0]
+      if (v.l <= 0 || v.a <= 0) continue
+      const tamJunq = famArt.get(v.art)?.tamJunq ?? 0
+      if (!tamJunq) continue
+      const junq = junquilloEsperado(serie, tamJunq)
+      if (!junq) continue
+      const cortes = g.cortes.get(junq) ?? []
+      let acc = ajustes.get(serie)
+      if (!acc) ajustes.set(serie, (acc = { largo: new Map(), ancho: new Map() }))
+      for (const corte of cortes) {
+        const dL = Math.round((corte - v.l) * 10) / 10
+        const dA = Math.round((corte - v.a) * 10) / 10
+        if (Math.abs(dL) > 100 && Math.abs(dA) > 100) continue
+        const mapa = Math.abs(dL) <= Math.abs(dA) ? acc.largo : acc.ancho
+        const d = Math.abs(dL) <= Math.abs(dA) ? dL : dA
+        mapa.set(d, (mapa.get(d) ?? 0) + 1)
+      }
+    }
+    const rj: Resultado = {
+      tabla: 'junquillo_ajustes', leidas: 0, insertadas: 0, descartadas: 0,
+      excluidas: 0, motivos: new Map(),
+    }
+    const filasAjuste: Record<string, unknown>[] = []
+    for (const [serie, acc] of ajustes) {
+      const moda = (m: Map<number, number>) => {
+        const total = [...m.values()].reduce((a, b) => a + b, 0)
+        if (!total) return null
+        const [valor, n] = [...m.entries()].sort((a, b) => b[1] - a[1])[0]
+        return { valor, n, total }
+      }
+      const mL = moda(acc.largo), mA = moda(acc.ancho)
+      rj.leidas++
+      if (!mL || !mA || mL.total < 3 || mA.total < 3 || mL.n / mL.total < 0.9 || mA.n / mA.total < 0.9) {
+        excluir(rj, 'muestras insuficientes o inconsistentes: no se emite')
+        continue
+      }
+      filasAjuste.push({
+        serie_codigo: serie,
+        ajuste_largo_mm: mL.valor,
+        ajuste_ancho_mm: mA.valor,
+        muestras: Math.min(mL.n, mA.n),
+      })
+    }
+    if (filasAjuste.length) {
+      await sql`INSERT INTO junquillo_ajustes ${sql(filasAjuste)} ON CONFLICT DO NOTHING`
+      rj.insertadas = filasAjuste.length
+    }
+    resultados.push(rj)
   } else {
     r.motivos.set('CSV no encontrado', 1)
   }

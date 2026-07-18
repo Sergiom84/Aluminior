@@ -41,9 +41,51 @@ export const conjuntos = pgTable('conjuntos', {
   codigo: text('codigo').primaryKey(),
   /** Serie a la que pertenece el conjunto, si consta. */
   serieCodigo: text('serie_codigo'),
+  /**
+   * Tabla de acristalamiento para las hojas (TAcristalamiento). Da el
+   * junquillo y las juntas según el grosor del vidrio. Ver anexo M.
+   */
+  tablaHojas: text('tabla_hojas'),
+  /** Ídem para los fijos (aún sin explotar). */
+  tablaFijos: text('tabla_fijos'),
 }, (t) => ({
   serieIdx: index('conjuntos_serie_idx').on(t.serieCodigo),
 }))
+
+/**
+ * Filas de las tablas de acristalamiento (TAcristalamientoLin):
+ * para una tabla y un grosor de galce, qué junquillo y qué juntas van.
+ *
+ * Regla de selección validada contra el oráculo (anexo M): la fila con el
+ * MENOR grosor >= TamJunqGoma del vidrio elegido. Artículos '0' o fuera del
+ * catálogo (p. ej. el marcador V1000 de "sin junquillos") no generan pieza.
+ */
+export const tacrisFilas = pgTable('tacris_filas', {
+  tabla: text('tabla').notNull(),
+  posicion: text('posicion').notNull().default('*'),
+  grosor: numeric('grosor', { precision: 8, scale: 2 }).notNull(),
+  junquillo: text('junquillo'),
+  juntaExterior: text('junta_exterior'),
+  juntaInterior: text('junta_interior'),
+}, (t) => ({
+  pk: primaryKey({ columns: [t.tabla, t.posicion, t.grosor] }),
+}))
+
+/**
+ * Ajuste de longitud del junquillo respecto a la medida del vidrio, por
+ * serie. MEDIDO del histórico igual que el galce (anexo M):
+ *
+ *   junquillo vertical   = largo del vidrio + ajuste_largo   (típico −28)
+ *   junquillo horizontal = ancho del vidrio + ajuste_ancho   (típico +12/+16)
+ *
+ * Sólo se emite con ≥3 muestras y ≥90% de consistencia en ambas dimensiones.
+ */
+export const junquilloAjustes = pgTable('junquillo_ajustes', {
+  serieCodigo: text('serie_codigo').primaryKey(),
+  ajusteLargoMm: numeric('ajuste_largo_mm', { precision: 8, scale: 2 }).notNull(),
+  ajusteAnchoMm: numeric('ajuste_ancho_mm', { precision: 8, scale: 2 }).notNull(),
+  muestras: integer('muestras').notNull(),
+})
 
 /**
  * Delegaciones entre conjuntos: el registro de un conjunto en el original
