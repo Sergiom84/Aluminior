@@ -250,3 +250,95 @@ el alcance en H1+H2 se refuerza.
    a ciegas. Conceder acceso o hacer las capturas tú.
 3. **Qué empresa es la de referencia.** EMP0009 tiene 9 clientes y 1.037 obras — no parece
    la operativa principal. Hay que identificar cuál lo es antes de modelar sobre ella.
+
+---
+---
+
+# ANEXO B — Auditoría visual e informes Crystal (18/07/2026)
+
+## B.1 Identificación resuelta
+
+- Titular de licencia: **ALUMINIOS LARA SLU — B83979179 (28095)**.
+- Empresa activa: **ALUMINIOS LARA - 2026 [0016]** → `EMP0016`, no EMP0009.
+  **EMP0016 es la base de referencia para todo el modelado.** Corrige el Anexo A.
+- Estructura de menús: Ficheros · Compras · Ventas · Utilidades · Ayuda.
+
+## B.2 Mapa funcional real
+
+| Menú | Contenido |
+|---|---|
+| **Ficheros** | Clientes, Clientes Potenciales, Artículos, Proveedores, Acreedores, Formas de Pago, Textos para Presupuestos, Representantes, Trabajadores, Reparto, Empresa, Listados |
+| **Compras** | Pedidos, Albaranes, Facturas, Gastos, Ofertas, Control de Pago, Autorización de Pedidos, Fabricación de Artículos, Cheques/Pagarés, Creación Automática de Pedidos |
+| **Ventas** | Presupuestos, Pedidos, Albaranes, Facturas, Albarán Electrónico, Factura Electrónica, **SII**, Documentos Web, Ofertas, Control de Cobro, Comisiones, Producción, Reparto, Control de Producción en Fábrica, Emisión de Recibos |
+| **Utilidades** | Cajas, Agenda, Informes y Estadísticas, Documentos Vinculados, Actualizar Precios de Coste, Recalcular Precios de Venta, Importar Tarifa de Coste, **Importar Series**, Trabajo Desconectado, Notificador, Registro de acciones, **Hoja de Corte Múltiple**, **Series. Biblioteca**, **Ejecuta SQL**, WebService Productor, Copia de Seguridad, Reparar y Compactar |
+
+Nota: en el menú aparece **SII**, pero no VeriFactu ni TicketBAI. Hay que verificar cómo
+se está cumpliendo hoy la obligación de facturación verificable antes de planificar H5.
+
+## B.3 Anatomía de una serie (pantalla "Series. Biblioteca")
+
+Una biblioteca de serie se compone de: **Estructuras, Artículos, Acabados, Familias,
+Familias de Estructuras, Vidrios, Proveedores de Artículo, Coste y Dimensiones,
+Tarifas de Coste Bruto, Subfamilias, Mano de obra y Guías de Persiana.**
+
+Ese es el modelo de datos mínimo que debe soportar el catálogo del sistema nuevo.
+
+## B.4 Estructura de una línea de presupuesto
+
+Columnas visibles: `Artículo · Acabado · Tonalidad · Descripción · Referencia ·
+Cantidad · Ancho(mm) · Alto(mm) · Precio · Total`.
+
+Una línea es de uno de dos tipos:
+
+1. **Elemento configurado** — se parte de una estructura de serie y se le dan medidas y
+   opciones (ej. ventana abatible de dos hojas, 1600×1230, acabado L).
+2. **Artículo de catálogo** — producto simple de la tarifa (ej. mosquitera enrollable).
+
+`Referencia` es la ubicación en la obra (SALÓN, BAÑO…). Las 147 columnas restantes de
+`VPresupuestosLin` desarrollan la configuración del elemento del tipo 1.
+
+**Este es el núcleo del dominio.** Modelarlo bien es el 80% de H2.
+
+## B.5 Calidad de datos: confirmada la sospecha
+
+En la lista de 439 presupuestos de 2026, **muchas filas tienen el código de Cliente vacío
+y el nombre escrito a mano** ("LUISFER", "REBECA", "JORGE"…).
+
+El sistema nuevo debe admitir **cliente ocasional sin ficha**. Si se modela el cliente como
+obligatorio, la migración falla en un porcentaje alto de los documentos históricos.
+
+## B.6 Informes Crystal: 291 leídos, 136.766 campos
+
+Extraídos con el motor oficial de SAP presente en el GAC (32 bits). Resultado en
+`esquema/rpt/`.
+
+- `informe_a_tablas.csv` — qué tablas usa cada informe. Sustituye a las claves ajenas
+  que la base de datos no tiene: si un informe cruza `Clientes` + `VFacturas` +
+  `VFacturasLin`, ahí está la relación.
+- `informe_campos.csv` — 136.766 referencias campo a campo.
+
+Tablas más referenciadas: `Articulos` (28.743 campos), `Clientes` (16.186),
+`Constantes` (15.651), `VPedidos` (11.533), `Estructuras` (9.253).
+
+**Limitación importante:** los informes solo cubren **43 de las 178 tablas con datos**.
+Las otras **135 no las toca ningún informe** — y son precisamente las del motor de
+configuración: `VDatosLinDetDis` (196.267 filas), `EstructurasDiseño`, `VOpcionesHerraje`,
+`ConfigSeriesCotas`, `VCerramientosLin`, `VDespunteDetalle`, `VAccesorios`.
+
+Es decir: **los `.rpt` documentan bien la parte comercial y nada de la parte de
+configuración y despiece**, que es justo la difícil. Para esa mitad no hay atajo
+documental — hay que ir por observación de la aplicación y entrevistas a quien la usa.
+El `GetSQLStatement` volvió vacío en los 291 (los informes no están conectados a una
+base viva), así que tenemos el mapa de tablas y campos pero no las consultas literales.
+
+## B.7 Vía de trabajo descubierta
+
+`Utilidades → Ejecuta SQL` permite consultar la base desde la propia aplicación.
+Útil para validar hipótesis del modelo sin tocar las MDB por fuera. **Solo lectura.**
+
+## B.8 Estado tras esta sesión
+
+- No se ha modificado ningún dato. La pantalla "Series. Biblioteca" se abrió y se cerró
+  sin pulsar ninguna acción (contiene botones de escritura: Marcar/Anular Biblioteca).
+- Pendiente: recorrer el configurador de un presupuesto (pestaña Ficha / Editar), que es
+  donde vive la lógica de las 135 tablas sin cobertura documental.
