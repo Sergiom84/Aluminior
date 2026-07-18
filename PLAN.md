@@ -730,3 +730,73 @@ formular una hipótesis y **medirla contra los datos reales** antes de construir
 En el anexo E la hipótesis era falsa y se descartó un componente; aquí era
 cierta y desbloqueó el motor entero. El coste de comprobar fue una hora en
 ambos casos.
+
+---
+---
+
+# ANEXO H — La plantilla de despiece es GENÉRICA (18/07/2026)
+
+**Descubierto al intentar valorar un presupuesto real. Corrige una suposición
+implícita del anexo G.**
+
+## El síntoma
+
+Se creó el presupuesto 260001 y se le añadió una línea de estructura `1+1`
+(1600 × 1230). El despiece se calculó correctamente —las medidas de corte
+salen bien— pero el importe quedó en **0,00 €**.
+
+## La causa
+
+Los artículos que referencia la plantilla no son productos reales:
+
+```
+1    (**MARCO VERTICAL GENERICO**)
+2    (**MARCO SUPERIOR GENERICO**)
+3    (**MARCO INFERIOR GENERICO**)
+10   (**HOJA ABATIBLE PEQUEÑA VERTICAL APERTURA INTERIOR GENERICO**)
+97   (**TRAVESAÑO MARCO GRANDE GENERICO**)
+105  (**ESCUADRA PEQUEÑA GENERICO**)
+```
+
+Hay **311 artículos genéricos** en el catálogo. No tienen precio de venta ni
+coste porque no se venden: son **ranuras**.
+
+## Qué significa
+
+La plantilla de despiece de una estructura es **independiente de la serie**.
+Define la geometría y qué tipo de pieza va en cada sitio (marco vertical, hoja
+horizontal, travesaño), pero no qué perfil concreto.
+
+**La serie es la que resuelve cada genérico a un perfil real.** Por eso la
+aplicación original se niega a continuar con "Indique Serie primero": sin serie
+no hay artículos reales, y sin artículos reales no hay ni coste ni precio.
+
+La cadena completa es:
+
+```
+Estructura  ->  geometría y ranuras genéricas   (EstructurasArticulos)
+   + Serie  ->  perfil real para cada ranura    (ConfigSeriesAsoc, Conjuntos)
+   + Medidas->  largo de corte de cada pieza    (fórmulas, anexo F/G)
+   + Acabado->  precio del perfil               (ArticulosCoste / ArticulosPVP)
+                     |
+                     v
+                  Importe
+```
+
+## Estado
+
+- La **geometría es correcta**: medidas, ángulos y tipos de corte salen bien.
+  Eso ya está validado y no cambia.
+- La **valoración está incompleta** y la interfaz lo dice: las líneas sin
+  precio muestran "sin valorar" en vez de un cero engañoso. Un presupuesto que
+  se queda corto en silencio es dinero perdido en cada venta.
+
+## Siguiente investigación
+
+Resolver genérico + serie -> artículo real. Los candidatos son
+`ConfigSeriesAsoc` (1.137 filas: Conjunto + TipoHoja -> Artículo real),
+`Conjuntos`, `ConjuntosLin` y `ConjuntosAsoc` (17.006 filas). También hay que
+cargar `ArticulosCoste` (27.817 filas), que aún no está migrada.
+
+Es el mismo tipo de problema que el anexo G y se aborda igual: hipótesis,
+medición contra los datos, y sólo entonces construir.
