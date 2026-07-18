@@ -1,0 +1,41 @@
+# --- Datos reales de empresa: NUNCA al repositorio ---
+*.mdb
+*.accdb
+*.ldb
+*.laccdb
+datos_reales/
+export_datos/
+
+# --- Material pesado de la investigacion ---
+investigacion_productor_aluminio/kit_tecnico/Archivos de Instalacion/
+investigacion_productor_aluminio/kit_tecnico/ManualUsr/
+*.bmp
+*.zip
+*.msi
+*.cab
+
+# --- Binarios de terceros (GAIA) ---
+*.exe
+*.dll
+*.ocx
+
+# --- Secretos ---
+*.pfx
+*.p12
+*.key
+.env
+*.config.local
+appsettings.*.local.json
+
+# --- Build / entorno ---
+bin/
+obj/
+node_modules/
+.vs/
+*.user
+__pycache__/
+.venv/
+
+# --- Sistema ---
+Thumbs.db
+desktop.ini
