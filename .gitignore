@@ -31,9 +31,17 @@ log4net.config
 *.pfx
 *.p12
 *.key
-.env
 *.config.local
 appsettings.*.local.json
+
+# Variables de entorno: TODAS las variantes, en cualquier carpeta.
+# .env.example es la unica que se versiona.
+.env
+.env.*
+**/.env
+**/.env.*
+!.env.example
+!**/.env.example
 
 # --- Build / entorno ---
 bin/
@@ -43,6 +51,13 @@ node_modules/
 *.user
 __pycache__/
 .venv/
+
+# --- Next.js ---
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+.vercel/
 
 # --- Sistema ---
 Thumbs.db

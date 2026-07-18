@@ -85,11 +85,11 @@ principio.
 | Capa | Elección | Motivo |
 |---|---|---|
 | Base de datos | **PostgreSQL** (Supabase, región UE) | Es un modelo relacional pesado |
-| Backend | **Node + TypeScript + Express 5** | El cálculo debe estar en servidor |
-| Validación | **Zod** | Esquemas compartidos entre API y frontend |
+| Aplicación | **Next.js App Router + TypeScript** | Un solo framework: UI y servidor |
+| Validación | **Zod** | Esquemas compartidos entre servidor y cliente |
 | Acceso a datos | **Drizzle ORM** | SQL explícito, migraciones versionadas |
-| Frontend | **React + TypeScript + Vite** | Envolvible en Electron después |
-| Despliegue | **Render** (API + estáticos) | Como propuso el usuario |
+| Estilos | **Tailwind + tokens CSS** | Mismo sistema que F-Gestor-IA |
+| Despliegue | **Render** | Como propuso el usuario |
 | Escritorio | **Electron o Tauri, más adelante** | Cuando haya requisito que lo justifique |
 
 **Un solo lenguaje, TypeScript, de punta a punta.** Reduce el coste de mantenimiento y
@@ -99,7 +99,30 @@ Esto sustituye a la propuesta de .NET del plan original: aquella era razonable p
 origen Windows del sistema, pero TypeScript encaja mejor con las herramientas que has
 elegido y con quien va a mantener esto.
 
-### 5a. Express en lugar de Fastify — decidido el 18/07/2026
+### 5b. Next.js en lugar de Vite + Express — decidido el 18/07/2026
+
+**Esta decisión revierte la anterior (5a).** Se tomó tras conocer un dato nuevo:
+el usuario mantiene otro proyecto, F-Gestor-IA, construido sobre Next.js App
+Router + Tailwind + Supabase, y quiere que Aluminior siga esa línea.
+
+Motivos del cambio:
+
+- **Elimina un paquete entero.** Los route handlers y las server actions de Next
+  sustituyen a `packages/api`. El requisito irrenunciable —que el motor de
+  despiece se ejecute en servidor, nunca en el cliente— se cumple igual.
+- **El patrón de autenticación con Supabase SSR ya está resuelto** en el otro
+  proyecto. Es de lo más costoso de montar bien; aquí se adapta.
+- **Consistencia entre los dos proyectos del usuario**: mismo framework, mismos
+  patrones, mismo sistema de tokens de diseño.
+
+Coste del cambio: prácticamente nulo. `packages/api` eran unas veinte líneas y
+un endpoint de salud. Todo lo valioso construido hasta ahora —esquema, ETL,
+evaluador de fórmulas de despiece— es agnóstico del framework y no se toca.
+
+Contrapartida aceptada: envolver Next.js en Electron es algo más incómodo que
+un SPA de Vite. Sigue siendo viable y esa decisión seguía aplazada.
+
+### 5a. Express en lugar de Fastify — decidido el 18/07/2026 (revertido por 5b)
 
 La propuesta inicial de este documento era Fastify. Se optó por Express, y el
 razonamiento queda aquí para no revisitarlo:

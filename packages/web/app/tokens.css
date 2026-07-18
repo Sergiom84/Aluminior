@@ -1,0 +1,103 @@
+/**
+ * Tokens de diseño de Aluminior.
+ *
+ * Mismo sistema que F-Gestor-IA: la identidad visual vive aquí y los
+ * componentes sólo consumen variables. Así, con muchas pantallas, la interfaz
+ * no se descuadra y cambiar el tema es tocar un fichero.
+ *
+ * Convención de prefijos:
+ *   --al-*  token de Aluminior
+ */
+
+:root {
+  /* --- Acento: índigo, heredado de F-Gestor-IA --- */
+  --al-accent: #4f46e5;
+  --al-accent-strong: #4338ca;
+  --al-accent-soft: #eef0ff;
+  --al-accent-contrast: #ffffff;
+
+  /* --- Superficies --- */
+  --al-sidebar: #0c1322;
+  --al-sidebar-hover: #16203a;
+  --al-sidebar-text: #94a3b8;
+  --al-sidebar-text-active: #ffffff;
+
+  --al-page: #eef1f5;
+  --al-surface: #ffffff;
+  --al-surface-muted: #f8fafc;
+  --al-border: #e2e8f0;
+  --al-border-strong: #cbd5e1;
+
+  /* --- Texto --- */
+  --al-text: #0f172a;
+  --al-text-muted: #64748b;
+  --al-text-faint: #94a3b8;
+
+  /* --- Estados --- */
+  --al-ok: #0d9f6e;
+  --al-ok-soft: #e7f7f0;
+  --al-warn: #d97706;
+  --al-warn-soft: #fef3c7;
+  --al-error: #dc2626;
+  --al-error-soft: #fee2e2;
+
+  /* --- Tipografía --- */
+  --al-font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* Tabular para importes y medidas: las columnas de cifras deben alinearse. */
+  --al-font-num: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, monospace;
+
+  /* --- Radios y sombras --- */
+  --al-radius: 8px;
+  --al-radius-sm: 6px;
+  --al-radius-lg: 12px;
+  --al-shadow: 0 1px 2px rgb(15 23 42 / 0.06), 0 1px 3px rgb(15 23 42 / 0.1);
+  --al-shadow-lg: 0 4px 12px rgb(15 23 42 / 0.08);
+
+  /* --- Densidad (por defecto: cómoda) --- */
+  --al-row-h: 40px;
+  --al-pad-x: 16px;
+  --al-pad-y: 10px;
+}
+
+/**
+ * Densidad compacta. Un presupuesto de carpintería puede tener decenas de
+ * líneas: en pantallas de tabla conviene ver más de una vez.
+ */
+.al-compact {
+  --al-row-h: 30px;
+  --al-pad-x: 10px;
+  --al-pad-y: 5px;
+}
+
+.al-comfy {
+  --al-row-h: 48px;
+  --al-pad-x: 20px;
+  --al-pad-y: 14px;
+}
+
+/* --- Tema oscuro: se activa por preferencia del sistema o por atributo --- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --al-page: #0b1120;
+    --al-surface: #111827;
+    --al-surface-muted: #0f172a;
+    --al-border: #1f2937;
+    --al-border-strong: #334155;
+    --al-text: #f1f5f9;
+    --al-text-muted: #94a3b8;
+    --al-text-faint: #64748b;
+    --al-accent-soft: #1e1b4b;
+  }
+}
+
+:root[data-theme='dark'] {
+  --al-page: #0b1120;
+  --al-surface: #111827;
+  --al-surface-muted: #0f172a;
+  --al-border: #1f2937;
+  --al-border-strong: #334155;
+  --al-text: #f1f5f9;
+  --al-text-muted: #94a3b8;
+  --al-text-faint: #64748b;
+  --al-accent-soft: #1e1b4b;
+}

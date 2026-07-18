@@ -1,0 +1,53 @@
+@import './tokens.css';
+@import 'tailwindcss';
+
+/**
+ * Puente entre los tokens y Tailwind v4: expone las variables como utilidades
+ * (bg-surface, text-muted, border-default...) para no escribir
+ * `bg-[var(--al-surface)]` por todas partes.
+ */
+@theme inline {
+  --color-accent: var(--al-accent);
+  --color-accent-strong: var(--al-accent-strong);
+  --color-accent-soft: var(--al-accent-soft);
+  --color-sidebar: var(--al-sidebar);
+  --color-page: var(--al-page);
+  --color-surface: var(--al-surface);
+  --color-surface-muted: var(--al-surface-muted);
+  --color-default: var(--al-border);
+  --color-ok: var(--al-ok);
+  --color-warn: var(--al-warn);
+  --color-error: var(--al-error);
+  --font-sans: var(--al-font);
+  --font-mono: var(--al-font-num);
+  --radius-token: var(--al-radius);
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background: var(--al-page);
+  color: var(--al-text);
+  font-family: var(--al-font);
+  -webkit-font-smoothing: antialiased;
+}
+
+/**
+ * Cifras siempre tabulares: en un ERP las columnas de importes y de medidas
+ * en milímetros tienen que alinearse verticalmente para poder compararlas
+ * de un vistazo.
+ */
+.cifra {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+  text-align: right;
+}
+
+/* Foco visible y consistente: se navega mucho con teclado en captura de datos. */
+:focus-visible {
+  outline: 2px solid var(--al-accent);
+  outline-offset: 2px;
+  border-radius: var(--al-radius-sm);
+}
