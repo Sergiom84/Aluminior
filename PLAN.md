@@ -800,3 +800,80 @@ cargar `ArticulosCoste` (27.817 filas), que aún no está migrada.
 
 Es el mismo tipo de problema que el anexo G y se aborda igual: hipótesis,
 medición contra los datos, y sólo entonces construir.
+
+---
+---
+
+# ANEXO I — Resolución genérico → perfil: PARCIAL (18/07/2026)
+
+**Investigación abierta. Se documenta lo confirmado y lo que falta, para
+poder retomarla sin repetir el trabajo.**
+
+## Confirmado
+
+**1. La serie ES un conjunto.** Las 57 series configuradas de EMP0016 existen
+todas como `Conjunto` en `ConjuntosLin`. Coincidencia 57/57, no es casualidad.
+
+**2. `ConjuntosLin` resuelve genéricos.** Estructura: `Conjunto | Componente |
+Familia | Articulo`, donde `Componente` es el código genérico y `Articulo` el
+perfil real. 18.858 de 21.714 filas (87%) llevan artículo real.
+
+Ejemplo verificado con la serie GMA100:
+
+```
+genérico 10  (**HOJA ABATIBLE PEQUEÑA VERTICAL…**)  ->  GM100   [con coste]
+genérico 15  (**HOJA ABATIBLE PEQUEÑA HORIZONTAL…**) ->  GM113   [con coste]
+genérico 85                                          ->  GM116   [con coste]
+```
+
+**3. El conjunto de la serie declara sus dependencias.** El registro `GMA100`
+en `Conjuntos` contiene:
+
+```
+FamiliaAsociada   050        (vidrios)
+TablaHojas        GM08
+TablaFijos        GM08
+herr1HA           GM0019     herraje para 1 hoja abatible
+herr1HPC          GM0020     ídem 1 hoja practicable+corredera
+herr2HA           GM0022     ídem 2 hojas
+```
+
+Es decir: el herraje se elige **según el tipo de apertura**, no es fijo. Eso
+explica los campos `Abat1H`, `Abat2H`, `Corr2H`… de `ConfigSeries`.
+
+## Lo que NO resuelve
+
+De los 14 genéricos del despiece de `1+1`, la serie resuelve **5**. Los otros
+nueve —entre ellos `2` (MARCO SUPERIOR), `3` (MARCO INFERIOR), `97`
+(TRAVESAÑO) y `105` (ESCUADRA)— **no los resuelve ningún conjunto** en
+`ConjuntosLin`.
+
+Los genéricos de marco y travesaño se resuelven por otro mecanismo, todavía
+sin identificar. Candidatos por explorar:
+
+- `ConfigSeriesAsoc` (1.137 filas): `Conjunto + TipoHoja -> Articulo`, con
+  fórmulas propias (`FormulaL`, `FormulaA`) y tipo de corte.
+- `EstructurasSeriesAsoc` (2.134 filas): qué series valen para qué estructura.
+- Las tablas `TablaHojas` / `TablaFijos` (`GM08` en el ejemplo), que apuntan a
+  algún catálogo de perfiles por tipo de hoja.
+- `ConjuntosAsoc` (13.345 filas), con `ComponenteAsoc` y fórmulas.
+
+## Evaluación honesta
+
+Esto no es una sola tabla de traducción: es un **sistema de resolución en
+varios niveles**, donde el perfil concreto depende de la serie, del tipo de
+apertura, del tipo de hoja y probablemente de las medidas. Es coherente con lo
+que hace un configurador de carpintería de verdad, y con que la aplicación
+original tenga 968 tablas.
+
+Resolverlo del todo es una sesión de trabajo en sí misma. Lo prudente es no
+construir valoración sobre una comprensión parcial: un precio mal calculado
+que parece correcto es peor que un "sin valorar" honesto.
+
+## Estado del código
+
+- La interfaz ya muestra **"sin valorar"** en lugar de un cero engañoso.
+- La geometría del despiece —medidas, ángulos, cortes— es correcta y no depende
+  de esto.
+- Scripts de diagnóstico en `scripts/buscar-genericos.mjs` y
+  `scripts/resolver-genericos.mjs`, para retomar sin rehacer el análisis.
