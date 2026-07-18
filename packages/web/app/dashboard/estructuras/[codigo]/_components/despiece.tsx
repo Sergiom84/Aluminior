@@ -24,6 +24,12 @@ const CORTE: Record<string, string> = {
   '\\!': 'Inglete / Recto',
 }
 
+export interface Cota {
+  simbolo: string
+  valorPorDefecto: string | null
+  nombre: string | null
+}
+
 /**
  * Tabla de despiece con evaluación de fórmulas en vivo.
  *
@@ -31,15 +37,33 @@ const CORTE: Record<string, string> = {
  * más directa de contrastar contra el sistema original: mismas medidas de
  * entrada, mismos largos de salida.
  *
- * AVISO: sólo se cubren L y A. El resto de variables (REF, FI, FS, CAJ…) aún
- * no sabemos de dónde toman su valor — ver PLAN.md anexo F. Las fórmulas que
- * las usen mostrarán qué falta, en lugar de inventarse un número.
+ * El contexto se compone de:
+ *   L, A   ancho y alto del hueco, que introduce el usuario
+ *   cotas  variables simbólicas de la estructura (FI, FS, TR…), con su valor
+ *          por defecto y editables aquí mismo
+ *
+ * Lo que no se sepa NO se rellena con cero: la fila dice qué falta. Un cero
+ * silencioso en una medida de corte es una pieza mal cortada.
  */
-export function TablaDespiece({ componentes }: { componentes: Componente[] }) {
+export function TablaDespiece({
+  componentes,
+  cotas,
+}: {
+  componentes: Componente[]
+  cotas: Cota[]
+}) {
   const [largo, setLargo] = useState(1600)
   const [alto, setAlto] = useState(1230)
+  const [valores, setValores] = useState<Record<string, number>>(() =>
+    Object.fromEntries(
+      cotas.map((c) => [c.simbolo, Number(c.valorPorDefecto ?? 0)]),
+    ),
+  )
 
-  const contexto = useMemo(() => ({ L: largo, A: alto }), [largo, alto])
+  const contexto = useMemo(
+    () => ({ L: largo, A: alto, ...valores }),
+    [largo, alto, valores],
+  )
 
   const filas = useMemo(
     () =>
@@ -88,8 +112,30 @@ export function TablaDespiece({ componentes }: { componentes: Componente[] }) {
             <span className="text-sm" style={{ color: 'var(--al-text-muted)' }}>mm (A)</span>
           </div>
         </div>
+        {cotas.map((c) => (
+          <div key={c.simbolo}>
+            <label htmlFor={`cota-${c.simbolo}`} className="mb-1 block text-sm font-medium">
+              {c.simbolo}
+              {c.nombre && (
+                <span className="ml-1 font-normal" style={{ color: 'var(--al-text-faint)' }}>
+                  ({c.nombre})
+                </span>
+              )}
+            </label>
+            <input
+              id={`cota-${c.simbolo}`} type="number" step={10}
+              value={valores[c.simbolo] ?? 0}
+              onChange={(e) =>
+                setValores((v) => ({ ...v, [c.simbolo]: Number(e.target.value) }))
+              }
+              className="cifra w-24 rounded-md border px-3 py-2 text-sm"
+              style={{ background: 'var(--al-surface)', borderColor: 'var(--al-border-strong)' }}
+            />
+          </div>
+        ))}
+
         <p className="ml-auto text-sm" style={{ color: 'var(--al-text-muted)' }}>
-          {resueltas} de {conFormula} fórmulas resueltas con L y A
+          {resueltas} de {conFormula} fórmulas resueltas
         </p>
       </div>
 

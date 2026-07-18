@@ -18,6 +18,43 @@ import {
 import { estructuras } from './catalogo.ts'
 
 /**
+ * Cotas simbólicas de la estructura: el origen de las variables del despiece.
+ *
+ * Origen: `EstructurasDiseño`, columnas `Simbolo` y `Cota`.
+ *
+ * Cada estructura define cotas con nombre (FI, FS, FD, FZ, TR, ZO…) y un valor
+ * por defecto. Las fórmulas de despiece las referencian por ese símbolo.
+ * Ejemplo real: estructura `1+2`, símbolo `TR`, cota 600, "travesaño".
+ *
+ * Aportando estas cotas, la cobertura del despiece pasa del 84% al 99,6%
+ * (14.658 de 14.724 componentes). Ver PLAN.md anexo G.
+ *
+ * El valor es el POR DEFECTO: al configurar una línea el usuario puede
+ * cambiarlo, y ahí es donde el hueco toma su forma concreta.
+ */
+export const estructuraCotas = pgTable('estructura_cotas', {
+  id: uuid('id').primaryKey().defaultRandom(),
+
+  estructuraCodigo: text('estructura_codigo')
+    .notNull()
+    .references(() => estructuras.codigo, { onDelete: 'cascade' }),
+
+  /** Identificador usado en las fórmulas: FI, FS, FD, TR… */
+  simbolo: text('simbolo').notNull(),
+  /** Valor por defecto en milímetros. */
+  valorPorDefecto: numeric('valor_por_defecto', { precision: 10, scale: 2 }),
+
+  /** Descripción legible del original: "travesaño", "fijo inferior"… */
+  nombre: text('nombre'),
+  /** V = vertical, H = horizontal. Orientación de la cota. */
+  orientacion: text('orientacion'),
+  ordenTravesano: integer('orden_travesano'),
+}, (t) => ({
+  estructuraIdx: index('cotas_estructura_idx').on(t.estructuraCodigo),
+  simboloIdx: index('cotas_simbolo_idx').on(t.simbolo),
+}))
+
+/**
  * Tipo de corte, en la notación ASCII del sistema original:
  *   !!  ambos extremos rectos (90°)
  *   /\  ambos a inglete (45°)

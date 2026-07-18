@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { eq, asc } from 'drizzle-orm'
+import { eq, asc, sql } from 'drizzle-orm'
 import { crearDb, schema } from '@aluminior/db'
 import { nombreFamilia } from '@aluminior/core/estructuras'
 import { Shell } from '../../_components/shell.tsx'
@@ -42,6 +42,28 @@ export default async function DetalleEstructura({
     .where(eq(schema.estructuraComponentes.estructuraCodigo, cod))
     .orderBy(asc(schema.estructuraComponentes.lineaOrigen))
 
+  /**
+   * Cotas simbólicas de la estructura: FI (fijo inferior), FS (fijo superior),
+   * TD (travesaño derecha)… con su valor por defecto.
+   *
+   * Se agrupan por símbolo: el original guarda una fila por travesaño, así que
+   * el mismo símbolo puede repetirse. En las fórmulas es una única variable,
+   * de modo que mostrar tres casillas "TD" confundiría.
+   */
+  const cotas = (await db.execute<{
+    simbolo: string
+    valorPorDefecto: string | null
+    nombre: string | null
+  }>(sql`
+    SELECT DISTINCT ON (simbolo)
+           simbolo,
+           valor_por_defecto AS "valorPorDefecto",
+           nombre
+    FROM estructura_cotas
+    WHERE estructura_codigo = ${cod}
+    ORDER BY simbolo, orden_travesano NULLS LAST
+  `)) as unknown as { simbolo: string; valorPorDefecto: string | null; nombre: string | null }[]
+
   return (
     <Shell moduloActivo="estructuras">
       <div className="mb-6">
@@ -73,7 +95,7 @@ export default async function DetalleEstructura({
           </p>
         </div>
       ) : (
-        <TablaDespiece componentes={componentes} />
+        <TablaDespiece componentes={componentes} cotas={cotas} />
       )}
     </Shell>
   )

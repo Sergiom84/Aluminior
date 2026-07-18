@@ -108,7 +108,7 @@ async function vaciarDestino() {
     'lineas_despiece', 'lineas_acristalamiento', 'lineas_opciones_herraje',
     'lineas_estructura', 'lineas', 'presupuestos', 'obras',
     'clientes_potenciales', 'clientes', 'proveedores',
-    'estructura_componentes',
+    'estructura_componentes', 'estructura_cotas',
     'articulos_coste', 'articulos_pvp', 'articulos', 'estructuras',
     'subfamilias', 'tonalidades', 'acabados', 'familias',
   ]
@@ -241,6 +241,29 @@ resultados.push(await cargar('Estructuras', 'estructuras', (f, r) => {
     observaciones: txt(f.Observaciones),
     es_accesorio: bool(f.AccesorioSN),
     fabrica_stock: bool(f.StFabricacionSN),
+  }
+}))
+
+/**
+ * Cotas simbólicas: el origen de las variables de las fórmulas.
+ * Sólo interesan las filas de catálogo (sin documento) que llevan símbolo.
+ */
+resultados.push(await cargar('EstructurasDiseño', 'estructura_cotas', (f, r) => {
+  if (txt(f.TipoDoc)) { excluir(r, 'instancia de documento, no plantilla'); return null }
+
+  const simbolo = txt(f.Simbolo)
+  if (!simbolo) { excluir(r, 'fila de diseño sin símbolo'); return null }
+
+  const estructura = txt(f.Estructura)
+  if (!estructura) { descartar(r, 'sin estructura'); return null }
+
+  return {
+    estructura_codigo: estructura,
+    simbolo,
+    valor_por_defecto: num(f.Cota),
+    nombre: txt(f.nombreDA),
+    orientacion: txt(f.TravVP),
+    orden_travesano: ent(f.nTrav),
   }
 }))
 

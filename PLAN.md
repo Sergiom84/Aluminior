@@ -657,4 +657,76 @@ hipótesis. Es exactamente el método del anexo E, que ya demostró su utilidad.
 ## Nota sobre `TipoCorte`
 
 Valores observados: `!!`, `/\`, `!\`. Son representaciones ASCII del corte:
-`!` recto, `/` y `\` a inglete. Pendiente de confirmar contra el histórico.
+`!` recto, `/` y `\` a inglete. **Confirmado** (anexo G): correlacionan con los
+ángulos — `/\` va con 45°/45°, `!!` con 90°/90°.
+
+---
+---
+
+# ANEXO G — Resueltas las variables del despiece (18/07/2026)
+
+**Las 23 variables de las fórmulas son cotas de diseño de cada estructura.**
+
+## Cómo se encontró
+
+Primero se buscó la medida de corte ya calculada, para despejar las incógnitas
+por álgebra. No existe: el sistema original **no persiste los largos de corte**,
+los calcula al vuelo para imprimir la hoja. Las filas de instancia de
+`EstructurasArticulos` guardan la fórmula, no el resultado.
+
+La vía buena estaba en `EstructurasDiseño`, columnas `Simbolo` y `Cota`:
+
+```
+Estructura  1+2
+Simbolo     TR          <- el identificador que usan las fórmulas
+Cota        600         <- su valor por defecto, en mm
+nombreDA    travesaño   <- qué representa
+```
+
+## Qué son
+
+Cada estructura declara sus propias cotas con nombre. Confirmado en pantalla
+con la estructura `2O+1OFIFS`, donde el propio sistema las describe:
+
+| Símbolo | Significado | Valor por defecto |
+|---|---|---|
+| `FI` | FIJO INFERIOR | 300 mm |
+| `FS` | FIJO SUPERIOR | 300 mm |
+| `TD` | TRAV DERECHA | 600 mm |
+
+Comprobación aritmética: fórmula `L-FS-FI` con hueco de 1600 mm →
+1600 − 300 − 300 = **1000 mm**. Correcto.
+
+Son valores **por defecto**: al configurar una línea concreta el usuario los
+cambia, y ahí es donde el hueco toma su forma real. Eso explica por qué el
+configurador de la aplicación original pide medidas adicionales según la
+estructura elegida.
+
+## Impacto medido
+
+| | Sólo L y A | Con cotas |
+|---|---|---|
+| Componentes resueltos | 12.348 / 14.724 (84%) | **14.658 / 14.724 (99,6%)** |
+| Estructuras completas | 351 / 518 (68%) | **476 / 518 (92%)** |
+
+Sólo quedan 66 componentes sin resolver, de dos variables:
+
+- **`CAJ` (64)** — cajón de persiana. Su medida viene del compacto que se elija,
+  no de la estructura. Es contextual y se resolverá al modelar los compactos.
+- **`HB` (2)** — sin identificar. Impacto despreciable.
+
+## Estado
+
+Cargadas 283 cotas simbólicas en `estructura_cotas`, y conectadas a la pantalla
+de despiece: se pueden editar y ver el recálculo en vivo.
+
+**El motor de despiece está resuelto.** Queda integrarlo en el flujo de
+presupuestos, que es ingeniería normal, no investigación.
+
+## Nota de método
+
+Las tres veces que este proyecto ha avanzado de golpe ha sido por lo mismo:
+formular una hipótesis y **medirla contra los datos reales** antes de construir.
+En el anexo E la hipótesis era falsa y se descartó un componente; aquí era
+cierta y desbloqueó el motor entero. El coste de comprobar fue una hora en
+ambos casos.
