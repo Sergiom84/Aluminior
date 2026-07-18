@@ -53,10 +53,15 @@ export const lineas = pgTable('lineas', {
   medidaEsHueco: boolean('medida_es_hueco').notNull().default(false),
 
   // --- Precio ---
-  precioUnitario: numeric('precio_unitario', { precision: 12, scale: 4 }).notNull().default('0'),
+  /** null significa que la línea no está valorada por completo. */
+  precioUnitario: numeric('precio_unitario', { precision: 12, scale: 4 }),
   descuento: numeric('descuento', { precision: 5, scale: 2 }).notNull().default('0'),
   descuento2: numeric('descuento_2', { precision: 5, scale: 2 }).notNull().default('0'),
-  total: numeric('total', { precision: 14, scale: 2 }).notNull().default('0'),
+  total: numeric('total', { precision: 14, scale: 2 }),
+  /** False cuando falta cualquier parte del cálculo (perfil, vidrio, tarifa…). */
+  valoracionCompleta: boolean('valoracion_completa').notNull().default(true),
+  /** Explicación persistida para que el aviso sobreviva a una recarga. */
+  avisoValoracion: text('aviso_valoracion'),
 
   /** Anulaciones manuales: el usuario fuerza el valor calculado. */
   pvpManual: boolean('pvp_manual').notNull().default(false),

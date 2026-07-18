@@ -121,7 +121,7 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
     `)) as unknown as { orden: number }[]
 
     let descripcion = d.codigo
-    let precioUnitario = 0
+    let precioUnitario: number | null = null
     let aviso: string | null = null
 
     /** Despiece resuelto a persistir en lineas_despiece (trazabilidad + coste). */
@@ -153,7 +153,7 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
         .limit(1)
 
       if (precios.length) precioUnitario = Number(precios[0].precio)
-      else aviso = 'El artículo no tiene precio en esta tarifa; la línea queda a cero.'
+      else aviso = 'Importe incompleto: el artículo no tiene precio en esta tarifa.'
     } else {
       const [est] = await db.select()
         .from(schema.estructuras).where(eq(schema.estructuras.codigo, d.codigo)).limit(1)
@@ -630,13 +630,20 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
       if (valoracion.sinPrecio.length) {
         problemas.push(`${valoracion.sinPrecio.length} artículos sin precio en la tarifa`)
       }
-      if (problemas.length) aviso = `Importe incompleto: ${problemas.join('; ')}.`
+      if (problemas.length) {
+        // Un importe parcial no es el precio de la estructura. Se conserva el
+        // despiece para trazabilidad, pero la línea queda sin valorar.
+        precioUnitario = null
+        aviso = `Importe incompleto: ${problemas.join('; ')}.`
+      }
       else if (variantesAplicadas > 0) {
         aviso = `Valorado con variante de doble cristal en ${variantesAplicadas} componentes (el criterio de la empresa).`
       }
     }
 
-    const total = Math.round(precioUnitario * d.cantidad * 100) / 100
+    const total = precioUnitario === null
+      ? null
+      : Math.round(precioUnitario * d.cantidad * 100) / 100
 
     await db.insert(schema.lineas).values({
       presupuestoId: d.presupuestoId,
@@ -648,8 +655,10 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
       cantidad: String(d.cantidad),
       anchoMm: d.anchoMm ?? null,
       altoMm: d.altoMm ?? null,
-      precioUnitario: String(precioUnitario),
-      total: String(total),
+      precioUnitario: precioUnitario === null ? null : String(precioUnitario),
+      total: total === null ? null : String(total),
+      valoracionCompleta: precioUnitario !== null,
+      avisoValoracion: aviso,
     })
 
     if (d.tipo === 'ESTRUCTURA') {

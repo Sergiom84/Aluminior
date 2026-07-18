@@ -1242,3 +1242,22 @@ Verificado en vivo (estructura 02V + GMA350, 1600×1230):
 scripts/analizar-fijos.mjs   anatomía de líneas de solo-fijo
 scripts/medir-fijos.mjs      deltas 100%, junquillo esperado 200/200
 ```
+
+---
+
+# ANEXO O — Estructuras mixtas: límite medido (18/07/2026)
+
+La fase de medición confirma que el acristalamiento mixto (hoja + fijo) es
+frecuente y que **no se puede valorar como una extensión del caso simple**.
+
+`scripts/analizar-mixtas.mjs` encontró, entre otras, 46 instancias de `2OFI`,
+40 de `1OFI` y 22 de `3HO` con hojas y más de una medida de vidrio. En la
+plantilla de `2OFI` las ranuras se distinguen por campos como `DisVidrio`,
+`DisTipoHoja`, `DisIdHoja` y `DisGrupo`; por tanto, el emparejamiento debe ser
+ranura a ranura. Una sola medida derivada de los perfiles de hoja no cubre los
+huecos fijos.
+
+**Decisión:** no se activa ninguna valoración adicional para mixtas. La guarda
+existente conserva la línea como *sin valorar* cuando el número de cristales no
+cuadra con el de hojas. El siguiente trabajo debe contrastar un emparejamiento
+explícito con el oráculo antes de escribir lógica de precio.

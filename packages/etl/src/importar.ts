@@ -342,7 +342,7 @@ resultados.push(await cargar('TAcristalamientoLin', 'tacris_filas', (f, r) => {
   const tabla = txt(f.TAcris)
   const grosor = num(f.Grosor)
   if (!tabla || grosor === null) { descartar(r, 'clave incompleta'); return null }
-  const limpiar = (v: unknown) => {
+  const limpiar = (v: string | undefined) => {
     const t = txt(v)
     return t && t !== '0' ? t : null
   }

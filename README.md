@@ -8,17 +8,18 @@ configurador de estructuras, despiece y documentos comerciales.
 
 ## Estado
 
-En construcción. Fase de esquema y carga de datos.
+En construcción. Cuatro módulos operativos y valoración parcial, explícitamente
+marcada cuando faltan datos.
 
 | Componente | Estado |
 |---|---|
 | Análisis del sistema origen | Completado — ver [PLAN.md](PLAN.md) |
 | Decisiones de arquitectura | Completado — ver [ARQUITECTURA.md](ARQUITECTURA.md) |
-| Esquema de base de datos | Primera versión: 16 tablas |
-| ETL desde el sistema original | Pendiente |
-| API | Pendiente |
-| Interfaz web | Pendiente |
-| Motor de despiece | Pendiente |
+| Esquema de base de datos | 29 tablas y migraciones Drizzle |
+| ETL desde el sistema original | Completado: 178.804 filas aplicables |
+| Interfaz web | Clientes, Artículos, Estructuras y Presupuestos operativos |
+| Motor de despiece | Operativo: 417/417 fórmulas; 99,6% de componentes |
+| Valoración | Perfiles y vidrio de hoja/fijo puro; incompletos se muestran sin valorar |
 
 ## Contexto
 

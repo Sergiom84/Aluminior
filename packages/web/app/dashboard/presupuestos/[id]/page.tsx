@@ -30,6 +30,7 @@ export default async function DetallePresupuesto({
     .from(schema.lineas)
     .where(eq(schema.lineas.presupuestoId, id))
     .orderBy(asc(schema.lineas.orden))
+  const hayImportesIncompletos = lineas.some((l) => !l.valoracionCompleta)
 
   // Series configuradas: la serie es prerrequisito de toda línea de estructura.
   const series = await db.select({ codigo: schema.series.codigo })
@@ -117,17 +118,22 @@ export default async function DetallePresupuesto({
           style={{ background: 'var(--al-surface)', borderColor: 'var(--al-border)' }}>
           <div className="flex justify-between py-1">
             <dt style={{ color: 'var(--al-text-muted)' }}>Base imponible</dt>
-            <dd className="cifra">{eur.format(Number(p.baseImponible))}</dd>
+            <dd className="cifra">{hayImportesIncompletos ? 'sin valorar' : eur.format(Number(p.baseImponible))}</dd>
           </div>
           <div className="flex justify-between py-1">
             <dt style={{ color: 'var(--al-text-muted)' }}>IVA {Number(p.tipoIva)}%</dt>
-            <dd className="cifra">{eur.format(Number(p.cuotaIva))}</dd>
+            <dd className="cifra">{hayImportesIncompletos ? 'sin valorar' : eur.format(Number(p.cuotaIva))}</dd>
           </div>
           <div className="mt-2 flex justify-between border-t pt-2 text-base font-semibold"
             style={{ borderColor: 'var(--al-border)' }}>
             <dt>Total</dt>
-            <dd className="cifra">{eur.format(Number(p.total))}</dd>
+            <dd className="cifra">{hayImportesIncompletos ? 'sin valorar' : eur.format(Number(p.total))}</dd>
           </div>
+          {hayImportesIncompletos && (
+            <p className="mt-2 text-xs" style={{ color: 'var(--al-warn)' }}>
+              Hay líneas con cálculo pendiente. El presupuesto no tiene un total válido.
+            </p>
+          )}
         </dl>
       </div>
     </Shell>
@@ -144,7 +150,8 @@ function LineaConDespiece({
   linea: {
     id: string; orden: number; tipo: string; descripcion: string
     referencia: string | null; anchoMm: number | null; altoMm: number | null
-    cantidad: string; precioUnitario: string; total: string
+    cantidad: string; precioUnitario: string | null; total: string | null
+    valoracionCompleta: boolean; avisoValoracion: string | null
   }
   presupuestoId: string
   despiece: {
@@ -178,15 +185,15 @@ function LineaConDespiece({
                   </td>
                   <td className="cifra px-3 py-2">{Number(l.cantidad)}</td>
                   <td className="cifra px-3 py-2">
-                    {Number(l.precioUnitario) === 0 ? (
+                    {!l.valoracionCompleta ? (
                       <span className="text-xs" style={{ color: 'var(--al-warn)' }}
-                        title="Los perfiles del despiece son genéricos y se resuelven según la serie. Ver PLAN.md anexo H.">
+                        title={l.avisoValoracion ?? 'La línea tiene partes pendientes de valorar.'}>
                         sin valorar
                       </span>
                     ) : eur.format(Number(l.precioUnitario))}
                   </td>
                   <td className="cifra px-3 py-2 font-medium">
-                    {Number(l.total) === 0 ? '—' : eur.format(Number(l.total))}
+                    {!l.valoracionCompleta || l.total === null ? '—' : eur.format(Number(l.total))}
                   </td>
                   <td className="px-3 py-2 text-right">
                     <BotonBorrarLinea lineaId={l.id} presupuestoId={presupuestoId} />

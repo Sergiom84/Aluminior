@@ -55,7 +55,7 @@ Las MDB se leen con `Microsoft.ACE.OLEDB.16.0` (instalado, 64 bits).
 
 Aplicación **Next.js 15 + TypeScript + Drizzle + PostgreSQL** (Supabase, región
 UE). Funcionan cuatro módulos: **Clientes, Artículos, Estructuras y
-Presupuestos**. Hay 119.347 filas cargadas.
+Presupuestos**. Hay **178.804 filas** cargadas.
 
 Arranca con:
 
@@ -69,36 +69,31 @@ corte (`L-FS-FI`, `(A)/2`…) se evalúan correctamente: 417 de 417 validadas.
 
 ## Tu tarea
 
-**Resolver la valoración de presupuestos.** Está bloqueada por un problema
-concreto y bien delimitado, descrito en el anexo I de `PLAN.md`:
+**Completar la valoración de presupuestos sin inventar importes.** La resolución
+de perfiles genéricos, los costes y el acristalamiento de hoja y fijo puro ya
+están implementados. Una línea incompleta queda persistida como **sin valorar**
+—sin precio ni total— y el presupuesto tampoco muestra un total válido.
 
 La plantilla de despiece referencia **artículos genéricos** —`(**MARCO VERTICAL
 GENERICO**)`, `(**TRAVESAÑO MARCO GRANDE GENERICO**)`, 311 en total— que no
 tienen precio porque son **ranuras**. La serie es la que resuelve cada ranura a
 un perfil real.
 
-**Ya confirmado:**
+**Ya confirmado e implementado:**
 - La serie *es* un conjunto: las 57 series de la empresa existen como
   `Conjunto` en `ConjuntosLin` (coincidencia 57/57)
 - `ConjuntosLin` mapea `Conjunto + Componente(genérico) → Articulo(real)`
 - Verificado: serie GMA100, genérico 10 → GM100, con coste
 
-**Sin resolver:** de los 14 genéricos del despiece de la estructura `1+1`, la
-serie resuelve 5. Los de **marco, travesaño y escuadra** (`2`, `3`, `97`, `105`)
-no los resuelve ningún conjunto. Se resuelven por otro mecanismo.
+La cadena de delegaciones de la serie y `DisComponente` resuelven los perfiles
+reales con un 96,5% de coincidencia frente al oráculo histórico. Los asociados
+(herrajes y escuadras), la mano de obra, las correderas y las estructuras mixtas
+(hoja + fijo) siguen sin valoración y deben seguir mostrando el aviso honesto.
 
-**Candidatos, en orden:**
-1. `ConfigSeriesAsoc` (1.137 filas) — `Conjunto + TipoHoja → Articulo`, con
-   fórmulas propias. El más prometedor.
-2. `TablaHojas` / `TablaFijos` — el conjunto de serie apunta a `GM08`
-3. `ConjuntosAsoc` (13.345 filas) — con `ComponenteAsoc` y fórmulas
-4. `EstructurasSeriesAsoc` (2.134 filas)
-
-Hay scripts de diagnóstico ya escritos en `scripts/buscar-genericos.mjs` y
-`scripts/resolver-genericos.mjs`. Úsalos como punto de partida.
-
-Cuando lo resuelvas: cargar `ArticulosCoste` (27.817 filas, aún sin migrar) e
-implementar la valoración.
+La siguiente investigación es el acristalamiento de **estructuras mixtas**. El
+script de sólo lectura `scripts/analizar-mixtas.mjs` perfila las ranuras y el
+histórico antes de que se escriba código de valoración. Mide la hipótesis contra
+el oráculo y no actives ningún cálculo que no sea inequívoco.
 
 ## Cómo quiero que trabajes
 
