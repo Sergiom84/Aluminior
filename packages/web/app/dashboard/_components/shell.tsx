@@ -13,6 +13,9 @@ export interface Modulo {
   id: string
   nombre: string
   descripcion: string
+  /** Ruta real. Los módulos sin implementar caen en el marcador de posición. */
+  href: string
+  listo: boolean
 }
 
 /**
@@ -21,13 +24,14 @@ export interface Modulo {
  * en el día a día en vez de por cómo estaban en el menú heredado.
  */
 export const MODULOS: Modulo[] = [
-  { id: 'inicio', nombre: 'Inicio', descripcion: 'Resumen de actividad' },
-  { id: 'catalogo', nombre: 'Catálogo', descripcion: 'Artículos, series y tarifas' },
-  { id: 'clientes', nombre: 'Clientes', descripcion: 'Clientes, potenciales y obras' },
-  { id: 'presupuestos', nombre: 'Presupuestos', descripcion: 'Presupuestos y ofertas' },
-  { id: 'produccion', nombre: 'Producción', descripcion: 'Despiece, corte y fabricación' },
-  { id: 'compras', nombre: 'Compras', descripcion: 'Proveedores, pedidos y costes' },
-  { id: 'informes', nombre: 'Informes', descripcion: 'Listados y estadísticas' },
+  { id: 'inicio', nombre: 'Inicio', descripcion: 'Resumen de actividad', href: '/dashboard', listo: true },
+  { id: 'articulos', nombre: 'Artículos', descripcion: 'Materiales, familias y tarifas', href: '/dashboard/articulos', listo: true },
+  { id: 'clientes', nombre: 'Clientes', descripcion: 'Clientes, potenciales y obras', href: '/dashboard/clientes', listo: true },
+  { id: 'estructuras', nombre: 'Estructuras', descripcion: 'Tipos de hueco configurables', href: '/dashboard?module=estructuras', listo: false },
+  { id: 'presupuestos', nombre: 'Presupuestos', descripcion: 'Presupuestos y ofertas', href: '/dashboard?module=presupuestos', listo: false },
+  { id: 'produccion', nombre: 'Producción', descripcion: 'Despiece, corte y fabricación', href: '/dashboard?module=produccion', listo: false },
+  { id: 'compras', nombre: 'Compras', descripcion: 'Proveedores, pedidos y costes', href: '/dashboard?module=compras', listo: false },
+  { id: 'informes', nombre: 'Informes', descripcion: 'Listados y estadísticas', href: '/dashboard?module=informes', listo: false },
 ]
 
 export function Shell({
@@ -61,9 +65,9 @@ export function Shell({
             return (
               <li key={m.id}>
                 <Link
-                  href={`/dashboard?module=${m.id}`}
+                  href={m.href}
                   aria-current={activo ? 'page' : undefined}
-                  className="block rounded-md px-3 py-2 text-sm transition-colors"
+                  className="flex items-center justify-between rounded-md px-3 py-2 text-sm transition-colors"
                   style={{
                     background: activo ? 'var(--al-accent)' : 'transparent',
                     color: activo
@@ -71,7 +75,16 @@ export function Shell({
                       : 'var(--al-sidebar-text)',
                   }}
                 >
-                  {m.nombre}
+                  <span>{m.nombre}</span>
+                  {/* Marca honesta de lo que aún no existe. */}
+                  {!m.listo && (
+                    <span
+                      className="rounded px-1.5 py-0.5 text-[10px] uppercase tracking-wide"
+                      style={{ background: 'rgb(255 255 255 / 0.08)', color: 'var(--al-sidebar-text)' }}
+                    >
+                      pend.
+                    </span>
+                  )}
                 </Link>
               </li>
             )
