@@ -14,6 +14,7 @@ import { revalidatePath } from 'next/cache'
 import { crearDb, schema } from '@aluminior/db'
 import { calcularDespiece, type ComponentePlantilla } from '@aluminior/core/despiece'
 import { valorarDespiece, type DatosArticuloPrecio } from '@aluminior/core/precios'
+import { expandirCadena, construirResoluciones, resolverComponente } from '@aluminior/core/series'
 
 export type Estado =
   | { ok: true; id: string }
@@ -80,6 +81,9 @@ const esquemaLinea = z.object({
   tipo: z.enum(['ARTICULO', 'ESTRUCTURA']),
   codigo: z.string().trim().min(1, 'Elige un artículo o una estructura'),
   referencia: z.string().trim().max(60).optional().transform((v) => v || null),
+  /** Serie de perfiles. Prerrequisito del tipo ESTRUCTURA: sin ella no hay
+   * artículos reales, y sin artículos reales no hay precio. */
+  serieCodigo: z.string().trim().optional().transform((v) => v || null),
   cantidad: z.coerce.number().positive().default(1),
   anchoMm: z.coerce.number().int().min(0).optional(),
   altoMm: z.coerce.number().int().min(0).optional(),
@@ -142,6 +146,15 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
         return { ok: false, errores: { anchoMm: ['Indica ancho y alto del hueco'] } }
       }
 
+      // Regla heredada del original: "Indique Serie primero". Sin serie no hay
+      // artículos reales, y sin artículos reales no hay precio.
+      if (!d.serieCodigo) {
+        return { ok: false, errores: { serieCodigo: ['Indique Serie primero'] } }
+      }
+      const [serie] = await db.select()
+        .from(schema.series).where(eq(schema.series.codigo, d.serieCodigo)).limit(1)
+      if (!serie) return { ok: false, errores: { serieCodigo: ['Serie no encontrada'] } }
+
       const plantilla = await db.select({
         articuloCodigo: schema.estructuraComponentes.articuloCodigo,
         cantidad: schema.estructuraComponentes.cantidad,
@@ -152,8 +165,66 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
         funcion: schema.estructuraComponentes.funcion,
         medidaMinima: schema.estructuraComponentes.medidaMinima,
         medidaMaxima: schema.estructuraComponentes.medidaMaxima,
+        componenteDisenyo: schema.estructuraComponentes.componenteDisenyo,
       }).from(schema.estructuraComponentes)
         .where(eq(schema.estructuraComponentes.estructuraCodigo, d.codigo))
+
+      // --- Resolución genérico -> perfil real (PLAN.md anexo J) ---
+      // Cadena de conjuntos de la serie (la tabla completa de delegaciones es
+      // pequeña: ~700 filas) y resoluciones de esos conjuntos.
+      const delegacionesFilas = await db.select({
+        conjuntoCodigo: schema.conjuntoDelegaciones.conjuntoCodigo,
+        delegadoCodigo: schema.conjuntoDelegaciones.delegadoCodigo,
+      }).from(schema.conjuntoDelegaciones)
+      const delegaciones = new Map<string, string[]>()
+      for (const f of delegacionesFilas) {
+        const lista = delegaciones.get(f.conjuntoCodigo) ?? []
+        lista.push(f.delegadoCodigo)
+        delegaciones.set(f.conjuntoCodigo, lista)
+      }
+      const cadena = expandirCadena(d.serieCodigo, delegaciones)
+      const resolucionesFilas = await db.select({
+        conjuntoCodigo: schema.conjuntoResoluciones.conjuntoCodigo,
+        componente: schema.conjuntoResoluciones.componente,
+        articuloCodigo: schema.conjuntoResoluciones.articuloCodigo,
+      }).from(schema.conjuntoResoluciones)
+        .where(inArray(schema.conjuntoResoluciones.conjuntoCodigo, cadena))
+      const resoluciones = construirResoluciones(cadena, resolucionesFilas)
+
+      // Qué artículos de la plantilla son ranuras genéricas (descripción
+      // "(**…**)"): son los que DEBEN sustituirse para poder valorar.
+      const codigosPlantilla = [...new Set(plantilla.map((c) => c.articuloCodigo))]
+      const genericos = new Set(
+        (codigosPlantilla.length
+          ? await db.select({ codigo: schema.articulos.codigo })
+              .from(schema.articulos)
+              .where(and(
+                inArray(schema.articulos.codigo, codigosPlantilla),
+                sql`${schema.articulos.descripcion} LIKE '(**%'`,
+              ))
+          : []
+        ).map((a) => a.codigo),
+      )
+
+      // La empresa monta doble cristal en el 100% del histórico; la variante
+      // es una elección visible (se informa en el aviso si interviene).
+      const VARIANTE = '2' as const
+      let variantesAplicadas = 0
+      const sinResolver = new Set<string>()
+
+      const plantillaResuelta = plantilla.map((c) => {
+        if (!c.componenteDisenyo) {
+          if (genericos.has(c.articuloCodigo)) sinResolver.add(c.articuloCodigo)
+          return c
+        }
+        const res = resolverComponente(c.componenteDisenyo, resoluciones, VARIANTE)
+        if (res.articuloCodigo) {
+          if (res.via === 'variante') variantesAplicadas++
+          return { ...c, articuloCodigo: res.articuloCodigo }
+        }
+        if (genericos.has(c.articuloCodigo)) sinResolver.add(c.articuloCodigo)
+        return c
+      })
 
       const cotasFilas = await db.select({
         simbolo: schema.estructuraCotas.simbolo,
@@ -167,7 +238,7 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
       }
 
       const despiece = calcularDespiece(
-        plantilla as ComponentePlantilla[],
+        plantillaResuelta as ComponentePlantilla[],
         { anchoMm: d.anchoMm, altoMm: d.altoMm },
         cotas,
       )
@@ -203,6 +274,11 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
       precioUnitario = valoracion.importe
 
       const problemas: string[] = []
+      if (sinResolver.size) {
+        problemas.push(
+          `${sinResolver.size} ranuras genéricas que la serie ${d.serieCodigo} no resuelve (quedan sin valorar)`,
+        )
+      }
       if (despiece.incalculables > 0) {
         problemas.push(
           `${despiece.incalculables} piezas sin medida` +
@@ -213,6 +289,9 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
         problemas.push(`${valoracion.sinPrecio.length} artículos sin precio en la tarifa`)
       }
       if (problemas.length) aviso = `Importe incompleto: ${problemas.join('; ')}.`
+      else if (variantesAplicadas > 0) {
+        aviso = `Valorado con variante de doble cristal en ${variantesAplicadas} componentes (el criterio de la empresa).`
+      }
     }
 
     const total = Math.round(precioUnitario * d.cantidad * 100) / 100
@@ -242,7 +321,7 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
       if (linea) {
         await db.insert(schema.lineasEstructura).values({
           lineaId: linea.id,
-          serieCodigo: '',
+          serieCodigo: d.serieCodigo ?? '',
           estructuraCodigo: d.codigo,
           acabadoCodigo: d.acabadoCodigo,
         })

@@ -109,6 +109,7 @@ async function vaciarDestino() {
     'lineas_estructura', 'lineas', 'presupuestos', 'obras',
     'clientes_potenciales', 'clientes', 'proveedores',
     'estructura_componentes', 'estructura_cotas',
+    'conjunto_resoluciones', 'conjunto_delegaciones', 'conjuntos', 'series',
     'articulos_coste', 'articulos_pvp', 'articulos', 'estructuras',
     'subfamilias', 'tonalidades', 'acabados', 'familias',
   ]
@@ -303,6 +304,112 @@ resultados.push(await cargar('EstructurasArticulos', 'estructura_componentes', (
     componente_disenyo: txt(f.DisComponente),
   }
 }))
+
+/**
+ * Series y resolución de genéricos (PLAN.md anexo J).
+ *
+ * La serie traduce cada ranura genérica de la plantilla (`DisComponente`) a
+ * un perfil real: serie -> cadena de conjuntos -> resolución por componente.
+ */
+resultados.push(await cargar('ConfigSeries', 'series', (f, r) => {
+  const codigo = txt(f.Serie)
+  if (!codigo) { descartar(r, 'sin código'); return null }
+  // La fila '*' es la configuración por defecto del programa, no una serie.
+  if (codigo === '*') { excluir(r, 'configuración por defecto, no es una serie'); return null }
+  return { codigo, es_pvc: bool(f.PVCsn) }
+}))
+
+resultados.push(await cargar('Conjuntos', 'conjuntos', (f, r) => {
+  const codigo = txt(f.Codigo)
+  if (!codigo) { descartar(r, 'sin código'); return null }
+  return { codigo, serie_codigo: txt(f.CodSerie) }
+}))
+
+/**
+ * Delegaciones: cada fila de Conjuntos apunta a otros conjuntos mediante ~74
+ * columnas (SubSerieDe, herr1HA…, TablaHojas…). Es una carga 1 -> N, así que
+ * no encaja en `cargar`: se extraen aquí las parejas.
+ * Los TablaHojas/TablaFijos apuntan a tablas de acristalamiento, no a
+ * conjuntos con resoluciones; se cargan igualmente por trazabilidad y la
+ * expansión de cadena simplemente no encuentra filas para ellos.
+ */
+{
+  const r: Resultado = {
+    tabla: 'conjunto_delegaciones', leidas: 0, insertadas: 0, descartadas: 0,
+    excluidas: 0, motivos: new Map(),
+  }
+  const ruta = rutaTabla(ORIGEN, 'Conjuntos')
+  if (ruta) {
+    const ES_DELEGACION = /^(TablaHojas\d?|TablaFijos\d?|TablaDobleH\d?|SubSerieDe|herr.+)$/
+    for await (const lote of leerLotes(ruta, 500)) {
+      r.leidas += lote.length
+      const filas: Record<string, unknown>[] = []
+      const vistas = new Set<string>()
+      for (const f of lote) {
+        const conjunto = txt(f.Codigo)
+        if (!conjunto) continue
+        for (const [campo, valor] of Object.entries(f)) {
+          if (!ES_DELEGACION.test(campo)) continue
+          const delegado = txt(valor)
+          if (!delegado || delegado === '0' || delegado === conjunto) continue
+          const clave = `${conjunto}|${delegado}|${campo}`
+          if (vistas.has(clave)) continue
+          vistas.add(clave)
+          filas.push({ conjunto_codigo: conjunto, delegado_codigo: delegado, campo })
+        }
+      }
+      if (filas.length) {
+        await sql`INSERT INTO conjunto_delegaciones ${sql(filas)} ON CONFLICT DO NOTHING`
+        r.insertadas += filas.length
+      }
+    }
+  } else {
+    r.motivos.set('CSV no encontrado', 1)
+  }
+  resultados.push(r)
+}
+
+resultados.push(await cargar('ConjuntosLin', 'conjunto_resoluciones', (f, r) => {
+  const conjunto = txt(f.Conjunto)
+  const componente = txt(f.Componente)
+  if (!conjunto || !componente) { descartar(r, 'clave incompleta'); return null }
+  const articulo = txt(f.Articulo)
+  // Muchas filas del catálogo global no llevan artículo: el conjunto no
+  // resuelve ese componente. No es un error, es la forma normal de la tabla.
+  if (!articulo || articulo === '0') { excluir(r, 'componente sin artículo asignado'); return null }
+  return {
+    conjunto_codigo: conjunto,
+    componente,
+    familia: txt(f.Familia) ?? '',
+    articulo_codigo: articulo,
+  }
+}))
+
+/**
+ * Costes por artículo, proveedor y acabado.
+ * La tabla original referencia también artículos de series no migradas de
+ * InfoSeries: los que no están en nuestro catálogo se excluyen a propósito
+ * (no pueden aparecer en un despiece de esta empresa).
+ */
+{
+  const codigosArticulo = new Set<string>(
+    (await sql<{ codigo: string }[]>`SELECT codigo FROM articulos`).map((x) => x.codigo),
+  )
+  resultados.push(await cargar('ArticulosCoste', 'articulos_coste', (f, r) => {
+    const articulo = txt(f.Articulo)
+    if (!articulo) { descartar(r, 'sin artículo'); return null }
+    if (!codigosArticulo.has(articulo)) { excluir(r, 'artículo fuera del catálogo de la empresa'); return null }
+    const coste = num(f.Coste)
+    if (coste === null) { descartar(r, 'sin coste'); return null }
+    return {
+      articulo_codigo: articulo,
+      proveedor_codigo: txt(f.Proveedor) ?? '',
+      acabado_codigo: txt(f.Acabado) ?? '',
+      coste,
+      actualizado_en: fecha(f.UltimaAct),
+    }
+  }))
+}
 
 resultados.push(await cargar('ArticulosPVP', 'articulos_pvp', (f, r) => {
   const articulo = txt(f.Articulo)

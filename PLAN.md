@@ -877,3 +877,113 @@ que parece correcto es peor que un "sin valorar" honesto.
   de esto.
 - Scripts de diagnóstico en `scripts/buscar-genericos.mjs` y
   `scripts/resolver-genericos.mjs`, para retomar sin rehacer el análisis.
+
+---
+---
+
+# ANEXO J — Resolución genérico → perfil: RESUELTA y validada contra el oráculo (18/07/2026)
+
+**Cierra la investigación del anexo I. Corrige dos afirmaciones de ese anexo.**
+
+## Correcciones al anexo I
+
+**1. La clave de resolución NO es el código de artículo genérico: es
+`EstructurasArticulos.DisComponente`.** El anexo I interpretó "genérico 10 →
+GM100", pero GM100 es "CERCO VENTANA 28 S100" —un marco— mientras que el
+artículo genérico 10 es una hoja. La coincidencia era un espejismo: el `10` de
+`ConjuntosLin.Componente` es el `DisComponente` del MARCO INFERIOR de la
+plantilla, no el artículo genérico 10. Con la clave correcta:
+
+```
+plantilla 1+1, serie GMA100 (ConjuntosLin, clave DisComponente):
+  DisComp 12 (MV, marco vertical)  -> GM100  CERCO VENTANA 28 S100     ✔ semántica
+  DisComp 11 (MH, marco superior)  -> GM100  CERCO VENTANA 28 S100     ✔
+  DisComp 10 (MH, marco inferior)  -> GM100  CERCO VENTANA 28 S100     ✔
+  DisComp 17M (TM, travesaño)      -> GM119  PILASTRA 47 S100          ✔
+  DisComp 25/26 (HV/HH, hoja)      -> GM101  HOJA LISA VENTANA S100    ✔
+  DisComp 29 (HH, vierteaguas)     -> GM125  VIERTEAGUAS 30 MM         ✔
+```
+
+Los genéricos 2, 3, 97 y 105 que "no resolvía ningún conjunto" no existen como
+`Componente` en ninguna fila de `ConjuntosLin` (comprobado: 0 filas): nunca
+fueron la clave.
+
+**2. `TablaHojas`/`TablaFijos` (`GM08`) no son catálogos de perfiles.** `GM08`
+solo existe en `TAcristalamiento*`: son tablas de acristalamiento (junquillos
+y juntas por grosor de vidrio). No intervienen en la resolución de perfiles.
+
+## El mecanismo completo
+
+```
+1. PERFILES PRINCIPALES (MV, MH, HV, HH, TM):
+   ConjuntosLin[ Conjunto ∈ cadena(serie) ][ DisComponente ] -> Articulo real
+
+   cadena(serie) = la serie misma + conjuntos delegados transitivamente por
+   los campos de Conjuntos: SubSerieDe, herr* (los TablaHojas/Fijos/DobleH
+   apuntan a acristalamiento, no a conjuntos de perfiles).
+
+2. VARIANTES DE ACRISTALAMIENTO: componentes con sufijo ".1" (cristal
+   sencillo) / ".2" (doble cristal). Ej. GMC400: 21.1 -> GM445 HOJA LATERAL
+   53MM y 21.2 -> GM449 HOJA LAT.D.CRIST.52MM. 278 filas con sufijo en
+   ConjuntosLin. En el histórico de la empresa el 100% de los casos usa .2
+   (siempre doble cristal), así que el selector no se puede aprender de los
+   datos: se deriva del vidrio elegido y, si es ambiguo, la pieza queda
+   "sin valorar".
+
+3. ASOCIADOS (escuadras, herrajes, zona apertura, compás):
+   ConjuntosAsoc[ Conjunto ∈ cadena(serie) ][ ComponenteAsoc ] -> Articulo,
+   con Cantidad (incluye cantidades negativas: correcciones) y fórmulas
+   propias. Ej.: GMA100 + 58 (escuadra) -> GM1222.
+   ConfigSeriesAsoc añade artículos por TipoHoja (M=marco, H=hojas,
+   G=general) con FormulaL/FormulaA y filtros de medida.
+
+4. NO RESUELVEN POR SERIE (elección del usuario o configuración):
+   cristal (DisComponente 1: acristalamiento), manilla (130: opciones de
+   herraje), mano de obra (39: campos mo* de Conjuntos), infHV (50).
+```
+
+## Validación contra el oráculo
+
+El anexo I suponía que las 12.689 instancias de `EstructurasArticulos` con
+`TipoDoc` eran el despiece resuelto. **No lo son: guardan aún el genérico.**
+El despiece resuelto vive en `VPresupuestosLin`: la línea padre tiene
+`EstructuraSN=True` y `Articulo` = código de estructura; las hijas cuelgan por
+`nEstr` = `nLinea` del padre y llevan el perfil real con su `Funcion` y sus
+medidas de corte. La serie de cada línea está en `VDatosLinEstr.Conjunto1`
+(clave `nVDoc`+`nVLinea`).
+
+Prueba sobre las 1.657 líneas de estructura de presupuestos reales con serie
+conocida, comparando por (línea, Función) los artículos de perfil predichos
+frente a los reales (script `scripts/validar-oraculo2.mjs`):
+
+| Resultado | Piezas | % |
+|---|---|---|
+| Coincide con lo que eligió GAIA | 5.595 | **96,5%** |
+| Predice otro perfil | 67 | 1,2% |
+| Sin predicción (→ "sin valorar") | 137 | 2,4% |
+
+Y los restos están explicados:
+
+- **Huecos**: casi todos de estructura código `0` (diseño específico sin
+  plantilla, `DisEspecificoSN`); no son resolubles por plantilla.
+- **"Fallos" con real 4, 5, 6**: el artículo real del documento ES el
+  genérico: GAIA lo dejó sin resolver. No es fallo nuestro.
+- **Fallos reales (~1%)**: variantes de apertura de ELEGANTPVC y similares
+  (GM8781M frente a GM8787M): la plantilla trae un componente y el documento
+  usó la variante de otra apertura (oscilo/practicable). Dimensión pendiente;
+  mientras tanto, esas piezas se detectan y quedan "sin valorar" si el
+  componente no resuelve, o se valoran con el perfil de la plantilla asumiendo
+  el error del ~1% conocido y acotado. Decisión: NO asumir; ver implementación.
+
+## Scripts de esta investigación
+
+```
+scripts/resolver-delegados.mjs        hipótesis 1 (delegación): descartada para perfiles
+scripts/hipotesis-discomponente.mjs   hipótesis 2 (DisComponente): confirmada
+scripts/buscar-componentes-restantes.mjs  asociados en ConjuntosAsoc/ConfigSeriesAsoc
+scripts/inspeccionar-doc.mjs          anatomía de un documento real
+scripts/inspeccionar-variantes.mjs    sufijos .1/.2 de acristalamiento
+scripts/selector-variante.mjs         el histórico usa .2 en el 100% de los casos
+scripts/validar-oraculo.mjs           v1: demostró que las instancias guardan el genérico
+scripts/validar-oraculo2.mjs          v2: validación real, 96,5% de coincidencia
+```

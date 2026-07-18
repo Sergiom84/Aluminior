@@ -12,7 +12,9 @@ const estilo = { background: 'var(--al-surface)', borderColor: 'var(--al-border-
  *   ESTRUCTURA  elemento configurado: se pide el hueco y se calcula el
  *               despiece y el precio a partir de sus componentes
  */
-export function AnyadirLinea({ presupuestoId }: { presupuestoId: string }) {
+export function AnyadirLinea({
+  presupuestoId, series,
+}: { presupuestoId: string; series: string[] }) {
   const [tipo, setTipo] = useState<'ARTICULO' | 'ESTRUCTURA'>('ESTRUCTURA')
   const [estado, accion, enviando] = useActionState<Estado, FormData>(anyadirLinea, null)
 
@@ -48,7 +50,7 @@ export function AnyadirLinea({ presupuestoId }: { presupuestoId: string }) {
       )}
 
       <div className="grid grid-cols-12 items-end gap-3">
-        <div className="col-span-3">
+        <div className={tipo === 'ESTRUCTURA' ? 'col-span-2' : 'col-span-3'}>
           <label htmlFor="codigo" className="mb-1 block text-sm font-medium">
             {tipo === 'ESTRUCTURA' ? 'Estructura' : 'Artículo'}
           </label>
@@ -60,7 +62,7 @@ export function AnyadirLinea({ presupuestoId }: { presupuestoId: string }) {
           )}
         </div>
 
-        <div className="col-span-3">
+        <div className={tipo === 'ESTRUCTURA' ? 'col-span-2' : 'col-span-3'}>
           <label htmlFor="referencia" className="mb-1 block text-sm font-medium">Ubicación</label>
           <input id="referencia" name="referencia" className={entrada} style={estilo}
             placeholder="SALÓN" />
@@ -68,6 +70,19 @@ export function AnyadirLinea({ presupuestoId }: { presupuestoId: string }) {
 
         {tipo === 'ESTRUCTURA' && (
           <>
+            {/* La serie es prerrequisito: sin ella los perfiles del despiece
+                son genéricos y no hay precio ("Indique Serie primero"). */}
+            <div className="col-span-2">
+              <label htmlFor="serieCodigo" className="mb-1 block text-sm font-medium">Serie</label>
+              <select id="serieCodigo" name="serieCodigo" defaultValue="" className={entrada}
+                style={{ ...estilo, borderColor: err.serieCodigo ? 'var(--al-error)' : estilo.borderColor }}>
+                <option value="" disabled>Elegir…</option>
+                {series.map((s) => <option key={s} value={s}>{s}</option>)}
+              </select>
+              {err.serieCodigo && (
+                <p className="mt-1 text-xs" style={{ color: 'var(--al-error)' }}>{err.serieCodigo.join('. ')}</p>
+              )}
+            </div>
             <div className="col-span-2">
               <label htmlFor="anchoMm" className="mb-1 block text-sm font-medium">Ancho (mm)</label>
               <input id="anchoMm" name="anchoMm" type="number" defaultValue={1600} step={10}

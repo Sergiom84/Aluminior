@@ -3,7 +3,9 @@
 **Fecha:** 18 de julio de 2026
 **Titular:** ALUMINIOS LARA SLU — B83979179 (28095)
 **Repositorio:** https://github.com/Sergiom84/Aluminior (privado)
-**Estado:** 16 commits · 4 módulos funcionando · motor de despiece operativo al 99,6%
+**Estado:** 4 módulos funcionando · motor de despiece operativo al 99,6% ·
+resolución genérico → perfil validada (96,5% contra el oráculo) y valoración
+de perfiles funcionando
 
 Este documento recoge todo lo hecho, todo lo encontrado, todo lo que queda y
 todas las rutas necesarias para continuar sin repetir trabajo.
@@ -383,6 +385,17 @@ fórmulas resueltas.**
 
 # 5. EL PROBLEMA ABIERTO — valoración
 
+> **RESUELTO (18/07/2026, sesión posterior).** El mecanismo de resolución
+> genérico → perfil está identificado y validado contra 1.657 líneas de
+> documentos reales: **96,5% de coincidencia exacta** con lo que eligió GAIA.
+> La clave NO es el código del artículo genérico sino
+> `EstructurasArticulos.DisComponente` (la sección 5.2 de abajo contiene esa
+> confusión; se conserva como historia). Ver **PLAN.md anexo J** para el
+> mecanismo completo, y la sección 6 para lo implementado: la valoración de
+> perfiles funciona en la aplicación, con serie obligatoria en la línea.
+> Quedan sin valorar (y avisando) los asociados: herrajes, cristal y mano de
+> obra.
+
 ## 5.1 Los artículos del despiece son GENÉRICOS
 
 Este es el obstáculo actual y está bien delimitado.
@@ -543,24 +556,29 @@ Aluminior/
 
 ## 6.4 Datos cargados
 
-**119.347 filas**, todas al 100% sin descartes:
+**178.804 filas**, todas al 100% sin descartes:
 
 | Tabla | Filas |
 |---|---|
 | `articulos_pvp` | 83.367 |
+| `articulos_coste` | 27.817 |
 | `articulos` | 17.547 |
+| `conjunto_resoluciones` | 15.823 |
+| `conjuntos` | 15.063 |
 | `estructura_componentes` | 15.263 |
 | `obras` | 1.728 |
+| `conjunto_delegaciones` | 697 |
 | `estructuras` | 541 |
 | `clientes` | 503 |
 | `estructura_cotas` | 283 |
+| `series` | 57 |
 | `tonalidades` | 57 |
 | `familias` | 32 |
 | `acabados` | 18 |
 | `proveedores` | 8 |
 
-**Vacías a propósito** (esquema listo, sin cargar): `articulos_coste`,
-`clientes_potenciales`, `subfamilias`, y todas las de documentos.
+**Vacías a propósito** (esquema listo, sin cargar): `clientes_potenciales`,
+`subfamilias`, y todas las de documentos.
 
 ## 6.5 El ETL
 
@@ -697,13 +715,24 @@ Corregido con un `TRUNCATE ... CASCADE` único.
 
 ## 8.1 Inmediato — desbloquear la valoración
 
-1. **Resolver genérico + serie → perfil real.** Explorar `ConfigSeriesAsoc`,
-   `TablaHojas`/`TablaFijos`, `ConjuntosAsoc`. Método: hipótesis, medición
-   contra los datos, y sólo entonces construir.
-2. **Cargar `ArticulosCoste`** (27.817 filas).
-3. **Implementar la valoración** una vez resuelto lo anterior.
-4. **Validar contra el oráculo**: las 12.689 instancias de despiece de
-   documentos reales.
+> **HECHO (18/07/2026, sesión posterior):** resolución genérico → perfil
+> identificada y validada contra el oráculo real (96,5%, anexo J);
+> `ArticulosCoste` cargada (27.817 filas); valoración de perfiles funcionando
+> con serie obligatoria en la línea. Nota: el oráculo NO son las instancias de
+> `EstructurasArticulos` (guardan el genérico) sino las líneas hijas de
+> `VPresupuestosLin` + la serie de `VDatosLinEstr`.
+
+Lo que queda de la valoración:
+
+1. **Asociados**: escuadras, herrajes por apertura, zona de apertura —
+   `ConjuntosAsoc` / `ConfigSeriesAsoc` (mecanismo localizado, sin validar
+   contra el oráculo). Hoy quedan "sin valorar" con aviso.
+2. **Acristalamiento y mano de obra**: elecciones del usuario (slots de
+   vidrio, campos `mo*` de `Conjuntos`), sin interfaz todavía.
+3. **Variante de acristalamiento** (`.1`/`.2`): hoy fija a doble cristal (el
+   100% del histórico); exponerla como elección en el configurador.
+4. **El ~1% de fallos conocidos**: variantes de apertura (ELEGANTPVC y
+   similares); requiere la dimensión "tipo de apertura" del configurador.
 
 ## 8.2 Corto plazo
 

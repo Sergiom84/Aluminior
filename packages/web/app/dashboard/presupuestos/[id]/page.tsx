@@ -31,6 +31,10 @@ export default async function DetallePresupuesto({
     .where(eq(schema.lineas.presupuestoId, id))
     .orderBy(asc(schema.lineas.orden))
 
+  // Series configuradas: la serie es prerrequisito de toda línea de estructura.
+  const series = await db.select({ codigo: schema.series.codigo })
+    .from(schema.series).orderBy(asc(schema.series.codigo))
+
   return (
     <Shell moduloActivo="presupuestos">
       <div className="mb-6">
@@ -55,7 +59,7 @@ export default async function DetallePresupuesto({
       </div>
 
       <div className="mb-6">
-        <AnyadirLinea presupuestoId={id} />
+        <AnyadirLinea presupuestoId={id} series={series.map((s) => s.codigo)} />
       </div>
 
       <div className="overflow-hidden rounded-lg border"
