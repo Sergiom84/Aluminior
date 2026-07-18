@@ -342,3 +342,119 @@ base viva), así que tenemos el mapa de tablas y campos pero no las consultas li
   sin pulsar ninguna acción (contiene botones de escritura: Marcar/Anular Biblioteca).
 - Pendiente: recorrer el configurador de un presupuesto (pestaña Ficha / Editar), que es
   donde vive la lógica de las 135 tablas sin cobertura documental.
+
+---
+---
+
+# ANEXO C — El configurador (18/07/2026)
+
+Recorrido sobre un presupuesto de prueba (nº 260418), creado y **eliminado** al terminar.
+La lista volvió a 439 registros: no queda rastro.
+
+Esto es lo que faltaba: el modelo de dominio de las 135 tablas que ningún informe cubre.
+
+## C.1 Cabecera del documento
+
+`Nº Presupuesto` · `Revisión` · `Fecha` · `Serie` · `Tarifa` · `Bloqueo Precios`
+
+**Cliente y Potencial son campos distintos y excluyentes** (radio). Un presupuesto puede
+dirigirse a un cliente con ficha o a un cliente potencial. Más: `Nombre`, `Obra`,
+`Nombre Versión`, `R.Interna`, `F.Pago`, `Tipo Rem.`, `Estado` (PENDIENTE…),
+`Documentos Destino`, usuario responsable. Seis pestañas de cabecera (1–6).
+
+Pie: `Subtotal`, `Dto`, `Dto.p.p.`, `Base Imponible`, `Tipo IVA`, `Req.Eq.`, `Retención`,
+`Total`, divisa. Pestañas: Presupuesto · Datos Adicionales · Plazos · Gastos.
+
+**Validaciones observadas:** `Forma de Pago` es obligatoria para grabar. Si se han tocado
+las líneas, el documento exige grabarse antes de cerrar.
+
+## C.2 Una línea es de UNO DE TRES tipos
+
+Corrige el Anexo B, que decía dos:
+
+1. **Estructura** — elemento configurado a partir de una estructura de serie.
+2. **Artículo** — producto de catálogo/tarifa.
+3. **Cerramiento** — conjunto acristalado completo (tablas `VCerramientosLin`, `VCerramientosPI`).
+
+## C.3 El código de estructura es una gramática compositiva
+
+No es un identificador opaco. Describe la composición del hueco:
+
+| Código | Significado |
+|---|---|
+| `1+1` | dos ventanas abatibles de 1 hoja |
+| `1O+2F+1O` | 2 ventanas oscilobatientes + 2 fijos |
+| `2O+2O4FI` | dos ventanas de 2 hojas, una oscilo, con 4 fijos inferiores |
+| `F2PF` | puerta abatible de 2 hojas con 2 fijos laterales |
+| `2P` | puerta balconera abatible de dos hojas |
+
+Dígito = nº de hojas · `O` = oscilobatiente · `F` = fijo · `P` = puerta · `I` = inferior.
+
+`Familia` clasifica el tipo: `003` ventanas · `004` puertas · `010` arcos · `113` mamparas ·
+`103` accesorios de unión.
+
+**Implicación de diseño:** el catálogo de estructuras no es una lista plana, es un lenguaje.
+El sistema nuevo debe modelarlo como composición de vanos, no como códigos sueltos.
+
+## C.4 Anatomía de la línea configurada
+
+Pestañas del editor: **Estructura · Opc.Herraje · Cargos Adic. · Acristalamiento** (+ Mas Datos).
+
+### Estructura
+- **PERFILES** (serie) y **VIDRIO** — los dos selectores de biblioteca. `Serie` es
+  prerrequisito: sin ella, el resto se bloquea ("Indique Serie primero").
+- `Acabado`, `Accesorios`, `Madera` — cada uno con código **y tonalidad**.
+- `Cantidad`, `Metraje`, unidad, `Referencia (Tipo)` = ubicación en obra.
+- **`ANCHO` / `ALTO` en mm**, con conmutador `HUECO` (medida de hueco vs. de carpintería).
+- **Vista previa del dibujo**: la aplicación renderiza el elemento en tiempo real.
+- **HORAS ADICIONALES**: `Fabricación` y `Colocación` → tabla `VConceptosMO`.
+- Complementos: `Compacto`, `Guía Izq./Der.`, `Tapajuntas`, `Registro`, `Premarco`,
+  `Condensación`, `Altura`.
+- Añadidos: `Mosquiteras`, `Ángulos y Tubos`, `Bandejas/Cond.`, `Accesorios`.
+- `Descripción` autogenerada desde el código, con conmutador de **descripción manual**.
+- Precio: `Precio`, `Dto`, `Dto.2`, `Total Línea`, `Tarifa`, y anulaciones manuales
+  (`PVP Manual`, `%Dto. Manual`, `Coste Manual`).
+
+### Opc. Herraje
+Selector de grupo (`Opciones de Marco`…), árbol de **Categoría**, y rejilla de opciones
+seleccionables. → `VOpcionesHerraje`, `ConjuntosOpcionesHerraje`, `ConfigSeriesHerraje`.
+
+### Acristalamiento
+Cinco slots, cada uno con vidrio separado para **Hojas** y para **Fijos**. Hasta cinco
+composiciones distintas por elemento.
+
+## C.5 Cadena de dependencias del cálculo
+
+```
+Serie (perfiles)
+  └─> Estructura (código compositivo) + Familia
+        └─> Medidas (ancho/alto, hueco o carpintería)
+              └─> Acabado + Tonalidad
+                    └─> Opciones de herraje (por categoría)
+                          └─> Acristalamiento (hojas / fijos)
+                                └─> Complementos y accesorios
+                                      └─> Mano de obra (fabricación + colocación)
+                                            └─> Despiece  ->  Coste  ->  PVP por tarifa
+```
+
+Ese es el motor. Reproducirlo es el verdadero proyecto: no es una pantalla, es una cadena
+de cálculo cuyos datos maestros vienen de la biblioteca de series de GAIA.
+
+## C.6 Consecuencia para la estrategia
+
+La exportación de datos (clientes, artículos, tarifas, presupuestos) es **mecánica y ya
+está resuelta**. No es el cuello de botella.
+
+El cuello de botella es C.5: sin la biblioteca de series, el configurador no tiene datos
+maestros con los que calcular. Confirma que la decisión de A.4 bloquea todo lo demás.
+
+**Se puede empezar a construir ya, pero solo esta mitad:**
+
+| Se puede construir ahora | Requiere resolver A.4 primero |
+|---|---|
+| Clientes y clientes potenciales | Configurador de estructuras |
+| Artículos, familias, tarifas | Cálculo de despiece |
+| Proveedores, acabados, tonalidades | Optimización de corte |
+| Presupuestos con líneas de artículo | Líneas de estructura y cerramiento |
+| Documentos: pedidos, albaranes, facturas | Generación de dibujos |
+| Informes comerciales | Escandallo de coste real |
