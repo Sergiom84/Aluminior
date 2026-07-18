@@ -104,6 +104,24 @@ export const vidrioGalceFijo = pgTable('vidrio_galce_fijo', {
 }))
 
 /**
+ * Descuento desde el mÃ³dulo geomÃ©trico hasta el vidrio para una pareja de
+ * lÃ­mites fÃ­sicos. Los lÃ­mites son perfiles reales o marcadores de divisiÃ³n
+ * invisible; perfilHoja es null en fijos y el perfil HV/HH en hojas.
+ * SÃ³lo contiene reglas medidas con >=3 muestras y >=90% de consistencia.
+ */
+export const vidrioDescuentosAlojamiento = pgTable('vidrio_descuentos_alojamiento', {
+  eje: text('eje').notNull(),
+  limite1: text('limite_1').notNull(),
+  limite2: text('limite_2').notNull(),
+  perfilHoja: text('perfil_hoja').notNull().default(''),
+  deltaMm: numeric('delta_mm', { precision: 8, scale: 2 }).notNull(),
+  muestras: integer('muestras').notNull(),
+  totalMuestras: integer('total_muestras').notNull(),
+}, (t) => ({
+  pk: primaryKey({ columns: [t.eje, t.limite1, t.limite2, t.perfilHoja] }),
+}))
+
+/**
  * Ajustes del junquillo de FIJOS, por serie. Distintos de los de hoja
  * (ELEGANTPVC: hoja −28/+16, fijo −50/0). El junquillo sale de TablaFijos.
  */

@@ -1313,3 +1313,50 @@ elegir **cristal sencillo** (`.1`) o **doble cristal** (`.2`); doble sigue como
 valor inicial porque representa el 100% del histórico disponible. La elección
 se usa al resolver los perfiles variantes y se persiste en
 `lineas_acristalamiento.variante` para conservar la trazabilidad.
+
+---
+
+# ANEXO Q — Perfiles que delimitan cada hueco (18/07/2026)
+
+Este anexo corrige y continúa P.2. La cobertura de 5/121 era el resultado de
+agrupar por ranura sin recuperar todas las cotas reales ni modelar el árbol de
+`EstructurasDiseño`.
+
+## Q.1 Modelo comprobado
+
+`EstructurasDiseño` es un árbol: marco (tipo 1), división o travesaño (6),
+hueco resultante (2), hoja (3) y vidrio (5). `ContenidoEn`, `idTrav` y
+`posHueco` permiten reconstruir recursivamente los cuatro límites del hueco.
+Una división invisible se conserva como límite físico (`@INVISIBLE:*`).
+
+Cada perfil se acepta sólo si es inequívoco: marco `MH`/`MV`, travesaño `TM`
+con el mismo `DisIdIt`, y hoja `HH`/`HV` del grupo `HP` y nodo exactos. Si hay
+más de un candidato, la observación se excluye.
+
+## Q.2 Resultado medido
+
+Se contrastaron 270 ranuras (151 de hoja y 119 fijas), 540 dimensiones. La
+firma es eje + pareja de límites exteriores + perfil de hoja (vacío en fijos).
+Con un mínimo de 3 muestras y 90% de consistencia:
+
+| Medición | Resultado |
+|---|---:|
+| Reglas físicas estables | **21** |
+| Dimensiones reproducidas | **421 / 540** |
+| Casos mixtos completos reproducidos | **49 / 121** |
+
+Ejemplo ELEGANTPVC `2OFI`: hojas 175,1/168,5 mm; fijo inferior delimitado por
+marco y travesaño, 68,5/86 mm.
+
+## Q.3 Implementación y guarda
+
+- `estructura_diseno_nodos` persiste el árbol geométrico limpio.
+- `estructura_componentes` conserva `DisIdIt`, `DisTipoHoja` y `DisIdHoja`.
+- `vidrio_descuentos_alojamiento` guarda sólo reglas medidas y sus muestras.
+- El ETL vuelve a medir desde los CSV; no contiene descuentos manuales.
+- El núcleo resuelve marco, travesaño, división invisible y hoja exacta con
+  pruebas automatizadas.
+
+La migración 0011 está aplicada. La recarga destructiva del ETL queda pendiente
+de autorización explícita. La valoración web mixta permanece cerrada hasta que
+esas filas estén cargadas; los 72 casos no cubiertos continúan sin valorar.

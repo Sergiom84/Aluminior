@@ -25,8 +25,8 @@ Lee estos tres documentos del repositorio, en este orden:
 
 1. **`ENTREGA.md`** — estado completo: qué se ha hecho, qué se ha descubierto,
    qué falta, y todas las rutas. Es el documento principal.
-2. **`PLAN.md`** — el análisis con sus anexos A a I. Los anexos **F, G, H e I**
-   son los importantes: contienen el motor de despiece y el problema abierto.
+2. **`PLAN.md`** — el análisis completo con sus anexos A a Q; los últimos
+   contienen las correcciones y el estado vigente del acristalamiento mixto.
 3. **`ARQUITECTURA.md`** — decisiones técnicas y su razonamiento, incluidas las
    que se revirtieron.
 
@@ -90,11 +90,11 @@ reales con un 96,5% de coincidencia frente al oráculo histórico. Los asociados
 (herrajes y escuadras), la mano de obra, las correderas y las estructuras mixtas
 (hoja + fijo) siguen sin valoración y deben seguir mostrando el aviso honesto.
 
-El acristalamiento de **estructuras mixtas** ya se midió con
-`scripts/analizar-mixtas.mjs`: sólo 5 de 121 casos se reproducen con reglas
-estables, así que continúa expresamente *sin valorar*. El siguiente avance en
-esa vía requiere identificar los perfiles que delimitan cada hueco (marco,
-travesaño u hoja) y volver a medir contra el oráculo antes de activar precio.
+El acristalamiento de **estructuras mixtas** ya modela los perfiles que
+delimitan cada hueco: marco, travesaño exacto, hoja exacta y división invisible.
+`scripts/analizar-mixtas.mjs` obtiene 21 reglas físicas estables y reproduce
+49 de 121 casos completos. La valoración sigue cerrada hasta cargar esas reglas
+y sólo podrá activarse cuando ambas dimensiones del hueco estén cubiertas.
 La variante de cristal sencillo/doble ya es una elección persistida.
 
 ## Cómo quiero que trabajes
@@ -157,3 +157,13 @@ preferible a construir sobre una comprensión parcial.
 - No subas datos de clientes a ningún sitio
 
 Empieza leyendo `ENTREGA.md` y dime cómo lo enfocas antes de escribir código.
+
+## Actualización posterior — anexo Q
+
+La medición de 5/121 citada arriba ha sido corregida y queda sustituida por el
+anexo Q de `PLAN.md`. Ya se modelan los límites físicos de cada hueco mediante
+el árbol de `EstructurasDiseño`: marco, travesaño exacto, hoja exacta y división
+invisible. El contraste obtiene 21 reglas estables, reproduce 421/540
+dimensiones y 49/121 casos mixtos completos. La migración 0011 está aplicada;
+falta autorizar la recarga destructiva del ETL y conectar después sólo los
+casos completamente cubiertos. Los demás deben continuar sin valorar.

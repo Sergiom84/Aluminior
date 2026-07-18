@@ -519,7 +519,7 @@ Fastify → Express → Next.js. La última por alinearse con F-Gestor-IA.
 
 ```
 Aluminior/
-├─ PLAN.md              análisis completo, anexos A a I
+├─ PLAN.md              análisis completo, anexos A a Q
 ├─ ARQUITECTURA.md      decisiones y su razonamiento
 ├─ ENTREGA.md           este documento
 ├─ README.md
@@ -730,8 +730,10 @@ Lo que queda de la valoración:
 2. **Acristalamiento**: el vidrio se elige y se valora tanto en HOJAS
    (anexo L) como en FIJOS (anexo N), con junquillos y juntas por grosor de
    las tablas de la serie y longitudes medidas del histórico (anexo M).
-   Pendiente: estructuras mixtas hoja+fijo, correderas, variante `.1`/`.2`
-   derivada del vidrio, slots múltiples. **Mano de obra**: sin modelar.
+   Mixtas hoja+fijo: **modelo geométrico HECHO** (anexo Q: 21 reglas estables,
+   49/121 casos completos); pendiente recargar el ETL con autorización y
+   conectar la valoración web segura. Correderas y slots con vidrios distintos
+   siguen pendientes. **Mano de obra**: sin modelar.
 3. **Variante de acristalamiento** (`.1`/`.2`): **HECHO**. El configurador
    permite elegir cristal sencillo o doble, usa la variante al resolver los
    perfiles y la persiste. Doble queda como valor inicial porque es el 100%

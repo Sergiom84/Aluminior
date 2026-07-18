@@ -186,6 +186,9 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
         medidaMinima: schema.estructuraComponentes.medidaMinima,
         medidaMaxima: schema.estructuraComponentes.medidaMaxima,
         componenteDisenyo: schema.estructuraComponentes.componenteDisenyo,
+        idItemDisenyo: schema.estructuraComponentes.idItemDisenyo,
+        grupoDisenyo: schema.estructuraComponentes.grupoDisenyo,
+        tipoHojaDisenyo: schema.estructuraComponentes.tipoHojaDisenyo,
       }).from(schema.estructuraComponentes)
         .where(eq(schema.estructuraComponentes.estructuraCodigo, d.codigo))
 

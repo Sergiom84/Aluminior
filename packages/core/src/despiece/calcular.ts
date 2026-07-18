@@ -25,6 +25,9 @@ export interface ComponentePlantilla {
   /** Rango de medidas en que aplica; fuera de él, el componente no entra. */
   medidaMinima?: string | number | null
   medidaMaxima?: string | number | null
+  /** Nodo de diseÃ±o (DisIdIt), necesario para emparejar perfiles y vidrios. */
+  idItemDisenyo?: number | null
+  grupoDisenyo?: string | null
 }
 
 /** Pieza resultante, ya con su medida de corte. */
@@ -38,6 +41,8 @@ export interface PiezaCortada {
   anguloIzquierdo: number | null
   anguloDerecho: number | null
   funcion: string | null
+  idItemDisenyo?: number | null
+  grupoDisenyo?: string | null
   /** Motivo por el que no se pudo calcular, si aplica. */
   incidencia: string | null
 }
@@ -125,6 +130,8 @@ export function calcularDespiece(
       anguloIzquierdo: aNumero(c.anguloIzquierdo),
       anguloDerecho: aNumero(c.anguloDerecho),
       funcion: c.funcion,
+      idItemDisenyo: c.idItemDisenyo ?? null,
+      grupoDisenyo: c.grupoDisenyo ?? null,
       incidencia,
     })
 

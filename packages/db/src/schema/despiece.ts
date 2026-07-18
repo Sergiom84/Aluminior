@@ -13,7 +13,7 @@
  */
 
 import {
-  pgTable, text, integer, numeric, uuid, index,
+  pgTable, text, integer, numeric, uuid, index, boolean, primaryKey,
 } from 'drizzle-orm/pg-core'
 import { estructuras } from './catalogo.ts'
 
@@ -62,6 +62,26 @@ export const estructuraCotas = pgTable('estructura_cotas', {
  * Los símbolos dibujan literalmente el corte. Correlacionan con los ángulos.
  */
 export const TIPOS_CORTE = ['!!', '/\\', '!\\', '\\!'] as const
+
+/**
+ * Ãrbol geomÃ©trico de cada estructura (EstructurasDiseÃ±o): marco, huecos,
+ * hojas, vidrios y travesaÃ±os. Permite reconstruir quÃ© perfiles delimitan
+ * cada ranura de vidrio sin inferirlo del cÃ³digo de estructura.
+ */
+export const estructuraDisenoNodos = pgTable('estructura_diseno_nodos', {
+  estructuraCodigo: text('estructura_codigo').notNull()
+    .references(() => estructuras.codigo, { onDelete: 'cascade' }),
+  idItem: integer('id_item').notNull(),
+  tipo: integer('tipo').notNull(),
+  contenidoEn: integer('contenido_en'),
+  idTravesano: integer('id_travesano'),
+  posicionHueco: integer('posicion_hueco'),
+  tipoTravesano: text('tipo_travesano'),
+  invisible: boolean('invisible').notNull().default(false),
+}, (t) => ({
+  pk: primaryKey({ columns: [t.estructuraCodigo, t.idItem] }),
+  estructuraIdx: index('nodos_diseno_estructura_idx').on(t.estructuraCodigo),
+}))
 
 /**
  * Función de la pieza dentro del conjunto. Vocabulario observado en los datos:
@@ -115,6 +135,10 @@ export const estructuraComponentes = pgTable('estructura_componentes', {
   /** Agrupación de diseño heredada, útil para ordenar la presentación. */
   grupoDisenyo: text('grupo_disenyo'),
   componenteDisenyo: text('componente_disenyo'),
+  /** Nodo de EstructurasDiseÃ±o al que pertenece la pieza (DisIdIt). */
+  idItemDisenyo: integer('id_item_disenyo'),
+  tipoHojaDisenyo: integer('tipo_hoja_disenyo'),
+  idHojaDisenyo: integer('id_hoja_disenyo'),
 }, (t) => ({
   estructuraIdx: index('componentes_estructura_idx').on(t.estructuraCodigo),
   articuloIdx: index('componentes_articulo_idx').on(t.articuloCodigo),

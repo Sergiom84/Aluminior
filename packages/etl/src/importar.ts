@@ -13,6 +13,7 @@
 import { readFileSync } from 'node:fs'
 import postgres from 'postgres'
 import { rutaTabla, leerLotes, txt, num, ent, bool, fecha, type Fila } from './csv.ts'
+import { medirDescuentosAlojamiento } from './medir-mixtas.ts'
 
 // --- Entorno ---
 for (const linea of readFileSync(new URL('../../../.env', import.meta.url), 'utf8').split('\n')) {
@@ -108,8 +109,9 @@ async function vaciarDestino() {
     'lineas_despiece', 'lineas_acristalamiento', 'lineas_opciones_herraje',
     'lineas_estructura', 'lineas', 'presupuestos', 'obras',
     'clientes_potenciales', 'clientes', 'proveedores',
-    'estructura_componentes', 'estructura_cotas',
-    'vidrio_galce', 'vidrio_galce_fijo', 'junquillo_ajustes', 'junquillo_ajustes_fijo', 'tacris_filas',
+    'estructura_componentes', 'estructura_cotas', 'estructura_diseno_nodos',
+    'vidrio_descuentos_alojamiento', 'vidrio_galce', 'vidrio_galce_fijo',
+    'junquillo_ajustes', 'junquillo_ajustes_fijo', 'tacris_filas',
     'conjunto_resoluciones', 'conjunto_delegaciones', 'conjuntos', 'series',
     'articulos_coste', 'articulos_pvp', 'articulos', 'estructuras',
     'subfamilias', 'tonalidades', 'acabados', 'familias',
@@ -269,6 +271,25 @@ resultados.push(await cargar('EstructurasDiseño', 'estructura_cotas', (f, r) =>
   }
 }))
 
+/** Ãrbol geomÃ©trico: marco, divisiones, huecos, hojas y vidrios. */
+resultados.push(await cargar('EstructurasDiseño', 'estructura_diseno_nodos', (f, r) => {
+  if (txt(f.TipoDoc)) { excluir(r, 'instancia de documento, no plantilla'); return null }
+  const estructura = txt(f.Estructura)
+  const idItem = ent(f.Id)
+  const tipo = ent(f.Tipo)
+  if (!estructura || idItem === null || tipo === null) { descartar(r, 'clave incompleta'); return null }
+  return {
+    estructura_codigo: estructura,
+    id_item: idItem,
+    tipo,
+    contenido_en: ent(f.ContenidoEn),
+    id_travesano: ent(f.idTrav),
+    posicion_hueco: ent(f.posHueco),
+    tipo_travesano: txt(f.TipoTrav),
+    invisible: bool(f.bInvisible),
+  }
+}))
+
 /**
  * Plantillas de despiece.
  *
@@ -305,6 +326,9 @@ resultados.push(await cargar('EstructurasArticulos', 'estructura_componentes', (
     medida_maxima: num(f.MedidaMax),
     grupo_disenyo: txt(f.DisGrupo),
     componente_disenyo: txt(f.DisComponente),
+    id_item_disenyo: ent(f.DisIdIt),
+    tipo_hoja_disenyo: ent(f.DisTipoHoja),
+    id_hoja_disenyo: ent(f.DisIdHoja),
   }
 }))
 
@@ -415,6 +439,26 @@ resultados.push(await cargar('ConjuntosLin', 'conjunto_resoluciones', (f, r) => 
     articulo_codigo: articulo,
   }
 }))
+
+{
+  const medida = await medirDescuentosAlojamiento(ORIGEN)
+  const r: Resultado = {
+    tabla: 'vidrio_descuentos_alojamiento',
+    leidas: medida.reglas.length,
+    insertadas: 0,
+    descartadas: 0,
+    excluidas: 0,
+    motivos: new Map([
+      [`mediciÃ³n: ${medida.observacionesCubiertas}/${medida.observaciones} dimensiones; ` +
+        `${medida.casosExactos}/${medida.casos} casos mixtos completos`, 1],
+    ]),
+  }
+  if (medida.reglas.length) {
+    await sql`INSERT INTO vidrio_descuentos_alojamiento ${sql(medida.reglas)} ON CONFLICT DO NOTHING`
+    r.insertadas = medida.reglas.length
+  }
+  resultados.push(r)
+}
 
 /**
  * Costes por artículo, proveedor y acabado.
