@@ -30,12 +30,26 @@ interface Resultado {
   leidas: number
   insertadas: number
   descartadas: number
+  excluidas: number
   motivos: Map<string, number>
 }
 
+/**
+ * Descarte: la fila DEBERÍA haber entrado y no pudo. Es un problema.
+ */
 function descartar(r: Resultado, motivo: string) {
   r.descartadas++
-  r.motivos.set(motivo, (r.motivos.get(motivo) ?? 0) + 1)
+  r.motivos.set(`descartada: ${motivo}`, (r.motivos.get(`descartada: ${motivo}`) ?? 0) + 1)
+}
+
+/**
+ * Exclusión: la fila NO pertenece a esta tabla y se filtra a propósito.
+ * No es un error y no debe hacer fallar la carga. La distinción importa:
+ * si todo se cuenta igual, un descarte real se esconde entre el ruido.
+ */
+function excluir(r: Resultado, motivo: string) {
+  r.excluidas++
+  r.motivos.set(`excluida: ${motivo}`, (r.motivos.get(`excluida: ${motivo}`) ?? 0) + 1)
 }
 
 /**
@@ -48,7 +62,8 @@ async function cargar(
   mapear: (f: Fila, r: Resultado) => Record<string, unknown> | null,
 ): Promise<Resultado> {
   const r: Resultado = {
-    tabla: tablaDestino, leidas: 0, insertadas: 0, descartadas: 0, motivos: new Map(),
+    tabla: tablaDestino, leidas: 0, insertadas: 0, descartadas: 0, excluidas: 0,
+    motivos: new Map(),
   }
 
   const ruta = rutaTabla(ORIGEN!, tablaOrigen)
@@ -93,6 +108,7 @@ async function vaciarDestino() {
     'lineas_despiece', 'lineas_acristalamiento', 'lineas_opciones_herraje',
     'lineas_estructura', 'lineas', 'presupuestos', 'obras',
     'clientes_potenciales', 'clientes', 'proveedores',
+    'estructura_componentes',
     'articulos_coste', 'articulos_pvp', 'articulos', 'estructuras',
     'subfamilias', 'tonalidades', 'acabados', 'familias',
   ]
@@ -228,6 +244,43 @@ resultados.push(await cargar('Estructuras', 'estructuras', (f, r) => {
   }
 }))
 
+/**
+ * Plantillas de despiece.
+ *
+ * `EstructurasArticulos` mezcla plantillas de catálogo (sin documento) con
+ * despieces ya calculados de documentos reales. Aquí sólo se cargan las
+ * plantillas: las instancias son el oráculo de validación y van aparte.
+ */
+resultados.push(await cargar('EstructurasArticulos', 'estructura_componentes', (f, r) => {
+  // Filtrado deliberado: si tiene documento, es una instancia, no una plantilla.
+  if (txt(f.TipoDoc)) { excluir(r, 'instancia de documento, no plantilla'); return null }
+
+  const estructura = txt(f.Estructura)
+  const articulo = txt(f.Articulo)
+  if (!estructura) { descartar(r, 'sin estructura'); return null }
+  if (!articulo) { descartar(r, 'sin artículo'); return null }
+
+  return {
+    estructura_codigo: estructura,
+    linea_origen: ent(f.nLin),
+    articulo_codigo: articulo,
+    cantidad: num(f.Cantidad),
+    cantidad_corte: num(f.CantidadCorte),
+    formula_largo: txt(f.FormulaLargo),
+    formula_largo_corte: txt(f.FormulaLargoCorte),
+    formula_ref_largo: txt(f.DisFRefLargo),
+    tipo_corte: txt(f.TipoCorte),
+    angulo_izquierdo: num(f.AnguloI),
+    angulo_derecho: num(f.AnguloD),
+    posicion_trabajo: txt(f.PosicionTrabajo),
+    funcion: txt(f.Funcion),
+    medida_minima: num(f.MedidaMin),
+    medida_maxima: num(f.MedidaMax),
+    grupo_disenyo: txt(f.DisGrupo),
+    componente_disenyo: txt(f.DisComponente),
+  }
+}))
+
 resultados.push(await cargar('ArticulosPVP', 'articulos_pvp', (f, r) => {
   const articulo = txt(f.Articulo)
   const acabado = txt(f.Acabado)
@@ -243,24 +296,31 @@ await sql.end()
 // --- Informe ---
 
 console.log('\n=== Importación ===\n')
-let totalLeidas = 0
 let totalInsertadas = 0
+let totalDescartadas = 0
 
 for (const r of resultados) {
-  const pct = r.leidas ? Math.round((100 * r.insertadas) / r.leidas) : 0
-  const marca = r.leidas === 0 ? '·' : r.insertadas === r.leidas ? 'ok' : '!'
+  // El objetivo real son las filas aplicables: leídas menos las excluidas aposta.
+  const aplicables = r.leidas - r.excluidas
+  const pct = aplicables ? Math.round((100 * r.insertadas) / aplicables) : 0
+  const marca = r.leidas === 0 ? '·' : r.descartadas === 0 ? 'ok' : '!'
+
   console.log(
-    `${marca} ${r.tabla.padEnd(18)} ${String(r.insertadas).padStart(7)} / ${String(r.leidas).padStart(7)}  (${pct}%)`,
+    `${marca} ${r.tabla.padEnd(24)} ${String(r.insertadas).padStart(7)} / ${String(aplicables).padStart(7)}  (${pct}%)`,
   )
   for (const [motivo, n] of r.motivos) {
-    console.log(`     ${n} × ${motivo}`)
+    console.log(`     ${String(n).padStart(7)} × ${motivo}`)
   }
-  totalLeidas += r.leidas
+
   totalInsertadas += r.insertadas
+  totalDescartadas += r.descartadas
 }
 
-console.log(`\n  Total: ${totalInsertadas} / ${totalLeidas} filas`)
-if (totalInsertadas !== totalLeidas) {
-  console.log('  Hay descartes. Revisa los motivos antes de dar la carga por buena.')
+console.log(`\n  Insertadas: ${totalInsertadas.toLocaleString('es-ES')} filas`)
+
+if (totalDescartadas > 0) {
+  console.log(`  ${totalDescartadas} filas descartadas que deberían haber entrado. Revísalo.`)
   process.exitCode = 1
+} else {
+  console.log('  Sin descartes: todas las filas aplicables se cargaron.')
 }

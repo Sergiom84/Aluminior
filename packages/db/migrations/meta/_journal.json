@@ -22,6 +22,13 @@
       "when": 1784392056314,
       "tag": "0002_proveedores_obras",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1784395861942,
+      "tag": "0003_despiece",
+      "breakpoints": true
     }
   ]
 }

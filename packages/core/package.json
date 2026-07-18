@@ -1,0 +1,17 @@
+{
+  "name": "@aluminior/core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./estructuras": "./src/estructuras/index.ts",
+    "./despiece": "./src/despiece/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}
