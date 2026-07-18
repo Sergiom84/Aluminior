@@ -1,0 +1,27 @@
+{
+  "name": "aluminior",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Sistema de gestion para carpinteria de aluminio y PVC",
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "db:generate": "npm run -w @aluminior/db generate",
+    "db:migrate": "npm run -w @aluminior/db migrate",
+    "etl": "npm run -w @aluminior/etl import",
+    "dev:api": "npm run -w @aluminior/api dev",
+    "dev:web": "npm run -w @aluminior/web dev",
+    "test": "npm run -ws --if-present test",
+    "typecheck": "npm run -ws --if-present typecheck"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "tsx": "^4.19.2",
+    "vitest": "^2.1.5"
+  }
+}

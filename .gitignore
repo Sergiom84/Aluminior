@@ -6,13 +6,21 @@
 datos_reales/
 export_datos/
 
-# --- Material pesado de la investigacion ---
-investigacion_productor_aluminio/kit_tecnico/Archivos de Instalacion/
-investigacion_productor_aluminio/kit_tecnico/ManualUsr/
+# --- Investigacion original: NADA de esta carpeta se versiona ---
+# Contiene 818 MB de binarios de GAIA, configuraciones con credenciales y
+# material propietario. Lo util (esquema, mapa de informes) ya vive en esquema/.
+investigacion_productor_aluminio/
+
 *.bmp
 *.zip
 *.msi
 *.cab
+*.chm
+*.rpt
+
+# --- Configuraciones con posibles credenciales o correos ---
+log4net.config
+*.config.orig
 
 # --- Binarios de terceros (GAIA) ---
 *.exe

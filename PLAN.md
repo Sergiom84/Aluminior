@@ -458,3 +458,63 @@ maestros con los que calcular. Confirma que la decisión de A.4 bloquea todo lo 
 | Presupuestos con líneas de artículo | Líneas de estructura y cerramiento |
 | Documentos: pedidos, albaranes, facturas | Generación de dibujos |
 | Informes comerciales | Escandallo de coste real |
+
+---
+---
+
+# ANEXO D — CORRECCIÓN IMPORTANTE (18/07/2026)
+
+**Los anexos A.4 y C.6 estaban equivocados. El configurador NO está bloqueado.**
+
+Al exportar EMP0016 y mirar dentro de las tablas, resulta que el motor de despiece
+está en la base de datos del cliente:
+
+| Contenido | Cantidad |
+|---|---|
+| `EstructurasDiseño` — definición geométrica (81 columnas) | **394 estructuras** |
+| `EstructurasArticulos` — despiece y lista de materiales (132 columnas) | **520 despieces** |
+| Líneas con ángulos de corte (`AnguloI`, `AnguloD`) | **23.197** |
+| Series con cotas y herraje configurados | **57 series** |
+
+`EstructurasDiseño` contiene: travesaños, cotas, hojas, huecos, tipos de corte, curvas
+con radio, perfiles adicionales, altura de manilla, barrotillos, lamas, correderas.
+
+`EstructurasArticulos` contiene: cantidades, posición de trabajo, cantidad y largo de
+corte, ángulos izquierdo y derecho, dirección de veta, rangos mín/máx por medida,
+y la lógica condicional de opciones (`OPC*`).
+
+## Dónde estaba el error
+
+Confundí **lo que GAIA suministra en el futuro** (series nuevas, actualizaciones de
+tarifas de fabricante) con **lo que el cliente ya posee** (la definición completa de las
+57 series que usa). Lo primero es una cuestión de suministro continuo. Lo segundo es lo
+que hace falta para construir, y ya está en su poder y exportado.
+
+## Lo que sigue siendo trabajo real
+
+No los datos: la **lógica de interpretación**. Cómo esas 81 + 132 columnas se convierten
+en lista de corte y precio. Eso es ingeniería inversa.
+
+**Pero es ingeniería inversa verificable.** Hay 468.838 líneas de presupuesto históricas
+con sus despieces y precios ya calculados. Es un banco de pruebas: si el motor nuevo no
+reproduce el mismo despiece y el mismo precio, está mal. Eso convierte el problema de
+"adivinar" en "iterar contra un oráculo".
+
+**Estrategia de construcción del motor:** test-driven contra el histórico. Se extrae un
+conjunto de casos (estructura + medidas + opciones → despiece + precio esperados) y se
+construye el motor hasta que pase el mayor porcentaje posible.
+
+## Sobre la mochila (dongle HASP/UniKey)
+
+Descartada. Es el dispositivo de licencia: valida que hay derecho de ejecución, no
+contiene datos de negocio. Además, extraer sus claves o rodear la comprobación sería
+elusión de medidas de protección — exactamente el riesgo legal que este plan evita.
+No es necesaria: todo lo que hace falta está en los datos del cliente.
+
+## Plan revisado: ya no hay dos mitades
+
+1. Esquema PostgreSQL + ETL de las 204 tablas con datos
+2. Catálogo: artículos, familias, acabados, tonalidades, tarifas, series
+3. Comercial: clientes, potenciales, obras, presupuestos, documentos
+4. Motor de despiece, validado contra las 468.838 líneas históricas
+5. Facturación legal, al final y aislada
