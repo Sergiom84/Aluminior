@@ -1188,3 +1188,57 @@ GM4091 2×1600 + 2×615, línea 447,84 -> 507,64 €.
 scripts/analizar-junquillos.mjs   mecanismo y claves de grosor
 scripts/validar-junquillos.mjs    R1 76%/95%, R3 constantes por serie
 ```
+
+---
+---
+
+# ANEXO N — Vidrio de FIJOS (18/07/2026)
+
+**Tercera pieza del acristalamiento. Implementada. Cierra hojas + fijos.**
+
+## Medición (200 líneas reales de solo-fijo)
+
+- **Galce del fijo**: vidrio = corte del CERCO (MV/MH) − delta, con el MISMO
+  delta en ambas dimensiones, **constante al 100%** por (serie, perfil de
+  cerco): GMA350·GM300 = 64,4 (n=92), ELEGANTPVC·GM8781M = 86 (n=58),
+  GMA60RL·GM8855L = 68, GMA65OPT·GM16068L = 64, GMA75C16·GM16332H = 76.
+- **Junquillo del fijo**: sale de `TablaFijos` con la misma regla de grosor
+  (menor Grosor >= TamJunqGoma). El esperado estaba presente en **200 de
+  200** líneas. Sus ajustes de longitud son PROPIOS, distintos de los de
+  hoja: ELEGANTPVC fijo −50/0 (hoja −28/+16) — eran los modos secundarios
+  del 7% que se veían en el anexo M. GMA350 fijo −28/+12 (igual que hoja).
+- **Juntas**: dimensiones del módulo, como siempre.
+
+En la medición de ajustes se omiten vidrios casi cuadrados
+(|largo−ancho| < 60 mm): la asignación corte→dimensión sería ambigua.
+
+## Implementación
+
+- Tablas `vidrio_galce_fijo` (5 filas) y `junquillo_ajustes_fijo` (5), que
+  el ETL mide del histórico con los umbrales de siempre (≥3, ≥90%).
+- La línea detecta el contexto: con hojas (HV) → vidrio de hoja; sin hojas →
+  vidrio de FIJO contra el cerco. La tabla de acristalamiento y los ajustes
+  cambian con el contexto (TablaHojas/TablaFijos).
+- **Guarda anti-mezcla**: si el nº de cristales no cuadra con el nº de hojas
+  (estructuras mixtas hoja+fijo), el vidrio queda "sin calcular" — NO se
+  extrapola el vidrio de hoja a los huecos fijos.
+
+Verificado en vivo (estructura 02V + GMA350, 1600×1230):
+- V420AGS4 (galce 28): vidrio 1535,6×1165,6 ✔ y aviso honesto de junquillos
+  "sin tabla aplicable" — el galce 28 no cabe en la tabla GM02 del fijo.
+- V484 (galce 16): vidrio ídem, junquillo GM8207 2×1507,6 + 2×1177,6
+  (−28/+12), juntas GM4057/GM4089 (fila 17,5) a 1600/615. Línea 300,57 €.
+
+## Pendiente del acristalamiento
+
+- Estructuras MIXTAS hoja+fijo (requiere emparejar cada ranura de cristal
+  con su hueco: DisVidrio/DisIdHoja de la plantilla).
+- Correderas (felpudos/zócalos, sin junquillos por tabla).
+- Variante `.1`/`.2` derivada del vidrio; slots múltiples.
+
+## Scripts
+
+```
+scripts/analizar-fijos.mjs   anatomía de líneas de solo-fijo
+scripts/medir-fijos.mjs      deltas 100%, junquillo esperado 200/200
+```

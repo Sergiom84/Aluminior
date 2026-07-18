@@ -109,7 +109,7 @@ async function vaciarDestino() {
     'lineas_estructura', 'lineas', 'presupuestos', 'obras',
     'clientes_potenciales', 'clientes', 'proveedores',
     'estructura_componentes', 'estructura_cotas',
-    'vidrio_galce', 'junquillo_ajustes', 'tacris_filas',
+    'vidrio_galce', 'vidrio_galce_fijo', 'junquillo_ajustes', 'junquillo_ajustes_fijo', 'tacris_filas',
     'conjunto_resoluciones', 'conjunto_delegaciones', 'conjuntos', 'series',
     'articulos_coste', 'articulos_pvp', 'articulos', 'estructuras',
     'subfamilias', 'tonalidades', 'acabados', 'familias',
@@ -477,9 +477,11 @@ resultados.push(await cargar('ConjuntosLin', 'conjunto_resoluciones', (f, r) => 
     // TablaHojas por conjunto y filas de acristalamiento, para saber qué
     // junquillo esperar en cada línea (anexo M).
     const tablaHojasPorConjunto = new Map<string, string>()
+    const tablaFijosPorConjunto = new Map<string, string>()
     for await (const lote of leerLotes(rutaTabla(ORIGEN, 'Conjuntos')!, 1000)) {
       for (const f of lote) {
         tablaHojasPorConjunto.set((f.Codigo ?? '').trim(), (f.TablaHojas ?? '').trim())
+        tablaFijosPorConjunto.set((f.Codigo ?? '').trim(), (f.TablaFijos ?? '').trim())
       }
     }
     const filasTacris = new Map<string, { grosor: number; junq: string }[]>()
@@ -494,13 +496,17 @@ resultados.push(await cargar('ConjuntosLin', 'conjunto_resoluciones', (f, r) => 
       }
     }
     for (const lista of filasTacris.values()) lista.sort((a, b) => a.grosor - b.grosor)
-    const junquilloEsperado = (serie: string, tamJunq: number): string | null => {
-      const lista = filasTacris.get(tablaHojasPorConjunto.get(serie) ?? '') ?? []
+    const junquilloDeTabla = (tabla: string | undefined, tamJunq: number): string | null => {
+      const lista = filasTacris.get(tabla ?? '') ?? []
       for (const f of lista) {
         if (f.grosor >= tamJunq - 1e-9) return f.junq && f.junq !== '0' ? f.junq : null
       }
       return null
     }
+    const junquilloEsperado = (serie: string, tamJunq: number): string | null =>
+      junquilloDeTabla(tablaHojasPorConjunto.get(serie), tamJunq)
+    const junquilloEsperadoFijo = (serie: string, tamJunq: number): string | null =>
+      junquilloDeTabla(tablaFijosPorConjunto.get(serie), tamJunq)
     // Serie por línea de documento
     const seriePorLinea = new Map<string, string>()
     for await (const lote of leerLotes(rutaDatos, 1000)) {
@@ -511,6 +517,7 @@ resultados.push(await cargar('ConjuntosLin', 'conjunto_resoluciones', (f, r) => 
     // Agrupar hijas por línea padre
     interface Hoja {
       hv: Set<number>; hh: Set<number>; artHV: Set<string>
+      mv: Set<number>; mh: Set<number>; artMV: Set<string>
       vidrios: { l: number; a: number; art: string }[]
       cortes: Map<string, number[]>
     }
@@ -526,7 +533,7 @@ resultados.push(await cargar('ConjuntosLin', 'conjunto_resoluciones', (f, r) => 
         const nEstr = (f.nEstr ?? '').trim()
         if (!nEstr || nEstr === '0') continue
         let g = grupos.get(nEstr)
-        if (!g) grupos.set(nEstr, (g = { hv: new Set(), hh: new Set(), artHV: new Set(), vidrios: [], cortes: new Map() }))
+        if (!g) grupos.set(nEstr, (g = { hv: new Set(), hh: new Set(), artHV: new Set(), mv: new Set(), mh: new Set(), artMV: new Set(), vidrios: [], cortes: new Map() }))
         const fn = (f.Funcion ?? '').trim()
         const art = (f.Articulo ?? '').trim()
         if (fn === 'HV') {
@@ -534,6 +541,16 @@ resultados.push(await cargar('ConjuntosLin', 'conjunto_resoluciones', (f, r) => 
           if (art && art !== '0') g.artHV.add(art)
         } else if (fn === 'HH') {
           g.hh.add(aNum(f.LargoCorte))
+        } else if (fn === 'MV') {
+          g.mv.add(aNum(f.LargoCorte))
+          if (art && art !== '0') g.artMV.add(art)
+          if (art && art !== '0') {
+            const lista = g.cortes.get(art) ?? []
+            lista.push(aNum(f.LargoCorte))
+            g.cortes.set(art, lista)
+          }
+        } else if (fn === 'MH') {
+          g.mh.add(aNum(f.LargoCorte))
         } else {
           const info = famArt.get(art)
           if (info?.familia === '050' && info.m2) {
@@ -639,6 +656,102 @@ resultados.push(await cargar('ConjuntosLin', 'conjunto_resoluciones', (f, r) => 
       rj.insertadas = filasAjuste.length
     }
     resultados.push(rj)
+
+    // --- FIJOS (anexo N): mismo método sobre líneas SIN hojas ---
+    // El vidrio del fijo se descuenta del corte del CERCO, con el mismo delta
+    // en ambas dimensiones; el junquillo sale de TablaFijos con sus propios
+    // ajustes. Para los ajustes se omiten vidrios casi cuadrados
+    // (|largo−ancho| < 60 mm): la asignación de cada corte a una dimensión
+    // sería ambigua y contaminaría la moda.
+    const rgf: Resultado = {
+      tabla: 'vidrio_galce_fijo', leidas: 0, insertadas: 0, descartadas: 0,
+      excluidas: 0, motivos: new Map(),
+    }
+    const rjf: Resultado = {
+      tabla: 'junquillo_ajustes_fijo', leidas: 0, insertadas: 0, descartadas: 0,
+      excluidas: 0, motivos: new Map(),
+    }
+    const deltasFijo = new Map<string, Map<number, number>>()
+    const ajustesFijo = new Map<string, { largo: Map<number, number>; ancho: Map<number, number> }>()
+    for (const [nLinea, serie] of padres) {
+      const g = grupos.get(nLinea)
+      if (!g || g.hv.size > 0) continue // tiene hojas: no es un fijo puro
+      if (g.mv.size !== 1 || g.mh.size !== 1 || g.artMV.size !== 1) continue
+      if (!g.vidrios.length) continue
+      const medidas = new Set(g.vidrios.map((v) => `${v.l}|${v.a}`))
+      if (medidas.size !== 1) continue
+      const v = g.vidrios[0]
+      if (v.l <= 0 || v.a <= 0) continue
+
+      const dL = [...g.mv][0] - v.l
+      const dA = [...g.mh][0] - v.a
+      if (Math.abs(dL - dA) < 0.51 && dL >= 0 && dL < 200) {
+        const clave = `${serie}|${[...g.artMV][0]}`
+        const delta = Math.round(dL * 10) / 10
+        let m = deltasFijo.get(clave)
+        if (!m) deltasFijo.set(clave, (m = new Map()))
+        m.set(delta, (m.get(delta) ?? 0) + 1)
+        rgf.leidas++
+      }
+
+      const tamJunq = famArt.get(v.art)?.tamJunq ?? 0
+      if (!tamJunq || Math.abs(v.l - v.a) < 60) continue
+      const junq = junquilloEsperadoFijo(serie, tamJunq)
+      if (!junq) continue
+      let acc = ajustesFijo.get(serie)
+      if (!acc) ajustesFijo.set(serie, (acc = { largo: new Map(), ancho: new Map() }))
+      for (const corte of g.cortes.get(junq) ?? []) {
+        const jL = Math.round((corte - v.l) * 10) / 10
+        const jA = Math.round((corte - v.a) * 10) / 10
+        if (Math.abs(jL) > 100 && Math.abs(jA) > 100) continue
+        const esL = Math.abs(jL) <= Math.abs(jA)
+        const mapa = esL ? acc.largo : acc.ancho
+        mapa.set(esL ? jL : jA, (mapa.get(esL ? jL : jA) ?? 0) + 1)
+      }
+    }
+    const filasGalceFijo: Record<string, unknown>[] = []
+    for (const [clave, conteo] of deltasFijo) {
+      const total = [...conteo.values()].reduce((a, b) => a + b, 0)
+      const [delta, n] = [...conteo.entries()].sort((a, b) => b[1] - a[1])[0]
+      if (total < 3 || n / total < 0.9) {
+        excluir(rgf, 'muestras insuficientes o inconsistentes: no se emite')
+        continue
+      }
+      const [serie, perfil] = clave.split('|')
+      filasGalceFijo.push({ serie_codigo: serie, perfil_codigo: perfil, delta_mm: delta, muestras: n })
+    }
+    if (filasGalceFijo.length) {
+      await sql`INSERT INTO vidrio_galce_fijo ${sql(filasGalceFijo)} ON CONFLICT DO NOTHING`
+      rgf.insertadas = filasGalceFijo.length
+    }
+    resultados.push(rgf)
+
+    const filasAjusteFijo: Record<string, unknown>[] = []
+    for (const [serie, acc] of ajustesFijo) {
+      const moda = (m: Map<number, number>) => {
+        const total = [...m.values()].reduce((a, b) => a + b, 0)
+        if (!total) return null
+        const [valor, n] = [...m.entries()].sort((a, b) => b[1] - a[1])[0]
+        return { valor, n, total }
+      }
+      const mL = moda(acc.largo), mA = moda(acc.ancho)
+      rjf.leidas++
+      if (!mL || !mA || mL.total < 3 || mA.total < 3 || mL.n / mL.total < 0.9 || mA.n / mA.total < 0.9) {
+        excluir(rjf, 'muestras insuficientes o inconsistentes: no se emite')
+        continue
+      }
+      filasAjusteFijo.push({
+        serie_codigo: serie,
+        ajuste_largo_mm: mL.valor,
+        ajuste_ancho_mm: mA.valor,
+        muestras: Math.min(mL.n, mA.n),
+      })
+    }
+    if (filasAjusteFijo.length) {
+      await sql`INSERT INTO junquillo_ajustes_fijo ${sql(filasAjusteFijo)} ON CONFLICT DO NOTHING`
+      rjf.insertadas = filasAjusteFijo.length
+    }
+    resultados.push(rjf)
   } else {
     r.motivos.set('CSV no encontrado', 1)
   }

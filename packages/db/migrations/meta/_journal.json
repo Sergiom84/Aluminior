@@ -57,6 +57,13 @@
       "when": 1784405685709,
       "tag": "0007_acristalamiento",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1784406627138,
+      "tag": "0008_fijos",
+      "breakpoints": true
     }
   ]
 }

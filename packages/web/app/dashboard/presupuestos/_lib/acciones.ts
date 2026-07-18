@@ -355,6 +355,8 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
       /** Medidas del vidrio si se pudieron calcular (para junquillos/juntas). */
       let dimsVidrio: { largoMm: number; anchoMm: number } | null = null
       let tamJunqVidrio = 0
+      /** HOJA = vidrio alojado en hojas; FIJO = en cerco fijo. */
+      let contextoVidrio: 'HOJA' | 'FIJO' | null = null
       if (d.vidrioCodigo) {
         const [vidrio] = await db.select()
           .from(schema.articulos).where(eq(schema.articulos.codigo, d.vidrioCodigo)).limit(1)
@@ -362,31 +364,63 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
           return { ok: false, errores: { vidrioCodigo: ['Vidrio no válido (debe ser familia 050, facturable por m²)'] } }
         }
 
-        // Hojas del despiece: emparejamiento inequívoco HV/HH del mismo perfil
+        // Emparejamiento inequívoco del vidrio con su alojamiento:
+        //  - con hojas (HV/HH): vidrio de HOJA, descontado del corte de hoja
+        //  - sin hojas: vidrio de FIJO, descontado del corte del CERCO (MV/MH)
         const hvs = despiece.piezas.filter((pz) => pz.funcion === 'HV' && pz.largoMm !== null)
-        const artsHV = new Set(hvs.map((pz) => pz.articuloCodigo))
-        const cortesHV = new Set(hvs.map((pz) => pz.largoMm))
-        const perfilHoja = artsHV.size === 1 ? [...artsHV][0] : null
-        const cortesHH = new Set(
-          despiece.piezas
-            .filter((pz) => pz.funcion === 'HH' && pz.articuloCodigo === perfilHoja && pz.largoMm !== null)
-            .map((pz) => pz.largoMm),
-        )
         const nCristales = plantillaResuelta.filter((c) => c.componenteDisenyo === '1').length
 
-        if (!perfilHoja || cortesHV.size !== 1 || cortesHH.size !== 1 || nCristales === 0) {
-          avisoVidrio = 'vidrio sin calcular: emparejamiento de hojas ambiguo para esta estructura'
+        let perfilRef: string | null = null
+        let corteV: number | null = null
+        let corteH: number | null = null
+        if (hvs.length > 0) {
+          contextoVidrio = 'HOJA'
+          const artsHV = new Set(hvs.map((pz) => pz.articuloCodigo))
+          const cortesHV = new Set(hvs.map((pz) => pz.largoMm))
+          perfilRef = artsHV.size === 1 ? [...artsHV][0] : null
+          const cortesHH = new Set(
+            despiece.piezas
+              .filter((pz) => pz.funcion === 'HH' && pz.articuloCodigo === perfilRef && pz.largoMm !== null)
+              .map((pz) => pz.largoMm),
+          )
+          // Un cristal por hoja: si la estructura mezcla hojas y fijos, el
+          // recuento no cuadra y NO se extrapola el vidrio de hoja a los
+          // fijos (sería un precio inventado para esos huecos).
+          const nHojas = Math.round(hvs.reduce((acc, pz) => acc + pz.cantidad, 0) / 2)
+          if (perfilRef && cortesHV.size === 1 && cortesHH.size === 1 && nCristales === nHojas) {
+            corteV = [...cortesHV][0]
+            corteH = [...cortesHH][0]
+          }
         } else {
+          contextoVidrio = 'FIJO'
+          const mvs = despiece.piezas.filter((pz) => pz.funcion === 'MV' && pz.largoMm !== null)
+          const artsMV = new Set(mvs.map((pz) => pz.articuloCodigo))
+          const cortesMV = new Set(mvs.map((pz) => pz.largoMm))
+          const cortesMH = new Set(
+            despiece.piezas.filter((pz) => pz.funcion === 'MH' && pz.largoMm !== null).map((pz) => pz.largoMm),
+          )
+          perfilRef = artsMV.size === 1 ? [...artsMV][0] : null
+          if (perfilRef && cortesMV.size === 1 && cortesMH.size === 1) {
+            corteV = [...cortesMV][0]
+            corteH = [...cortesMH][0]
+          }
+        }
+
+        if (!perfilRef || corteV === null || corteH === null || nCristales === 0) {
+          avisoVidrio = 'vidrio sin calcular: emparejamiento ambiguo para esta estructura (¿mezcla hojas y fijos?)'
+          contextoVidrio = null
+        } else {
+          const tablaGalce = contextoVidrio === 'FIJO' ? schema.vidrioGalceFijo : schema.vidrioGalce
           const [galce] = await db.select()
-            .from(schema.vidrioGalce)
+            .from(tablaGalce)
             .where(and(
-              eq(schema.vidrioGalce.serieCodigo, d.serieCodigo),
-              eq(schema.vidrioGalce.perfilCodigo, perfilHoja),
+              eq(tablaGalce.serieCodigo, d.serieCodigo),
+              eq(tablaGalce.perfilCodigo, perfilRef),
             )).limit(1)
           if (!galce) {
-            avisoVidrio = `vidrio sin calcular: sin descuento de galce medido para ${d.serieCodigo} + ${perfilHoja}`
+            avisoVidrio = `vidrio sin calcular: sin descuento de galce medido para ${d.serieCodigo} + ${perfilRef} (${contextoVidrio.toLowerCase()})`
           } else {
-            const dims = medidasVidrio([...cortesHV][0]!, [...cortesHH][0]!, Number(galce.deltaMm))
+            const dims = medidasVidrio(corteV, corteH, Number(galce.deltaMm))
             if (!dims) {
               avisoVidrio = 'vidrio sin calcular: el descuento de galce no cabe en la medida'
             } else {
@@ -444,10 +478,12 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
       // del vidrio + ajuste MEDIDO del histórico. Artículos fuera del
       // catálogo (marcador V1000 "sin junquillos") no generan pieza.
       let avisoAcris: string | null = null
-      if (dimsVidrio) {
-        const [cjSerie] = await db.select({ tablaHojas: schema.conjuntos.tablaHojas })
-          .from(schema.conjuntos).where(eq(schema.conjuntos.codigo, d.serieCodigo)).limit(1)
-        const tablaAcris = cjSerie?.tablaHojas || null
+      if (dimsVidrio && contextoVidrio) {
+        const [cjSerie] = await db.select({
+          tablaHojas: schema.conjuntos.tablaHojas,
+          tablaFijos: schema.conjuntos.tablaFijos,
+        }).from(schema.conjuntos).where(eq(schema.conjuntos.codigo, d.serieCodigo)).limit(1)
+        const tablaAcris = (contextoVidrio === 'FIJO' ? cjSerie?.tablaFijos : cjSerie?.tablaHojas) || null
         const [filaAcris] = tablaAcris && tamJunqVidrio > 0
           ? await db.select().from(schema.tacrisFilas)
               .where(and(
@@ -470,8 +506,9 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
               if (Number.isFinite(l) && Number.isFinite(a) && l > 0 && a > 0) modulos.push({ l, a })
             } catch { /* fórmula no evaluable: cuenta como módulo ausente */ }
           }
-          const [ajuste] = await db.select().from(schema.junquilloAjustes)
-            .where(eq(schema.junquilloAjustes.serieCodigo, d.serieCodigo)).limit(1)
+          const tablaAjustes = contextoVidrio === 'FIJO' ? schema.junquilloAjustesFijo : schema.junquilloAjustes
+          const [ajuste] = await db.select().from(tablaAjustes)
+            .where(eq(tablaAjustes.serieCodigo, d.serieCodigo)).limit(1)
 
           const piezasAcris: PiezaCortada[] = []
           const anyadir = (articulo: string | null, largoMm: number, funcion: string) => {

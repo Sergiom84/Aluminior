@@ -88,6 +88,33 @@ export const junquilloAjustes = pgTable('junquillo_ajustes', {
 })
 
 /**
+ * Galce de vidrio para FIJOS: el vidrio de un fijo se descuenta del corte
+ * del CERCO (no de una hoja). Medido del histórico igual que vidrio_galce
+ * (anexo N): constante al 100% por (serie, perfil de cerco); mismo delta en
+ * ambas dimensiones.
+ */
+export const vidrioGalceFijo = pgTable('vidrio_galce_fijo', {
+  serieCodigo: text('serie_codigo').notNull(),
+  /** Perfil de cerco del fijo (artículo real). */
+  perfilCodigo: text('perfil_codigo').notNull(),
+  deltaMm: numeric('delta_mm', { precision: 8, scale: 2 }).notNull(),
+  muestras: integer('muestras').notNull(),
+}, (t) => ({
+  pk: primaryKey({ columns: [t.serieCodigo, t.perfilCodigo] }),
+}))
+
+/**
+ * Ajustes del junquillo de FIJOS, por serie. Distintos de los de hoja
+ * (ELEGANTPVC: hoja −28/+16, fijo −50/0). El junquillo sale de TablaFijos.
+ */
+export const junquilloAjustesFijo = pgTable('junquillo_ajustes_fijo', {
+  serieCodigo: text('serie_codigo').primaryKey(),
+  ajusteLargoMm: numeric('ajuste_largo_mm', { precision: 8, scale: 2 }).notNull(),
+  ajusteAnchoMm: numeric('ajuste_ancho_mm', { precision: 8, scale: 2 }).notNull(),
+  muestras: integer('muestras').notNull(),
+})
+
+/**
  * Delegaciones entre conjuntos: el registro de un conjunto en el original
  * apunta a otros conjuntos mediante ~74 columnas (SubSerieDe, herr1HA,
  * herr2HA, TablaHojas…). La cadena de resolución de una serie es el cierre
