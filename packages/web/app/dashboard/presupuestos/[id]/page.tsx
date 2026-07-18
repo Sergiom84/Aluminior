@@ -149,7 +149,8 @@ function LineaConDespiece({
   presupuestoId: string
   despiece: {
     id: string; articuloCodigo: string; cantidad: string
-    largoCorteMm: string | null; funcion: string | null
+    largoCorteMm: string | null; anchoCorteMm: string | null
+    funcion: string | null
     costeUnitario: string | null; costeTotal: string | null
   }[]
 }) {
@@ -217,7 +218,10 @@ function LineaConDespiece({
                       <td className="px-2 py-0.5" style={{ color: 'var(--al-text-muted)' }}>{pz.funcion ?? '—'}</td>
                       <td className="cifra px-2 py-0.5 text-right">{Number(pz.cantidad)}</td>
                       <td className="cifra px-2 py-0.5 text-right">
-                        {pz.largoCorteMm !== null ? Number(pz.largoCorteMm).toLocaleString('es-ES') : '—'}
+                        {pz.largoCorteMm !== null
+                          ? Number(pz.largoCorteMm).toLocaleString('es-ES') +
+                            (pz.anchoCorteMm !== null ? ` × ${Number(pz.anchoCorteMm).toLocaleString('es-ES')}` : '')
+                          : '—'}
                       </td>
                       <td className="cifra px-2 py-0.5 text-right">
                         {pz.costeUnitario !== null ? eur.format(Number(pz.costeUnitario)) : (

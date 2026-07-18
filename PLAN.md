@@ -1060,3 +1060,69 @@ scripts/oraculo-asociados.mjs            cobertura de fuentes: 77,9% con las Aso
 scripts/medir-categorias-restantes.mjs   descomposición 71,4/16,2/9,9/2,4
 scripts/seleccion-asociados.mjs          semántica de selección, doc real
 ```
+
+---
+---
+
+# ANEXO L — Vidrio: modelo completo, medido y validado (18/07/2026)
+
+**Primera pieza del acristalamiento (anexo K, punto 2). Implementada.**
+
+## El modelo, en tres reglas
+
+**1. MEDIDA.** El vidrio no sale de las fórmulas de la plantilla: sale de la
+hoja que lo aloja, restando el **descuento de galce**:
+
+```
+medida del vidrio = medida de corte de la hoja − delta(serie, perfil de hoja)
+```
+
+El delta se MIDIÓ del histórico (2.431 vidrios reales, emparejamiento
+inequívoco hoja-vidrio): es **constante al 100%** por (serie, perfil de hoja)
+en todas las combinaciones con muestras. Ejemplos: ELEGANTPVC·GM8783M =
+130,6 mm; GMA350·GM301 = 104,2; GMA350·GM307/GM308 = 144,6; GMPC65·GM10002M
+= 123. La primera pasada agrupando sólo por serie daba 60% en GMA350: el
+delta es del PERFIL, no de la serie (cada hoja tiene el suyo). La corredera
+GMC400 es asimétrica (80,5 / 62,8) y queda excluida de la v1.
+
+Verificación puntual: doc 764, hueco 400×900, hoja GM307 325,6×409,25,
+delta 144,6 → vidrio 181×264,65. Exacto.
+
+**2. METRAJE FACTURABLE.** Por dimensión, redondeo HACIA ARRIBA al múltiplo
+del artículo (`MetrajeMultiploLargo/Ancho`, en **cm**), producto de áreas, y
+`MetrajeMinimo` en m². Validado contra 2.273 vidrios reales: **98,7% exacto**
+(los restos: mínimos aplicados a grupos de unidades).
+
+**3. PRECIO.** metraje × PVP por m² de la tarifa (los vidrios tarifan con
+acabado `*`).
+
+## Implementación
+
+- Tabla `vidrio_galce` (serie, perfil, delta, muestras): la genera el ETL
+  midiendo el histórico; sólo emite filas con ≥3 muestras y ≥90% de
+  consistencia (14 filas hoy). Sin fila → "vidrio sin calcular".
+- `packages/core/src/precios/vidrio.ts`: `medidasVidrio` y `metrajeVidrioM2`.
+- Línea de estructura: campo Vidrio (código familia 050 M2, validado en
+  servidor). El importe del vidrio se suma al PVP de la línea; la pieza se
+  persiste en `lineas_despiece` (función VIDRIO, largo × ancho, coste m²).
+- Casos ambiguos (varias hojas distintas, sin delta medido, galce que no
+  cabe) → aviso explícito "vidrio sin calcular", nunca un precio a ojo.
+
+Verificado en vivo: 1+1 + ELEGANTPVC + V420AGS4, hueco 1600×1230 →
+2 vidrios de 1469,4 × 484,4 (= 1600−130,6 y 615−130,6), metraje 0,81 m²
+(múltiplos de 6 cm), coste 47,43 €/m² → 76,84 €.
+
+## Pendiente del acristalamiento
+
+- Vidrios de FIJOS (delta contra marco, no medido aún) y correderas.
+- Junquillos/juntas por `TAcristalamientoLin` (grosor del vidrio elegido).
+- Variante `.1`/`.2` de perfiles derivada del vidrio (hoy fija a `.2`).
+- Slots múltiples (hasta 5, hojas/fijos por separado).
+
+## Scripts
+
+```
+scripts/analizar-cristal.mjs         ranuras de cristal, vidrios reales, redondeos
+scripts/medir-descuento-vidrio.mjs   delta por (serie, perfil): 100% consistente
+scripts/validar-metraje-vidrio.mjs   regla de metraje: 98,7% exacto
+```

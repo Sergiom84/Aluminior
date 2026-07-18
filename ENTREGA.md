@@ -727,8 +727,10 @@ Lo que queda de la valoración:
 1. **Asociados**: escuadras, herrajes por apertura, zona de apertura —
    `ConjuntosAsoc` / `ConfigSeriesAsoc` (mecanismo localizado, sin validar
    contra el oráculo). Hoy quedan "sin valorar" con aviso.
-2. **Acristalamiento y mano de obra**: elecciones del usuario (slots de
-   vidrio, campos `mo*` de `Conjuntos`), sin interfaz todavía.
+2. **Acristalamiento**: el vidrio de HOJAS ya se elige y se valora (anexo L:
+   medida = corte de hoja − galce medido del histórico, metraje validado al
+   98,7%). Pendiente: vidrios de fijos y correderas, junquillos/juntas por
+   `TAcristalamientoLin`, y slots múltiples. **Mano de obra**: sin modelar.
 3. **Variante de acristalamiento** (`.1`/`.2`): hoy fija a doble cristal (el
    100% del histórico); exponerla como elección en el configurador.
 4. **El ~1% de fallos conocidos**: variantes de apertura (ELEGANTPVC y

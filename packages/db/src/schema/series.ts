@@ -17,7 +17,7 @@
  */
 
 import {
-  pgTable, text, boolean, index, primaryKey,
+  pgTable, text, boolean, integer, numeric, index, primaryKey,
 } from 'drizzle-orm/pg-core'
 
 /**
@@ -74,6 +74,30 @@ export const conjuntoDelegaciones = pgTable('conjunto_delegaciones', {
  * código del artículo genérico (el anexo I los confundió; corregido en el
  * anexo J). Sufijos ".1"/".2" = variante de acristalamiento.
  */
+/**
+ * Descuento de galce del vidrio, por serie y perfil de hoja.
+ *
+ *   medida del vidrio = medida de corte de la hoja − delta
+ *
+ * MEDIDO del histórico real, no inventado: para cada (serie, perfil de hoja)
+ * con emparejamiento inequívoco hoja-vidrio en los documentos, el delta es
+ * constante al 100% (PLAN.md anexo L). Solo se emiten filas con ≥3 muestras
+ * y ≥90% de consistencia; sin fila, el vidrio queda "sin calcular".
+ *
+ * Lo genera el ETL a partir de VPresupuestosLin + VDatosLinEstr.
+ */
+export const vidrioGalce = pgTable('vidrio_galce', {
+  serieCodigo: text('serie_codigo').notNull(),
+  /** Perfil de hoja (artículo real, ya resuelto por la serie). */
+  perfilCodigo: text('perfil_codigo').notNull(),
+  /** Descuento en mm que se resta a cada medida de corte de la hoja. */
+  deltaMm: numeric('delta_mm', { precision: 8, scale: 2 }).notNull(),
+  /** Nº de líneas reales de las que se midió. */
+  muestras: integer('muestras').notNull(),
+}, (t) => ({
+  pk: primaryKey({ columns: [t.serieCodigo, t.perfilCodigo] }),
+}))
+
 export const conjuntoResoluciones = pgTable('conjunto_resoluciones', {
   conjuntoCodigo: text('conjunto_codigo').notNull(),
   componente: text('componente').notNull(),

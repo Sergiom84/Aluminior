@@ -13,7 +13,9 @@ import { eq, sql, and, inArray } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { crearDb, schema } from '@aluminior/db'
 import { calcularDespiece, type ComponentePlantilla } from '@aluminior/core/despiece'
-import { valorarDespiece, type DatosArticuloPrecio } from '@aluminior/core/precios'
+import {
+  valorarDespiece, medidasVidrio, metrajeVidrioM2, type DatosArticuloPrecio,
+} from '@aluminior/core/precios'
 import { expandirCadena, construirResoluciones, resolverComponente } from '@aluminior/core/series'
 
 export type Estado =
@@ -84,6 +86,9 @@ const esquemaLinea = z.object({
   /** Serie de perfiles. Prerrequisito del tipo ESTRUCTURA: sin ella no hay
    * artículos reales, y sin artículos reales no hay precio. */
   serieCodigo: z.string().trim().optional().transform((v) => v || null),
+  /** Vidrio del acristalamiento (familia 050, facturable por m²). Opcional:
+   * sin él, el cristal queda "sin valorar". */
+  vidrioCodigo: z.string().trim().optional().transform((v) => v || null),
   cantidad: z.coerce.number().positive().default(1),
   anchoMm: z.coerce.number().int().min(0).optional(),
   altoMm: z.coerce.number().int().min(0).optional(),
@@ -124,6 +129,7 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
       articuloCodigo: string
       cantidad: string
       largoCorteMm: string | null
+      anchoCorteMm?: string | null
       anguloIzquierdo: string | null
       anguloDerecho: string | null
       funcion: string | null
@@ -340,7 +346,94 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
         }
       })
 
+      // --- Vidrio (PLAN.md anexo L) ---
+      // medida = corte de hoja − delta medido del histórico; metraje con
+      // múltiplos (cm) y mínimo del artículo; precio por m² de la tarifa.
+      // Cualquier ambigüedad -> "vidrio sin calcular", nunca un precio a ojo.
+      let avisoVidrio: string | null = null
+      if (d.vidrioCodigo) {
+        const [vidrio] = await db.select()
+          .from(schema.articulos).where(eq(schema.articulos.codigo, d.vidrioCodigo)).limit(1)
+        if (!vidrio || vidrio.familiaCodigo !== '050' || vidrio.tipoMetraje !== 'M2') {
+          return { ok: false, errores: { vidrioCodigo: ['Vidrio no válido (debe ser familia 050, facturable por m²)'] } }
+        }
+
+        // Hojas del despiece: emparejamiento inequívoco HV/HH del mismo perfil
+        const hvs = despiece.piezas.filter((pz) => pz.funcion === 'HV' && pz.largoMm !== null)
+        const artsHV = new Set(hvs.map((pz) => pz.articuloCodigo))
+        const cortesHV = new Set(hvs.map((pz) => pz.largoMm))
+        const perfilHoja = artsHV.size === 1 ? [...artsHV][0] : null
+        const cortesHH = new Set(
+          despiece.piezas
+            .filter((pz) => pz.funcion === 'HH' && pz.articuloCodigo === perfilHoja && pz.largoMm !== null)
+            .map((pz) => pz.largoMm),
+        )
+        const nCristales = plantillaResuelta.filter((c) => c.componenteDisenyo === '1').length
+
+        if (!perfilHoja || cortesHV.size !== 1 || cortesHH.size !== 1 || nCristales === 0) {
+          avisoVidrio = 'vidrio sin calcular: emparejamiento de hojas ambiguo para esta estructura'
+        } else {
+          const [galce] = await db.select()
+            .from(schema.vidrioGalce)
+            .where(and(
+              eq(schema.vidrioGalce.serieCodigo, d.serieCodigo),
+              eq(schema.vidrioGalce.perfilCodigo, perfilHoja),
+            )).limit(1)
+          if (!galce) {
+            avisoVidrio = `vidrio sin calcular: sin descuento de galce medido para ${d.serieCodigo} + ${perfilHoja}`
+          } else {
+            const dims = medidasVidrio([...cortesHV][0]!, [...cortesHH][0]!, Number(galce.deltaMm))
+            if (!dims) {
+              avisoVidrio = 'vidrio sin calcular: el descuento de galce no cabe en la medida'
+            } else {
+              const metraje = metrajeVidrioM2(dims.largoMm, dims.anchoMm, {
+                metrajeMinimo: vidrio.metrajeMinimo === null ? null : Number(vidrio.metrajeMinimo),
+                multiploLargoCm: vidrio.metrajeMultiploLargo === null ? null : Number(vidrio.metrajeMultiploLargo),
+                multiploAnchoCm: vidrio.metrajeMultiploAncho === null ? null : Number(vidrio.metrajeMultiploAncho),
+              })
+              const [pvpVidrio] = (await db.execute<{ precio: string }>(sql`
+                SELECT precio FROM articulos_pvp
+                WHERE articulo_codigo = ${d.vidrioCodigo} AND tarifa = ${presupuesto.tarifa}
+                ORDER BY (acabado_codigo = ${d.acabadoCodigo ?? ''}) DESC,
+                         (acabado_codigo = '*') DESC, acabado_codigo
+                LIMIT 1
+              `)) as unknown as { precio: string }[]
+              if (!pvpVidrio) {
+                avisoVidrio = `vidrio sin valorar: ${d.vidrioCodigo} no tiene precio en la tarifa ${presupuesto.tarifa}`
+              } else {
+                const importeVidrio = nCristales * metraje * Number(pvpVidrio.precio)
+                precioUnitario = Math.round((precioUnitario + importeVidrio) * 100) / 100
+
+                const [costeVidrio] = (await db.execute<{ coste: string }>(sql`
+                  SELECT coste FROM articulos_coste
+                  WHERE articulo_codigo = ${d.vidrioCodigo}
+                  ORDER BY (acabado_codigo = ${d.acabadoCodigo ?? ''}) DESC,
+                           (acabado_codigo = '*') DESC, acabado_codigo
+                  LIMIT 1
+                `)) as unknown as { coste: string }[]
+                const costeM2 = costeVidrio ? Number(costeVidrio.coste) : null
+                piezasAPersistir.push({
+                  articuloCodigo: d.vidrioCodigo,
+                  cantidad: String(nCristales),
+                  largoCorteMm: String(dims.largoMm),
+                  anchoCorteMm: String(dims.anchoMm),
+                  anguloIzquierdo: null,
+                  anguloDerecho: null,
+                  funcion: 'VIDRIO',
+                  costeUnitario: costeM2 !== null ? String(costeM2) : null,
+                  costeTotal: costeM2 !== null
+                    ? String(Math.round(costeM2 * metraje * nCristales * 10000) / 10000)
+                    : null,
+                })
+              }
+            }
+          }
+        }
+      }
+
       const problemas: string[] = []
+      if (avisoVidrio) problemas.push(avisoVidrio)
+      if (!d.vidrioCodigo) problemas.push('sin vidrio elegido: el acristalamiento no se valora')
       if (sinResolver.size) {
         problemas.push(
           `${sinResolver.size} ranuras genéricas que la serie ${d.serieCodigo} no resuelve (quedan sin valorar)`,
@@ -397,6 +490,14 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
           await db.insert(schema.lineasDespiece).values(
             piezasAPersistir.map((pz) => ({ lineaId: linea.id, ...pz })),
           )
+        }
+
+        if (d.vidrioCodigo) {
+          await db.insert(schema.lineasAcristalamiento).values({
+            lineaId: linea.id,
+            slot: 1,
+            vidrioHojas: d.vidrioCodigo,
+          })
         }
       }
     }

@@ -88,6 +88,18 @@ export function AnyadirLinea({
               )}
             </div>
 
+            {/* Vidrio del acristalamiento (código de familia 050). Sin él, el
+                cristal queda "sin valorar" — el aviso lo dice. */}
+            <div className="col-span-2">
+              <label htmlFor="vidrioCodigo" className="mb-1 block text-sm font-medium">Vidrio</label>
+              <input id="vidrioCodigo" name="vidrioCodigo" className={entrada}
+                style={{ ...estilo, borderColor: err.vidrioCodigo ? 'var(--al-error)' : estilo.borderColor }}
+                placeholder="V420AGS4" />
+              {err.vidrioCodigo && (
+                <p className="mt-1 text-xs" style={{ color: 'var(--al-error)' }}>{err.vidrioCodigo.join('. ')}</p>
+              )}
+            </div>
+
             {/* El coste real depende del acabado; sin él, las piezas con coste
                 distinto por acabado quedan "sin coste" en vez de adivinarse. */}
             <div className="col-span-2">

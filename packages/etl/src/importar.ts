@@ -109,6 +109,7 @@ async function vaciarDestino() {
     'lineas_estructura', 'lineas', 'presupuestos', 'obras',
     'clientes_potenciales', 'clientes', 'proveedores',
     'estructura_componentes', 'estructura_cotas',
+    'vidrio_galce',
     'conjunto_resoluciones', 'conjunto_delegaciones', 'conjuntos', 'series',
     'articulos_coste', 'articulos_pvp', 'articulos', 'estructuras',
     'subfamilias', 'tonalidades', 'acabados', 'familias',
@@ -409,6 +410,110 @@ resultados.push(await cargar('ConjuntosLin', 'conjunto_resoluciones', (f, r) => 
       actualizado_en: fecha(f.UltimaAct),
     }
   }))
+}
+
+/**
+ * Descuento de galce del vidrio, MEDIDO del histórico (PLAN.md anexo L):
+ *
+ *   medida del vidrio = medida de corte de la hoja − delta(serie, perfil)
+ *
+ * Para cada línea real con emparejamiento inequívoco (un único corte HV, un
+ * único HH y vidrios M2 de medida única), delta = corte − medida del vidrio.
+ * Se emite la moda por (serie, perfil de hoja) sólo si hay ≥3 muestras y
+ * ≥90% de consistencia. Sin fila, el vidrio queda "sin calcular": nunca se
+ * adivina.
+ */
+{
+  const r: Resultado = {
+    tabla: 'vidrio_galce', leidas: 0, insertadas: 0, descartadas: 0,
+    excluidas: 0, motivos: new Map(),
+  }
+  const rutaVLin = rutaTabla(ORIGEN, 'VPresupuestosLin')
+  const rutaDatos = rutaTabla(ORIGEN, 'VDatosLinEstr')
+  if (rutaVLin && rutaDatos) {
+    const aNum = (v: string | undefined) => Number((v ?? '').replace(',', '.')) || 0
+
+    // Familia y tipo de metraje por artículo (para reconocer vidrios M2)
+    const famArt = new Map<string, { familia: string; m2: boolean }>()
+    for await (const lote of leerLotes(rutaTabla(ORIGEN, 'Articulos')!, 1000)) {
+      for (const f of lote) {
+        famArt.set((f.Codigo ?? '').trim(), {
+          familia: (f.Familia ?? '').trim(),
+          m2: (f.TipoMetraje ?? '').trim() === 'M2',
+        })
+      }
+    }
+    // Serie por línea de documento
+    const seriePorLinea = new Map<string, string>()
+    for await (const lote of leerLotes(rutaDatos, 1000)) {
+      for (const f of lote) {
+        seriePorLinea.set(`${(f.nVDoc ?? '').trim()}|${(f.nVLinea ?? '').trim()}`, (f.Conjunto1 ?? '').trim())
+      }
+    }
+    // Agrupar hijas por línea padre
+    interface Hoja { hv: Set<number>; hh: Set<number>; artHV: Set<string>; vidrios: { l: number; a: number }[] }
+    const padres = new Map<string, string>() // nLinea -> serie
+    const grupos = new Map<string, Hoja>()
+    for await (const lote of leerLotes(rutaVLin, 1000)) {
+      for (const f of lote) {
+        if ((f.EstructuraSN ?? '').trim() === 'True') {
+          const serie = seriePorLinea.get(`${(f.nDoc ?? '').trim()}|${(f.nLinea ?? '').trim()}`)
+          if (serie) padres.set((f.nLinea ?? '').trim(), serie)
+          continue
+        }
+        const nEstr = (f.nEstr ?? '').trim()
+        if (!nEstr || nEstr === '0') continue
+        let g = grupos.get(nEstr)
+        if (!g) grupos.set(nEstr, (g = { hv: new Set(), hh: new Set(), artHV: new Set(), vidrios: [] }))
+        const fn = (f.Funcion ?? '').trim()
+        const art = (f.Articulo ?? '').trim()
+        if (fn === 'HV') {
+          g.hv.add(aNum(f.LargoCorte))
+          if (art && art !== '0') g.artHV.add(art)
+        } else if (fn === 'HH') {
+          g.hh.add(aNum(f.LargoCorte))
+        } else {
+          const info = famArt.get(art)
+          if (info?.familia === '050' && info.m2) g.vidrios.push({ l: aNum(f.Largo), a: aNum(f.Ancho) })
+        }
+      }
+    }
+    // Deltas por (serie, perfil)
+    const muestras = new Map<string, Map<number, number>>()
+    for (const [nLinea, serie] of padres) {
+      const g = grupos.get(nLinea)
+      if (!g || g.hv.size !== 1 || g.hh.size < 1 || g.artHV.size !== 1 || !g.vidrios.length) continue
+      const medidas = new Set(g.vidrios.map((v) => `${v.l}|${v.a}`))
+      if (medidas.size !== 1) continue
+      const v = g.vidrios[0]
+      if (v.l <= 0 || v.a <= 0) continue
+      const delta = Math.round(([...g.hv][0] - v.l) * 10) / 10
+      if (delta < 0 || delta > 200) continue
+      const clave = `${serie}|${[...g.artHV][0]}`
+      let m = muestras.get(clave)
+      if (!m) muestras.set(clave, (m = new Map()))
+      m.set(delta, (m.get(delta) ?? 0) + 1)
+      r.leidas++
+    }
+    const filas: Record<string, unknown>[] = []
+    for (const [clave, conteo] of muestras) {
+      const total = [...conteo.values()].reduce((a, b) => a + b, 0)
+      const [delta, n] = [...conteo.entries()].sort((a, b) => b[1] - a[1])[0]
+      if (total < 3 || n / total < 0.9) {
+        excluir(r, 'muestras insuficientes o inconsistentes: no se emite')
+        continue
+      }
+      const [serie, perfil] = clave.split('|')
+      filas.push({ serie_codigo: serie, perfil_codigo: perfil, delta_mm: delta, muestras: n })
+    }
+    if (filas.length) {
+      await sql`INSERT INTO vidrio_galce ${sql(filas)} ON CONFLICT DO NOTHING`
+      r.insertadas = filas.length
+    }
+  } else {
+    r.motivos.set('CSV no encontrado', 1)
+  }
+  resultados.push(r)
 }
 
 resultados.push(await cargar('ArticulosPVP', 'articulos_pvp', (f, r) => {
