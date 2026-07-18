@@ -518,3 +518,62 @@ No es necesaria: todo lo que hace falta está en los datos del cliente.
 3. Comercial: clientes, potenciales, obras, presupuestos, documentos
 4. Motor de despiece, validado contra las 468.838 líneas históricas
 5. Facturación legal, al final y aislada
+
+---
+---
+
+# ANEXO E — El anexo C.3 estaba equivocado (18/07/2026)
+
+**Afirmé que el código de estructura es una gramática compositiva. Es falso
+en la mayoría de los casos.**
+
+## Qué hice
+
+Escribí un parser basado en esa hipótesis y lo validé contra las **541
+estructuras** del catálogo real de EMP0016, en lugar de darlo por bueno.
+
+Resultado: **21% de cobertura**. Y peor que la baja cobertura: entre los
+códigos que el parser decía reconocer había errores graves.
+
+| Código | Lectura del parser | Realidad | Familia |
+|---|---|---|---|
+| `1+1` | 1 hoja + 1 hoja abatible | DOS VENTANAS ABATIBLES DE 1 HOJA ✅ | 003 |
+| `1O+2F+1O` | 1 oscilo + 2 fijos + 1 oscilo | 2 VENTANAS OSCILO Y 2 FIJOS ✅ | 003 |
+| `F2PF` | fijo + 2 puerta + fijo | PUERTA ABATIBLE 2 HOJAS CON 2 FIJOS ✅ | 004 |
+| `C312` | corredera + **312 hojas** | VENTANA CORREDERA DE TRES HOJAS (312) ❌ | 001 |
+| `F16` | fijo + **16 hojas** | MAMPARA PENTAGONAL, 2 PLEGABLES Y 1 ABATIBLE ❌ | 113 |
+| `F4` | fijo + 4 hojas | MAMPARA LATERAL CORREDERO 2 HOJAS 1 PUERTA ❌ | 113 |
+
+## Por qué me equivoqué
+
+Generalicé desde los primeros ejemplos que vi en pantalla, que casualmente
+eran todos de las familias 003 (ventanas) y 004 (puertas) — las únicas donde
+el código sí es compositivo. En 113 (mamparas) y 001 (correderas) los dígitos
+son referencias de modelo, no cuentas de hojas.
+
+## Decisión
+
+**El parser se elimina.** Un componente que acierta el 21% de las veces y
+miente con total seguridad el resto es peor que no tenerlo: introduce errores
+silenciosos en el despiece y en los precios.
+
+El código de estructura se trata como **identificador opaco**. Las fuentes
+autoritativas, por orden:
+
+1. `EstructurasDiseño` — geometría real (hojas, travesaños, cotas, cortes).
+   Es el dato con el que calcula el sistema original.
+2. `EstructurasArticulos` — despiece y lista de materiales.
+3. `Estructuras.Descripcion` — texto humano, para mostrar al usuario.
+4. `Estructuras.Familia` — clasificación.
+
+## Lección para el resto del proyecto
+
+Esto refuerza la estrategia del anexo D: **validar toda hipótesis contra el
+histórico antes de construir sobre ella.** El parser costó una hora y se
+descartó con datos. Si se hubiera dado por bueno y se hubiera construido el
+motor de despiece encima, el error habría aparecido meses después, en
+presupuestos reales y con dinero de por medio.
+
+Regla operativa: ninguna regla de negocio inferida entra en el motor sin
+haberse contrastado antes contra el catálogo o contra las 468.838 líneas
+históricas.

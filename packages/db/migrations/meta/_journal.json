@@ -8,6 +8,13 @@
       "when": 1784385516640,
       "tag": "0000_esquema_inicial",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1784388871477,
+      "tag": "0001_estructuras",
+      "breakpoints": true
     }
   ]
 }

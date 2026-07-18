@@ -93,7 +93,7 @@ async function vaciarDestino() {
     'lineas_despiece', 'lineas_acristalamiento', 'lineas_opciones_herraje',
     'lineas_estructura', 'lineas', 'presupuestos', 'obras',
     'clientes_potenciales', 'clientes',
-    'articulos_coste', 'articulos_pvp', 'articulos',
+    'articulos_coste', 'articulos_pvp', 'articulos', 'estructuras',
     'subfamilias', 'tonalidades', 'acabados', 'familias',
   ]
   await sql`TRUNCATE TABLE ${sql(tablas)} RESTART IDENTITY CASCADE`
@@ -172,6 +172,19 @@ resultados.push(await cargar('Clientes', 'clientes', (f, r) => {
     persona_fisica_juridica: txt(f.PersonaFisicaJuridica),
     sii_tipo_id_fiscal: txt(f.siiTipoIdFiscal),
     fecha_alta: fecha(f.FechaAlta),
+  }
+}))
+
+resultados.push(await cargar('Estructuras', 'estructuras', (f, r) => {
+  const codigo = txt(f.Codigo)
+  if (!codigo) { descartar(r, 'sin código'); return null }
+  return {
+    codigo,
+    descripcion: txt(f.Descripcion) ?? codigo,
+    familia: txt(f.Familia),
+    observaciones: txt(f.Observaciones),
+    es_accesorio: bool(f.AccesorioSN),
+    fabrica_stock: bool(f.StFabricacionSN),
   }
 }))
 

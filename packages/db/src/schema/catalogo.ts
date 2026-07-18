@@ -111,6 +111,28 @@ export const articulosPvp = pgTable('articulos_pvp', {
 }))
 
 /**
+ * Catálogo de estructuras (tipos de hueco configurables).
+ * Origen: Estructuras (541 filas).
+ *
+ * `codigo` es un identificador OPACO: no se parsea para deducir composición.
+ * Ver PLAN.md anexo E — se intentó y produce errores graves.
+ * La geometría real vive en `EstructurasDiseño` (pendiente de modelar).
+ */
+export const estructuras = pgTable('estructuras', {
+  codigo: text('codigo').primaryKey(),
+  descripcion: text('descripcion').notNull(),
+  /** 001 correderas · 003 ventanas · 004 puertas · 010 arcos · 113 mamparas. */
+  familia: text('familia'),
+  observaciones: text('observaciones'),
+  /** true si es un accesorio de unión, no un hueco completo. */
+  esAccesorio: boolean('es_accesorio').notNull().default(false),
+  fabricaStock: boolean('fabrica_stock').notNull().default(false),
+}, (t) => ({
+  familiaIdx: index('estructuras_familia_idx').on(t.familia),
+  descripcionIdx: index('estructuras_descripcion_idx').on(t.descripcion),
+}))
+
+/**
  * Precio de coste por artículo, proveedor y acabado.
  * Origen: ArticulosCoste (24.716 filas en EMP0009).
  */
