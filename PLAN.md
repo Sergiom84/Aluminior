@@ -151,3 +151,102 @@ Ejecutar Fase 0 completa:
 2. Extraer SQL de los 291 `.rpt`.
 3. Montar el paquete depurado de ~60 MB.
 4. Primer commit.
+
+---
+---
+
+# ANEXO A — Hallazgos de la Fase 0 (18/07/2026)
+
+Ejecutada la extracción de esquema sobre copias de `EMP0009` (446 MB) e `InfoSeries` (358 MB).
+Lo encontrado obliga a corregir varias suposiciones del plan original.
+
+## A.1 El esquema NO es igual entre empresas
+
+| Base | Tablas | Con datos |
+|---|---|---|
+| EMP0003 | 830 | 154 |
+| EMP0009 | **968** | **178** |
+
+138 tablas de diferencia. Las empresas están en **versiones distintas del esquema**.
+Consecuencia directa: el ETL no puede asumir una estructura única. Hay que perfilar las 16
+bases por separado y construir la migración contra la unión de esquemas, no contra una.
+
+## A.2 No existe integridad referencial
+
+**10 claves ajenas declaradas sobre 968 tablas.** Todas apuntan a `Articulos` o `Proveedores`.
+
+Esto es el hallazgo más importante para la reconstrucción: las relaciones entre tablas
+**no están en la base de datos**, están en el código de la aplicación. No se pueden
+deducir automáticamente. Hay que inferirlas por convención de nombres, por los `.rpt`
+y por observación.
+
+Implica además que los datos actuales pueden contener huérfanos e inconsistencias que
+la aplicación tolera. El ETL necesita una fase de **perfilado y saneamiento** que no
+estaba contemplada. Añadir 2–3 semanas.
+
+## A.3 Tablas extremadamente anchas
+
+| Tabla | Columnas | Filas |
+|---|---|---|
+| `Articulos` | 235 | 3.120 |
+| `VDatosDiseño` | 223 | 6.558 |
+| `VPresupuestos` | 152 | 2.335 |
+| `VPresupuestosLin` | **147** | **468.838** |
+| `EstructurasArticulos` | 129 | 61.674 |
+
+`VPresupuestosLin` es el corazón del sistema. 147 columnas significa que la lógica de
+negocio está codificada en la *semántica de cada columna*, no en estructura. Cada una
+hay que entender qué representa. Es el trabajo más lento de todo el proyecto y no se
+puede automatizar.
+
+## A.4 Dependencia estratégica: las bibliotecas de series
+
+`InfoSeries.mdb` no contiene diseños: es un **catálogo de 4.104 series** de ~100 fabricantes
+(Veka, Alumed, Domal, Cortizo…), versionado por GAIA (`version 45.50`, `codigoGaia`).
+
+- EMP0009 solo tiene **29 series** realmente configuradas.
+- Las definiciones técnicas se importan a la MDB de empresa (`EstructurasDiseño`,
+  `EstructurasArticulos`, `ConfigSeriesCotas`, `ConfigSeriesHerraje`).
+
+**Lo que esto significa:** las series que ya usas están en tus datos y son recuperables.
+Pero el *mantenimiento continuo* del catálogo — series nuevas, cambios de tarifa de
+fabricante, actualizaciones de herrajes — es un servicio de GAIA, no un fichero que se
+copia. Reconstruir la aplicación no te da ese flujo.
+
+Es la decisión estratégica de fondo del proyecto, y hay que tomarla explícitamente:
+
+1. **Mantener GAIA para el catálogo** y construir lo propio encima. Sigues pagando algo.
+2. **Asumir el mantenimiento del catálogo** — relación directa con cada fabricante.
+   Es trabajo continuo y permanente, no un hito.
+3. **Limitar el alcance a las 29 series que usas** y mantenerlas a mano.
+   Viable si tu catálogo real es estable.
+
+Sin resolver esto, H4 (producción y despiece) no tiene sentido.
+
+## A.5 Detalles técnicos menores
+
+- `aluminio.exe` es solo un lanzador; la aplicación real es `AluminioApp.exe`.
+- Los `.rpt` son ficheros compuestos OLE con contenido codificado: no se leen por
+  extracción de cadenas. Se leen con el motor oficial de Crystal (presente en el GAC).
+- `EMP0009\DIBUJOS`: 36.406 ficheros, 2,7 GB. Solo una empresa. Los dibujos son
+  regenerables desde las estructuras — no hay que migrarlos, hay que poder recrearlos.
+- Auditoría visual: pendiente. Requiere permiso para `aluminioapp.exe`.
+
+## A.6 Revisión de estimaciones
+
+| Hito | Antes | Ahora | Motivo |
+|---|---|---|---|
+| H1 Catálogo | 4–6 sem | **6–9 sem** | Tablas de 235 columnas, sin FKs |
+| H2 Comercial | 6–8 sem | **10–14 sem** | `VPresupuestosLin` 147 columnas |
+| ETL | incluido | **+3 sem** | Perfilado y saneamiento, 16 esquemas distintos |
+
+El proyecto es viable, pero es más grande de lo estimado. La recomendación de congelar
+el alcance en H1+H2 se refuerza.
+
+## A.7 Lo que hay que decidir ahora
+
+1. **Bibliotecas de series** (A.4). Bloquea H4. Es la decisión más importante.
+2. **Auditoría visual**: sin ver la aplicación, `VPresupuestosLin` es ingeniería inversa
+   a ciegas. Conceder acceso o hacer las capturas tú.
+3. **Qué empresa es la de referencia.** EMP0009 tiene 9 clientes y 1.037 obras — no parece
+   la operativa principal. Hay que identificar cuál lo es antes de modelar sobre ella.
