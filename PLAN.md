@@ -1261,3 +1261,55 @@ huecos fijos.
 existente conserva la línea como *sin valorar* cuando el número de cristales no
 cuadra con el de hojas. El siguiente trabajo debe contrastar un emparejamiento
 explícito con el oráculo antes de escribir lógica de precio.
+
+---
+
+# ANEXO P — Corrección de la medición de mixtas y variante explícita (18/07/2026)
+
+## P.1 La primera clasificación de "mixta" era demasiado amplia
+
+El anexo O clasificaba una estructura como mixta cuando tenía hojas y vidrios
+de varias medidas. Esa condición también incluye correderas y estructuras con
+varias hojas, aunque no tengan ningún fijo. Por eso aparecían falsos positivos
+como `2O`, `1O` y `C3`.
+
+El script `scripts/analizar-mixtas.mjs` se corrigió para exigir la evidencia
+autoritaria de la plantilla: al menos una ranura de vidrio con
+`DisTipoHoja = -1` (fijo) y otra con un tipo de hoja distinto.
+
+También se corrigió un defecto del informe: mostraba la plantilla de `2OFI`
+pero elegía como ejemplo histórico la primera estructura distinta disponible
+(en una ejecución, `C3`). Ahora plantilla y ejemplo pertenecen a la misma
+estructura.
+
+## P.2 Hipótesis ranura a ranura: insuficiente para valorar
+
+Se evaluaron `FormulaLargo` y `FormulaAncho` de cada ranura con las medidas y
+cotas reales de la instancia. Después se midió el descuento entre el módulo y
+el vidrio histórico, agrupado por estructura, serie y ranura (`DisTipoHoja`,
+`DisIdHoja`, `DisGrupo`, `DisIdIt`). Resultado:
+
+| Medición | Resultado |
+|---|---:|
+| Casos mixtos emparejables por cantidad | 121 |
+| Reglas con >=3 muestras y >=90% de consistencia | 3 |
+| Grupos inestables o con pocas muestras | 66 |
+| Casos completos reproducidos exactamente | **5 / 121** |
+
+La cobertura es insuficiente. En un `2OFI` real de ELEGANTPVC, por ejemplo,
+el fijo limitado por marco y travesaño tiene descuentos distintos en cada eje;
+no se puede reutilizar el galce medido de un fijo puro contra cuatro perfiles
+de marco.
+
+**Decisión:** no se añade valoración de mixtas. La guarda existente continúa
+dejando la línea como *sin valorar*. El siguiente avance requiere modelar los
+perfiles que delimitan cada hueco, no una tabla de descuentos aprendida de
+cinco casos.
+
+## P.3 Variante de acristalamiento `.1` / `.2`
+
+La variante dejó de estar fijada a `.2` en el servidor. El formulario permite
+elegir **cristal sencillo** (`.1`) o **doble cristal** (`.2`); doble sigue como
+valor inicial porque representa el 100% del histórico disponible. La elección
+se usa al resolver los perfiles variantes y se persiste en
+`lineas_acristalamiento.variante` para conservar la trazabilidad.

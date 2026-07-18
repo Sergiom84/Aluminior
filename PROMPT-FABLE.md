@@ -90,10 +90,12 @@ reales con un 96,5% de coincidencia frente al oráculo histórico. Los asociados
 (herrajes y escuadras), la mano de obra, las correderas y las estructuras mixtas
 (hoja + fijo) siguen sin valoración y deben seguir mostrando el aviso honesto.
 
-La siguiente investigación es el acristalamiento de **estructuras mixtas**. El
-script de sólo lectura `scripts/analizar-mixtas.mjs` perfila las ranuras y el
-histórico antes de que se escriba código de valoración. Mide la hipótesis contra
-el oráculo y no actives ningún cálculo que no sea inequívoco.
+El acristalamiento de **estructuras mixtas** ya se midió con
+`scripts/analizar-mixtas.mjs`: sólo 5 de 121 casos se reproducen con reglas
+estables, así que continúa expresamente *sin valorar*. El siguiente avance en
+esa vía requiere identificar los perfiles que delimitan cada hueco (marco,
+travesaño u hoja) y volver a medir contra el oráculo antes de activar precio.
+La variante de cristal sencillo/doble ya es una elección persistida.
 
 ## Cómo quiero que trabajes
 

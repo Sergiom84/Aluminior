@@ -129,6 +129,8 @@ export const lineasAcristalamiento = pgTable('lineas_acristalamiento', {
   slot: integer('slot').notNull(),
   vidrioHojas: text('vidrio_hojas'),
   vidrioFijos: text('vidrio_fijos'),
+  /** Variante de perfiles dependientes del vidrio: 1=sencillo, 2=doble. */
+  variante: text('variante').notNull().default('2'),
 }, (t) => ({
   pk: primaryKey({ columns: [t.lineaId, t.slot] }),
 }))

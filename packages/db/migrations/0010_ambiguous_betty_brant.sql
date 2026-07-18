@@ -1,0 +1,1 @@
+ALTER TABLE "lineas_acristalamiento" ADD COLUMN "variante" text DEFAULT '2' NOT NULL;

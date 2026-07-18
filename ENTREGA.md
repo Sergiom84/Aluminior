@@ -732,8 +732,10 @@ Lo que queda de la valoración:
    las tablas de la serie y longitudes medidas del histórico (anexo M).
    Pendiente: estructuras mixtas hoja+fijo, correderas, variante `.1`/`.2`
    derivada del vidrio, slots múltiples. **Mano de obra**: sin modelar.
-3. **Variante de acristalamiento** (`.1`/`.2`): hoy fija a doble cristal (el
-   100% del histórico); exponerla como elección en el configurador.
+3. **Variante de acristalamiento** (`.1`/`.2`): **HECHO**. El configurador
+   permite elegir cristal sencillo o doble, usa la variante al resolver los
+   perfiles y la persiste. Doble queda como valor inicial porque es el 100%
+   del histórico.
 4. **El ~1% de fallos conocidos**: variantes de apertura (ELEGANTPVC y
    similares); requiere la dimensión "tipo de apertura" del configurador.
 

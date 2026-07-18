@@ -89,6 +89,7 @@ const esquemaLinea = z.object({
   /** Vidrio del acristalamiento (familia 050, facturable por m²). Opcional:
    * sin él, el cristal queda "sin valorar". */
   vidrioCodigo: z.string().trim().optional().transform((v) => v || null),
+  varianteAcristalamiento: z.enum(['1', '2']).default('2'),
   cantidad: z.coerce.number().positive().default(1),
   anchoMm: z.coerce.number().int().min(0).optional(),
   altoMm: z.coerce.number().int().min(0).optional(),
@@ -227,7 +228,7 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
 
       // La empresa monta doble cristal en el 100% del histórico; la variante
       // es una elección visible (se informa en el aviso si interviene).
-      const VARIANTE = '2' as const
+      const VARIANTE = d.varianteAcristalamiento
       let variantesAplicadas = 0
       const sinResolver = new Set<string>()
 
@@ -637,7 +638,8 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
         aviso = `Importe incompleto: ${problemas.join('; ')}.`
       }
       else if (variantesAplicadas > 0) {
-        aviso = `Valorado con variante de doble cristal en ${variantesAplicadas} componentes (el criterio de la empresa).`
+        const nombreVariante = VARIANTE === '2' ? 'doble' : 'sencillo'
+        aviso = `Valorado con variante de cristal ${nombreVariante} en ${variantesAplicadas} componentes.`
       }
     }
 
@@ -688,6 +690,7 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
             lineaId: linea.id,
             slot: 1,
             vidrioHojas: d.vidrioCodigo,
+            variante: d.varianteAcristalamiento,
           })
         }
       }

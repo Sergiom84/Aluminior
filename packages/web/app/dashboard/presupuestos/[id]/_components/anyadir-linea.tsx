@@ -100,6 +100,17 @@ export function AnyadirLinea({
               )}
             </div>
 
+            <div className="col-span-2">
+              <label htmlFor="varianteAcristalamiento" className="mb-1 block text-sm font-medium">
+                Acristalamiento
+              </label>
+              <select id="varianteAcristalamiento" name="varianteAcristalamiento"
+                defaultValue="2" className={entrada} style={estilo}>
+                <option value="2">Doble cristal</option>
+                <option value="1">Cristal sencillo</option>
+              </select>
+            </div>
+
             {/* El coste real depende del acabado; sin él, las piezas con coste
                 distinto por acabado quedan "sin coste" en vez de adivinarse. */}
             <div className="col-span-2">
