@@ -65,11 +65,29 @@ export const clientesPotenciales = pgTable('clientes_potenciales', {
 export const obras = pgTable('obras', {
   id: uuid('id').primaryKey().defaultRandom(),
   clienteCodigo: text('cliente_codigo').references(() => clientes.codigo),
+  /** Número de obra dentro del cliente, tal como venía del original. */
+  numero: integer('numero'),
   descripcion: text('descripcion').notNull(),
   direccion: text('direccion'),
+  observaciones: text('observaciones'),
 }, (t) => ({
   clienteIdx: index('obras_cliente_idx').on(t.clienteCodigo),
 }))
+
+/** Proveedores. Origen: Proveedores (8 filas en EMP0016). */
+export const proveedores = pgTable('proveedores', {
+  codigo: text('codigo').primaryKey(),
+  nombre: text('nombre').notNull(),
+  nif: text('nif'),
+  contacto: text('contacto'),
+  direccion: text('direccion'),
+  cp: text('cp'),
+  poblacion: text('poblacion'),
+  provincia: text('provincia'),
+  telefono: text('telefono'),
+  email: text('email'),
+  activo: boolean('activo').notNull().default(true),
+})
 
 export const ESTADOS_PRESUPUESTO = [
   'PENDIENTE', 'ACEPTADO', 'RECHAZADO', 'ANULADO',

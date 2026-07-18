@@ -15,6 +15,13 @@
       "when": 1784388871477,
       "tag": "0001_estructuras",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1784392056314,
+      "tag": "0002_proveedores_obras",
+      "breakpoints": true
     }
   ]
 }

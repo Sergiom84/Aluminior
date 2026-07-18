@@ -92,7 +92,7 @@ async function vaciarDestino() {
   const tablas = [
     'lineas_despiece', 'lineas_acristalamiento', 'lineas_opciones_herraje',
     'lineas_estructura', 'lineas', 'presupuestos', 'obras',
-    'clientes_potenciales', 'clientes',
+    'clientes_potenciales', 'clientes', 'proveedores',
     'articulos_coste', 'articulos_pvp', 'articulos', 'estructuras',
     'subfamilias', 'tonalidades', 'acabados', 'familias',
   ]
@@ -172,6 +172,46 @@ resultados.push(await cargar('Clientes', 'clientes', (f, r) => {
     persona_fisica_juridica: txt(f.PersonaFisicaJuridica),
     sii_tipo_id_fiscal: txt(f.siiTipoIdFiscal),
     fecha_alta: fecha(f.FechaAlta),
+  }
+}))
+
+resultados.push(await cargar('AcaTonalidades', 'tonalidades', (f, r) => {
+  const acabado = txt(f.Acabado)
+  const codigo = txt(f.Tonalidad)
+  if (!acabado || !codigo) { descartar(r, 'clave incompleta'); return null }
+  return {
+    acabado_codigo: acabado,
+    codigo,
+    descripcion: txt(f.Descripcion) ?? codigo,
+  }
+}))
+
+resultados.push(await cargar('Proveedores', 'proveedores', (f, r) => {
+  const codigo = txt(f.Codigo)
+  if (!codigo) { descartar(r, 'sin código'); return null }
+  return {
+    codigo,
+    nombre: txt(f.Nombre) ?? codigo,
+    nif: txt(f.NIF),
+    contacto: txt(f.Contacto),
+    direccion: txt(f.Direccion),
+    cp: txt(f.CP),
+    poblacion: txt(f.Poblacion),
+    provincia: txt(f.Provincia),
+    telefono: txt(f.Telefono),
+    email: txt(f.eMail),
+  }
+}))
+
+resultados.push(await cargar('ClientesObras', 'obras', (f, r) => {
+  const cliente = txt(f.Cliente)
+  const nombre = txt(f.Nombre)
+  if (!nombre) { descartar(r, 'obra sin nombre'); return null }
+  return {
+    cliente_codigo: cliente,
+    numero: ent(f.nObra),
+    descripcion: nombre,
+    observaciones: txt(f.Observaciones),
   }
 }))
 
