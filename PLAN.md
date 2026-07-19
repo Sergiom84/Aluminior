@@ -1942,6 +1942,50 @@ no son más muestras sino un modelo distinto, y antes de escribirlo hay
 que entender qué distingue las 26 no nulas — no buscarlo por fuerza bruta
 sobre 26 casos.
 
+### S.9.9 Las condiciones restantes de `ConjuntosAsoc`: ninguna es filtro
+
+Buscando el discriminante que falta en los 24 casos de S.9.1 se revisaron
+las columnas de `ConjuntosAsoc` sin semántica asignada
+(`scripts/explorar-medida-conjuntos.mjs`,
+`scripts/medir-condiciones-restantes.mjs`). Ninguna resuelve nada, y
+conviene dejarlo escrito para no volver a mirarlas.
+
+**`TipoMedCV` — vía muerta.** Era el mejor candidato a declarar el eje
+contra el que se compara `MedidaMin/Max`. Vale **`"C"` en las 4.203 filas
+con rango** que lo traen: constante, sin información.
+
+**`FormulaOpcion` — mecanismo entendido, impacto nulo.** Condición de
+opciones compuesta que el predictor no implementa: `O<n>` = "opción n
+marcada". Sólo 3 valores distintos (`O926*O4`, `O927*O4`, `O925*O4`), 120
+filas, y **un único operador: `*`** (conjunción). Afecta a **2 artículos**
+(`GM5314`, `GM5315`, bisagra oculta) y a **0 filas del oráculo**. No se
+implementa: sería código sin una sola prueba que lo respalde.
+
+**`AperturaTH` — cierra el punto 5 de S.7, por falta de presencia.** S.7
+la listaba como *"190 filas, última condición sin semántica"*. En el
+oráculo sólo aparece en **14 filas**, y el reparto es exactamente
+**7 artículos ausentes / 7 presentes**: aplicarla como filtro cambiaría 7
+falsos positivos por 7 aciertos perdidos, a cara o cruz. No hay muestra
+para inferir su semántica ni beneficio esperado en hacerlo. **Anotada como
+no determinable con el oráculo actual**; requeriría ampliarlo con
+correderas (los artículos afectados son todos RUEDA REGULABLE).
+
+**`AsocAGrupoAsoc` — no es un filtro.** 1.747 filas del oráculo, con
+838 ausentes frente a **909 presentes**: descartar las filas que la llevan
+perdería más aciertos de los que evitaría. Es una clave de agrupación con
+semántica propia, no una condición de descarte. Sin resolver.
+
+**`GrupoAsoc`, `SoloUnaSN`, `PVCrefuerzoSN`, `SoloPerfPpalSN`,
+`InsertadoSN` — descartadas como condiciones.** `PVCrefuerzoSN`,
+`SoloPerfPpalSN` e `InsertadoSN` valen `False` en las 13.345 filas;
+`SoloUnaSN` sólo 63 veces `True`; `GrupoAsoc` vale `'!'` en 13.047. Son
+campos poblados, no condiciones que filtren.
+
+**Corrección de método**: la primera versión de esta medición contaba
+`"False"` como condición marcada, lo que arrastraba el catálogo entero al
+recuento y daba cifras idénticas y sin sentido para las cuatro columnas
+booleanas. Corregido en el script; las cifras de arriba son las buenas.
+
 ### S.9.4 Resultado
 
 | Predictor (216 líneas) | Precisión | Cobertura | Exactas (artículos) |
