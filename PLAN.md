@@ -1861,6 +1861,53 @@ La implementación **no fija ninguno**: el umbral vive en quien construye la
 tabla de reglas, no en el motor. Queda **pendiente de decisión explícita**
 antes de conectar esto a producción.
 
+## T.13 La cola es variación real, y sus errores son grandes
+
+Antes de elegir el umbral de T.12 había que saber **qué son** las 92 piezas
+que se salen de su regla (`scripts/medir-cola-rebaje.mjs`). Dos hipótesis
+con consecuencias opuestas: que fueran piezas mal emparejadas (arreglable,
+sin coste de cobertura) o variación real del rebaje (compromiso
+inevitable).
+
+| ¿Qué son las 92 piezas atípicas? | |
+|---|---:|
+| Su corte encaja con OTRA fórmula de la misma estructura y eje | 0 (0,0%) |
+| Su delta coincide con el rebaje de otra regla del mismo perfil | 2 (2,2%) |
+| **Sin explicar — variación real del rebaje** | **90 (97,8%)** |
+
+**El emparejamiento no tiene la culpa.** Las 92 piezas no son un artefacto
+de medición: son variación real. **El compromiso de T.12 es inevitable** y
+el umbral hay que decidirlo, no esquivarlo.
+
+### Y no son errores de un milímetro
+
+El dato que faltaba para decidir con criterio. "92 cortes malos" no
+significa lo mismo si son de 1 mm que si son de 3 cm:
+
+| Error | piezas | |
+|---|---:|---:|
+| ≤ 1 mm | 6 | 6,5% |
+| 5–10 mm | 13 | 14,1% |
+| 10–25 mm | 13 | 14,1% |
+| 25–50 mm | 31 | 33,7% |
+| **> 50 mm** | **29** | **31,5%** |
+
+**El 79,3% se desvía más de 10 mm. El error máximo es 630,5 mm.** No son
+redondeos tolerables en carpintería: son hojas que no entran en su marco.
+
+**Esto refuerza la cautela en la decisión pendiente de T.12.** Un umbral
+del 90% no reparte 92 pequeñas imprecisiones: reparte 73 piezas
+inservibles entre presupuestos que parecerán correctos. La recomendación
+—que sigue siendo una recomendación, no una decisión tomada— es empezar
+por el 99% (16 piezas atípicas) y revisar a mano los grupos entre el 99% y
+el 90%, que están identificados y son pocos.
+
+**Anotado sin resolver**: por qué varía el rebaje dentro de un mismo
+(perfil, eje, fórmula, serie). El test de determinismo de T.10 ya dijo que
+el techo del contexto observable es 94,4%, así que **esa variación no se
+puede explicar con los datos que exporta el ERP**. No es falta de análisis:
+es falta de datos.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
