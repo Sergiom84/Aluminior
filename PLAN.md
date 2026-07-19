@@ -1736,6 +1736,79 @@ le falte cualquiera de sus reglas**, en vez de rellenar con un rebaje
 aproximado. Con eso, el 79,6% pasa a valorarse bien y el 20,4% avisa
 honestamente en lugar de mentir.
 
+## T.10 Regla del rebaje cerrada al 93,0%, a 1,4 puntos del techo
+
+Analizados los 37 grupos inestables de T.9 (1.417 piezas)
+con `scripts/medir-rebaje-hoja-v4.mjs`. ¿Les falta una condición, o son
+irreducibles?
+
+| Discriminante adicional | piezas recuperadas de 1.417 |
+|---|---:|
+| `DisNHoja` | 3 (0,2%) |
+| acabado | 131 (9,2%) |
+| `DisIdIt` | 658 (46,4%) |
+| estructura | 769 (54,3%) |
+| `DisTipoHoja` | 789 (55,7%) |
+| **serie** | **1.043 (73,6%)** |
+
+**La regla completa es `rebaje = f(perfil, eje, fórmula, serie)`.** Medida
+directamente, no estimada, y con la misma prueba de validez de T.9:
+
+| | grupos | piezas |
+|---|---:|---:|
+| grupos totales | 134 | |
+| estables (≥3 muestras, ≥90%) | 93 | |
+| de ellos triviales (una sola medida) | 29 | 163 |
+| **robustos (medidas variadas)** | **64** | **7.102** |
+
+**Cobertura honesta: 7.102/7.639 = 93,0%** (T.9 sin serie: 79,6%).
+
+**Y hay un techo, medido.** Aplicando el test de determinismo de S.9.8 —si
+dos piezas comparten perfil, eje, fórmula, estructura, ítem de diseño y
+medida evaluada pero tienen rebajes distintos, ninguna regla sobre estas
+entradas puede acertar las dos—: de 2.290 firmas de contexto, **70 son
+ambiguas (430 observaciones)**. El techo teórico es **94,4%**.
+
+**El 93,0% está a 1,4 puntos de lo máximo alcanzable con estos datos.** No
+merece la pena seguir buscando discriminantes: lo que falta no está en los
+CSV. Ese 5,6% irreducible sólo se cerraría con información que el ERP no
+exporta.
+
+### Evolución del frente
+
+| | cobertura |
+|---|---:|
+| T.7 (perfil + eje, muestra completa) | 15,0% |
+| T.9 (+ fórmula, tolerancia corregida) | 79,6% |
+| **T.10 (+ serie)** | **93,0%** |
+| Techo teórico del contexto observable | 94,4% |
+
+### Lo que queda irreducible, anotado
+
+Los grupos inestables restantes son casi todos del eje **HH** y de dos
+perfiles: `GM8428` (VIERTEAGUAS HOJA) y `GM8783M` (HOJA CANAL 16). Sus
+distribuciones incluyen valores disparatados —`-344,6`, `218,9`,
+`156,4`— que no son un segundo rebaje sino, con toda probabilidad, piezas
+mal emparejadas o líneas con datos atípicos. **No se ha comprobado cuál de
+las dos cosas es**, y se anota como tal.
+
+## T.11 Ahora sí: implementar con guarda
+
+Con 64 reglas robustas y 93,0% de cobertura, el frente pasa de medición a
+implementación, siguiendo **exactamente el patrón del anexo Q** para las
+mixtas:
+
+1. Migración + ETL que carguen las 64 reglas `(perfil, eje, fórmula,
+   serie) → rebaje`.
+2. El motor aplica el rebaje cuando existe regla para la pieza.
+3. **Si a una pieza de hoja le falta su regla, la línea entera queda sin
+   valorar**, con aviso — nunca se rellena con un rebaje aproximado ni se
+   emite la medida del hueco como si fuera el corte.
+
+Con eso, el 93,0% se valora bien y el 7,0% avisa honestamente, que es
+justo lo que hoy no ocurre: hoy las 1.003 líneas con hoja del anexo T
+producen medidas de corte equivocadas sin avisar de nada.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
