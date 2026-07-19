@@ -547,7 +547,7 @@ Aluminior/
 
 ## 6.3 Esquema de base de datos
 
-31 tablas. Migraciones en `packages/db/migrations/`:
+33 tablas. Migraciones en `packages/db/migrations/`:
 
 ```
 0000_esquema_inicial     16 tablas base
@@ -562,11 +562,12 @@ Aluminior/
 0009                     variante de acristalamiento en línea
 0010                     variante elegida persistida
 0011                     árbol de diseño y descuentos por alojamiento (mixtas)
+0012                     opciones de herraje: catálogo y juego medido por serie+estructura
 ```
 
 ## 6.4 Datos cargados
 
-**186.942 filas**, todas al 100% sin descartes:
+**198.819 filas**, todas al 100% sin descartes:
 
 | Tabla | Filas |
 |---|---|
@@ -576,7 +577,8 @@ Aluminior/
 | `conjunto_resoluciones` | 15.823 |
 | `estructura_componentes` | 15.263 |
 | `conjuntos` | 15.063 |
-| `estructura_diseno_nodos` | 5.596 |
+| `opciones_herraje` | 11.854 |
+| `estructura_diseno_nodos` | 5.597 |
 | `tacris_filas` | 2.488 |
 | `obras` | 1.728 |
 | `conjunto_delegaciones` | 697 |
@@ -586,6 +588,7 @@ Aluminior/
 | `series` | 57 |
 | `tonalidades` | 57 |
 | `familias` | 32 |
+| `herraje_conjuntos` | 22 |
 | `vidrio_descuentos_alojamiento` | 21 |
 | `acabados` | 18 |
 | `vidrio_galce` | 14 |

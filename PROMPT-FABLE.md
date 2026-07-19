@@ -56,7 +56,7 @@ Las MDB se leen con `Microsoft.ACE.OLEDB.16.0` (instalado, 64 bits).
 
 Aplicación **Next.js 15 + TypeScript + Drizzle + PostgreSQL** (Supabase, región
 UE). Funcionan cuatro módulos: **Clientes, Artículos, Estructuras y
-Presupuestos**. Hay **186.942 filas** cargadas en 31 tablas.
+Presupuestos**. Hay **198.819 filas** cargadas en 33 tablas.
 
 Arranca con:
 
@@ -102,11 +102,14 @@ valorar. La variante de cristal sencillo/doble ya es una elección persistida.
 
 **El siguiente paso es cerrar la selección de asociados** (herrajes y
 escuadras). El anexo R ya midió: fuente confirmada (99,8%), `nOpcion` validado
-como filtro seguro, pero 56,5% de precisión y 0 líneas exactas. Quedan tres
-semánticas por resolver, en este orden: medidas por eje
-(`Intervalo`/`TipoMedCV`, verificable contra compases y bisagras por tramos),
-la apertura de la hoja (`AperturaTH`) y `ComponenteAsoc` contra el despiece
-instanciado. Solo al llegar a ~100% línea a línea se implementa la valoración.
+como filtro seguro, pero 56,5% de precisión y 0 líneas exactas. Ya están
+implementadas las **opciones de herraje en la línea** (R.5: catálogo, juego de
+conjuntos medido por serie+estructura, y elección persistida) y medida la
+referencia de `MedidaMin/Max`: **dimensiones de la hoja**, no de la línea
+(R.4; los cerraderos siguen sin explicar — probablemente gradúan cantidad).
+Queda por resolver: cerraderos, `AperturaTH` (apertura de la hoja) y
+`ComponenteAsoc` contra el despiece instanciado. Solo al llegar a ~100% línea
+a línea se implementa la valoración.
 
 ## Cómo quiero que trabajes
 

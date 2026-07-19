@@ -185,6 +185,47 @@ export const vidrioGalce = pgTable('vidrio_galce', {
   pk: primaryKey({ columns: [t.serieCodigo, t.perfilCodigo] }),
 }))
 
+/**
+ * Catálogo de opciones de herraje por conjunto.
+ * Origen: ConjuntosOpcionesHerraje (11.854 filas).
+ *
+ * Una opción marcada activa las filas de ConjuntosAsoc con su nOpcion
+ * (filtro validado contra el oráculo: anexo R — pierde solo un 0,2% de
+ * cobertura). La valoración de asociados sigue cerrada; esto persiste la
+ * ELECCIÓN para cuando la selección esté resuelta al completo.
+ */
+export const opcionesHerraje = pgTable('opciones_herraje', {
+  conjuntoCodigo: text('conjunto_codigo').notNull(),
+  opcionCodigo: text('opcion_codigo').notNull(),
+  descripcion: text('descripcion').notNull().default(''),
+  /** SelecDefSN: marcada por defecto al configurar. */
+  porDefecto: boolean('por_defecto').notNull().default(false),
+  /** OcultaSN: el original no la muestra al usuario. */
+  oculta: boolean('oculta').notNull().default(false),
+  categoria: text('categoria'),
+}, (t) => ({
+  pk: primaryKey({ columns: [t.conjuntoCodigo, t.opcionCodigo] }),
+}))
+
+/**
+ * Juego de conjuntos de herraje que usa cada (serie, estructura), MEDIDO del
+ * histórico (VOpcionesHerraje sobre presupuestos reales): cada línea usa
+ * varios conjuntos a la vez (la serie + una tabla de herraje según la
+ * apertura). La firma dominante es determinista en 70 de 80 combinaciones;
+ * las excepciones son variantes de apertura elegidas por el usuario.
+ * Solo se emiten reglas con ≥3 muestras y ≥90% de consistencia.
+ */
+export const herrajeConjuntos = pgTable('herraje_conjuntos', {
+  serieCodigo: text('serie_codigo').notNull(),
+  estructuraCodigo: text('estructura_codigo').notNull(),
+  /** Códigos de conjunto de la firma dominante, orden alfabético, unidos por '+'. */
+  conjuntos: text('conjuntos').notNull(),
+  muestras: integer('muestras').notNull(),
+  totalMuestras: integer('total_muestras').notNull(),
+}, (t) => ({
+  pk: primaryKey({ columns: [t.serieCodigo, t.estructuraCodigo] }),
+}))
+
 export const conjuntoResoluciones = pgTable('conjunto_resoluciones', {
   conjuntoCodigo: text('conjunto_codigo').notNull(),
   componente: text('componente').notNull(),

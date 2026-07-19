@@ -1431,8 +1431,49 @@ precisión, cada línea llevaría de media casi tanta pieza inventada como real.
 4. Solo con precisión y cobertura ~100% línea a línea, pasar cantidades
    (`Cantidad`, `FormulaL`, cantidades negativas) y después implementar.
 
+## R.4 Medidas por eje: la referencia es la HOJA (medido)
+
+`Intervalo` y `TipoMedCV` resultaron constantes en las 13.345 filas ('0' y
+'C'): no discriminan nada. La semántica real se midió con los **grupos de
+tramos** (`scripts/medir-medidas-asoc.mjs`): filas con el mismo
+`Conjunto+ComponenteAsoc+nOpcion`, artículos distintos y rangos distintos.
+Cuando una línea real contiene exactamente uno de esos artículos, el rango
+del elegido delata contra qué dimensión se comparó.
+
+Sobre 9.150 casos (32 grupos con ≥10 casos):
+
+- **17 grupos (2.016 casos) se explican al ≥90% por una dimensión de la
+  hoja**: el mayor corte `HH` (ancho de hoja) en 7 —los brazos de compás
+  `OBPH` llegan al 100%— y el mayor corte `HV` (alto de hoja) en 10.
+  Las dimensiones de la línea (`L`, `A`) no explican ninguno.
+- **Los 15 grupos no explicados son todos CERRADERO ESTANDAR**: sus tramos
+  probablemente gradúan la CANTIDAD (más puntos de cierre a más altura), no
+  la elección del artículo. Semántica pendiente.
+
+## R.5 Implementado: opciones de herraje en la línea (19/07/2026)
+
+Prerrequisito 1 del anexo K, ahora cumplido. Medición previa: cada línea
+histórica registra opciones de VARIOS conjuntos a la vez (la serie + una
+tabla de herraje según la apertura), y ese juego es determinista por
+(serie, estructura) en 70 de 80 combinaciones — las excepciones son las
+variantes de apertura ya conocidas (P.ej. `ELEGANTPVC|2O`: 224× `HU532`,
+2× `HU529`).
+
+- `opciones_herraje` (migración 0012): catálogo de
+  `ConjuntosOpcionesHerraje`, con defaults (`SelecDefSN`) y ocultas
+  (`OcultaSN`).
+- `herraje_conjuntos`: juego de conjuntos por (serie, estructura), MEDIDO
+  por el ETL (`packages/etl/src/medir-herrajes.ts`) con los umbrales de
+  siempre: ≥3 muestras y ≥90% de consistencia. Sin regla, el configurador
+  no ofrece opciones.
+- Web: al elegir serie y estructura, el alta de línea muestra las opciones
+  no ocultas con sus defaults; la elección se persiste en
+  `lineas_opciones_herraje` (más los defaults ocultos). **No afecta a la
+  valoración**: los asociados siguen "sin valorar" hasta cerrar R.3.
+
 ## Scripts
 
 ```
-scripts/medir-opciones-herraje.mjs   la medición de este anexo
+scripts/medir-opciones-herraje.mjs   selección contra el oráculo (R.1)
+scripts/medir-medidas-asoc.mjs       hipótesis de dimensión por tramos (R.4)
 ```

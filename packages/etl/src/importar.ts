@@ -14,6 +14,7 @@ import { readFileSync } from 'node:fs'
 import postgres from 'postgres'
 import { rutaTabla, leerLotes, txt, num, ent, bool, fecha, type Fila } from './csv.ts'
 import { medirDescuentosAlojamiento } from './medir-mixtas.ts'
+import { medirHerrajeConjuntos } from './medir-herrajes.ts'
 
 // --- Entorno ---
 for (const linea of readFileSync(new URL('../../../.env', import.meta.url), 'utf8').split('\n')) {
@@ -112,6 +113,7 @@ async function vaciarDestino() {
     'estructura_componentes', 'estructura_cotas', 'estructura_diseno_nodos',
     'vidrio_descuentos_alojamiento', 'vidrio_galce', 'vidrio_galce_fijo',
     'junquillo_ajustes', 'junquillo_ajustes_fijo', 'tacris_filas',
+    'opciones_herraje', 'herraje_conjuntos',
     'conjunto_resoluciones', 'conjunto_delegaciones', 'conjuntos', 'series',
     'articulos_coste', 'articulos_pvp', 'articulos', 'estructuras',
     'subfamilias', 'tonalidades', 'acabados', 'familias',
@@ -439,6 +441,49 @@ resultados.push(await cargar('ConjuntosLin', 'conjunto_resoluciones', (f, r) => 
     articulo_codigo: articulo,
   }
 }))
+
+/**
+ * Catálogo de opciones de herraje por conjunto (anexo R). Las ocultas
+ * también se cargan: el original las usa en la selección de asociados
+ * aunque no las muestre; el filtrado de visibilidad es de la interfaz.
+ */
+resultados.push(await cargar('ConjuntosOpcionesHerraje', 'opciones_herraje', (f, r) => {
+  const conjunto = txt(f.Conjunto)
+  const opcion = txt(f.nOpcion)
+  if (!conjunto || !opcion) { descartar(r, 'clave incompleta'); return null }
+  return {
+    conjunto_codigo: conjunto,
+    opcion_codigo: opcion,
+    descripcion: txt(f.Descripcion) ?? '',
+    por_defecto: bool(f.SelecDefSN),
+    oculta: bool(f.OcultaSN),
+    categoria: txt(f.CategoriaOH),
+  }
+}))
+
+/**
+ * Juego de conjuntos de herraje por (serie, estructura), medido del
+ * histórico. Ver medir-herrajes.ts.
+ */
+{
+  const medida = await medirHerrajeConjuntos(ORIGEN)
+  const r: Resultado = {
+    tabla: 'herraje_conjuntos',
+    leidas: medida.reglas.length,
+    insertadas: 0,
+    descartadas: 0,
+    excluidas: 0,
+    motivos: new Map([
+      [`medición: ${medida.reglas.length}/${medida.combinaciones} combinaciones estables ` +
+        `sobre ${medida.lineas} líneas históricas`, 1],
+    ]),
+  }
+  if (medida.reglas.length) {
+    await sql`INSERT INTO herraje_conjuntos ${sql(medida.reglas)} ON CONFLICT DO NOTHING`
+    r.insertadas = medida.reglas.length
+  }
+  resultados.push(r)
+}
 
 {
   const medida = await medirDescuentosAlojamiento(ORIGEN)
@@ -812,7 +857,10 @@ resultados.push(await cargar('ArticulosPVP', 'articulos_pvp', (f, r) => {
   return { articulo_codigo: articulo, acabado_codigo: acabado, tarifa, precio }
 }))
 
-await sql.end()
+// Cierre acotado: sin timeout, un socket que el servidor ya cerró por su
+// lado deja el end() colgado para siempre y el proceso muere con
+// "unsettled top-level await" sin llegar a imprimir el informe.
+await sql.end({ timeout: 5 })
 
 // --- Informe ---
 
