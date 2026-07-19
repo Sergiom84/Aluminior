@@ -2265,6 +2265,99 @@ para elegirlas primero no es que desbloqueen solas, sino que tienen mecanismo
 demostrado (anexo J, 96,5% contra el oráculo) mientras que los asociados
 siguen en 96,3% de precisión con 51/216 líneas exactas (anexo S).
 
+## T.21 Las ranuras pendientes son TRES causas, no 178 casos sueltos
+
+Clasificación por causa de fallo en la cadena del anexo J, con su peso.
+Scripts: `scripts/clasificar-ranuras-perfil.mjs` (todas las parejas) y
+`scripts/clasificar-ranuras-reales.mjs` (sólo las del histórico).
+
+### T.21.1 Corrección a T.20: el denominador estaba fabricado
+
+T.20 midió sobre **21.090 combinaciones serie × estructura**, que es el
+producto cartesiano 57 × 370. **La mayoría de esas parejas no existen**: una
+serie de abatibles con una estructura de corredera nunca se configura, y ahí
+"sin candidato" es la respuesta correcta, no un fallo.
+
+Es exactamente el error de la regla 8 —medir sobre parejas que uno mismo ha
+elegido— por cuarta vez en este proyecto. Repetido sobre las parejas reales:
+
+| | Cartesiano (T.20) | **Real (histórico)** |
+|---|---:|---:|
+| Parejas serie × estructura | 21.090 | **140** |
+| Con pieza de hoja | 21.090 | **87** |
+| Ranuras de perfil distintas sin resolver | 178 | **38** |
+
+**El frente es 38 ranuras, no 178.** El "178 con cola larga" de T.20.3 queda
+corregido: la cola era el producto cartesiano.
+
+### T.21.2 Peso por causa, sobre las 7.000 apariciones reales
+
+| Causa | líneas | % |
+|---|---:|---:|
+| **E. sin candidato en la cadena** | 5.136 | 73,4% |
+| **B. no toca a la serie por diseño** (cristal) | 1.864 | 26,6% |
+| A. sin `componente_disenyo` | 0 | 0% |
+| C. sólo existe la variante `.1` | 0 | 0% |
+
+Y la causa E se descompone en familias limpias, no en casos sueltos:
+
+| Familia dentro de E | componentes | líneas | % del total |
+|---|---|---:|---:|
+| **Oscilobatiente** | `OBC` `OBM` `OBCR` `OBP` `OBPH` | 2.959 | **42,3%** |
+| **Correderas** | `222` `224` `226` `228` `22` | 1.886 | **26,9%** |
+| Kits de corredera/elevable | `EKCC` `EKEF` `EKEE` | 135 | 1,9% |
+| Practicable pasiva y compás | `PRC` `PRPV` `PRPH` | 92 | 1,3% |
+| Elevables | `223` `225` `227` `229` | 36 | 0,5% |
+| Junquillos curvos, marcos 3 carriles, sueltos | varios | 28 | 0,4% |
+
+**Tres causas concentran el 95,8%**: cristal (26,6%) + oscilobatiente (42,3%)
++ correderas (26,9%) = 6.709 de 7.000.
+
+### T.21.3 `funcion null` no es una clase: la clase es el CRISTAL
+
+La ranura 8 (`(**CRISTAL GENERICO**)`) tiene `funcion` null, pero lo que la
+define no es eso: es su `componente_disenyo = 1`. **El paso 4 del anexo J ya
+dice que el componente 1 es acristalamiento y NO resuelve por serie por
+diseño** — lo elige el usuario, y el acristalamiento ya está implementado por
+otra vía (anexos L, M, N, Q).
+
+Es decir: **`acciones.ts` está contando como "ranura genérica que la serie no
+resuelve" una ranura que la serie nunca tuvo que resolver.** Eso mete un
+`problema` en toda línea con cristal y la deja sin valorar. No es una ranura
+pendiente: es una clasificación equivocada por nuestra parte.
+
+Peso real de arreglarlo, medido: de las 87 parejas con hoja, **7 están
+bloqueadas SÓLO por el cristal** (12 líneas del histórico). Las otras 80
+tienen además alguna ranura de causa E. Así que corregirlo es necesario y
+barato, pero **por sí solo desbloquea 7 parejas, no el sistema**.
+
+### T.21.4 Decisión: se implementa por causa
+
+La clasificación demuestra que no son casos sueltos. Orden propuesto, cada uno
+validado contra el oráculo como en el anexo J —no contra la intuición—:
+
+1. **Cristal (26,6%)**: dejar de contar el componente 1 como ranura sin
+   resolver. Es corregir un error propio, no descubrir un mecanismo.
+2. **Oscilobatiente (42,3%)**: `OBC`, `OBM`, `OBCR`, `OBP`, `OBPH` son
+   códigos alfanuméricos, y el anexo S.2 ya midió que **50 de los 54 valores
+   de `ComponenteAsoc` son `DisComponente`**, citando `OBC` y `OBCR` entre
+   ellos. Hipótesis a medir antes de construir: **estas ranuras resuelven por
+   `ConjuntosAsoc`, no por `ConjuntosLin`**. Si se confirma, un solo mecanismo
+   cubre también `PRC`/`PRPV`/`PRPH` (43,6% juntos).
+3. **Correderas (26,9%)**: `222`–`229` son numéricos y simplemente no están en
+   la cadena de la serie configurada. Hipótesis a medir: la resolución pasa por
+   otro conjunto (delegación de corredera) o por `ConfigSeriesAsoc` vía
+   `TipoHoja`. Es el frente que `ENTREGA.md` ya daba por abierto.
+
+**Lo que NO se hace**: ir ranura a ranura. La cola —elevables, kits,
+junquillos curvos, marcos de 3 carriles— suma el 4,2% y son 20 ranuras; se
+tratan al final o se quedan fuera avisando, que es el comportamiento correcto.
+
+**Recordatorio de T.20.3, que sigue en pie**: ninguna de estas tres cierra por
+sí sola una línea, porque toda pareja con hoja tiene además asociados
+pendientes. El valor de hacerlas es que son el prerrequisito con mecanismo
+demostrable; la línea valorada llega cuando cierren también los asociados.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
