@@ -1604,9 +1604,18 @@ ranura.
 
 1. ~~Anclar los ejes de rango~~ **RESUELTO en S.6**: la medida es la
    fórmula de la propia ranura; la mano real, la de la instancia.
-2. **Longitudes por `FormulaL`**: juntas perimetrales y demás asociados en
-   metros (el mayor falso negativo restante). Mismo evaluador de fórmulas
-   que los perfiles.
+2. **Juntas perimetrales de hoja** (GM4055/GM5085, el mayor falso
+   negativo): semántica DESCUBIERTA y medida
+   (`scripts/medir-junta-espejo.mjs`, `scripts/medir-ml-asociados.mjs`):
+   NO van en metros — son **4 piezas por hoja** (Cdad=1 cada una), una por
+   lado, con `Largo = corte del lado de la hoja − ajuste(serie, eje)`
+   (1PFS: −64 vertical/−90 horizontal; 1OFI: −44/−70…). El mismo patrón
+   que los junquillos del anexo M: falta medir la tabla de ajustes por
+   serie con los umbrales de siempre y emitirla desde el ETL. Ojo: contar
+   las hojas por `DisIdHoja` de la plantilla se queda corto (2OD da 1,
+   3HO da 2); el recuento bueno es el de la instancia.
+   La goma GM4090 (`A`/`L` ×2) sigue igual: unidades con largo aparte,
+   ajuste sin medir.
 3. **La mano** (`ManoID`): bisagras izquierda/derecha.
 4. **`ConfigSeriesAsoc`** (por `TipoHoja`) como segunda fuente.
 5. **`AperturaTH`** (190 filas): última condición sin semántica.
