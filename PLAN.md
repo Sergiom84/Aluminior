@@ -1477,3 +1477,88 @@ variantes de apertura ya conocidas (P.ej. `ELEGANTPVC|2O`: 224× `HU532`,
 scripts/medir-opciones-herraje.mjs   selección contra el oráculo (R.1)
 scripts/medir-medidas-asoc.mjs       hipótesis de dimensión por tramos (R.4)
 ```
+
+---
+
+# ANEXO S — Asociados: el mecanismo es resolución de ranuras (19/07/2026)
+
+Continúa R. Tres descubrimientos que cambian el modelo, y una medición que
+acota lo que falta.
+
+## S.1 Las filas de ConjuntosAsoc son ACUMULATIVAS, no excluyentes
+
+Inspección de los cerraderos de `HU531` (ranura 56): cada tramo de altura de
+cremona lleva su fila de cremona (cantidad 1) **y** una fila de CERRADERO
+ESTANDAR con cantidad 0, 1, 2 o 3 según el tramo. La opción de hoja pasiva
+(926/927) aporta filas con **cantidad negativa** que restan los cerraderos
+de la cremona. La cantidad final de un artículo es la SUMA de las filas que
+pasan sus condiciones. Esto explica por qué los cerraderos no encajaban como
+"elección por tramo" en R.4.
+
+## S.2 ComponenteAsoc es una RANURA del despiece — el mismo mecanismo que los perfiles
+
+Las instancias de `EstructurasArticulos` conservan las ranuras genéricas de
+asociados con su `DisComponente`: `105 infHAesc → 58` (escuadras),
+`85/89 infHAB → 52/56` (herraje abatible), `156 infZApert → 71` (zona de
+apertura), `148 infMOmof → 39` (mano de obra), `310 AccDisMI → 130`.
+
+**50 de los 54 valores de `ComponenteAsoc` son exactamente esos
+`DisComponente`** (incluidos `OBC`, `OBCR`, `EHC`, `PRC`…, que parecían
+códigos especiales). El modelo completo:
+
+1. La plantilla genera ranuras de asociado (funciones `inf*`) igual que
+   genera perfiles.
+2. `ConjuntosAsoc` resuelve cada ranura presente con condiciones: `nOpcion`
+   marcada, medida de la HOJA en rango, `ArticuloAsoc` presente.
+3. La cantidad es la suma de las filas que pasan (S.1).
+
+Solo `!`, `A`, `L` y `59R` no son ranuras:
+
+- **`!`** ancla por categoría de elemento en texto (`AsociadoA`): 32 valores
+  ("HOJAS", "MARCOS INFERIORES", "TRAVESAÑOS PEQUEÑOS", "BISAGRA
+  PRACTICABLE"…). La cantidad depende del nº de elementos de esa categoría;
+  algunos encadenan sobre otros asociados.
+- **`A`/`L`** = una por ancho / por alto (patillas de anclaje GM1161).
+
+## S.3 Predictor v2 medido (scripts/medir-seleccion-v2.mjs)
+
+Sobre las 146 líneas del oráculo con opciones + instancia + asociados:
+filtro de ranura presente + `nOpcion` + eje aprendido por grupo (8 de 27
+grupos alcanzan ≥90% con ≥5 muestras):
+
+| Métrica | v1 (sin ranuras) | v2 (con ranuras) |
+|---|---:|---:|
+| Precisión | 56,2% | 61,5% |
+| Cobertura | 99,5% | 82,2% |
+| Líneas exactas | 0 | 0 |
+
+La cobertura que pierde v2 es EXACTAMENTE los mecanismos aún no modelados:
+`GM1161` (patillas `A`/`L`, en las 146 líneas), `GM4337` (salida de agua,
+`!` MARCOS INFERIORES), juntas por `!` HOJAS, y `ConfigSeriesAsoc` (por
+`TipoHoja`), que todavía no entra en el predictor.
+
+**Decisión (regla 3): los asociados siguen sin valorar.** El mecanismo está
+identificado pero la selección no reproduce ninguna línea exacta todavía.
+
+## S.4 Qué falta, en orden
+
+1. **`!` por categoría**: mapear los 32 textos de `AsociadoA` a recuentos
+   del despiece (nº de hojas, travesaños por tamaño, marcos inferiores…) y
+   medir. Es la mayor pérdida de cobertura.
+2. **`A`/`L`**: patillas por dimensión (¿cantidad por fórmula o por tramos
+   de `Intervalo`?). GM1161 aparece en el 100% de las líneas.
+3. **Ejes de rango**: aprenderlos con más datos (añadir VALB y VFAC al
+   oráculo triplica las muestras) o anclarlos a la hoja de la ranura
+   (`DisIdHoja` de la instancia) en vez de al máximo de la línea.
+4. **`ConfigSeriesAsoc`** (por `TipoHoja`) como segunda fuente del
+   predictor.
+5. **`AperturaTH`** (190 filas): última condición sin semántica.
+6. Con exactitud línea a línea: cantidades, `FormulaL` (longitudes de
+   corte de asociados tipo perfil) y recién entonces la valoración.
+
+## Scripts
+
+```
+scripts/medir-seleccion-completa.mjs   predictor v1: opciones + ejes (56,2%/99,5%)
+scripts/medir-seleccion-v2.mjs         predictor v2: ranuras (61,5%/82,2%)
+```

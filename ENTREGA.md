@@ -744,12 +744,14 @@ Corregido con un `TRUNCATE ... CASCADE` único.
 
 Lo que queda de la valoración:
 
-1. **Asociados**: escuadras, herrajes por apertura, zona de apertura —
-   fuente confirmada al 99,8% y `nOpcion` validado como filtro seguro
-   (anexo R), pero la selección exacta sigue abierta: 56,5% de precisión,
-   0 líneas exactas. Faltan tres semánticas: medidas por eje
-   (`Intervalo`/`TipoMedCV`), `AperturaTH` (apertura de la hoja) y
-   `ComponenteAsoc`. Hoy quedan "sin valorar" con aviso.
+1. **Asociados**: mecanismo identificado (anexo S): resolución de RANURAS
+   como los perfiles — la plantilla genera ranuras `inf*` con
+   `DisComponente`, `ConjuntosAsoc` las resuelve (opción marcada + medida
+   de hoja en rango) y la cantidad es la suma de filas, con correcciones
+   negativas. Opciones de herraje ya en el configurador (R.5). Predictor
+   v2: 61,5% precisión / 82,2% cobertura, 0 líneas exactas. Falta (S.4):
+   ancla `!` por categoría, patillas `A`/`L`, ejes con más muestras,
+   `ConfigSeriesAsoc` y `AperturaTH`. Hoy quedan "sin valorar" con aviso.
 2. **Acristalamiento**: el vidrio se elige y se valora tanto en HOJAS
    (anexo L) como en FIJOS (anexo N), con junquillos y juntas por grosor de
    las tablas de la serie y longitudes medidas del histórico (anexo M).

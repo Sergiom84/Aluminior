@@ -101,15 +101,19 @@ si a un hueco le falta cualquiera de sus dos reglas, la línea entera queda sin
 valorar. La variante de cristal sencillo/doble ya es una elección persistida.
 
 **El siguiente paso es cerrar la selección de asociados** (herrajes y
-escuadras). El anexo R ya midió: fuente confirmada (99,8%), `nOpcion` validado
-como filtro seguro, pero 56,5% de precisión y 0 líneas exactas. Ya están
-implementadas las **opciones de herraje en la línea** (R.5: catálogo, juego de
-conjuntos medido por serie+estructura, y elección persistida) y medida la
-referencia de `MedidaMin/Max`: **dimensiones de la hoja**, no de la línea
-(R.4; los cerraderos siguen sin explicar — probablemente gradúan cantidad).
-Queda por resolver: cerraderos, `AperturaTH` (apertura de la hoja) y
-`ComponenteAsoc` contra el despiece instanciado. Solo al llegar a ~100% línea
-a línea se implementa la valoración.
+escuadras). El mecanismo ya está identificado (anexo S): es **resolución de
+ranuras**, como los perfiles — la plantilla genera ranuras de asociado
+(funciones `inf*`, con `DisComponente`), `ConjuntosAsoc` resuelve cada ranura
+presente filtrando por `nOpcion` marcada y medida de la HOJA en rango, y la
+cantidad es la SUMA de las filas que pasan (hay filas de cantidad 0 y
+negativas: correcciones). Las opciones de herraje ya están en el configurador
+(R.5) y el predictor v2 llega a 61,5% de precisión / 82,2% de cobertura sobre
+el oráculo, sin ninguna línea exacta aún. Lo que falta está acotado en
+**S.4**, en orden: el ancla `!` por categoría de elemento (32 textos de
+`AsociadoA` → recuentos del despiece), las patillas `A`/`L`, los ejes de
+rango con más muestras (añadir VALB/VFAC al oráculo), `ConfigSeriesAsoc` por
+`TipoHoja`, y `AperturaTH`. Solo al llegar a ~100% línea a línea se
+implementa la valoración.
 
 ## Cómo quiero que trabajes
 
