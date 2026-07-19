@@ -1565,6 +1565,61 @@ genérico, que es información que el motor no recibe hoy.
 **No se ha implementado ningún rebaje.** Con 23 de 40 reglas no se toca un
 motor que corta material real (regla 3).
 
+## T.6 El rebaje es del PERFIL, no de la serie — confirmado en dirección, sin cerrar
+
+Medido el punto 1 de T.5 (`scripts/medir-rebaje-hoja.mjs`). Primero se
+descartó que el descuento venga declarado: **`ConjuntosLin` —la tabla que
+resuelve genérico→perfil— sólo tiene 4 columnas** (`Conjunto`,
+`Componente`, `Familia`, `Articulo`). No hay campo de descuento.
+
+Comparando la estabilidad del mismo rebaje según cómo se agrupe, sobre las
+mismas 148 observaciones:
+
+| Agrupación | grupos | estables | piezas cubiertas |
+|---|---:|---:|---:|
+| a) serie + función | 6 | 2 | 8/148 (5,4%) |
+| **b) PERFIL REAL + función** | 13 | 6 | **52/148 (35,1%)** |
+| c) perfil + marco + función | 16 | 8 | **62/148 (41,9%)** |
+
+**La hipótesis de T.5 se confirma en dirección**: el perfil explica más de
+seis veces lo que explica la serie. Y que añadir el perfil de MARCO mejore
+todavía más encaja con la lectura física: el rebaje es el **solape entre
+la hoja y el marco**, y depende de los dos perfiles, no de uno.
+
+Los rebajes por perfil son valores redondos y propios de cada perfil, lo
+que refuerza que sean una característica física:
+
+| Perfil | rebaje | muestras |
+|---|---:|---:|
+| `GM301` HOJA 47 CURVA 350E | 40,4 | 26/28 ✔ |
+| `GM308` HOJA APERTURA EXTERNA 350E | 74,4 | 8/8 ✔ |
+| `GM8852M` HOJA 47 MM ST.50 RPT | 44 | 4/4 ✔ |
+| `GM16218L` HOJA 73 BALCONERA | 96 | 4/4 ✔ |
+| `GM8245` HOJA BALCONERA 50 MM | 93 | 4/4 ✔ |
+| `GM307` HOJA BALCONERA 47 MM 350E | 74,4 | 30/40 ✘ |
+
+**Pero NO se cierra, y hay que decir por qué.** Dos límites serios:
+
+1. **La muestra es pequeña y sesgada**: 148 observaciones de 2.082
+   posibles; **1.934 descartadas** por tener varios perfiles en la misma
+   función o por no coincidir el recuento de piezas. El filtro de no
+   ambigüedad, que es lo que hace fiable la medición, es también lo que la
+   deja sin muestra.
+2. **Sólo mide HV**. Ningún grupo de HH sobrevive al filtro: en el eje
+   horizontal las líneas casi siempre mezclan perfiles. Y precisamente HH
+   era el mayor foco de fallos del anexo T (6.894 piezas).
+
+Con 41,9% de cobertura en el mejor caso, y sin ninguna medida del eje HH,
+**no se implementa ningún rebaje**. Sería tocar el motor que corta
+material real con una regla medida sobre el 7% de las piezas y ciega en el
+eje que más falla.
+
+**Prerrequisito antes de volver aquí**: resolver el emparejamiento de las
+líneas con varios perfiles por función —con la maquinaria de
+`mejorEmparejamiento` de `packages/etl/src/medir-mixtas.ts`, que ya
+resuelve ese problema para los vidrios—. Sin eso, cualquier medición del
+rebaje seguirá viendo el 7% de los datos.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
