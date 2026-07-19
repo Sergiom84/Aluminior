@@ -1686,6 +1686,56 @@ Corregirlo antes de volver a medir.
 **Sigue sin implementarse ningún rebaje.** Con 15% de cobertura y una
 condición identificada pero sin medir, tocar el motor sería precipitado.
 
+## T.9 La segunda condición es la FÓRMULA de la pieza (79,6%)
+
+Medida la hipótesis de T.8 sobre las 7.639 observaciones
+(`scripts/medir-rebaje-hoja-v3.mjs`), probando como discriminantes los
+campos con los que la propia plantilla describe cada pieza de hoja. Se
+corrigió además el artefacto de T.8: se agrupa con **tolerancia 0,51 mm**,
+la del resto del proyecto, en vez de redondear a 0,1 mm.
+
+| Discriminante | grupos | estables | piezas cubiertas |
+|---|---:|---:|---:|
+| perfil + eje (referencia T.7) | 52 | 26 | 1.358 (17,8%) |
+| perfil + eje + `DisPosPerf` | 52 | 26 | 1.358 (17,8%) |
+| perfil + eje + vecinos `DisIdPerAd*` | 52 | 26 | 1.358 (17,8%) |
+| perfil + eje + `DisGrupo` | 72 | 35 | 1.425 (18,7%) |
+| perfil + eje + `DisNHoja` | 145 | 53 | 3.094 (40,5%) |
+| perfil + eje + grupos I/D | 93 | 55 | 3.688 (48,3%) |
+| perfil + eje + `DisTipoHoja` | 153 | 96 | 4.477 (58,6%) |
+| **perfil + eje + FÓRMULA** | 111 | **74** | **6.222 (81,5%)** |
+
+**La hipótesis física de T.8 —marco frente a cruce con otra hoja— NO es la
+que manda.** Los vecinos declarados (`DisIdPerAd*`) no aportan **nada**
+(17,8%, idéntico a la referencia). Lo que discrimina es la **fórmula de
+corte de la pieza**, que codifica su papel en la estructura de forma más
+fina que cualquiera de los campos de posición.
+
+Y no es circular: el rebaje se mide como `evaluar(fórmula) − corte real`,
+así que agrupar por fórmula no fija el resultado. Dice algo comprobable:
+**para un perfil, un eje y una fórmula dados, el rebaje es constante.** Los
+tres datos están disponibles al despiezar.
+
+**Prueba de validez (obligatoria aquí).** Un grupo cuyas piezas tengan
+todas la misma medida evaluada sería estable por trivialidad, no por
+regla. Separando:
+
+| | grupos | piezas |
+|---|---:|---:|
+| estables con UNA sola medida (no demuestran nada) | 24 | 138 |
+| **estables con medidas VARIADAS (regla real)** | **50** | **6.084** |
+
+**Cobertura honesta: 6.084/7.639 = 79,6%** — de 15,0% en T.7 a 79,6%
+descartando ya los grupos triviales.
+
+**Sigue sin implementarse.** 79,6% no es reproducir el oráculo, y el 20,4%
+restante son piezas reales que se cortarían mal. Pero el camino ya no es
+buscar hipótesis: es el patrón que el anexo Q dejó establecido para las
+mixtas — cargar las reglas medidas y **dejar sin valorar la línea a la que
+le falte cualquiera de sus reglas**, en vez de rellenar con un rebaje
+aproximado. Con eso, el 79,6% pasa a valorarse bien y el 20,4% avisa
+honestamente en lugar de mentir.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
