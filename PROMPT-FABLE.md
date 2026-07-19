@@ -25,8 +25,9 @@ Lee estos tres documentos del repositorio, en este orden:
 
 1. **`ENTREGA.md`** — estado completo: qué se ha hecho, qué se ha descubierto,
    qué falta, y todas las rutas. Es el documento principal.
-2. **`PLAN.md`** — el análisis completo con sus anexos A a Q; los últimos
-   contienen las correcciones y el estado vigente del acristalamiento mixto.
+2. **`PLAN.md`** — el análisis completo con sus anexos A a R; los últimos
+   contienen el estado vigente del acristalamiento mixto (Q) y de la
+   selección de asociados (R).
 3. **`ARQUITECTURA.md`** — decisiones técnicas y su razonamiento, incluidas las
    que se revirtieron.
 
@@ -55,7 +56,7 @@ Las MDB se leen con `Microsoft.ACE.OLEDB.16.0` (instalado, 64 bits).
 
 Aplicación **Next.js 15 + TypeScript + Drizzle + PostgreSQL** (Supabase, región
 UE). Funcionan cuatro módulos: **Clientes, Artículos, Estructuras y
-Presupuestos**. Hay **178.804 filas** cargadas.
+Presupuestos**. Hay **186.942 filas** cargadas en 31 tablas.
 
 Arranca con:
 
@@ -87,15 +88,25 @@ un perfil real.
 
 La cadena de delegaciones de la serie y `DisComponente` resuelven los perfiles
 reales con un 96,5% de coincidencia frente al oráculo histórico. Los asociados
-(herrajes y escuadras), la mano de obra, las correderas y las estructuras mixtas
-(hoja + fijo) siguen sin valoración y deben seguir mostrando el aviso honesto.
+(herrajes y escuadras), la mano de obra y las correderas siguen sin valoración
+y deben seguir mostrando el aviso honesto.
 
-El acristalamiento de **estructuras mixtas** ya modela los perfiles que
-delimitan cada hueco: marco, travesaño exacto, hoja exacta y división invisible.
-`scripts/analizar-mixtas.mjs` obtiene 21 reglas físicas estables y reproduce
-49 de 121 casos completos. La valoración sigue cerrada hasta cargar esas reglas
-y sólo podrá activarse cuando ambas dimensiones del hueco estén cubiertas.
-La variante de cristal sencillo/doble ya es una elección persistida.
+El acristalamiento de **estructuras mixtas** (hoja + fijo) está implementado
+para los casos demostrados: el árbol de `EstructurasDiseño` modela los perfiles
+que delimitan cada hueco (marco, travesaño exacto, hoja exacta y división
+invisible), y `scripts/analizar-mixtas.mjs` obtiene 21 reglas físicas estables
+que reproducen 421/540 dimensiones y 49/121 casos completos (anexo Q). Esas
+reglas están cargadas (migración 0011 + ETL) y la web valora ranura a ranura;
+si a un hueco le falta cualquiera de sus dos reglas, la línea entera queda sin
+valorar. La variante de cristal sencillo/doble ya es una elección persistida.
+
+**El siguiente paso es cerrar la selección de asociados** (herrajes y
+escuadras). El anexo R ya midió: fuente confirmada (99,8%), `nOpcion` validado
+como filtro seguro, pero 56,5% de precisión y 0 líneas exactas. Quedan tres
+semánticas por resolver, en este orden: medidas por eje
+(`Intervalo`/`TipoMedCV`, verificable contra compases y bisagras por tramos),
+la apertura de la hoja (`AperturaTH`) y `ComponenteAsoc` contra el despiece
+instanciado. Solo al llegar a ~100% línea a línea se implementa la valoración.
 
 ## Cómo quiero que trabajes
 
@@ -157,13 +168,3 @@ preferible a construir sobre una comprensión parcial.
 - No subas datos de clientes a ningún sitio
 
 Empieza leyendo `ENTREGA.md` y dime cómo lo enfocas antes de escribir código.
-
-## Actualización posterior — anexo Q
-
-La medición de 5/121 citada arriba ha sido corregida y queda sustituida por el
-anexo Q de `PLAN.md`. Ya se modelan los límites físicos de cada hueco mediante
-el árbol de `EstructurasDiseño`: marco, travesaño exacto, hoja exacta y división
-invisible. El contraste obtiene 21 reglas estables, reproduce 421/540
-dimensiones y 49/121 casos mixtos completos. La migración 0011 y el ETL están
-aplicados y la web calcula cada ranura cubierta, incluyendo junquillos y juntas.
-Los demás casos continúan sin valorar.

@@ -1367,3 +1367,72 @@ Prueba real reversible: `2OFI + ELEGANTPVC + V420AGS4`, 1795×1770 con cotas por
 defecto, produjo dos vidrios de hoja de 1319,9×716,5 y un fijo de 231,5×1684,
 con tres slots correctamente clasificados. La línea siguió sin total por 13
 genéricos ajenos al vidrio que la serie no resuelve; no por el acristalamiento.
+
+---
+
+# ANEXO R — Selección de asociados: medida, aún no resuelta (19/07/2026)
+
+Retoma el anexo K con el prerrequisito 2 (acristalamiento) ya cumplido. La
+hipótesis a medir: las **opciones de herraje** históricas
+(`VOpcionesHerraje`: `TipoDoc+nDoc+nLinEstr+Conjunto+nOpcion+SelecSN`, 28.428
+filas, `VPRES` incluido) más los defaults del catálogo
+(`ConjuntosOpcionesHerraje.SelecDefSN`) bastan para decidir qué filas de
+`ConjuntosAsoc` entran en cada línea.
+
+## R.1 Medición (scripts/medir-opciones-herraje.mjs)
+
+Sobre 1.234 líneas del oráculo cuyos asociados pertenecen a la población de
+`ConjuntosAsoc` (fuera quedan mano de obra, junquillos/juntas —que salen de
+`TAcristalamiento`, anexo M— y compactos, que son elección del usuario).
+Filtros acumulativos sobre las candidatas de la cadena de la serie:
+
+| Nivel | Precisión | Cobertura | Líneas exactas |
+|---|---:|---:|---:|
+| F0 cadena (baseline anexo K) | 37,0% | 99,8% | 0/1.234 |
+| F1 + `nOpcion` (marcadas o default) | 39,7% | 99,8% | 0/1.234 |
+| F2 + `MedidaMin/Max` (heurística "algún eje") | 49,8% | 93,1% | 0/1.234 |
+| F3 + `ArticuloAsoc` presente | 52,1% | 93,1% | 0/1.234 |
+| F4 + `ComponenteAsoc` en plantilla | 56,5% | 73,8% | 0/1.234 |
+
+Solo el 54,1% de las líneas tiene opciones registradas; el resto depende de
+los defaults del catálogo.
+
+## R.2 Lo que la medición establece
+
+- **La fuente queda confirmada**: el 99,8% de los asociados de serie del
+  oráculo está entre las candidatas de la cadena.
+- **`nOpcion` es un filtro seguro**: apenas pierde cobertura (36 casos de
+  GM4090 y 4 de GM4330 en 1.234 líneas) y gana precisión. La contradicción
+  del anexo K ("filas iguales donde una entra y otra no") era esto.
+- **La selección NO está cerrada**: 0 líneas exactas. Los falsos positivos
+  restantes (tacos de pilastra, brazos de compás por tramos 751–1200,
+  cerraderos, tirantes) apuntan a tres semánticas sin resolver:
+  1. **Medidas por eje**: la heurística "algún eje en rango" pierde un 6,7%
+     de cobertura; `Intervalo`, `TipoMedCV` y `AltoALMin/Max` deben decir qué
+     dimensión se compara.
+  2. **`AperturaTH`**: el tipo de apertura de la hoja (practicable,
+     oscilobatiente, fijo…) que el configurador aún no modela.
+  3. **`ComponenteAsoc`**: filtrarlo contra la plantilla pierde un 19,3% de
+     cobertura — el número no siempre es un slot de plantilla; su semántica
+     real está sin identificar (¿genérico del despiece expandido por hoja?).
+
+**Decisión (regla 3): los asociados siguen sin valorar.** Con 56,5% de
+precisión, cada línea llevaría de media casi tanta pieza inventada como real.
+
+## R.3 Siguiente paso concreto
+
+1. Resolver la semántica de medidas con los campos `Intervalo`/`TipoMedCV`
+   contra los casos de compases y bisagras por tramos (son los FP más
+   frecuentes y tienen rangos en la descripción: verificables uno a uno).
+2. Modelar la apertura de la línea (origen `VOpcionesHerraje` +
+   `ConfigSeriesHerraje`) para activar `AperturaTH`.
+3. Investigar `ComponenteAsoc` contra el despiece instanciado del oráculo
+   (las instancias de `EstructurasArticulos` llevan `DisComponente`).
+4. Solo con precisión y cobertura ~100% línea a línea, pasar cantidades
+   (`Cantidad`, `FormulaL`, cantidades negativas) y después implementar.
+
+## Scripts
+
+```
+scripts/medir-opciones-herraje.mjs   la medición de este anexo
+```

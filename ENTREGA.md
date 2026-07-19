@@ -393,8 +393,11 @@ fórmulas resueltas.**
 > confusión; se conserva como historia). Ver **PLAN.md anexo J** para el
 > mecanismo completo, y la sección 6 para lo implementado: la valoración de
 > perfiles funciona en la aplicación, con serie obligatoria en la línea.
-> Quedan sin valorar (y avisando) los asociados: herrajes, cristal y mano de
-> obra.
+> El acristalamiento también está valorado: hojas (anexo L), fijos (anexo N),
+> junquillos y juntas (anexo M) y mixtas hoja+fijo en los casos demostrados
+> (anexo Q). Quedan sin valorar (y avisando) los asociados —herrajes y
+> escuadras—, la mano de obra, las correderas y los casos mixtos que las 21
+> reglas medidas no cubren.
 
 ## 5.1 Los artículos del despiece son GENÉRICOS
 
@@ -519,7 +522,7 @@ Fastify → Express → Next.js. La última por alinearse con F-Gestor-IA.
 
 ```
 Aluminior/
-├─ PLAN.md              análisis completo, anexos A a Q
+├─ PLAN.md              análisis completo, anexos A a R
 ├─ ARQUITECTURA.md      decisiones y su razonamiento
 ├─ ENTREGA.md           este documento
 ├─ README.md
@@ -544,7 +547,7 @@ Aluminior/
 
 ## 6.3 Esquema de base de datos
 
-20 tablas. Migraciones en `packages/db/migrations/`:
+31 tablas. Migraciones en `packages/db/migrations/`:
 
 ```
 0000_esquema_inicial     16 tablas base
@@ -552,11 +555,18 @@ Aluminior/
 0002_proveedores_obras   proveedores y obras
 0003_despiece            plantillas de despiece
 0004_cotas               cotas simbólicas
+0005_series              conjuntos, resoluciones y delegaciones
+0006_vidrio_galce        galces medidos para vidrio de hoja
+0007_acristalamiento     persistencia del vidrio por línea
+0008_fijos               galce y junquillo de fijos; tablas TACRIS
+0009                     variante de acristalamiento en línea
+0010                     variante elegida persistida
+0011                     árbol de diseño y descuentos por alojamiento (mixtas)
 ```
 
 ## 6.4 Datos cargados
 
-**178.804 filas**, todas al 100% sin descartes:
+**186.942 filas**, todas al 100% sin descartes:
 
 | Tabla | Filas |
 |---|---|
@@ -564,8 +574,10 @@ Aluminior/
 | `articulos_coste` | 27.817 |
 | `articulos` | 17.547 |
 | `conjunto_resoluciones` | 15.823 |
-| `conjuntos` | 15.063 |
 | `estructura_componentes` | 15.263 |
+| `conjuntos` | 15.063 |
+| `estructura_diseno_nodos` | 5.596 |
+| `tacris_filas` | 2.488 |
 | `obras` | 1.728 |
 | `conjunto_delegaciones` | 697 |
 | `estructuras` | 541 |
@@ -574,8 +586,13 @@ Aluminior/
 | `series` | 57 |
 | `tonalidades` | 57 |
 | `familias` | 32 |
+| `vidrio_descuentos_alojamiento` | 21 |
 | `acabados` | 18 |
+| `vidrio_galce` | 14 |
+| `junquillo_ajustes` | 9 |
 | `proveedores` | 8 |
+| `junquillo_ajustes_fijo` | 5 |
+| `vidrio_galce_fijo` | 5 |
 
 **Vacías a propósito** (esquema listo, sin cargar): `clientes_potenciales`,
 `subfamilias`, y todas las de documentos.
@@ -725,8 +742,11 @@ Corregido con un `TRUNCATE ... CASCADE` único.
 Lo que queda de la valoración:
 
 1. **Asociados**: escuadras, herrajes por apertura, zona de apertura —
-   `ConjuntosAsoc` / `ConfigSeriesAsoc` (mecanismo localizado, sin validar
-   contra el oráculo). Hoy quedan "sin valorar" con aviso.
+   fuente confirmada al 99,8% y `nOpcion` validado como filtro seguro
+   (anexo R), pero la selección exacta sigue abierta: 56,5% de precisión,
+   0 líneas exactas. Faltan tres semánticas: medidas por eje
+   (`Intervalo`/`TipoMedCV`), `AperturaTH` (apertura de la hoja) y
+   `ComponenteAsoc`. Hoy quedan "sin valorar" con aviso.
 2. **Acristalamiento**: el vidrio se elige y se valora tanto en HOJAS
    (anexo L) como en FIJOS (anexo N), con junquillos y juntas por grosor de
    las tablas de la serie y longitudes medidas del histórico (anexo M).
