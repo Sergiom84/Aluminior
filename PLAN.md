@@ -1605,17 +1605,20 @@ ranura.
 1. ~~Anclar los ejes de rango~~ **RESUELTO en S.6**: la medida es la
    fórmula de la propia ranura; la mano real, la de la instancia.
 2. **Juntas perimetrales de hoja** (GM4055/GM5085, el mayor falso
-   negativo): semántica DESCUBIERTA y medida
-   (`scripts/medir-junta-espejo.mjs`, `scripts/medir-ml-asociados.mjs`):
-   NO van en metros — son **4 piezas por hoja** (Cdad=1 cada una), una por
-   lado, con `Largo = corte del lado de la hoja − ajuste(serie, eje)`
-   (1PFS: −64 vertical/−90 horizontal; 1OFI: −44/−70…). El mismo patrón
-   que los junquillos del anexo M: falta medir la tabla de ajustes por
-   serie con los umbrales de siempre y emitirla desde el ETL. Ojo: contar
-   las hojas por `DisIdHoja` de la plantilla se queda corto (2OD da 1,
-   3HO da 2); el recuento bueno es el de la instancia.
-   La goma GM4090 (`A`/`L` ×2) sigue igual: unidades con largo aparte,
-   ajuste sin medir.
+   negativo): semántica RESUELTA y validada
+   (`scripts/medir-ajuste-junta.mjs`): NO van en metros — cada tramo es
+   una pieza (Cdad=1) que **copia exactamente un corte de perfil de
+   hoja: delta = 0 en las 21 reglas estables, 4.624/4.632 tramos**,
+   agrupado por (serie, junta, perfil de hoja, eje). Implementación: al
+   despiezar, emitir una junta por cada pieza de perfil de hoja con su
+   mismo largo; el artículo de junta sale de la fila `'!' HOJAS` de
+   `ConjuntosAsoc`.
+   **Corrección explícita**: una versión anterior de este punto afirmaba
+   un ajuste por serie (−64/−90, −44/−70…). Era un artefacto de un bug de
+   medición (con varias filas HV por hoja se comparaba contra la fórmula
+   equivocada). El delta real es 0.
+   La goma GM4090 (`A`/`L` ×2): unidades con largo aparte, pendiente de
+   emparejar igual.
 3. **La mano** (`ManoID`): bisagras izquierda/derecha.
 4. **`ConfigSeriesAsoc`** (por `TipoHoja`) como segunda fuente.
 5. **`AperturaTH`** (190 filas): última condición sin semántica.
