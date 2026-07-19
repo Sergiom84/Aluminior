@@ -1572,9 +1572,15 @@ Diagnóstico ya preciso de lo que impide cerrar:
 ## S.5 Qué falta, en orden (revisado tras v3)
 
 1. **Anclar los ejes de rango a la hoja de la ranura**: reconstruir la
-   medida de la hoja `DisIdHoja` de cada ranura (vía las fórmulas del
-   despiece o correlando instancia ↔ hijas por orden) y reaprender. Es lo
-   que separa las dos políticas (94% preciso pero 76% de cobertura).
+   medida de la hoja `DisIdHoja` de cada ranura y reaprender. Es lo que
+   separa las dos políticas (94% preciso pero 76% de cobertura).
+   Medido: correlar instancia ↔ hijas por orden es IMPOSIBLE (0 de 279
+   líneas coinciden en nº de filas — la instancia guarda ranuras, las
+   hijas artículos expandidos). La vía es la del anexo Q: evaluar las
+   fórmulas del árbol de `EstructurasDiseño` con las cotas reales de la
+   línea (`VMedidasDA`/`VDatosLinDetDis`), como hace
+   `packages/etl/src/medir-mixtas.ts`, y sacar el módulo de cada hoja
+   por su id.
 2. **Longitudes por `FormulaL`**: juntas perimetrales y demás asociados en
    metros (el mayor falso negativo restante). Mismo evaluador de fórmulas
    que los perfiles.
