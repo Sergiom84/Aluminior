@@ -341,6 +341,22 @@ for (const linea of lineas) {
   }
   for (const [art, cdad] of [...predicho]) if (cdad <= 0) predicho.delete(art)
 
+  // Depuración puntual: DEPURAR_ART=GM5320 npx tsx scripts/medir-seleccion-v5.mjs
+  const DEP = process.env.DEPURAR_ART
+  if (DEP && (predicho.has(DEP) !== linea.reales.has(DEP))) {
+    const tipo = predicho.has(DEP) ? 'FP' : 'FN'
+    const detalles = []
+    for (const [cj] of linea.opciones) {
+      for (const f of asocPorConjunto.get(cj) ?? []) {
+        if (col(f, 'Articulo') !== DEP) continue
+        const comp = col(f, 'ComponenteAsoc')
+        const med = (linea.medidasRanura.get(comp) ?? []).map((a) => a.medida?.toFixed(0) ?? '·').join('/')
+        detalles.push(`${cj}|comp=${comp}|rango=${col(f, 'MedidaMin')}-${col(f, 'MedidaMax')}|op=${col(f, 'nOpcion') || '·'}|medidas=${med}|enInst=${linea.ranuras.has(comp)}`)
+      }
+    }
+    console.log(`[${tipo}] ${linea.k}  ${detalles.join('  ||  ')}`)
+  }
+
   let iguales = 0
   for (const art of linea.reales.keys()) {
     if (predicho.has(art)) { tp++; iguales++ }

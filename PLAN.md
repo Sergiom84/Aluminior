@@ -1619,11 +1619,18 @@ Reincorporar el filtro `ArticuloAsoc` (condición de perfil presente, que
 v1 ya tenía y se perdió al reescribir) eliminó de golpe los falsos
 positivos de escuadras y del kit de acristalamiento GM4353.
 
-Pendiente que concentra el resto: los tramos de cremona/tirante/pletina
-con varias fórmulas por ranura (las 454 filas con rango descartadas por
-ranura sin fórmula evaluable), los tacos de pilastra (regla dominante
-"2 por travesaño", medida en ~83% — las excepciones parecen ancladas a
-la PILASTRA, no al travesaño), y la goma GM4090.
+Pendiente que concentra el resto (depurado con `DEPURAR_ART=GM5320`):
+
+- **Tramos de cremona/tirante/pletina**: tres causas medidas — estructuras
+  cuya plantilla no trae fórmula para la ranura (`medidas=` vacío, parte
+  de las 454 filas descartadas), cotas de instancia recuperadas
+  incompletas que desvían la medida lo justo para caer en el tramo vecino
+  (evaluado 800 con rango 546–795 y el artículo real dentro), y líneas
+  con dos ranuras en rango a la vez. Es afinado del contexto de cotas,
+  no mecanismo nuevo.
+- **Tacos de pilastra**: regla dominante "2 por travesaño" (~83%); las
+  excepciones parecen ancladas a la PILASTRA, no al travesaño.
+- **Goma GM4090** (`A`/`L`): unidades con largo aparte, sin emparejar.
 
 ## S.7 Qué falta, en orden (revisado tras v4)
 
