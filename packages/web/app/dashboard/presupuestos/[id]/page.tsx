@@ -178,6 +178,19 @@ function LineaConDespiece({
                       {l.tipo === 'ESTRUCTURA' ? 'estr' : 'art'}
                     </span>
                     {l.descripcion}
+                    {/*
+                      T.17 condición 1: el riesgo de una regla de rebaje no
+                      exacta se acepta, pero NUNCA en silencio. Una línea
+                      valorada con avisos pinta su precio; el aviso tiene que
+                      leerse igual. Como saldrá en la mayoría de líneas de
+                      ELEGANTPVC (3.306 de 4.747 piezas), va discreto —sin
+                      fondo ni borde— pero a tamaño legible, no en un tooltip.
+                    */}
+                    {l.valoracionCompleta && l.avisoValoracion && (
+                      <div className="mt-0.5 text-xs" style={{ color: 'var(--al-warn)' }}>
+                        {l.avisoValoracion}
+                      </div>
+                    )}
                   </td>
                   <td className="px-3 py-2" style={{ color: 'var(--al-text-muted)' }}>{l.referencia ?? '—'}</td>
                   <td className="px-3 py-2" style={{ color: 'var(--al-text-muted)' }}>
@@ -190,7 +203,16 @@ function LineaConDespiece({
                         title={l.avisoValoracion ?? 'La línea tiene partes pendientes de valorar.'}>
                         sin valorar
                       </span>
-                    ) : eur.format(Number(l.precioUnitario))}
+                    ) : (
+                      <>
+                        {eur.format(Number(l.precioUnitario))}
+                        {l.avisoValoracion && (
+                          <div className="text-[10px] uppercase" style={{ color: 'var(--al-warn)' }}>
+                            con avisos
+                          </div>
+                        )}
+                      </>
+                    )}
                   </td>
                   <td className="cifra px-3 py-2 font-medium">
                     {!l.valoracionCompleta || l.total === null ? '—' : eur.format(Number(l.total))}

@@ -2115,6 +2115,73 @@ Son los que revisar a mano para recuperar cobertura sin bajar el umbral —el
 siguiente paso acordado— y el ETL los cuenta en su informe para no perderlos
 de vista.
 
+## T.19 El aviso no se pintaba — y hoy ningún dato puede dispararlo
+
+Dos hallazgos, uno de UI y otro de medición. El segundo es el importante.
+
+### T.19.1 La condición 1 de T.17 estaba incumplida en pantalla
+
+`packages/web/app/dashboard/presupuestos/[id]/page.tsx` sólo usaba
+`avisoValoracion` como `title` (tooltip) de la rama **"sin valorar"**. Una
+línea **valorada con avisos** pintaba su precio y el aviso se perdía: no
+aparecía en ninguna parte, ni siquiera como tooltip.
+
+T.17 dejó escrito que el riesgo del umbral 99% se acepta "pero nunca en
+silencio". Durante T.17 y T.18 fue exactamente silencio. Las tres capas
+—regla en `hoja_rebajes`, `RebajeHoja` con su evidencia, `avisoValoracion`
+persistido— estaban bien; la última pulgada no existía. Es el mismo patrón
+que T.18: capas correctas y desconectadas.
+
+Corregido: el texto completo del aviso se pinta bajo la descripción (12 px,
+`--al-warn`) y una marca corta `con avisos` bajo el precio (10 px). Verificado
+en navegador contra una línea real: ambos son `display: block`, color
+`rgb(217, 119, 6)`. No es un tooltip.
+
+### T.19.2 Ese estado NO es alcanzable hoy con ningún dato
+
+Al intentar reproducirlo en la aplicación, ninguna línea llegaba a
+"valorada con avisos". Medido en vez de supuesto, sobre **las 57 series ×
+519 estructuras**:
+
+| Camino al aviso informativo | combinaciones que lo alcanzan |
+|---|---:|
+| Regla de rebaje no exacta (`GM8783M`, ELEGANTPVC) | **0** |
+| Variante de cristal aplicada | **0** |
+
+Bajo ELEGANTPVC, 126 de 519 estructuras resuelven todas sus ranuras — pero
+son persianas, compactos y tubos (`PSU*`, `COM*`, `GMTUB*`): **ninguna lleva
+pieza de hoja**, así que ninguna puede usar una regla de rebaje. Y toda
+estructura con hoja (`2O`, `1+1`…) deja ranuras sin resolver, luego cae en
+`problemas` y queda **sin valorar**, que es un estado más fuerte que el aviso.
+
+Comprobado en `2O` bajo ELEGANTPVC: 13 ranuras sin resolver, de dos clases
+distintas —asociados (`infHAesc`, `infMOmof`, `infHAB`, `infZApert`,
+`AccDisMI`) y perfiles (`94 HV`, `168 HH`, `91 HH`, `92/93 HV`)—.
+
+**Consecuencia para T.17**: la rama informativa de `acciones.ts` es hoy
+inalcanzable en la práctica. No es código muerto como el filtro de T.16 —se
+vuelve alcanzable en cuanto una línea llegue a cero ranuras sin resolver—,
+pero **la afirmación de T.17 de que "el aviso aparecerá en la mayoría de
+líneas de ELEGANTPVC" no es cierta todavía**: hoy no aparece en ninguna,
+porque esas líneas ni siquiera se valoran. Se corrige aquí explícitamente.
+
+Requiere para desbloquearse: cerrar los asociados (anexo S) **y** las ranuras
+de perfil que la serie no resuelve. El arreglo de UI se adelanta a ese momento
+en vez de esperarlo, que es lo correcto: cuando la valoración se complete, el
+aviso ya estará visible en lugar de descubrirse ausente otra vez.
+
+**Cómo se verificó** (los datos de prueba se borraron después): presupuesto de
+prueba en la aplicación con dos líneas ELEGANTPVC tomadas del histórico real
+(`1+1` 1600×1230 y `2O` 1200×1050, vidrio `V420AGS4`, acabado `L`); ambas
+salieron sin valorar, y el estado "valorada + aviso" hubo que **forzarlo en
+la base** para poder ver el renderizado.
+
+**Nota de método**: durante el diagnóstico un `Application error` del cliente
+pareció venir del cambio de UI. No venía: lo provocaban los `git stash`/`pop`
+del propio experimento, que recompilaban el servidor a mitad de petición. Se
+descartó recargando en limpio (3 de 3 respuestas con el aviso presente) antes
+de "arreglar" un fallo inexistente.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
