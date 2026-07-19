@@ -1961,6 +1961,59 @@ aplicables salen de las opciones de herraje de la línea
 (`VOpcionesHerraje`), como estableció el anexo S. Es exactamente el mismo
 malentendido que se documentó con `GMBASTIDOR` en S.9.3.
 
+## T.15 Qué piezas llevan junta: NO se puede determinar con estos datos
+
+Medido el pendiente de T.14 (`scripts/medir-que-hojas-llevan-junta.mjs`).
+Sobre 525 líneas y 4.200 piezas de hoja, **el 80,0% tiene un tramo de junta
+de su mismo largo y el 20,0% no**. La pregunta era qué las separa.
+
+**Ningún discriminante lo explica:**
+
+| Discriminante | grupos decididos | piezas explicadas |
+|---|---:|---:|
+| `DisTipoHoja` | 0 | 0,0% |
+| eje (HV/HH) | 1 | 39,7% |
+| perfil + eje + fórmula | 29 | 39,7% |
+| perfil + eje | 17 | 41,4% |
+| **`DisGrupo`** | 4 | **41,5%** |
+
+El mejor llega al 41,5%, muy lejos del umbral. Y el motivo de fondo no es
+que falte buscar más: **la atribución no está registrada**.
+
+### El dato que cierra el frente
+
+Los tramos de junta **no tienen enlace de diseño**:
+
+| Tramos de junta en el histórico | 5.158 |
+|---|---:|
+| con fila en `VDatosLinDetDis` | **0** |
+| con `DisIdIt` utilizable | **0** |
+
+`VDatosLinDetDis` fue lo que desbloqueó el rebaje en T.7 (muestra ×51,
+emparejamiento exacto). Aquí no existe: el ERP no registra a qué pieza de
+hoja pertenece cada tramo de junta. Sin esa atribución, la relación
+"pieza → lleva junta" no se puede reconstruir, sólo estimar.
+
+**Anotado como no resoluble con los datos exportados.** No es falta de
+análisis. Para cerrarlo haría falta o bien una fuente que registre la
+atribución, o bien observar la aplicación original generando un despiece
+con juntas y ver qué piezas las reciben.
+
+### Corrección de método (importante)
+
+La primera versión de esta medición emparejaba **pieza a pieza por largo** y
+daba un prometedor 80% de piezas explicadas por el perfil. **Era un
+artefacto.** Cuando dos piezas de hoja miden lo mismo y sólo hay un tramo de
+junta, cuál de las dos queda marcada como "lleva junta" lo decide el orden
+del bucle, no los datos — y esa marca arbitraria contamina cualquier
+discriminante que se mida después.
+
+Rehecha agrupando por (línea, largo), donde el recuento sí es inequívoco (3
+piezas de ese largo y 2 tramos → 2 llevan y 1 no) y descartando las cestas
+cuyas piezas no comparten el valor del discriminante, el 80% se desploma al
+41,5%. **Es el mismo tipo de error que ya se documentó en S.7.2 y en T.6:
+un emparejamiento que parece razonable fabrica la señal que luego se mide.**
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
