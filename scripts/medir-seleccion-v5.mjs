@@ -147,6 +147,11 @@ for (const f of estArt) {
   const rr = rasgosInstancia.get(k)
   if (fn) rr.set(`fn:${fn}`, (rr.get(`fn:${fn}`) ?? 0) + cant)
   if (gen && gen !== '0') rr.set(`gen:${gen}`, (rr.get(`gen:${gen}`) ?? 0) + cant)
+  // v6: "travesaño pequeño" = genérico 11 o, en las estructuras que no usan
+  // ese genérico, el travesaño horizontal TH. Medido en 76/76 apariciones de
+  // los tacos GM4870/GM5102/GM4726 (scripts/medir-tacos-goma.mjs): ni gen:11
+  // (86,8%) ni fn:TH por separado llegan; el rasgo combinado sí.
+  if (gen === '11' || fn === 'TH') rr.set('trvPeq', (rr.get('trvPeq') ?? 0) + cant)
   const idHoja = num(f, 'DisIdHoja')
   if (idHoja > 0) {
     if (!hojasPorLinea.has(k)) hojasPorLinea.set(k, new Set())

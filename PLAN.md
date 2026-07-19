@@ -1632,6 +1632,136 @@ Pendiente que concentra el resto (depurado con `DEPURAR_ART=GM5320`):
   excepciones parecen ancladas a la PILASTRA, no al travesaño.
 - **Goma GM4090** (`A`/`L`): unidades con largo aparte, sin emparejar.
 
+## S.9 Los tres frentes de S.8, medidos (19/07/2026)
+
+Se atacaron en orden. Uno se resuelve, otro cambia de causa y el primero
+**queda refutado**: su premisa era falsa. Las correcciones van explícitas.
+
+### S.9.1 Tramos de cremona/pletina — la premisa de S.8 era FALSA
+
+S.8 afirmaba: *"la fórmula genérica `(A)/2` no vale; hay que evaluar el
+ancho REAL de cada hoja con el árbol de `EstructurasDiseño`"*. **Es
+incorrecto, y construir sobre ello habría sido trabajo perdido.**
+
+`EstructurasArticulos` guarda la fórmula por partida doble:
+`DisFRefLargo` la expresa contra un ítem referenciado (`REF` = medida de
+`DisIdRefLargo`: `REF`, `(REF)/2`, `REF-FS-FI`…) y `FormulaLargo` /
+`FormulaLargoCorte` es **esa misma fórmula ya aplanada** contra las cotas
+de la estructura. El aplanado no es genérico: las estructuras de hojas
+desiguales traen `(A-TR)/2`, `(A-HO)/2`, `A-FZ`… es decir, ya resuelven la
+cadena `REF`. Evaluar `FormulaLargo` —lo que v5 hacía— **ya es** evaluar
+el ancho real de cada hoja. No hay ancho de hoja que recuperar.
+
+Medición sobre las 364 familias de tramos
+(`scripts/medir-desvio-tramos.mjs`; una familia son las filas de
+`ConjuntosAsoc` que sólo difieren en `MedidaMin/Max`, y el artículo que el
+oráculo trae declara el intervalo en que cayó la medida verdadera):
+
+| De 112 casos familia × línea | |
+|---|---:|
+| la medida evaluada YA cae en el tramo correcto | 69 |
+| cae fuera del tramo correcto | 24 |
+| la plantilla no trae fórmula para la ranura | 19 |
+
+Y las otras dos causas que S.8 daba por medidas **tampoco se sostienen**:
+
+- *"cotas de instancia recuperadas incompletas"*: **0 de los 24 fallos**
+  usan una cota rellenada con el valor por defecto de la plantilla. El
+  contexto está completo; la desviación no viene de ahí.
+- *"desvío que cae en el tramo vecino"*: el desvío **no es constante**
+  (8 valores distintos en 10 observaciones de `HU529|OBCR`), así que no
+  hay ajuste aprendible con los umbrales de siempre.
+
+Se probó además sustituir la fórmula por los **cortes reales** de la línea
+—la vía que resolvió la junta perimetral (S.7.2)—. Aparente éxito
+(`corte:cualquiera` acierta 91/93 = 97,8%) que **es un artefacto**: con
+muchos cortes por línea, alguno cae siempre dentro. Exigiendo además que
+la fuente **excluya** los demás tramos de la familia:
+
+| Fuente de medida | acierta | y descarta los demás tramos |
+|---|---:|---:|
+| `corte:cualquiera` | 97,8% | **5,4%** |
+| `corte:HV` | 62,4% | 48,4% |
+| **fórmula de la ranura** | **74,2%** | 47,3% |
+| `corte:HH` | 39,8% | 37,6% |
+
+Ninguna fuente alternativa mejora a la fórmula. **Conclusión honesta: la
+fórmula de la ranura es la medida correcta y ya está bien implementada.**
+Lo que queda son dos colas distintas, y no sé explicar la primera:
+
+1. **24 casos sin mecanismo identificado**: la medida evaluada cae fuera
+   del tramo que el oráculo eligió, sin desvío constante, sin cotas por
+   defecto y sin mejor fuente. Una misma medida evaluada (810) aparece con
+   dos tramos reales distintos (`GM5333`[636-795] y `GM5347`[996-1995]),
+   así que la medida evaluada **no es** el discriminante en estos casos.
+   Falta una condición que no está identificada. **No se construye nada
+   encima hasta saber cuál es.**
+2. **19 casos (y las 454 filas descartadas) sin fórmula en la plantilla**:
+   pérdida de cobertura pura, no error de selección.
+
+### S.9.2 Tacos de pilastra — RESUELTO, 76/76
+
+S.8 conjeturaba que las excepciones estaban *"ancladas a la PILASTRA"*.
+**No hay tal ancla**: `AsociadoA` no contiene ninguna categoría con
+"PILASTRA" (se listaron las 100 existentes). Los tres tacos se declaran
+idénticos y el ancla está escrita en los datos:
+
+```
+GM4870 / GM5102 / GM4726   comp='!'   Cantidad=2   AsociadoA='TRAVESAÑOS PEQUEÑOS'
+```
+
+Lo que faltaba era contar bien esa categoría. Medido sobre las 76
+apariciones del oráculo (`scripts/medir-tacos-goma.mjs`):
+
+| Rasgo de la instancia | acierta `real = 2 × rasgo` |
+|---|---:|
+| `gen:11` (genérico travesaño pequeño) | 66/76 (86,8%) |
+| `fn:TM` | 54/76 (71,1%) |
+| **`gen:11` ó `fn:TH`** (rasgo combinado) | **76/76 (100%)** |
+
+Los 10 casos que `gen:11` no explica tienen `gen:11 = 0` y `fn:TH` = 2 ó 3,
+y `2 × fn:TH` da exactamente el real: son estructuras que no usan el
+genérico 11 y montan el travesaño pequeño como travesaño horizontal.
+El rasgo `trvPeq` está incorporado a `scripts/medir-seleccion-v5.mjs` y lo
+aprende el mecanismo de siempre, sin codificar el multiplicador a mano.
+La regla dominante *"2 por travesaño (~83%)"* de S.8 queda sustituida.
+
+### S.9.3 Goma GM4090 — la causa NO son los largos
+
+S.8 pedía *"emparejar sus largos como se hizo con las juntas"*. La
+medición dice que el problema es anterior y de otra naturaleza:
+
+- `GM4090` se declara en **un solo conjunto: `GMBASTIDOR`**, con dos filas
+  (`comp='A'` cdad 2, `comp='L'` cdad 2).
+- En **0 de las 18 líneas** en que la goma es real aparece `GMBASTIDOR`
+  entre las opciones de la línea.
+
+Es decir: la goma **no se selecciona por el mecanismo de `ConjuntosAsoc`
+de la línea**. Llega desde un bastidor que es **subestructura anidada**
+(`EstructurasArticulos.Subestructura`), con su propio conjunto y sus
+propios asociados. Emparejar largos no habría arreglado nada porque el
+artículo no llega siquiera a proponerse.
+
+Se descartó también la lectura fácil: las cantidades son múltiplos de 4
+(4×10, 8×5, 16×3) y las dos filas suman 4 por hueco, pero la hipótesis
+`cantidad = 4 × nº de vidrios` sólo acierta **5/18 (27,8%)**. No se
+codifica.
+
+**Pendiente**: modelar la resolución de asociados de subestructuras
+anidadas. Es mecanismo nuevo, no afinado. Mientras tanto la goma sigue
+siendo falso negativo declarado.
+
+### S.9.4 Resultado
+
+| Predictor (216 líneas) | Precisión | Cobertura | Exactas (artículos) |
+|---|---:|---:|---:|
+| v5 + `ArticuloAsoc` | 96,3% | 92,6% | 51/216 |
+| **v5 + rasgo `trvPeq`** | **96,4%** | **94,3%** | **72/216** |
+
+Las exactas suben un 41% con un solo rasgo medido. Sigue sin reproducirse
+el oráculo línea a línea, así que **la valoración de asociados sigue
+cerrada con aviso** (regla 3).
+
 ## S.7 Qué falta, en orden (revisado tras v4)
 
 1. ~~Anclar los ejes de rango~~ **RESUELTO en S.6**: la medida es la
@@ -1668,4 +1798,10 @@ scripts/medir-seleccion-completa.mjs   predictor v1: opciones + ejes (56,2%/99,5
 scripts/medir-seleccion-v2.mjs         predictor v2: ranuras (61,5%/82,2%)
 scripts/medir-seleccion-v3.mjs         predictor v3: completo, dos políticas
 scripts/medir-seleccion-v4.mjs         predictor v4: fórmula de ranura + mano real
+scripts/medir-seleccion-v5.mjs         predictor v5: rasgos '!' + trvPeq (96,4%/94,3%, 72/216)
+scripts/medir-desvio-tramos.mjs        S.9.1: desvío de tramos y fuentes de medida
+scripts/medir-tacos-goma.mjs           S.9.2/S.9.3: ancla de los tacos y origen de GM4090
+scripts/explorar-ancho-hoja.mjs        S.9.1: DisIdRef*/DisFRef* y hojas desiguales
+scripts/explorar-ref-largo.mjs         S.9.1: ¿el aplanado FormulaLargo pierde información?
+scripts/explorar-tacos-goma.mjs        S.9.2/S.9.3: declaración en ConjuntosAsoc
 ```
