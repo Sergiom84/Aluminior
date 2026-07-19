@@ -749,9 +749,10 @@ Lo que queda de la valoración:
    `DisComponente`, `ConjuntosAsoc` las resuelve (opción marcada + medida
    de hoja en rango) y la cantidad es la suma de filas, con correcciones
    negativas. Opciones de herraje ya en el configurador (R.5). Predictor
-   v3: 94,1% precisión / 75,9% cobertura en política estricta, primeras
-   5 líneas exactas. Falta (S.5): anclar ejes a la hoja de la ranura,
-   longitudes por `FormulaL`, mano, `ConfigSeriesAsoc` y `AperturaTH`.
+   v4 (S.6): la medida se compara contra la fórmula de la PROPIA ranura y
+   la mano real sale de la instancia — **94,1% precisión / 88,3%
+   cobertura**. Falta (S.7): longitudes por `FormulaL` (juntas en metros),
+   categorías `!` restantes, `ConfigSeriesAsoc` y `AperturaTH`.
    Hoy quedan "sin valorar" con aviso.
 2. **Acristalamiento**: el vidrio se elige y se valora tanto en HOJAS
    (anexo L) como en FIJOS (anexo N), con junquillos y juntas por grosor de

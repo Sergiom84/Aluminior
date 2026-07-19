@@ -1569,18 +1569,41 @@ Diagnóstico ya preciso de lo que impide cerrar:
 - Bisagras de rebajo izquierda/derecha (FP bajo la política estricta)
   necesitan la MANO de la línea (`ManoID`), aún sin modelar.
 
-## S.5 Qué falta, en orden (revisado tras v3)
+## S.6 Predictor v4: la medida es la fórmula de la PROPIA RANURA (19/07/2026)
 
-1. **Anclar los ejes de rango a la hoja de la ranura**: reconstruir la
-   medida de la hoja `DisIdHoja` de cada ranura y reaprender. Es lo que
-   separa las dos políticas (94% preciso pero 76% de cobertura).
-   Medido: correlar instancia ↔ hijas por orden es IMPOSIBLE (0 de 279
-   líneas coinciden en nº de filas — la instancia guarda ranuras, las
-   hijas artículos expandidos). La vía es la del anexo Q: evaluar las
-   fórmulas del árbol de `EstructurasDiseño` con las cotas reales de la
-   línea (`VMedidasDA`/`VDatosLinDetDis`), como hace
-   `packages/etl/src/medir-mixtas.ts`, y sacar el módulo de cada hoja
-   por su id.
+Resuelve el punto 1 de S.5 sin aprender nada. Dos hechos verificados:
+
+1. **Cada ranura de la plantilla lleva su propia fórmula de medida**
+   (`FormulaLargoCorte`/`FormulaLargo`): la ranura 56 (cremona) mide
+   `L-FS-FI` (altura de hoja), `OBC` mide `(A)/2` (ancho de hoja), `71`
+   (zona apertura) `A-FI-FD`… `MedidaMin/Max` se compara contra ESA
+   medida, evaluada con las cotas reales de la línea. Determinista;
+   ningún eje que aprender. (Correlar instancia ↔ hijas por orden se
+   probó antes y es imposible: 0 de 279 líneas coinciden en nº de filas.)
+2. **La mano por fila (`ManoID` = `I`/`D`, 1.920 filas) se filtra contra
+   la mano REAL de cada aparición** (`DisManoID` de la instancia — el
+   usuario puede invertir la de la plantilla; usar la plantilla invierte
+   izquierda por derecha).
+
+La ranura aparece una vez por elemento (una por hoja, una por zona), así
+que la cantidad natural es filas × apariciones que pasan el rango y la mano.
+
+| Predictor (216 líneas) | Precisión | Cobertura |
+|---|---:|---:|
+| v3 aceptar / excluir | 64,2% / 94,1% | 92,4% / 75,9% |
+| v4 fórmula de ranura | 90,2% | 88,3% |
+| v4 + mano real | **94,1%** | **88,3%** |
+
+Los fallos restantes ya no son de mecanismo desconocido: juntas
+perimetrales en METROS (171 casos, fase `FormulaL`), tacos de pilastra
+(categorías `!` sin multiplicador fiable), la goma por grosor de vidrio, y
+solapes de tramos con fórmulas distintas entre apariciones de una misma
+ranura.
+
+## S.7 Qué falta, en orden (revisado tras v4)
+
+1. ~~Anclar los ejes de rango~~ **RESUELTO en S.6**: la medida es la
+   fórmula de la propia ranura; la mano real, la de la instancia.
 2. **Longitudes por `FormulaL`**: juntas perimetrales y demás asociados en
    metros (el mayor falso negativo restante). Mismo evaluador de fórmulas
    que los perfiles.
@@ -1600,4 +1623,5 @@ aprendidas, oráculo triplicado con VALB+VFAC.
 scripts/medir-seleccion-completa.mjs   predictor v1: opciones + ejes (56,2%/99,5%)
 scripts/medir-seleccion-v2.mjs         predictor v2: ranuras (61,5%/82,2%)
 scripts/medir-seleccion-v3.mjs         predictor v3: completo, dos políticas
+scripts/medir-seleccion-v4.mjs         predictor v4: fórmula de ranura + mano real
 ```

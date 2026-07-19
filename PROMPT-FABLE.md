@@ -107,14 +107,15 @@ ranuras**, como los perfiles — la plantilla genera ranuras de asociado
 presente filtrando por `nOpcion` marcada y medida de la HOJA en rango, y la
 cantidad es la SUMA de las filas que pasan (hay filas de cantidad 0 y
 negativas: correcciones). Las opciones de herraje ya están en el configurador
-(R.5) y el predictor v3 (oráculo triplicado con albaranes y facturas,
-patillas `A`/`L` resueltas, 5 categorías `!` aprendidas) alcanza **94,1% de
-precisión con 75,9% de cobertura** en su política estricta, con las primeras
-5 líneas exactas en artículos. Lo que falta está acotado en **S.5**, en
-orden: anclar los ejes de rango a la hoja de la propia ranura (`DisIdHoja`),
-las longitudes por `FormulaL` (juntas en metros — el mayor falso negativo),
-la mano (`ManoID`), `ConfigSeriesAsoc` y `AperturaTH`. Solo al llegar a
-~100% línea a línea se implementa la valoración.
+(R.5) y el predictor v4 alcanza **94,1% de precisión con 88,3% de
+cobertura** (S.6): la condición de medida se compara contra la FÓRMULA DE LA
+PROPIA RANURA evaluada con las cotas reales — determinista, sin ejes que
+aprender — y la mano `I`/`D` se filtra con el `DisManoID` real de la
+instancia (no el de la plantilla, que el usuario puede invertir). Lo que
+falta está acotado en **S.7**, en orden: longitudes por `FormulaL` (juntas
+en metros — el mayor falso negativo), las categorías `!` sin multiplicador,
+la goma por grosor de vidrio, `ConfigSeriesAsoc` y `AperturaTH`. Solo al
+llegar a ~100% línea a línea se implementa la valoración.
 
 ## Cómo quiero que trabajes
 
