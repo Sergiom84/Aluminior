@@ -101,21 +101,45 @@ si a un hueco le falta cualquiera de sus dos reglas, la línea entera queda sin
 valorar. La variante de cristal sencillo/doble ya es una elección persistida.
 
 **El siguiente paso es cerrar la selección de asociados** (herrajes y
-escuadras). El mecanismo ya está identificado (anexo S): es **resolución de
-ranuras**, como los perfiles — la plantilla genera ranuras de asociado
-(funciones `inf*`, con `DisComponente`), `ConjuntosAsoc` resuelve cada ranura
-presente filtrando por `nOpcion` marcada y medida de la HOJA en rango, y la
-cantidad es la SUMA de las filas que pasan (hay filas de cantidad 0 y
-negativas: correcciones). Las opciones de herraje ya están en el configurador
-(R.5) y el predictor v4 alcanza **94,1% de precisión con 88,3% de
-cobertura** (S.6): la condición de medida se compara contra la FÓRMULA DE LA
-PROPIA RANURA evaluada con las cotas reales — determinista, sin ejes que
-aprender — y la mano `I`/`D` se filtra con el `DisManoID` real de la
-instancia (no el de la plantilla, que el usuario puede invertir). Lo que
-falta está acotado en **S.7**, en orden: longitudes por `FormulaL` (juntas
-en metros — el mayor falso negativo), las categorías `!` sin multiplicador,
-la goma por grosor de vidrio, `ConfigSeriesAsoc` y `AperturaTH`. Solo al
-llegar a ~100% línea a línea se implementa la valoración.
+escuadras). El mecanismo completo está identificado y medido (anexos S.1 a
+S.8 de `PLAN.md`): es **resolución de ranuras**, como los perfiles. El
+predictor de referencia es `scripts/medir-seleccion-v5.mjs` (ejecutar con
+`npx tsx`), que reproduce el oráculo con **96,3% de precisión, 92,6% de
+cobertura y 51/216 líneas exactas en artículos**. Sus reglas, todas
+validadas:
+
+- Ranura presente en la instancia + `nOpcion` marcada + `ArticuloAsoc`
+  (perfil requerido presente) + rango de medida contra la **fórmula de la
+  propia ranura** evaluada con las cotas reales (S.6) + mano `I`/`D`
+  contra el `DisManoID` real de la instancia.
+- Filas acumulativas con cantidades 0 y negativas (S.1); cantidad = filas
+  × apariciones que pasan.
+- `A`/`L` = patillas por `UnidadesMin`; `!` = categoría en texto con
+  multiplicador aprendido de la instancia (rasgos `fn:`/`gen:` ×
+  constante k, umbrales ≥5 obs y ≥90%).
+- La junta perimetral de hoja copia EXACTAMENTE cada corte de perfil de
+  hoja (delta 0, 4.624/4.632 tramos — S.7.2).
+
+**Los tres frentes que separan el 96% del ~100%** (diagnóstico en S.8, con
+`DEPURAR_ART=<código> npx tsx scripts/medir-seleccion-v5.mjs`):
+
+1. **Tramos de cremona/pletina/tirante**: la medida evaluada se desvía
+   cuando las hojas son desiguales — la fórmula genérica `(A)/2` no vale;
+   hay que evaluar el ancho REAL de cada hoja con el árbol de
+   `EstructurasDiseño` (la maquinaria ya existe:
+   `packages/etl/src/medir-mixtas.ts` y `packages/core/src/despiece/`,
+   anexo Q). También hay estructuras cuya plantilla no trae fórmula para
+   la ranura (parte de las 454 filas descartadas).
+2. **Tacos de pilastra** (GM4870/GM5102/GM4726): regla dominante "2 por
+   travesaño" (~83%); las excepciones (2PD, 1OFI sin travesaño) parecen
+   ancladas a la PILASTRA. Medir antes de codificar.
+3. **Goma GM4090** (`A`/`L` ×2): unidades con largo aparte; emparejar sus
+   largos como se hizo con las juntas (`scripts/medir-ajuste-junta.mjs`).
+
+Después: cantidades y largos exactos línea a línea, `ConfigSeriesAsoc`
+(por `TipoHoja`) y `AperturaTH` (190 filas). **Solo al reproducir el
+oráculo línea a línea se activa la valoración de asociados**; hasta
+entonces siguen "sin valorar" con aviso.
 
 ## Cómo quiero que trabajes
 
