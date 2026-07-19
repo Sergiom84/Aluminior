@@ -2535,6 +2535,110 @@ el frente de perfil del oscilobatiente por el `Componente` real de las piezas co
 `25` y `26` aparecen como componentes reales distintos con artículos distintos en
 alguna serie (el dato que faltaba para separar `25` de `26`).
 
+## T.25 El perfil del oscilobatiente YA resuelve; el 42,3% de T.21.2 era herraje
+
+Medición pura, sin implementar nada. Script
+`scripts/reclasificar-oscilobatiente-perfil.mjs` (solo lectura). Reclasifica el
+frente de perfil del oscilobatiente por el `Componente` REAL de cada pieza
+—enlace 1:1 por `VDatosLinDetDis.Componente`, nunca por la clave ambigua que T.24
+refutó—. Cierra el punto 1 (oscilobatiente) y el punto 2 (separar `25` de `26`).
+
+### T.25.1 Cuadre contra T.21.2: las 2.959 eran herraje, enteras
+
+Reproducido el frente oscilobatiente de T.21.2 con su mismo método (ranura de
+plantilla × `veces` sobre parejas reales): **2.959 líneas ✓ cuadra al número**.
+Repartidas por la clase empírica de cada componente (lo que produce en la
+instancia):
+
+| Clase | líneas |
+|---|---:|
+| **herraje (`Articulo=0`)** | **2.959** |
+| perfil real (`Articulo≠0`) | 0 |
+| no clasificable (nunca en instancia) | 0 |
+| **suma** | **2.959** (reparto completo) |
+
+Por componente: `OBC`, `OBM`, `OBCR` ×703 cada uno; `OBP`, `OBPH` ×425. Los cinco
+son herraje. **El 42,3% que T.21.2 atribuyó al "perfil oscilobatiente sin
+resolver" es en realidad herraje** (compás, mecanismo, cremona), que se resuelve
+por la vía de asociados (anexo S), no por la de perfiles. T.21.2 lo contó como
+perfil porque clasificaba por `DisComponente` de plantilla sin mirar si la ranura
+llegaba a llevar artículo. Corrección explícita (regla 6).
+
+### T.25.2 El perfil REAL de esas estructuras resuelve al 100%, 0 fallos
+
+Universo: las **54 estructuras** cuya plantilla tiene ranura OB*. Sus **12.655
+piezas de perfil** (`Articulo≠0`), enlazadas a su componente por
+`det.Componente` (0 exclusiones: no se toca la clave colisionada):
+
+| Componente | piezas | acierta | falla | sin candidato |
+|---|---:|---:|---:|---:|
+| `25` (hoja vertical) | 2.204 | **100%** | 0 | 0 |
+| `26` (hoja horizontal) | 2.204 | **100%** | 0 | 0 |
+| `29` (vierteaguas) | 1.110 | **100%** | 0 | 0 |
+| `12` | 1.312 | 100% | 0 | 0 |
+| `10` / `11` | 656 / 656 | 100% | 0 | 0 |
+| `B` (funcion `BT`) | 413 | 100% | 0 | 0 |
+| `16` | 151 | 100% | 0 | 0 |
+| `17M` | 30 | 100% | 0 | 0 |
+| `25P` / `26P` | 16 / 16 | 100% | 0 | 0 |
+| `13` / `14` | 14 / 14 | 100% | 0 | 0 |
+| `18.1` | 4 | 100% | 0 | 0 |
+
+**Fallos totales (esperado ≠ real): 0.** Ni una pieza de perfil de hoja mal
+resuelta en 12.655. El vierteaguas `29` —la pieza que T.23.3 creía necesitar una
+"segunda dimensión"— resuelve directo al 100%. La distribución completa se
+imprime en la salida, con `otro/ninguno = 0` (regla 7).
+
+### T.25.3 Lo `sin candidato` es cristal y juntas, por diseño u otra vía
+
+Tres componentes no resuelven por `ConjuntosLin`, y ninguno es perfil de hoja:
+
+| Componente | piezas | qué es |
+|---|---:|---|
+| `1` | 1.261 | cristal — no toca a la serie por diseño (T.22) |
+| `JH` / `JV` | 1.257 / 1.257 | juntas horizontal/vertical — se valoran por su vía (anexo M) |
+| `BI` | 80 | **sin identificar** — anotado, no medido aquí |
+
+`BI` (80 piezas) es el único cabo suelto real del frente de perfil
+oscilobatiente. Pequeño, y se mira aparte cuando toque.
+
+### T.25.4 `25` vs `26`: la ambigüedad es inofensiva POR CONSTRUCCIÓN
+
+El punto 2 (separar `25` de `26`), medido en dos niveles:
+
+- **(a) Catálogo:** de las 57 series, **0 resuelven `resol[25]` ≠ `resol[26]`**;
+  21 los resuelven al mismo artículo, 36 no tienen uno de los dos. Ningún
+  conjunto de la biblioteca los distingue.
+- **(b) Histórico:** irrelevante — al no diferir en ninguna serie, no hay nada
+  que contrastar (0 series con testigo).
+
+**Cuadrante: INOFENSIVA POR CONSTRUCCIÓN.** `25` y `26` nunca resuelven a
+artículos distintos, así que confundirlos no puede cortar una pieza mal. Se dice,
+no se supone (regla 7): la clave real entre `25` y `26` es indeterminable con
+estos datos, pero da igual porque el resultado es el mismo artículo. El punto 2
+queda cerrado sin necesidad de separarlos.
+
+### T.25.5 Consecuencia y decisión abierta
+
+Con T.24 + T.25, el frente oscilobatiente queda así:
+
+- **Perfil de hoja (`25`/`26`/`29` + variantes) y marco/travesaño: resuelto,
+  100%, 0 fallos.** No hay nada que implementar aquí: ya lo cubre la cadena del
+  anexo J.
+- **Herraje (`OBC`/`OBM`/`OBCR`/`OBP`/`OBPH`, las 2.959 de T.21.2): sigue en el
+  frente de asociados** (anexo S), que continúa cerrado con aviso.
+- **Cristal y juntas: por sus vías** (T.22, anexo M).
+- **Cabo suelto: `BI`, 80 piezas sin identificar.**
+
+**El 42,3% de T.21.2 se disuelve como "frente de perfil":** no era perfil sin
+resolver, era herraje ya contabilizado en el frente de asociados. El frente de
+perfil real del oscilobatiente estaba ya resuelto.
+
+**Decisión que NO se toma aquí** (es del titular, con la salida delante): dar el
+perfil oscilobatiente por cerrado y pasar `BI` y el recuento de causas de T.21.2
+a revisión, o investigar `BI` antes. Recordatorio de T.20.3: esto no hace valorar
+ninguna línea todavía — los asociados siguen abiertos en todas las parejas.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
