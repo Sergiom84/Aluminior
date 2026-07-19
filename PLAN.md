@@ -1893,6 +1893,55 @@ mejor rasgo, `dis:PRPV × 2`, llega a **136/162 (84,0%)**: acierta los ceros
 pero falla la cantidad cuando la bisagra sí va. Queda **anotado como no
 resuelto**; no se codifica un 84%.
 
+### S.9.8 `BISAGRA PRACTICABLE`: el contexto basta, el modelo no
+
+Único frente `!` con señal según S.9.6. Se atacó con la hipótesis de S.2
+—*"algunas categorías `!` encadenan sobre otros asociados"*— añadiendo
+rasgos `asoc:<código>` = cantidad real de cada otro asociado de la línea
+(`scripts/medir-bisagra-encadenada.mjs`). Es un diagnóstico, no un
+predictor: usa el oráculo como entrada.
+
+**No cierra.** Los 162 casos son `GM5002` (CERRADERO COMPLEMENTARIO) y
+`GM4846` (PUNTO CIERRE COMPLEMENT.), 81 cada uno, con 26 de real > 0. Y
+todos los candidatos —de instancia y encadenados, con `base` y sin ella—
+se detienen en **exactamente 136/162 (84,0%)**, que es el número de
+observaciones con `real = 0`:
+
+> **Ningún rasgo explica ni una sola de las 26 observaciones no nulas.**
+> El 84% es enteramente el mérito de acertar los ceros.
+
+Se probó también quitar `base` del modelo, porque la columna `Cantidad`
+vale 1, 5 ó 10 mientras el real vale 1, 2 ó 3 —no se comporta como
+multiplicador—. Mismo techo: 136/162.
+
+**Pero el problema NO es de datos.** Prueba de determinismo: se agruparon
+las 162 observaciones por (artículo, `base`, todos los rasgos) y se
+comprobó si algún grupo de contexto idéntico tiene cantidades distintas.
+
+| Grupos de contexto idéntico | 94 |
+|---|---:|
+| Grupos con cantidades reales DISTINTAS | **0** |
+| Techo teórico con estas entradas | **162/162 (100%)** |
+
+**Corrección de una lectura precipitada**: al ver dos líneas con las
+mismas bisagras (`GM4390×2`, `base=5`) y reales distintos (2 y 3) se
+concluyó de entrada que faltaba un dato en los CSV y que el frente no era
+cerrable. **Es falso**: esas líneas difieren en otros rasgos, y la prueba
+de determinismo sale limpia. El contexto observable SÍ determina la
+cantidad.
+
+Lo que falla es la **forma del modelo**: `real = base × rasgo × k`, un
+único rasgo multiplicativo, es estructuralmente incapaz de expresar esta
+relación. Con 26 observaciones no nulas repartidas entre dos artículos,
+ajustar un modelo más rico (varios rasgos, condiciones, umbrales por
+tramo) tiene mucho más riesgo de sobreajuste que valor: son importes de
+presupuestos reales.
+
+**Anotado como no resuelto, y cerrable en principio.** Lo que hace falta
+no son más muestras sino un modelo distinto, y antes de escribirlo hay
+que entender qué distingue las 26 no nulas — no buscarlo por fuerza bruta
+sobre 26 casos.
+
 ### S.9.4 Resultado
 
 | Predictor (216 líneas) | Precisión | Cobertura | Exactas (artículos) |
