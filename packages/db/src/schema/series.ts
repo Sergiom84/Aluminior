@@ -122,6 +122,40 @@ export const vidrioDescuentosAlojamiento = pgTable('vidrio_descuentos_alojamient
 }))
 
 /**
+ * Rebaje de la pieza de perfil de HOJA respecto a la medida del hueco.
+ *
+ * La hoja encaja DENTRO del marco, así que su corte es menor que lo que da
+ * la fórmula de la plantilla. Sin esto, el motor emitía la medida del hueco:
+ * el anexo T midió que reproducía 0 de las 1.003 líneas con hoja del
+ * histórico.
+ *
+ * La clave es (perfil real, eje, fórmula, serie) — medido en T.9/T.10. Ni la
+ * serie sola ni el perfil solo bastan (15% de cobertura); con la fórmula sube
+ * al 79,6% y con las cuatro al 93,0%, frente a un techo demostrado del 94,4%
+ * (lo que falta no está en los datos que exporta el ERP).
+ *
+ * `muestras`/`totalMuestras` son obligatorias de mostrar, no informativas:
+ * una regla con muestras < totalMuestras acierta *casi* siempre, y el anexo
+ * T.13 midió que sus fallos no son milimétricos (el 79,3% se desvía más de
+ * 10 mm). La valoración las usa para avisar. La futura hoja de corte de
+ * Producción deberá exigir muestras = totalMuestras o confirmación manual.
+ */
+export const hojaRebajes = pgTable('hoja_rebajes', {
+  /** Perfil REAL de la hoja, ya resuelto desde el genérico. */
+  perfilCodigo: text('perfil_codigo').notNull(),
+  /** Eje de la pieza: HV o HH. */
+  eje: text('eje').notNull(),
+  /** Fórmula de corte de la plantilla; distingue el papel de la pieza. */
+  formula: text('formula').notNull(),
+  serieCodigo: text('serie_codigo').notNull(),
+  rebajeMm: numeric('rebaje_mm', { precision: 8, scale: 2 }).notNull(),
+  muestras: integer('muestras').notNull(),
+  totalMuestras: integer('total_muestras').notNull(),
+}, (t) => ({
+  pk: primaryKey({ columns: [t.perfilCodigo, t.eje, t.formula, t.serieCodigo] }),
+}))
+
+/**
  * Ajustes del junquillo de FIJOS, por serie. Distintos de los de hoja
  * (ELEGANTPVC: hoja −28/+16, fijo −50/0). El junquillo sale de TablaFijos.
  */

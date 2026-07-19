@@ -2045,6 +2045,76 @@ perfiles sin motivo. Lo correcto sería comparar contra la fórmula del propio
 componente, como los asociados. **No se cambia ahora** porque no se puede
 probar contra ningún dato real: no hay ni un caso en el histórico.
 
+## T.17 Decisión tomada: umbral 99%, con el riesgo SIEMPRE visible
+
+Decidido por el titular del negocio el 19/07/2026, tras medir el coste de
+cada opción (T.12) y la gravedad de los fallos (T.13).
+
+**Umbral: 99%.** Menos cobertura a cambio de menos piezas mal cortadas.
+
+| Umbral | piezas valoradas | cortes malos |
+|---:|---:|---:|
+| 90% | 91,8% | 92 (el 79,3% se desvía >10 mm) |
+| **99%** | **61,9%** | **16** |
+| 100% | 18,7% | 0 |
+
+**El riesgo se acepta, pero nunca en silencio.** Dos condiciones, ambas
+parte de la decisión:
+
+### Condición 1 — aviso en la valoración (implementada)
+
+Toda línea que use una regla con `muestras < total_muestras` lleva **aviso
+informativo**. No bloquea la valoración: la hace honesta.
+
+- `hoja_rebajes` guarda `muestras`/`total_muestras` por regla.
+- `OpcionesDespiece.rebajeDeHoja` devuelve `RebajeHoja { mm, muestras,
+  totalMuestras }`, no un número suelto: la evidencia viaja con el valor.
+- `PiezaCortada.aviso` y `ResultadoDespiece.avisos` exponen el mensaje, con
+  el porcentaje real (`1616/1622 = 99.6%`).
+- Distinto de `incidencia`, que significa "no hay medida y la línea no se
+  valora". Un aviso es "hay medida, y conviene confirmarla".
+
+**Dato a tener presente**: de las 53 reglas cargadas, 50 son exactas y sólo
+3 llevan aviso — pero esas 3 respaldan **3.306 de las 4.747 piezas
+valoradas**. El aviso NO será raro: aparecerá en la mayoría de líneas de
+`ELEGANTPVC`. Es correcto —ahí el riesgo existe— pero conviene no
+confundirlo con un fallo del sistema.
+
+### Condición 2 — Producción exigirá 100% (pendiente, anotado aquí)
+
+**La futura hoja de corte de Producción NO puede heredar este umbral.**
+Valorar con una medida que falla una de cada cien veces es un riesgo
+comercial acotado; cortar aluminio con ella es material perdido.
+
+Requisito para ese módulo, cuando se construya:
+
+> Una pieza de hoja sólo entra en la hoja de corte si su regla es **exacta**
+> (`muestras = total_muestras`). Si no lo es, la pieza **exige confirmación
+> manual** de la medida antes de cortar, o queda fuera del parte.
+
+Con los datos de hoy eso significa: 50 de 53 reglas pasarían directas, y las
+3 de `ELEGANTPVC` —que son las de más volumen— requerirían confirmación.
+Incómodo, y correcto.
+
+### Estado de la carga
+
+Migración `0013_minor_exiles.sql` (aditiva, sólo crea `hoja_rebajes`),
+aplicada. ETL ejecutado: **53/53 reglas cargadas**, verificadas contra la
+base y no sólo contra el log:
+
+| | |
+|---|---:|
+| Reglas | 53 |
+| exactas (sin aviso) | 50 |
+| con aviso | 3 |
+| piezas respaldadas | 4.747 |
+| que violan el umbral o las invariantes | **0** |
+
+**Pendiente inmediato**: los **11 grupos válidos al 90% pero no al 99%**.
+Son los que revisar a mano para recuperar cobertura sin bajar el umbral —el
+siguiente paso acordado— y el ETL los cuenta en su informe para no perderlos
+de vista.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento

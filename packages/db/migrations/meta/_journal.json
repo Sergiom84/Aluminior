@@ -92,6 +92,13 @@
       "when": 1784442577122,
       "tag": "0012_cloudy_klaw",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1784477822759,
+      "tag": "0013_minor_exiles",
+      "breakpoints": true
     }
   ]
 }

@@ -36,6 +36,9 @@ const marco: ComponentePlantilla = {
 
 const medidas = { anchoMm: 1100, altoMm: 1140 }
 
+/** Regla medida sin una sola excepción: no debe generar aviso. */
+const exacta = (mm: number) => ({ mm, muestras: 10, totalMuestras: 10 })
+
 describe('rebaje de hoja', () => {
   it('sin tabla de reglas el motor se comporta como antes', () => {
     const r = calcularDespiece([hoja('HV', 'L')], medidas)
@@ -46,17 +49,47 @@ describe('rebaje de hoja', () => {
   it('resta el rebaje cuando hay regla para esa pieza', () => {
     const r = calcularDespiece([hoja('HV', 'L')], medidas, {}, {
       serie: 'GMA60RL',
-      rebajeDeHoja: () => 70,
+      rebajeDeHoja: () => exacta(70),
     })
     expect(r.piezas[0].largoMm).toBe(1030)
     expect(r.piezas[0].incidencia).toBeNull()
+  })
+
+  it('una regla EXACTA no genera aviso', () => {
+    const r = calcularDespiece([hoja('HV', 'L')], medidas, {}, {
+      rebajeDeHoja: () => exacta(70),
+    })
+    expect(r.piezas[0].aviso).toBeNull()
+    expect(r.avisos).toEqual([])
+  })
+
+  it('una regla NO exacta valora igual, pero avisa', () => {
+    const r = calcularDespiece([hoja('HV', 'L')], medidas, {}, {
+      rebajeDeHoja: () => ({ mm: 70, muestras: 99, totalMuestras: 100 }),
+    })
+    // la medida es buena y la línea se valora...
+    expect(r.piezas[0].largoMm).toBe(1030)
+    expect(r.incalculables).toBe(0)
+    // ...pero el riesgo queda visible, nunca en silencio
+    expect(r.piezas[0].aviso).toMatch(/99\/100 = 99\.0%/)
+    expect(r.avisos).toHaveLength(1)
+  })
+
+  it('los avisos de la línea no se repiten', () => {
+    const r = calcularDespiece(
+      [hoja('HV', 'L'), hoja('HV', 'L')],
+      medidas, {},
+      { rebajeDeHoja: () => ({ mm: 70, muestras: 99, totalMuestras: 100 }) },
+    )
+    expect(r.piezas).toHaveLength(2)
+    expect(r.avisos).toHaveLength(1)
   })
 
   it('la clave del rebaje lleva perfil, eje, fórmula y serie', () => {
     const claves: unknown[] = []
     calcularDespiece([hoja('HV', 'L')], medidas, {}, {
       serie: 'GMA60RL',
-      rebajeDeHoja: (c) => { claves.push(c); return 70 },
+      rebajeDeHoja: (c) => { claves.push(c); return exacta(70) },
     })
     expect(claves).toEqual([{
       articuloCodigo: 'GM8783M', funcion: 'HV', formula: 'L', serie: 'GMA60RL',
@@ -86,7 +119,7 @@ describe('rebaje de hoja', () => {
   it('un rebaje mayor que la medida avisa en vez de cortar en negativo', () => {
     const r = calcularDespiece([hoja('HH', '(A)/2')], medidas, {}, {
       serie: 'GMA60RL',
-      rebajeDeHoja: () => 9999,
+      rebajeDeHoja: () => exacta(9999),
     })
     expect(r.piezas[0].largoMm).toBeNull()
     expect(r.piezas[0].incidencia).toMatch(/rebaje mayor que la medida/)
@@ -106,7 +139,13 @@ describe('rebaje de hoja', () => {
       [hoja('HV', 'L'), hoja('HH', '(A)/2')],
       { anchoMm: 1100, altoMm: 1140 },
       {},
-      { serie: 'GMA60RL', rebajeDeHoja: (c) => rebajes.get(c.funcion) ?? null },
+      {
+        serie: 'GMA60RL',
+        rebajeDeHoja: (c) => {
+          const mm = rebajes.get(c.funcion)
+          return mm === undefined ? null : exacta(mm)
+        },
+      },
     )
     expect(r.piezas.map((p) => p.largoMm)).toEqual([1030, 532])
   })

@@ -14,6 +14,7 @@ import { readFileSync } from 'node:fs'
 import postgres from 'postgres'
 import { rutaTabla, leerLotes, txt, num, ent, bool, fecha, type Fila } from './csv.ts'
 import { medirDescuentosAlojamiento } from './medir-mixtas.ts'
+import { medirRebajeHoja } from './medir-rebaje-hoja.ts'
 import { medirHerrajeConjuntos } from './medir-herrajes.ts'
 
 // --- Entorno ---
@@ -500,6 +501,35 @@ resultados.push(await cargar('ConjuntosOpcionesHerraje', 'opciones_herraje', (f,
   }
   if (medida.reglas.length) {
     await sql`INSERT INTO vidrio_descuentos_alojamiento ${sql(medida.reglas)} ON CONFLICT DO NOTHING`
+    r.insertadas = medida.reglas.length
+  }
+  resultados.push(r)
+}
+
+/**
+ * Rebaje de las piezas de perfil de hoja (anexos T.9-T.13).
+ *
+ * Umbral del 99%, decidido con el titular: menos cobertura a cambio de menos
+ * piezas mal cortadas. Las reglas con `muestras < total_muestras` no son
+ * exactas; la valoración DEBE avisar cuando use una.
+ */
+{
+  const medida = await medirRebajeHoja(ORIGEN)
+  const conAviso = medida.reglas.length - medida.gruposExactos
+  const r: Resultado = {
+    tabla: 'hoja_rebajes',
+    leidas: medida.reglas.length,
+    insertadas: 0,
+    descartadas: 0,
+    excluidas: 0,
+    motivos: new Map([
+      [`medición (umbral 99%): ${medida.observacionesCubiertas}/${medida.observaciones} piezas de hoja cubiertas; ` +
+        `${medida.gruposExactos} reglas exactas y ${conAviso} con aviso; ` +
+        `${medida.gruposEntreUmbrales} grupos válidos al 90% pero no al 99% (revisables a mano)`, 1],
+    ]),
+  }
+  if (medida.reglas.length) {
+    await sql`INSERT INTO hoja_rebajes ${sql(medida.reglas)} ON CONFLICT DO NOTHING`
     r.insertadas = medida.reglas.length
   }
   resultados.push(r)

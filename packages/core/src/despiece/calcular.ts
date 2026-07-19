@@ -45,6 +45,11 @@ export interface PiezaCortada {
   grupoDisenyo?: string | null
   /** Motivo por el que no se pudo calcular, si aplica. */
   incidencia: string | null
+  /**
+   * Advertencia informativa: la pieza SÍ tiene medida, pero la regla que la
+   * produjo no es exacta. No impide valorar; obliga a avisar.
+   */
+  aviso?: string | null
 }
 
 export interface ResultadoDespiece {
@@ -55,6 +60,11 @@ export interface ResultadoDespiece {
   variablesFaltantes: string[]
   /** Metros lineales totales por artículo, para valorar. */
   consumoPorArticulo: Map<string, { unidades: number; metrosLineales: number }>
+  /**
+   * Avisos de la línea, sin repetir. La valoración DEBE mostrarlos: son
+   * medidas buenas obtenidas con reglas que no son exactas.
+   */
+  avisos: string[]
 }
 
 /** Funciones cuyo corte lleva rebaje: la hoja encaja DENTRO del marco. */
@@ -69,11 +79,26 @@ export interface ClaveRebaje {
   serie: string
 }
 
+/**
+ * Una regla de rebaje medida, con la evidencia que la respalda.
+ *
+ * `muestras`/`totalMuestras` no son adorno: son lo que permite distinguir
+ * una regla exacta de una que acierta *casi* siempre. Una regla al 99% falla
+ * una de cada cien piezas, y el anexo T.13 midió que esos fallos no son
+ * milimétricos —el 79,3% se desvía más de 10 mm—. La valoración puede
+ * aceptar ese riesgo, pero **nunca en silencio**.
+ */
+export interface RebajeHoja {
+  mm: number
+  muestras: number
+  totalMuestras: number
+}
+
 export interface OpcionesDespiece {
   /** Serie (conjunto) de la línea; forma parte de la clave del rebaje. */
   serie?: string
   /**
-   * Rebaje de hoja en mm, o null si no hay regla medida para esa pieza.
+   * Rebaje de hoja para esa pieza, o null si no hay regla medida.
    *
    * La hoja no mide lo que mide el hueco: encaja dentro del marco y va
    * rebajada. El anexo T midió que ese rebaje es constante por
@@ -85,7 +110,7 @@ export interface OpcionesDespiece {
    * se valore. Emitir la medida del hueco como si fuera el corte es
    * exactamente el error que el anexo T encontró en producción.
    */
-  rebajeDeHoja?: (clave: ClaveRebaje) => number | null
+  rebajeDeHoja?: (clave: ClaveRebaje) => RebajeHoja | null
 }
 
 /**
@@ -163,6 +188,7 @@ export function calcularDespiece(
 
   const piezas: PiezaCortada[] = []
   const faltantes = new Set<string>()
+  const avisos = new Set<string>()
   const consumo = new Map<string, { unidades: number; metrosLineales: number }>()
 
   for (const c of plantilla) {
@@ -186,6 +212,7 @@ export function calcularDespiece(
 
     let largoMm: number | null = null
     let incidencia: string | null = null
+    let aviso: string | null = null
 
     if (c.formulaLargo) {
       try {
@@ -225,15 +252,22 @@ export function calcularDespiece(
         incidencia = 'sin regla de rebaje de hoja para (perfil, eje, fórmula, serie)'
         largoMm = null
       } else {
-        largoMm -= rebaje
+        largoMm -= rebaje.mm
         if (largoMm < 0) {
           incidencia = `rebaje mayor que la medida (${Math.round(largoMm)} mm): revisa la regla`
           largoMm = null
+        } else if (rebaje.muestras < rebaje.totalMuestras) {
+          // Regla no exacta: la medida vale para valorar, pero el riesgo se
+          // hace visible. Nunca en silencio.
+          const pct = (100 * rebaje.muestras / rebaje.totalMuestras).toFixed(1)
+          aviso = `medida de hoja obtenida con una regla no exacta (${rebaje.muestras}/${rebaje.totalMuestras} = ${pct}%): confírmala antes de cortar`
+          avisos.add(aviso)
         }
       }
     }
 
     piezas.push({
+      aviso,
       articuloCodigo: c.articuloCodigo,
       cantidad,
       largoMm,
@@ -258,5 +292,6 @@ export function calcularDespiece(
     incalculables: piezas.filter((p) => p.largoMm === null).length,
     variablesFaltantes: [...faltantes].sort(),
     consumoPorArticulo: consumo,
+    avisos: [...avisos],
   }
 }
