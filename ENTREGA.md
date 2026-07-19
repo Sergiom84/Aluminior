@@ -3,9 +3,18 @@
 **Fecha:** 18 de julio de 2026
 **Titular:** ALUMINIOS LARA SLU — B83979179 (28095)
 **Repositorio:** https://github.com/Sergiom84/Aluminior (privado)
-**Estado:** 4 módulos funcionando · motor de despiece operativo al 99,6% ·
-resolución genérico → perfil validada (96,5% contra el oráculo) y valoración
-de perfiles funcionando
+**Estado:** 4 módulos funcionando · motor de despiece que **evalúa** el 99,6%
+de los componentes · resolución genérico → perfil validada (96,5% contra el
+oráculo) y valoración de perfiles funcionando
+
+> ⚠️ **Matiz importante (anexo T de `PLAN.md`, 19/07/2026).** El "99,6%" mide
+> que el motor **evalúa** los componentes, no que **acierte los cortes**. La
+> primera prueba de extremo a extremo contra el histórico
+> (`scripts/probar-motor-contra-oraculo.mjs`, 1.229 líneas reales) da 25,1% de
+> piezas correctas: el marco se reproduce bien (91,9% de piezas, 77,4% de
+> líneas exactas) pero **de las 1.003 líneas con hoja no hay ninguna
+> correcta**. El motor acierta cuántas piezas de hoja hay y falla cuánto
+> miden: emite la medida del hueco y la hoja va rebajada. Sin resolver.
 
 Este documento recoge todo lo hecho, todo lo encontrado, todo lo que queda y
 todas las rutas necesarias para continuar sin repetir trabajo.

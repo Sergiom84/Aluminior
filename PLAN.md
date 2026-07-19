@@ -1480,6 +1480,110 @@ scripts/medir-medidas-asoc.mjs       hipótesis de dimensión por tramos (R.4)
 
 ---
 
+# ANEXO T — PRUEBA REAL del motor contra el histórico: la hoja no se reproduce (19/07/2026)
+
+Agotados los frentes de medición de asociados, se pasó a probar el código
+que valora de verdad. `scripts/probar-motor-contra-oraculo.mjs` llama a
+`calcularDespiece` de `packages/core` sobre 1.229 líneas reales de
+presupuesto y compara pieza a pieza con lo que el ERP cortó (multiconjunto
+de largos por función, tolerancia 0,51 mm).
+
+**Es la primera prueba de extremo a extremo del motor. El resultado obliga
+a matizar el estado del proyecto.**
+
+| | |
+|---|---:|
+| Piezas reales | 18.468 |
+| Piezas que el motor reproduce | **4.634 (25,1%)** |
+| Líneas con TODAS las piezas correctas | **175/1.229 (14,2%)** |
+| Piezas que el motor no supo calcular | 0 |
+
+## T.1 Qué NO dice este resultado
+
+**No contradice el "417 de 417 fórmulas validadas" ni el "99,6% de
+componentes resueltos".** Esas cifras miden cosas distintas y siguen
+siendo ciertas: que el evaluador resuelve todas las fórmulas del catálogo,
+y que la cadena genérico→perfil resuelve el 99,6% de los componentes.
+Ninguna de las dos medía si el despiece resultante **coincide con lo que
+el ERP cortó**. Esa prueba no se había hecho nunca, y es la que importa
+para cortar aluminio.
+
+Conviene por tanto leer "motor operativo al 99,6%" (`ENTREGA.md`) como
+*"evalúa el 99,6% de los componentes"*, no como *"acierta el 99,6% de los
+cortes"*.
+
+## T.2 El fallo está localizado: es la HOJA, no el motor entero
+
+Control del arnés, separando las líneas por si llevan hoja:
+
+| | líneas | piezas correctas | líneas exactas |
+|---|---:|---:|---:|
+| SIN hoja (marco/travesaño) | 226 | 888/966 (**91,9%**) | 175/226 (**77,4%**) |
+| CON hoja (HV/HH) | 1.003 | 3.746/17.502 (21,4%) | **0/1.003 (0,0%)** |
+
+El marco se reproduce bien. **De las 1.003 líneas con hoja no hay una sola
+correcta.** Los fallos se concentran ahí: 6.894 HH y 6.282 HV sin pareja,
+frente a 292 MH y 12 MV.
+
+## T.3 Los recuentos son correctos; los largos, no
+
+Depuración de una línea real (estructura `2O`, L=1100, A=1140, sin cotas):
+
+```
+MV  real (2): 1100, 1100     motor (2): 1100, 1100     ✔
+MH  real (2): 1140, 1140     motor (2): 1140, 1140     ✔
+HV  real (7): 1030 ×7        motor (7): 1100 ×7        −70
+HH  real (8):  532 ×8        motor (8):  570 ×8        −38
+```
+
+El motor acierta **cuántas** piezas de hoja hay y falla **cuánto miden**.
+La hoja va rebajada respecto al hueco —encaja dentro del marco— y el motor
+emite la medida del hueco. `(A)/2 = 570` es exactamente lo que evalúa la
+fórmula; el corte real es 532.
+
+## T.4 El rebaje existe pero no es una constante por serie
+
+Medido el rebaje `motor − real` por (serie, función) con los umbrales de
+siempre:
+
+| (serie \| función) | rebaje | muestras |
+|---|---:|---:|
+| `GMPC65` HV | 74 | 424/424 ✔ |
+| `GMPC76R` HV | 82 | 196/196 ✔ |
+| `GMC400` HV | 53 | 1.116/1.156 ✔ |
+| `ELEGANTPVC` HV | 70 | 2.919/3.515 ✘ |
+| `ELEGANTPVC` HH | 37,9 | 2.776/3.932 ✘ |
+| `GMPC65` HH | 4 | 320/424 ✘ |
+| `GMC400` HH | 20 | 992/1.156 ✘ |
+
+**23 de 40 reglas estables, 2.080 de 12.697 piezas cubiertas.** El eje HV
+es mucho más consistente que el HH, y los rebajes de HH varían dentro de
+una misma serie (4, 5, 20, 24, 37,9). Es decir: **el rebaje no depende
+sólo de la serie**, sino probablemente del perfil concreto que resuelve el
+genérico, que es información que el motor no recibe hoy.
+
+**No se ha implementado ningún rebaje.** Con 23 de 40 reglas no se toca un
+motor que corta material real (regla 3).
+
+## T.5 Qué hacer, en orden
+
+1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
+   es que es un descuento del PERFIL resuelto (solape marco-hoja), no de
+   la serie. Hay que cruzarlo con la resolución genérico→perfil ya
+   implementada antes de tocar `calcular.ts`.
+2. **Revisar el filtro de rango de `calcular.ts:94`**, que compara
+   `MedidaMinima/Maxima` contra `Math.max(ancho, alto)`. S.6 demostró que
+   esa referencia es incorrecta para los asociados —la medida es la de la
+   fórmula de la propia ranura—. Para perfiles no se ha medido todavía si
+   también lo es. **Anotado, sin tocar.**
+3. Sólo después, las reglas ya validadas que siguen sin implementar: la
+   junta perimetral de hoja (S.7.2, delta 0) y la goma GM4090 (S.9.7,
+   delta 0 contra el hueco).
+
+**Mientras tanto, el aviso de "sin valorar" cubre este hueco**: una línea
+con hoja cuyo despiece no se puede garantizar no debe producir un importe
+que parezca bueno.
+
 # ANEXO S — Asociados: el mecanismo es resolución de ranuras (19/07/2026)
 
 Continúa R. Tres descubrimientos que cambian el modelo, y una medición que
