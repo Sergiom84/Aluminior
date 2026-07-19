@@ -2639,6 +2639,102 @@ perfil oscilobatiente por cerrado y pasar `BI` y el recuento de causas de T.21.2
 a revisión, o investigar `BI` antes. Recordatorio de T.20.3: esto no hace valorar
 ninguna línea todavía — los asociados siguen abiertos en todas las parejas.
 
+## T.26 La tabla de causas de T.21.2, rehecha: el frente de perfil se disuelve
+
+Medición pura. Script `scripts/recuento-frente-perfil.mjs` (solo lectura). T.24 y
+T.25 tumbaron la partida mayor de T.21.2 (el 42,3% "oscilobatiente" era herraje).
+Como la tabla de causas es la métrica oficial del proyecto (T.20.4), medir
+correderas contra ese denominador sería repetir el error de T.21.1. Se rehace
+entera con el enlace limpio. **Este anexo sustituye formalmente la tabla de
+T.21.2** (regla 6).
+
+Puente de unidades: las 7.000 "apariciones" de T.21.2 son ranuras de PLANTILLA
+(`componente_disenyo`) que fallan la resolución, ponderadas por `veces` (nº de
+apariciones de cada pareja serie×estructura). Se reproduce ese bucle exacto y se
+reclasifica cada ranura por la clase EMPÍRICA de su componente en la instancia
+(`VDatosLinDetDis.Componente`, 1:1). El cuadre a 7.000 se conserva.
+
+### T.26.1 Ancla: la tabla vieja se reproduce al número
+
+| Causa (T.21.2) | líneas | % |
+|---|---:|---:|
+| E. sin candidato en la cadena | 5.136 | 73,4% |
+| B. no toca a la serie (cristal) | 1.864 | 26,6% |
+| **total** | **7.000** | ✓ cuadra |
+
+### T.26.2 La tabla nueva (enlace limpio), misma base de 7.000
+
+| Clase real | líneas | % |
+|---|---:|---:|
+| **herraje (`Articulo=0`) → asociados (anexo S)** | **5.108** | **73,0%** |
+| cristal → otra vía (T.22) | 1.864 | 26,6% |
+| juntas (`J*`) → otra vía (anexo M) | 16 | 0,2% |
+| **PERFIL REAL sin resolver** | **10** | **0,1%** |
+| resuelve YA 100% por `ConjuntosLin` | 2 | 0,0% |
+| **suma** | **7.000** | ✓ cuadra |
+
+El herraje se descompone en: oscilobatiente `OB*` 2.959 (T.24/T.25), **correderas
+`222`–`229` 1.920**, kits `EKCC`/`EKEF`/`EKEE` 135, practicables
+`PRC`/`PRPV`/`PRPH` 92, sueltos 2. Todas son ranuras con `Articulo=0` en la
+instancia: herraje, no perfil. Las 2 líneas de "resuelve YA 100%" (comp `16`) son
+fallos fantasma de T.21.2: la plantilla tenía la ranura para una pareja cuya serie
+no la resolvía, pero las piezas reales de ese componente resuelven al 100%.
+
+### T.26.3 Correderas: también herraje, y su perfil resuelve al 100%
+
+Igual que el oscilobatiente: `222`–`229`/`22` son la ranura de **herraje** de la
+corredera (`Articulo=0`), no la hoja. Medido el perfil REAL de las estructuras de
+corredera con el criterio de T.25 (cobertura por la cadena, enlace limpio):
+
+- comps de hoja `23.2` (898), `22.2` (490, 99,6%), `21.2` (462), `12` (445),
+  `11` (223), `10` (222), y variantes menores: **cobertura 100%, 0 fallos**.
+
+**Esto refuta la premisa de T.21.4 punto 3**: las correderas no eran "el siguiente
+frente de perfil". Su perfil ya resolvía; lo que T.21.2 contó era su herraje.
+
+### T.26.4 El perfil real sin resolver: 10 líneas + colas declaradas
+
+Lo único que queda como perfil que `ConjuntosLin` no resuelve:
+
+- **10 líneas** en la tabla de 7.000: `12C` ×4, `22` ×2, `11C` ×2, `10C` ×2 —
+  variantes curvas (`*C`) y bases sueltas.
+- Fuera de esas 7.000, medido sobre la instancia, hay colas `sin candidato`
+  (nunca un artículo equivocado, sólo "la serie no lo resuelve"):
+  - **`BI`: 158 piezas** de perfil real que no resuelven por `ConjuntosLin`. Es el
+    cabo suelto que T.25 dejó anotado (allí 80, aquí 158 en todo el histórico).
+    Funcion no confirmada; queda como **cola declarada**, pendiente de identificar.
+  - Bases `.0` de doble cristal (`23` ×16, `21` ×8): el histórico es 100% doble
+    (`.2`), así que la base rara vez se usa y no está resuelta. Cola.
+  - Curvas `10C`/`11C`/`12C`: ~75% de cobertura, el resto `sin candidato`.
+
+**Fallos (artículo esperado ≠ real): 0 en todo el frente.** Nunca se corta una
+pieza equivocada; lo que falta, falta con aviso.
+
+### T.26.5 Defecto en `acciones.ts` (informe; el cambio sería T.27)
+
+`acciones.ts:362` clasifica una ranura sin resolver como asociado sólo si
+`funcion` empieza por `inf`/`Acc`; el resto va a "ranuras de perfil que la serie
+no resuelve". Las ranuras de herraje `OB*` y las correderas `222`–`229` tienen
+funcion `HV`/`HH`, así que **hoy se cuentan como perfil** — exactamente el defecto
+que T.22 corrigió para el cristal. Consecuencia: el aviso "N ranuras de perfil que
+la serie no resuelve" está inflado con herraje que pertenece al frente de
+asociados (anexo S).
+
+**Sólo informe en este paso.** El cambio, si se decide, sería un **T.27** análogo
+a T.22: reclasificar el herraje (`OB*`, `222`–`229`, kits, practicables) fuera del
+bucket de perfil, con verificación antes/después sobre las 140 parejas reales,
+alarma si cambia cualquier causa que no deba, y ejecución real en la aplicación
+con una línea del histórico. No se toca código aquí.
+
+### T.26.6 Conclusión
+
+El "frente de perfil sin resolver" de T.21 **no existe como tal**: el 99,9% era
+herraje (73%), cristal (26,6%) y juntas (0,2%), cada uno con su propia vía. El
+perfil real de hoja —oscilobatiente y corredera incluidos— **ya resuelve al 100%,
+0 fallos**. Lo que queda es cola: `BI` (158, sin identificar), bases `.0` y curvas
+`*C`. Recordatorio de T.20.3: nada de esto valora todavía una línea — el frente
+vivo son los asociados (5.108 de 7.000, anexo S) y el cristal por su vía.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
