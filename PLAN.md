@@ -1747,9 +1747,52 @@ Se descartó también la lectura fácil: las cantidades son múltiplos de 4
 `cantidad = 4 × nº de vidrios` sólo acierta **5/18 (27,8%)**. No se
 codifica.
 
-**Pendiente**: modelar la resolución de asociados de subestructuras
-anidadas. Es mecanismo nuevo, no afinado. Mientras tanto la goma sigue
-siendo falso negativo declarado.
+**Pendiente**: identificar por dónde llega. Ver S.9.5, que corrige la
+conjetura de este apartado. Mientras tanto la goma sigue siendo falso
+negativo declarado.
+
+### S.9.5 Goma GM4090: la subestructura anidada tampoco (corrige S.9.3)
+
+**Corrección explícita**: S.9.3 conjeturaba que la goma llegaba desde *"un
+bastidor que es subestructura anidada
+(`EstructurasArticulos.Subestructura`)"*. **Es falso.** La columna
+`Subestructura` está **vacía en las 15.263 filas de plantilla** (0 filas
+con valor). No hay anidamiento de estructuras en estos datos. Era una
+conjetura escrita sin comprobar, y se comprobó antes de codificar nada.
+
+Lo que sí establecen los datos (`scripts/medir-goma-vidrio.mjs`, 50 líneas
+con goma y 158 filas):
+
+- La goma sale en **parejas por vidrio**: 1 vidrio → 2 filas (15 líneas de
+  15), 2 vidrios → 4 filas (13 de 20). Cada fila lleva `Cdad=2`
+  (152 de 158 filas). Es exactamente lo que declara `GMBASTIDOR`:
+  `comp='A'` cdad 2 (ANCHO) + `comp='L'` cdad 2 (ALTO) → **4 gomas por
+  hueco acristalado, dos por cada eje**.
+- Los largos emparejan con las dimensiones del vidrio: 156 de 158 filas
+  tienen una dimensión de vidrio a menos de 200 mm.
+
+**Conclusión: GM4090 no pertenece a la selección de asociados de la línea.
+Es un artículo de la fase de ACRISTALAMIENTO, por hueco, como el junquillo
+y la junta por grosor de vidrio (anexo M).** Por eso su conjunto nunca
+aparece entre las opciones de herraje: no se selecciona ahí.
+
+El ajuste todavía **no alcanza los umbrales** y no se codifica. Midiendo
+sólo las 15 líneas inequívocas (un vidrio y dos filas, sin emparejamiento
+que adivinar — el error de medición que S.7.2 documenta):
+
+| (serie \| eje) | delta | muestras |
+|---|---:|---:|
+| `GMA350` mayor / menor | **64,4** | 4/4 ✔ |
+| `GMA60RL` | 68 | 3/4 ✘ |
+| `GMA75C16` | 76 | 3/6 ✘ |
+| `ELEGANTPVC` | 255,8 | 1/1 ✘ |
+
+Sólo 2 de 8 reglas estables (8/30 filas). El delta es el mismo en ambos
+ejes dentro de cada serie —dato consistente— y ronda 64-76 mm, pero con
+15 líneas no hay muestra suficiente. **Anotado como no resuelto**: hace
+falta ampliar el oráculo de goma o resolver el emparejamiento de las 35
+líneas ambiguas con la maquinaria de `mejorEmparejamiento`
+(`packages/etl/src/medir-mixtas.ts`) antes de fijar ningún valor.
 
 ### S.9.4 Resultado
 
