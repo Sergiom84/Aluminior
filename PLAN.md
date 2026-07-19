@@ -1809,6 +1809,58 @@ Con eso, el 93,0% se valora bien y el 7,0% avisa honestamente, que es
 justo lo que hoy no ocurre: hoy las 1.003 líneas con hoja del anexo T
 producen medidas de corte equivocadas sin avisar de nada.
 
+## T.12 Implementado con guarda — y un compromiso que hay que decidir
+
+`calcularDespiece` acepta ahora `OpcionesDespiece.rebajeDeHoja`, que
+devuelve el rebaje de una pieza o **`null` cuando no hay regla medida**.
+`null` no significa "sin rebaje": la pieza queda **sin medida y con
+incidencia**, para que la línea no se valore. Ocho pruebas nuevas
+(`packages/core/src/despiece/rebaje.test.ts`) fijan ese comportamiento,
+incluida la reproducción del caso real del anexo T (estructura `2O`:
+HV 1030, HH 532). Sin tabla de reglas el motor se comporta como antes, así
+que el cambio no rompe nada existente.
+
+Prueba de extremo a extremo con las 64 reglas
+(`scripts/probar-motor-con-rebaje.mjs`), sólo piezas de hoja:
+
+| | piezas correctas | sin medida | líneas exactas |
+|---|---:|---:|---:|
+| SIN reglas (anexo T) | 18/7.639 (**0,2%**) | 0 | **0/934** |
+| CON reglas (T.10) | 7.010/7.639 (**91,8%**) | 537 | **751/934 (80,4%)** |
+
+La guarda funciona: las 537 piezas sin regla quedan sin medida, no con la
+medida del hueco.
+
+### El compromiso: el umbral del 90% deja pasar cortes equivocados
+
+**Hallazgo que obliga a decidir.** Con umbral del 90%, **92 piezas salen
+con una medida que no es la correcta y sin ningún aviso**. No es un fallo
+de la guarda: la guarda cubre las reglas *ausentes*. Una regla que acierta
+el 90% falla, por definición, una de cada diez veces — y el proyecto
+sostiene que un corte mal medido es una pieza mal cortada.
+
+Medido el coste de exigir más consistencia:
+
+| Umbral | reglas | piezas correctas | sin medida | **cortes MALOS** | líneas exactas |
+|---:|---:|---:|---:|---:|---:|
+| 90% | 64 | 91,8% | 537 | **92** | 80,4% |
+| 95% | 61 | 88,8% | 778 | **76** | 61,3% |
+| 99% | 53 | 61,9% | 2.892 | **16** | 11,0% |
+| **100%** | 50 | 18,7% | 6.214 | **0** | 11,0% |
+
+**No es una decisión técnica sino de negocio, y no se toma sola.** El
+umbral del 90% que el proyecto usa para *descubrir* reglas no es
+necesariamente el que debe usarse para *cortar aluminio*:
+
+- **90%** valora el 91,8% de las piezas, pero 92 piezas al año saldrían
+  mal cortadas sin que nadie lo sepa hasta el taller.
+- **100%** no permite ni un solo corte equivocado, pero deja el 81,3% de
+  las piezas sin valorar, y eso devuelve el problema al presupuesto.
+
+La implementación **no fija ninguno**: el umbral vive en quien construye la
+tabla de reglas, no en el motor. Queda **pendiente de decisión explícita**
+antes de conectar esto a producción.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento

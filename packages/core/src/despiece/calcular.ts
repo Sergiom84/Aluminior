@@ -57,6 +57,37 @@ export interface ResultadoDespiece {
   consumoPorArticulo: Map<string, { unidades: number; metrosLineales: number }>
 }
 
+/** Funciones cuyo corte lleva rebaje: la hoja encaja DENTRO del marco. */
+const FUNCIONES_HOJA = new Set(['HV', 'HH'])
+
+/** Clave de una regla de rebaje. Ver `rebajeDeHoja`. */
+export interface ClaveRebaje {
+  /** Perfil REAL, ya resuelto desde el genérico. */
+  articuloCodigo: string
+  funcion: string
+  formula: string
+  serie: string
+}
+
+export interface OpcionesDespiece {
+  /** Serie (conjunto) de la línea; forma parte de la clave del rebaje. */
+  serie?: string
+  /**
+   * Rebaje de hoja en mm, o null si no hay regla medida para esa pieza.
+   *
+   * La hoja no mide lo que mide el hueco: encaja dentro del marco y va
+   * rebajada. El anexo T midió que ese rebaje es constante por
+   * (perfil, eje, fórmula, serie) en 64 reglas que cubren el 93,0% de las
+   * piezas, con un techo del 94,4% (lo que falta no está en los datos).
+   *
+   * Devolver `null` NO significa "sin rebaje": significa "no lo sé". La
+   * pieza queda entonces sin medida y con incidencia, para que la línea no
+   * se valore. Emitir la medida del hueco como si fuera el corte es
+   * exactamente el error que el anexo T encontró en producción.
+   */
+  rebajeDeHoja?: (clave: ClaveRebaje) => number | null
+}
+
 function aNumero(v: string | number | null | undefined): number | null {
   if (v === null || v === undefined) return null
   const n = typeof v === 'number' ? v : Number(String(v).replace(',', '.'))
@@ -74,6 +105,7 @@ export function calcularDespiece(
   plantilla: ComponentePlantilla[],
   medidas: { anchoMm: number; altoMm: number },
   cotas: Record<string, number> = {},
+  opciones: OpcionesDespiece = {},
 ): ResultadoDespiece {
   const contexto: Contexto = {
     L: medidas.anchoMm,
@@ -119,6 +151,29 @@ export function calcularDespiece(
       }
     } else {
       incidencia = 'sin fórmula de largo'
+    }
+
+    // Rebaje de hoja (anexo T). Sólo aplica a HV/HH y sólo si el llamante
+    // aporta la tabla de reglas; sin ella el motor se comporta como antes.
+    if (largoMm !== null && opciones.rebajeDeHoja && FUNCIONES_HOJA.has(c.funcion ?? '')) {
+      const rebaje = opciones.rebajeDeHoja({
+        articuloCodigo: c.articuloCodigo,
+        funcion: c.funcion ?? '',
+        formula: c.formulaLargo ?? '',
+        serie: opciones.serie ?? '',
+      })
+      if (rebaje === null) {
+        // No hay regla medida. No se inventa un rebaje ni se deja la medida
+        // del hueco: la pieza queda sin medida y la línea, sin valorar.
+        incidencia = 'sin regla de rebaje de hoja para (perfil, eje, fórmula, serie)'
+        largoMm = null
+      } else {
+        largoMm -= rebaje
+        if (largoMm < 0) {
+          incidencia = `rebaje mayor que la medida (${Math.round(largoMm)} mm): revisa la regla`
+          largoMm = null
+        }
+      }
     }
 
     piezas.push({
