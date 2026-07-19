@@ -2358,6 +2358,89 @@ sí sola una línea, porque toda pareja con hoja tiene además asociados
 pendientes. El valor de hacerlas es que son el prerrequisito con mecanismo
 demostrable; la línea valorada llega cuando cierren también los asociados.
 
+## T.23 Oscilobatiente: la hipótesis de S.2 queda REFUTADA (y aparece otra)
+
+Medición pura, sin implementar nada. Script `scripts/medir-oscilobatiente.mjs`,
+contrastado contra el oráculo con enlace exacto por `VDatosLinDetDis.DisIdIt`
+—nunca por proximidad de medida—. **5.501 piezas reales.**
+
+### T.23.1 Las ranuras SÍ están en ConjuntosAsoc… y da igual
+
+| Ranura | filas en `ConjuntosAsoc` | conjuntos | artículos distintos |
+|---|---:|---:|---:|
+| `OBC` | 474 | 34 | 28 |
+| `OBCR` | 429 | 34 | 24 |
+| `OBP` | 249 | 17 | 20 |
+| `OBM` | 166 | 34 | 11 |
+| `OBPH` | 48 | 6 | 5 |
+| `PRC` | 84 | 14 | 5 |
+| `PRPV` / `PRPH` | **0** | 0 | 0 |
+
+Estar, están (salvo `PRPV`/`PRPH`). Pero el contraste con el oráculo:
+
+| | piezas | % |
+|---|---:|---:|
+| candidato único y acierta | 0 | 0,0% |
+| candidato único y falla | 0 | 0,0% |
+| varios candidatos | 5.209 | 94,7% |
+| sin candidato | 292 | 5,3% |
+
+Y el dato que cierra la puerta: **el perfil real está entre los candidatos de
+`ConjuntosAsoc` en 0 de los 5.209 casos ambiguos.** Cero. No es que falten
+condiciones que afinen la elección: **el artículo correcto no está en la lista**,
+y ninguna condición lo va a meter.
+
+**Hipótesis de T.21.4 punto 2: REFUTADA.** Tiene sentido a posteriori —
+`ConjuntosAsoc` da el herraje (`OBC` = compás, `OBM` = mecanismo, `OBCR` =
+cremona), mientras que la pieza que falta es el **perfil de hoja** que lo
+lleva. S.2 tenía razón en que esos códigos son `DisComponente`; la
+equivocación fue mía al deducir que por eso resolvían por esa tabla.
+
+### T.23.2 Dónde sí está: en ConjuntosLin, bajo el componente de hoja normal
+
+El perfil real está en `ConjuntosLin` dentro de la cadena de la serie en
+**5.501 de 5.501** casos.
+
+Ese test sólo demuestra **contención**, no correspondencia: busca cualquier
+componente cuyo artículo coincida y se queda con el primero, así que con
+varios candidatos el que sale es arbitrario. Sería fabricar el emparejamiento
+y medir sobre él (regla 8). El test determinista —fijar el componente
+candidato ANTES de mirar— da:
+
+| Ranura | piezas | acierto con comp. `25`/`26` | con `29` |
+|---|---:|---:|---:|
+| `OBCR` | 1.310 | **99,2%** | — |
+| `OBP` | 800 | **99,5%** | — |
+| `OBC` | 1.965 | 66,2% | 33,3% |
+| `OBPH` | 1.200 | 66,3% | 33,3% |
+| `PRPV` | 22 | 63,6% | — |
+| `PRPH` | 33 | 42,4% | 33,3% |
+| `PRC` | 171 | 24,6% (`25P` 33,9%) | 33,3% |
+
+Lecturas, con cuidado:
+
+- `25` y `26` dan **exactamente el mismo porcentaje** en todas: en estas series
+  ambos componentes resuelven al mismo artículo, así que **este test no los
+  distingue**. No se puede concluir cuál de los dos es la clave.
+- `OBCR` y `OBP` quedan prácticamente explicados por el componente de hoja.
+- `OBC` y `OBPH` se parten limpiamente: 66% + 33% ≈ 99,5%. Hay **una segunda
+  dimensión** que decide entre hoja (`25`) y vierteaguas (`29`) — coherente
+  con que la pieza baja de una hoja sea un vierteaguas.
+- La familia practicable (`PRC`, `PRPV`, `PRPH`) **no** encaja aquí: es otro
+  mecanismo, y con 226 piezas es el 1,3% del frente. No merece esfuerzo ahora.
+
+### T.23.3 Qué NO se ha hecho, y por qué
+
+**No se ha implementado nada.** Lo medido es prometedor pero no es una regla:
+falta separar `25` de `26` con un test que los distinga, e identificar la
+segunda dimensión de `OBC`/`OBPH`. Construir con el 66% actual metería la
+pieza equivocada en un tercio de los casos, y una hoja mal resuelta es una
+pieza mal cortada.
+
+Siguiente medición, cuando se retome: qué distingue el 66% del 33% en `OBC` y
+`OBPH` (candidato natural: la posición o el eje de la pieza dentro del
+diseño), y un caso donde `25` y `26` resuelvan distinto para poder separarlos.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
