@@ -65,10 +65,24 @@ npm install
 npm run dev:web     # http://localhost:3000/dashboard
 ```
 
-**El motor de despiece está resuelto y operativo al 99,6%.** Las fórmulas de
-corte (`L-FS-FI`, `(A)/2`…) se evalúan correctamente: 417 de 417 validadas.
+**El evaluador de fórmulas está resuelto: 417 de 417 validadas**, y la cadena
+genérico→perfil resuelve el 99,6% de los componentes. **Ojo con leer eso como
+"el motor acierta el 99,6% de los cortes": no es lo que mide.** Sin las reglas
+de rebaje, el motor reproduce el 25,1% de las piezas del histórico y ninguna de
+las 1.003 líneas con hoja (anexo T). Con ellas, el 91,8% de las piezas de hoja.
 
 ## Tu tarea
+
+**Lo primero, y es una decisión que no debes tomar tú: pregunta al usuario qué
+umbral quiere para las reglas de rebaje de hoja** (ver más abajo). Sin esa
+respuesta no se conecta el rebaje a producción, y sin el rebaje ninguna línea
+con hoja se corta bien. Todo lo demás está medido y anotado.
+
+Después, si hay margen: los frentes abiertos están clasificados al final de esta
+sección por qué los bloquea. Los que dependen de datos que el ERP no exporta
+**no se resuelven midiendo más**; están así por medición, no por pereza.
+
+### Contexto de la tarea original
 
 **Completar la valoración de presupuestos sin inventar importes.** La resolución
 de perfiles genéricos, los costes y el acristalamiento de hoja y fijo puro ya
@@ -120,26 +134,73 @@ validadas:
 - La junta perimetral de hoja copia EXACTAMENTE cada corte de perfil de
   hoja (delta 0, 4.624/4.632 tramos — S.7.2).
 
-**Los tres frentes que separan el 96% del ~100%** (diagnóstico en S.8, con
-`DEPURAR_ART=<código> npx tsx scripts/medir-seleccion-v5.mjs`):
+Los tres frentes de S.8 **ya se atacaron** y están cerrados o acotados
+(anexo S.9): los tacos se resolvieron (76/76, rasgo `trvPeq`), la goma
+resultó ser acristalamiento por hueco con delta 0 (S.9.7), y el primero
+—"evaluar el ancho real de cada hoja"— **quedó REFUTADO**: `FormulaLargo`
+ya es la cadena `REF` aplanada, así que evaluarla ya es evaluar el ancho
+real. No repitas ese trabajo.
 
-1. **Tramos de cremona/pletina/tirante**: la medida evaluada se desvía
-   cuando las hojas son desiguales — la fórmula genérica `(A)/2` no vale;
-   hay que evaluar el ancho REAL de cada hoja con el árbol de
-   `EstructurasDiseño` (la maquinaria ya existe:
-   `packages/etl/src/medir-mixtas.ts` y `packages/core/src/despiece/`,
-   anexo Q). También hay estructuras cuya plantilla no trae fórmula para
-   la ranura (parte de las 454 filas descartadas).
-2. **Tacos de pilastra** (GM4870/GM5102/GM4726): regla dominante "2 por
-   travesaño" (~83%); las excepciones (2PD, 1OFI sin travesaño) parecen
-   ancladas a la PILASTRA. Medir antes de codificar.
-3. **Goma GM4090** (`A`/`L` ×2): unidades con largo aparte; emparejar sus
-   largos como se hizo con las juntas (`scripts/medir-ajuste-junta.mjs`).
+## ⚠️ Lo más importante que se ha descubierto: el anexo T
 
-Después: cantidades y largos exactos línea a línea, `ConfigSeriesAsoc`
-(por `TipoHoja`) y `AperturaTH` (190 filas). **Solo al reproducir el
-oráculo línea a línea se activa la valoración de asociados**; hasta
-entonces siguen "sin valorar" con aviso.
+Se ejecutó por primera vez el **motor de producción contra el histórico**
+(`scripts/probar-motor-contra-oraculo.mjs`, 1.229 líneas reales). Resultado:
+reproduce **25,1% de las piezas**, y de las **1.003 líneas con hoja, cero**
+son correctas. El marco sí sale bien (91,9%).
+
+Esto **no contradice** el "417/417 fórmulas validadas" ni el "99,6%": esas
+cifras miden que el evaluador resuelve las fórmulas, no que los cortes
+coincidan con los del ERP. Nadie había hecho esa comprobación.
+
+La causa se midió y se cerró: la hoja va **rebajada** respecto al hueco y el
+motor emitía la medida del hueco. La regla es
+`rebaje = f(perfil, eje, fórmula, serie)` — 64 reglas, **93,0% de cobertura,
+con techo medido del 94,4%** (lo que falta no está en los CSV). Está
+**implementada con guarda** en `calcularDespiece`
+(`OpcionesDespiece.rebajeDeHoja`): si falta la regla, la pieza queda **sin
+medida** y la línea sin valorar, nunca con la medida del hueco. Con ella el
+motor pasa de 0,2% a **91,8% de piezas de hoja** correctas.
+
+## Lo único que bloquea avanzar: una decisión que no es técnica
+
+Con umbral del 90% quedan **92 piezas con medida incorrecta y sin aviso**, y
+**el 79,3% se desvía más de 10 mm** (máximo 630 mm): hojas que no encajan.
+Subir el umbral las elimina pero hunde la cobertura:
+
+| Umbral | piezas correctas | cortes MALOS |
+|---:|---:|---:|
+| 90% | 91,8% | 92 |
+| 99% | 61,9% | 16 |
+| 100% | 18,7% | 0 |
+
+**Hay que elegir umbral antes de conectar esto a producción.** El motor no
+lo fija: vive en quien construye la tabla de reglas. Recomendación (no
+decisión): empezar por 99% y revisar a mano los grupos entre 99% y 90%.
+
+## Frentes abiertos, clasificados por qué los bloquea
+
+**Bloqueados por falta de DATOS** (no de análisis; medido y anotado):
+- Variación del rebaje dentro de un mismo grupo — techo 94,4% (T.10).
+- **Qué piezas de hoja llevan junta**: los 5.158 tramos de junta **no
+  tienen enlace de diseño** (`VDatosLinDetDis`), así que la atribución no
+  se puede reconstruir (T.15). `emitirJuntaPerimetral` está implementada y
+  probada pero **marcada como NO APTA PARA PRODUCCIÓN**: acierta el largo
+  (94,2%) y emite **840 tramos de más**.
+- `AperturaTH`: sólo 14 filas en el oráculo, 7 a favor y 7 en contra (S.9.9).
+- Los 24 casos de tramos de S.9.1: una misma medida evaluada da dos tramos
+  reales distintos. Sin hipótesis.
+
+**Bloqueado por la FORMA del modelo, no por los datos:**
+- `BISAGRA PRACTICABLE` (`GM4846`): el contexto SÍ determina la cantidad
+  (techo 100%), pero `real = base × rasgo × k` no puede expresarla. Ningún
+  rasgo explica ni una de las 26 observaciones no nulas (S.9.8).
+
+**Cerrados como vía muerta** (no volver a mirarlos): `TipoMedCV` es
+constante, `FormulaOpcion` afecta a 0 filas del oráculo, `GrupoAsoc` y las
+columnas booleanas no son condiciones (S.9.9).
+
+La valoración de asociados **sigue cerrada con aviso**: el predictor v5 va
+al 96,4%/94,3% con 72/216 líneas exactas.
 
 ## Cómo quiero que trabajes
 
@@ -180,6 +241,23 @@ disimularlo.
 **7. Dime lo que no sabes.**
 Si llegas a un punto donde sólo entiendes el problema a medias, dilo y para. Es
 preferible a construir sobre una comprensión parcial.
+
+**8. Desconfía de todo emparejamiento que hayas inventado tú.**
+Ha pasado **tres veces** en este proyecto, siempre igual: emparejas piezas por
+proximidad de medida, mides sobre las parejas resultantes y sale una señal
+preciosa que no existe. Ocurrió en S.7.2 (un ajuste por serie que era delta 0),
+en T.6 (el perfil explicaba "seis veces más" que la serie; con la muestra
+completa, lo mismo) y en T.15 (un 80% que al quitar la ambigüedad era 41,5%).
+Si dos elementos son intercambiables y tú eliges cuál va con cuál, **has
+fabricado el dato que luego mides**. Agrupa por algo inequívoco, o usa el
+enlace real (`VDatosLinDetDis`) si existe — y si no existe, dilo: eso es
+exactamente lo que cierra un frente por falta de datos.
+
+**9. Comprueba que un grupo "estable" no lo es por trivialidad.**
+Una regla medida sobre observaciones que comparten todas la misma medida no
+demuestra nada. En T.9, 24 de 74 grupos estables eran así: separarlos bajó la
+cobertura del 81,5% al 79,6% real. Mide siempre si el grupo abarca valores
+distintos.
 
 ## Detalles operativos
 
