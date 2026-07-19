@@ -107,13 +107,14 @@ ranuras**, como los perfiles — la plantilla genera ranuras de asociado
 presente filtrando por `nOpcion` marcada y medida de la HOJA en rango, y la
 cantidad es la SUMA de las filas que pasan (hay filas de cantidad 0 y
 negativas: correcciones). Las opciones de herraje ya están en el configurador
-(R.5) y el predictor v2 llega a 61,5% de precisión / 82,2% de cobertura sobre
-el oráculo, sin ninguna línea exacta aún. Lo que falta está acotado en
-**S.4**, en orden: el ancla `!` por categoría de elemento (32 textos de
-`AsociadoA` → recuentos del despiece), las patillas `A`/`L`, los ejes de
-rango con más muestras (añadir VALB/VFAC al oráculo), `ConfigSeriesAsoc` por
-`TipoHoja`, y `AperturaTH`. Solo al llegar a ~100% línea a línea se
-implementa la valoración.
+(R.5) y el predictor v3 (oráculo triplicado con albaranes y facturas,
+patillas `A`/`L` resueltas, 5 categorías `!` aprendidas) alcanza **94,1% de
+precisión con 75,9% de cobertura** en su política estricta, con las primeras
+5 líneas exactas en artículos. Lo que falta está acotado en **S.5**, en
+orden: anclar los ejes de rango a la hoja de la propia ranura (`DisIdHoja`),
+las longitudes por `FormulaL` (juntas en metros — el mayor falso negativo),
+la mano (`ManoID`), `ConfigSeriesAsoc` y `AperturaTH`. Solo al llegar a
+~100% línea a línea se implementa la valoración.
 
 ## Cómo quiero que trabajes
 

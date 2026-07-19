@@ -1540,25 +1540,58 @@ La cobertura que pierde v2 es EXACTAMENTE los mecanismos aún no modelados:
 **Decisión (regla 3): los asociados siguen sin valorar.** El mecanismo está
 identificado pero la selección no reproduce ninguna línea exacta todavía.
 
-## S.4 Qué falta, en orden
+## S.4 Predictor v3: mecanismos completos, dos políticas (19/07/2026)
 
-1. **`!` por categoría**: mapear los 32 textos de `AsociadoA` a recuentos
-   del despiece (nº de hojas, travesaños por tamaño, marcos inferiores…) y
-   medir. Es la mayor pérdida de cobertura.
-2. **`A`/`L`**: patillas por dimensión (¿cantidad por fórmula o por tramos
-   de `Intervalo`?). GM1161 aparece en el 100% de las líneas.
-3. **Ejes de rango**: aprenderlos con más datos (añadir VALB y VFAC al
-   oráculo triplica las muestras) o anclarlos a la hoja de la ranura
-   (`DisIdHoja` de la instancia) en vez de al máximo de la línea.
-4. **`ConfigSeriesAsoc`** (por `TipoHoja`) como segunda fuente del
-   predictor.
+`scripts/medir-seleccion-v3.mjs` añade sobre v2: oráculo ampliado a
+VALB+VFAC (216 líneas con opciones+instancia+asociados), patillas `A`/`L`
+por `UnidadesMin` (verificado antes: 8 por línea en 1.150 casos históricos,
+4 en series con una fila por lado), y multiplicador de las categorías `!`
+APRENDIDO por consistencia (5 de 14 categorías alcanzan ≥90%: zócalos,
+batientes de apertura interior…).
+
+| Política con rangos sin eje aprendido | Precisión | Cobertura | Exactas (artículos) |
+|---|---:|---:|---:|
+| Aceptarlos | 64,2% | 92,4% | 5/216 |
+| Excluirlos | **94,1%** | 75,9% | 5/216 |
+
+Diagnóstico ya preciso de lo que impide cerrar:
+
+- **El eje de los rangos debe anclarse a la HOJA DE LA RANURA**, no al
+  máximo de la línea: con varias hojas distintas la consistencia no llega
+  al 90% y solo 11 de 27 grupos aprenden eje. La instancia trae
+  `DisIdHoja` por ranura; falta unirla con la medida real de esa hoja
+  (las hijas de `VPresupuestosLin` tienen el corte pero no el `DisIdHoja`).
+  Agrupar por ranura ignorando el conjunto se probó y es peor (2/10):
+  cada serie tiene fórmulas de hoja distintas.
+- **Las juntas perimetrales (GM4055/GM5085, el mayor FN) no son un fallo
+  de selección**: su cantidad va en METROS. Pertenecen a la fase de
+  longitudes (`FormulaL`), como los junquillos.
+- Bisagras de rebajo izquierda/derecha (FP bajo la política estricta)
+  necesitan la MANO de la línea (`ManoID`), aún sin modelar.
+
+## S.5 Qué falta, en orden (revisado tras v3)
+
+1. **Anclar los ejes de rango a la hoja de la ranura**: reconstruir la
+   medida de la hoja `DisIdHoja` de cada ranura (vía las fórmulas del
+   despiece o correlando instancia ↔ hijas por orden) y reaprender. Es lo
+   que separa las dos políticas (94% preciso pero 76% de cobertura).
+2. **Longitudes por `FormulaL`**: juntas perimetrales y demás asociados en
+   metros (el mayor falso negativo restante). Mismo evaluador de fórmulas
+   que los perfiles.
+3. **La mano** (`ManoID`): bisagras izquierda/derecha.
+4. **`ConfigSeriesAsoc`** (por `TipoHoja`) como segunda fuente.
 5. **`AperturaTH`** (190 filas): última condición sin semántica.
-6. Con exactitud línea a línea: cantidades, `FormulaL` (longitudes de
-   corte de asociados tipo perfil) y recién entonces la valoración.
+6. Las 9 categorías `!` aún sin multiplicador fiable (más muestras o
+   mapeo manual verificado).
+7. Con exactitud línea a línea: activar la valoración.
+
+Hecho ya: `A`/`L` (patillas por `UnidadesMin`), 5 categorías `!`
+aprendidas, oráculo triplicado con VALB+VFAC.
 
 ## Scripts
 
 ```
 scripts/medir-seleccion-completa.mjs   predictor v1: opciones + ejes (56,2%/99,5%)
 scripts/medir-seleccion-v2.mjs         predictor v2: ranuras (61,5%/82,2%)
+scripts/medir-seleccion-v3.mjs         predictor v3: completo, dos políticas
 ```
