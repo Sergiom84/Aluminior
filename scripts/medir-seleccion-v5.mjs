@@ -174,9 +174,11 @@ for (const doc of DOCS) {
     if (!opciones || !ranuras) continue
     const hijas = hijasPorPadre.get(col(p, 'nLinea')) ?? []
     const reales = new Map()
+    const perfilesLinea = new Set()
     for (const h of hijas) {
       const art = col(h, 'Articulo'), fn = col(h, 'Funcion')
-      if (!art || art === '0' || FUNCIONES_PERFIL.has(fn)) continue
+      if (!art || art === '0') continue
+      if (FUNCIONES_PERFIL.has(fn)) { perfilesLinea.add(art); continue }
       const fam = famPorArt.get(art) ?? ''
       if (fam === '050' || fam === '051') continue
       if (!poblacionAsoc.has(art)) continue
@@ -199,7 +201,7 @@ for (const doc of DOCS) {
       }))
     }
     lineas.push({
-      k, opciones, ranuras, reales, medidasRanura,
+      k, opciones, ranuras, reales, medidasRanura, perfilesLinea,
       manos: manosInstancia.get(k) ?? new Map(),
       rasgosExtra: rasgosInstancia.get(k) ?? new Map(),
       nHojas: hojasPorLinea.get(k)?.size ?? 0,
@@ -216,6 +218,9 @@ function filasOpcionOk(linea) {
     for (const f of asocPorConjunto.get(cj) ?? []) {
       const nOp = col(f, 'nOpcion')
       if (nOp && nOp !== '0' && !marcadas.has(nOp)) continue
+      // ArticuloAsoc: condicionada a que un perfil concreto esté presente
+      const artAsoc = col(f, 'ArticuloAsoc')
+      if (artAsoc && artAsoc !== '0' && !linea.perfilesLinea.has(artAsoc)) continue
       activas.push(f)
     }
   }

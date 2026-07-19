@@ -1612,13 +1612,18 @@ solas ("una por pieza de hoja") sin codificar nada a mano.
 | Predictor (216 líneas) | Precisión | Cobertura | Exactas (artículos) |
 |---|---:|---:|---:|
 | v4 | 94,1% | 88,3% | 5/216 |
-| **v5** | **94,5%** | **92,6%** | **34/216** |
+| v5 (rasgos + k) | 94,5% | 92,6% | 34/216 |
+| **v5 + `ArticuloAsoc`** | **96,3%** | **92,6%** | **51/216** |
 
-Pendiente que concentra el resto: tacos de pilastra (categorías
-`TRAVESAÑOS *` sin multiplicador fiable aún), la goma GM4090, el kit de
-acristalamiento condicionado al junquillo (GM4353, FP), y los tramos de
-cremona/tirante con varias fórmulas por ranura (las 454 filas con rango
-descartadas por ranura sin fórmula evaluable).
+Reincorporar el filtro `ArticuloAsoc` (condición de perfil presente, que
+v1 ya tenía y se perdió al reescribir) eliminó de golpe los falsos
+positivos de escuadras y del kit de acristalamiento GM4353.
+
+Pendiente que concentra el resto: los tramos de cremona/tirante/pletina
+con varias fórmulas por ranura (las 454 filas con rango descartadas por
+ranura sin fórmula evaluable), los tacos de pilastra (regla dominante
+"2 por travesaño", medida en ~83% — las excepciones parecen ancladas a
+la PILASTRA, no al travesaño), y la goma GM4090.
 
 ## S.7 Qué falta, en orden (revisado tras v4)
 
