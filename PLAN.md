@@ -1600,6 +1600,26 @@ perimetrales en METROS (171 casos, fase `FormulaL`), tacos de pilastra
 solapes de tramos con fórmulas distintas entre apariciones de una misma
 ranura.
 
+## S.8 Predictor v5: categorías '!' con rasgos de la instancia (19/07/2026)
+
+`scripts/medir-seleccion-v5.mjs` amplía el aprendizaje de multiplicadores
+de las categorías `!` con rasgos derivados de la instancia — recuentos por
+FUNCIÓN (`fn:HV` = piezas de perfil de hoja…) y por GENÉRICO (`gen:97` =
+travesaños grandes…) — más una constante `k` aprendida como moda de
+`real/(base×rasgo)`. Con eso las juntas perimetrales (S.7.2) se aprenden
+solas ("una por pieza de hoja") sin codificar nada a mano.
+
+| Predictor (216 líneas) | Precisión | Cobertura | Exactas (artículos) |
+|---|---:|---:|---:|
+| v4 | 94,1% | 88,3% | 5/216 |
+| **v5** | **94,5%** | **92,6%** | **34/216** |
+
+Pendiente que concentra el resto: tacos de pilastra (categorías
+`TRAVESAÑOS *` sin multiplicador fiable aún), la goma GM4090, el kit de
+acristalamiento condicionado al junquillo (GM4353, FP), y los tramos de
+cremona/tirante con varias fórmulas por ranura (las 454 filas con rango
+descartadas por ranura sin fórmula evaluable).
+
 ## S.7 Qué falta, en orden (revisado tras v4)
 
 1. ~~Anclar los ejes de rango~~ **RESUELTO en S.6**: la medida es la
