@@ -88,6 +88,54 @@ export interface OpcionesDespiece {
   rebajeDeHoja?: (clave: ClaveRebaje) => number | null
 }
 
+/**
+ * Junta perimetral de hoja: una pieza por cada pieza de perfil de hoja, con
+ * EXACTAMENTE su mismo largo.
+ *
+ * Medido en el anexo S.7.2: no va en metros lineales, como se creyó al
+ * principio, sino en tramos; y el delta contra el corte del perfil de hoja
+ * es **0** en las 21 reglas estables, 4.624 de 4.632 tramos. Una versión
+ * anterior de ese anexo afirmaba un ajuste por serie (−64/−90, −44/−70…):
+ * era un artefacto de medición y quedó corregido.
+ *
+ * El artículo de junta sale de la fila `'!' HOJAS` de `ConjuntosAsoc`; el
+ * motor no lo adivina, se lo dan. Si no se conoce, no se emite nada: es
+ * preferible una junta ausente y visible a una junta inventada.
+ *
+ * Las piezas de hoja sin medida (por ejemplo, sin regla de rebaje) propagan
+ * su incidencia a la junta, que tampoco tendrá medida. Copiar un largo
+ * desconocido no lo vuelve conocido.
+ *
+ * ⚠️ NO CONECTAR A PRODUCCIÓN TODAVÍA (anexo T.14). S.7.2 validó el LARGO
+ * de cada tramo (delta 0), pero nunca el RECUENTO. Al ejecutar esta función
+ * contra el histórico, los largos casan al 94,2% pero se emiten 840 tramos
+ * de más: no todas las piezas de hoja llevan junta. Falta medir cuáles.
+ * Emitir juntas de más infla el presupuesto con material que no se usa.
+ */
+export function emitirJuntaPerimetral(
+  piezas: PiezaCortada[],
+  articuloJunta: string | null,
+): PiezaCortada[] {
+  if (!articuloJunta) return []
+  return piezas
+    .filter((p) => FUNCIONES_HOJA.has(p.funcion ?? ''))
+    .map((p) => ({
+      articuloCodigo: articuloJunta,
+      cantidad: p.cantidad,
+      largoMm: p.largoMm,
+      formula: null,
+      tipoCorte: null,
+      anguloIzquierdo: null,
+      anguloDerecho: null,
+      funcion: 'JUNTA',
+      idItemDisenyo: p.idItemDisenyo ?? null,
+      grupoDisenyo: p.grupoDisenyo ?? null,
+      incidencia: p.largoMm === null
+        ? `junta sin medida: la hoja que copia tampoco la tiene (${p.incidencia ?? 'sin motivo'})`
+        : null,
+    }))
+}
+
 function aNumero(v: string | number | null | undefined): number | null {
   if (v === null || v === undefined) return null
   const n = typeof v === 'number' ? v : Number(String(v).replace(',', '.'))

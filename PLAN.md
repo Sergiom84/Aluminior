@@ -1908,6 +1908,59 @@ el techo del contexto observable es 94,4%, así que **esa variación no se
 puede explicar con los datos que exporta el ERP**. No es falta de análisis:
 es falta de datos.
 
+## T.14 La junta: el largo estaba validado, el RECUENTO no
+
+Implementada `emitirJuntaPerimetral` en `packages/core` con la regla de
+S.7.2 (cada tramo copia el corte de una pieza de perfil de hoja, delta 0) y
+seis pruebas (`packages/core/src/despiece/junta.test.ts`), incluida la que
+exige que una hoja sin medida produzca una junta **sin medida**, no a cero.
+
+Ejecutada contra el histórico (`scripts/probar-junta-contra-oraculo.mjs`),
+partiendo de los cortes de hoja REALES para aislar la regla de la junta del
+rebaje del anexo T:
+
+| | |
+|---|---:|
+| Líneas con junta real | 772 |
+| Tramos reales | 3.566 |
+| **Tramos casados** | **3.360 (94,2%)** |
+| **Tramos emitidos DE MÁS** | **840** |
+| Líneas exactas | **0/772 (0,0%)** |
+
+**El largo es correcto; el recuento no.** El desajuste dominante es
+"faltan 0, sobran 1 ó 2" (462 de las 525 líneas que fallan): la regla emite
+una junta por cada pieza de perfil de hoja y **no todas las piezas de hoja
+llevan junta**.
+
+**Corrección de alcance de S.7.2.** Aquel anexo midió el delta de los
+tramos que *ya estaban emparejados* — es decir, validó **cuánto mide** cada
+junta, y de ahí el "delta 0, 4.624/4.632". Nunca midió **cuántas** juntas
+hay. La frase *"emitir una junta por cada pieza de perfil de hoja"* era una
+extrapolación no medida, y al ejecutarla se ve que sobra material.
+
+Esto sólo aparece al ejecutar el código: ninguna medición lo habría
+detectado, porque medir deltas de parejas ya formadas nunca cuestiona el
+número de parejas.
+
+**Consecuencia práctica**: emitir juntas de más **infla el presupuesto** con
+material que no se usa. Es el error simétrico del que persigue el resto del
+proyecto (quedarse corto), y igual de caro. La función queda implementada y
+probada pero **marcada como no apta para producción** en su propia
+documentación, hasta medir qué piezas de hoja llevan junta.
+
+**Pendiente concreto y medible**: agrupar las piezas de hoja por su función,
+su fórmula y su papel en el diseño, y comprobar cuáles tienen tramo de junta
+en el oráculo. Es el mismo método que resolvió el rebaje en T.9-T.10, con
+maquinaria ya escrita (`VDatosLinDetDis` para el enlace exacto).
+
+**Error de arnés detectado y corregido durante la prueba**: la primera
+versión buscaba el artículo de junta indexando `ConjuntosAsoc` por la serie
+de la línea (`VDatosLinEstr.Conjunto1`) y no encontraba ninguno en las 772
+líneas. El conjunto de `ConjuntosAsoc` **no es** la serie: los conjuntos
+aplicables salen de las opciones de herraje de la línea
+(`VOpcionesHerraje`), como estableció el anexo S. Es exactamente el mismo
+malentendido que se documentó con `GMBASTIDOR` en S.9.3.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
