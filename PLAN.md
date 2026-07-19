@@ -2441,6 +2441,100 @@ Siguiente medición, cuando se retome: qué distingue el 66% del 33% en `OBC` y
 `OBPH` (candidato natural: la posición o el eje de la pieza dentro del
 diseño), y un caso donde `25` y `26` resuelvan distinto para poder separarlos.
 
+## T.24 El 66/33 del oscilobatiente NO era una dimensión: era una clave ambigua
+
+Medición pura, sin implementar nada. Script `scripts/medir-oscilobatiente-dim.mjs`
+(solo lectura). Se buscaba la "segunda dimensión" que T.23.3 dejó pendiente —qué
+separa el 66% del 33% en `OBC`/`OBPH`—. **No existe tal dimensión: el 66/33 es el
+propio `DisComponente` de la pieza, y el enlace con el que T.23 lo midió estaba
+fabricando el reparto.** Esto corrige T.23 entero (regla 6).
+
+### T.24.1 Ancla de regresión: T.23 se reproduce al decimal
+
+Antes de medir nada nuevo, la versión restringida reproduce el test determinista
+de T.23.2 exactamente (si divergiera sería un bug de la restricción, no un
+hallazgo):
+
+| Ranura | piezas | acierto comp. 25/26 | T.23.2 esperaba |
+|---|---:|---:|---|
+| `OBC` | 1.965 | 66,2% | 1.965 / 66,2% ✓ |
+| `OBPH` | 1.200 | 66,3% | 1.200 / 66,3% ✓ |
+| `OBCR` | 1.310 | 99,2% | 1.310 / 99,2% ✓ |
+| `OBP` | 800 | 99,5% | 800 / 99,5% ✓ |
+
+`OBM` no aparece (0 piezas): su clave `HV` pierde siempre el *last-wins*; T.23.2
+tampoco lo tabuló.
+
+### T.24.2 La clave del enlace de T.23 es ambigua
+
+T.23 enlaza cada pieza real con la plantilla por `Estructura|Funcion|DisIdIt`,
+guardando el último `DisComponente` que casa (*last-wins*). Esa clave **colisiona**:
+en una misma estructura, varias filas de plantilla comparten `Funcion` y `DisIdIt`
+con `DisComponente` distinto. Ejemplo real: `1O+1F+1O | HH | 6 → {26, 29, OBC}`.
+Son 8 claves colisionadas en este frente. Como `26`, `29` y `OBC` son todas
+`Funcion=HH`, se aplastan en un único bucket etiquetado arbitrariamente `OBC`.
+
+### T.24.3 La prueba de fuego: el bucket es 25/26/29, no OB*
+
+`VDatosLinDetDis.Componente` da el genérico por pieza **sin ambigüedad** (1:1,
+41.610 líneas). El `Componente` REAL de las piezas que la clave mete en cada
+bucket OB*:
+
+| Bucket T.23 | Componente real dominante | segundo |
+|---|---|---|
+| `OBC` (1.965) | `26` = 66,2% | `29` = 33,3% |
+| `OBPH` (1.200) | `26` = 66,3% | `29` = 33,3% |
+| `OBCR` (1.310) | `25` = 99,2% | — |
+| `OBP` (800) | `25` = 99,5% | — |
+
+El "66% resuelve por 25/26 y 33% por 29" es una **tautología**: cada pieza `26`
+resuelve a `resol[26]` y cada `29` a `resol[29]` porque *son* esos componentes.
+Lo mismo el 99,2%/99,5% de `OBCR`/`OBP`: su bucket es 99% comp. `25` (clave `HV`),
+así que ese 99,5% no medía la resolución del oscilobatiente, medía que una pieza
+`25` resuelve por `25`. Es el error de la regla 8 —medir sobre un emparejamiento
+que uno mismo fabricó— por quinta vez en el proyecto.
+
+### T.24.4 Las ranuras OB* reales son herraje, no perfil
+
+Las líneas hijas cuyo `Componente` REAL es OB* llevan **`Articulo=0` en las 3.022
+del oráculo** (0 con perfil):
+
+| Ranura | con perfil | `Articulo=0` |
+|---|---:|---:|
+| `OBC` | 0 | 724 |
+| `OBPH` | 0 | 425 |
+| `OBCR` | 0 | 724 |
+| `OBP` | 0 | 425 |
+| `OBM` | 0 | 724 |
+
+Coherente con T.23.1: `OBC`=compás, `OBM`=mecanismo, `OBCR`=cremona. Son el
+**herraje** del oscilobatiente, no la hoja. La pieza de perfil de una hoja
+oscilobatiente es el componente de hoja normal (`25` vertical, `26` horizontal,
+`29` vierteaguas), que ya resuelve directo por `ConjuntosLin`.
+
+### T.24.5 Conclusión: el punto 1 queda disuelto
+
+No hay segunda dimensión que identificar. **El vierteaguas es el componente `29`;
+la hoja, `25`/`26`. Son filas distintas de la plantilla y resuelven directas por
+`ConjuntosLin`; no dependen de `OBC`/`OBPH`.** Construir con el 66% habría metido
+la pieza equivocada en un tercio de los casos por un artefacto de etiquetado.
+
+**Corrección explícita a T.23** (regla 6): la lectura de T.23.2 —"`OBCR` y `OBP`
+quedan prácticamente explicados por el componente de hoja" al 99,5%, y "`OBC`/
+`OBPH` se parten 66/33 con una segunda dimensión pendiente"— queda **refutada como
+regla**: ambas cifras son tautologías del enlace ambiguo. La contención medida en
+T.23.2 (el perfil real está en `ConjuntosLin`) sigue siendo cierta; lo que cae es
+la interpretación del reparto y de los porcentajes.
+
+**Queda SÓLO puesto en duda, sin medir** (regla 7): el 42,3% de T.21.2 (frente de
+perfil del oscilobatiente) se clasificó por `DisComponente` de plantilla, que
+incluye estas ranuras OB* de herraje. Si son herraje, ese 42,3% cuenta ranuras que
+no son de perfil. **No lo afirmo: es la siguiente medición (T.25)** —reclasificar
+el frente de perfil del oscilobatiente por el `Componente` real de las piezas con
+`Articulo≠0` y medir su cobertura real por `ConjuntosLin`—, que también dirá si
+`25` y `26` aparecen como componentes reales distintos con artículos distintos en
+alguna serie (el dato que faltaba para separar `25` de `26`).
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
