@@ -2014,6 +2014,37 @@ cuyas piezas no comparten el valor del discriminante, el 80% se desploma al
 41,5%. **Es el mismo tipo de error que ya se documentó en S.7.2 y en T.6:
 un emparejamiento que parece razonable fabrica la señal que luego se mide.**
 
+## T.16 El filtro de rango de `calcular.ts` es código muerto (cierra T.5 punto 2)
+
+T.5 dejó anotado que `calcularDespiece` decide si un componente condicional
+entra comparando su `MedidaMin/MedidaMax` contra `Math.max(ancho, alto)`
+(`calcular.ts:94`) — la misma referencia que S.6 **refutó** para los
+asociados—, y que para perfiles no se había comprobado.
+
+Medido (`scripts/medir-filtro-rango-perfiles.mjs`). El resultado hace la
+pregunta irrelevante:
+
+| Filas de plantilla en `EstructurasArticulos` | 15.263 |
+|---|---:|
+| con `MedidaMin` o `MedidaMax` distintos de cero | **0** |
+
+**Ninguna fila de plantilla tiene rango.** Las columnas están vacías en todo
+el catálogo, así que el filtro **nunca se ejecuta**: es código muerto. No hay
+nada que corregir y **T.5 punto 2 queda cerrado**.
+
+(Los rangos que sí existen y sí importan son los de `ConjuntosAsoc` —4.215
+filas—, que gobiernan la selección de asociados y ya usan la referencia
+correcta desde S.6: la fórmula de la propia ranura.)
+
+**Pero queda una trampa latente, y por eso se documenta en vez de
+ignorarse.** El código conserva una heurística refutada. Hoy no hace daño
+porque no se activa; el día que alguien rellene `medidaMinima/medidaMaxima`
+en `ComponentePlantilla` —al ampliar el ETL, por ejemplo— se activará **con
+la referencia equivocada** y fallará en silencio, incluyendo o excluyendo
+perfiles sin motivo. Lo correcto sería comparar contra la fórmula del propio
+componente, como los asociados. **No se cambia ahora** porque no se puede
+probar contra ningún dato real: no hay ni un caso en el histórico.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento

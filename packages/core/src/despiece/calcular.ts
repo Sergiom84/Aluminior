@@ -169,6 +169,15 @@ export function calcularDespiece(
     const cantidad = aNumero(c.cantidad) ?? 1
 
     // Componentes condicionales: sólo entran dentro de su rango de medida.
+    //
+    // ⚠️ TRAMPA LATENTE (anexo T.16). Hoy esto es código muerto: ninguna de
+    // las 15.263 filas de plantilla del catálogo trae MedidaMin/MedidaMax,
+    // así que el filtro nunca se activa. Pero la referencia que usa —el
+    // máximo de las dos medidas— es la que el anexo S.6 REFUTÓ para los
+    // asociados: la correcta es la fórmula del propio componente evaluada
+    // con las cotas reales. Si alguien rellena estos campos al ampliar el
+    // ETL, esto empezará a incluir o excluir perfiles en silencio y por el
+    // motivo equivocado. Corregirlo entonces, con datos con los que probarlo.
     const min = aNumero(c.medidaMinima)
     const max = aNumero(c.medidaMaxima)
     const referencia = Math.max(medidas.anchoMm, medidas.altoMm)
