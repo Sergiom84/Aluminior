@@ -2182,6 +2182,89 @@ del propio experimento, que recompilaban el servidor a mitad de petición. Se
 descartó recargando en limpio (3 de 3 respuestas con el aviso presente) antes
 de "arreglar" un fallo inexistente.
 
+## T.20 Los 11 grupos están detrás del tapón: cambia el orden de trabajo
+
+Medición pedida antes de empezar con los 11 grupos, para decidir el orden en
+vez de suponerlo (regla 1). Script: `scripts/medir-tapon-hoja.mjs`.
+
+### T.20.1 Ninguna estructura con hoja valora, en ninguna serie
+
+| | |
+|---|---:|
+| Estructuras del catálogo | 519 |
+| Con pieza de hoja (`HV`/`HH`) | 370 |
+| **Que resuelven TODAS sus ranuras, en cualquiera de las 57 series** | **0** |
+
+Cero. No es que valoren pocas: **no valora ninguna**, en ninguna serie. Esto
+confirma y generaliza T.19.2, que sólo lo había medido para ELEGANTPVC.
+
+### T.20.2 Los 11 grupos caen todos detrás del tapón
+
+| Serie | grupos 90–99% |
+|---|---:|
+| GMA350 | 3 |
+| ELEGANTPVC | 3 |
+| GMC400 | 3 |
+| GMA65OPT | 2 |
+
+```
+GMA350      GM307     HV  "L"       34/36   (94,4%)
+GMA350      GM8428    HH  "(A)/2"   20/22   (90,9%)
+GMA350      GM307     HH  "A"       40/42   (95,2%)
+ELEGANTPVC  GM8428    HH  "(A)/2"  674/682  (98,8%)
+ELEGANTPVC  GM8428    HH  "A"      171/183  (93,4%)
+ELEGANTPVC  GM8783M   HV  "L-FI"   220/230  (95,7%)
+GMC400      GM451     HH  "(A)/2"  474/498  (95,2%)
+GMC400      GM449     HV  "L"      274/278  (98,6%)
+GMC400      GM450     HV  "L"      284/292  (97,3%)
+GMA65OPT    GM16064L  HH  "A"       46/48   (95,8%)
+GMA65OPT    GM16064L  HV  "L-FI"    42/44   (95,5%)
+```
+
+Las cuatro series están entre las que no valoran ninguna estructura de hoja
+—como todas—. **Grupos que recuperarían cobertura visible hoy: 0.**
+
+El recuento de la copia de la agrupación coincide con el del ETL (11 y 11):
+si divergiera, el script avisa.
+
+### T.20.3 El bloqueo es doble, no de una sola clase
+
+Sobre las 21.090 combinaciones serie × estructura-con-hoja bloqueadas:
+
+| Clase de bloqueo | combinaciones |
+|---|---:|
+| Sólo asociados pendientes (anexo S) | **0** |
+| Sólo ranuras de perfil pendientes | **0** |
+| **Ambos a la vez** | **21.090** |
+
+Esto **corrige la premisa** con la que se planteó la decisión: no basta con
+cerrar las ranuras de perfil. Cerrar cualquiera de los dos frentes por
+separado no hace que valore ni una línea; hacen falta los dos. Decirlo ahora
+evita prometer un resultado visible que no llegaría.
+
+El frente de perfiles son **178 ranuras distintas** con cola larga. La de más
+peso, con diferencia, es `articulo 8 · funcion null · componente 1`, presente
+en **47.424** combinaciones serie × estructura — aparece prácticamente en
+todas. Las siguientes son ranuras de hoja corrientes (`10 HV`, `15 HH`,
+`47 HH`, `226 HV`…). Ninguna de las 178 carece de `componente_disenyo`, así
+que todas son en principio resolubles por la cadena del anexo J: lo que falta
+es que la cadena las cubra, no que el dato no exista.
+
+### T.20.4 Decisión
+
+**Los 11 grupos esperan.** Su resultado no se puede ver ni medir en la
+aplicación hasta que alguna estructura con hoja valore, y ninguna lo hace.
+Trabajarlos ahora sería mover un número que nadie puede comprobar — el error
+que este proyecto ya cometió al dar por bueno el 99,6% sin ejecutar el motor
+de extremo a extremo (anexo T).
+
+**El frente pasa a las ranuras de perfil pendientes**, empezando por la ranura
+`8` por volumen. Con la salvedad de T.20.3 anotada: al cerrarlas, seguirá sin
+valorar ninguna línea hasta que cierren también los asociados. El criterio
+para elegirlas primero no es que desbloqueen solas, sino que tienen mecanismo
+demostrado (anexo J, 96,5% contra el oráculo) mientras que los asociados
+siguen en 96,3% de precisión con 51/216 líneas exactas (anexo S).
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
