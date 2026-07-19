@@ -1809,11 +1809,48 @@ sin bastar:
 
 El eje L ronda el 79-100% y el eje A el 57-67%, con deltas distintos por
 eje (~64-76 frente a ~51-61). Dos estrategias de emparejamiento probadas y
-ninguna alcanza los umbrales. **No se codifica ningún delta.** La
-siguiente hipótesis a medir —no medida aún— es que la goma siga el
-perímetro del HUECO y no la dimensión del vidrio, que es menor por el
-alojamiento (anexo Q); eso explicaría un delta por eje. Requiere la
-maquinaria de `packages/etl/src/medir-mixtas.ts`.
+ninguna alcanza los umbrales contra el vidrio. **Resuelto en S.9.7: el
+vidrio era la referencia equivocada.**
+
+### S.9.7 La goma copia el HUECO con delta 0 (resuelve el ajuste de S.9.5)
+
+La hipótesis física anotada en S.9.5 se midió
+(`scripts/medir-goma-hueco.mjs`) y **es correcta**. La goma no sigue la
+dimensión del vidrio sino la del HUECO: las ranuras de hoja
+(`DisComponente='1'`) con sus `FormulaLargo`/`FormulaAncho` evaluadas con
+las cotas reales de la línea — la maquinaria de
+`packages/etl/src/medir-mixtas.ts`. El vidrio es menor que el hueco por el
+alojamiento (anexo Q), y ese alojamiento es justo lo que ensuciaba el
+delta.
+
+Medido sobre las mismas 31 líneas emparejables y las mismas 100 filas, con
+el mismo emparejamiento por rango, cambiando **sólo** la referencia:
+
+| Referencia | reglas estables | filas cubiertas |
+|---|---:|---:|
+| VIDRIO (S.9.5) | 1/8 | 8/100 |
+| **HUECO (módulo)** | **6/8** | **80/100** |
+
+Y el delta no es una constante ajustada: **es 0 en las ocho reglas**, las
+seis estables y las dos que no lo son.
+
+| (serie \| eje) | delta | muestras |
+|---|---:|---:|
+| `ELEGANTPVC` L / A | 0 | 10/10 ✔ / 10/10 ✔ |
+| `GMA60RL` L / A | 0 | 18/18 ✔ / 18/18 ✔ |
+| `GMA75C16` L / A | 0 | 12/12 ✔ / 12/12 ✔ |
+| `GMA350` L / A | 0 | 5/10 ✘ / 4/10 ✘ |
+
+**Es el mismo resultado que la junta perimetral de hoja (S.7.2): delta 0,
+la pieza copia exactamente la medida del elemento que bordea.** No hay
+constante que inventar, que es la señal de que la referencia es la buena.
+
+**Excepción anotada, sin resolver**: la serie `GMA350` (20 de las 100
+filas) sólo alcanza 4-5 de 10 aun con delta 0 como moda. No se codifica
+regla para esa serie; el resto queda cubierto con los umbrales de siempre.
+La causa no está medida — la sospecha razonable es un desajuste de
+recuento entre módulos y filas de goma en esa serie, pero **no se ha
+comprobado y no se afirma**.
 
 ### S.9.6 Las categorías '!' pendientes: cuatro de siete son SIEMPRE cero
 
