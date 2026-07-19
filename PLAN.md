@@ -1791,8 +1791,70 @@ Sólo 2 de 8 reglas estables (8/30 filas). El delta es el mismo en ambos
 ejes dentro de cada serie —dato consistente— y ronda 64-76 mm, pero con
 15 líneas no hay muestra suficiente. **Anotado como no resuelto**: hace
 falta ampliar el oráculo de goma o resolver el emparejamiento de las 35
-líneas ambiguas con la maquinaria de `mejorEmparejamiento`
-(`packages/etl/src/medir-mixtas.ts`) antes de fijar ningún valor.
+líneas ambiguas antes de fijar ningún valor.
+
+**Ampliación medida (y negativa)**: se resolvió el emparejamiento de forma
+global —cada vidrio aporta sus dos dimensiones, y con coste
+`|largo − dimensión|` ordenar ambas listas y emparejar por rango *es* el
+emparejamiento óptimo, sin nada que adivinar—. La muestra sube de 15 a 31
+líneas y de 30 a 100 filas, pero la consistencia **empeora**: de 2 reglas
+estables de 8 a **1 de 8**. Separado por eje, el patrón es claro y sigue
+sin bastar:
+
+| Serie | eje L | eje A |
+|---|---:|---:|
+| `GMA350` | 64,4 — 8/8 ✔ | 51,8 — 4/8 |
+| `GMA60RL` | 68 — 15/18 | 54 — 12/18 |
+| `GMA75C16` | 76 — 11/14 | 61 — 8/14 |
+
+El eje L ronda el 79-100% y el eje A el 57-67%, con deltas distintos por
+eje (~64-76 frente a ~51-61). Dos estrategias de emparejamiento probadas y
+ninguna alcanza los umbrales. **No se codifica ningún delta.** La
+siguiente hipótesis a medir —no medida aún— es que la goma siga el
+perímetro del HUECO y no la dimensión del vidrio, que es menor por el
+alojamiento (anexo Q); eso explicaría un delta por eje. Requiere la
+maquinaria de `packages/etl/src/medir-mixtas.ts`.
+
+### S.9.6 Las categorías '!' pendientes: cuatro de siete son SIEMPRE cero
+
+`scripts/medir-categorias-bang.mjs` repite para las 13 categorías el
+análisis que resolvió los tacos, con un repertorio de rasgos ampliado
+(`perfilHoja`, `perfilMarco`, `travesano`, `ranurasInf`, `fg:función:genérico`).
+Ninguno de los rasgos nuevos gana en ninguna categoría: las 6 que aprenden
+lo hacen con `trvPeq`, `dis:17M`, `dis:51`, `dis:222`, `dis:B` y `const1`.
+**El repertorio ampliado no aporta nada y no se incorpora.**
+
+Lo que sí aporta es el diagnóstico de las 7 pendientes, que **corrige el
+punto 6 de S.7** (*"las 9 categorías `!` aún sin multiplicador fiable —
+más muestras o mapeo manual verificado"*). No son 9 sino 7, y no les falta
+muestra: cuatro de ellas **valen cero siempre**.
+
+| Categoría pendiente | n | observaciones con `real = 0` |
+|---|---:|---:|
+| `ZOCALO HORIZONTAL` | 162 | **162 de 162** |
+| `TRAVESAÑOS ZOCALO` | 18 | **18 de 18** |
+| `FIJOS INDEPENDIENTES (TODOS)` | 4 | **4 de 4** |
+| `BISAGRA PRACTICABLE` | 162 | 134 de 162 |
+| `MARCOS SUPERIORES` | 3 | 0 de 3 |
+| `TRAVESAÑOS (TODOS)` | 2 | 0 de 2 |
+| `MARCOS (TODOS)` | 1 | 0 de 1 |
+
+El aprendizaje exige `k > 0`, así que **no puede expresar "no emitir"** y
+esas categorías nunca aprenderán por construcción. No es un fallo: v5 las
+salta (`if (!regla) continue`) y el resultado coincide con el oráculo. Pero
+la razón es otra de la que S.7 daba, y conviene no seguir buscando muestras
+que no arreglarían nada.
+
+De las tres restantes, `MARCOS SUPERIORES`, `TRAVESAÑOS (TODOS)` y
+`MARCOS (TODOS)` tienen n = 3, 2 y 1: por debajo del umbral de ≥5
+observaciones. No se tocan.
+
+**El único frente con señal real es `BISAGRA PRACTICABLE`** (n=162,
+artículos `GM5002` y `GM4846` — este último es el 4.º falso negativo más
+frecuente, 16 apariciones). Tiene 28 observaciones con `real > 0` y su
+mejor rasgo, `dis:PRPV × 2`, llega a **136/162 (84,0%)**: acierta los ceros
+pero falla la cantidad cuando la bisagra sí va. Queda **anotado como no
+resuelto**; no se codifica un 84%.
 
 ### S.9.4 Resultado
 

@@ -89,27 +89,34 @@ for (const doc of DOCS) {
     }
 
     // Emparejar "al más cercano" mezcla ejes y vidrios: es el mismo error de
-    // medición que se documentó en S.7.2. Sólo se miden las líneas SIN
-    // ambigüedad — un único vidrio y exactamente dos filas de goma, que por
-    // fuerza son su ancho y su alto.
-    if (vidrios.length !== 1 || gomas.length !== 2) { ambiguas++; continue }
-    const v = vidrios[0]
-    const largos = gomas.map((g) => num(g, 'LargoCorte') || num(g, 'Largo')).sort((a, b) => a - b)
-    const dims = [v.l, v.a].sort((a, b) => a - b)
-    if (largos[0] <= 0 || dims[0] <= 0) { sinPareja++; continue }
+    // medición que se documentó en S.7.2. Aquí se empareja globalmente: cada
+    // vidrio aporta sus dos dimensiones (ancho y alto) y la línea aporta sus
+    // largos de goma. Con coste |largo − dimensión|, ordenar ambas listas y
+    // emparejar por rango ES el emparejamiento óptimo, así que no hay nada
+    // que adivinar mientras los recuentos cuadren.
+    const objetivos = []
+    for (const v of vidrios) {
+      if (v.l > 0) objetivos.push({ dim: v.l, eje: 'L' })
+      if (v.a > 0) objetivos.push({ dim: v.a, eje: 'A' })
+    }
+    const largos = gomas
+      .map((g) => num(g, 'LargoCorte') || num(g, 'Largo'))
+      .filter((x) => x > 0)
+      .sort((a, b) => a - b)
+    if (largos.length !== objetivos.length || !largos.length) { ambiguas++; continue }
+    objetivos.sort((a, b) => a.dim - b.dim)
     inequivocas++
-    for (let i = 0; i < 2; i++) {
-      const eje = dims[i] === Math.max(v.l, v.a) ? 'mayor' : 'menor'
-      const k = `${serie}|${eje}`
+    for (let i = 0; i < largos.length; i++) {
+      const k = `${serie}|${objetivos[i].eje}`
       if (!deltas.has(k)) deltas.set(k, new Map())
       const m = deltas.get(k)
-      const delta = Math.round((largos[i] - dims[i]) * 10) / 10
+      const delta = Math.round((largos[i] - objetivos[i].dim) * 10) / 10
       m.set(delta, (m.get(delta) ?? 0) + 1)
     }
   }
 }
 console.log(`Líneas con GM4090: ${lineas}   filas de goma: ${filasGoma}`)
-console.log(`  líneas inequívocas (1 vidrio, 2 filas de goma): ${inequivocas}   ambiguas descartadas: ${ambiguas}   sin medidas: ${sinPareja}`)
+console.log(`  líneas emparejables (nº largos = nº dimensiones): ${inequivocas}   descartadas por no cuadrar: ${ambiguas}`)
 console.log(`Cdad de las filas de goma: ${[...cdadFrec].sort((a, b) => b[1] - a[1]).map(([c, n]) => `${c}×${n}`).join('  ')}`)
 
 console.log('\n--- ¿nº de filas de goma por nº de vidrios de la línea? ---')
