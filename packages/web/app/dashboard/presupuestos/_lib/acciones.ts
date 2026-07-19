@@ -371,10 +371,26 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
         cotas[c.simbolo] ??= Number(c.valor ?? 0)
       }
 
+      // Rebaje de las piezas de hoja (anexo T). La hoja encaja DENTRO del
+      // marco: sin esto el motor emite la medida del hueco y no reproduce
+      // ninguna línea con hoja del histórico. Las reglas se midieron al 99%
+      // de consistencia (T.17); si a una pieza le falta la suya, queda sin
+      // medida y la línea entera sin valorar.
+      const rebajesFilas = await db.select().from(schema.hojaRebajes)
+        .where(eq(schema.hojaRebajes.serieCodigo, d.serieCodigo ?? ''))
+      const rebajes = new Map(rebajesFilas.map((f) => [
+        `${f.perfilCodigo}|${f.eje}|${f.formula}`,
+        { mm: Number(f.rebajeMm), muestras: f.muestras, totalMuestras: f.totalMuestras },
+      ]))
+
       const despiece = calcularDespiece(
         plantillaResuelta as ComponentePlantilla[],
         { anchoMm: d.anchoMm, altoMm: d.altoMm },
         cotas,
+        {
+          serie: d.serieCodigo ?? '',
+          rebajeDeHoja: (c) => rebajes.get(`${c.articuloCodigo}|${c.funcion}|${c.formula}`) ?? null,
+        },
       )
 
       // Valoración: precios de los artículos que componen el despiece
@@ -787,9 +803,19 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
         precioUnitario = null
         aviso = `Importe incompleto: ${problemas.join('; ')}.`
       }
-      else if (variantesAplicadas > 0) {
-        const nombreVariante = VARIANTE === '2' ? 'doble' : 'sencillo'
-        aviso = `Valorado con variante de cristal ${nombreVariante} en ${variantesAplicadas} componentes.`
+      else {
+        // Avisos INFORMATIVOS: la línea se valora, pero hay algo que el
+        // presupuestador debe saber. No anulan el precio (eso lo hace
+        // `problemas`), y por eso van en esta rama.
+        const informativos: string[] = []
+        if (variantesAplicadas > 0) {
+          const nombreVariante = VARIANTE === '2' ? 'doble' : 'sencillo'
+          informativos.push(`variante de cristal ${nombreVariante} en ${variantesAplicadas} componentes`)
+        }
+        // Reglas de rebaje no exactas (T.17, condición 1). El riesgo se
+        // acepta al 99%, pero nunca en silencio.
+        informativos.push(...despiece.avisos)
+        if (informativos.length) aviso = `Valorado con avisos: ${informativos.join('; ')}.`
       }
     }
 
