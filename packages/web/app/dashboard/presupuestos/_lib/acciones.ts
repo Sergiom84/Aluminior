@@ -21,6 +21,12 @@ import {
 } from '@aluminior/core/precios'
 import { expandirCadena, construirResoluciones, resolverComponente } from '@aluminior/core/series'
 
+/**
+ * `DisComponente` de la ranura de CRISTAL. No la resuelve la serie: la elige
+ * el usuario y se valora por la vía del acristalamiento (anexo J, paso 4).
+ */
+const COMPONENTE_CRISTAL = '1'
+
 export type Estado =
   | { ok: true; id: string }
   | { ok: false; errores: Record<string, string[]>; mensaje?: string }
@@ -344,19 +350,42 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
       // es una elección visible (se informa en el aviso si interviene).
       const VARIANTE = d.varianteAcristalamiento
       let variantesAplicadas = 0
+      // Dos clases de ranura sin resolver, y conviene no mezclarlas en el
+      // aviso: los PERFILES son el frente del anexo J (mecanismo demostrado),
+      // los ASOCIADOS —herrajes, escuadras, mano de obra— son el del anexo S,
+      // que sigue abierto. Un usuario que lee "20 ranuras que la serie no
+      // resuelve" no puede saber cuál de los dos le está bloqueando la línea.
       const sinResolver = new Set<string>()
+      const sinResolverAsoc = new Set<string>()
+      const esAsociado = (fn: string | null) =>
+        !!fn && (fn.startsWith('inf') || fn.startsWith('Acc'))
+      const anotarSinResolver = (c: { articuloCodigo: string; funcion: string | null }) => {
+        if (!genericos.has(c.articuloCodigo)) return
+        if (esAsociado(c.funcion)) sinResolverAsoc.add(c.articuloCodigo)
+        else sinResolver.add(c.articuloCodigo)
+      }
 
       const plantillaResuelta = plantilla.map((c) => {
         if (!c.componenteDisenyo) {
-          if (genericos.has(c.articuloCodigo)) sinResolver.add(c.articuloCodigo)
+          anotarSinResolver(c)
           return c
         }
+        // El componente 1 es el CRISTAL, y la serie no tiene que resolverlo:
+        // lo elige el usuario y se valora por la vía del acristalamiento
+        // (anexos L, M, N, Q). El paso 4 del anexo J ya lo decía. Contarlo
+        // aquí metía un `problema` en TODA línea con cristal y la dejaba sin
+        // valorar: 1.864 de 7.000 apariciones del histórico (T.21.3).
+        //
+        // Esto NO se traga fallos de esa vía: si el acristalamiento no se
+        // puede calcular o valorar, `avisoVidrio` / `avisoAcris` siguen
+        // entrando en `problemas` más abajo, igual que antes.
+        if (c.componenteDisenyo === COMPONENTE_CRISTAL) return c
         const res = resolverComponente(c.componenteDisenyo, resoluciones, VARIANTE)
         if (res.articuloCodigo) {
           if (res.via === 'variante') variantesAplicadas++
           return { ...c, articuloCodigo: res.articuloCodigo }
         }
-        if (genericos.has(c.articuloCodigo)) sinResolver.add(c.articuloCodigo)
+        anotarSinResolver(c)
         return c
       })
 
@@ -496,7 +525,7 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
         if (!vidrio || vidrio.familiaCodigo !== '050' || vidrio.tipoMetraje !== 'M2') {
           return { ok: false, errores: { vidrioCodigo: ['Vidrio no válido (debe ser familia 050, facturable por m²)'] } }
         }
-        const ranuras = plantillaResuelta.filter((c) => c.componenteDisenyo === '1')
+        const ranuras = plantillaResuelta.filter((c) => c.componenteDisenyo === COMPONENTE_CRISTAL)
         acristalamientoAPersistir = ranuras.map((r, i) => ({
           slot: i + 1,
           vidrioHojas: r.tipoHojaDisenyo === -1 ? null : d.vidrioCodigo,
@@ -574,7 +603,7 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
         //  - con hojas (HV/HH): vidrio de HOJA, descontado del corte de hoja
         //  - sin hojas: vidrio de FIJO, descontado del corte del CERCO (MV/MH)
         const hvs = despiece.piezas.filter((pz) => pz.funcion === 'HV' && pz.largoMm !== null)
-        const nCristales = plantillaResuelta.filter((c) => c.componenteDisenyo === '1').length
+        const nCristales = plantillaResuelta.filter((c) => c.componenteDisenyo === COMPONENTE_CRISTAL).length
 
         let perfilRef: string | null = null
         let corteV: number | null = null
@@ -785,7 +814,12 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
       if (!d.vidrioCodigo) problemas.push('sin vidrio elegido: el acristalamiento no se valora')
       if (sinResolver.size) {
         problemas.push(
-          `${sinResolver.size} ranuras genéricas que la serie ${d.serieCodigo} no resuelve (quedan sin valorar)`,
+          `${sinResolver.size} ranuras de perfil que la serie ${d.serieCodigo} no resuelve (quedan sin valorar)`,
+        )
+      }
+      if (sinResolverAsoc.size) {
+        problemas.push(
+          `${sinResolverAsoc.size} ranuras de asociado sin valorar (herrajes, escuadras y mano de obra: pendiente)`,
         )
       }
       if (despiece.incalculables > 0) {
