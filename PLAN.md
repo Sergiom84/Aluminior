@@ -1620,6 +1620,72 @@ líneas con varios perfiles por función —con la maquinaria de
 resuelve ese problema para los vidrios—. Sin eso, cualquier medición del
 rebaje seguirá viendo el 7% de los datos.
 
+## T.7 Muestra desbloqueada (51×) — y T.6 queda corregido
+
+El cuello de botella de T.6 no era estadístico sino estructural, y se
+resuelve sin inventar nada: **`VDatosLinDetDis` enlaza cada línea hija real
+con su ítem de diseño (`DisIdIt`)** —el mismo enlace que
+`packages/etl/src/medir-mixtas.ts` usa para emparejar vidrios—. Con él,
+cada pieza real se empareja con su fila de plantilla por
+(función, `DisIdIt`): exacto, sin ordenar ni adivinar, y válido aunque la
+línea mezcle perfiles (`scripts/medir-rebaje-hoja-v2.mjs`).
+
+| | T.6 | **T.7** |
+|---|---:|---:|
+| Observaciones | 148 | **7.639** (51×) |
+| Eje HV | 148 | 3.250 |
+| Eje HH | **0** | **4.389** |
+| Descartes | 1.934 | 555 |
+
+**Corrección explícita de T.6.** Con la muestra completa, la ventaja del
+perfil sobre la serie **desaparece**:
+
+| Agrupación | T.6 (n=148) | **T.7 (n=7.639)** |
+|---|---:|---:|
+| serie + función | 5,4% | **14,0%** |
+| perfil + función | 35,1% | **15,0%** |
+| perfil + marco + función | 41,9% | 10,5% |
+
+T.6 concluía que *"el perfil explica más de seis veces lo que explica la
+serie"*. **Era un artefacto de la muestra sesgada**: las 148 observaciones
+que sobrevivían al filtro de no ambigüedad eran justamente las líneas de
+un solo perfil, donde perfil y serie casi coinciden. Con los datos
+completos, perfil (15,0%) y serie (14,0%) explican prácticamente lo mismo,
+y añadir el marco **empeora** por dispersión. La hipótesis de T.5 —el
+rebaje como solape del perfil— **no queda confirmada**.
+
+## T.8 La cola no es ruido: hay una segunda condición
+
+Lo que sí aporta la muestra completa es la forma de la distribución. Los
+grupos mayores son **bimodales con muy pocos valores distintos**, no
+dispersos:
+
+| (perfil \| eje) | modas | valores distintos |
+|---|---|---:|
+| `GM8783M` HV | 70×1616, 44,5×238 | 5 |
+| `GM451` HH | 20×474, 25,8×30 | 5 |
+| `GM450` HV | 53×284, 0×8 | 3 |
+| `GM16064L` HV | 42×84, 28,5×46 | 3 |
+| `GM16064L` HH | 24×76, 42×46 | 4 |
+| `GM10002M` HV | 74×212 | **1** |
+
+Un rebaje dominante más un segundo valor limpio significa que **falta una
+condición que distinga dos casos**, no que el dato sea ruidoso. La
+hipótesis con fundamento físico —anotada, **no medida**— es que la pieza
+de hoja se rebaja distinto según contra qué apoye: contra el marco o
+contra otra hoja (cruce central). El árbol de `EstructurasDiseño` ya
+modela esos límites (anexo Q, `limitesDeHueco`), así que es medible con
+maquinaria existente.
+
+**Artefacto de medición detectado**: `GM10002M` HH aparece como bimodal
+con `4×160` y `4,1×52`, que son el mismo valor separado por redondear a
+0,1 mm. La medición debería agrupar con la tolerancia de 0,51 mm que usa
+el resto del proyecto; con 0,1 mm se inventan grupos que no existen.
+Corregirlo antes de volver a medir.
+
+**Sigue sin implementarse ningún rebaje.** Con 15% de cobertura y una
+condición identificada pero sin medir, tocar el motor sería precipitado.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
