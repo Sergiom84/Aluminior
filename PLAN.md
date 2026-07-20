@@ -2892,6 +2892,43 @@ tarifa/acabado de esa línea—. "Sin precio" se mide como cero filas de precio 
 estructural). Al valorar una línea real podrían aparecer bloqueos adicionales de
 instancia; "único tapón" es a nivel estructural.
 
+## T.30 El recuento de la junta perimetral está BLOQUEADO por datos (cierra una discrepancia)
+
+Medición pura. Script `scripts/medir-recuento-junta.mjs` (solo lectura). El mapeo
+del frente de asociados marcó el *recuento* de la junta perimetral como "abierto,
+medible por pieza con `VDatosLinDetDis`". T.15 decía lo contrario: bloqueado. Se
+mide para zanjarlo.
+
+**Veredicto: BLOQUEADO por datos. T.15 acierta en la conclusión; su mecanismo se
+corrige (regla 6).**
+
+- **T.15 reproducido:** los 5.158 tramos de junta identificados por `Articulo`
+  (vía asociado `'!'`→HOJAS) tienen **0** filas en `VDatosLinDetDis`.
+- **La junta por el enlace limpio** (`Componente ∈ {JH, JV}`, la vía de
+  T.25.3/T.26): **4.594 tramos** (JH 2.297 / JV 2.297, simétrico), y **sí** tienen
+  fila de detalle — pero **`DisIdIt`, `DisId`, `DisNHoja`, `DisIdHoja` = 0 en el
+  100%**. Existe la fila; no existe la atribución a una pieza de hoja concreta.
+- **No es 1:1 con las piezas de hoja:** de 1.223 líneas con junta, **solo 1**
+  cumple `nJunta == nHoja`. Σ junta = 4.518 frente a Σ piezas de hoja = 13.138.
+  Hay incluso líneas con juntas y **0** piezas de hoja (`2:0`, `4:0`). La plantilla
+  `EstructurasArticulos` no declara filas JH/JV en 54 de las 55 estructuras
+  realmente usadas con junta.
+
+**Consecuencia para el motor:** el error de `emitirJuntaPerimetral`
+(`calcular.ts:140-162`, 840 tramos de más) **es exactamente la suposición 1:1** —
+emite una junta por cada pieza `FUNCIONES_HOJA`. Como el recuento real no se puede
+**reconstruir** (no hay atribución diseño→pieza ni declaración en plantilla), solo
+**estimar** por estructura, la función **sigue `NO CONECTAR`**. El patrón
+(JH=JV, recuento par, sin fila de plantilla, sin atribución, aparece incluso sin
+piezas de hoja) apunta a que la junta se genera en la capa de diseño **por hueco**,
+como la goma GM4090 (S.9.7), no por pieza de perfil de hoja.
+
+**Corrección a T.15 (regla 6):** el bloqueo no es "no hay fila en
+`VDatosLinDetDis`" —las filas JH/JV existen— sino "las filas de junta no llevan
+campo que las ate a una pieza de hoja, y la plantilla no las declara para las
+estructuras usadas". El "recuento por pieza" del mapeo queda refutado; lo medible
+es el agregado por línea/estructura, no por pieza.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
