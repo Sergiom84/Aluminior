@@ -2811,6 +2811,38 @@ base compartida en solo lectura; la verificación determinista sobre el históri
 —mismo resolvedor, misma lógica de enrutado— cubre el comportamiento. Anotado, no
 inventado.
 
+## T.28 `BI` identificado: barrotillo de vidrio, cola inofensiva
+
+Medición pura. Script `scripts/medir-bi.mjs` (solo lectura). T.25/T.26 dejaron
+`BI` como el único cabo suelto del frente de perfil: 158 piezas reales
+(`Articulo≠0`) que no resuelven por `ConjuntosLin`. Ahora identificado.
+
+**`BI` = "BARROTILLO INTERIOR AL VIDRIO", familia `050` = VIDRIOS.** No es perfil
+estructural: es el barrotillo/cruceta decorativo que va sobre el cristal.
+
+- La plantilla estampa el **artículo concreto** `BI` directo (precio 12,98), no un
+  genérico: **158/158 piezas concretas, 0 genéricos `(**…`**. La pieza ya viene
+  resuelta en el documento; no pasa por el resolvedor de perfiles.
+- No existe en **ninguna** vía de resolución, y es correcto: `conjunto_resoluciones`
+  (ConjuntosLin) 0 filas para `BI`; `ConjuntosAsoc.ComponenteAsoc='BI'` 0 filas
+  (los 156 "BI" de ese CSV eran la columna `AperturaTH`="BATIENTES APERTURA
+  INTERIOR", homónimo sin relación); variantes `BI.1`/`BI.2` 0. Cobertura de las
+  158 por ConjuntosLin: `sinCandidato=158`, `acierta=0`, `falla=0`.
+- Reparto: dominado por PVC (`ELEGANTPVC` ×76) y estructuras batientes/oscilo
+  (`2O` ×42, `1O` ×14) — consistente con un accesorio de acristalamiento.
+
+**Veredicto: cola inofensiva, no un hueco de perfil.** Corrige la nota "sin
+identificar" de T.25.3/T.26.4 (regla 6): `BI` no necesita mecanismo; ya está
+resuelto (artículo concreto con precio). **Con esto, el frente de perfil real sin
+identificar queda cerrado.**
+
+**Observación abierta, sin afirmar que sea un fallo** (regla 7): `BI` aparece en
+234 filas de `EstructurasArticulos` con `Funcion` vacía, pero en **0 filas** de
+`estructura_componentes` (la plantilla migrada) — probablemente lo excluyó el
+filtro ETL de "filas de diseño sin símbolo". Consecuencia posible a verificar
+cuando toque el acristalamiento: la app podría **no emitir el barrotillo** en el
+despiece. No es del frente de perfil ni de asociados; queda anotado aparte.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
