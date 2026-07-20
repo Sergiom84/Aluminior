@@ -2735,6 +2735,82 @@ perfil real de hoja —oscilobatiente y corredera incluidos— **ya resuelve al 
 `*C`. Recordatorio de T.20.3: nada de esto valora todavía una línea — el frente
 vivo son los asociados (5.108 de 7.000, anexo S) y el cristal por su vía.
 
+## T.27 El herraje sale del bucket de perfil (implementado)
+
+Ejecuta el cambio que T.26.5 dejó como informe. Decisión de arquitectura:
+**allowlist de los 51 códigos de herraje, AÑADIDA a la heurística `funcion`
+inf/Acc, no en sustitución** (regla aditiva: solo puede mover herraje de
+perfil→asociado, nunca al revés, así que es imposible que enmascare un hueco de
+perfil real).
+
+### T.27.1 Por qué una allowlist y no una regla estructural
+
+Se midió (`scripts/medir-criterio-herraje.mjs`) qué regla en tiempo de
+resolución —solo con datos de plantilla/catálogo, nunca del histórico— separa
+herraje de perfil. Verdad de campo: **HERRAJE = `componente_disenyo` cuyas piezas
+de instancia son TODAS `Articulo=0` en el oráculo** (51 códigos); **PERFIL =
+alguna pieza `Articulo≠0`** (42 códigos). Resultado de las candidatas:
+
+- **`ConjuntosAsoc.ComponenteAsoc`** (candidata A): 11 falsos positivos —marca
+  como herraje perfiles evidentes (`10`,`11`,`12`,`B`, hoja/marco)— y 28 falsos
+  negativos. **Refutada** (coherente con T.23).
+- **Señal estructural de plantilla** (candidata B): `StFabricadoSN`, `AsociadoA`,
+  `AsociadoAId`, `NoComputarCosteSN`, `Seccion` son **constantes en herraje Y en
+  perfil** (cero poder discriminante); `funcion` HV/HH **solapa** las dos clases;
+  y "artículo genérico en plantilla" o "no resuelve por la cadena" clasificarían
+  como herraje **cualquier perfil no resuelto** —que es justo el hueco que no se
+  debe ocultar (26 falsos positivos)—. **No hay señal estructural limpia.**
+
+Por eso se hardcodea la lista medida, igual que T.22 hardcodeó el cristal `'1'`.
+Riesgo asumido y por qué es aceptable: la única forma de fallo de la allowlist es
+un código de herraje que exista en catálogo pero no en el histórico → se trataría
+como perfil no resuelto → **aviso ruidoso y visible**, nunca un hueco silenciado.
+Falla en la dirección segura (regla del proyecto: si falta, que se diga). Lo
+contrario —un falso positivo que oculta perfil— es imposible con allowlist.
+
+### T.27.2 La lista (51 códigos)
+
+Correderas `222`–`229`; oscilobatiente `OBC`,`OBCR`,`OBM`,`OBP`,`OBPH`;
+proyectante `PRC`,`PRPH`,`PRPV`; eje/kit `EKCC`,`EKEE`†,`EKEF`†; cierres y
+mecanismos de hoja `39`,`50`,`51`,`52`,`53`,`55`,`56`,`57`,`58`,`58R`,`59`,`71`,
+`130`,`133`,`134`,`EHC`,`EHH`,`EHF`†,`EHFH`†,`EMBF`,`CHC`,`CHH`,`JA`,`JB`,`JD`,
+`JI`; y muestra fina †(≤6 piezas en el oráculo, menor confianza pero coherentes
+con su familia) `30`,`116`,`135`,`139`,`143`,`51MA`. Nota (corrige el contexto
+previo, regla 6): **`22` NO es herraje** —es perfil, 8 piezas `Articulo≠0` en el
+oráculo—; sí lo son `222`–`229`. No confundir `22` con `222`.
+
+### T.27.3 Verificación antes/después (`scripts/verificar-t27.mjs`)
+
+Sobre las parejas serie×estructura reales del histórico con pieza de hoja (87
+con `HV`/`HH`), reproduciendo el `anotarSinResolver` de `acciones.ts` (incluido
+el salto del cristal), ponderado por `veces`:
+
+| bucket | antes | después |
+| --- | --- | --- |
+| PERFIL | 4.019 | **10** |
+| ASOCIADO | 6.047 | **10.056** |
+| suma total | 10.066 | 10.066 (conservada) |
+
+**La suma total no cambia: el arreglo solo reetiqueta el aviso, no altera lo que
+se valora** (verificado además en `acciones.ts:811-833`: `sinResolver` y
+`sinResolverAsoc` entran ambos en `problemas` → la línea queda "sin valorar"
+igual; ninguno ramifica otra cosa que el texto del mensaje). Se movieron
+perfil→asociado **solo códigos de la lista** (`OB*`, `222`–`229`, `EKCC`, `PR*`,
+`JA/JB/JD/JI`, `30`, …); el bucket de perfil baja a **10** ranuras, que son perfil
+real sin resolver (cola `BI`/bases `.0`) y siguen —correctamente— en el aviso
+ruidoso. **Sin alarma**: ningún `componente_disenyo` fuera de los 51 cambia de
+bucket, y no hay ningún movimiento asociado→perfil.
+
+### T.27.4 Estado
+
+`packages/web/.../acciones.ts`: `COMPONENTES_HERRAJE` (51) añadido a
+`anotarSinResolver`. Cristal (`'1'`) intacto. Typecheck limpio; tests 25/25.
+**Pendiente de ojo**: la ejecución en vivo en la app no se hizo porque produciría
+una escritura (crear/editar una línea de presupuesto oscilobatiente) contra la
+base compartida en solo lectura; la verificación determinista sobre el histórico
+—mismo resolvedor, misma lógica de enrutado— cubre el comportamiento. Anotado, no
+inventado.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento

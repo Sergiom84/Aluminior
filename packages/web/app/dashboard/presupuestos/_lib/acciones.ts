@@ -359,10 +359,54 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
       const sinResolverAsoc = new Set<string>()
       const esAsociado = (fn: string | null) =>
         !!fn && (fn.startsWith('inf') || fn.startsWith('Acc'))
-      const anotarSinResolver = (c: { articuloCodigo: string; funcion: string | null }) => {
+      // Herraje/asociado por `componente_disenyo` (anexo T.27). La heurística de
+      // `funcion` (inf*/Acc*) captura los asociados de mano de obra e informes,
+      // pero deja fuera compases, mecanismos, cremonas y correderas, que llevan
+      // `funcion` HV/HH igual que una hoja de perfil y por eso se colaban en el
+      // bucket de PERFIL (inflando el aviso "N ranuras de perfil que la serie no
+      // resuelve" con herraje que NUNCA se resuelve por ConjuntosLin). Es el
+      // mismo defecto que T.22 corrigió para el cristal (componente '1').
+      //
+      // No hay señal estructural limpia en la plantilla que los separe (medido
+      // en T.24–T.26 y en scripts/medir-criterio-herraje.mjs): StFabricadoSN,
+      // AsociadoA, NoComputarCosteSN y Seccion son constantes en herraje Y en
+      // perfil; `funcion` HV/HH solapa; y "artículo genérico" o "no resuelve por
+      // la cadena" clasificarían como herraje cualquier perfil no resuelto —que
+      // es justo el hueco que no se debe ocultar—. Por eso se hardcodea la lista
+      // medida: HERRAJE = componente cuyas piezas de instancia son TODAS
+      // Articulo=0 en el oráculo (se valoran por el frente de asociados, anexo
+      // S, no por perfil). La regla es ADITIVA a `esAsociado`: solo mueve
+      // herraje de perfil→asociado, nunca a la inversa, así que no puede
+      // enmascarar un hueco de perfil real (un código fuera de la lista sigue
+      // cayendo al aviso ruidoso de perfil: falla en la dirección segura).
+      // Marcados (†) los de muestra fina (≤6 piezas en el oráculo): confianza
+      // menor, pero coherentes con su familia (OB*/EK*/…).
+      const COMPONENTES_HERRAJE = new Set<string>([
+        // correderas
+        '222', '223', '224', '225', '226', '227', '228', '229',
+        // oscilobatiente (compás/mecanismo/cremona)
+        'OBC', 'OBCR', 'OBM', 'OBP', 'OBPH',
+        // proyectante
+        'PRC', 'PRPH', 'PRPV',
+        // eje / kit (EKEE†, EKEF†)
+        'EKCC', 'EKEE', 'EKEF',
+        // herrajes de hoja / cierres / mecanismos varios
+        '39', '50', '51', '52', '53', '55', '56', '57', '58', '58R', '59',
+        '71', '130', '133', '134', 'EHC', 'EHH', 'EHF', 'EHFH', 'EMBF',
+        'CHC', 'CHH', 'JA', 'JB', 'JD', 'JI',
+        // muestra fina (†, ≤6 piezas): 30, 116, 135, 139, 143, 51MA, EHF, EHFH, EKEE, EKEF
+        '30', '116', '135', '139', '143', '51MA',
+      ])
+      const anotarSinResolver = (
+        c: { articuloCodigo: string; funcion: string | null; componenteDisenyo: string | null },
+      ) => {
         if (!genericos.has(c.articuloCodigo)) return
-        if (esAsociado(c.funcion)) sinResolverAsoc.add(c.articuloCodigo)
-        else sinResolver.add(c.articuloCodigo)
+        if (esAsociado(c.funcion) ||
+          (c.componenteDisenyo !== null && COMPONENTES_HERRAJE.has(c.componenteDisenyo))) {
+          sinResolverAsoc.add(c.articuloCodigo)
+        } else {
+          sinResolver.add(c.articuloCodigo)
+        }
       }
 
       const plantillaResuelta = plantilla.map((c) => {
