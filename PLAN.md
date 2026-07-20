@@ -2929,6 +2929,46 @@ campo que las ate a una pieza de hoja, y la plantilla no las declara para las
 estructuras usadas". El "recuento por pieza" del mapeo queda refutado; lo medible
 es el agregado por línea/estructura, no por pieza.
 
+## T.31 El tapón de la valoración es el RECUENTO, no un umbral
+
+Decision-support para la decisión de conectar el predictor de asociados (que la
+regla 3 reserva al titular). Script `scripts/medir-umbral-asociados.mjs` (solo
+lectura, replica exacto `medir-seleccion-v5.mjs`). T.29 dejó a los asociados como
+único tapón de 82/87 líneas; toca cuantificar cómo de listo está el predictor para
+un umbral estilo T.17.
+
+**El dato que lo decide: 0 de las 216 líneas del oráculo son exactas en
+CANTIDADES.** El predictor acierta el 96,4% por pieza y el conjunto de artículos en
+72/216, pero valorar una línea exige TODAS sus cantidades exactas, y eso es **0**.
+
+| | líneas (de 216) |
+|---|---:|
+| exactas en artículos (conjunto correcto) | 72 |
+| exactas también en cantidades (valorables bien) | **0** |
+
+**Anatomía del error** (dónde está el recuento roto):
+- Errores de CANTIDAD (conjunto correcto, cantidad mal) → concentrados en
+  **ESCUADRAS** (238 de 344 cantidades erróneas) y juntas/gomas. Sesgo
+  **sistemático a la baja** (288 de menos vs 56 de más): son las piezas "una por
+  esquina / una por pieza" que el recuento por aparición de ranura infravalora.
+- Errores de CONJUNTO (falta/sobra artículo) → concentrados en **HERRAJE** del
+  oscilobatiente (compás/cremona/tirante, `GM53xx`), que mete y quita artículos.
+
+**Tabla estilo T.17** (por política de aceptación): en las tres (aceptar todo /
+solo líneas "limpias" / solo conjunto-exacto), **correctas = 0** y **"valorada
+pero MAL" (precio equivocado silencioso) = el 100% de lo valorado**. A diferencia
+de T.17, el flag de confianza interno (`limpia`) **no correlaciona con acertar**:
+no hay sobre qué gatillar.
+
+**Conclusión (corrige el encuadre que yo mismo estaba montando, regla 6): no
+existe un umbral defendible.** Conectar el predictor hoy no produce ni una línea
+bien valorada; solo mueve líneas entre "mispriciadas en silencio" y "sin valorar
+honesto". **El siguiente paso que mueve la aguja es cerrar el RECUENTO de
+cantidades** (escuadras por esquina, juntas por pieza/hueco, y el mecanismo de
+conjunto del oscilobatiente), NO ajustar un umbral. Caveats (regla 7): sin precios
+cargados el "cómo de mal" se mide en unidades, no en €; 40 de las 82 parejas de
+T.29 no tienen evidencia histórica y quedan sin medir.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
