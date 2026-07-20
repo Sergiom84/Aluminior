@@ -2969,6 +2969,60 @@ conjunto del oscilobatiente), NO ajustar un umbral. Caveats (regla 7): sin preci
 cargados el "cómo de mal" se mide en unidades, no en €; 40 de las 82 parejas de
 T.29 no tienen evidencia histórica y quedan sin medir.
 
+## T.32 Mano de obra: fabricación es fórmula plana (acoplada al recuento), colocación es manual
+
+Mapeo del sistema origen (MDB de `C:\Users\sergi\Desktop\Productor\Aluminio\`,
+leídas en solo lectura por ODBC 32-bit — ver memoria `leer-mdb-portatil`).
+`ENTREGA.md` 8.1 daba la mano de obra (MO) como "sin modelar"; aquí queda el
+modelo real. La MO señalada por el titular como frente de mayor certeza resultó
+**parcialmente modelable, con predominio manual**.
+
+### T.32.1 El modelo de fabricación: tiempo plano × recuento de módulos
+
+`ConjuntosMO` mapea `conjunto(módulo) → Concepto`; `MOConceptos.TiempoFabr` da los
+**minutos planos** de ese concepto. **Fabricación: `minutos = Σ (nº módulos × TiempoFabr)`**,
+valorada a **0,5 €/min** (30 €/h; `Constantes` + `ArticulosPVP` de `MO*`).
+Verificado contra el oráculo (regla 8): de 6.794 filas de `VConceptosMO` con
+minutos>0, **las 6.794 (100%) son múltiplo entero exacto del `TiempoFabr`** del
+concepto. La MO se materializa además como artículos `MO`/`MOCOL`/`MOCOMP`/`MOTAP`
+(familia `054`, `Cdad` en minutos) en `VPresupuestosLin` (5.657 / 1.279 / 616 / 26
+líneas).
+
+**La fórmula geométrica por ancho/alto está MUERTA:** las columnas
+`AnchoTiempo`/`AltoTiempo`/… existen en el esquema pero están a **0 en 116/116
+filas (EMP0016) y 105/105 (catálogo `ConfigDis`)**. Perseguirla sería trabajo
+sobre un mecanismo sin poblar. Verificado en CSV: `MOConceptos` 0/116 con
+ancho/alto ≠ 0.
+
+### T.32.2 El grueso del dinero es entrada manual
+
+| Vía | € aprox (VPRES) | % | Origen |
+|---|---:|---:|---|
+| Fabricación módulos (fórmula) | 59.080 | ~21% | recuento × `TiempoFabr` |
+| Extra fabricación (`HorasAdFabr`) | ~23.550 | ~9% | **manual** |
+| Colocación (`MOCOL`=`HorasColoc`) | ~187.900 | ~68% | **manual** |
+
+Colocación y extra —**~79% del importe de MO**— son **horas que teclea el
+usuario**, sin fórmula (la tabla `MOConceptosColoc.TiempoColoc` está 0/579). Son
+un dato de entrada, no un cálculo.
+
+### T.32.3 Consecuencia: la MO no es un frente independiente
+
+**La parte modelable (fabricación) tiene como insumo el recuento de módulos —el
+MISMO tapón de T.31.** Sin resolver el recuento de asociados, la MO de fabricación
+tampoco se reconstruye. Y el 79% del dinero de MO es manual por diseño. Así que
+modelar MO ahora es prematuro: **converge en el recuento (T.31)**, no lo evita.
+
+**Cómo modelarla, cuando toque** (no se implementa aquí): fabricación como
+`recuento × TiempoFabr × 0,5 €` (acoplada al recuento); colocación y extra como
+**campos de entrada del usuario** (`HorasColoc`/`HorasAdFabr` × 60 × 0,5 €), no
+como cálculo. `VConceptosMO.Cantidad` sirve de **oráculo directo** de la MO de
+fabricación para contrastar el día que el recuento se resuelva.
+
+Cabo suelto (regla 7): `ConjuntosMO` está a 0 en el catálogo global `ConfigDis`; el
+mapeo módulo→concepto vive en las MDB de serie (`InfoSeries.mdb`, 375 MB, no
+abierta). Cerrar ese eslabón es medición pendiente, subordinada al recuento.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
