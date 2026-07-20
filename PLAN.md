@@ -2843,6 +2843,55 @@ filtro ETL de "filas de diseño sin símbolo". Consecuencia posible a verificar
 cuando toque el acristalamiento: la app podría **no emitir el barrotillo** en el
 despiece. No es del frente de perfil ni de asociados; queda anotado aparte.
 
+## T.29 El bloqueo doble de T.20.3 queda superado: los asociados son el único tapón
+
+Medición de extremo a extremo. Script `scripts/medir-bloqueo-vivo.mjs` (solo
+lectura, espejo del enrutado de `acciones.ts`). T.20.3 midió un **bloqueo doble**:
+ninguna línea con hoja valora porque tiene pendientes a la vez ranuras de PERFIL
+**y** ASOCIADOS, y "cerrar cualquiera de los dos por separado no hace que valore ni
+una línea". T.24–T.28 demostraron que la mayor parte de ese "perfil pendiente" era
+**herraje** (frente de asociados) y que el perfil real resuelve al 100%. Toca
+volver a medir el bloqueo con esa reclasificación aplicada.
+
+Universo: **87 parejas serie×estructura REALES del histórico con pieza de hoja**
+(mismo N que T.27, no cartesiano — regla 8). Enlace limpio, variante `2` (doble
+cristal, default de la app).
+
+| Causa de bloqueo hoy | parejas | % |
+|---|---:|---:|
+| PERFIL real sin resolver | 4 | 4,6% |
+| PERFIL resuelto sin precio (`articulos_pvp` = 0 filas) | 1 | 1,1% |
+| CRISTAL presente (elección de usuario, otra vía) | 87 | 100% |
+| **ASOCIADOS pendientes (herraje/escuadra/MO)** | **87** | **100%** |
+
+**Resultado: en 82 de las 87 parejas (94,3%) los ASOCIADOS son el ÚNICO bloqueo
+estructural restante** — perfil resuelto y con precio, cristal aparte. **Esto
+supera T.20.3**: cerrar el frente de asociados (anexo S) **SÍ** haría valorar esas
+82 líneas. El lado "perfil" del bloqueo doble está despejado por T.24–T.28. Y los
+asociados son un bloqueo **universal**: pendientes en las 87, ninguna línea con
+hoja puede valorar sin cerrarlos. **El frente de asociados pasa de "no desbloquea
+nada" (T.20.3) a ser el camino directo a la primera línea con hoja valorada.**
+
+Residuo de perfil (las 5 parejas restantes, colas ya declaradas en T.26.4 — 0
+fallos, solo "la serie no lo resuelve"): comp `22` (marco 3 carriles, 2 parejas),
+`16` (el fallo fantasma de T.26.2), curvas `10C`/`11C`/`12C` (1 cada una); y una
+pareja con perfil sin precio, artículos `101`/`103` (diseño curvo `UD`, 0 filas en
+`articulos_pvp`/`articulos_coste` — accesorio de nicho, nunca valorable sin cargar
+su precio). Nada de esto es hoja de línea corriente.
+
+Pareja más cerca de valorar, por peso en el histórico: **`GMPC65|PC2`** (veces=51),
+perfil resuelto y con precio, solo le faltan **8 ranuras de asociado** + elección
+de vidrio. El mínimo de asociados pendientes en cualquier pareja es **7**: el
+frente es ancho y parejo, no hay atajo por una pareja "casi hecha".
+
+**Caveats** (regla 7): la unidad es la **pareja** (estructural), no la instancia.
+Esta medición NO captura bloqueos de INSTANCIA que dependen de ancho/alto/cotas/
+vidrio de cada línea concreta —rebaje o medida faltante (`despiece.incalculables`),
+vidrio no calculable, o un precio que exista en catálogo pero no para la
+tarifa/acabado de esa línea—. "Sin precio" se mide como cero filas de precio (hueco
+estructural). Al valorar una línea real podrían aparecer bloqueos adicionales de
+instancia; "único tapón" es a nivel estructural.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
