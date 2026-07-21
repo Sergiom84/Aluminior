@@ -3654,6 +3654,53 @@ de MO de fabricación EXACTO; el tope es COBERTURA (402/1.783 líneas tienen ár
 apariciones), no linealidad. Confirma T.39.3: la topología es la columna vertebral
 común (escuadras, juntas y módulos de MO). Sigue **0/216 valoradas**.
 
+## T.46 Las dos piezas de T.42 se CIERRAN: el 4·marco base es ConjuntosAsoc, el factor es ×2 uniforme (sin gate de nOpcion)
+
+Cierre de las dos piezas que T.42 dejó abiertas en la derivación fila→coeficiente del
+recuento de escuadra de alineamiento (comp 58/59). Ejecutado por trabajador,
+**verificado de forma independiente por el arquitecto**: reejecución de
+`scripts/medir-escuadra-derivacion.mjs` (predictor reproducido) y del discriminador de
+la base (query directa a `ConjuntosAsoc`, confirmada). Enlace exacto (regla 8).
+
+**Pieza 1 — el `4·marco` base viene de `ConjuntosAsoc` (genérica), no de
+`ConfigSeriesAsoc`.** ELEGANTPVC solo tiene 2 filas H en `ConfigSeriesAsoc`, pero SÍ
+tiene filas en `ConjuntosAsoc` con `nOpcion` VACÍO y comp 58/59 (`58·Cd1 + 59·Cd1`).
+Estas disparan siempre y cuentan sobre el marco. **Discriminador medido y verificado
+(no memorización):** el término base existe **sii** existen esas filas genéricas —
+`ELEGANTPVC`/`GMA65OPT`/`GMA60RL·GM4735` tienen 2 filas base → base 4; `GMA350·GM4710`
+y `GMA60RL·GM4710` tienen **0** filas base → su oráculo NO lleva base (real = puro
+n·hoja). Refuta la hipótesis de "escuadra de marco universal" de T.42: no es universal,
+es condicional a la tabla genérica. **Escalado con nº de marcos: NO MEDIBLE** (todas las
+líneas del export tienen marco=1); se deja como `4·marco` sin validar para marco>1
+(regla 7).
+
+**Pieza 2 — el factor es `×2` uniforme; el "×4 marco" era base+opción sumadas.**
+`GMA60RL·GM4735 = 8` no es "1 fila M ×4" sino base 4 (genérica) + `M·58·Cd2·×2` = 4+4.
+Con la base separada, el factor es `Cdad·2·elem(rol)` para 58/59 en todos los casos:
+marco base `(1+1)·2 = 4`; hoja ELEGANTPVC `(2+2)·2·hoja = 8·hoja` (por eso 58+59 dan
+`8·hoja`, no 16). **`nOpcion` NO es gate** (confirma T.42, refuta el gate de T.41):
+ELEGANTPVC cuenta `8·hoja` tenga o no la opción 11 activa (hoja=1→12 con opt11 sí ×53 y
+no ×57). El disparo real de una fila de `ConfigSeriesAsoc` es: `ArticuloAsoc` (perfil)
+presente **∨** rol con el par 58+59 completo (filas sin perfil). Separa exacto:
+`ELEGANTPVC` H (par, sin perfil) → dispara → 8·hoja; `GMA65OPT` H/M (solo 58, sin
+perfil) → no dispara → base 4; `GMA60RL` M (solo 58, con perfil `GM8873L` presente) →
+dispara → +4 = 8.
+
+**Regla medida:**
+`count = Σ_{ConjuntosAsoc, nOpc vacío, comp∈{58,59}} Cdad·2·marco  +  Σ_{ConfigSeriesAsoc}[dispara]·Cdad·2·elem(rol)`,
+`dispara = perfil_presente ∨ par_58+59`, `elem(H)=nº hojas`, `elem(M/G)=nº marcos`, sin
+gate de `nOpcion`.
+
+**Resultado contra oráculo (verificado):** `ELEGANTPVC·GM4735` **232/236 = 98,3%** (los
+4 fallos son marcos desnudos `m1h0j0t0`), `GMA65OPT·GM4735` **35/35**, `GMA60RL·GM4735`
+**15/15**, `GMA60RL·GM4710` **15/15**. **No cierra aún (regla 7):** comp `!` (wildcard
+"TODAS", corredera/abatible, mecanismo distinto sin `×2`) y filas con `ArticuloAsoc` de
+código genérico no resuelto (`GMA350·GM4710` 3%, `GMPC76R`, `GMA65OHS`) — anotado, no
+forzado. Esto **cierra la RE del recuento de escuadra de alineamiento** en las series
+medibles (corrige T.42, que lo dejaba parcial): es geometría medida sobre dos tablas de
+fábrica (`ConjuntosAsoc` base + `ConfigSeriesAsoc` opciones), no memoria. Sigue **0/216
+valoradas** (falta el resto de asociados y juntas por línea).
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
