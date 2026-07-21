@@ -3701,6 +3701,43 @@ medibles (corrige T.42, que lo dejaba parcial): es geometría medida sobre dos t
 fábrica (`ConjuntosAsoc` base + `ConfigSeriesAsoc` opciones), no memoria. Sigue **0/216
 valoradas** (falta el resto de asociados y juntas por línea).
 
+## T.47 El comp '!' es una familia de wildcards por categoría; cierra la corredera (por HUECOS, no hojas), no la oscilobatiente
+
+Reverse-engineer del comp '!' que T.46 dejó anotado. Ejecutado por trabajador,
+**verificado de forma independiente por el arquitecto** (reejecución de
+`scripts/medir-escuadra-comp-bang.mjs`, SOLO LECTURA; corredera y negativo
+reproducidos). Enlace exacto (regla 8).
+
+**Qué es (medido).** El comp '!' no es una categoría única: es una **familia de
+wildcards `AsociadoA` "(TODAS/TODOS)"** —HOJAS RODAMIENTO (Cdad 6), ESCUADRAS ABATIBLES
+(Cdad 1), FIJOS INDEPENDIENTES (Cdad 1), MARCOS CARRIL, FIJO HORIZONTAL/LATERAL—,
+presente en AMBAS tablas (`ConjuntosAsoc` y `ConfigSeriesAsoc`). La distinción
+corredera/abatible/fijo **no se lee del nodo hoja** (`TipoCorredera` es constante `R`,
+inútil): la declara la SERIE vía qué fila '!' trae. Sin gate de `nOpcion` (como 58/59,
+T.46). **Regla:** `count('!') = Σ Cdad × conteo_topológico(categoría)`, **SIN `×2`** (a
+diferencia de 58/59).
+
+**Hallazgo clave — la corredera se cuenta por HUECOS (carriles), no por hojas.** El
+árbol colapsa cada hoja-corredera a 1 hoja `Tipo3` por carril; el conteo correcto es
+huecos. Verificado: `GMPC135ME·GM4735` real=**12** `[m1 hu2 h1 t1]` → `6·hueco = 12` ✓
+(`6·hoja = 6` ✗); `GMPC135ME·GM4330` real=**8** ✓. Cierra **4/4** celdas de corredera, y
+**deriva de fábrica** el coeficiente que T.41 solo podía fitear con `n_train=2` (el
+`Cdad=6` de HOJAS RODAMIENTO × hueco), no lo memoriza. Confirma la pista de T.40
+(24/12/36 = 6 × carriles).
+
+**No cierra (regla 7).** ESCUADRAS ABATIBLES (oscilobatiente): la escuadra se emite en
+**bloques de 4** (4 esquinas/hoja) y el nº de bloques no es `Cdad × {hoja,hueco}`.
+`GMA65OHS·GM4710` es **constante 20** con `hu2` y `hu4` y con estructuras `2O`/`3HO`
+distintas → residuo **NO topológico** (mismo tipo que el felpudo, T.44: el hardware del
+oscilobatiente no está expuesto en el árbol). Igual `GMPC65`/`GMA75C16`. Datos finísimos:
+de las 16 series con fila '!', casi ninguna tiene líneas en el export.
+
+**Cobertura.** Añadir el término '!' suma **+4 aciertos limpios** (corredera GMPC135ME,
+100% en lo que cierra) que T.46 no atacaba; el % global baja 87,1→83,3 porque el término
+ataca honestamente 24 líneas abatible/fijo que no cierran (no rompe ninguna previa).
+Cierra la RE del recuento de escuadra para corredera; el oscilobatiente queda como
+residuo no topológico. Sigue **0/216 valoradas**.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
