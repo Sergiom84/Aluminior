@@ -3362,6 +3362,77 @@ NO tiene un catálogo de fábrica que lo cubra —mezcla config no vista con pos
 históricos (b)—, así que ese resto solo se cierra viendo más oráculo por serie, no con
 una ecuación.
 
+## T.39 La topología transfiere a las JUNTAS; los MÓDULOS de MO son el mismo problema por-componente
+
+Punto 1: llevar el extractor de topología (T.36) a los otros componentes del recuento
+—juntas y módulos de MO—, los que T.31/T.32 dejaron acoplados al mismo árbol.
+
+### T.39.1 Juntas: la topología reconstruye las dominantes, y REFINA T.30
+
+Script `scripts/medir-juntas-topologia.mjs` (SOLO LECTURA). Las juntas se cuentan en
+PIEZAS (Cdad ∈ {1 (8.866), 2 (3.234), 4 (700)}, verificado), no en metros —cada tramo
+es una pieza que bordea un lado (S.7.2, delta 0)—. Por artículo-junta, la topología
+del árbol reconstruye la cantidad igual que en las escuadras:
+
+| artículo | regla | acierto |
+|---|---|---:|
+| `GM4055` (JUNTA PERIMETRAL HOJA, n=236) | 4 × hoja | 236/236 (100%) |
+| `GM5085` (PERIMETRAL HOJA ALG, n=50) | 4 × hoja | 50/50 (100%) |
+| `GM5592` (CENTRAL CELULAR, n=34) | 4 × marco | 34/34 (100%) |
+| `GM5018`/`GM1312` (acristalamiento) | 4 × vidrio | 100% |
+
+Modelo completo held-out (split por línea, ley topológica + tabla por serie): **TEST
+179/208 líneas (86,1%)** con todas las juntas OK, 93,3% por aparición. Igual que las
+escuadras (T.37), **ese 86,1% está inflado por memorización**: la cifra honesta por
+generalización (contrafactual sin el nivel que memoriza `(serie,topología)`) es
+**38,9% por línea (64,1% por aparición)** —incluso peor que el 48,7% de escuadras
+(T.37), porque las juntas de acristalamiento (`GM4057`/`GM4091`/`GM4089`) no cierran
+con ley topológica limpia (85/76/69%) y caen a tabla—. La **parte-fórmula sí
+generaliza** (topología 182/187 = 97,3%) pero solo cubre 4 artículos (`GM4055`/`GM5085`
+`4×hoja`, `GM5592` `4×marco`, acristalamiento `4×vidrio`); la tabla memoriza
+`(serie,topología)` vista (495/498) y NO extrapola (topología nueva 10/46 = 22%; serie
+nueva 0/5). Verificado adversarialmente (`GM4055` `4×hoja` escala con nHoja real
+{1:123, 2:102, 3:10, 4:1} → reales {4,8,12,16}, no es "constante 4"; enlace exacto sin
+fuga; filtro `esJunta` endurecido para excluir escuadras/herramientas/tapajuntas, sin
+cambio en cifras).
+
+**Refina T.30 (regla 6):** T.30 dio el recuento de junta por "bloqueado por datos"
+—las filas JH/JV no llevan atribución diseño→pieza, solo estimable "por estructura"—.
+La topología del árbol ES ese "por estructura", y reconstruye las juntas dominantes
+(`GM4055` 4×hoja 100%). El bloqueo de T.30 era del recuento **por pieza**; el
+**agregado por estructura** —lo que la valoración necesita— sí se reconstruye desde la
+topología. Mismo patrón que las escuadras: una parte-fórmula que generaliza (perímetro
+= 4×hoja, marco = 4×marco, acristalamiento = 4×vidrio) + un residuo por-serie
+memorizado (felpudos/juntas centrales de correderas, análogo al alineamiento).
+
+### T.39.2 Módulos de MO: no es una cuenta más simple, es el mismo problema
+
+Script `scripts/medir-mo-topologia.mjs` (SOLO LECTURA). Oráculo directo
+`VConceptosMO.Cantidad` = MINUTOS (100% múltiplo entero de `TiempoFabr`, T.32.1); nº
+módulos = minutos / `TiempoFabr`(concepto), de `MOConceptos.csv`. Sobre 402 líneas con
+módulos y topología, **el nº total de módulos NO encaja en una suma topológica simple**
+(mejor candidato `marco+hueco+hoja+trav` = 35,3%).
+
+La causa es estructural, no un fallo de medida: `MOConceptos` trae columnas
+`ComponenteAsoc`/`ModuloAsoc`/`AsociadoA` —**cada concepto de MO está atado a un
+componente, exactamente como los asociados**—. Sumar todos los módulos aplana esa
+estructura. **La MO de fabricación no es una cantidad independiente más simple: es el
+MISMO recuento por-componente** que escuadras y juntas, resuelto por los mismos medios
+(topología por componente + residuo por serie). Confirma y afina **T.32.3** ("la MO
+converge en el recuento"): no solo comparte el insumo, es el mismo algoritmo.
+
+### T.39.3 Consecuencia
+
+La topología del árbol `EstructurasDiseño` es la **columna vertebral común** de todo
+el recuento: escuadras (T.36), juntas (T.39.1) y módulos de MO (T.39.2) se cuentan por
+elementos del árbol (esquina/lado/módulo por hoja/marco/hueco/vidrio), con la misma
+forma en los tres —una parte-fórmula que generaliza y un residuo por-serie que se
+memoriza—. Sigue **0/216 líneas valoradas** (T.20.3): esto unifica el mecanismo del
+recuento y reconstruye sus partes dominantes, pero no cierra la línea entera mientras
+el residuo por-serie (alineamiento, felpudos, conceptos de MO de corredera) siga sin
+más oráculo. El recuento ha pasado de "tapón sin modelo" (T.31) a "algoritmo
+topológico común con un residuo acotado y caracterizado".
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
