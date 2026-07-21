@@ -41,7 +41,7 @@ fiel en columnas; lo que falta en CSV son tablas de config/semántica y de MO.
 
 ---
 
-## 2. Estado actual (arco T.24–T.38)
+## 2. Estado actual (arco T.24–T.39)
 
 El **frente de perfil está cerrado**; el frente vivo son los **asociados**, y su
 tapón es el **recuento de cantidades**.
@@ -89,27 +89,41 @@ tapón es el **recuento de cantidades**.
   y revelan que **Productor daba cuentas de escuadra MAL, corregidas a mano** → parte
   del oráculo son bugs históricos.
 
+- **T.39 (la topología, columna vertebral común del recuento)** El extractor de
+  topología transfiere a los otros componentes. **Juntas** (se cuentan en piezas): la
+  topología reconstruye las dominantes —`GM4055` JUNTA PERIMETRAL HOJA `4×hoja` 100%,
+  `GM5085` 100%, `GM5592` `4×marco`, acristalamiento `4×vidrio`—; held-out 86,1% pero
+  generalización honesta 38,9%/línea (parte-fórmula 97%, resto memoria por serie).
+  **Refina T.30** (regla 6): el bloqueo era del recuento POR PIEZA; el agregado por
+  estructura sí lo da la topología. **Módulos de MO**: el total no encaja en suma
+  topológica (35%) porque `MOConceptos` ata cada concepto a un `ComponenteAsoc` — es el
+  MISMO recuento por-componente (confirma T.32.3). Todo verificado adversarialmente.
+
 **Convergencia:** valorar una línea, la MO de fabricación y las cantidades de
-asociados **desembocan todas en el RECUENTO**. Tras T.36–T.38, el recuento de
-escuadras está **medido y agotado por ambas fuentes**: las de esquina se reconstruyen
-del árbol con fórmula que generaliza; las de alineamiento son **memoria por serie**
-(no ecuación, y sin catálogo de fábrica que consultar). El componente escuadras del
-recuento está tan resuelto como el dato permite; el crux ahora es **llevar el mismo
-enfoque topológico a las JUNTAS y a los MÓDULOS de MO** (T.31/T.32).
+asociados **desembocan todas en el RECUENTO**, y tras T.33–T.39 el recuento tiene
+**una columna vertebral común: la topología del árbol `EstructurasDiseño`**. Los tres
+componentes (escuadras, juntas, módulos de MO) se cuentan por elementos del árbol
+(esquina/lado/módulo por hoja/marco/hueco/vidrio) con la MISMA forma: una parte-fórmula
+que generaliza (`4 × conteo`) + un residuo por-serie que se memoriza (alineamiento,
+felpudos, conceptos de MO de corredera) y NO tiene catálogo de fábrica (T.38). El
+recuento pasó de "tapón sin modelo" (T.31) a "algoritmo topológico común con residuo
+acotado y caracterizado". Sigue **0/216 valoradas** (T.20.3): el residuo por-serie
+aparece en casi toda línea.
 
 ---
 
 ## 3. Qué hacer, en orden
 
-1. **EL RECUENTO (crux).** Para ESCUADRAS está **medido y agotado por ambas fuentes**
-   (T.33–T.38): esquina = `4 × conteo topológico` que generaliza
-   (`scripts/medir-escuadras-topologia.mjs`); alineamiento = **memoria por serie**
-   (`scripts/medir-escuadras-modelo.mjs`, 83% held-out pero 49% por generalización), y
-   `InfoSeries.mdb` no aporta tabla de fábrica (T.38). El siguiente paso del crux es
-   **llevar el mismo enfoque topológico a las JUNTAS y a los MÓDULOS de MO** (los otros
-   componentes del recuento, T.31/T.32, acoplados al mismo árbol `EstructurasDiseño`).
-   El extractor de topología de la instancia ya está escrito y reutilizable. Rozan los
-   anexos S.1–S.9 y T.33–T.38 — leerlos antes.
+1. **EL RECUENTO (crux).** Los tres componentes están **medidos y unificados** por la
+   topología del árbol (T.33–T.39): escuadras (`scripts/medir-escuadras-topologia.mjs`,
+   `-modelo.mjs`), juntas (`scripts/medir-juntas-topologia.mjs`), módulos de MO
+   (`scripts/medir-mo-topologia.mjs`). Patrón común: `4 × conteo` generaliza para lo
+   dominante; el **residuo por-serie** (alineamiento, felpudos, MO de corredera) se
+   memoriza y no tiene catálogo de fábrica (T.38). Lo que queda del crux, en honesto:
+   ese residuo por-serie **solo se cierra con más oráculo por serie** (no hay ecuación
+   ni catálogo). Y es donde entra la **decisión del titular** (§3, abajo): si valorar
+   solo series/estructuras recurrentes (donde el recuento ya reconstruye bien) es
+   aceptable. Rozan los anexos S.1–S.9 y T.33–T.39 — leerlos antes.
 2. **MO de colocación (construible ya).** Modelar `HorasColoc`/`HorasAdFabr` como
    **campos de entrada del usuario** valorados a 0,5 €/min (68%+9% del dinero de MO).
    No desbloquea una línea por sí solo, pero es un componente real del total.
