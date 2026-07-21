@@ -3084,6 +3084,57 @@ línea (medida y descartada) ni un umbral (T.31). Caveat (regla 7): sin precios 
 "cómo de mal" se mide en unidades; y el ×2 de hueco simple, aunque físico, aún deja
 36,3% sin explicar dentro de ese grupo (misma causa: apariciones de v5).
 
+## T.34 Multi-hueco: la señal de apariciones de v5 no escala, y la familia geométrica no cierra
+
+Sigue el lever de T.33 (la cuenta de apariciones de v5 en multi-hueco). Script
+`scripts/diag-escuadras-multihueco.mjs` (SOLO LECTURA), 555 apariciones reales de
+artículo-escuadra en las líneas de estructura multi-hueco (`2*`,`3*`…). Resultado
+**parcial y en su mayoría negativo**: se entiende por qué v5 falla, pero no se
+encuentra el modelo correcto.
+
+**Por qué v5 falla (confirmado):** para las escuadras, v5 multiplica por las
+apariciones de la ranura en la INSTANCIA (`EstructurasArticulos.DisComponente` de
+comp 58/59). Esa cuenta **no escala con la geometría**: vale `12` en 430 de 555
+filas (y 8/16/4/2/20 en el resto), el mismo `12` en estructuras de 2 y de 3 huecos.
+Es un valor de plantilla, no un recuento de esquinas. Ese es el defecto de raíz del
+recuento de escuadras que T.31 detectó.
+
+**La familia geométrica es la forma correcta, pero no cierra:**
+
+| Candidato (multiplicador fijo) | acierto (de 555) |
+|---|---:|
+| 4 × nHuecos | 34,6% |
+| 2 × nHuecos | 30,3% |
+| 4 × nHojas | 17,8% |
+| 4 × (nHuecos+nHojas) | 14,6% |
+
+Por artículo, el multiplicador dominante encaja bien en unos pocos y mal en los
+demás: `GM4327` (ESCUADRA HOJA) `2×huecos` 92%, `GM5104` (BALCONERA) `4×huecos`
+100%, `GM4742`/`GM4837` `4×huecos` ~75%; pero el artículo más frecuente, **`GM4735`
+(ESCUADRA ALINEAMIENTO 2MM, n=130), no encaja en ninguno (15%)**. Solo **2 de 11**
+artículos (n≥3) tienen multiplicador geométrico consistente (≥90%). "Algún candidato
+de la familia acierta" da 71,4%, pero eso es probar varias hipótesis a la vez
+(riesgo de sobreajuste, regla 9), no una regla.
+
+**Correcciones de lecturas precipitadas (regla 6):**
+- *"la instancia trae un 12 constante"* — es dominante (430/555) pero **no
+  constante**: varía 8/16/4/2/20. Lo defendible es "no escala con la geometría", no
+  "es una constante".
+- *"las escuadras de ALINEAMIENTO son las que rompen la geometría"* — **refutado**
+  por los datos: `4×huecos` acierta ALINEAMIENTO 33,6% y marco/hoja 35,7%, sin
+  separación. No hay evidencia de que el rol (alineamiento vs marco/hoja) sea el
+  discriminante. Se conjeturó que las escuadras de alineamiento cuentan uniones entre
+  huecos adyacentes (topología del layout), pero **no se ha medido y no se afirma**.
+
+**Estado:** el recuento de escuadras en multi-hueco queda **medido y no resuelto**.
+La causa raíz (v5 usa una cuenta de plantilla que no escala) está identificada; el
+modelo correcto (un recuento de esquinas por rol de escuadra, probablemente desde la
+topología del árbol `EstructurasDiseño`, no un multiplicador plano por `nHuecos`)
+**no está encontrado**. Sigue 0/216 valoradas (T.20.3). No se codifica nada: 2/11
+artículos limpios no es una regla. El sub-lever siguiente, si se retoma, es la
+topología de esquinas del árbol de diseño —más costoso y aún sin señal—, no otro
+multiplicador plano.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
