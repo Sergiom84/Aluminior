@@ -41,7 +41,7 @@ fiel en columnas; lo que falta en CSV son tablas de config/semántica y de MO.
 
 ---
 
-## 2. Estado actual (arco T.24–T.39)
+## 2. Estado actual (arco T.24–T.40)
 
 El **frente de perfil está cerrado**; el frente vivo son los **asociados**, y su
 tapón es el **recuento de cantidades**.
@@ -99,8 +99,21 @@ tapón es el **recuento de cantidades**.
   topológica (35%) porque `MOConceptos` ata cada concepto a un `ComponenteAsoc` — es el
   MISMO recuento por-componente (confirma T.32.3). Todo verificado adversarialmente.
 
+- **T.40 (el residuo por-serie SÍ tiene fuente de fábrica)** Atacando el residuo de
+  alineamiento en `C:\Users\sergi\Desktop\Productor`: `InfoSeries.mdb` no lo tabula
+  (T.38), pero **`ConfigSeriesAsoc`** sí —la 2ª declaración de asociados por
+  `(serie, TipoHoja)` que S.7.4 dejó pendiente—. Vacía en el `ConfigDis` global,
+  **poblada en el export de EMP0016** (`ConfigSeriesAsoc.csv`, 1.137 filas), y **v5 la
+  ignora** (usa `ConjuntosAsoc`). Sus `Cantidad` reproducen las constantes del oráculo
+  por serie a nivel modal (GMA60RL M:2→8, GMPC135 !:6→24/12/36, GMA65OPT M:1→4;
+  ELEGANTPVC no encaja). Pero un predictor mecánico ingenuo **falla (1,4%)**: las filas
+  no son aditivas (el configurador selecciona por opción/TipoHoja/estructura) y el
+  filtro `nOpcion` no cuadra con `VOpcionesHerraje`. **Fuente localizada y parcialmente
+  validada; mecanismo de combinación SIN resolver.** Generalizaría (no memoriza), a
+  diferencia de la tabla de T.37 — pero no funciona aún.
+
 **Convergencia:** valorar una línea, la MO de fabricación y las cantidades de
-asociados **desembocan todas en el RECUENTO**, y tras T.33–T.39 el recuento tiene
+asociados **desembocan todas en el RECUENTO**, y tras T.33–T.40 el recuento tiene
 **una columna vertebral común: la topología del árbol `EstructurasDiseño`**. Los tres
 componentes (escuadras, juntas, módulos de MO) se cuentan por elementos del árbol
 (esquina/lado/módulo por hoja/marco/hueco/vidrio) con la MISMA forma: una parte-fórmula
@@ -123,7 +136,12 @@ aparece en casi toda línea.
    ese residuo por-serie **solo se cierra con más oráculo por serie** (no hay ecuación
    ni catálogo). Y es donde entra la **decisión del titular** (§3, abajo): si valorar
    solo series/estructuras recurrentes (donde el recuento ya reconstruye bien) es
-   aceptable. Rozan los anexos S.1–S.9 y T.33–T.39 — leerlos antes.
+   aceptable. **Lead vivo (T.40):** el residuo SÍ tiene fuente de fábrica que
+   generalizaría —`ConfigSeriesAsoc.csv`, que v5 ignora—; falta **ingeniería inversa
+   del mecanismo de combinación** de sus filas (selección vs suma; gating real de
+   `nOpcion`/`TipoHoja`/estructura; factor de esquina por rol) y el caso duro
+   `ELEGANTPVC`. Ese es el siguiente paso concreto del crux, con
+   `scripts/medir-configseriesasoc.mjs` de partida. Rozan S.1–S.9 y T.33–T.40.
 2. **MO de colocación (construible ya).** Modelar `HorasColoc`/`HorasAdFabr` como
    **campos de entrada del usuario** valorados a 0,5 €/min (68%+9% del dinero de MO).
    No desbloquea una línea por sí solo, pero es un componente real del total.
