@@ -352,3 +352,106 @@ for (const f of filas) {
   if (shown++ >= 15) break
   console.log(`     ${f.serie}|${f.estructura} ${f.art}  real=${f.real} v5=${f.v5} nHojas=${f.linea.nHojas} HV+HH=${f.linea.nHV + f.linea.nHH} ranEsc=${[...ESCUADRA_COMP].reduce((s, c) => s + (f.linea.ranuras.get(c) ?? 0), 0)}`)
 }
+
+// ════════ FOCO: residuo de HUECO SIMPLE (paso 1 confirmado por el titular) ════════
+console.log(`\n\n████████ RESIDUO DE HUECO SIMPLE (dónde falla v5×2 = 63,7%) ████████`)
+// candidatos por ROL: marco = 4 esquinas del hueco; +4 por cada hoja
+for (const f of single) {
+  const nHj = f.linea.nHojas
+  f.candS = {
+    'v5×2': f.v5 * 2,
+    '4 (marco)': 4,
+    '4×(1+nHojas)': 4 * (1 + nHj),
+    '4+4×nHojas': 4 + 4 * nHj,   // == 4×(1+nHojas)
+    '4×nHojas': 4 * nHj,
+    '8×nHojas': 8 * nHj,
+    '4×max(1,nHojas)': 4 * Math.max(1, nHj),
+  }
+}
+const CS = ['v5×2', '4 (marco)', '4×(1+nHojas)', '4×nHojas', '8×nHojas', '4×max(1,nHojas)']
+const hitS = new Map(CS.map((c) => [c, 0]))
+for (const f of single) for (const c of CS) if (Math.abs(f.candS[c] - f.real) < 0.01) hitS.set(c, hitS.get(c) + 1)
+console.log(`  single n=${single.length}. Acierto por candidato de ROL:`)
+for (const c of CS) console.log(`     ${c.padEnd(18)}: ${String(hitS.get(c)).padStart(3)}/${single.length} (${(100 * hitS.get(c) / single.length).toFixed(1)}%)`)
+
+// por artículo en single: multiplicador de ROL dominante
+const porArtS = new Map()
+for (const f of single) { if (!porArtS.has(f.art)) porArtS.set(f.art, []); porArtS.get(f.art).push(f) }
+console.log(`\n  Por ARTÍCULO (single, n≥3): mejor candidato de ROL`)
+let artOkS = 0, artTotS = 0
+for (const [art, rs] of [...porArtS].sort((a, b) => b[1].length - a[1].length)) {
+  if (rs.length < 3) continue
+  artTotS++
+  let best = null, bestN = 0
+  for (const c of CS) { const ok = rs.filter((f) => Math.abs(f.candS[c] - f.real) < 0.01).length; if (ok > bestN) { bestN = ok; best = c } }
+  if (bestN / rs.length >= 0.9) artOkS++
+  console.log(`     ${art.padEnd(8)} n=${String(rs.length).padStart(3)} mejor=${(best ?? '-').padEnd(16)} ${bestN}/${rs.length} (${(100 * bestN / rs.length).toFixed(0)}%) ${(descArt.get(art) ?? '').slice(0, 24)}`)
+}
+console.log(`  Artículos single (n≥3) con candidato de ROL consistente (≥90%): ${artOkS}/${artTotS}`)
+
+// residuo puro: donde v5×2 falla, ¿qué relación real/nHojas?
+const resid = single.filter((f) => Math.abs(f.v5 * 2 - f.real) > 0.01)
+console.log(`\n  Residuo v5×2 en single: ${resid.length}/${single.length}. Muestra:`)
+let sh2 = 0
+for (const f of resid) {
+  if (sh2++ >= 18) break
+  console.log(`     ${f.serie}|${f.estructura} ${f.art} real=${f.real} v5=${f.v5} v5×2=${f.v5 * 2} nHj=${f.linea.nHojas} HV+HH=${f.linea.nHV + f.linea.nHH} MV+MH=${f.linea.nMV + f.linea.nMH} T=${f.linea.nTH + f.linea.nTV + f.linea.nTM}`)
+}
+
+// CHECK anti-trivial (regla 9): ¿"4 constante" gana solo porque real=4 domina?
+const distReal = new Map()
+for (const f of single) distReal.set(f.real, (distReal.get(f.real) ?? 0) + 1)
+console.log(`\n  Distribución de real (single): ${[...distReal].sort((a, b) => b[1] - a[1]).slice(0, 8).map(([v, n]) => `${v}→${n}`).join('  ')}`)
+
+// MODELO COMBINADO por-artículo: asigna a cada art su candidato de ROL de moda
+// (≥90% consistencia y n≥3), como el mecanismo de '!' de v5. Aprende sobre single.
+const roleDe = new Map()
+for (const [art, rs] of porArtS) {
+  if (rs.length < 3) continue
+  let best = null, bestN = 0
+  for (const c of CS) { const ok = rs.filter((f) => Math.abs(f.candS[c] - f.real) < 0.01).length; if (ok > bestN) { bestN = ok; best = c } }
+  if (bestN / rs.length >= 0.9) roleDe.set(art, best)
+}
+let cubierto = 0, correctoModelo = 0, sinRegla = 0
+for (const f of single) {
+  const role = roleDe.get(f.art)
+  if (!role) { sinRegla++; continue }
+  cubierto++
+  if (Math.abs(f.candS[role] - f.real) < 0.01) correctoModelo++
+}
+console.log(`\n  MODELO por-artículo (rol de moda, ≥90%, n≥3) sobre single (n=${single.length}):`)
+console.log(`     artículos con regla: ${roleDe.size}   filas cubiertas: ${cubierto}   sin regla: ${sinRegla}`)
+console.log(`     correctas dentro de lo cubierto: ${correctoModelo}/${cubierto} (${cubierto ? (100 * correctoModelo / cubierto).toFixed(1) : 0}%)`)
+console.log(`     baseline "siempre 4": ${single.filter((f) => f.real === 4).length}/${single.length}`)
+// líneas single donde TODAS las escuadras quedan correctas por el modelo
+const escPorLinea = new Map()
+for (const f of single) { if (!escPorLinea.has(f.k)) escPorLinea.set(f.k, []); escPorLinea.get(f.k).push(f) }
+let lineasEscOk = 0, lineasSingle = 0
+for (const [, fs] of escPorLinea) {
+  lineasSingle++
+  if (fs.every((f) => roleDe.has(f.art) && Math.abs(f.candS[roleDe.get(f.art)] - f.real) < 0.01)) lineasEscOk++
+}
+console.log(`     LÍNEAS single con TODAS sus escuadras correctas por el modelo: ${lineasEscOk}/${lineasSingle}`)
+// ¿en cuántas líneas single aparece un artículo SIN regla? (el tapón)
+let conSinRegla = 0
+for (const [, fs] of escPorLinea) if (fs.some((f) => !roleDe.has(f.art))) conSinRegla++
+console.log(`     líneas single con ≥1 escuadra SIN regla (el tapón): ${conSinRegla}/${lineasSingle}`)
+const sinReglaArts = new Map()
+for (const f of single) if (!roleDe.has(f.art)) sinReglaArts.set(f.art, (sinReglaArts.get(f.art) ?? 0) + 1)
+console.log(`     artículos sin regla (single): ${[...sinReglaArts].sort((a, b) => b[1] - a[1]).map(([a, n]) => `${a}(${n})`).join(' ')}`)
+
+// FOCO GM4735: el tapón más frecuente. ¿qué determina su cantidad?
+console.log(`\n  ── FOCO GM4735 (ESCUADRA ALINEAMIEN.2MM), el tapón más frecuente ──`)
+const g = single.filter((f) => f.art === 'GM4735')
+const dg = new Map(); for (const f of g) dg.set(f.real, (dg.get(f.real) ?? 0) + 1)
+console.log(`     real (single): ${[...dg].sort((a, b) => b[1] - a[1]).map(([v, n]) => `${v}→${n}`).join('  ')}`)
+// correlatos candidatos
+for (const [nombre, fn] of [
+  ['4×nHojas', (f) => 4 * f.linea.nHojas], ['4×(HV+HH)/2', (f) => 2 * (f.linea.nHV + f.linea.nHH)],
+  ['2×(MV+MH)', (f) => 2 * (f.linea.nMV + f.linea.nMH)], ['4×nTravVert', (f) => 4 * f.linea.nTV],
+  ['4×(1+nTrav)', (f) => 4 * (1 + f.linea.nTH + f.linea.nTV + f.linea.nTM)],
+]) {
+  const ok = g.filter((f) => Math.abs(fn(f) - f.real) < 0.01).length
+  console.log(`     ${nombre.padEnd(14)}: ${ok}/${g.length}`)
+}
+console.log(`     muestra GM4735: ${g.slice(0, 6).map((f) => `${f.estructura}:real=${f.real},nHj=${f.linea.nHojas},T=${f.linea.nTH + f.linea.nTV + f.linea.nTM},HVHH=${f.linea.nHV + f.linea.nHH}`).join(' | ')}`)

@@ -3135,6 +3135,70 @@ artículos limpios no es una regla. El sub-lever siguiente, si se retoma, es la
 topología de esquinas del árbol de diseño —más costoso y aún sin señal—, no otro
 multiplicador plano.
 
+## T.35 Hueco simple: el recuento de escuadras es un multiplicador FIJO por artículo; el tapón es GM4735
+
+Paso 1 del plan (residuo de hueco simple, confirmado por el titular). Ampliado
+`scripts/medir-recuento-escuadras.mjs` (bloque "RESIDUO DE HUECO SIMPLE", SOLO
+LECTURA). En T.33, `v5×2` cerraba el 63,7% del hueco simple; aquí se abre ese 63,7%
+y se caracteriza el residuo. Resultado: **el recuento por escuadra es un
+multiplicador fijo por artículo, y se resuelve para 10 de 16 artículos, pero no
+cierra ninguna línea** porque un puñado —liderado por `GM4735`— resiste.
+
+**El recuento es un multiplicador fijo POR ARTÍCULO (rol), no por línea.** Asignando
+a cada artículo-escuadra el mejor candidato de un menú de rol
+{`4` (constante = 4 esquinas del hueco/marco), `4×nHojas`, `4×max(1,nHojas)`,
+`4×(1+nHojas)`, `8×nHojas`, `v5×2`}, aprendido por consistencia ≥90% con n≥3 —el
+mismo mecanismo que el multiplicador de categorías `'!'` de v5—:
+
+| | |
+|---|---:|
+| artículos con regla (de 16 con n≥3) | **10** |
+| filas cubiertas | 215 |
+| **correctas dentro de lo cubierto** | **215/215 (100%)** |
+
+El modelo **generaliza** (validación cruzada 50/50 hecha por el verificador: mitades
+held-out 95,6% y 100%), así que no es puro sobreajuste. Ejemplos limpios: `GM4327`
+(ESCUADRA HOJA) `4` 47/47; `GM4742` (ALIN.C/EXCENTR) `4×max(1,nHojas)` 67/67;
+`GM4837` (HOJA C16) `4×max(1,nHojas)` 45/45; `GM4847`, `GM3627`, `GM3625` `v5×2`
+100%.
+
+**Cuánto de esto es no-trivial, en honesto (corrección del verificador, regla 6):**
+`real=4` domina (251/397), y el grueso de las 215 cubiertas es constante-4. Una
+redacción previa afirmaba "146 filas usan roles que varían con las hojas"; eso es
+cierto **solo por la etiqueta de la fórmula**. Los dos artículos de n grande
+(`GM4742`, `GM4837`, 112 filas) son **constante-4 encubierta dentro del hueco
+simple**: `4×max(1,nHojas)` solo se separa de 4 en **5 de esas 112 filas** (las de
+nHojas=2 → 8). Las filas donde el modelo **de verdad** predice ≠4 y acierta son
+**~35, no 146** —el núcleo genuinamente no-trivial son las ~30 de rol `v5×2`
+(`GM4847`/`GM3627`/`GM3625`, que predicen 8 donde real=8). La no-trivialidad de
+`GM4742`/`GM4837` vive en **multi-hueco** (2O→real 8), que este modelo ni entrena ni
+cierra. El aprendizaje por-artículo es real, pero dentro del hueco simple está
+dominado por la constante 4.
+
+**Pero no cierra ninguna línea: 0/100 líneas de hueco simple** tienen todas sus
+escuadras correctas, porque **las 100 tienen ≥1 escuadra SIN regla**. Los artículos
+sin regla (single) son `GM4735`(81), `GM4710`(47), `GM4330`(19), `GM4732`(16),
+`GM4743`(9), `GM4326`(9). El tapón es `GM4735` (ESCUADRA ALINEAMIENTO 2MM), **la
+escuadra más frecuente del oráculo**: su cantidad real es 12 (51 veces), 8 (14), 4
+(14), y **ningún correlato geométrico simple la explica** (el mejor, `4×(1+nTrav)`,
+18/81). Queda **sin resolver** (regla 7): no se fuerza un modelo sobre importes
+reales.
+
+**Corrección a T.34 (regla 6):** allí se conjeturó que el rol "alineamiento" era el
+que rompía la geometría. Es **falso también aquí**: `GM4742`, un artículo de
+alineamiento, tiene regla limpia `4×max(1,nHojas)` 100%. El discriminante **no es el
+rol semántico** sino el artículo concreto: un subconjunto (liderado por `GM4735`)
+resiste cualquier multiplicador fijo mientras el resto no.
+
+**Estado y consecuencia:** el frente del recuento de escuadras queda **localizado con
+precisión**. Lo resuelto: 10/16 artículos = multiplicador fijo por artículo, mismo
+aprendizaje que v5, sin sobreajuste (no valora ninguna línea, solo cuenta). Lo
+pendiente y único que bloquea el cierre de líneas: **la cantidad de `GM4735` y ~5
+artículos más**, cuyo determinante no está identificado. Sigue 0/216 valoradas
+(T.20.3). El siguiente paso, si se retoma el crux, es **entender qué fija la cantidad
+de `GM4735`** —una sola pregunta, sobre el artículo más frecuente—, no un
+multiplicador de línea ni la topología completa del árbol.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
