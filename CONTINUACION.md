@@ -121,3 +121,13 @@ herramienta Workflow (o deja que el arquitecto lance subagentes con la herramien
 Agent). El arquitecto SIEMPRE verifica el resultado del trabajador antes de
 commitear, y **para y reporta** (no decide) en los puntos marcados "decisión del
 titular" o "bloqueado por datos".
+
+**Paraleliza por hipótesis, no marches en secuencia.** Cuando un frente es UN
+problema duro (como el RECUENTO), no lo trates como una sola tarea encadenada:
+descomponlo en 2–4 **hipótesis/ángulos independientes** y lanza un trabajador por
+hipótesis **en paralelo** (p.ej. para el recuento: geometría de línea, topología de
+esquinas del árbol `EstructurasDiseño`, y config en `ConfigDis.mdb`). Luego el
+arquitecto sintetiza cuál cierra. El workflow ya lo hace si `hipotesis` viene con ≥2
+elementos; si lanzas subagentes a mano, aplica el mismo criterio. El paralelismo
+secuencial (T.33→T.34) fue correcto porque cada paso dependía del anterior, pero
+cuando hay varios ángulos que NO dependen entre sí, pruébalos a la vez.

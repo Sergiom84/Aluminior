@@ -38,6 +38,11 @@ const ESQUEMA_FRENTES = {
           accionable: { type: 'boolean', description: 'false si esta bloqueado por datos o es decision del titular' },
           razon_no_accionable: { type: 'string' },
           tarea: { type: 'string', description: 'que medir/corregir, concreto, contra que del oraculo' },
+          hipotesis: {
+            type: 'array', maxItems: 4,
+            description: 'Si el frente es un problema DURO, descomponlo en 2-4 hipotesis/angulos INDEPENDIENTES que puedan probarse EN PARALELO (no pasos secuenciales). Vacio o 1 elemento = frente simple, un solo trabajador.',
+            items: { type: 'string' },
+          },
         },
       },
     },
@@ -85,6 +90,11 @@ DECISIONES DEL TITULAR (conectar el predictor de asociados). Marca accionable=tr
 los que se avanzan MIDIENDO o con un fix bien acotado y verificable (p.ej. recuento por
 geometria de EstructurasDiseño; MO de colocacion como campo manual; cabos menores).
 Para cada accionable da una tarea CONCRETA y contra que del oraculo se contrasta.
+PARALELISMO: si un frente es UN problema DURO (p.ej. el RECUENTO), no lo dejes como una
+sola tarea secuencial: descomponlo en 2-4 HIPOTESIS/ANGULOS INDEPENDIENTES en el campo
+"hipotesis" para probarlos EN PARALELO (p.ej. para el recuento: geometria de linea,
+topologia de esquinas del arbol EstructurasDiseño, y config en ConfigDis.mdb). Cada
+hipotesis debe poder medirse sin esperar a las otras. Frente simple = hipotesis vacio.
 ${REGLAS}`,
   { schema: ESQUEMA_FRENTES, label: 'arquitecto:mapa', phase: 'Mapa' },
 )
@@ -94,29 +104,48 @@ if (!accionables.length) {
   return { resumen: 'No hay frentes accionables: todo esta bloqueado por datos o es decision del titular.', anexos_propuestos: [], bloqueados: (mapa?.frentes ?? []).filter((f) => !f.accionable).map((f) => `${f.id}: ${f.razon_no_accionable}`), decisiones_titular: [] }
 }
 
-// ── Fase 2: un TRABAJADOR por frente, luego VERIFICACION adversarial ──────
+// ── Fase 2: TRABAJADORES + verificacion adversarial ──────────────────────
+// Un frente SIMPLE = un trabajador. Un frente DURO con >=2 hipotesis = un
+// trabajador por hipotesis EN PARALELO + un sintetizador de frente. Asi el
+// paralelismo aparece incluso cuando hay un solo frente duro (no se marcha
+// secuencial pudiendo probar varios angulos a la vez).
 phase('Trabajo')
-const trabajados = await pipeline(
-  accionables,
-  (f) => agent(
-    `Eres un TRABAJADOR de Aluminior. Frente ${f.id}: ${f.titulo}.
-TAREA: ${f.tarea}
+const trabajar = (f, tarea, etiqueta) => agent(
+  `Eres un TRABAJADOR de Aluminior. Frente ${f.id}: ${f.titulo}.
+TAREA: ${tarea}
 Trabaja SOLO LECTURA por defecto (deja el .mjs sin commitear). Si el frente es un fix
 de codigo, describe el cambio y su verificacion pero NO commitees. Contrasta contra el
 oraculo con enlace exacto (regla 8). Imprime nulos/ceros (regla 7). Reporta destilado
 con cifras; si el resultado es negativo o el frente resulta bloqueado, dilo (tambien es
 resultado). ${REGLAS}`,
-    { schema: ESQUEMA_TRABAJO, label: `trab:${f.id}`, phase: 'Trabajo' },
-  ),
-  (r, f) => r ? agent(
-    `Eres el VERIFICADOR adversarial. El trabajador reporto sobre el frente ${f.id}:
+  { schema: ESQUEMA_TRABAJO, label: etiqueta, phase: 'Trabajo' },
+)
+const verificar = (f, r) => agent(
+  `Eres el VERIFICADOR adversarial. El trabajador reporto sobre el frente ${f.id}:
 "${r.hallazgo}"
 Intenta REFUTARLO: re-ejecuta o re-mide lo esencial, busca emparejamientos fabricados
 (regla 8), grupos triviales (regla 9) y sobreajuste. Devuelve CONFIRMADO solo si
 sobrevive; DUDOSO si no puedes decidir; REFUTADO si cae. ${REGLAS}`,
-    { schema: ESQUEMA_VERIF, label: `verif:${f.id}`, phase: 'Trabajo' },
-  ).then((v) => ({ frente: f, trabajo: r, verif: v })) : null,
+  { schema: ESQUEMA_VERIF, label: `verif:${f.id}`, phase: 'Trabajo' },
 )
+const trabajados = await parallel(accionables.map((f) => async () => {
+  const hips = f.hipotesis ?? []
+  if (hips.length >= 2) {
+    const angulos = (await parallel(hips.map((h, i) => () =>
+      trabajar(f, `Hipotesis INDEPENDIENTE a probar/refutar: ${h}. Es UN angulo del frente "${f.tarea}"; mide solo este, sin esperar a los demas.`, `hip:${f.id}:${i}`),
+    ))).filter(Boolean)
+    if (!angulos.length) return null
+    const neto = await agent(
+      `Eres el ARQUITECTO del frente ${f.id}: ${f.titulo}. Se probaron ${angulos.length} hipotesis EN PARALELO:
+${JSON.stringify(angulos.map((a) => ({ hallazgo: a.hallazgo, confianza: a.confianza })))}
+Consolida en UN hallazgo neto con cifras: que angulo cierra el frente (o por que no cierra ninguno, descartando cada uno). ${REGLAS}`,
+      { schema: ESQUEMA_TRABAJO, label: `sint:${f.id}`, phase: 'Trabajo' },
+    )
+    return { frente: f, trabajo: neto, verif: await verificar(f, neto) }
+  }
+  const r = await trabajar(f, f.tarea, `trab:${f.id}`)
+  return r ? { frente: f, trabajo: r, verif: await verificar(f, r) } : null
+}))
 
 // ── Fase 3: el ARQUITECTO consolida (solo lo CONFIRMADO) ──────────────────
 phase('Sintesis')
