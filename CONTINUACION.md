@@ -41,7 +41,7 @@ fiel en columnas; lo que falta en CSV son tablas de config/semántica y de MO.
 
 ---
 
-## 2. Estado actual (arco T.24–T.46)
+## 2. Estado actual (arco T.24–T.47)
 
 El **frente de perfil está cerrado**; el frente vivo son los **asociados**, y su
 tapón es el **recuento de cantidades**.
@@ -146,6 +146,14 @@ tapón es el **recuento de cantidades**.
   58/59, condicional, no universal) y el factor es `×2` uniforme (el "×4" era base+opción
   sumadas); `nOpcion` NO es gate. Regla medida reproduce el oráculo (ELEGANTPVC 98,3%,
   GMA65OPT/GMA60RL 100%). Queda fuera el comp `!` (corredera, mecanismo distinto).
+- **T.47 (el comp `!` de escuadras)** El comp `!` es una familia de wildcards
+  `AsociadoA` (HOJAS RODAMIENTO Cdad6, ESCUADRAS ABATIBLES Cdad1, FIJOS, MARCOS CARRIL),
+  en ambas tablas, sin gate de `nOpcion`. Regla: `count = Cdad × conteo_topológico(cat)`,
+  SIN `×2`. **La corredera se cuenta por HUECOS (carriles), no hojas** (el árbol colapsa
+  cada hoja-corredera a 1 Tipo3 por carril): `GMPC135ME·GM4735` real=12=`6·hueco` (2/2),
+  deriva de fábrica el coef que T.41 fiteaba con n_train=2. **NO cierra** ESCUADRAS
+  ABATIBLES (oscilobatiente): emisión en bloques de 4, `GMA65OHS` constante 20 con hu2/hu4
+  → residuo NO topológico (tipo T.44). Verificado.
 
 **Convergencia:** valorar una línea, la MO de fabricación y las cantidades de
 asociados **desembocan todas en el RECUENTO**, y tras T.33–T.40 el recuento tiene
@@ -178,16 +186,19 @@ aparece en casi toda línea.
    `ELEGANTPVC`. **RESUELTO en T.41:** el gating es (nOpcion + ArticuloAsoc perfil +
    TipoHoja, acumulativo) y la cuenta es una **fórmula lineal-entera por serie sobre la
    topología** (`a·marco+b·hoja+c·hueco+d·trav`), que generaliza. El siguiente paso del
-   crux, ahora, está en gran parte MEDIDO: la derivación de escuadra cerrada (T.46), el
-   residuo de juntas de acristalamiento cerrado (T.43), los módulos de MO por concepto
-   (T.45). Lo que queda del recuento, en honesto: **(1a)** el mecanismo del comp `!`
-   (wildcard "TODAS", correderas/abatibles — GMA350·GM4710, GMPC*, GMA65OHS), que es
-   distinto (sin el `×2`) y aún no medido; **(1b)** el felpudo y otras piezas "por
-   carril/lado" son NO topológicas (T.44) — requieren otra dimensión (carriles/mm) que el
-   árbol no expone; **(1c)** validar el `×marco` para estructuras multi-marco (todo el
-   export tiene marco=1). Scripts de partida: `medir-escuadra-derivacion.mjs`,
+   crux está en gran parte MEDIDO: derivación de escuadra (comp 58/59) cerrada (T.46), el
+   comp `!` de corredera cerrado (T.47, por huecos), juntas de acristalamiento (T.43),
+   módulos de MO por concepto (T.45). Lo que queda del recuento, en honesto: **(1a)**
+   varios residuos son **NO topológicos** —oscilobatiente/ESCUADRAS ABATIBLES (bloques de
+   4, T.47), felpudo (carril/lado, T.44)—: el árbol no expone su dimensión (nº de
+   hardware oscilo, carriles/mm); requieren otra fuente o quedan "sin valorar" honesto;
+   **(1b)** validar el `×marco` para estructuras multi-marco (todo el export tiene
+   marco=1); **(1c)** el salto grande pendiente es **componer todos los componentes por
+   línea** (escuadras + juntas + resto de asociados + MO) para intentar la primera línea
+   valorada — hasta ahora cada componente se ha medido por separado (0/216). Scripts de
+   partida: `medir-escuadra-derivacion.mjs`, `medir-escuadra-comp-bang.mjs`,
    `medir-configseriesasoc.mjs`, `medir-juntas-lineal-serie.mjs`,
-   `medir-mo-concepto-lineal.mjs`. Rozan S.1–S.9 y T.33–T.46.
+   `medir-mo-concepto-lineal.mjs`. Rozan S.1–S.9 y T.33–T.47.
 2. **MO de colocación (construible ya).** Modelar `HorasColoc`/`HorasAdFabr` como
    **campos de entrada del usuario** valorados a 0,5 €/min (68%+9% del dinero de MO).
    No desbloquea una línea por sí solo, pero es un componente real del total.
