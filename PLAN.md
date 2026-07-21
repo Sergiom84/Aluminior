@@ -3433,6 +3433,53 @@ el residuo por-serie (alineamiento, felpudos, conceptos de MO de corredera) siga
 más oráculo. El recuento ha pasado de "tapón sin modelo" (T.31) a "algoritmo
 topológico común con un residuo acotado y caracterizado".
 
+## T.40 El residuo por-serie SÍ tiene fuente de fábrica: ConfigSeriesAsoc (localizada, no cerrada)
+
+Ataque al residuo por-serie (alineamiento), con la pista del titular de que
+`C:\Users\sergi\Desktop\Productor` tiene toda la información. T.38 concluyó que
+`InfoSeries.mdb` no tabula el alineamiento; pero la exploración de `ConfigDis.mdb`
+(tablas de config) apunta a otra: **`ConfigSeriesAsoc`** —la 2ª declaración de
+asociados que **S.7.4 dejó pendiente** ("por `TipoHoja` como segunda fuente")—.
+
+**Hallazgo: `ConfigSeriesAsoc` es la fuente de fábrica del residuo, y v5 la ignora.**
+Está **vacía en el `ConfigDis` global** (0 filas) pero **poblada en el export de
+EMP0016** (`ConfigSeriesAsoc.csv`, 1.137 filas). Keyed por `(Conjunto=serie,
+TipoHoja=rol/apertura)` —`H`=Hojas, `M`=Marco, `G`=General, códigos de apertura
+`4HC`/`2HOP`…, y `'!'`=categoría—. `GM4735` tiene **46 filas** aquí, con `Cantidad`
+distinta por serie y rol; el predictor de asociados actual (que usa `ConjuntosAsoc`,
+no `ConfigSeriesAsoc`) nunca la consulta.
+
+**Sus `Cantidad` reproducen las constantes del oráculo por serie** (a nivel modal, con
+una lectura rol×topología simple):
+
+| serie | oráculo (moda) | ConfigSeriesAsoc | lectura |
+|---|---:|---|---|
+| `GMA60RL` | 8 | M · Cdad 2 | 2 × 4 esquinas de marco |
+| `GMA65OPT` | 4 | M · Cdad 1 | 1 × 4 |
+| `GMPC76R` | 4 | M · `!` Cdad 1 | 1 × 4 |
+| `GMPC135*` | 24 / 12 / 36 | H · `!` Cdad 6 | 6 × nº hojas correderas |
+| `ELEGANTPVC` | 12 / 20 | H · Cdad 2 (58+59) | **no encaja** (caso duro) |
+
+**Pero un predictor mecánico ingenuo NO funciona (1,4% exacto).** Construir la cuenta
+como "Σ filas × Cdad × conteo del rol" **sobre-cuenta** (`ELEGANTPVC` predice 32 vs 12
+real; `GMA60RL` 24 vs 8) porque las filas de `ConfigSeriesAsoc` no son puramente
+aditivas: hay filas duplicadas/alternativas que el configurador selecciona (por
+opción/`TipoHoja`/estructura), no suma —la lección de S.1 (acumulativas) NO aplica
+igual aquí—. Y el filtro de opción tal como lo probé descarta 260/471 apariciones
+(la semántica de `nOpcion` en `ConfigSeriesAsoc` no coincide con la de
+`VOpcionesHerraje` que asumí).
+
+**Estado (regla 7): fuente LOCALIZADA y parcialmente validada, mecanismo NO resuelto.**
+Corrige el matiz de T.38 (regla 6): sí existe una tabla por-serie del alineamiento
+—`ConfigSeriesAsoc`, en la biblioteca de empresa/export, no en `InfoSeries.mdb`—, y
+sus cantidades cuadran con el oráculo para varias series (`GMA60RL`, `GMA65OPT`,
+`GMPC135*`, `GMPC76R`). Lo que falta es **ingeniería inversa del mecanismo de
+combinación** de sus filas (selección vs suma; gating real de `nOpcion`/`TipoHoja`/
+estructura; factor de esquina por rol) y el caso duro `ELEGANTPVC`. Es un lead
+prometedor que **generalizaría** (no memoriza) —a diferencia de la tabla de T.37—,
+pero **no es un predictor que funcione todavía**; no se codifica. Script:
+`scripts/medir-configseriesasoc.mjs` (SOLO LECTURA). Sigue **0/216 valoradas**.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
