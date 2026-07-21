@@ -41,7 +41,7 @@ fiel en columnas; lo que falta en CSV son tablas de config/semántica y de MO.
 
 ---
 
-## 2. Estado actual (arco T.24–T.49)
+## 2. Estado actual (arco T.24–T.51)
 
 El **frente de perfil está cerrado**; el frente vivo son los **asociados**, y su
 tapón es el **recuento de cantidades**.
@@ -167,6 +167,18 @@ tapón es el **recuento de cantidades**.
   gate ignorado por v5; el overlap es estructural (222 familias con rangos solapados). Es
   el residuo de S.9.1 (el discriminante de tramo no está en el árbol). Techo: 72 exactas →
   152 si se resolviera el tramo. Verificado.
+- **T.50–T.51 (los frentes restantes son BLOQUEO POR DATOS, no de modelo)** **T.50**: el
+  modelo lineal-por-serie NO cierra la escuadra residual —cazado por verificación
+  adversarial del arquitecto: el `+9` held-out era suerte del split (multi-salt +6,2
+  [2..9]) y ~94% memoria (generalización real ~+0,4)—. La escuadra de esquina ya la cerraba
+  T.36; el residuo `GM4710` es NO topológico (confirma T.36: "una tabla, no una ecuación").
+  **T.51**: el discriminante de tramo del oscilobatiente **corrige S.9.1** (la colisión
+  "810→dos tramos" era mezclar familias: cremona nOpcion=2 vs cerradero acumulativo
+  nOpcion vacío; acotando la familia la medida resuelve 23/23). El residuo es un tramo
+  fantasma sub-intervalo: dirección limpia (contenedor gana 18/18) pero **indeployable** —
+  51 pares co-reales que ningún dato oracle-observable separa; el discriminante es la
+  asignación por unidad física, que el oráculo (agregados por artículo) no expone.
+  **Bloqueo por datos.**
 
 **Convergencia:** valorar una línea, la MO de fabricación y las cantidades de
 asociados **desembocan todas en el RECUENTO**, y tras T.33–T.40 el recuento tiene
@@ -212,10 +224,16 @@ aparece en casi toda línea.
    (5). **(1d) El techo de la valoración lo fija el residuo de TRAMO de S.9.1** (T.49): el
    discriminante que elige el tramo exacto de compás/cremona/tirante NO está en el árbol
    (222 familias con rangos solapados); resolverlo llevaría el conjunto-exacto de 72 a 152.
-   Es el frente más profundo y probablemente requiere un dato no exportado (otra MDB o una
-   cota que el árbol no expone). Scripts de partida: `medir-topo-sustituido.mjs`
-   (composición), `medir-conjunto-oscilobatiente.mjs` (tramo), y los de cada componente.
-   Rozan S.1–S.9 y T.33–T.49.
+   Es el frente más profundo y **T.51 lo cerró como BLOQUEO POR DATOS**: el discriminante
+   de tramo es la asignación medida→tramo POR UNIDAD FÍSICA, y el oráculo solo expone
+   agregados por artículo/línea. Igual el residuo `GM4710` (T.50, no topológico). **El
+   límite ha pasado de modelo a FUENTE:** subir de ~20 líneas exactas requeriría un export
+   con despiece por unidad (otra MDB o un volcado por hoja), no un modelo mejor.
+   **(1e) Lo accionable con el export actual está en gran parte agotado**; el siguiente
+   paso real es la **decisión del titular** (§ abajo) o adquirir esa fuente. Scripts de
+   partida: `medir-topo-sustituido.mjs` (composición), `cazar-discriminante-tramo.mjs`
+   (tramo), `medir-escuadra-lineal-serie.mjs` (escuadra residual), y los de cada
+   componente. Rozan S.1–S.9 y T.33–T.51.
 2. **MO de colocación (construible ya).** Modelar `HorasColoc`/`HorasAdFabr` como
    **campos de entrada del usuario** valorados a 0,5 €/min (68%+9% del dinero de MO).
    No desbloquea una línea por sí solo, pero es un componente real del total.
