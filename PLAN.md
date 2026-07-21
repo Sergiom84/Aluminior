@@ -3023,6 +3023,67 @@ Cabo suelto (regla 7): `ConjuntosMO` está a 0 en el catálogo global `ConfigDis
 mapeo módulo→concepto vive en las MDB de serie (`InfoSeries.mdb`, 375 MB, no
 abierta). Cerrar ese eslabón es medición pendiente, subordinada al recuento.
 
+## T.33 El recuento de escuadras: "2 por esquina" cierra en hueco simple, se rompe en multi-hueco
+
+Primer ataque al crux de T.31 (el RECUENTO, concentrado en escuadras). Script
+`scripts/medir-recuento-escuadras.mjs` (SOLO LECTURA, no commiteado). CONTINUACION.md
+§3.1 pedía medir si la GEOMETRÍA de la estructura (huecos, hojas, esquinas)
+reconstruye la cantidad mejor que el conteo por aparición de ranura del v5. Se mide
+sobre las **765 apariciones reales** de artículo-escuadra (línea×artículo) en las
+216 líneas del oráculo (VPRES+VALB+VFAC), con **enlace exacto** (regla 8): la
+cantidad real es `Cdad` de las hijas de `VPresupuestosLin` por `nEstr==nLinea`, nunca
+por proximidad de medida. Verificado de forma adversarial (reproducción idéntica de
+las cifras, `esEscuadra()` sin falsos positivos —los 28 artículos llevan "ESCUADRA"
+en descripción o comp 58/59 declarado por el ERP—, sin emparejamiento fabricado).
+
+**Ninguna fórmula geométrica de LÍNEA cierra** (corrige la esperanza de §3.1):
+
+| Reconstrucción | acierto de cantidad exacta (de 765) |
+|---|---:|
+| v5 (aparición de ranura) | 9,9% |
+| **v5 × 2** | **41,4%** |
+| nHojas × 4 | 22,0% |
+| ranEsc × 1 | 17,1% |
+| piezasHoja (HV+HH) | 5,0% |
+| ranEsc × 4 | 0,0% |
+
+El sesgo de v5 es sistemático a la baja (629 de menos, 60 de más) y el **modo
+dominante de `real/v5` es ×2** (317/765). Físicamente: **las escuadras van de dos
+por esquina** y el conteo por aparición de ranura las cuenta a la mitad.
+
+**El corte real es hueco-simple vs multi-hueco** (dígito inicial del código de
+estructura), no una fórmula de línea:
+
+| | n | v5 | **v5 × 2** | nHojas × 4 |
+|---|---:|---:|---:|---:|
+| **Hueco simple (`1*`)** | 397 | 17,4% | **63,7%** | 28,2% |
+| **Multi-hueco (`2*`,`3*`…)** | 307 | 1,6% | 13,4% | 15,3% |
+
+- En **hueco simple**, "2 escuadras por esquina" (`v5×2`) reconstruye el **63,7%**:
+  el mecanismo físico está identificado y es correcto ahí.
+- En **multi-hueco**, la **cuenta base de v5 está rota** (1,6%; `v5×2` no rescata) y
+  además **sobre-cuenta en 54/307** líneas (`real < v5`, el modo ×0,67). Los modos
+  fraccionarios de `real/v5` (×2,67, ×2,22, ×1,33) no pueden salir de "N escuadras
+  por esquina": salen de v5 miscontando apariciones de ranura cuando hay varias
+  hojas/huecos.
+
+**Por qué no es una cuenta de línea** (dato de `ConjuntosAsoc`): la escuadra declara
+`Cantidad ∈ {1 (805 filas), 2 (388), 4 (72)}` —no hay doblado global oculto— y un
+mismo artículo dispara en **dos comps a la vez (58 y 59)**: p.ej. `ELEGANTPVC GM4735`
+= comp 58 Cdad 1 + comp 59 Cdad 1. El recuento es **por-comp, con varias ranuras por
+artículo y ×2 por esquina**, no `f(nHojas)`. `real/nHojas` tampoco es constante por
+estructura (2–8 valores distintos), lo que ratifica que ninguna fórmula de línea
+cierra ni restringida a estructura homogénea.
+
+**Consecuencia (regla 3): sigue sin valorarse ninguna línea** (0/216 exactas en
+cantidades, T.20.3). Lo que avanza: el mecanismo del hueco simple queda **medido y
+correcto** (×2 por esquina), y el frente se acota. **El siguiente lever es la cuenta
+de apariciones de v5 en multi-hueco** —dónde y por qué mete/quita apariciones de la
+ranura de escuadra cuando hay varias hojas—, NO buscar una fórmula geométrica de
+línea (medida y descartada) ni un umbral (T.31). Caveat (regla 7): sin precios el
+"cómo de mal" se mide en unidades; y el ×2 de hueco simple, aunque físico, aún deja
+36,3% sin explicar dentro de ese grupo (misma causa: apariciones de v5).
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
