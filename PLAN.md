@@ -3199,6 +3199,75 @@ artículos más**, cuyo determinante no está identificado. Sigue 0/216 valorada
 de `GM4735`** —una sola pregunta, sobre el artículo más frecuente—, no un
 multiplicador de línea ni la topología completa del árbol.
 
+## T.36 Topología del árbol: "4 × esquinas" reconstruye 14/21 escuadras; el alineamiento lo fija la SERIE
+
+Punto A (atacar la topología del árbol `EstructurasDiseño`, refactor incluido).
+Script nuevo `scripts/medir-escuadras-topologia.mjs` (SOLO LECTURA). Capacidad
+nueva: un **extractor de la topología de la instancia**. El árbol de la instancia
+está completo (nodos con `TipoDoc` que traen `Tipo` y `ContenidoEn`): `Tipo` 1=marco
+raíz, 2=hueco, 3=hoja, 5/7=vidrio, 6=travesaño/montante. Cada marco/hueco/hoja/
+travesaño es un rectángulo con **4 esquinas**. Se cuenta cada tipo por línea y se
+mide, por artículo-escuadra, qué conteo × factor reconstruye la cantidad real
+(1358 apariciones, oráculo VPRES+VALB+VFAC, enlace exacto por hijas de
+`VPresupuestosLin`, regla 8).
+
+**La ley "4 × elementos-con-esquina" se demuestra robusta para 3 artículos**
+(deshinchado de un "14/21 con regla ≥90%" que era sobreajuste, ver abajo). Estos
+tres, base pura y held-out ~100%, cubren **673 de 1358 apariciones (49,6%)**, y a
+diferencia de T.34/T.35 la ley funciona **cross-serie y en single Y multi-hueco**:
+
+| artículo | regla | acierto | held-out (mitad) |
+|---|---|---:|---:|
+| `GM4742` (ALIN.C/EXCENTR) | 4 × hoja | 235/235 (100%) | **100%** |
+| `GM4837` (HOJA C16) | 4 × hoja | 210/210 (100%) | **100%** |
+| `GM4327` (HOJA BAL) | 4 × marco | 224/228 (98%) | **97%** |
+| `GM4847` (CERCO-HOJA) | 4 × (marco+hoja) | 47/51 (92%) | 96% (base compuesta) |
+
+Los conteos globales confirman que la esquina es la unidad: `4×hoja` 51,3% y
+`4×marco` 50,5% son los mejores candidatos planos (vs `4×hueco` 11%). **Corrige a
+T.34 (regla 6):** allí el recuento multi-hueco quedó "medido y no resuelto" y la
+familia geométrica "no cierra"; con la topología del árbol —no un multiplicador
+plano por `nHuecos`— las escuadras de esquina SÍ se reconstruyen, también en
+multi-hueco (los 673 aciertos incluyen líneas multi-hueco). El fallo de T.34 era usar
+la cuenta de apariciones de ranura (un valor de plantilla) en vez de contar los nodos
+del árbol.
+
+**Deshinchado del "14/21" (regla 9, corrección del verificador):** el ajuste por
+artículo prueba `base × factor` de un menú de ~54 candidatos; con umbral 90% eso es
+demasiada libertad para n pequeño. Control nulo (barajando `real` dentro del
+artículo): con **n=3, el 44% de datos aleatorios ya logra ≥90%**; con n=5, el 17%.
+Así que los 10 artículos con n≤13 al "100%" (`GM4149`, `GM4116`, `GM4869`…) son
+**azar esperable, no ley**. De los 8 artículos con n≥20 (los únicos con muestra
+seria), la ley `4×conteo` cierra **4/8** —los tres robustos + `GM4847`—; los otros 4
+son la familia de alineamiento. La ley cross-serie está demostrada para 3–4
+artículos (~50% de las apariciones), no 14.
+
+**El residuo es la familia de ALINEAMIENTO** (`GM4735` n=292, `GM4710` n=100,
+`GM4330` n=79), que **no** encaja en `4×conteo` (mejor de `GM4735`: 38%; y es el
+artículo-escuadra MÁS frecuente). Aquí el hallazgo que cierra la pregunta de T.35
+(*"qué fija la cantidad de GM4735"*):
+
+> **`GM4735` no lo determina la topología sola** (12/27 grupos de topología idéntica
+> tienen real distinto) **sino la combinación (serie, topología)**: predice **92%
+> out-of-sample** (train mitad / test mitad), frente a solo-serie 56% y
+> solo-topología 82%. La serie lleva la información que falta —cada serie coloca las
+> escuadras de alineamiento a su manera—, lo que explica toda la heterogeneidad por
+> serie de T.33/T.34. De hecho **5 de las 6 series son constantes** en `GM4735`
+> (GMA60RL→8, GMA65OPT→4…); toda la ambigüedad vive en **`ELEGANTPVC`** (236/292
+> filas, que reparte 12/20/4/28 sobre 24 topologías, y ahí la topología sí resuelve).
+
+**Consecuencia:** el recuento de escuadras se parte, ahora con nitidez, en (a) las
+**escuadras de esquina**, ley `4 × conteo topológico` reconstruible cross-serie
+—demostrada para 3–4 artículos, ~50% de las apariciones—; y (b) las **escuadras de
+alineamiento** (`GM4735` &c.), que **no son fórmula universal**: su cantidad es
+función de (serie, topología) al 92% out-of-sample, modelable como valor aprendido
+POR SERIE (para 5/6 series, literalmente una constante), no como geometría. Sigue
+**0/216 líneas valoradas** (T.20.3): el alineamiento aparece en casi toda línea y su
+valor por serie aún no se codifica (evidencia fina por serie; regla 3). El siguiente
+paso deja de ser "una fórmula": es **aprender el valor de alineamiento por serie**
+—una tabla, no una ecuación— con oráculo suficiente por serie, o leerlo del catálogo
+de serie (`InfoSeries.mdb`) si allí está declarado.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
