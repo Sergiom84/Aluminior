@@ -3785,6 +3785,50 @@ líneas), (2) el herraje de oscilobatiente (5 líneas, aún sin tocar — ver T.
 sin precios cargados: "exacta en cantidad" es condición necesaria de valorar, no el €
 final. Script: `scripts/medir-topo-sustituido.mjs`.
 
+## T.49 El error de CONJUNTO del oscilobatiente es RESIDUO de tramo, no un gate — y fija el techo de la valoración
+
+Reverse-engineer del frente que T.31 dejó abierto ("herraje del oscilobatiente
+mete/quita artículos"). Ejecutado por trabajador, **verificado por el arquitecto**
+(reejecución de `scripts/medir-conjunto-oscilobatiente.mjs`, réplica exacta de v5 con
+clasificación FP/FN; cifras y el solape de rangos reproducidos). SOLO LECTURA.
+
+**El "error de conjunto" es casi todo error de TRAMO, no de conjunto:**
+
+| Clase | Volumen |
+|---|---:|
+| SWAP de tramo (conjunto neto OK, tramo mal) | FP 112 / FN 109 |
+| OVERLAP FP (rangos MedidaMin/Max solapados) | 28 |
+| **FP PURO neto** (sobrante real) | **4** |
+| FN PURO (falta artículo) | 125 |
+
+**FP: ningún gate ignorado.** Revisadas todas las condiciones de `ConjuntosAsoc` en las
+filas ofensoras: `nOpcion`/`ArticuloAsoc` ya en v5; `FormulaOpcion` vacía; `SoloUnaSN`
+False; `TablaHerrajeInsertar` vacía; `ManoID` modelada. `GrupoAsoc='!'` (13.047 filas) y
+`TipoMedCV='C'` son defaults casi-universales, no gates. Los FP son 112 swap + 28
+overlap. El overlap es ESTRUCTURAL: **222 familias (conjunto|comp|nOpcion) tienen rangos
+solapados** (p.ej. `HU529|OBCR|2`: GM5334=796-1545 contiene a GM5335=996-1495); cuando la
+medida cae en el solape, dos artículos matchean y v5 emite ambos. El FP puro real es de
+**4 líneas** (kits `GM5405`/`GM4024`/`GM8412`/`GM4025` de otra serie).
+
+**FN puro (125) por causa:** 68 fuera-de-rango (la familia produce cero, incl. el
+cerradero acumulativo GM5347 de S.1 que suma ≤0) · 26 categoría `!` no aprendida
+(`GM4846` PUNTO CIERRE, `GM5002` CERRADERO; residuo T.47) · 17 conjunto no ofertado
+(kit base de compás `GM5303/GM5310/GM5311`…, herraje por defecto sin gate de opción) ·
+10 ranura ausente · 4 opción no marcada.
+
+**Veredicto: RESIDUO, mismo tipo que S.9.1/T.44/T.47.** El discriminante que elige el
+tramo exacto de compás/cremona/tirante NO está expuesto en el árbol — confirmado por (a)
+S.9.1 (una medida evaluada 810 → dos tramos reales distintos), (b) los 222 solapes de
+rango (`medida∈rango` no es único), (c) `TipoMedCV='C'` uniforme. **Por línea (216): 72
+ya exactas en conjunto, 80 se volverían exactas SÓLO resolviendo el tramo/medida (techo
+152/216), 64 bloqueadas además por gap genuino** (`!`/no-ofertado/ranura). No se codifica
+gate (no reduciría FP sin subir FN, por los 222 solapes); el único candidato —tie-break
+"rango más ancho gana" para los 28 overlap— no está fundamentado (S.9.1 mostró que la
+medida no es el discriminante). **Consecuencia:** el techo de la exactitud de conjunto
+—y por tanto de la valoración— lo fija el **residuo de tramo de S.9.1**, un dato no
+expuesto en el árbol; es el frente más profundo que queda. Caveat (regla 7): sin precios,
+el impacto se mide en líneas, no en €.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
