@@ -3864,6 +3864,48 @@ topológicos** (`GM4710` sin árbol/sin señal) **y el tramo del oscilobatiente*
 ambos datos no expuestos en el árbol. Sin precios cargados. **Valor del anexo: negativo
 honesto — evita perseguir un modelo lineal que solo memoriza.**
 
+## T.51 El discriminante de tramo: dirección limpia, selección oracle-invisible — y CORRIGE la colisión de S.9.1
+
+Caza del discriminante de tramo que fija el techo de T.49 (72→152), en las fuentes que
+S.9.1 no había tocado (cotas del árbol, `VMedidasDA`, encadenamiento, `ConfigDis.mdb`).
+Ejecutado por trabajador, **verificado por el arquitecto** (determinismo por familia y el
+efecto del tie-break reproducidos). Scripts `scripts/cazar-discriminante-tramo.mjs`,
+`scripts/medir-tramo-tiebreak.mjs` (SOLO LECTURA).
+
+**Corrige la premisa de S.9.1 (regla 6).** La colisión estrella de S.9.1 ("medida
+evaluada 810 → `GM5333`[636-795] y `GM5347`[996-1995]") es un **artefacto de mezclar dos
+familias distintas**: `GM5333` es tramo de cremona (`OBCR`, `nOpcion=2`); `GM5347` es el
+CERRADERO ACUMULATIVO de S.1 (`OBC`/`OBCR`/`OBP`, `nOpcion` **vacío**, ~10 filas de rango
+solapado). No compiten. **Acotando la familia a `Conjunto|Comp|nOpcion` (escalera pura),
+la medida evaluada resuelve el tramo del oráculo SIN colisiones en las líneas de un solo
+tramo: 23/23 (`HU532|OBCR|2`), 21/21 (`HU529|OBCR|2`).** El discriminante que "faltaba"
+en S.9.1 era el propio alcance de familia — la medida sí funciona.
+
+**El residuo (OVERLAP FP=28, T.49) es un tramo FANTASMA sub-intervalo.** v5 emite toda
+fila cuyo rango contiene la medida, colando `GM5335`[996-1495] (⊂ `GM5334`[796-1545])
+junto al correcto. La dirección es limpia: en pares de contención estricta con exactamente
+un real, **gana el contenedor 18/18** (contenido 0/18) — valida el tie-break "rango más
+ancho gana" que T.49 dejó sin fundamentar.
+
+**Pero es INDEPLOYABLE — y aquí está el techo real (bloqueo por datos).** Hay **51 pares
+de contención con AMBOS artículos reales** (líneas multi-hoja donde el tramo contenido es
+legítimo). Ningún dato oracle-observable los separa de los 18 fantasmas: `nHojas`,
+ocurrencias de ranura (incluso con 1 sola, el contenido es real 41 vs 12 fantasma),
+`mano`, `TipoHoja`, cotas de hoja (`Hc/Hi/Ld/altManilla/PlHojasX/Y`), encadenamiento con
+cremonas/puntos de cierre. La misma medida (1045) → contenedor en una línea de una hoja y
+contenido en una de dos. El separador real es la **asignación medida→tramo POR HOJA/
+UNIDAD**, y el oráculo solo expone conteos AGREGADOS por artículo por línea. Aplicar el
+tie-break a ciegas **empeora** (medido): las exactas bajan 72→51-54 y los FN puros suben
+125→180 (`GM5335` pasa a FN 49 veces, sus casos co-reales). **De las 80 líneas del techo,
+11 tienen el fantasma como único error, pero la recuperación NETA segura con regla
+oracle-ciega es 0.**
+
+**Consecuencia:** el techo de exactitud de conjunto del oscilobatiente lo fija la
+**ausencia, en el oráculo, del despiece POR UNIDAD FÍSICA** del herraje —no una condición
+de `ConjuntosAsoc` sin identificar—. Cerrado como **bloqueo por datos**, con la dirección
+del discriminante ya caracterizada por si en el futuro se dispone de líneas con asignación
+por hoja. Caveat (regla 7): sin precios, en líneas, no en €.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
