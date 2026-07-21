@@ -3738,6 +3738,53 @@ ataca honestamente 24 líneas abatible/fijo que no cierran (no rompe ninguna pre
 Cierra la RE del recuento de escuadra para corredera; el oscilobatiente queda como
 residuo no topológico. Sigue **0/216 valoradas**.
 
+## T.48 ⭐ La composición por línea DESPEGA de 0: el recuento topológico da las primeras líneas exactas en cantidad
+
+Primer intento de COMPONER todos los componentes por línea. Ejecutado por trabajador,
+**verificado de forma independiente por el arquitecto** (reejecución de
+`scripts/medir-topo-sustituido.mjs` y comprobación art-a-art de una línea contra las
+hijas crudas del oráculo, regla 8). Se parte del predictor completo de asociados v5
+(réplica de `medir-umbral-asociados.mjs`, con `exactasCdad` por línea) y se SUSTITUYE la
+cantidad de los artículos de ESCUADRA por el recuento topológico (T.36 esquina, T.46
+comp 58/59, T.47 comp '!') y la de JUNTA por la topológica (T.39.1 perimetral 4×hoja,
+T.43 acristalamiento/central lineal por serie), dejando herraje/MO/patilla como v5. El
+override solo re-escala cantidades: `exactArt` (72/216) es invariante y **no rompe nada
+de lo que v5 acertaba**.
+
+**Resultado — `exactasCdad` pasa de 0 a las primeras líneas exactas:**
+
+| | exactasCdad |
+|---|---|
+| ANTES (v5 puro, T.31) | **0** / 216 |
+| DESPUÉS — techo in-sample | **40** / 72 exactArt |
+| DESPUÉS — **held-out honesto** (reglas aprendidas en train, medido en test 50/50) | **~20/34 exactArt** (≈ 20/216) |
+
+**Es el primer cambio de la sesión que despega `exactasCdad` de 0.** Verificado art-a-art
+en `ELEGANTPVC|2O` (topo marco1/hueco2/hoja2/trav1): el oráculo trae GM4837=8, GM4742=8,
+GM4735=20 (escuadras) y GM4055=8, GM4369=5 (juntas), y las fórmulas los clavan
+(`4×hoja=8`, `4·marco+8·hoja=20`, `3·marco+1·hoja=5`); los 25 herrajes GM53xx ya eran
+correctos en v5 → la línea cierra.
+
+**Matices honestos (regla 7):**
+- **El modo estructural-PURO cierra 0.** Las reglas derivadas solo de las tablas de
+  fábrica (ALIN T.46/47 + junta dominante) no cierran ninguna línea por sí solas; los
+  ~20–40 cierres vienen de los modelos APRENDIDOS (base×factor de esquina, lineal-por-
+  serie de junta) que **generalizan held-out** pero no están 100% derivados de config.
+- **Sinergia escuadra×junta:** solo-escuadra cierra 4, solo-junta 0, **ambos 40** —cerrar
+  exige acertar escuadra Y junta a la vez—.
+- **Bloqueante restante:** de las 32 líneas exactArt aún mal, escuadra residual **24**
+  (multi-hueco/travesaño/oscilobatiente), herraje **10**, junta **3** (≈resuelta).
+- **Near-miss:** 0 → **25 líneas a un solo artículo** de ser exactas; ese artículo es
+  escuadra en 20, herraje en 5. En el régimen limpio (marco=1, trav=0, sin felpudo):
+  0 → 11 de 31.
+
+**Lectura:** la reconstrucción topológica de escuadras+juntas de esta sesión es lo que
+mueve la aguja del 0 histórico (T.31). Los siguientes frentes accionables, en orden por
+las 25 near-miss: (1) la escuadra residual de esquina multi-hueco/travesaño (20
+líneas), (2) el herraje de oscilobatiente (5 líneas, aún sin tocar — ver T.49). Sigue
+sin precios cargados: "exacta en cantidad" es condición necesaria de valorar, no el €
+final. Script: `scripts/medir-topo-sustituido.mjs`.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
