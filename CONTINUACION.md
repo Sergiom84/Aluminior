@@ -41,7 +41,7 @@ fiel en columnas; lo que falta en CSV son tablas de config/semántica y de MO.
 
 ---
 
-## 2. Estado actual (arco T.24–T.36)
+## 2. Estado actual (arco T.24–T.38)
 
 El **frente de perfil está cerrado**; el frente vivo son los **asociados**, y su
 tapón es el **recuento de cantidades**.
@@ -77,25 +77,39 @@ tapón es el **recuento de cantidades**.
   valoradas**: el alineamiento aparece en casi toda línea y su valor por serie no está
   codificado. Todo verificado adversarialmente.
 
+- **T.37–T.38 (las DOS fuentes del alineamiento, contrastadas)** **T.37** fuente (a),
+  tabla aprendida del oráculo: ley de esquinas (T.36) + tabla por (serie,topología)
+  para el alineamiento, held-out por línea. Titular 83,2% de líneas con TODAS las
+  escuadras OK, **pero inflado por memorización**: la cifra honesta por generalización
+  es **48,7%** (la ley de esquinas generaliza al 98%; la tabla de alineamiento
+  MEMORIZA configs vistas y no extrapola a topología/serie nuevas). **T.38** fuente
+  (b), `InfoSeries.mdb` (ODBC 32-bit sobre copia): **no** tabula el alineamiento por
+  serie (es catálogo de metadatos; la BOM vive en las bibliotecas por serie = lo que
+  el oráculo refleja), pero sus `notasPublicas` **corroboran** el mecanismo topológico
+  y revelan que **Productor daba cuentas de escuadra MAL, corregidas a mano** → parte
+  del oráculo son bugs históricos.
+
 **Convergencia:** valorar una línea, la MO de fabricación y las cantidades de
-asociados **desembocan todas en el RECUENTO**. Tras T.36, el recuento de escuadras
-está **medido y partido**: las de esquina se reconstruyen del árbol; las de
-alineamiento son una **tabla por serie**, no una ecuación (leerla del oráculo por
-serie, o del catálogo `InfoSeries.mdb` si está declarada).
+asociados **desembocan todas en el RECUENTO**. Tras T.36–T.38, el recuento de
+escuadras está **medido y agotado por ambas fuentes**: las de esquina se reconstruyen
+del árbol con fórmula que generaliza; las de alineamiento son **memoria por serie**
+(no ecuación, y sin catálogo de fábrica que consultar). El componente escuadras del
+recuento está tan resuelto como el dato permite; el crux ahora es **llevar el mismo
+enfoque topológico a las JUNTAS y a los MÓDULOS de MO** (T.31/T.32).
 
 ---
 
 ## 3. Qué hacer, en orden
 
-1. **EL RECUENTO (crux).** Para ESCUADRAS ya está medido y partido (T.33–T.36): las
-   de esquina se reconstruyen con `4 × conteo topológico` del árbol (script
-   `scripts/medir-escuadras-topologia.mjs`); las de **alineamiento** (`GM4735` &c.)
-   son una **tabla por serie**. El siguiente paso del crux es: **(1a)** aprender/leer
-   el valor de alineamiento por serie —del oráculo por serie, o del catálogo
-   `InfoSeries.mdb` si está declarado (elección que roza la decisión del titular:
-   tabla aprendida vs dato de catálogo)—; **(1b)** aplicar el mismo enfoque
-   topológico a JUNTAS y MÓDULOS de MO, que T.31/T.32 dejaron acoplados al mismo
-   recuento. Rozan los anexos S.1–S.9 y T.33–T.36 — leerlos antes.
+1. **EL RECUENTO (crux).** Para ESCUADRAS está **medido y agotado por ambas fuentes**
+   (T.33–T.38): esquina = `4 × conteo topológico` que generaliza
+   (`scripts/medir-escuadras-topologia.mjs`); alineamiento = **memoria por serie**
+   (`scripts/medir-escuadras-modelo.mjs`, 83% held-out pero 49% por generalización), y
+   `InfoSeries.mdb` no aporta tabla de fábrica (T.38). El siguiente paso del crux es
+   **llevar el mismo enfoque topológico a las JUNTAS y a los MÓDULOS de MO** (los otros
+   componentes del recuento, T.31/T.32, acoplados al mismo árbol `EstructurasDiseño`).
+   El extractor de topología de la instancia ya está escrito y reutilizable. Rozan los
+   anexos S.1–S.9 y T.33–T.38 — leerlos antes.
 2. **MO de colocación (construible ya).** Modelar `HorasColoc`/`HorasAdFabr` como
    **campos de entrada del usuario** valorados a 0,5 €/min (68%+9% del dinero de MO).
    No desbloquea una línea por sí solo, pero es un componente real del total.
