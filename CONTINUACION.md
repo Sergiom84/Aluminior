@@ -41,7 +41,7 @@ fiel en columnas; lo que falta en CSV son tablas de config/semántica y de MO.
 
 ---
 
-## 2. Estado actual (arco T.24–T.42)
+## 2. Estado actual (arco T.24–T.46)
 
 El **frente de perfil está cerrado**; el frente vivo son los **asociados**, y su
 tapón es el **recuento de cantidades**.
@@ -132,6 +132,20 @@ tapón es el **recuento de cantidades**.
   ELEGANTPVC (0%)** por un `4·marco` base sin fila y la combinación comp 58+59.
   **Derivación PARCIAL**; el modelo lineal aprendido de T.41 sigue siendo el que
   funciona.
+- **T.43–T.46 (modo arquitecto+trabajadores; los residuos y la derivación, cerrados)**
+  Tres ejecutores en segundo plano, cada uno verificado independientemente por el
+  arquitecto. **T.43**: el residuo de acristalamiento de las juntas se cuenta por
+  `4·marco + 4·trav` (NO por vidrio; GM4057 100% en ELEGANTPVC+GMA350, generaliza) —
+  cierra el residuo de T.39.1. **T.44**: el felpudo de corredera (`GM4971`) es NO
+  topológico (topología idéntica → real 1/2/4; depende de carril/lado) — límite de T.30.
+  **T.45**: los módulos de MO por CONCEPTO son lineales sobre topología (mayormente
+  triviales porque marco=1 siempre; la señal real es AJUNQUILLADO = `1·vidrio` /
+  `1·marco+1·trav`); refina T.39.2 (16/20 conceptos con `ComponenteAsoc` vacío → la clave
+  es el código del concepto). **T.46 (cierra T.42)**: las dos piezas de la derivación de
+  escuadra se cierran — el `4·marco` base viene de `ConjuntosAsoc` (filas nOpcion-vacío
+  58/59, condicional, no universal) y el factor es `×2` uniforme (el "×4" era base+opción
+  sumadas); `nOpcion` NO es gate. Regla medida reproduce el oráculo (ELEGANTPVC 98,3%,
+  GMA65OPT/GMA60RL 100%). Queda fuera el comp `!` (corredera, mecanismo distinto).
 
 **Convergencia:** valorar una línea, la MO de fabricación y las cantidades de
 asociados **desembocan todas en el RECUENTO**, y tras T.33–T.40 el recuento tiene
@@ -164,13 +178,16 @@ aparece en casi toda línea.
    `ELEGANTPVC`. **RESUELTO en T.41:** el gating es (nOpcion + ArticuloAsoc perfil +
    TipoHoja, acumulativo) y la cuenta es una **fórmula lineal-entera por serie sobre la
    topología** (`a·marco+b·hoja+c·hueco+d·trav`), que generaliza. El siguiente paso del
-   crux, ahora, es: **(1a)** cerrar la derivación `fila→coeficiente` que T.42 dejó
-   PARCIAL — faltan dos piezas concretas: el **`4·marco` base** (una escuadra de marco
-   universal que no está en las filas de alineamiento; buscarla en `ConjuntosAsoc`/otra
-   familia) y la **combinación comp 58+59** (por qué 2 filas H·Cdad2 dan 8·hoja, no 16);
-   el gating ya está afinado (sin filtro de opción). **(1b)** aplicar el mismo modelo
-   lineal-por-serie a JUNTAS (residuo de felpudos/acristalamiento, T.39) y a MÓDULOS de
-   MO. Partida: `scripts/medir-configseriesasoc.mjs`. Rozan S.1–S.9 y T.33–T.42.
+   crux, ahora, está en gran parte MEDIDO: la derivación de escuadra cerrada (T.46), el
+   residuo de juntas de acristalamiento cerrado (T.43), los módulos de MO por concepto
+   (T.45). Lo que queda del recuento, en honesto: **(1a)** el mecanismo del comp `!`
+   (wildcard "TODAS", correderas/abatibles — GMA350·GM4710, GMPC*, GMA65OHS), que es
+   distinto (sin el `×2`) y aún no medido; **(1b)** el felpudo y otras piezas "por
+   carril/lado" son NO topológicas (T.44) — requieren otra dimensión (carriles/mm) que el
+   árbol no expone; **(1c)** validar el `×marco` para estructuras multi-marco (todo el
+   export tiene marco=1). Scripts de partida: `medir-escuadra-derivacion.mjs`,
+   `medir-configseriesasoc.mjs`, `medir-juntas-lineal-serie.mjs`,
+   `medir-mo-concepto-lineal.mjs`. Rozan S.1–S.9 y T.33–T.46.
 2. **MO de colocación (construible ya).** Modelar `HorasColoc`/`HorasAdFabr` como
    **campos de entrada del usuario** valorados a 0,5 €/min (68%+9% del dinero de MO).
    No desbloquea una línea por sí solo, pero es un componente real del total.
