@@ -3480,6 +3480,72 @@ prometedor que **generalizaría** (no memoriza) —a diferencia de la tabla de T
 pero **no es un predictor que funcione todavía**; no se codifica. Script:
 `scripts/medir-configseriesasoc.mjs` (SOLO LECTURA). Sigue **0/216 valoradas**.
 
+## T.41 Ingeniería inversa del configurador: la escuadra de alineamiento es una fórmula LINEAL por serie sobre la topología (generaliza)
+
+Ingeniería inversa del mecanismo de `ConfigSeriesAsoc` (T.40 lo dejó localizado, no
+cerrado). Es el corazón del proyecto: reconstruir la lógica del configurador de GAIA.
+Mismo script `scripts/medir-configseriesasoc.mjs` (SOLO LECTURA), ampliado.
+
+**El gating, reverse-engineered (corrige el bug de T.40):** una fila de
+`ConfigSeriesAsoc(serie, art)` DISPARA si (a) su `nOpcion` está activa, (b) su
+`ArticuloAsoc` (perfil) está presente en la línea, (c) su `TipoHoja` aplica; las filas
+que disparan son ACUMULATIVAS (S.1). El bug de T.40 (1,4%) era **no aplicar el filtro
+`ArticuloAsoc`**: las filas que solo difieren en el perfil (`GMA60RL`: 3 filas
+`M·58·Cdad2` que solo cambian `ArticuloAsoc` = GM8855L/GM8870L/GM8873L) son
+**alternativas**, no sumandos —solo dispara la del perfil presente—. Verificado a mano:
+`GMA60RL` tras el filtro deja 1 fila, `Cdad2 × 4 esquinas = 8 = oráculo`.
+
+**El descubrimiento: la cuenta es una COMBINACIÓN LINEAL ENTERA de la topología del
+árbol, con coeficientes POR SERIE.** No es `Cdad × 4 × rol` uniforme; es
+`cantidad = a·marco + b·hoja + c·hueco + d·trav`, con `(a,b,c,d)` enteros pequeños
+propios de cada (serie, artículo):
+
+| (serie, art) | fórmula | evidencia |
+|---|---|---|
+| `ELEGANTPVC · GM4735` | **4·marco + 8·hoja** | real: hoja 0→4, 1→12, 2→20, 3→28, 4→36 (232/236 = 98%) |
+| `GMA60RL · GM4735` | 8·marco | real 8 constante |
+| `GMA65OPT · GM4735` | 4·marco | |
+| `GMA350 · GM4710` | 8·hoja | |
+| `GMPC135ME · GM4735` | 4·hueco + 4·trav | corredera: se cuenta por huecos/travesaños |
+
+Nota (no confundir mecanismos): el predictor DIRECTO con la cuenta ingenua
+`Cdad × 4 × rol` sobre las filas gated acierta solo **16,5%** —ese count uniforme NO
+cierra—. Lo que funciona es el **modelo lineal-entero por serie**; es a él a lo que se
+refiere lo que sigue.
+
+**Y GENERALIZA (lo que la memoria de T.37 no hacía), demostrado con solidez desigual.**
+Coeficientes aprendidos en train (grid de enteros), evaluados en test held-out (split
+por línea). Cifras honestas (recorte del verificador, regla 6):
+- La **prueba fuerte es `ELEGANTPVC · GM4735`** (n=118): `4·marco + 8·hoja` acierta
+  **232/236 = 98,3%** con variedad REAL (hoja 0→4…4→36; baseline "constante 12" solo
+  46,6%). Es lineal-entera genuina, no memoria. Evidencia seria y limpia también en
+  `GMA65OPT · GM4735`/`GM4710` (n=16/15, 100%). **3 (serie,art) con evidencia sólida**
+  —no los 10 modelos que el grid produce: los de `n_train=2` (GMPC135ME, GMPC76R) son
+  ajuste trivial (4 coef sobre 2 puntos), y los `GMA350` quedan forzados (84–86%)—.
+- **Generaliza a topologías NUEVAS** (no vistas en train): 16/17, repartido en **4
+  series distintas** (`ELEGANTPVC` 4/4, `GMA65OPT` 6/6, `GMA350` 5/6, `GMA60RL` 1/1),
+  frente al 22–54% de la tabla memorizada de T.37. Es señal real de que es fórmula, no
+  memoria —aunque n=17 es pequeño—.
+- El "94,1% test global" está **inflado**: el test es ~50% `ELEGANTPVC`, así que más de
+  la mitad del acierto es una sola serie. Estable al cambiar el split (94–97%, novel
+  16–17/17), pero no debe leerse como métrica global limpia.
+
+**Consecuencia — el residuo deja de ser memoria y pasa a ser fórmula (demostrado en la
+serie dominante).** El recuento de la escuadra de alineamiento (el tapón desde
+T.31/T.35) es, para cada serie, una combinación lineal entera de los elementos del
+árbol; los coeficientes son la huella de `ConfigSeriesAsoc` (Cdad × rol × esquinas), la
+tabla de fábrica que v5 ignora. Cierra la línea de T.36→T.40: escuadras de esquina =
+`4·conteo` universal; escuadras de alineamiento = `Σ coef_serie · conteo`, ambas
+geometría sobre la misma topología. **Pendiente:** (1) derivar `(a,b,c,d)`
+DIRECTAMENTE de las filas de `ConfigSeriesAsoc` —hoy se aprenden del oráculo; la
+correspondencia es clara (`ELEGANTPVC` 2 filas H·Cdad2 → 8·hoja, más el 4·marco base)
+pero no está cerrada fila→coeficiente—; (2) más oráculo en las series con `n_train`
+pequeño (la generalización está probada de verdad en `ELEGANTPVC`+`GMA65OPT`, con señal
+en otras dos). Sigue **0/216 líneas valoradas** (T.20.3): esto resuelve el recuento de
+escuadras —el mayor error de T.31— con un modelo que generaliza en la serie dominante,
+no la línea entera (faltan juntas y demás), pero convierte el residuo en algo
+reconstruible por geometría en vez de memorizable.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
