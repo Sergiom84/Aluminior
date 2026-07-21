@@ -41,7 +41,7 @@ fiel en columnas; lo que falta en CSV son tablas de config/semántica y de MO.
 
 ---
 
-## 2. Estado actual (arco T.24–T.40)
+## 2. Estado actual (arco T.24–T.41)
 
 El **frente de perfil está cerrado**; el frente vivo son los **asociados**, y su
 tapón es el **recuento de cantidades**.
@@ -111,6 +111,18 @@ tapón es el **recuento de cantidades**.
   filtro `nOpcion` no cuadra con `VOpcionesHerraje`. **Fuente localizada y parcialmente
   validada; mecanismo de combinación SIN resolver.** Generalizaría (no memoriza), a
   diferencia de la tabla de T.37 — pero no funciona aún.
+- **T.41 (INGENIERÍA INVERSA del configurador — el residuo pasa de memoria a fórmula)**
+  Reverse-engineering de `ConfigSeriesAsoc`. Gating resuelto: una fila dispara si
+  `nOpcion` activa + `ArticuloAsoc` (perfil) presente + `TipoHoja`; acumulativas. El bug
+  de T.40 era no filtrar por `ArticuloAsoc` (filas que solo difieren en perfil son
+  ALTERNATIVAS, no sumandos). **Descubrimiento: la cuenta de la escuadra de alineamiento
+  es una COMBINACIÓN LINEAL ENTERA de la topología, con coeficientes POR SERIE** —
+  `ELEGANTPVC·GM4735 = 4·marco + 8·hoja` (98,3%, real 4/12/20/28/36 con hoja 0→4, no
+  constante), `GMA60RL = 8·marco`, `GMPC135ME = 4·hueco + 4·trav` (corredera)—. Y
+  **GENERALIZA a topologías nuevas** (16/17 en 4 series), a diferencia de la memoria de
+  T.37. Verificado y con cifras recortadas: evidencia sólida en 3 (serie,art)
+  (`ELEGANTPVC`+`GMA65OPT`×2); el 94,1% global inflado (test 50% ELEGANTPVC). El
+  residuo del recuento **deja de ser memorizable y pasa a ser fórmula geométrica**.
 
 **Convergencia:** valorar una línea, la MO de fabricación y las cantidades de
 asociados **desembocan todas en el RECUENTO**, y tras T.33–T.40 el recuento tiene
@@ -140,8 +152,15 @@ aparece en casi toda línea.
    generalizaría —`ConfigSeriesAsoc.csv`, que v5 ignora—; falta **ingeniería inversa
    del mecanismo de combinación** de sus filas (selección vs suma; gating real de
    `nOpcion`/`TipoHoja`/estructura; factor de esquina por rol) y el caso duro
-   `ELEGANTPVC`. Ese es el siguiente paso concreto del crux, con
-   `scripts/medir-configseriesasoc.mjs` de partida. Rozan S.1–S.9 y T.33–T.40.
+   `ELEGANTPVC`. **RESUELTO en T.41:** el gating es (nOpcion + ArticuloAsoc perfil +
+   TipoHoja, acumulativo) y la cuenta es una **fórmula lineal-entera por serie sobre la
+   topología** (`a·marco+b·hoja+c·hueco+d·trav`), que generaliza. El siguiente paso del
+   crux, ahora, es: **(1a)** derivar los coeficientes `(a,b,c,d)` DIRECTAMENTE de las
+   filas de `ConfigSeriesAsoc` (hoy se aprenden del oráculo; falta cerrar
+   fila→coeficiente) y ampliar oráculo en series con `n_train` pequeño; **(1b)** aplicar
+   el mismo modelo lineal-por-serie a JUNTAS (residuo de felpudos/acristalamiento, T.39)
+   y a MÓDULOS de MO. Partida: `scripts/medir-configseriesasoc.mjs`. Rozan S.1–S.9 y
+   T.33–T.41.
 2. **MO de colocación (construible ya).** Modelar `HorasColoc`/`HorasAdFabr` como
    **campos de entrada del usuario** valorados a 0,5 €/min (68%+9% del dinero de MO).
    No desbloquea una línea por sí solo, pero es un componente real del total.
