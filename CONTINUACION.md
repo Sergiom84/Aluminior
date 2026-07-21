@@ -41,7 +41,7 @@ fiel en columnas; lo que falta en CSV son tablas de config/semántica y de MO.
 
 ---
 
-## 2. Estado actual (arco T.24–T.41)
+## 2. Estado actual (arco T.24–T.42)
 
 El **frente de perfil está cerrado**; el frente vivo son los **asociados**, y su
 tapón es el **recuento de cantidades**.
@@ -123,6 +123,15 @@ tapón es el **recuento de cantidades**.
   T.37. Verificado y con cifras recortadas: evidencia sólida en 3 (serie,art)
   (`ELEGANTPVC`+`GMA65OPT`×2); el 94,1% global inflado (test 50% ELEGANTPVC). El
   residuo del recuento **deja de ser memorizable y pasa a ser fórmula geométrica**.
+- **T.42 (derivar coeficiente ← fila: gating afinado, derivación parcial)** Intento de
+  derivar `(a,b,c,d)` directamente de `ConfigSeriesAsoc`. Positivo (regla 6): el filtro
+  `nOpcion` de T.41 era **incorrecto** (GMA65OPT declara nOp=11 pero las líneas tienen
+  activas 13/980 y la escuadra se cuenta igual → `nOpcion` NO se filtra; gating correcto
+  = `ArticuloAsoc` + `TipoHoja`). Negativo honesto: el predictor directo
+  `Cdad×F×elemento` reproduce algunas series (GMA350 96%, GMA60RL 50%) pero **falla
+  ELEGANTPVC (0%)** por un `4·marco` base sin fila y la combinación comp 58+59.
+  **Derivación PARCIAL**; el modelo lineal aprendido de T.41 sigue siendo el que
+  funciona.
 
 **Convergencia:** valorar una línea, la MO de fabricación y las cantidades de
 asociados **desembocan todas en el RECUENTO**, y tras T.33–T.40 el recuento tiene
@@ -155,12 +164,13 @@ aparece en casi toda línea.
    `ELEGANTPVC`. **RESUELTO en T.41:** el gating es (nOpcion + ArticuloAsoc perfil +
    TipoHoja, acumulativo) y la cuenta es una **fórmula lineal-entera por serie sobre la
    topología** (`a·marco+b·hoja+c·hueco+d·trav`), que generaliza. El siguiente paso del
-   crux, ahora, es: **(1a)** derivar los coeficientes `(a,b,c,d)` DIRECTAMENTE de las
-   filas de `ConfigSeriesAsoc` (hoy se aprenden del oráculo; falta cerrar
-   fila→coeficiente) y ampliar oráculo en series con `n_train` pequeño; **(1b)** aplicar
-   el mismo modelo lineal-por-serie a JUNTAS (residuo de felpudos/acristalamiento, T.39)
-   y a MÓDULOS de MO. Partida: `scripts/medir-configseriesasoc.mjs`. Rozan S.1–S.9 y
-   T.33–T.41.
+   crux, ahora, es: **(1a)** cerrar la derivación `fila→coeficiente` que T.42 dejó
+   PARCIAL — faltan dos piezas concretas: el **`4·marco` base** (una escuadra de marco
+   universal que no está en las filas de alineamiento; buscarla en `ConjuntosAsoc`/otra
+   familia) y la **combinación comp 58+59** (por qué 2 filas H·Cdad2 dan 8·hoja, no 16);
+   el gating ya está afinado (sin filtro de opción). **(1b)** aplicar el mismo modelo
+   lineal-por-serie a JUNTAS (residuo de felpudos/acristalamiento, T.39) y a MÓDULOS de
+   MO. Partida: `scripts/medir-configseriesasoc.mjs`. Rozan S.1–S.9 y T.33–T.42.
 2. **MO de colocación (construible ya).** Modelar `HorasColoc`/`HorasAdFabr` como
    **campos de entrada del usuario** valorados a 0,5 €/min (68%+9% del dinero de MO).
    No desbloquea una línea por sí solo, pero es un componente real del total.
