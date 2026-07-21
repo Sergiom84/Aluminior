@@ -41,7 +41,7 @@ fiel en columnas; lo que falta en CSV son tablas de config/semántica y de MO.
 
 ---
 
-## 2. Estado actual (arco T.24–T.32)
+## 2. Estado actual (arco T.24–T.36)
 
 El **frente de perfil está cerrado**; el frente vivo son los **asociados**, y su
 tapón es el **recuento de cantidades**.
@@ -62,20 +62,40 @@ tapón es el **recuento de cantidades**.
 - **T.32** La **mano de obra**: fabricación = `nº módulos × TiempoFabr × 0,5 €/min`
   (fórmula plana, la geométrica ancho/alto está muerta), **acoplada al mismo
   recuento**; colocación (68% del dinero) es **entrada manual** del usuario.
+- **T.33–T.36 (el RECUENTO de escuadras, atacado a fondo)** El recuento por
+  aparición de ranura del v5 infravalora las escuadras. **T.33**: la señal es física
+  (×2 por esquina), cierra 63,7% en hueco simple, se rompe en multi-hueco. **T.34**:
+  la cuenta de apariciones de v5 es un valor de plantilla que **no escala con la
+  geometría** (raíz del fallo). **T.35**: es un multiplicador fijo por artículo, pero
+  0 líneas cierran; tapón = `GM4735` (la escuadra más frecuente). **T.36** (refactor:
+  extractor de la topología del árbol de la instancia): el recuento se **parte en
+  dos** — (a) **escuadras de esquina** = ley `4 × elementos-con-esquina` (marco/hoja/
+  travesaño del árbol), robusta cross-serie y single+multi para 3–4 artículos (~50% de
+  las apariciones, held-out ~100%); (b) **escuadras de alineamiento** (`GM4735` &c.),
+  que **no son fórmula**: las fija **(serie, topología)** al 92% out-of-sample (5/6
+  series dan una constante; la ambigüedad vive en `ELEGANTPVC`). **Sigue 0/216
+  valoradas**: el alineamiento aparece en casi toda línea y su valor por serie no está
+  codificado. Todo verificado adversarialmente.
 
 **Convergencia:** valorar una línea, la MO de fabricación y las cantidades de
-asociados **desembocan todas en el RECUENTO** — un algoritmo del configurador
-(cuántas escuadras/juntas/módulos por estructura), reconstruible desde el árbol
-`EstructurasDiseño`, no un dato almacenado.
+asociados **desembocan todas en el RECUENTO**. Tras T.36, el recuento de escuadras
+está **medido y partido**: las de esquina se reconstruyen del árbol; las de
+alineamiento son una **tabla por serie**, no una ecuación (leerla del oráculo por
+serie, o del catálogo `InfoSeries.mdb` si está declarada).
 
 ---
 
 ## 3. Qué hacer, en orden
 
-1. **EL RECUENTO (crux).** Medir si la geometría de `EstructurasDiseño` (huecos,
-   hojas, esquinas) reconstruye las cantidades de escuadras/juntas/módulos mejor que
-   el conteo por aparición de ranura (el predictor v5, que falla las cantidades).
-   Roza los anexos S.1–S.9 — leerlos antes. Es medición → modelado, no solo medición.
+1. **EL RECUENTO (crux).** Para ESCUADRAS ya está medido y partido (T.33–T.36): las
+   de esquina se reconstruyen con `4 × conteo topológico` del árbol (script
+   `scripts/medir-escuadras-topologia.mjs`); las de **alineamiento** (`GM4735` &c.)
+   son una **tabla por serie**. El siguiente paso del crux es: **(1a)** aprender/leer
+   el valor de alineamiento por serie —del oráculo por serie, o del catálogo
+   `InfoSeries.mdb` si está declarado (elección que roza la decisión del titular:
+   tabla aprendida vs dato de catálogo)—; **(1b)** aplicar el mismo enfoque
+   topológico a JUNTAS y MÓDULOS de MO, que T.31/T.32 dejaron acoplados al mismo
+   recuento. Rozan los anexos S.1–S.9 y T.33–T.36 — leerlos antes.
 2. **MO de colocación (construible ya).** Modelar `HorasColoc`/`HorasAdFabr` como
    **campos de entrada del usuario** valorados a 0,5 €/min (68%+9% del dinero de MO).
    No desbloquea una línea por sí solo, pero es un componente real del total.
