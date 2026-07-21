@@ -3268,6 +3268,100 @@ paso deja de ser "una fórmula": es **aprender el valor de alineamiento por seri
 —una tabla, no una ecuación— con oráculo suficiente por serie, o leerlo del catálogo
 de serie (`InfoSeries.mdb`) si allí está declarado.
 
+## T.37 Fuente (a): la tabla aprendida cierra el 83% de las escuadras por línea (held-out), pero no extrapola
+
+Se pidió construir las DOS fuentes del valor de alineamiento (T.36) para
+contrastarlas: (a) aprenderlo del oráculo por serie, (b) leerlo de `InfoSeries.mdb`.
+Este anexo es la fuente (a). Script `scripts/medir-escuadras-modelo.mjs` (SOLO
+LECTURA). Modelo completo de escuadras: la ley de esquinas de T.36 (`4 × conteo`)
+para los artículos donde generaliza (n≥15, ≥90% en train), y una TABLA aprendida
+`(serie, topología) → serie → global` (moda del real) para el resto. **Split honesto
+por LÍNEA** (hash determinista; una línea entera va a train o a test, nunca partida),
+se aprende en train y se evalúa en test.
+
+**Held-out (test): 164/197 líneas (83,2%) tienen todas sus escuadras correctas,
+92,6% por aparición — PERO ese 83,2% está inflado por memorización.** El número
+honesto de cierre por GENERALIZACIÓN (desactivando el nivel de tabla que memoriza la
+config exacta `(serie,topología)`) es **48,7% (96/197), estable en 47–51%** a lo
+largo de varios splits genuinamente distintos (titular 79–83%). De las 164 líneas
+cerradas, **158 dependen de ≥1 escuadra acertada por una pareja (serie, topología) ya
+vista en train**; solo **6** cierran sin ninguna config memorizada, y **0** con solo
+fórmula (toda línea con escuadras lleva una de alineamiento que va por tabla).
+Verificado adversarialmente: split limpio por línea (train∩test=∅; `nLinea` único por
+fichero), enlace exacto (regla 8), `esEscuadra` sin falsos positivos.
+
+**De dónde sale cada acierto en test** (lo que revela qué generaliza y qué memoriza):
+
+| Vía de predicción | acierto test |
+|---|---:|
+| ley-esquina (fórmula) | 358/364 (98%) ← generaliza de verdad |
+| tabla `(serie,topología)` ya vista en train | 255/275 (93%) ← **memoriza config** |
+| tabla serie, **topología NUEVA** | 19/35 (54%) ← apenas generaliza |
+| fallback global, **serie NUEVA** | 2/5 (40%) ← aquí falta el catálogo |
+
+La lectura honesta: la **ley de esquinas es fórmula real** (98%, generaliza cross-
+serie); la **tabla de alineamiento MEMORIZA** —cierra el 93% cuando la pareja (serie,
+topología) ya se vio, pero cae a 54% con topología nueva y 40% con serie nueva—.
+Incluso el 93% held-out de `GM4735` es memoria (138/148 de sus filas de test repiten
+una config ya vista), no extrapolación. **La fuente (a) es, con precisión, una
+memoria de configuraciones vistas**: sirve para series/estructuras **recurrentes** (el
+grueso de la producción real repite catálogo), no para lo no visto. Ahí haría falta
+una regla de fábrica —que la fuente (b) mostró que **no existe tabulada** (T.38)—.
+
+**Alcance (regla 7):** cerrar las escuadras de una línea **no** es valorarla —faltan
+juntas y demás asociados—; incluso el 48,7% es cota superior por el lado de las
+escuadras. **Sigue 0/216 líneas valoradas** (T.20.3): esto avanza UNO de los
+componentes del recuento (las escuadras, el mayor error de T.31) —la ley de esquinas
+generaliza; el alineamiento se memoriza por serie—, no la línea entera.
+
+## T.38 Fuente (b): InfoSeries.mdb no tabula el alineamiento, pero lo corrobora (y revela que Productor tenía bugs)
+
+Fuente (b) del valor de alineamiento: leer `InfoSeries.mdb` (375 MB) en SOLO LECTURA
+sobre COPIA (ODBC 32-bit; memoria `leer-mdb-portatil`). Expedición hecha por
+trabajador; copia en `%TEMP%\aluminior_explore\InfoSeries_copia.mdb` (el driver ODBC
+segfaultea al CERRAR sobre este fichero, pero siempre tras devolver el resultado —
+datos fiables). **Resultado NEGATIVO para un join, con corroboración fuerte.**
+
+**No hay declaración por serie de la cantidad de escuadras.** `InfoSeries.mdb` es el
+**catálogo maestro de metadatos**, no un almacén de BOM: 9 tablas (`SerSeries`
+id/código/material, `SerBibliotecas` versiones/rutas, `SerSeriesCE` solo marcado CE,
+`SerActuaciones`/`Lin` registro de cambios, `Constantes`…). **Ninguna liga
+`GM4735`/comp 58-59/'HOJAS RODAMIENTO' a una cantidad por serie.** La BOM (conjuntos,
+`ConjuntosAsoc`, `EstructurasArticulos`) vive en los **.mdb de biblioteca por serie**
+—de donde salió el CSV que ya usamos—, no en el maestro. Confirma que la fuente
+estructurada de (a) es la única: no hay un catálogo por serie más limpio que consultar.
+
+**Lo que SÍ corrobora (independiente del oráculo):** las escuadras aparecen en el
+campo libre `notasPublicas` de 49 actuaciones (peticiones de cambio en prosa; los
+campos SQL estructurados venían vacíos → los ajustes eran manuales). Varias reglas
+textuales reproducen las constantes y la topología medidas:
+- *"perfil 9744 cerco lleva 8 escuadras x cerco"* → coincide con `GMA60RL→8` (T.36).
+- *"corredera de 3 carriles pone 12 unid, y son 4"* y *"4 hojas pone 16, y son 8"*
+  → reproduce el patrón 12/4 que en `ELEGANTPVC` resolvía la topología (T.36).
+- *"escuadras de marco 2 por inglete"*, *"3 escuadras por esquina Marco 3 carriles"*,
+  *"fijo independiente 4735, cada vértice 1 escuadra"* → confirman "por esquina/
+  vértice", con multiplicador que depende de la topología (carriles/vértices).
+
+**Hallazgo de peso (afecta la confianza en el oráculo, regla 7):** esas notas
+documentan que **el propio Productor daba cuentas de escuadra INCORRECTAS,
+corregidas a mano** ("*pone 12, y son 4*"; "*pone 16, y son 8*"). El recuento de
+escuadras es topológico, afinado por serie y **históricamente con errores**: parte de
+lo que el oráculo registra son esas cuentas —a veces la mala, a veces la corregida—.
+
+**Síntesis del cruce (a)×(b):** ambas fuentes coinciden en el mecanismo —la escuadra
+se cuenta por esquina/vértice, con un factor topológico afinado por serie—. La (a)
+lo cuantifica: la ley de esquinas generaliza (98%) y la tabla de alineamiento
+memoriza (83% held-out sobre configs vistas, pero solo 49% por generalización real,
+T.37). La (b) confirma que **no existe una tabla-por-serie de fábrica** que consultar
+(el dato vive en las bibliotecas de serie = lo que el oráculo ya refleja) y avisa de
+que algunas cuentas del oráculo son **erróneas de origen** (Productor daba mal el
+recuento). **Conclusión práctica:** la fuente canónica es la (a) —el oráculo/
+bibliotecas—, con la topología de T.36 como columna vertebral; el alineamiento no es
+fórmula sino memoria por serie, y lo que (a) no generaliza (topologías/series nuevas)
+NO tiene un catálogo de fábrica que lo cubra —mezcla config no vista con posibles bugs
+históricos (b)—, así que ese resto solo se cierra viendo más oráculo por serie, no con
+una ecuación.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
