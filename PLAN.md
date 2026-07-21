@@ -3829,6 +3829,41 @@ medida no es el discriminante). **Consecuencia:** el techo de la exactitud de co
 expuesto en el árbol; es el frente más profundo que queda. Caveat (regla 7): sin precios,
 el impacto se mide en líneas, no en €.
 
+## T.50 El modelo lineal NO cierra la escuadra residual: la esquina ya la resolvía T.36, y el "avance" en alineamiento era memoria
+
+Intento de subir el exactasCdad de T.48 (~20 held-out) atacando la escuadra residual con
+el modelo lineal-entero por serie (T.41/T.43). Ejecutado por trabajador y **verificado de
+forma ADVERSARIAL por el arquitecto**: comprobé de forma independiente que la regla clave
+`GMA65OPT|GM4710 = 4·hoja` acierta solo **32/70 (46%)** sobre todo el oráculo, no el 93%
+inicial; al devolver el rumbo (`SendMessage`), la reejecución multi-salt confirmó la
+inflación. Script `scripts/medir-escuadra-lineal-serie.mjs` (SOLO LECTURA, no commiteado).
+
+**Resultado (negativo, honesto):**
+- **Escuadra de ESQUINA: el lineal aporta +0 held-out.** `GM4742`/`GM4327`/`GM4837` ya
+  cierran al 100% con el término único `4×base` de T.36, incluido multi-hueco/travesaño
+  (`GM4742` multi 90/90). **Refuta la premisa** de que las 20 near-miss de T.48 fueran
+  esquina multi-hueco: eran la escuadra de ALINEAMIENTO `GM4710` (19/20).
+- **Escuadra de ALINEAMIENTO `GM4710`: el lineal NO la cierra estructuralmente.** El
+  aparente `+9` held-out era **suerte del split**: con 5 sales de hash distintas el delta
+  es **media +6,2, rango [2..9]**. Contrafactual desactivando la memoria de
+  `(serie,topología)` exacta (nivel de T.37): **delta media 0,4, rango [0..1]** → **~94%
+  del avance es MEMORIA de config vista, ~6% fórmula que generaliza**. Las líneas que
+  cierran son mono-hoja `[m1 h1]` donde `4·hoja` = la constante 4; el aporte real es
+  corregir un factor ½ de `predAlin` (T.46/47 infra-cuenta `GM4710`) con un valor
+  per-serie memorizado. Cobertura ~50%: `4·hoja` es 94% sobre líneas CON árbol (32/34)
+  pero 46% sobre las 70 (36 sin árbol → la fórmula no dispara). `GMA350|GM4710` y
+  `GMA60RL|GM4710` = "sin modelo" (grid <80%: reales {4,8,16} sobre 3 topologías).
+
+**Consecuencia — confirma T.36 (regla 6):** la escuadra de alineamiento es *"una tabla,
+no una ecuación"*. El modelo lineal-topológico que cerró juntas (T.43) y esquinas NO
+transfiere al alineamiento: su cantidad no es geometría del árbol sino un valor por
+serie/config, y `GM4710` en varias series es un **residuo NO topológico** (familia
+T.44 felpudo / T.47 oscilobatiente). exactasCdad held-out se queda en ~20 (el +6,2 es
+casi todo memoria; solo ~+0,4 generaliza). **El bloqueante restante son residuos NO
+topológicos** (`GM4710` sin árbol/sin señal) **y el tramo del oscilobatiente** (T.49) —
+ambos datos no expuestos en el árbol. Sin precios cargados. **Valor del anexo: negativo
+honesto — evita perseguir un modelo lineal que solo memoriza.**
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
