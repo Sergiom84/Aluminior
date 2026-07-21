@@ -3546,6 +3546,42 @@ escuadras —el mayor error de T.31— con un modelo que generaliza en la serie 
 no la línea entera (faltan juntas y demás), pero convierte el residuo en algo
 reconstruible por geometría en vez de memorizable.
 
+## T.42 Derivar coeficiente ← fila: el gating se afina (opción refutada), pero la derivación NO cierra
+
+Intento de cerrar la RE del todo: derivar los coeficientes `(a,b,c,d)` de T.41
+DIRECTAMENTE de las filas de `ConfigSeriesAsoc`, sin aprenderlos del oráculo. Dos
+resultados, uno positivo y uno honesto negativo.
+
+**Positivo — el filtro de opción de T.41 era incorrecto (corrección, regla 6).** El
+gating de T.41 exigía `nOpcion` activa. Es **falso**: `GMA65OPT·GM4735` declara sus
+filas con `nOpcion=11`, pero las líneas reales tienen activas `GMA65OPT:13/980` —no
+11— y la escuadra **se cuenta igual** (real=4). Luego `nOpcion` en `ConfigSeriesAsoc`
+**no se filtra** contra las opciones activas de la línea; el gating correcto es solo
+`ArticuloAsoc` (perfil presente) + `TipoHoja`. Con eso, las filas "que no disparaban"
+de T.41 (`GMA65OPT`: M·Cdad1 → 4·marco con hoja=0 en sus líneas fijas 2PD/2O)
+**cuadran**. Esto refina el mecanismo de T.41 sin cambiar su modelo lineal (que no usa
+este gating: aprende los coeficientes de la topología directamente).
+
+**Negativo honesto — la derivación mecánica `fila → coeficiente` NO cierra.** Un
+predictor directo `cantidad = Σ Cdad × F × elemento(rol)` (rol M/G→marco, H→hoja,
+`!`→hoja) reproduce algunas series (`GMA350` 96%, `GMA60RL` 50% con F=4) pero **falla
+la dominante `ELEGANTPVC` (0%)**, por dos piezas sin decodificar:
+- un **`4·marco` base que aparece sin fila que lo genere** (`ELEGANTPVC` solo tiene
+  filas H, pero su fórmula real lleva +4·marco; `GMA65OPT`/`GMA350` dan 4·marco "de la
+  nada" también) — apunta a una escuadra de marco universal que no está en las filas de
+  alineamiento;
+- la **combinación de `comp 58`+`59`** (ESCUADRA PEQ + GRANDE): 2 filas H·Cdad2 dan
+  `8·hoja`, no `16` —el factor efectivo por fila es la mitad del de una fila M sola—,
+  sin regla clara de por qué.
+
+**Estado (regla 7): derivación PARCIAL.** El gating quedó afinado (opción refutada,
+`ArticuloAsoc`+`TipoHoja`), y para series de rol simple (M sola, `!` de corredera) el
+coeficiente = `Cdad × 4 × elemento` cuadra; pero el `4·marco` base y la combinación
+58/59 de la serie dominante no están cerrados. **El modelo LINEAL aprendido de T.41
+sigue siendo el que funciona** (generaliza); la derivación directa se deja anotada
+como no cerrada, para no volver a intentar el `Cdad×F×elem` ingenuo sin resolver antes
+esas dos piezas. Sigue **0/216 valoradas**.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
