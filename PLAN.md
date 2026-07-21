@@ -3582,6 +3582,78 @@ sigue siendo el que funciona** (generaliza); la derivación directa se deja anot
 como no cerrada, para no volver a intentar el `Cdad×F×elem` ingenuo sin resolver antes
 esas dos piezas. Sigue **0/216 valoradas**.
 
+## T.43 El modelo lineal por serie cierra el residuo de ACRISTALAMIENTO de las juntas (no es por vidrio, es 4·marco+4·trav)
+
+Aplicación del modelo lineal-entero por serie de T.41 al RESIDUO de juntas que T.39.1
+dejó sin cerrar (acristalamiento GM4057/GM4091/GM4089 al 85/76/69%, juntas centrales,
+felpudos). Ejecutado por trabajador, **verificado de forma independiente por el
+arquitecto** (reejecución de `scripts/medir-juntas-lineal-serie.mjs`, SOLO LECTURA;
+cifras y fórmulas reproducidas). Base topológica ampliada con `vidrio`;
+`cantidad = a·marco+b·hoja+c·hueco+d·trav+e·vidrio`, coef enteros por (serie,art),
+split held-out por línea.
+
+**Hallazgo — las juntas de acristalamiento NO se cuentan por vidrio sino por
+`4·marco + 4·trav`** (esquinas de marco + travesaños), lo que explica por qué `4×vidrio`
+se quedaba en 69–85% en T.39.1:
+
+| artículo | antes | fórmula lineal por serie | evidencia (verificada) |
+|---|---|---|---|
+| `GM4057` GOMA EXT.ACRIST | 4×vidrio 85% | 4·marco + 4·trav | ELEGANTPVC n=118 100%, GMA350 n=35 100% |
+| `GM4089` INT.ACRIST 5-6 | 4×vidrio 69% | 4·marco + 4·trav | GMA350 n=33 97% |
+| `GM4091` INT.ACRIST 7-8 | 4×vidrio 76% | 4·marco + 2·hueco | ELEGANTPVC n=115 97% |
+| `GM4850` EXT.ACRIST C/ALA | 4×vidrio 85% | 4·marco + 4·trav | GMA65OPT n=16 100% |
+| `GM4369`/`GM4324` CENTRAL | 4×hoja 54/88% | 3·marco + 1·hoja | ELEGANTPVC/GMA350 94–95% |
+| `GM3016` BURBUJA | 8×hoja 88% | 2·marco + 6·hoja | GMA350 n=19 95% |
+
+**Cifras honestas (regla 6).** TRAIN 97,4% / TEST held-out 96,6% está INFLADO (test
+dominado por ELEGANTPVC+GMA350, como en T.41). Lo sólido: de 25 (serie,art) con modelo
+solo **3 tienen n_train≥10 y train 100%** (`GM4057` en ELEGANTPVC y GMA350, `GM4850` en
+GMA65OPT, todos `4·marco+4·trav`); otros ~5 al 94–97%; el resto (n_train=2) es ajuste
+trivial descartado. **Generaliza a topologías NUEVAS: 35/44 (79,5%)**, con evidencia
+limpia (`GM4057` 13/13, `GM4850` 4/4) y baseline-constante 38–55% (reales
+{4,8,12,16,20,24}) → es fórmula, no memoria. Cierra la línea T.41→T.43: escuadra de
+alineamiento Y junta de acristalamiento son ambas `Σ coef_serie·conteo` sobre la misma
+topología. Sigue **0/216 valoradas**.
+
+## T.44 El felpudo de corredera queda FUERA de la topología (depende del carril/lado)
+
+El residuo felpudo `GM4971` (FELPUDO FIN-SEAL) **no** encaja en lineal-sobre-topología,
+y no por falta de datos sino por naturaleza (verificado por trabajador y reproducido).
+Mejor ajuste topológico 18% (`6×hoja`). Dentro de la MISMA serie y **topología
+IDÉNTICA** el real varía en {1,2,4} (`GMC30056` [m1h3j3t2v3] → 1/2/4; `GMC400`
+[m1h2j2t1v4] → 1/2/4): hay varias líneas de felpudo por estructura (una por carril/lado
+de corredera) que la agregación por estructura no resuelve. Depende de nº de
+carriles / perímetro en mm —dimensión que el árbol no expone—. Confirma el límite que
+S.7.2/T.30 anticipaban para las piezas "por lado" no atribuidas: es residuo NO
+topológico, reconstruible solo con otra dimensión.
+
+## T.45 Los MÓDULOS de MO, desglosados POR CONCEPTO, sí son lineales sobre la topología (mayormente triviales; AJUNQUILLADO es la señal)
+
+T.39.2 midió el nº TOTAL de módulos de MO por línea y no encajó en suma topológica
+(35%). Aquí se desglosa POR CONCEPTO. Ejecutado por trabajador, **verificado por el
+arquitecto** (`scripts/medir-mo-concepto-lineal.mjs`, SOLO LECTURA; enlace
+`VConceptosMO(nLin) ↔ EstructurasDiseño(nLinEstr)`; nº módulos = `Cantidad/TiempoFabr`,
+100% entero por T.32.1). Modelo lineal por (serie,concepto), split por línea: 33
+modelos, TRAIN/TEST held-out 99,9%, topologías nuevas 63/64.
+
+**Cifra honesta (reglas 6/7): el 99,9% está inflado** porque en las 402 líneas
+cubiertas `marco` vale SIEMPRE 1 (huecos de un solo marco), así que todo modelo
+"`1·marco`" es una **constante disfrazada** (módulo=1 por línea); solo **377/1.724
+(21,9%)** apariciones son no triviales (mod>1). La señal no trivial se concentra en
+**`AJUNQUILLADO` (00618)**, per-serie y generalizable como en T.41:
+- `GMA60RL`/`GMA65OHS`: `1·vidrio` (vidrio {1,2,3,5} → módulos {1,2,3,5}).
+- `ELEGANTPVC`/`GMA350`/`GMA65OPT`: `1·marco + 1·trav` (módulos 1→6, 100% en mod>1, generaliza 6/6, 7/7, 4/4).
+
+**Refina T.39.2 (regla 6):** el encuadre "cada concepto de MO atado a un
+`ComponenteAsoc`" es empíricamente falso para la mayoría —16 de 20 conceptos con datos
+tienen `ComponenteAsoc` VACÍO—; la clave es el propio CÓDIGO/DESCRIPCIÓN del concepto
+(MARCO/HOJA/AJUNQUILLADO), ~1:1 con un elemento del árbol. Es más simple que el
+mecanismo por-componente de escuadras/juntas. **Reconstrucción de MO_fab:** de 208
+líneas TEST, 75 tienen todos sus conceptos modelados y de esas el 100% reconstruye el €
+de MO de fabricación EXACTO; el tope es COBERTURA (402/1.783 líneas tienen árbol, 25% de
+apariciones), no linealidad. Confirma T.39.3: la topología es la columna vertebral
+común (escuadras, juntas y módulos de MO). Sigue **0/216 valoradas**.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
