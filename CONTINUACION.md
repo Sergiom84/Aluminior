@@ -41,7 +41,7 @@ fiel en columnas; lo que falta en CSV son tablas de config/semántica y de MO.
 
 ---
 
-## 2. Estado actual (arco T.24–T.47)
+## 2. Estado actual (arco T.24–T.49)
 
 El **frente de perfil está cerrado**; el frente vivo son los **asociados**, y su
 tapón es el **recuento de cantidades**.
@@ -154,6 +154,19 @@ tapón es el **recuento de cantidades**.
   deriva de fábrica el coef que T.41 fiteaba con n_train=2. **NO cierra** ESCUADRAS
   ABATIBLES (oscilobatiente): emisión en bloques de 4, `GMA65OHS` constante 20 con hu2/hu4
   → residuo NO topológico (tipo T.44). Verificado.
+- **T.48 ⭐ (la composición por línea CRUZA el 0/216)** Primer intento de componer todos
+  los componentes por línea: se mete el recuento topológico de escuadras (T.46/T.47) y
+  juntas (T.39/T.43) dentro del predictor v5, dejando herraje/MO como v5. **`exactasCdad`
+  pasa de 0 (T.31) a 40/72 techo in-sample y ~20/34 held-out** (generaliza). Primer cambio
+  de la sesión que despega del 0. Verificado art-a-art (ELEGANTPVC|2O cierra). Honesto: el
+  modo estructural-puro cierra 0 (los cierres vienen de los modelos aprendidos que
+  generalizan); sinergia escuadra+junta. Bloqueante restante: escuadra residual 24,
+  herraje 10, junta 3. Near-miss 0→25 (20 escuadra, 5 herraje).
+- **T.49 (el herraje del oscilobatiente es residuo de TRAMO)** El "error de conjunto" de
+  GM53xx es casi todo error de tramo (112 swap + 28 overlap; FP puro neto solo 4). Ningún
+  gate ignorado por v5; el overlap es estructural (222 familias con rangos solapados). Es
+  el residuo de S.9.1 (el discriminante de tramo no está en el árbol). Techo: 72 exactas →
+  152 si se resolviera el tramo. Verificado.
 
 **Convergencia:** valorar una línea, la MO de fabricación y las cantidades de
 asociados **desembocan todas en el RECUENTO**, y tras T.33–T.40 el recuento tiene
@@ -193,12 +206,16 @@ aparece en casi toda línea.
    4, T.47), felpudo (carril/lado, T.44)—: el árbol no expone su dimensión (nº de
    hardware oscilo, carriles/mm); requieren otra fuente o quedan "sin valorar" honesto;
    **(1b)** validar el `×marco` para estructuras multi-marco (todo el export tiene
-   marco=1); **(1c)** el salto grande pendiente es **componer todos los componentes por
-   línea** (escuadras + juntas + resto de asociados + MO) para intentar la primera línea
-   valorada — hasta ahora cada componente se ha medido por separado (0/216). Scripts de
-   partida: `medir-escuadra-derivacion.mjs`, `medir-escuadra-comp-bang.mjs`,
-   `medir-configseriesasoc.mjs`, `medir-juntas-lineal-serie.mjs`,
-   `medir-mo-concepto-lineal.mjs`. Rozan S.1–S.9 y T.33–T.47.
+   marco=1); **(1c)** la composición por línea YA cruzó el 0/216 (T.48: ~20 held-out); los
+   frentes accionables que quedan, por las 25 near-miss: la **escuadra residual de esquina
+   multi-hueco/travesaño** (20 líneas — el `4×conteo` no cierra al 100% ahí) y el herraje
+   (5). **(1d) El techo de la valoración lo fija el residuo de TRAMO de S.9.1** (T.49): el
+   discriminante que elige el tramo exacto de compás/cremona/tirante NO está en el árbol
+   (222 familias con rangos solapados); resolverlo llevaría el conjunto-exacto de 72 a 152.
+   Es el frente más profundo y probablemente requiere un dato no exportado (otra MDB o una
+   cota que el árbol no expone). Scripts de partida: `medir-topo-sustituido.mjs`
+   (composición), `medir-conjunto-oscilobatiente.mjs` (tramo), y los de cada componente.
+   Rozan S.1–S.9 y T.33–T.49.
 2. **MO de colocación (construible ya).** Modelar `HorasColoc`/`HorasAdFabr` como
    **campos de entrada del usuario** valorados a 0,5 €/min (68%+9% del dinero de MO).
    No desbloquea una línea por sí solo, pero es un componente real del total.
