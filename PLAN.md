@@ -4168,8 +4168,10 @@ restante a nivel cliente es, medido:
   de acabado", que ya es el comportamiento base. Medido: el techo del remap de acabado es +0,2 pp;
   la equivalencia aparente VS→P es coincidencia y aplicada como regla EMPEORA −10,7 pp. El ~4% es
   ajuste manual/tarifa por acabado no equivalente, no un fallo de lookup. Ver T.57.)
-- **Margen/ajuste de ventana:** ~18% de ventanas tienen `padre ≠ Σhijas` (márgenes o ajustes
-  manuales a nivel de línea de venta); pendiente de caracterizar (¿`FamiliasTarifas.Margen`?).
+- **Margen/ajuste de ventana:** ~18% de ventanas tienen `padre ≠ Σhijas`. (⚠️ **Caracterizado en
+  T.58 — regla 6:** el "18%" era mayormente **Cdad** (ya resuelto). El margen real es 8,2% de
+  ventanas / 14,4% del € de ventana, y **NO es una regla**: 91,8% no tiene margen; el residuo es
+  precio manual + un factor por presupuesto NO guardado. `FamiliasTarifas.Margen` descartado. Ver T.58.)
 
 **(4) COSTURA DE SWAP — ya existe, es limpia (cero cambios de lógica).** La valoración en
 `packages/web/app/dashboard/presupuestos/_lib/acciones.ts` YA lee el precio de la tabla
@@ -4297,6 +4299,58 @@ números en vez de suponerla.
 (`npm run etl:tarifa -- --file … --tarifa 2026 --descripcion … --proveedor …`); medición del acabado
 en variantes de `pvpLookup` sobre `VPresupuestosLin × ArticulosPVP` tarifa 1 (baseline / remap /
 techo). BD compartida sin escrituras (verificado: `articulos_pvp` 1:27791 2:27788 3:27788).
+
+## T.58 El "margen de ventana" NO es una regla: 91,8% sin margen; el residuo es manual / factor por presupuesto no guardado
+
+Encargo: caracterizar el ~18% de "margen de ventana" (diferencia entre el precio de la ventana =
+padre estructural y Σ hijas × Cdad), el mayor frente de cobertura pendiente. SOLO LECTURA, script
+`scripts/medir-margen-ventana.mjs` (determinista). Enlace exacto (regla 8): hija→padre por
+`(nDoc,nEstr)`; documento por `nDoc → VPresupuestos.Id`.
+
+**(1) NO hay margen sistemático — el "18%" era casi todo Cdad (corrige T.56/T.57).** Medido el
+ratio `precio_ventana / (Σ hijas_stored × Cdad)` sobre 1.949 ventanas (€ 1.289.297):
+- **91,8% de las ventanas tienen ratio EXACTO 1.0**: el precio de la ventana ES la suma de su
+  despiece (las hijas ya llevan el PVP de venta; no hay recargo). Sin Cdad el ratio 1.0 caía al
+  82,1% (los cluster ×2/×3/×4 eran Cdad, ya incorporado en T.56).
+- El margen residual real es **8,2% de ventanas / 14,4% del € de ventana (185.953 €)**, no el 18%.
+
+**(2) El residuo NO es estable por familia ni serie (hipótesis 1 del encargo: FALSA).** Toda serie
+tiene media de ratio ≈ 1.0 y 87–98% de ventanas en ratio exacto 1.0 (ELEGANTPVC 837 vent media
+1.000 %ratio1 92%; GMA350 1.021/93%; GMC400 1.047/96%; GMPC65 1.006/93%). Igual por familia. No hay
+un margen `×k` por grupo: `FamiliasTarifas.Margen` **descartado con números**. La varianza vive en
+los outliers, no en un factor de grupo.
+
+**(3) El residuo (160 ventanas) se parte en dos, ninguna reconstruible por tarifa (regla 7):**
+- **42 ventanas — precio MANUAL** (`PVPManualSN=True`, 74.406 €): el usuario fijó el precio a mano,
+  ignorando el despiece. Correctamente "sin valorar" por tarifa (regla 3).
+- **118 ventanas — factor uniforme POR PRESUPUESTO** (111.547 €): dentro de un documento, todas las
+  ventanas OFF comparten el MISMO ratio (0.90, 0.92, 1.05, 1.10, 1.15, 1.243…). **Verificado que NO
+  es trivial (regla 9):** son ventanas DISTINTAS —estructura, dimensiones y Σhijas diferentes— con
+  idéntico ratio (doc 848: tres 2O de 995×1390/2000×1930/1000×1590, Σ 906/1521/971, todas 0.90);
+  **30/30 documentos con ≥2 ventanas OFF dan ratio constante**, 0 triviales. Es un ajuste comercial
+  por presupuesto (negociación) que el usuario aplicó por igual a todas las ventanas del quote.
+
+**(4) Ese factor por presupuesto NO está guardado en ninguna columna (por eso no se reconstruye).**
+Verificado en las 118: `DescuentoPorc`/`Descuento`/`Descuento2Porc`/`DescuentoPPporc`/`RecargoPorc`
+= 0 (el descuento global del documento va sobre el TOTAL, no por línea, y **0/118 coinciden** con el
+ratio; aplicarlo de hecho **empeora** el € cliente 70,5% → 66,5%); `PVPManualSN` = False;
+`PrecioVentaOriginal` = 0. El factor existe pero su origen no está en los datos exportados. Recuperarlo
+exigiría que la app capture un "ajuste por presupuesto" como campo (hoy no lo hace) o identificar su
+almacén (desconocido).
+
+**RESULTADO (regla 7): el margen no es una regla de tarifa; es ruido comercial no registrado. El €
+cliente reconstruido a ±1% NO cambia: sigue en 70,5%** (±5%: 76,9%). No hay regla que forzar sin
+inventar (regla 3). Techo teórico: si ese factor por presupuesto se capturara como input, las 118
+ventanas (111.547 € ≈ 7,5% del € cliente) serían reconstruibles y el cliente subiría hacia ~78% —
+pero es un hueco de CAPTURA de dato, no de modelo, y solo afecta a la reconstrucción del histórico:
+**para cotizar hacia delante, un "ajuste por presupuesto" es un input del usuario (como el descuento
+global), y la máquina de precio lo multiplica sin cambios.** El límite de cobertura restante es, por
+tanto: manual (colocación/varios + precio manual de ventana) + este ajuste no capturado; ninguno es
+un fallo de la máquina de PVP.
+
+*Método:* `scripts/medir-margen-ventana.mjs` (ratio por ventana; estabilidad por serie/familia;
+prueba del descuento de documento; constancia por presupuesto con control de no-trivialidad, regla 9).
+Determinista. BD/MDB no tocadas (medición sobre CSV del oráculo).
 
 ## T.5 Qué hacer, en orden
 

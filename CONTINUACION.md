@@ -74,6 +74,18 @@ esto PRIMERO; luego, solo si necesitas profundizar, ve a `PLAN.md`.
 > el remap VS→P **empeora −10,7 pp** (coincidencia, no equivalencia); techo teórico +0,2 pp. **El ~4%
 > es ajuste manual/tarifa no equivalente, no recuperable por acabado.** € a ±1% se mantiene: **90,9%
 > hija / 70,5% cliente**. BD compartida intacta (`articulos_pvp` 1/2/3, sin escrituras). Anexo **T.57**.
+>
+> **Actualización 2026-07-22 (T.58) — el "margen de ventana" NO es una regla.** Medido (regla 1):
+> el precio de la ventana = Σ(hijas×Cdad) EXACTO en el **91,8%** (sin margen); el "18%" era casi
+> todo Cdad (ya resuelto en T.56). El residuo real (8,2% ventanas / 14,4% € ventana / 185.953€) NO
+> es estable por serie ni familia (`FamiliasTarifas.Margen` descartado): se parte en 42 ventanas de
+> precio manual (`PVPManualSN`) + 118 con un **factor uniforme por presupuesto** (real, ventanas
+> distintas, regla 9 verificada; 30/30 docs) que **NO está guardado en ninguna columna**
+> (DescuentoPorc/Recargo/PVPManual/PrecioVentaOriginal todos 0/false; el descuento global va sobre el
+> total, aplicarlo empeora 70,5→66,5%). No reconstruible sin inventar (regla 3). **€ cliente a ±1%
+> NO cambia: 70,5%.** El hueco restante es manual/ajuste-no-capturado, no fallo de la máquina PVP;
+> hacia delante ese ajuste sería un input del usuario. Script `scripts/medir-margen-ventana.mjs`.
+> Anexo **T.58**.
 
 ---
 
