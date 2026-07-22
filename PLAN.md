@@ -5396,3 +5396,104 @@ el roadmap T.60.2 citaba como existente. Por tanto:
   compartida fueron los `COUNT(*)` de medición (`proveedores`=8,
   `articulos`=17.547, `articulos_coste`=27.817, `articulos_pvp`=83.367). Ninguna
   escritura, ninguna migración aplicada allí. Cero PII/costes reales en el repo.
+
+## T.64 Módulo #4 Producción: hoja de corte + optimizador de corte 1D — agrega a nivel de LISTA DE CORTES (bloqueo de datos T.51/T.53), la barra es parámetro del usuario
+
+**Objetivo.** Cierre del roadmap T.60. Detrás del gate de auth (T.61), una vista
+de producción que, dado un presupuesto ya despiezado, agrupa los cortes de perfil
+por artículo y optimiza su reparto en barras. El menú marcaba "pend."
+(`shell.tsx:33`); ahora es un módulo funcional. Todo el cálculo, en SERVIDOR.
+
+**Qué se midió de la fuente (regla 1).**
+- **`lineas_despiece`** (`schema/lineas.ts`) es la materia prima: cada fila lleva
+  `articulo_codigo`, `cantidad`, `largo_corte_mm`, `ancho_corte_mm`,
+  `angulo_izquierdo/derecho`, `funcion`. Es la SALIDA del motor de despiece, ya
+  persistida por `acciones.ts` de presupuestos.
+- **Selección de cortes 1D:** se filtra `largo_corte_mm IS NOT NULL AND
+  ancho_corte_mm IS NULL`. El `ancho` no nulo marca vidrio/panel (superficie 2D),
+  que NO se optimiza como barra. Filtro honesto y sin depender del catálogo.
+- **`cantidad` NO incluye el multiplicador de línea:** se comprobó en
+  `acciones.ts` que `lineas_despiece.cantidad = pz.cantidad` (piezas por UNA
+  unidad de estructura, p. ej. 2 marcos), mientras el nº de ventanas vive en
+  `lineas.cantidad`. Por eso la hoja calcula **piezas físicas = cantidad_despiece
+  × cantidad_línea**. Como el recuento de piezas es entero por naturaleza, el
+  producto se redondea para absorber artefactos de coma flotante (no se inventa).
+
+**De dónde sale la LONGITUD DE BARRA (hecho medido).** **No existe.** Se revisó
+`articulos` (`schema/catalogo.ts`) columna a columna: hay `metraje_minimo`,
+`metraje_multiplo_largo/ancho` y `peso_ml`, pero son de **facturación**
+(múltiplos de venta, peso para transporte), **no de stock físico de barra**. Un
+`grep` sobre `db/`, `etl/` y `core/` no encontró ningún campo de longitud de
+barra. Por tanto la longitud de barra es un **PARÁMETRO del usuario**, con
+**6000 mm** (barra comercial de 6 m) como valor por defecto **explícito y
+editable en la UI** — nunca una suposición silenciosa. Se expone como constante
+`LONGITUD_BARRA_POR_DEFECTO_MM` en el core y como input editable en la hoja
+(junto al ancho de sierra/kerf), que recalcula en servidor por query param.
+
+**Agrega a nivel de LISTA DE CORTES, no por unidad física (bloqueo T.51/T.53).**
+El despiece por unidad física —qué corte concreto va a qué ventana/hoja— NO está
+persistido en la fuente: las tablas de producción del ERP original están vacías
+(T.51/T.53). La hoja de corte respeta ese bloqueo: reúne TODOS los cortes de un
+mismo perfil del presupuesto en una sola lista y optimiza sobre ella. No fabrica
+una atribución pieza→ventana que la fuente no tiene (regla 3). El agrupado es por
+`(artículo, longitud redondeada a mm, ángulos)`.
+
+**El optimizador: función pura en el core, con tests.** Nuevo
+`packages/core/src/produccion/optimizar.ts` (export `./produccion` y en el índice
+raíz). `optimizarCorte(cortes, { longitudBarra, kerf })`:
+- **Algoritmo: First-Fit-Decreasing (FFD).** Se expanden los cortes a piezas
+  individuales, se ordenan de mayor a menor y cada una se coloca en la primera
+  barra donde entra, o abre una nueva. Meter primero las grandes deja los huecos
+  pequeños para las pequeñas y reduce el nº de barras.
+- **Es HEURÍSTICA, no óptimo exacto.** El cutting-stock 1D (bin packing) es
+  NP-difícil; FFD garantiza a lo sumo `11/9·óptimo + 6/9` barras y en la práctica
+  queda muy cerca, pero NO promete el mínimo absoluto. Documentado en el código;
+  la UI nunca lo llama "óptimo".
+- **Kerf (ancho de sierra):** cada corte consume `longitud + kerf`. El material
+  que se lleva la sierra cuenta como desperdicio. Por defecto 0.
+- **Corte imposible (regla 3):** un corte cuya `longitud + kerf` supera la barra
+  no se recorta ni se ignora en silencio → sale en `imposibles` con su motivo.
+- **Salida:** `{ barras: [{ cortes, sobrante }], nBarras, longitudBarra, kerf,
+  desperdicioTotal, porcentajeDesperdicio, totalUtil, imposibles }`. El % de
+  desperdicio es `(nBarras·longitudBarra − útil) / (nBarras·longitudBarra)`, con
+  kerf y sobrantes incluidos como desperdicio.
+- **Validación ruidosa:** longitud de barra ≤ 0, kerf < 0, longitud de corte ≤ 0
+  y cantidad no entera **lanzan** — nunca un plan silenciosamente malo.
+
+**Decisión de persistencia: VISTA COMPUTADA de solo lectura, SIN tabla nueva
+(menos superficie).** La hoja de corte es una función determinista de datos ya
+persistidos (`lineas_despiece` + parámetros del usuario). No se añade tabla de
+"orden de producción" ni migración: se recalcula en cada carga. Ventajas: cero
+riesgo de desincronización (si cambia el despiece, la hoja cambia sola) y menos
+esquema que mantener. Si en el futuro hiciera falta congelar una orden emitida
+(nº de orden, fecha, barras compradas), se añadiría entonces, con el dato real
+que hoy no existe. **No se generó ninguna migración en T.64.**
+
+**UI (imita Presupuestos), ficheros nuevos en
+`packages/web/app/dashboard/produccion/`:**
+- `page.tsx` — selección de presupuesto (búsqueda por número/cliente/obra);
+  cada fila muestra el nº de cortes 1D y enlaza a su hoja.
+- `[id]/page.tsx` — la hoja de corte: parámetros editables (barra, kerf),
+  métricas (perfiles, barras totales), y por perfil la **lista de cortes**
+  (longitud × cantidad, ángulos), el **plan de barras** (barra proporcional con
+  cada corte como segmento y el sobrante), el nº de barras y el % de desperdicio.
+  Los cortes imposibles se listan con su motivo. Cálculo en servidor.
+- `shell.tsx`: el ítem **Producción** pasa a `listo: true`, href
+  `/dashboard/produccion` (se quita el "pend.").
+
+**Verificación real (ejecutada).**
+- **Tests del optimizador (`optimizar.test.ts`, 15 casos):** **verdes**. Cubren
+  barra justa (3×2000 en 6000 → 1 barra, 0% desperdicio), sobrantes (3×2500 →
+  2 barras, 37,5%), FFD aprovechando huecos, arrastre de la etiqueta de ángulos,
+  corte > barra → `imposibles` (útil solo el que sí cabe), borde exacto
+  (longitud = barra sin kerf cabe), kerf forzando barra extra (3×2000 kerf 10 →
+  2 barras) y kerf que vuelve imposible un corte de 6000, y las cuatro
+  validaciones (barra ≤ 0, kerf < 0, longitud ≤ 0, cantidad no entera lanzan) +
+  lista vacía y cantidad 0.
+- **Suite completa del core:** **61 tests en verde** (7 ficheros).
+- **`npx tsc --noEmit`:** limpio en **core** y en **web**.
+- **`npm run -w @aluminior/web build`:** **verde**; aparecen las rutas
+  `/dashboard/produccion` y `/dashboard/produccion/[id]`.
+- **Datos:** Supabase a 0 presupuestos, así que el optimizador se ejercitó con
+  datos SINTÉTICOS en los tests (longitudes verificables a mano). No se tocó la
+  BD: cero escrituras en Supabase, cero PII/datos reales en el repo (regla 4).

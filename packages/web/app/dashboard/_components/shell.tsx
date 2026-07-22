@@ -30,7 +30,7 @@ export const MODULOS: Modulo[] = [
   { id: 'clientes', nombre: 'Clientes', descripcion: 'Clientes, potenciales y obras', href: '/dashboard/clientes', listo: true },
   { id: 'estructuras', nombre: 'Estructuras', descripcion: 'Tipos de hueco configurables', href: '/dashboard/estructuras', listo: true },
   { id: 'presupuestos', nombre: 'Presupuestos', descripcion: 'Presupuestos y ofertas', href: '/dashboard/presupuestos', listo: true },
-  { id: 'produccion', nombre: 'Producción', descripcion: 'Despiece, corte y fabricación', href: '/dashboard?module=produccion', listo: false },
+  { id: 'produccion', nombre: 'Producción', descripcion: 'Despiece, corte y fabricación', href: '/dashboard/produccion', listo: true },
   { id: 'compras', nombre: 'Compras', descripcion: 'Proveedores, pedidos y costes', href: '/dashboard/compras', listo: true },
   { id: 'informes', nombre: 'Informes', descripcion: 'Listados y estadísticas', href: '/dashboard?module=informes', listo: false },
 ]
