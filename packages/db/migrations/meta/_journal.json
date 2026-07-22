@@ -99,6 +99,13 @@
       "when": 1784477822759,
       "tag": "0013_minor_exiles",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1784752474491,
+      "tag": "0014_slim_hardball",
+      "breakpoints": true
     }
   ]
 }

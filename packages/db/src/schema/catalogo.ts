@@ -111,6 +111,22 @@ export const articulosPvp = pgTable('articulos_pvp', {
 }))
 
 /**
+ * Registro de tarifas (T.57). Una fila por `tarifa` de `articulos_pvp`:
+ * procedencia y vigencia del precio. Persiste la `fecha_vigencia` que el cargador
+ * (T.56) validaba y tiraba. Las históricas 1/2/3 no requieren fila; el cargador
+ * inserta la fila de la tarifa nueva en el mismo --apply que carga los precios.
+ */
+export const tarifas = pgTable('tarifas', {
+  /** = el `tarifa` (int) de articulos_pvp. */
+  id: integer('id').primaryKey(),
+  descripcion: text('descripcion').notNull(),
+  proveedor: text('proveedor'),
+  fechaVigencia: timestamp('fecha_vigencia', { withTimezone: true, mode: 'string' }),
+  fechaCarga: timestamp('fecha_carga', { withTimezone: true, mode: 'string' }).notNull().defaultNow(),
+  activa: boolean('activa').notNull().default(true),
+})
+
+/**
  * Catálogo de estructuras (tipos de hueco configurables).
  * Origen: Estructuras (541 filas).
  *

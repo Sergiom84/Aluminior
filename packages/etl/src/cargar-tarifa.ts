@@ -52,6 +52,8 @@ const FICHERO = arg('--file')
 const TARIFA = Number(arg('--tarifa'))
 const APPLY = flag('--apply')
 const ROLLBACK = flag('--rollback')
+const DESCRIPCION = arg('--descripcion')   // procedencia; por defecto, el nombre del fichero
+const PROVEEDOR = arg('--proveedor')       // opcional
 
 function abortar(msg: string): never {
   console.error(`\n✗ ABORTADO: ${msg}`)
@@ -81,7 +83,8 @@ async function main() {
     console.log(`rollback: la tarifa ${TARIFA} tiene ${n} filas.`)
     if (!APPLY) { console.log('DRY-RUN: no se borra nada. Añade --apply para borrar.'); await sql.end(); return }
     const borradas = await sql`DELETE FROM articulos_pvp WHERE tarifa = ${TARIFA}`
-    console.log(`✓ borradas ${borradas.count} filas de la tarifa ${TARIFA} (históricas intactas).`)
+    await sql`DELETE FROM tarifas WHERE id = ${TARIFA}`
+    console.log(`✓ borradas ${borradas.count} filas de la tarifa ${TARIFA} y su registro en tarifas (históricas intactas).`)
     await sql.end(); return
   }
 
@@ -138,6 +141,23 @@ async function main() {
     else iguales.push(clave)
   }
 
+  // ── 4b) REGISTRO en `tarifas` (procedencia + vigencia persistida, T.57) ───────
+  // fecha_vigencia de la tarifa = la fecha (no vacía) mayoritaria entre las filas válidas.
+  const aISO = (f: string) => {
+    const m = f.match(/^(\d{2})[/-](\d{2})[/-](\d{4})$/) // DD/MM/YYYY -> YYYY-MM-DD
+    return m ? `${m[3]}-${m[2]}-${m[1]}` : f
+  }
+  const fechas = new Map<string, number>()
+  for (const v of validas.values()) if (v.fecha) fechas.set(aISO(v.fecha), (fechas.get(aISO(v.fecha)) ?? 0) + 1)
+  const vigencia = [...fechas.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? null
+  if (fechas.size > 1) console.log(`⚠ el fichero trae ${fechas.size} fechas de vigencia distintas; se registra la mayoritaria (${vigencia}).`)
+  const registro = {
+    id: TARIFA,
+    descripcion: DESCRIPCION ?? `Tarifa ${TARIFA} (${(FICHERO ?? '').split(/[\\/]/).pop()})`,
+    proveedor: PROVEEDOR ?? null,
+    fecha_vigencia: vigencia,
+  }
+
   // ── 5) INFORME ────────────────────────────────────────────────────────────────
   console.log(`\nfichero: ${FICHERO}`)
   console.log(`filas leídas: ${filas.length}   válidas: ${validas.size}`)
@@ -150,10 +170,11 @@ async function main() {
   console.log(`  duplicadas en fichero (última gana):     ${duplicadas.length}`)
   if (altas.length) console.log(`  muestra altas: ${altas.slice(0, 6).join(', ')}`)
   if (cambios.length) console.log(`  muestra cambios: ${cambios.slice(0, 6).join(' ; ')}`)
+  console.log(`  registro en \`tarifas\`: id=${registro.id} descripcion="${registro.descripcion}" proveedor=${registro.proveedor ?? '(ninguno)'} fecha_vigencia=${registro.fecha_vigencia ?? '(ninguna)'} activa=true`)
 
   // ── 6) ESCRITURA (solo con --apply) ───────────────────────────────────────────
   if (!APPLY) {
-    console.log(`\n● DRY-RUN: no se ha escrito NADA en la base de datos. Revisa el diff y añade --apply para cargar.`)
+    console.log(`\n● DRY-RUN: no se ha escrito NADA en la base de datos (ni articulos_pvp ni tarifas). Revisa el diff y añade --apply para cargar.`)
     await sql.end(); return
   }
   if (!validas.size) { console.log('\nno hay filas válidas que cargar.'); await sql.end(); return }
@@ -161,9 +182,13 @@ async function main() {
   await sql.begin(async (tx) => {
     await tx`INSERT INTO articulos_pvp ${tx(lote, 'articulo_codigo', 'acabado_codigo', 'tarifa', 'precio')}
              ON CONFLICT (articulo_codigo, acabado_codigo, tarifa) DO UPDATE SET precio = EXCLUDED.precio`
+    // registro de la tarifa (procedencia + vigencia); fecha_carga la pone la BD (defaultNow).
+    await tx`INSERT INTO tarifas ${tx([registro], 'id', 'descripcion', 'proveedor', 'fecha_vigencia')}
+             ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion, proveedor = EXCLUDED.proveedor,
+                                            fecha_vigencia = EXCLUDED.fecha_vigencia, fecha_carga = now()`
   })
   const [{ n }] = await sql`SELECT COUNT(*)::int n FROM articulos_pvp WHERE tarifa = ${TARIFA}`
-  console.log(`\n✓ APPLY: upsert de ${lote.length} filas en tarifa ${TARIFA}. Total en esa tarifa ahora: ${n}. Históricas {1,2,3} intactas.`)
+  console.log(`\n✓ APPLY: upsert de ${lote.length} filas en tarifa ${TARIFA} + registro en tarifas. Total en esa tarifa ahora: ${n}. Históricas {1,2,3} intactas.`)
   await sql.end()
 }
 

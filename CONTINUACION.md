@@ -64,6 +64,16 @@ esto PRIMERO; luego, solo si necesitas profundizar, ve a `PLAN.md`.
 > tarifas 1/2/3). Revaloración de un presupuesto: `scripts/probar-revalorar-tarifa.mjs` (764:
 > 578,65→611,99 €, in-memory). **NO se ha hecho `--apply` contra la BD compartida** (requiere visto
 > bueno del titular). Detalle: anexo **T.56**.
+>
+> **Actualización 2026-07-22 (T.57) — tabla `tarifas` + el acabado NO recupera el 4%.** (A) Añadida
+> tabla `tarifas` (migración aditiva `0014`, no toca `articulos_pvp` ni históricas): id=tarifa,
+> descripcion, proveedor, fecha_vigencia, fecha_carga, activa. El cargador la upserta en el mismo
+> `--apply` (procedencia+vigencia persistidas); en dry-run la reporta. Args nuevos `--descripcion`,
+> `--proveedor`. Migración generada pero **NO aplicada** (pendiente `npm run db:migrate` con OK del
+> titular). (B) Medido (regla 6, corrige T.55): "usar acabado exacto" YA es el baseline (recupera 0);
+> el remap VS→P **empeora −10,7 pp** (coincidencia, no equivalencia); techo teórico +0,2 pp. **El ~4%
+> es ajuste manual/tarifa no equivalente, no recuperable por acabado.** € a ±1% se mantiene: **90,9%
+> hija / 70,5% cliente**. BD compartida intacta (`articulos_pvp` 1/2/3, sin escrituras). Anexo **T.57**.
 
 ---
 

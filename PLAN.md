@@ -4163,9 +4163,11 @@ restante a nivel cliente es, medido:
 - **Líneas manuales (no tarifa):** colocación `MOCOL` 84.897 € + `VARIOS` 99.010 € = **183.907 €
   (12,3% del € cliente)**. La colocación es entrada manual del usuario (confirma T.32, 68% del
   dinero de MO); correctamente "sin valorar" por tarifa. No es un fallo del modelo.
-- **Recargo por acabado:** ~4% de las hijas fallan >±1% y **casarían con OTRO acabado del mismo
-  artículo** (311 líneas): PVP acabado-dependiente que el lookup base (acabado→UNI) no coge.
-  Recuperable con lookup exacto de acabado (`EsAcabadoDependienteSN`).
+- **Recargo por acabado:** ~4% de las hijas fallan >±1% y 311 líneas **casarían con OTRO acabado
+  del mismo artículo**. (⚠️ **Corregido en T.57 — regla 6:** NO es recuperable con "lookup exacto
+  de acabado", que ya es el comportamiento base. Medido: el techo del remap de acabado es +0,2 pp;
+  la equivalencia aparente VS→P es coincidencia y aplicada como regla EMPEORA −10,7 pp. El ~4% es
+  ajuste manual/tarifa por acabado no equivalente, no un fallo de lookup. Ver T.57.)
 - **Margen/ajuste de ventana:** ~18% de ventanas tienen `padre ≠ Σhijas` (márgenes o ajustes
   manuales a nivel de línea de venta); pendiente de caracterizar (¿`FamiliasTarifas.Margen`?).
 
@@ -4248,7 +4250,53 @@ Revaloración del presupuesto 764 con el fichero (in-memory, SOLO LECTURA): **57
 visto bueno del titular). Cuando llegue la tarifa 2026 real: colocar el fichero con el esquema de
 arriba, dry-run, revisar diff, y `--apply` con un id de tarifa nuevo. Caveat (regla 7): la
 `fecha_vigencia` hoy se valida pero no se persiste (no hay columna/tabla de tarifas); si se quiere
-histórico de vigencias, añadir tabla `tarifas`.
+histórico de vigencias, añadir tabla `tarifas`. **[Resuelto en T.57: tabla `tarifas` añadida.]**
+
+## T.57 Tabla `tarifas` (vigencia persistida) + el recargo por acabado NO es recuperable (corrige T.55)
+
+Dos frentes: (A) persistir la procedencia/vigencia de cada tarifa que T.56 validaba y tiraba; (B)
+medir si el ~4% de fallos del precio se recupera por acabado. Todo SOLO LECTURA salvo el `--apply`
+del cargador, que NO se ha ejecutado contra la BD compartida (pendiente del titular).
+
+**(A) Tabla `tarifas` (migración aditiva, decisión del titular).** Nueva tabla en el esquema
+Drizzle (`packages/db/src/schema/catalogo.ts`) + migración `packages/db/migrations/0014_*.sql`
+(`CREATE TABLE IF NOT EXISTS tarifas`, **no toca `articulos_pvp`** ni las históricas 1/2/3):
+`id` (int PK = el `tarifa` de `articulos_pvp`), `descripcion`, `proveedor` (nullable),
+`fecha_vigencia`, `fecha_carga` (default now), `activa` (bool default true). El cargador T.56
+(`cargar-tarifa.ts`) queda enganchado: en `--apply`, dentro de la MISMA transacción que hace upsert
+de precios en `articulos_pvp`, hace upsert de UNA fila en `tarifas` (id, descripcion, proveedor,
+fecha_vigencia = la fecha mayoritaria del fichero); en dry-run solo la REPORTA. Nuevos args opcionales
+`--descripcion` y `--proveedor`. `--rollback --apply` borra también la fila de `tarifas`. Verificado
+en dry-run: reporta `registro en tarifas: id=2026 descripcion="…" proveedor=00048 fecha_vigencia=
+2026-01-01 activa=true` y **no escribe nada** (BD sigue con `articulos_pvp` 1/2/3 y sin tabla
+`tarifas` — la migración se aplica con `npm run db:migrate` cuando el titular dé el OK). `typecheck`
+de `@aluminior/db` y `@aluminior/etl` en verde.
+
+**(B) El ~4% de recargo por acabado NO se recupera por acabado (corrige la nota optimista de T.55,
+regla 6).** Medido sobre las hijas de despiece (enlace exacto, regla 8):
+
+| Estrategia de lookup | líneas ±1% | € ±1% (hija) |
+|---|---:|---:|
+| baseline `exacto→UNI→único` (ya en uso desde T.55) | 96,1% | **90,9%** |
+| + remap `VS→P` (equivalencia aparente) | 92,5% | 80,2% (**−10,7 pp**) |
+| techo teórico (elegir el acabado que casa)* | 96,5% | 91,1% (**+0,2 pp**) |
+
+`*` no deployable: elige el acabado PORQUE casa el objetivo → fabricaría el dato (regla 3).
+
+Diagnóstico: los 3.165 fallos >±1% **ya tienen la clave exacta `(artículo|acabado-de-la-línea)` en
+PVP, pero su PVP exacto NO casa** el precio histórico (`exactCasa=0`). O sea, el "lookup exacto de
+acabado" que T.55 proponía **ya es el comportamiento base**: recupera 0. De esos, 311 casan con OTRO
+acabado (232 son `VS→P`), pero aplicar `VS→P` como regla **empeora** (rompe las VS bien tarifadas):
+es coincidencia, no equivalencia. Y el techo absoluto (aun haciendo trampa) es solo +0,2 pp.
+**Conclusión honesta (regla 7): el ~4% es ajuste manual / precio por acabado no equivalente, NO un
+fallo de lookup; no es recuperable con un modelo de acabado.** El € reconstruido a ±1% se mantiene
+en **90,9% (hija) / 70,5% (cliente)** — sin cambio. No es una regresión: es descartar una vía con
+números en vez de suponerla.
+
+*Método:* migración `drizzle-kit generate` (offline); cargador probado en dry-run
+(`npm run etl:tarifa -- --file … --tarifa 2026 --descripcion … --proveedor …`); medición del acabado
+en variantes de `pvpLookup` sobre `VPresupuestosLin × ArticulosPVP` tarifa 1 (baseline / remap /
+techo). BD compartida sin escrituras (verificado: `articulos_pvp` 1:27791 2:27788 3:27788).
 
 ## T.5 Qué hacer, en orden
 
