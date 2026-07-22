@@ -5,6 +5,10 @@
 *.laccdb
 datos_reales/
 export_datos/
+# Export CSV del oraculo (EMP00xx): datos reales de clientes/presupuestos.
+# Es el RUTA_CSV_ORIGEN; vive local, nunca al repo (ENTREGA §7.2).
+EMP0016/
+EMP[0-9][0-9][0-9][0-9]/
 
 # --- Investigacion original: NADA de esta carpeta se versiona ---
 # Contiene 818 MB de binarios de GAIA, configuraciones con credenciales y

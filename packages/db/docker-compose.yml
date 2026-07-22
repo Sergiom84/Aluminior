@@ -1,0 +1,30 @@
+# Postgres EFÍMERO para desarrollo / tests locales.
+#
+# NO es la Supabase compartida (esa es SOLO LECTURA). Este contenedor existe
+# para poder ejecutar los efectos de ESCRITURA del cargador de tarifa (ETL)
+# contra una base de datos desechable, sin tocar jamás producción.
+#
+# Puerto 55432 en el host: el titular ya tiene un cluster Postgres nativo ocupando
+# 5432-5434 y Supabase local usa 54322, así que se elige un puerto bien fuera de rango.
+#
+# Levantar:   docker compose -f packages/db/docker-compose.yml up -d
+# Parar:      docker compose -f packages/db/docker-compose.yml down
+# Borrar todo (incluido el volumen): docker compose -f packages/db/docker-compose.yml down -v
+services:
+  postgres-test:
+    image: postgres:16-alpine
+    container_name: aluminior_pg_test
+    environment:
+      POSTGRES_USER: aluminior
+      POSTGRES_PASSWORD: aluminior
+      POSTGRES_DB: aluminior_test
+    ports:
+      - "55432:5432"
+    # tmpfs: datos en RAM -> efímero de verdad, arranque rápido, nada persiste.
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aluminior -d aluminior_test"]
+      interval: 2s
+      timeout: 3s
+      retries: 20

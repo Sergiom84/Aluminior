@@ -4983,3 +4983,264 @@ scripts/explorar-ancho-hoja.mjs        S.9.1: DisIdRef*/DisFRef* y hojas desigua
 scripts/explorar-ref-largo.mjs         S.9.1: ¿el aplanado FormulaLargo pierde información?
 scripts/explorar-tacos-goma.mjs        S.9.2/S.9.3: declaración en ConjuntosAsoc
 ```
+
+## T.60 Roadmap de los cuatro módulos nuevos: medición del estado y orden (auth → PDF → compras → producción)
+
+Cerrado el frente de precio (T.52–T.59, ver `ESTADO-VALORACION.md`), vienen
+cuatro módulos: **autenticación, PDF de presupuestos, compras (pedidos a
+proveedor) y producción (hoja de corte/optimización)**. Este anexo es SOLO
+análisis: mide el estado real de `packages/web` antes de construir (regla 1) y
+propone alcance, dependencias, esfuerzo y riesgo de cada uno, con un orden.
+No escribe código de aplicación.
+
+### T.60.1 Estado real, medido (no supuesto)
+
+**El modelo de presupuestos ya está completo y valorando.** La cabecera
+`presupuestos` (`packages/db/src/schema/comercial.ts:102`) tiene: `id` (uuid),
+`numero` (patrón AASSSS), `revision`, `serie`, `fecha`, destinatario flexible
+(`clienteCodigo` | `potencialCodigo` | `nombreLibre`, con `check`
+`presupuestos_destinatario_check` que exige al menos uno), `obraId`/`obraTexto`,
+`referenciaInterna`, `nombreVersion`, `tarifa` (default 1), `bloqueoPrecios`,
+`estado` (`PENDIENTE`/`ACEPTADO`/`RECHAZADO`/`ANULADO`), el bloque de importes
+(`subtotal`, `descuento`, `descuentoPp`, `baseImponible`, `tipoIva` default 21,
+`cuotaIva`, `recargoEquivalencia`, `retencion`, `total`, `divisa`), `formaPago`,
+`observaciones`, `creadoEn` y **`creadoPor` (text, nullable — HOY SIN POBLAR:
+no hay usuario que registrar porque no hay auth)**.
+
+La línea `lineas` (`packages/db/src/schema/lineas.ts:26`) es de tres tipos
+(`ESTRUCTURA`/`ARTICULO`/`CERRAMIENTO`) y guarda lo común: `orden`,
+`articuloCodigo` (sólo ARTICULO), `descripcion`(+`descripcionManual`),
+`referencia`, `cantidad`, `anchoMm`/`altoMm`, `medidaEsHueco`, y el bloque de
+precio: **`precioUnitario` numeric NULLABLE — `null` = línea no valorada por
+completo**, `descuento`/`descuento2`, `total` (nullable), `valoracionCompleta`
+(bool), `avisoValoracion` (text, explicación persistida), `pvpManual`,
+`costeManual`. Cuelgan de ella cuatro satélites: `lineasEstructura` (serie,
+estructura, acabado, complementos de persiana, `horasFabricacion`/
+`horasColocacion`), `lineasOpcionesHerraje`, `lineasAcristalamiento` (hasta 5
+slots, vidrio de hojas/fijos + variante), y `lineasDespiece` — **la SALIDA del
+motor**: por cada pieza, `articuloCodigo`, `cantidad`, `largoCorteMm`,
+`anchoCorteMm`, `anguloIzquierdo`/`anguloDerecho`, `funcion`, `costeUnitario`,
+`costeTotal`.
+
+**Cómo se calcula el total y la guarda "sin valorar"** (verificado en
+`packages/web/app/dashboard/presupuestos/_lib/acciones.ts`): `anyadirLinea`
+resuelve genérico→perfil real, despieza (`calcularDespiece`), valora
+(`valorarDespiece`), suma vidrio + junquillos/juntas, y acumula todo fallo en un
+array `problemas` (líneas 855–881). **Si `problemas` tiene algo, `precioUnitario
+= null` y `aviso = "Importe incompleto: …"` — nunca un total parcial ni cero**
+(regla del dinero, T.59); la parte de despiece/precio delega en la función pura
+`lineaValorable` de `@aluminior/core/precios` (extraída y testeada en T.59).
+`total` de línea = `precioUnitario × cantidad` (redondeo 2). Los totales de
+cabecera se recalculan **en SQL de una sola sentencia** (`recalcularTotales`,
+línea 1011): `subtotal = Σtotal`, `cuotaIva = ROUND(suma·tipoIva/100,2)`,
+`total = suma + cuota`. El cálculo ocurre SIEMPRE en servidor (server action).
+
+**Qué hay de cada módulo, verificado en el código (no en el menú):**
+
+- **AUTH — nada, confirmado.** No existe `@supabase/supabase-js` ni
+  `@supabase/ssr` en NINGÚN `package.json` (grep sobre los cuatro paquetes:
+  `NONE`). No hay página de login, ni sesión, ni `getSession`/`getUser`, ni
+  `layout` que proteja. La única mención a Supabase en `web` es un comentario
+  (`dashboard/page.tsx:4`) y el uso de Postgres de Supabase como BD vía
+  `DATABASE_URL` (`packages/db/src/index.ts`). Lo ÚNICO que cierra la app es el
+  **stopgap `packages/web/middleware.ts`** (HTTP Basic Auth, **falla cerrado**:
+  sin `BASIC_AUTH_PASSWORD` responde 503; cierra todo salvo assets internos de
+  Next). `creadoPor` en `presupuestos` está listo para recibir el usuario pero
+  nadie lo escribe.
+- **PDF — nada, confirmado.** Ninguna dependencia de generación PDF en ningún
+  `package.json` (grep `pdfkit|@react-pdf/renderer|jspdf|puppeteer|playwright|
+  pdf-lib`: vacío). El presupuesto sólo se ve como HTML del dashboard
+  (`presupuestos/[id]/page.tsx`). No hay ruta de exportación ni plantilla.
+- **COMPRAS — sólo el maestro, sin operativa.** Existe la tabla `proveedores`
+  (`comercial.ts:78`, 8 filas en EMP0016: código, nombre, nif, contacto, etc.).
+  **No hay tabla de pedidos de compra, ni ruta, ni server actions.** El menú lo
+  marca `listo: false` → "pend." (`shell.tsx:33`, href a `?module=compras` =
+  placeholder).
+- **PRODUCCIÓN — el dato ya existe, falta la vista.** El motor de despiece
+  (`@aluminior/core/despiece`) YA produce y persiste los cortes con ángulos en
+  `lineasDespiece` por cada línea de estructura valorada. **No hay pantalla de
+  producción, hoja de corte ni optimizador**; el menú lo marca "pend."
+  (`shell.tsx:32`). Informes también pend.
+
+**Claves de auth ya en `.env`** (confirmadas por NOMBRE, sin leer valores;
+presentes en `.env` y `.env.example`): `SUPABASE_URL`, `SUPABASE_ANON_KEY`,
+`SUPABASE_JWKS_URL`, `SUPABASE_SERVICE_ROLE`, `SUPABASE_PUBLISHABLE_KEY`,
+`SUPABASE_SECRET_KEY`, más `DATABASE_URL`. **El terreno para Supabase Auth ya
+está aprovisionado**; falta cablearlo. Stack: Next.js 15 App Router, React 19,
+Drizzle, Zod 4, Supabase/Postgres (`ENTREGA.md §6.1`).
+
+### T.60.2 Los cuatro módulos: alcance, dependencia, esfuerzo, riesgo
+
+| Módulo | Alcance (qué entra) | Depende de | Esfuerzo | Riesgo |
+|---|---|---|---|---|
+| **Auth** | Login Supabase (SSR con `@supabase/ssr`), sesión en cookie, `layout`/middleware que sustituye al Basic Auth, gate de `/dashboard`, poblar `creadoPor`. Alta de usuarios manual (sin auto-registro). | Nada de código (claves ya en `.env`); **1 decisión del titular** (T.60.4) | **M** — patrón estándar, pero toca el arranque de toda la app y sustituye un stopgap vivo en producción | **Medio** — puerta de despliegue; si falla, o se filtra el NIF o se cae la app. Falla-cerrado obligatorio |
+| **PDF** | Generar el PDF del presupuesto (cabecera + líneas + totales + IVA) desde el modelo YA existente; descarga desde `presupuestos/[id]`. Plantilla imitando el documento del ERP viejo | El modelo de presupuestos (ya completo, T.60.1). **NO depende de auth** | **M** — elegir librería (server-side: `@react-pdf/renderer` o render a HTML→PDF), maquetar, mapear campos | **Bajo** — sólo LEE datos ya calculados; sin escritura, sin migración |
+| **Compras** | Modelo de pedido a proveedor (cabecera+líneas), estados, alta/edición, relación con artículos/costes. Opcional: derivar necesidades desde `lineasDespiece` | `proveedores` (existe), catálogo `articulos`/`articulos_coste` (existe). Auth deseable (quién pide) | **L** — módulo nuevo de dominio: schema + migración + rutas + acciones + UI, análogo a presupuestos | **Medio** — datos de negocio (costes, proveedores) que hoy no se validan contra histórico como se hizo con el precio |
+| **Producción** | Hoja de corte por presupuesto/lote desde `lineasDespiece`; agrupar cortes por perfil; optimización de barras (bin-packing) | `lineasDespiece` (existe, ya poblado). Auth deseable | **L** — la hoja de corte es **M** (los datos existen); el **optimizador** de aprovechamiento es el trozo duro y algorítmico | **Medio-alto** — la optimización de corte es un problema propio; fácil sobre-invertir. Empezar por la hoja de corte simple |
+
+### T.60.3 Orden recomendado: **auth → PDF → compras → producción**
+
+1. **Auth primero — es puerta de despliegue, no una feature.** El servicio YA
+   está vivo en Render y **público por defecto**; el dashboard sirve fichas de
+   cliente con **NIF** (indexado en `clientes.nif`, búsqueda por NIF —
+   `ENTREGA.md §6.6`). Eso es exposición de datos personales en producción. El
+   stopgap Basic Auth (`middleware.ts`) tapa el agujero pero es una contraseña
+   compartida, no trazabilidad ni usuarios: interino por diseño. Auth real cierra
+   el riesgo legal y desbloquea `creadoPor`. **Bloqueado en 1 decisión del
+   titular** (T.60.4) — es lo único que impide arrancarlo hoy.
+2. **PDF segundo — máximo valor visible, riesgo mínimo, y NO depende de auth.**
+   El modelo ya está completo y valorado; el PDF sólo LEE. Es la entrega que el
+   titular "ve" (el presupuesto que se manda al cliente) y no escribe nada. Va
+   detrás de auth sólo porque auth es urgente por el NIF, no por dependencia
+   técnica — de hecho podría solaparse.
+3. **Compras tercero — módulo de dominio nuevo, sin urgencia.** Necesita schema,
+   migración y UI desde cero (esfuerzo L). No hay exposición ni bloqueo.
+4. **Producción cuarto — el trozo con más riesgo algorítmico.** La hoja de corte
+   simple es abordable (los datos ya están en `lineasDespiece`), pero el
+   optimizador de aprovechamiento es un frente propio; conviene atacarlo con auth,
+   PDF y compras ya asentados, y por fases (hoja de corte antes que optimización).
+
+**No hay contradicción dura con este orden.** Auth-first se sostiene por la
+exposición del NIF (riesgo real y presente), no por dependencia técnica; y PDF,
+el de mayor valor inmediato, es el segundo y podría empezar en paralelo porque
+no depende de auth. El único matiz honesto: si el titular considera que el Basic
+Auth actual mitiga suficientemente el NIF a corto plazo, PDF podría ir primero;
+pero el stopgap es una contraseña compartida sin trazabilidad, así que la
+recomendación se mantiene en auth primero.
+
+### T.60.4 AUTH: decisiones del titular que bloquean el diseño (regla 7)
+
+El diseño de auth NO puede fijarse sin estas respuestas. Se propone un **default
+razonable** para cada una, pero **la elección es del titular**:
+
+1. **¿Cuántos usuarios y de qué tipo — sólo empleados internos, o también
+   clientes?** Cambia todo el modelo: un portal de clientes es otro producto
+   (registro, aislamiento por cliente, superficie pública mayor).
+   **Default propuesto: sólo empleados internos** (los que hoy usan el ERP),
+   alta manual por un administrador, sin auto-registro. Es lo que el histórico y
+   el uso actual sugieren.
+2. **¿Hacen falta roles/permisos diferenciados o basta un login único?**
+   (p. ej. comercial que cotiza vs. taller que ve producción vs. administración
+   que ve costes/márgenes). **Default propuesto: login único con acceso total
+   para el primer corte** (pocos usuarios internos, todos de confianza), dejando
+   un campo `rol` en el modelo de usuario para diferenciar más adelante sin
+   migración dolorosa. Si el titular ya quiere separar "ve costes" de "no ve
+   costes", eso es una decisión a tomar ANTES de codificar.
+3. **¿Alcance de RLS (row-level security) en Supabase, o basta gate a nivel de
+   app?** El cálculo ocurre siempre en servidor vía `DATABASE_URL` (conexión de
+   servicio, no el SDK de cliente — `ENTREGA.md §6.1`), así que la app ya es la
+   única puerta a los datos. **Default propuesto: gate a nivel de app** (sesión
+   Supabase Auth + guarda en el `layout`/middleware del servidor), **sin RLS por
+   ahora**: con usuarios internos y todo el acceso mediado por server actions,
+   RLS añadiría complejidad sin cerrar un hueco real. RLS se vuelve necesario si
+   entran clientes (decisión 1) o si algún día el navegador hablara directo con
+   Supabase (hoy no, y es requisito irrenunciable que no lo haga).
+
+Estas tres son del titular; el resto del diseño de auth (Supabase Auth con
+`@supabase/ssr`, sesión en cookie httpOnly, middleware que sustituye al Basic
+Auth manteniendo el falla-cerrado, poblar `creadoPor`) es ejecución estándar una
+vez respondidas.
+
+### T.60.5 Veredicto
+
+`packages/web` tiene el frente de presupuestos **completo y valorando**, y el
+terreno de auth **aprovisionado pero sin cablear**. El único riesgo abierto y
+presente es la **exposición del NIF en producción**, hoy tapada por un stopgap
+de contraseña compartida. Orden: **auth (bloqueado en 1 decisión del titular)
+→ PDF (mayor valor, riesgo nulo, sin dependencia) → compras → producción**.
+Nada de esto requiere tocar el motor de precio, que queda cerrado.
+
+## T.61 Módulo #1 AUTH: sesión Supabase (`@supabase/ssr`) sustituye al Basic Auth — falla cerrado, sin RLS, sin signup
+
+Construido el módulo #1. La auth real de Supabase **reemplaza** el stopgap de
+Basic Auth (T.60): el gate de toda la app pasa a ser la SESIÓN de Supabase Auth,
+manteniendo el falla-cerrado. Ejecuta las tres decisiones que el titular fijó en
+T.60.4 (sólo empleados internos, login único, gate en app sin RLS), sin
+re-litigarlas.
+
+**Qué se construyó (ficheros):**
+- `packages/web/lib/supabase/servidor.ts` — cliente SSR de servidor
+  (`createServerClient` + `cookies()`, patrón `getAll`/`setAll`). Usa
+  `SUPABASE_URL`/`SUPABASE_ANON_KEY`. Falla cerrado si faltan.
+- `packages/web/lib/supabase/navegador.ts` — cliente de navegador
+  (`createBrowserClient`), dejado preparado (canónico) pero HOY sin uso: el flujo
+  es 100% de servidor. Requeriría `NEXT_PUBLIC_*` sólo si algún Client Component
+  lo usara.
+- `packages/web/lib/supabase/middleware.ts` — `actualizarSesion`: refresca la
+  sesión y decide el acceso. Verifica con **`getClaims()`** (valida la firma del
+  JWT contra el JWKS del proyecto), **nunca `getSession()`** en servidor.
+- `packages/web/middleware.ts` — **reescrito**: era HTTP Basic Auth; ahora delega
+  en `actualizarSesion`. `matcher` protege todo salvo assets de Next y estáticos.
+- `packages/web/app/login/page.tsx` — Client Component, formulario email +
+  contraseña (`useActionState`). **Sin enlace de registro.** Error legible.
+- `packages/web/app/login/acciones.ts` — server actions `iniciarSesion`
+  (`signInWithPassword` → redirect `/dashboard`, error genérico que no distingue
+  usuario de contraseña) y `cerrarSesion` (`signOut` → redirect `/login`).
+- `packages/web/app/dashboard/_components/shell.tsx` — botón **"Salir"** en la
+  cabecera (form → `cerrarSesion`).
+- `packages/web/next.config.mjs` — carga el `.env` de la RAÍZ (como
+  `drizzle.config.ts`) y **inyecta `SUPABASE_URL`/`ANON_KEY` vía `env`** para que
+  el runtime **Edge** del middleware las vea (verificado: inlinadas en el bundle).
+- `packages/db/src/schema/auth.ts` (+ export en `index.ts`) — tabla `perfiles`.
+- `packages/web/app/dashboard/presupuestos/_lib/acciones.ts` — `creadoPor` ahora
+  se rellena con el email de la sesión (ver abajo).
+
+**Dependencias añadidas** (en `packages/web`): `@supabase/ssr@^0.12`,
+`@supabase/supabase-js@^2.110`.
+
+**Cómo funciona el gate.** Cada petición pasa por el middleware → `actualizarSesion`:
+refresca cookies de sesión y llama `getClaims()`. Sin claims válidos y ruta ≠
+`/login` → **redirect 307 a `/login`**; con sesión y visitando `/login` → redirect
+a `/dashboard`. **Falla cerrado** en dos puntos: si faltan `SUPABASE_URL`/`ANON_KEY`
+(auth no configurada) o si `getClaims()` lanza, se trata como "sin sesión" y se
+redirige (nunca se deja pasar ante la duda; la app sirve NIF). `/login` es la
+única ruta pública.
+
+**Dónde vive el `rol` (decisión).** Tabla propia **`perfiles`** en `public`,
+1:1 con `auth.users(id)` (FK `ON DELETE CASCADE`): `id, email, rol` (default
+`'empleado'`), `creado_en`. **No en `user_metadata`**: ese campo es editable por
+el propio usuario y no vale para autorización (regla de seguridad de Supabase).
+Hoy el `rol` **se persiste pero NO se usa para permisos** (login único, acceso
+total — decisión del titular); la tabla lo deja listo para cuando haga falta, sin
+depender de un claim manipulable ni de la frescura del JWT.
+
+**Por qué sin RLS y sin signup** (T.60.4, no re-litigado): todo el acceso a datos
+está mediado por server actions con `DATABASE_URL`; la app es la única puerta, así
+que RLS añadiría complejidad sin cerrar un hueco real. El registro público está
+**ausente a propósito**: las cuentas las crea el admin en Supabase; un signup en
+una URL pública de Render sería un agujero.
+
+**`creadoPor` cableado.** `crearPresupuesto` rellena `creado_por` con el email de
+la sesión (`getClaims()`, helper `usuarioActual`). De **bajo riesgo**: ante
+cualquier fallo devuelve `null` y el presupuesto se crea igual (no rompe el flujo
+existente).
+
+**Migración generada (SIN aplicar): `packages/db/migrations/0015_chubby_king_cobra.sql`.**
+`CREATE TABLE perfiles` (drizzle-kit) + la **FK a `auth.users` añadida a mano** (el
+esquema `auth` no lo gestiona drizzle). **No aplicada** — la aplica el titular con
+`npm run db:migrate`.
+
+**Verificación real (ejecutada):**
+- `npx tsc --noEmit` **limpio** en `@aluminior/web` y en `@aluminior/db`.
+- `next dev` (env real de Supabase cargada): `GET /dashboard` → **307 → `/login`**;
+  `GET /` → **307 → `/login`**; `GET /login` → **200** con el formulario
+  (email/password/Entrar). Sin errores en el log. Bundle Edge del middleware:
+  host `supabase.co` y clave anónima **inlinados** (el gate corre el `getClaims()`
+  real, no sólo el falla-cerrado).
+- **Login real NO probado end-to-end**: requiere un usuario creado por el titular
+  en Supabase Auth (no hay auto-registro). La infraestructura (cliente, cookies,
+  server action, env) está verificada; falta sólo la credencial.
+
+**PASOS PENDIENTES PARA EL TITULAR:**
+1. **Crear el/los usuario(s)** en Supabase Auth (panel → Authentication → Users →
+   *Add user*, con contraseña). Opcional: insertar su fila en `perfiles` con el
+   `rol` deseado (o dejar el default `'empleado'`).
+2. **Desactivar los signups** en Supabase (Authentication → Providers/Sign In →
+   *Allow new users to sign up* = OFF). Defensa en profundidad: aunque la app no
+   expone registro, cierra el alta por API pública.
+3. **Aplicar la migración**: `npm run db:migrate` (crea `perfiles` + FK a
+   `auth.users`).
+4. **Env en Render**: confirmar que `SUPABASE_URL` y `SUPABASE_ANON_KEY` están en
+   el entorno del servicio web (ya en el `.env` local; en Render van en el panel).
+   Retirar `BASIC_AUTH_USER`/`BASIC_AUTH_PASSWORD` cuando la sesión esté validada
+   en producción (el stopgap ya no se usa).

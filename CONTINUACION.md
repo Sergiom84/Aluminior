@@ -99,6 +99,19 @@ esto PRIMERO; luego, solo si necesitas profundizar, ve a `PLAN.md`.
 > Dejado como está con criterio: `scripts/medir-*.mjs` no se movieron (diario, rutas citadas en
 > anexos); `ajusteComercial` (opcional) no implementado (no pedido). Anexo **T.59**. **El frente de
 > precio queda cerrado**: ~70,5% del € cliente a ±1% (límite por datos), swap listo, vigencia trazable.
+>
+> **Actualización 2026-07-23 (T.60) — nueva tanda + STOPGAP de seguridad.** Al medir el estado
+> real de `packages/web` para el roadmap de los 4 módulos (PDF/auth/compras/producción) se
+> confirmó: **cero auth** en la web (ni middleware, ni login, ni sesión) y el servicio **YA está
+> vivo en Render** (`srv-d9dprl...`, público por defecto). El dashboard sirve **NIF de clientes**
+> (§6.6 ENTREGA) → **exposición de datos personales en producción** (viola regla 4). Decisión del
+> titular: **reordenar la tanda a AUTH como módulo #1, PDF #2** (PDF no depende de auth; auth es
+> puerta de despliegue por el NIF). **Stopgap aplicado y verificado**: `packages/web/middleware.ts`
+> cierra TODA la app tras HTTP Basic Auth, **falla cerrado** (sin `BASIC_AUTH_PASSWORD` → 503, nunca
+> público). Probado end-to-end (401 sin/malas credenciales, 200 con buenas, `WWW-Authenticate` OK;
+> typecheck limpio). **Pendiente del titular**: fijar `BASIC_AUTH_PASSWORD` en Render y desplegar
+> (la web sigue expuesta hasta entonces); **rotar `RENDER_API`**. Roadmap medido T.60 y auth real
+> (Supabase, claves ya en `.env`) = trabajo en curso de esta tanda.
 
 ---
 
