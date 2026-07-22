@@ -8,6 +8,7 @@
  */
 
 import Link from 'next/link'
+import { cerrarSesion } from '../../login/acciones.ts'
 
 export interface Modulo {
   id: string
@@ -101,6 +102,16 @@ export function Shell({
           <p className="text-sm" style={{ color: 'var(--al-text-muted)' }}>
             {actual.descripcion}
           </p>
+          {/* Logout: server action que limpia la sesión de Supabase (T.61). */}
+          <form action={cerrarSesion} className="ml-auto">
+            <button
+              type="submit"
+              className="rounded-md border px-3 py-1.5 text-sm transition-colors"
+              style={{ borderColor: 'var(--al-border)', color: 'var(--al-text-muted)' }}
+            >
+              Salir
+            </button>
+          </form>
         </header>
 
         <main className="min-w-0 flex-1 p-8">{children}</main>

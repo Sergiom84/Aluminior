@@ -20,6 +20,24 @@ import {
   valorarDespiece, medidasVidrio, metrajeVidrioM2, lineaValorable, type DatosArticuloPrecio,
 } from '@aluminior/core/precios'
 import { expandirCadena, construirResoluciones, resolverComponente } from '@aluminior/core/series'
+import { crearClienteServidor } from '../../../../lib/supabase/servidor.ts'
+
+/**
+ * Email del usuario de la sesión, para el campo `creado_por` (antes vacío por
+ * no haber auth, T.61). Nunca rompe la creación: ante cualquier fallo devuelve
+ * null y el presupuesto se crea igual.
+ */
+async function usuarioActual(): Promise<string | null> {
+  try {
+    const supabase = await crearClienteServidor()
+    const { data, error } = await supabase.auth.getClaims()
+    if (error || !data?.claims) return null
+    const claims = data.claims as { email?: string; sub?: string }
+    return claims.email ?? claims.sub ?? null
+  } catch {
+    return null
+  }
+}
 
 /**
  * `DisComponente` de la ranura de CRISTAL. No la resuelve la serie: la elige
@@ -169,6 +187,7 @@ export async function crearPresupuesto(_previo: Estado, datos: FormData): Promis
   const db = crearDb()
   try {
     const numero = await siguienteNumero(db)
+    const creadoPor = await usuarioActual()
     const [fila] = await db.insert(schema.presupuestos).values({
       numero,
       revision: 0,
@@ -180,6 +199,7 @@ export async function crearPresupuesto(_previo: Estado, datos: FormData): Promis
       tarifa: d.tarifa,
       formaPago: d.formaPago,
       estado: 'PENDIENTE',
+      creadoPor,
     }).returning({ id: schema.presupuestos.id })
 
     revalidatePath('/dashboard/presupuestos')
