@@ -5313,3 +5313,86 @@ ese veredicto sin reejecutarlo:
   este entorno), así que no hubo un presupuesto real que renderizar; las consultas
   de `cargarPresupuestoPdf` corrieron contra el esquema en vivo sin error y son
   las mismas que `page.tsx` ya usa en producción.
+
+## T.63 Módulo #3 Compras: pedidos a proveedor (cabecera + líneas) — el coste es entrada del usuario, la fuente medida solo SUGIERE
+
+**Objetivo.** Dar de alta pedidos de compra a proveedor detrás del gate de auth
+(T.61), imitando el patrón de Presupuestos (server actions + Drizzle + Zod,
+cálculo en servidor). De Compras solo existía el maestro `proveedores` (8 filas);
+el menú lo marcaba "pend." (`shell.tsx:34`). Ahora es un módulo funcional.
+
+**Modelo de datos (nuevo `packages/db/src/schema/compras.ts`, exportado en
+`schema/index.ts`).** Cabecera + líneas, enlazadas por sus claves reales:
+- **`pedidos_compra`**: `id` uuid · `numero` int (patrón AASSSS del original,
+  260007 = nº 7 de 2026, misma lógica que presupuestos) · `fecha` date ·
+  `proveedor_codigo` → `proveedores.codigo` (**NOT NULL**: un pedido sin
+  proveedor no existe en el dominio) · `referencia` · `estado`
+  (BORRADOR·ENVIADO·RECIBIDO·ANULADO, `ESTADOS_PEDIDO_COMPRA`) · `total`
+  numeric(14,2) · `coste_completo` boolean · `observaciones` · `creado_en` ·
+  `creado_por`.
+- **`lineas_pedido_compra`**: `id` uuid · `pedido_id` → `pedidos_compra.id`
+  (`ON DELETE cascade`) · `orden` · `articulo_codigo` → `articulos.codigo`
+  (OPCIONAL: se admite línea de concepto libre) · `descripcion` NOT NULL ·
+  `acabado_codigo` · `cantidad` · `coste_unitario` numeric(12,4) **NULL =
+  "sin coste"** · `importe` numeric(14,2) **NULL si falta coste**.
+
+**Migración GENERADA (no aplicada a Supabase).** `npm run db:generate` produjo
+**`packages/db/migrations/0016_faithful_raider.sql`**: solo `CREATE TABLE` de las
+dos tablas nuevas + sus FK e índices (aditiva; no toca ninguna tabla existente).
+La aplica el titular con `npm run db:migrate` cuando decida.
+
+**Decisión sobre el COSTE (regla 1 y 3): entrada del usuario, con sugerencia
+medida — nunca inventado, nunca el PVP.** Se midió la BD real (solo lectura):
+`articulos_coste` tiene **27.817 filas** (clave artículo|proveedor|acabado) — es
+la MISMA fuente de coste que Presupuestos usa para valorar el despiece, y la que
+el roadmap T.60.2 citaba como existente. Por tanto:
+- El `coste_unitario` de cada línea es **input del usuario**.
+- Al indicar artículo (+ acabado), la acción `costeSugerido()` **autocompleta**
+  el campo desde `articulos_coste` **solo si la fuente es INEQUÍVOCA**: coste del
+  acabado exacto si se dio; si no, el coste común cuando todos los acabados de
+  ese (artículo, proveedor) coinciden; en cualquier otro caso (varios costes
+  distintos, o ninguno) el campo queda **en blanco** y la UI avisa "sin coste
+  fiable en el histórico… introdúcelo a mano o déjalo vacío". Es la misma
+  cautela que `acciones.ts` de presupuestos aplica al coste por acabado.
+- Nunca se copia `articulos_pvp` (PRECIO DE VENTA, no coste).
+- **Guarda del dinero (T.59) heredada:** una línea sin coste tiene `importe` NULL
+  (no 0). `recalcularTotales` (una sola sentencia SQL) suma **solo** las líneas
+  con coste y pone `coste_completo = BOOL_AND(coste_unitario IS NOT NULL)`
+  (COALESCE a true en pedido vacío). El detalle y el listado muestran el total
+  como **parcial** (marca `*` / aviso "N líneas sin coste") en vez de fingir un
+  coste real.
+
+**UI (imita Clientes/Presupuestos), ficheros nuevos en
+`packages/web/app/dashboard/compras/`:**
+- `page.tsx` — listado con búsqueda (número, proveedor, referencia).
+- `nuevo/page.tsx` (server, carga proveedores) + `nuevo/formulario.tsx` (client)
+  — alta de cabecera: selector de proveedor, referencia, observaciones.
+- `[id]/page.tsx` — detalle: cabecera, selector de estado, tabla de líneas,
+  total (parcial si hay líneas sin coste).
+- `[id]/_components/anyadir-linea.tsx` (client) — alta de línea con
+  autocompletado del coste; botón de borrado; selector de estado.
+- `_lib/acciones.ts` — server actions (`crearPedido`, `anyadirLinea`,
+  `borrarLinea`, `cambiarEstado`, `costeSugerido`, `recalcularTotales`) con Zod
+  y todo el cálculo en SERVIDOR.
+- `shell.tsx`: el ítem **Compras** pasa a `listo: true`, href `/dashboard/compras`
+  (se quita el "pend.").
+
+**Verificación real (ejecutada):**
+- `npm run -w @aluminior/db typecheck` y `npm run -w @aluminior/web typecheck`:
+  **limpios**.
+- `npm run -w @aluminior/web build`: **verde**; aparecen las tres rutas
+  `/dashboard/compras`, `/dashboard/compras/nuevo`, `/dashboard/compras/[id]`.
+- **Flujo real contra Postgres local desechable** (Docker `docker-compose.yml`,
+  puerto 55432; **NUNCA Supabase** para escrituras): se aplicaron TODAS las
+  migraciones (incluida `0016`) con `DATABASE_URL` local; la 0015 exige
+  `auth.users` (esquema de Supabase) → se creó un stub `auth.users(id uuid)` solo
+  en ese contenedor efímero. Con datos anónimos (P1, A1, A2) se ejercitó el
+  dominio: cabecera + línea con coste (importe 3×10 = **30,00**) + línea sin coste
+  (importe **NULL**); `recalcularTotales` dio **total 30,00** y
+  **coste_completo = false**; `costeSugerido` devolvió **10** (inequívoco), **null**
+  (ambiguo A2), **5** (acabado exacto), **null** (artículo inexistente); pedido
+  vacío → **coste_completo = true**. El contenedor se destruyó (`down -v`).
+- **Supabase (solo lectura):** las únicas consultas que tocaron la instancia
+  compartida fueron los `COUNT(*)` de medición (`proveedores`=8,
+  `articulos`=17.547, `articulos_coste`=27.817, `articulos_pvp`=83.367). Ninguna
+  escritura, ninguna migración aplicada allí. Cero PII/costes reales en el repo.

@@ -113,6 +113,13 @@
       "when": 1784760125897,
       "tag": "0015_chubby_king_cobra",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1784762905826,
+      "tag": "0016_faithful_raider",
+      "breakpoints": true
     }
   ]
 }
