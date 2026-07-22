@@ -4202,6 +4202,54 @@ guarda "todo o sin valorar" de T.54 aplica igual (línea sin PVP → sin valorar
 hija/ventana/cliente; tolerancias exacto/±1/±2/±5%). Caveat (regla 7): tarifa histórica 2024, no
 vigente; el € es reconstrucción del pasado para validar el modelo, no cotización nueva.
 
+## T.56 El cargador de TARIFA (ETL): swap aditivo, idempotente, dry-run por defecto
+
+Implementa la costura de swap de T.55: recibe un fichero de tarifa del proveedor y lo carga en
+`articulos_pvp` como una TARIFA NUEVA, sin tocar la lógica de valoración (`acciones.ts` ya lee el
+precio por `(articulo_codigo, acabado_codigo, tarifa)`). Construido y probado end-to-end contra un
+fichero de EJEMPLO (no se esperó a la tarifa 2026 real). Ficheros:
+`packages/etl/src/cargar-tarifa.ts` (cargador), `packages/etl/ejemplos/tarifa-ejemplo-2026.csv`
+(20 filas con artículos reales del catálogo + 1 inexistente + 1 fuera de rango, para ejercitar la
+validación), `scripts/probar-revalorar-tarifa.mjs` (revaloración de un presupuesto en memoria).
+
+**Salvaguardas (regla de entorno: Supabase compartida es SOLO LECTURA por defecto):**
+1. **Aditivo y aislado:** escribe SOLO en la `tarifa` destino (`--tarifa`, entero positivo). Las
+   históricas **{1,2,3} están PROTEGIDAS** (hardcode): el cargador aborta si se apunta a ellas.
+   Verificado: `--tarifa 1` → `ABORTADO: tarifa 1 PROTEGIDA`; `--tarifa 0` → `ABORTADO`.
+2. **Idempotente y reversible:** `INSERT … ON CONFLICT (articulo_codigo, acabado_codigo, tarifa)
+   DO UPDATE SET precio` — re-ejecutar no duplica; solo toca filas de la tarifa destino. `--rollback
+   --apply` borra exactamente esa tarifa (nunca una protegida).
+3. **DRY-RUN por defecto:** valida el fichero, resuelve códigos contra `articulos` (17.547, SOLO
+   LECTURA) y muestra el DIFF (altas / cambios / iguales / no encontrados / fuera de rango /
+   inválidas) SIN escribir. Solo escribe con `--apply` explícito.
+4. **Nunca inventa un precio:** artículo no en catálogo → reportado, no entra. Precio no numérico
+   o fuera de `0 < p < 100.000` → reportado, no entra. Fecha inválida → reportada, no entra.
+
+**Esquema del fichero (CSV UTF-8; XLSX → exportar a CSV, no se añadió dependencia):**
+`articulo` (obligatorio; casa con `Articulos.codigo`), `acabado` (código; vacío o `*` → `UNI` =
+precio no dependiente del acabado), `precio` (obligatorio; PVP por unidad del `TipoMetraje` del
+artículo — €/ud, €/m, €/m²; la unidad la fija el catálogo, no el fichero), `fecha_vigencia`
+(opcional; se valida y reporta). Columnas `recargo_*` se avisan e ignoran (hoy sin tabla destino;
+extensión futura = `articulos_incr_precio` + registro `tarifas` con vigencia).
+
+**Cómo se activa una tarifa nueva (swap):**
+1. `npm run etl:tarifa -- --file <fichero.csv> --tarifa 2026` → DRY-RUN: revisa el diff.
+2. `npm run etl:tarifa -- --file <fichero.csv> --tarifa 2026 --apply` → carga (upsert) esa tarifa.
+3. Apuntar el/los presupuestos a la nueva tarifa (`presupuestos.tarifa = 2026`); `acciones.ts`
+   revaloriza sin cambios de código. Rollback: `--tarifa 2026 --rollback --apply`.
+
+**Prueba end-to-end (regla 2, ejecutado):** dry-run del ejemplo → 22 filas, **20 válidas, 20
+altas**, `GM_NO_EXISTE` no encontrado, `MOCOL/UNI=999999` fuera de rango — todo reportado, **nada
+escrito** (confirmado: la BD sigue con tarifas solo `1:27791 2:27788 3:27788`, sin `2026`).
+Revaloración del presupuesto 764 con el fichero (in-memory, SOLO LECTURA): **578,65 € → 611,99 €
+(+5,76%)**, coherente con la subida ficticia +5% del ejemplo; desglose por línea (GM306 3,33→3,59…).
+
+**Estado:** cargador listo y probado. **NO se ha hecho `--apply` contra la BD compartida** (requiere
+visto bueno del titular). Cuando llegue la tarifa 2026 real: colocar el fichero con el esquema de
+arriba, dry-run, revisar diff, y `--apply` con un id de tarifa nuevo. Caveat (regla 7): la
+`fecha_vigencia` hoy se valida pero no se persiste (no hay columna/tabla de tarifas); si se quiere
+histórico de vigencias, añadir tabla `tarifas`.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento

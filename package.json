@@ -14,6 +14,7 @@
     "db:generate": "npm run -w @aluminior/db generate",
     "db:migrate": "npm run -w @aluminior/db migrate",
     "etl": "npm run -w @aluminior/etl import",
+    "etl:tarifa": "tsx packages/etl/src/cargar-tarifa.ts",
     "dev:api": "npm run -w @aluminior/api dev",
     "dev:web": "npm run -w @aluminior/web dev",
     "test": "npm run -ws --if-present test",

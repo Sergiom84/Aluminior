@@ -51,6 +51,19 @@ esto PRIMERO; luego, solo si necesitas profundizar, ve a `PLAN.md`.
 > proveedor: `artículo, acabado, precio (por unidad del TipoMetraje del catálogo), fecha`. Detalle:
 > anexo **T.55**. **T.24–T.52 (recuento topológico) NO se tira**: queda como capa de precisión
 > para los productos recurrentes.
+>
+> **Actualización 2026-07-22 (T.56) — cargador de TARIFA (ETL) listo y probado.** Implementa el
+> swap: `packages/etl/src/cargar-tarifa.ts` recibe un fichero del proveedor y lo carga en
+> `articulos_pvp` como TARIFA NUEVA. Salvaguardas: escribe solo en la tarifa destino, **{1,2,3}
+> protegidas** (aborta), **idempotente** (upsert por PK), **DRY-RUN por defecto** (valida + diff
+> sin escribir; solo `--apply` escribe), nunca inventa precio. Invocación:
+> `npm run etl:tarifa -- --file <csv> --tarifa 2026 [--apply]` (rollback: `--rollback --apply`).
+> Esquema fichero: `articulo, acabado (*/UNI=genérico), precio (por unidad del TipoMetraje),
+> fecha_vigencia`. Probado end-to-end con `packages/etl/ejemplos/tarifa-ejemplo-2026.csv` (20
+> altas, artículo inexistente y precio fuera de rango reportados, **nada escrito** — BD sigue con
+> tarifas 1/2/3). Revaloración de un presupuesto: `scripts/probar-revalorar-tarifa.mjs` (764:
+> 578,65→611,99 €, in-memory). **NO se ha hecho `--apply` contra la BD compartida** (requiere visto
+> bueno del titular). Detalle: anexo **T.56**.
 
 ---
 
