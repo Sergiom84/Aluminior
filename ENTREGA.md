@@ -532,7 +532,8 @@ falta para valorar.
 | Acceso a datos | **Drizzle ORM** | SQL explícito, migraciones versionadas |
 | Validación | **Zod 4** | Esquemas compartidos |
 | Estilos | **Tailwind 4 + tokens CSS** | Mismo sistema que F-Gestor-IA |
-| Despliegue previsto | **Render** | — |
+| Autenticación | **Supabase Auth** (`@supabase/ssr`) | Gate de sesión en servidor; verificación JWT (JWKS), no `getSession()` (T.61) |
+| Despliegue | **Render** (live) | `https://aluminior.onrender.com`, auto-deploy desde `main` |
 
 **Requisito irrenunciable:** el cálculo de despiece y precios ocurre **siempre
 en servidor**. Si el navegador pudiera calcular precios, cualquiera podría
@@ -540,6 +541,26 @@ manipularlos. Por eso se usa Supabase como base de datos, no su SDK de cliente.
 
 **Decisiones revertidas por el camino** (documentadas en `ARQUITECTURA.md`):
 Fastify → Express → Next.js. La última por alinearse con F-Gestor-IA.
+
+### Configuración de despliegue en Render (la que FUNCIONA)
+
+El servicio (`srv-d9dprl...`, repo `Sergiom84/Aluminior`, rama `main`, plan free)
+sirve `@aluminior/web` del monorepo. Config verificada (T.61):
+
+| Ajuste | Valor |
+|---|---|
+| `buildCommand` | `npm install --include=dev && npm run -w @aluminior/web build` |
+| `startCommand` | `npm run -w @aluminior/web start` |
+| `NODE_ENV` | `production` |
+
+Cuatro fallos de config (no de código) que costó desenredar, por si reaparecen:
+(1) el `startCommand` apuntaba a `@aluminior/api`, workspace **inexistente**;
+(2) el `buildCommand` era solo `npm install`, nunca corría `next build`;
+(3) `NODE_ENV=development` rompe `next build` al prerender de `/404`
+(«`<Html>` should not be imported…») — debe ser `production`;
+(4) con `NODE_ENV=production`, `npm install` **omite** devDependencies
+(Tailwind/PostCSS/TS) → falla PostCSS en `app/globals.css`; de ahí el
+`--include=dev`. Sanidad: `/` y `/dashboard` → 307 a `/login`; `/login` → 200.
 
 ## 6.2 Estructura del repositorio
 
@@ -658,10 +679,16 @@ simbólicas, y las medidas de corte se recalculan al instante.
 **Presupuestos** — listado, alta de cabecera, líneas de dos tipos, borrado de
 líneas, totales con IVA recalculados en SQL.
 
+**Autenticación** (T.61) — gate de sesión Supabase que protege toda la app;
+sin sesión → `/login`. Solo empleados internos, alta manual (sin registro
+público), login único. Pendiente del titular: crear usuario(s) en Supabase y
+`npm run db:migrate` para la tabla `perfiles` (migración `0015`, rol aún sin uso).
+
 ## 6.7 Módulos pendientes
 
 Marcados con la etiqueta **"pend."** en el menú lateral: Producción, Compras,
-Informes.
+Informes. Orden de trabajo (roadmap T.60): **PDF de presupuestos** (en curso,
+módulo #2) → Compras → Producción.
 
 ## 6.8 Cómo ejecutarlo
 
