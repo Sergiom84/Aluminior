@@ -40,3 +40,21 @@ export function lineaValorable(args: {
   }
   return { valorable: motivos.length === 0, motivos }
 }
+
+/**
+ * ¿Está el presupuesto INCOMPLETO? (regla del dinero a nivel documento).
+ *
+ * Una línea se persiste con `valoracionCompleta = false` cuando `lineaValorable`
+ * (arriba) la dejó sin valorar al añadirla (ver `acciones.ts`). El documento
+ * entero es "incompleto" si CUALQUIER línea quedó sin valorar: sus totales
+ * (subtotal/IVA/total) no son un importe válido y no deben mostrarse como cifra.
+ *
+ * Fuente ÚNICA del criterio "incompleto": la usan tanto la página de detalle
+ * (web) como el PDF, para que ambos coincidan al céntimo. NO revalora: consume
+ * el veredicto ya persistido por la guarda al añadir cada línea.
+ */
+export function presupuestoIncompleto(
+  lineas: readonly { valoracionCompleta: boolean }[],
+): boolean {
+  return lineas.some((l) => !l.valoracionCompleta)
+}

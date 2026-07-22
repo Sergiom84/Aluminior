@@ -5244,3 +5244,72 @@ esquema `auth` no lo gestiona drizzle). **No aplicada** — la aplica el titular
    el entorno del servicio web (ya en el `.env` local; en Render van en el panel).
    Retirar `BASIC_AUTH_USER`/`BASIC_AUTH_PASSWORD` cuando la sesión esté validada
    en producción (el stopgap ya no se usa).
+
+## T.62 Módulo #2 PDF: presupuesto a PDF en servidor desde el modelo ya valorado — la guarda del dinero se hereda, no se recalcula
+
+**Objetivo.** Generar el PDF de un presupuesto en **servidor**, detrás del gate de
+auth (T.61), reutilizando la valoración que la web ya persiste. Los números del
+PDF cuadran **al céntimo** con la pantalla porque salen de la MISMA fuente: las
+líneas ya valoradas en `lineas` (`precio_unitario`, `total`, `valoracion_completa`)
+y los totales de `presupuestos` que `recalcularTotales` grabó. El PDF **no
+revalora nada**.
+
+**Librería elegida: `@react-pdf/renderer@^4` (en `packages/web`).** Render
+100% en Node (`renderToBuffer`), composición con JSX (encaja con el árbol de
+componentes de Next) y **sin Chromium**: cumple la restricción de Render plan
+free (Puppeteer/Playwright quedan descartados, headless Chrome no es viable
+ahí). Frente a `pdfkit` (API imperativa de dibujo), react-pdf permite escribir
+el documento como componentes y estilos, más cerca del resto del código de la
+web.
+
+**Dónde vive la generación** (nueva carpeta `packages/web/app/dashboard/presupuestos/[id]/pdf/`):
+- **`documento.tsx`** — presentación PURA (`PresupuestoPDF`): recibe datos ya
+  valorados y los dibuja. Usa el MISMO formateador que la web
+  (`Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' })`), de ahí
+  la coincidencia al céntimo y con la misma cifra de euro.
+- **`datos.ts`** (`cargarPresupuestoPdf`) — lee EXACTAMENTE lo mismo que
+  `[id]/page.tsx`: cabecera, destinatario (cliente con ficha → `nombreLibre` →
+  "Sin destinatario") y líneas ordenadas. No calcula importes: consume el
+  veredicto persistido.
+- **`route.ts`** — `GET /dashboard/presupuestos/[id]/pdf` → `application/pdf`
+  (`Content-Disposition: inline`). `runtime = 'nodejs'` (react-pdf no es
+  compatible con Edge) y `dynamic = 'force-dynamic'`. Detrás del gate de auth
+  como el resto de `/dashboard`.
+- Enlace **"PDF"** añadido a la cabecera de `[id]/page.tsx` (abre en pestaña nueva).
+
+**Cómo reutiliza la guarda del dinero (FUENTE ÚNICA).** La regla 3 ("todo o sin
+valorar", T.59) ya la aplica `acciones.ts` al añadir cada línea, vía
+`lineaValorable` (`packages/core/src/precios/guarda.ts`): si algo no resuelve,
+persiste `precio_unitario = NULL` y `valoracion_completa = false`. El PDF hereda
+ese veredicto sin reejecutarlo:
+- línea con `valoracion_completa = false` → **"Sin valorar"** (nunca 0 ni un total
+  inventado); su importe sale **"—"**.
+- criterio de documento **"incompleto"** extraído a core como
+  **`presupuestoIncompleto(lineas)`** (nuevo símbolo en `guarda.ts`, junto a
+  `lineaValorable`), consumido por AMBOS: `[id]/page.tsx` (que antes hacía el
+  `lineas.some(...)` a mano) y el PDF. Cuando es `true`, el PDF pinta el aviso
+  rojo **"PRESUPUESTO INCOMPLETO — contiene líneas sin valorar"** y los totales
+  (base/IVA/total) salen "Sin valorar", igual que la web muestra "sin valorar".
+
+**Dependencia añadida** (en `packages/web`): `@react-pdf/renderer@^4` (instalada
+`4.5.1`).
+
+**Verificación real (ejecutada):**
+- `npx tsc --noEmit` en `@aluminior/web`: **limpio**.
+- `npm run -w @aluminior/web build`: **verde**; la ruta
+  `/dashboard/presupuestos/[id]/pdf` aparece como dinámica (ƒ).
+- Core intacto: **46/46 tests** siguen pasando (el nuevo `presupuestoIncompleto`
+  es aditivo).
+- **PDF real generado e inspeccionado** (a `os.tmpdir()`, fuera del repo — nada
+  versionado, regla 4/PII). Dos casos sintéticos (datos anonimizados):
+  - *Completo*: importes por línea y totales en euros correctos
+    (1.000,00 € + 234,56 € → base 1.234,56 €, IVA 259,26 €, total 1.493,82 €); una
+    línea "Valorado con avisos" conserva su nota.
+  - *Incompleto*: banner rojo "PRESUPUESTO INCOMPLETO"; la línea sin valorar sale
+    **"Sin valorar"** con importe **"—"** (no 0); base/IVA/total todos
+    **"Sin valorar"** (no un total parcial).
+- **BD real (Supabase, solo lectura):** la instancia conectada tiene **0
+  presupuestos / 0 líneas** (la migración histórica comercial no está cargada en
+  este entorno), así que no hubo un presupuesto real que renderizar; las consultas
+  de `cargarPresupuestoPdf` corrieron contra el esquema en vivo sin error y son
+  las mismas que `page.tsx` ya usa en producción.

@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { eq, asc, inArray } from 'drizzle-orm'
 import { crearDb, schema } from '@aluminior/db'
+import { presupuestoIncompleto } from '@aluminior/core/precios'
 import { Shell } from '../../_components/shell.tsx'
 import { AnyadirLinea, BotonBorrarLinea } from './_components/anyadir-linea.tsx'
 
@@ -30,7 +31,7 @@ export default async function DetallePresupuesto({
     .from(schema.lineas)
     .where(eq(schema.lineas.presupuestoId, id))
     .orderBy(asc(schema.lineas.orden))
-  const hayImportesIncompletos = lineas.some((l) => !l.valoracionCompleta)
+  const hayImportesIncompletos = presupuestoIncompleto(lineas)
 
   // Series configuradas: la serie es prerrequisito de toda línea de estructura.
   const series = await db.select({ codigo: schema.series.codigo })
@@ -68,6 +69,11 @@ export default async function DetallePresupuesto({
             style={{ background: 'var(--al-accent-soft)', color: 'var(--al-accent-strong)' }}>
             {p.estado}
           </span>
+          <a href={`/dashboard/presupuestos/${id}/pdf`} target="_blank" rel="noopener"
+            className="ml-auto rounded border px-3 py-1 text-sm"
+            style={{ borderColor: 'var(--al-border)', color: 'var(--al-accent)' }}>
+            PDF
+          </a>
         </div>
         <div className="mt-1 flex flex-wrap gap-4 text-sm" style={{ color: 'var(--al-text-muted)' }}>
           <span>{cliente?.nombre ?? p.nombreLibre ?? 'Sin destinatario'}</span>
