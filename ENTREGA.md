@@ -394,6 +394,20 @@ fórmulas resueltas.**
 
 # 5. EL PROBLEMA ABIERTO — valoración
 
+> **CERRADO por el frente de PRECIO (22/07/2026, anexos T.55–T.59).** El cuello de
+> la valoración NO era el recuento sino el PRECIO, y la mayor parte del dinero se
+> tarifa (no se despieza). Medido contra el histórico: **`ImporteTotal = PVP(artículo,
+> acabado, tarifa) × Metraje × Cdad`** reconstruye **~70,5% del € cliente a ±1%**
+> (90,9% del € de despiece); el resto es manual/ajuste por presupuesto no registrado
+> (límite por datos, no de modelo — T.58). Entregado: **máquina de precio** (lookup PVP,
+> ya en `acciones.ts`), **cargador de tarifa** `packages/etl/src/cargar-tarifa.ts`
+> (`npm run etl:tarifa`; dry-run por defecto, tarifas históricas 1/2/3 protegidas,
+> aditivo, idempotente, reversible), tabla **`tarifas`** (registro de vigencia/procedencia,
+> migración `0014` aplicada), y la **guarda "todo o sin valorar"** (`core/precios/guarda.ts`,
+> testeada). El swap a la tarifa 2026 real = cargar y apuntar el presupuesto, sin tocar
+> lógica. Ver PLAN.md **T.55–T.59**. Lo de abajo (recuento topológico T.24–T.52) queda como
+> capa de precisión para los productos recurrentes.
+
 > **RESUELTO (18/07/2026, sesión posterior).** El mecanismo de resolución
 > genérico → perfil está identificado y validado contra 1.657 líneas de
 > documentos reales: **96,5% de coincidencia exacta** con lo que eligió GAIA.

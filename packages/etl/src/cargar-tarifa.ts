@@ -28,6 +28,8 @@
 import { readFileSync } from 'node:fs'
 import { parse } from 'csv-parse/sync'
 import postgres from 'postgres'
+// Reglas puras (protección de tarifas, validación de fila, diff) — testeadas en core (T.59).
+import { PRECIO_MAX, tarifaDestinoValida, tarifaProtegida, validarFilaTarifa, diffTarifa, type FilaTarifa } from '@aluminior/core/precios'
 
 // --- Entorno ---
 for (const linea of readFileSync(new URL('../../../.env', import.meta.url), 'utf8').split('\n')) {
@@ -35,11 +37,6 @@ for (const linea of readFileSync(new URL('../../../.env', import.meta.url), 'utf
   if (m) process.env[m[1]] ??= m[2].trim()
 }
 if (!process.env.DATABASE_URL) throw new Error('Falta DATABASE_URL en .env')
-
-// --- Configuración fija ---
-const TARIFAS_PROTEGIDAS = new Set([1, 2, 3]) // históricas: nunca escribibles
-const PRECIO_MIN = 0        // exclusivo: precio > 0
-const PRECIO_MAX = 100000   // €/unidad; por encima se marca fuera de rango (revisar a mano)
 
 // --- Args ---
 const args = process.argv.slice(2)
@@ -60,19 +57,12 @@ function abortar(msg: string): never {
   process.exit(1)
 }
 
-if (!Number.isInteger(TARIFA) || TARIFA <= 0) abortar('--tarifa debe ser un entero positivo (p.ej. --tarifa 2026)')
-if (TARIFAS_PROTEGIDAS.has(TARIFA)) abortar(`la tarifa ${TARIFA} está PROTEGIDA (histórica). Elige un id nuevo (p.ej. 2026)`)
+if (TARIFA <= 0 || !Number.isInteger(TARIFA)) abortar('--tarifa debe ser un entero positivo (p.ej. --tarifa 2026)')
+if (tarifaProtegida(TARIFA)) abortar(`la tarifa ${TARIFA} está PROTEGIDA (histórica). Elige un id nuevo (p.ej. 2026)`)
+if (!tarifaDestinoValida(TARIFA)) abortar(`--tarifa ${TARIFA} no es un destino válido`)
 if (!ROLLBACK && !FICHERO) abortar('falta --file <ruta.csv>')
 
 const sql = postgres(process.env.DATABASE_URL!, { ssl: 'require', max: 3 })
-
-// ── util ─────────────────────────────────────────────────────────────────────
-const norm = (s: string | undefined) => (s ?? '').trim()
-const aNum = (s: string | undefined) => {
-  const n = Number(norm(s).replace(/\s/g, '').replace(',', '.'))
-  return Number.isFinite(n) ? n : null
-}
-const esFecha = (s: string) => s === '' || /^\d{4}-\d{2}-\d{2}$/.test(s) || /^\d{2}[/-]\d{2}[/-]\d{4}$/.test(s)
 
 async function main() {
   console.log(`\n═══ CARGADOR DE TARIFA — destino tarifa=${TARIFA}  modo=${APPLY ? 'APPLY (escribe)' : 'DRY-RUN (no escribe)'} ═══`)
@@ -107,8 +97,8 @@ async function main() {
   const catalogo = await sql<{ codigo: string; tipo_metraje: string }[]>`SELECT codigo, tipo_metraje FROM articulos`
   const tipoMetraje = new Map(catalogo.map((a) => [a.codigo, a.tipo_metraje]))
 
-  // ── 3) VALIDAR fila a fila ────────────────────────────────────────────────────
-  const validas = new Map<string, { articulo: string; acabado: string; precio: number; fecha: string }>()
+  // ── 3) VALIDAR fila a fila (formato/rango en core; catálogo con la BD) ─────────
+  const validas = new Map<string, FilaTarifa>()
   const noEncontrados: string[] = []
   const fueraRango: string[] = []
   const invalidas: string[] = []
@@ -116,30 +106,23 @@ async function main() {
   let nfila = 1
   for (const f of filas) {
     nfila++
-    const articulo = norm(col(f, 'articulo'))
-    let acabado = norm(col(f, 'acabado'))
-    if (acabado === '' || acabado === '*') acabado = 'UNI'
-    const precio = aNum(col(f, 'precio'))
-    const fecha = norm(col(f, 'fecha_vigencia'))
-    if (!articulo || precio === null) { invalidas.push(`fila ${nfila}: clave/precio ausente`); continue }
-    if (!esFecha(fecha)) { invalidas.push(`fila ${nfila} (${articulo}): fecha_vigencia inválida '${fecha}'`); continue }
-    if (!tipoMetraje.has(articulo)) { noEncontrados.push(articulo); continue }
-    if (!(precio > PRECIO_MIN && precio < PRECIO_MAX)) { fueraRango.push(`${articulo}/${acabado}=${precio}`); continue }
-    const clave = `${articulo}|${acabado}`
+    const v = validarFilaTarifa({ articulo: col(f, 'articulo'), acabado: col(f, 'acabado'), precio: col(f, 'precio'), fecha_vigencia: col(f, 'fecha_vigencia') })
+    if (!v.ok) {
+      if (v.motivo === 'rango') fueraRango.push(v.detalle)
+      else invalidas.push(`fila ${nfila}: ${v.detalle}`)
+      continue
+    }
+    if (!tipoMetraje.has(v.fila.articulo)) { noEncontrados.push(v.fila.articulo); continue }
+    const clave = `${v.fila.articulo}|${v.fila.acabado}`
     if (validas.has(clave)) duplicadas.push(clave)
-    validas.set(clave, { articulo, acabado, precio, fecha }) // última gana
+    validas.set(clave, v.fila) // última gana
   }
 
-  // ── 4) DIFF contra la tarifa destino existente ────────────────────────────────
+  // ── 4) DIFF contra la tarifa destino existente (idempotencia) ─────────────────
   const existentes = await sql<{ articulo_codigo: string; acabado_codigo: string; precio: string }[]>`
     SELECT articulo_codigo, acabado_codigo, precio FROM articulos_pvp WHERE tarifa = ${TARIFA}`
   const mapaExist = new Map(existentes.map((r) => [`${r.articulo_codigo}|${r.acabado_codigo}`, Number(r.precio)]))
-  const altas: string[] = [], cambios: string[] = [], iguales: string[] = []
-  for (const [clave, v] of validas) {
-    if (!mapaExist.has(clave)) altas.push(clave)
-    else if (Math.abs(mapaExist.get(clave)! - v.precio) > 1e-4) cambios.push(`${clave}: ${mapaExist.get(clave)} → ${v.precio}`)
-    else iguales.push(clave)
-  }
+  const { altas, cambios, iguales } = diffTarifa(validas, mapaExist)
 
   // ── 4b) REGISTRO en `tarifas` (procedencia + vigencia persistida, T.57) ───────
   // fecha_vigencia de la tarifa = la fecha (no vacía) mayoritaria entre las filas válidas.

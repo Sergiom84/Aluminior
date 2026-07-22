@@ -86,6 +86,19 @@ esto PRIMERO; luego, solo si necesitas profundizar, ve a `PLAN.md`.
 > NO cambia: 70,5%.** El hueco restante es manual/ajuste-no-capturado, no fallo de la máquina PVP;
 > hacia delante ese ajuste sería un input del usuario. Script `scripts/medir-margen-ventana.mjs`.
 > Anexo **T.58**.
+>
+> **Actualización 2026-07-22 (T.59) — frente de precio CERRADO y blindado.** (1) Migración `tarifas`
+> APLICADA (`npm run db:migrate`; única escritura autorizada): tabla creada, `articulos_pvp` intacta
+> (1/2/3). El `--apply` de precios sigue pendiente de la tarifa 2026 real. (2) La guarda "todo o sin
+> valorar" (T.54) YA estaba cableada y correcta en `acciones.ts` (array `problemas` → `precioUnitario
+> = null` + aviso, nunca total parcial ni cero); no se reescribió, se **extrajo a función pura
+> testeada** `packages/core/src/precios/guarda.ts` (`lineaValorable`). (3) **+21 tests (46 en verde)**:
+> identidad del dinero (`ImporteTotal = precio × cantidad`), guarda, y salvaguardas del cargador
+> (históricas protegidas, validación de fila, idempotencia del diff) — reglas puras extraídas a
+> `core/precios/tarifa.ts` que el cargador ahora importa (dry-run reproducido idéntico, nada escrito).
+> Dejado como está con criterio: `scripts/medir-*.mjs` no se movieron (diario, rutas citadas en
+> anexos); `ajusteComercial` (opcional) no implementado (no pedido). Anexo **T.59**. **El frente de
+> precio queda cerrado**: ~70,5% del € cliente a ±1% (límite por datos), swap listo, vigencia trazable.
 
 ---
 

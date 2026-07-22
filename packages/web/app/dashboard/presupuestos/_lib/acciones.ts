@@ -17,7 +17,7 @@ import {
   type ComponentePlantilla, type PiezaCortada, type NodoDisenyo,
 } from '@aluminior/core/despiece'
 import {
-  valorarDespiece, medidasVidrio, metrajeVidrioM2, type DatosArticuloPrecio,
+  valorarDespiece, medidasVidrio, metrajeVidrioM2, lineaValorable, type DatosArticuloPrecio,
 } from '@aluminior/core/precios'
 import { expandirCadena, construirResoluciones, resolverComponente } from '@aluminior/core/series'
 
@@ -866,15 +866,13 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
           `${sinResolverAsoc.size} ranuras de asociado sin valorar (herrajes, escuadras y mano de obra: pendiente)`,
         )
       }
-      if (despiece.incalculables > 0) {
-        problemas.push(
-          `${despiece.incalculables} piezas sin medida` +
-          (despiece.variablesFaltantes.length ? ` (faltan ${despiece.variablesFaltantes.join(', ')})` : ''),
-        )
-      }
-      if (valoracion.sinPrecio.length) {
-        problemas.push(`${valoracion.sinPrecio.length} artículos sin precio en la tarifa`)
-      }
+      // Guarda "todo o sin valorar" (regla del dinero, T.59): función pura en
+      // core, testeada. Añade los motivos de despiece/precio a los problemas.
+      problemas.push(...lineaValorable({
+        incalculables: despiece.incalculables,
+        sinPrecio: valoracion.sinPrecio,
+        variablesFaltantes: despiece.variablesFaltantes,
+      }).motivos)
       if (problemas.length) {
         // Un importe parcial no es el precio de la estructura. Se conserva el
         // despiece para trazabilidad, pero la línea queda sin valorar.

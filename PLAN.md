@@ -4352,6 +4352,58 @@ un fallo de la máquina de PVP.
 prueba del descuento de documento; constancia por presupuesto con control de no-trivialidad, regla 9).
 Determinista. BD/MDB no tocadas (medición sobre CSV del oráculo).
 
+## T.59 Cierre del frente de precio: migración `tarifas` aplicada, guarda formalizada y tests del dinero
+
+Blindaje y cierre del frente de precio (el análisis quedó agotado en T.58). Tres entregas.
+
+**(1) Migración `tarifas` APLICADA (única escritura autorizada por el titular).** `npm run db:migrate`
+creó la tabla `tarifas` (migración `0014`) en la BD compartida. Verificado: la tabla existe con
+`id, descripcion, proveedor, fecha_vigencia, fecha_carga, activa` (0 filas), y **`articulos_pvp`
+sigue intacta** (tarifas `1:27791 2:27788 3:27788`, sin cambios). El `--apply` de precios sigue
+PENDIENTE hasta la tarifa 2026 real (no ejecutado).
+
+**(2) Salud del camino de producción — la guarda YA estaba cableada y es correcta (regla 7).** Lectura
+del flujo `acciones.ts` → `calcularDespiece` → `valorarDespiece`. Hallazgo: la guarda "todo o sin
+valorar" de T.54 SÍ está implementada (inline, vía el array `problemas`): si falta cualquier
+componente —pieza sin medida, artículo sin precio, vidrio/acristalamiento/ranura sin resolver— la
+línea queda `precioUnitario = null` + aviso "Importe incompleto", nunca un total parcial ni cero
+(regla 3); `valoracionCompleta` se persiste. La rama ARTICULO hace lo mismo (sin PVP → null + aviso).
+**No se reescribió** (habría sido refactor sin payoff). Lo que sí se hizo: **extraer la regla del
+dinero a una función PURA testeable** en `packages/core/src/precios/guarda.ts` (`lineaValorable`)
+y cablearla en `acciones.ts` para la parte de despiece/precio (conducta idéntica, mensajes iguales,
+verificado). Antes vivía inaccesible dentro de una server-action de ~900 líneas con BD; ahora está
+protegida por test.
+
+**(3) Tests automáticos del camino del dinero (+21, total 46 en verde).** Estilo de los `*.test.ts`
+de core/despiece (vitest):
+- `precios/guarda.test.ts` (7): la guarda no valora si hay pieza sin medida o artículo sin precio
+  (mensajes exactos); y la **identidad del dinero** `ImporteTotal = precio × cantidad_facturable`
+  vía `valorarDespiece` (UD por unidades, ML por metros) + que sin precio NO inventa cero, lo reporta.
+- `precios/tarifa.test.ts` (14): salvaguardas del cargador —**tarifas históricas {1,2,3} protegidas**
+  (destino inválido), precio en rango `0<p<100000`, `validarFilaTarifa` (rechaza clave/precio ausente,
+  fuera de rango, fecha inválida; normaliza `*`→`UNI`), y `diffTarifa` (**idempotencia**: re-cargar el
+  mismo fichero da todo en "iguales"; alta / cambio).
+- Se **extrajeron a core** (`precios/tarifa.ts`) las reglas puras del cargador y `cargar-tarifa.ts`
+  (etl) ahora las importa: fuente única, testeada. Dry-run del ejemplo reproducido idéntico tras el
+  refactor (20 válidas, 20 altas, `GM_NO_EXISTE` no encontrado, `MOCOL/UNI=999999` fuera de rango,
+  **nada escrito**). Los efectos de ESCRITURA del cargador (dry-run no escribe, upsert idempotente,
+  rollback) se verificaron a mano contra la BD (T.56/T.57) pero NO se unit-testan: no hay BD de test
+  y la compartida es de solo lectura (regla 7 — dicho explícitamente).
+
+**Decisiones con criterio (lo que se dejó como está):**
+- `scripts/medir-*.mjs` **no se movieron** a `scripts/investigacion/`: son el diario y los anexos
+  T.31–T.58 citan sus rutas exactas; moverlos rompería esas referencias (payoff negativo).
+- **`ajusteComercial` (Tarea 3, opcional) NO implementado**: es un cambio en el camino del dinero
+  (migración + valoración + UI) que el titular no pidió explícitamente ahora. Queda listo como opción
+  documentada (T.58): campo en `presupuestos` (default 1.0) que la valoración multiplicaría, para
+  capturar HACIA DELANTE el factor por presupuesto de T.58 (no reconstruye histórico).
+
+**Veredicto de salud:** el camino del dinero es sólido. La guarda impide totales parciales; la
+identidad de valoración y las salvaguardas del cargador están bajo test; la única escritura a la BD
+compartida (migración `tarifas`) es aditiva y no tocó los precios históricos. El frente de precio
+queda **cerrado**: la máquina reconstruye ~70,5% del € cliente a ±1% (límite por datos, T.58), con
+swap de tarifa 2026 listo (dry-run) y trazabilidad de vigencia (tabla `tarifas`).
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
