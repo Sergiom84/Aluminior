@@ -36,6 +36,21 @@ esto PRIMERO; luego, solo si necesitas profundizar, ve a `PLAN.md`.
 > `guardaValoracion.ts` + `acciones.ts`) pero **NO implementada**: decisión de despliegue y
 > umbral `minSup` = del titular, con el número delante. Detalle: anexo **T.54**, script
 > `scripts/medir-cobertura-plan-a.mjs`.
+>
+> **Actualización 2026-07-22 (T.55) — PIVOTE al PRECIO: la máquina de tarifa reconstruye ~70%
+> del € cliente.** El cuello real de la valoración es el PRECIO, no el recuento (el 86,5% del
+> dinero se valora por TARIFA). Medido contra el histórico (`scripts/medir-precio-historico.mjs`,
+> SOLO LECTURA): `ImporteTotal = Precio × Metraje` (100% hijas) y **el precio unitario ES
+> `ArticulosPVP` tarifa 1** (exacto al céntimo en 96,1% de hijas). Cobertura reconstruida:
+> **hija 90,5% del €**, ventana 73,9%, **cliente 70,5% (±1%), 76,9% (±5%)**; solo 0,3% sin
+> precio candidato. El hueco restante es manual (colocación MOCOL + VARIOS = 12,3%, "sin valorar"
+> por diseño, T.32), recargo por acabado (~4%, recuperable) y márgenes de ventana (~18%, por
+> caracterizar). **Costura de swap YA existe y es limpia**: `acciones.ts` lee el precio de
+> `articulos_pvp` por `(articulo_codigo, acabado_codigo, tarifa)`; la tarifa 2026 = filas nuevas
+> con `tarifa` distinta + apuntar el presupuesto (cero cambios de lógica). Esquema que pedir al
+> proveedor: `artículo, acabado, precio (por unidad del TipoMetraje del catálogo), fecha`. Detalle:
+> anexo **T.55**. **T.24–T.52 (recuento topológico) NO se tira**: queda como capa de precisión
+> para los productos recurrentes.
 
 ---
 

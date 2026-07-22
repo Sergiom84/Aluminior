@@ -4121,6 +4121,87 @@ reconstrucción del pasado, no cotización nueva.
 *Método:* `scripts/medir-cobertura-plan-a.mjs` (oráculo VPRES+VALB+VFAC desde CSV; 2-fold CV
 determinista) + verificación del árbol en MDB viva (`EstructurasDiseño`, ODBC SOLO LECTURA).
 
+## T.55 La máquina de PRECIO contra el histórico: el precio ES `ArticulosPVP` (swap limpio de tarifa)
+
+PIVOTE del titular tras T.54: el cuello no es el recuento sino el PRECIO. El titular consigue
+la tarifa 2026 por su lado; aquí se construye/valida la máquina de precio contra el histórico
+—que SÍ tiene precios—, para que la tarifa nueva sea un swap. SOLO LECTURA, sin conectar nada.
+Script `scripts/medir-precio-historico.mjs` (determinista, dos ejecuciones idénticas, regla 2).
+Enlace EXACTO por `(Articulo, Acabado, Tarifa)` (regla 8), nunca por proximidad de medida.
+
+**(0) Estructura del dato (medido).** `VPresupuestosLin` 110.158 filas: 2.071 estructurales
+(ventanas configuradas), 107.388 hijas de despiece, 699 sueltas. `ImporteTotal` **doble-cuenta**
+(padre estructural = Σ hijas; y las cabeceras `GrupoSN=True`, art `GRUPO`, 474.554 € = subtotal
+de sus miembros). El total-cliente SIN doble conteo (ventanas + sueltas − subtotales GRUPO) =
+**1.490.444 €**. Tarifa única en todos los docs: `1`.
+
+**(1) El modelo, en dos hechos medidos.**
+- `ImporteTotal = Precio × Metraje` en el **100%** de las hijas. `Metraje` = cantidad facturable
+  ya calculada por el sistema (UD=unidades, ML=metros, M2=área; absorbe mínimos/múltiplos).
+- El `Precio` unitario de una hija de despiece **ES el PVP de `ArticulosPVP` tarifa 1**: coincide
+  **exacto al céntimo en el 96,1%** de las hijas (ratio Precio/PVP=1.00), `DescuentoPorc=0`. El
+  100% de las hijas tiene PVP en tarifa 1 (solo 38 sin PVP en todo el export).
+  ⇒ **máquina de precio = `PVP(Articulo, Acabado, Tarifa) × Metraje × Cdad`**. Sin PVP → "sin
+  valorar" (regla 3), nunca cero.
+
+**(2) Cobertura reconstruida con precios HISTÓRICOS (verificado, dos ejecuciones idénticas).**
+Tolerancia: PVP se almacena como float32 (p.ej. `8,55000019`), redondeado a céntimos; una línea
+"reconstruye" si el precio cae dentro de ±1% (absorbe redondeo float, no admite diferencias
+reales de tarifa). Se reportan exacto/±1%/±2%/±5%.
+
+| Nivel | Denominador € | Reconstruido ±1% | ±5% |
+|---|---:|---:|---:|
+| **Hija de despiece** (precio unitario = PVP) | 1.026.934 € (despiece) | 96,1% líneas / **90,5% €** | 98,9% / 93,1% |
+| **Ventana** (padre = Σ hijas × Cdad) | 1.295.946 € (estructural) | 78,2% ventanas / **73,9% €** | 84,1% / 81,3% |
+| **Cliente** (ventanas + sueltas, sin GRUPO) | 1.490.444 € | **70,5% €** | 76,9% |
+
+Solo **0,3%** del € cliente no tiene ni precio candidato. El swap de la tarifa 2026 subirá la
+EXACTITUD de estas cifras (hoy limitadas por que la tarifa histórica es de 2024, no por el modelo).
+
+**(3) Atribución honesta del hueco (regla 7).** El motor de artículo es ~90% exacto; el ~30%
+restante a nivel cliente es, medido:
+- **Líneas manuales (no tarifa):** colocación `MOCOL` 84.897 € + `VARIOS` 99.010 € = **183.907 €
+  (12,3% del € cliente)**. La colocación es entrada manual del usuario (confirma T.32, 68% del
+  dinero de MO); correctamente "sin valorar" por tarifa. No es un fallo del modelo.
+- **Recargo por acabado:** ~4% de las hijas fallan >±1% y **casarían con OTRO acabado del mismo
+  artículo** (311 líneas): PVP acabado-dependiente que el lookup base (acabado→UNI) no coge.
+  Recuperable con lookup exacto de acabado (`EsAcabadoDependienteSN`).
+- **Margen/ajuste de ventana:** ~18% de ventanas tienen `padre ≠ Σhijas` (márgenes o ajustes
+  manuales a nivel de línea de venta); pendiente de caracterizar (¿`FamiliasTarifas.Margen`?).
+
+**(4) COSTURA DE SWAP — ya existe, es limpia (cero cambios de lógica).** La valoración en
+`packages/web/app/dashboard/presupuestos/_lib/acciones.ts` YA lee el precio de la tabla
+`articulos_pvp` por `(articulo_codigo, acabado_codigo, tarifa)` — rama ARTICULO (precio directo)
+y rama ESTRUCTURA (vía `valorarDespiece` sobre las piezas). Esquema Drizzle
+`packages/db/src/schema/catalogo.ts`: `articulosPvp` con PK `(articulo_codigo, acabado_codigo,
+tarifa)`, `precio numeric(12,4)`. **El swap = cargar la tarifa 2026 como filas nuevas con un
+`tarifa` distinto (p.ej. `2026`) y apuntar `presupuesto.tarifa` ahí.** No se toca la lógica.
+
+**Esquema MÍNIMO que debe traer el fichero de tarifa del proveedor** (esto es lo que hay que
+pedir): una fila por artículo × acabado con —
+- `articulo` (código) — debe casar con `Articulos.codigo` del catálogo (GM…, perfiles, herraje).
+- `acabado` (código) — `*`/`UNI` si el precio NO depende del acabado; código concreto si depende
+  (lacados/imitación madera; ~4% del €).
+- `precio` (PVP por unidad del `TipoMetraje` del artículo: €/ud si UD, €/m si ML, €/m² si M2 —
+  **la unidad la fija el catálogo `Articulos.TipoMetraje`, no el fichero**).
+- `fecha` de vigencia (trazabilidad; el `tarifa` de destino se asigna al cargar, p.ej. `2026`).
+
+Opcional (afinan el ±): recargos por rango de metraje (`ArticulosIncrPrecio`: artículo, tipo,
+metrajeDesde, metrajeHasta, incremento%) para piezas cortas; y mínimos/múltiplos de metraje, que
+ya viven estables en `Articulos` (`metrajeMinimo`, `metrajeMultiploLargo`). Formato ideal: CSV/
+XLSX UTF-8 con esas columnas; una fila por (artículo, acabado).
+
+**Consecuencia:** la valoración por TARIFA reconstruye **~70% del € cliente** desde el propio
+histórico con un modelo trivial (lookup PVP), y la costura de swap ya está. Cuando llegue la
+tarifa 2026 es un `INSERT` en `articulos_pvp` + apuntar la tarifa; la exactitud sube sola. El
+12,3% manual (colocación/varios) queda "sin valorar" por diseño (T.32), no por defecto del modelo.
+Decisión del titular (pendiente): pedir el fichero con el esquema de arriba; y si se cablea, la
+guarda "todo o sin valorar" de T.54 aplica igual (línea sin PVP → sin valorar, nunca cero).
+
+*Método:* `scripts/medir-precio-historico.mjs` (VPresupuestosLin × ArticulosPVP tarifa 1; niveles
+hija/ventana/cliente; tolerancias exacto/±1/±2/±5%). Caveat (regla 7): tarifa histórica 2024, no
+vigente; el € es reconstrucción del pasado para validar el modelo, no cotización nueva.
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
