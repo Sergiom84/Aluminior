@@ -3,6 +3,26 @@
 Documento de arranque para retomar el proyecto sin perder tiempo buscando. Lee
 esto PRIMERO; luego, solo si necesitas profundizar, ve a `PLAN.md`.
 
+> **Actualización 2026-07-22 (T.52):** T.48 reproducido de forma independiente desde la
+> nube (match limpio: `exactasCdad` 0→40 in-sample / 20-34 held-out). Recon del export
+> descarta el despiece por unidad en tablas de producción (`VDespunteDetalle` = barras de
+> perfil; `VConceptosMO` = MO por concepto). **El titular (Sergio) ha decidido el camino
+> (b)**: buscar/adquirir una fuente con despiece por unidad física antes de aceptar el
+> techo (a). Paso decisivo = leer las MDB de fabricación en **local** (la nube no llega).
+> Lista de caza acotada + criterio go/no-go + fallback (a) en **`RECON-DESPIECE-UNIDAD.md`**
+> (raíz). Ya NO hay que preguntar la decisión (a)/(b): está tomada.
+>
+> **Actualización 2026-07-22 (T.53) — la caza local está HECHA: NO-GO.** Claude Code leyó
+> `EMP0016\Anterior.mdb` (ODBC 32-bit, solo lectura sobre copia). **Todas** las tablas de
+> taller/fabricación/optimización/corte están **vacías** (ALUMINIOS LARA presupuesta pero
+> no corre el módulo de producción en Productor). Prueba decisiva (regla 8): el oráculo de
+> herraje `VOpcionesHerraje` tiene grano **por línea+opción** (`nLinEstr/Conjunto/nOpcion/
+> SelecSN`), **sin columna de hoja**; el árbol `VDatosLinDetDis` sí tiene hoja pero no la
+> selección de tramo — y **no hay tabla que las una por hoja**. El separador de los 51 pares
+> co-reales no está persistido ni poblado ni en esquema. Confirma T.51/T.52 desde la MDB
+> autoritativa. **Cae al plan (a)** (valorar solo lo recurrente, resto "sin valorar"), ahora
+> defendible. Detalle en anexo **T.53** de `PLAN.md`. Decisión de activar (a) = del titular.
+
 ---
 
 ## 1. Dónde está TODO

@@ -1,7 +1,7 @@
 # Aluminior — Documento de entrega
 
 **Fecha:** 18 de julio de 2026
-**Titular:** ALUMINIOS LARA SLU — B83979179 (28095)
+**Titular:** ALUMINIOS LARA SLU (CIF omitido — regla 4)
 **Repositorio:** https://github.com/Sergiom84/Aluminior (privado)
 **Estado:** 4 módulos funcionando · motor de despiece que **evalúa** el 99,6%
 de los componentes · resolución genérico → perfil validada (96,5% contra el
@@ -758,11 +758,18 @@ Lo que queda de la valoración:
    `DisComponente`, `ConjuntosAsoc` las resuelve (opción marcada + medida
    de hoja en rango) y la cantidad es la suma de filas, con correcciones
    negativas. Opciones de herraje ya en el configurador (R.5). Predictor
-   v4 (S.6): la medida se compara contra la fórmula de la PROPIA ranura y
-   la mano real sale de la instancia — **94,1% precisión / 88,3%
-   cobertura**. Falta (S.7): longitudes por `FormulaL` (juntas en metros),
-   categorías `!` restantes, `ConfigSeriesAsoc` y `AperturaTH`.
-   Hoy quedan "sin valorar" con aviso.
+   **v5** (act. 2026-07-22, `scripts/medir-seleccion-v5.mjs`, reejecutado y
+   verificado de forma independiente): **96,4% precisión / 94,3% cobertura,
+   72/216 líneas exactas en artículos** — pero **0/216 exactas en
+   cantidades**: el tapón no es el predictor, es el **RECUENTO**
+   (escuadras/juntas/MO), reconstruido sobre la topología del árbol
+   `EstructurasDiseño` en T.33–T.48 (que ya cruza el 0: ~20 líneas held-out
+   exactas). Lo que quedaba de S.7 está cerrado o caracterizado:
+   `ConfigSeriesAsoc` por ingeniería inversa (T.40–T.47), categorías `!`
+   (T.47), juntas de acristalamiento (T.43). El techo restante es **bloqueo
+   por datos** (T.49–T.51): falta el despiece por unidad física. Estado y
+   decisión del titular (camino b) en `CONTINUACION.md` y anexo T.52.
+   Hoy quedan "sin valorar" con aviso (regla 3).
 2. **Acristalamiento**: el vidrio se elige y se valora tanto en HOJAS
    (anexo L) como en FIJOS (anexo N), con junquillos y juntas por grosor de
    las tablas de la serie y longitudes medidas del histórico (anexo M).

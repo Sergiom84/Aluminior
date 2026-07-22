@@ -258,7 +258,7 @@ el alcance en H1+H2 se refuerza.
 
 ## B.1 Identificación resuelta
 
-- Titular de licencia: **ALUMINIOS LARA SLU — B83979179 (28095)**.
+- Titular de licencia: **ALUMINIOS LARA SLU** (CIF omitido — regla 4).
 - Empresa activa: **ALUMINIOS LARA - 2026 [0016]** → `EMP0016`, no EMP0009.
   **EMP0016 es la base de referencia para todo el modelado.** Corrige el Anexo A.
 - Estructura de menús: Ficheros · Compras · Ventas · Utilidades · Ayuda.
@@ -3905,6 +3905,132 @@ oracle-ciega es 0.**
 de `ConjuntosAsoc` sin identificar—. Cerrado como **bloqueo por datos**, con la dirección
 del discriminante ya caracterizada por si en el futuro se dispone de líneas con asignación
 por hoja. Caveat (regla 7): sin precios, en líneas, no en €.
+
+## T.52 Reproducción independiente de T.48 desde la nube + recon del export descarta el despiece por unidad; el titular elige el camino (b)
+
+Sesión Cowork (nube, Linux) actuando de arquitecto. Sin acceso a MDB ni a Supabase
+(egress restringido; verificado: 5432/6543/HTTPS a Supabase caen). Trabajo hecho sobre
+**copia de solo lectura del export CSV de EMP0016**, montada en el contenedor. SOLO LECTURA.
+
+**(1) T.48 se reproduce al detalle (verificación de arquitecto, regla 2).** Reejecución
+independiente de `medir-topo-sustituido.mjs` contra el oráculo, sin fiarse del informe:
+
+| Métrica | Valor | ¿T.48? |
+|---|---:|:--:|
+| `exactasCdad` v5 puro | 0 / 216 | ✅ |
+| `exactasCdad` con recuento topológico (techo in-sample) | 40 / 216 | ✅ |
+| Held-out honesto (split 50/50 por línea) | 20 / 34 | ✅ |
+| Modo estructural puro (sin ajuste in-sample) | 0 | ✅ |
+| Bloqueante restante (conjunto OK, cdad mal) | 32 (escuadra 24, herraje 10, junta 3) | ✅ |
+| Near-miss a 1 artículo | 25 (escuadra 20, herraje 5) | ✅ |
+
+Match limpio y **determinista** (dos ejecuciones idénticas). **El anexo T.48 es fiel** y el
+pipeline de medición corre íntegro en la nube (los scripts leen el oráculo CSV, no la BD).
+
+**(2) Recon del propio export: el despiece por unidad NO está ahí (cierra un lead abierto).**
+Antes de mandar a buscar fuera, se rastrearon las tablas de producción/optimización que el
+arco T no había minado:
+- `VDespunteDetalle` (3.852 filas, enlace `TipoDoc/nDoc/nLinea`): despiece de **barras de
+  perfil** con coste (`LargoBarra/CantidadBarras/CosteBarras/CostePerfiles`). Per-barra de
+  PERFIL, **a medio poblar** (`LargoBarra=0` en muchos presupuestos: el optimizador no corrió).
+  Útil como coste de perfil; NO es despiece de herraje/escuadra por unidad.
+- `VConceptosMO` (24.158 filas, 53 conceptos, enlace `TipoDoc/nDoc/nLin`): es el **oráculo de
+  MO por concepto** (base de T.45), no una asignación por unidad física.
+- `VDatosLinDetDis` (41.610 filas): el enlace exacto (regla 8); ya agotado por T.49/T.51 para
+  el tramo — expone AGREGADOS por artículo/línea, no la asignación por hoja.
+
+**Consecuencia:** confirma T.51 desde otro ángulo. El separador de (R1) tramo del oscilobatiente
+y de (R2) escuadra `GM4710` —la asignación medida→tramo/escuadra POR UNIDAD FÍSICA— no está en
+ninguna tabla del export. Subir de las ~20 líneas exactas es un problema de **FUENTE**, no de
+modelo (reconfirma T.49/T.50/T.51).
+
+**(3) Decisión del titular (Sergio), registrada:** se elige el **camino (b)** — rastrear/adquirir
+una fuente con despiece por unidad (MDB de fabricación/optimización, o export distinto) antes de
+conceder que el techo es (a). El paso decisivo (leer las MDB) es de **Claude Code en local**; la
+nube no llega. Spec de caza acotada, con criterio go/no-go y fallback (a), en el documento nuevo
+**`RECON-DESPIECE-UNIDAD.md`** (raíz del repo). Resumen del criterio: GO si existe una tabla
+persistida por unidad física, enlazable por id exacto a `VDatosLinDetDis`, que separe los 51 pares
+co-reales de T.51; NO-GO (y caída a plan (a): valorar solo lo recurrente, resto "sin valorar") si
+la asignación se calcula al generar la hoja de corte y no se persiste.
+
+**Nota de método:** entorno de medición reproducible en nube = `.env` con `RUTA_CSV_ORIGEN`
+apuntando a la copia del oráculo + `npm i csv-parse tsx` + `packages/core/src/despiece/formula.ts`
+(autónomo). Los scripts `medir-*.mjs` no dependen de Supabase.
+
+## T.53 Caza del despiece POR UNIDAD FÍSICA en las MDB de fabricación — NO-GO (el módulo de taller está vacío; la selección de herraje no persiste por hoja)
+
+Ejecución del encargo `RECON-DESPIECE-UNIDAD.md` (camino b del titular): buscar en la MDB
+del sistema Productor una tabla que registre la asignación tramo/escuadra **por unidad
+física (por hoja)**, enlazable por id exacto a `VDatosLinDetDis`, que separe los 51 pares
+co-reales de T.51. Terreno de **Claude Code local** (la nube no llega a MDB): PowerShell
+32-bit + ODBC Access, SOLO LECTURA sobre copia `EMP0016_Anterior.mdb` (nunca `aluminio.mdb`
+activa). Primera y única parada necesaria: `EMP0016\Anterior.mdb` (misma empresa/ejercicio
+que el export → enlazaría directo con las líneas ya medidas).
+
+**(1) Todas las tablas de taller / fabricación / optimización / corte / ensamblaje están
+VACÍAS.** Recuento de filas (determinista, dos lecturas idénticas) de las candidatas por
+patrón (`Despiece/Fabri/Orden/Corte/Opti/Barr/Pieza/Unidad/Herraje/Mecaniz/Tall/Ensambla/
+Carro/Lote/Hoja`):
+
+| Tabla (grano por unidad esperado) | Filas |
+|---|---:|
+| `VOrdenesF` / `VOrdenesFLin` / `VOrdenesFcortes` (órdenes de fabricación) | 0 / 0 / 0 |
+| `FabricacionArt` / `FabricacionArtLin` | 0 / 0 |
+| `UTallLotesCorte` / `UTallLotesCorteLin` / `UTallLotesCorteLinDetVLin` | 0 / 0 / 0 |
+| `UTallProceso` / `UTallProcesoDet` / `UTallCortes` | 0 / 0 / 0 |
+| `UCorteMaticFabricDetalles` / `UCorteMaticEstructuraDetalles` / `CalculoEtiqCorte` | 0 / 0 / 0 |
+| `UOptimizacion*` (Barras, M2, PiezasCortadas, Restos, ID) | 0 (toda la familia) |
+| `AEnsamblaje` / `AEnsamblajeLin` / `CarrosCorte` / `CarrosCorteHuecos` | 0 / 0 / 0 / 0 |
+| `VDatosLinMecanizados` / `EstructurasMecOperaciones` / `UCentroHerrOperaciones` | 0 / 0 / 0 |
+
+ALUMINIOS LARA usa Productor para **presupuestar** (`VPresupuestosLin` 105.011 filas,
+`VConceptosMO` 21.932) pero **no corre el módulo de producción/taller** en esta BD: el
+despiece por pieza fabricada nunca se materializa aquí. Es exactamente el desenlace que
+T.51 predijo ("la asignación tramo→hoja se computa al generar la hoja de corte y no se
+persiste") — ahora confirmado desde la **fuente autoritativa (la MDB)**, no solo desde el
+CSV export (T.52).
+
+**(2) Las tablas de herraje POBLADAS son catálogo/config por serie u oráculo agregado por
+LÍNEA — ninguna por hoja.** Barrido de las pobladas que matchean patrón:
+`ConfigSeriesHerraje` (18.752), `ConjuntosOpcionesHerraje` (11.854), `VOpcionesHerraje`
+(26.570), `ArticulosLB` (11.021, lista de barras por artículo), `VDespunteDetalle` (3.852,
+barras de PERFIL — ya T.52), `VOptiArticulosLB` (304) / `VOptiConfig` (100). La única nueva,
+`VOptiArticulosLB`, es config de optimización por `(TipoDoc, Articulo, Acabado, nDoc)` con
+`LstDimLargo` **vacío** — perfil, no herraje por unidad.
+
+**(3) La prueba decisiva del enlace (regla 8): el grano de la selección de herraje NO tiene
+columna de hoja.** El oráculo de herraje `VOpcionesHerraje` tiene **6 columnas**: `TipoDoc,
+nDoc, nLinEstr, Conjunto, nOpcion, SelecSN`. Grano = **línea-estructura + opción** (un
+booleano de selección por opción), **sin `DisIdHoja`/`DisNHoja` ni ningún id de unidad**. El
+árbol `VDatosLinDetDis` SÍ tiene grano por hoja (`DisIdHoja`, `DisNHoja`, `DisTipoHoja`,
+`DisManoID`) pero sus filas son **componentes de diseño** (perfiles/vidrios/refuerzos), **no**
+la selección de herraje/tramo. Es decir: la hoja está en una tabla y la selección de tramo
+en otra, y **no hay tabla que las una a nivel de hoja**. Ese join —el que diría qué hoja
+lleva `GM5334` y cuál `GM5335` en los 51 pares co-reales— **no existe** ni poblado ni en
+esquema. Incluso el esquema de las tablas de corte vacías (`UTallLotesCorteLinDetVLin` =
+`NumeroLote/idPed/nVLinea`; `VOrdenesFLin` = cantidades de fabricación por línea) solo
+guardaría pertenencia a lote y cantidades **por línea**, nunca la asignación tramo→hoja.
+
+**VEREDICTO: NO-GO** (criterio §4 de `RECON-DESPIECE-UNIDAD.md`). No hay tabla persistida por
+unidad física enlazable por id exacto que separe los pares co-reales. El techo del
+oscilobatiente (72→~152, T.49) y la escuadra `GM4710` (T.50) quedan **bloqueados por datos
+de forma definitiva**: el separador es la asignación por hoja, que Productor calcula al
+generar la hoja de corte y **no persiste** (las tablas que lo harían están vacías; el módulo
+de taller no se usa). Se **reconfirma y refuerza** T.49/T.50/T.51/T.52 desde la MDB.
+
+**Consecuencia (para el titular): cae el plan (a), ahora defendible con evidencia.** Valorar
+SOLO las series/estructuras recurrentes donde el recuento topológico reconstruye (las ~20/216
+líneas held-out verificadas, T.48/T.52, que generalizan) y mantener el resto en **"sin
+valorar" honesto** (regla 3, nunca cero). No requiere datos nuevos y es la primera vez que
+es defendible con números. Adquirir la fuente por unidad exigiría **otro export** (un volcado
+de la hoja de corte en el momento de fabricar, o activar/consultar el módulo de taller de
+Productor mientras produce) — no está en la BD histórica. **Se para y se reporta** (regla 7):
+la decisión de conectar la valoración en modo (a) es del titular. Caveat: sin precios
+vigentes (Tarifa/GM a 2022, T.32), el alcance de (a) es en líneas/cantidades, no en €.
+
+*Método (regla 2, reproducible):* `leer-mdb.ps1` (listado/columnas/query) + `sweep.ps1`
+(recuento por patrón) en `%TEMP%\aluminior_explore\`, ODBC 32-bit SOLO LECTURA sobre
+`EMP0016_Anterior.mdb`. Ninguna escritura; `aluminio.mdb` activa nunca abierta.
 
 ## T.5 Qué hacer, en orden
 
