@@ -22,6 +22,20 @@ esto PRIMERO; luego, solo si necesitas profundizar, ve a `PLAN.md`.
 > co-reales no está persistido ni poblado ni en esquema. Confirma T.51/T.52 desde la MDB
 > autoritativa. **Cae al plan (a)** (valorar solo lo recurrente, resto "sin valorar"), ahora
 > defendible. Detalle en anexo **T.53** de `PLAN.md`. Decisión de activar (a) = del titular.
+>
+> **Actualización 2026-07-22 (T.54) — plan (a) MEDIDO: cobertura marginal.** Fase de medición
+> (sin conectar nada). Criterio de calificación MEDIDO (regla 8): clases `(serie, topología)`
+> cuyo 100% de líneas del oráculo resuelve EXACTO fuera de muestra (2-fold CV). Cobertura sobre
+> el universo REAL (2.071 líneas estructurales / 407 presupuestos, no las 216): **0,4% de
+> líneas**, **0% de presupuestos completos**, **0,26% del € histórico**. Dos cuellos apilados:
+> (1) **86,5% de las líneas no tienen árbol de diseño** — verificado en la MDB viva, no es
+> laguna del export; se tarifan, vía que la topología no cubre y sin precio vigente (T.32) —
+> techo estructural 13,5%; (2) el residuo del recuento rompe la exactitud en casi toda clase.
+> **A nivel de presupuesto, plan (a) es COSMÉTICO** (0 presupuestos mostrarían total limpio).
+> No es fallo del recuento sino de la FUENTE. Guarda "todo o sin valorar" diseñada (dónde va en
+> `guardaValoracion.ts` + `acciones.ts`) pero **NO implementada**: decisión de despliegue y
+> umbral `minSup` = del titular, con el número delante. Detalle: anexo **T.54**, script
+> `scripts/medir-cobertura-plan-a.mjs`.
 
 ---
 

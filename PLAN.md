@@ -4032,6 +4032,95 @@ vigentes (Tarifa/GM a 2022, T.32), el alcance de (a) es en líneas/cantidades, n
 (recuento por patrón) en `%TEMP%\aluminior_explore\`, ODBC 32-bit SOLO LECTURA sobre
 `EMP0016_Anterior.mdb`. Ninguna escritura; `aluminio.mdb` activa nunca abierta.
 
+## T.54 Plan (a) — cobertura MEDIDA sobre los presupuestos reales: 0,4% de líneas, 0% de presupuestos completos, 0,26% del € histórico
+
+Fase de MEDICIÓN del plan (a) decidido por el titular (valorar SOLO lo recurrente que
+generaliza; el resto "sin valorar"). SOLO LECTURA, sin conectar nada a producción. Script
+`scripts/medir-cobertura-plan-a.mjs` (determinista, dos ejecuciones idénticas, regla 2).
+Enlace exacto por `VDatosLinEstr`/`EstructurasDiseño` (regla 8).
+
+**(1) Criterio de calificación (MEDIDO, no elegido a mano; regla 8).** Clase = `(serie,
+topología)` con topología = conteos del árbol `(marco, hueco, hoja, trav, vidrio)`. Veredicto
+por línea del oráculo **fuera de muestra** con **2-fold CV**: cada línea se juzga con un
+modelo (reglas topológicas de escuadra/junta de T.46/47/39/43) entrenado **sin ella**. Una
+línea "resuelve" si v5 acierta el CONJUNTO de asociados (`exactArt`, config de fábrica,
+determinista, NO ajustado al oráculo) **Y** el recuento topológico acierta TODAS las
+cantidades (`exactCdad`). Una clase **CALIFICA(minSup)** si tiene ≥ minSup líneas del oráculo
+y el **100%** resuelve OOS (bar honesto para un guard de dinero: si una sola línea de la clase
+falla, la clase no es fiable). El conjunto que califica = unión de líneas de clases que
+califican. Sin listas escritas a mano.
+
+**(2) Cifras de cobertura sobre el universo REAL (no las 216).** Universo = **2.071 líneas
+estructurales VPRES** (productos configurados) en **407 presupuestos** con ≥1 estructural.
+Del oráculo (VPRES+VALB+VFAC): 216 líneas con herraje asociado, 72 con conjunto v5 correcto,
+**40 resuelven OOS**. Clases (serie,topo) del oráculo VPRES: **51**.
+
+| minSup clase | clases que califican | LÍNEAS valoradas /2071 | PRESUP. COMPLETOS /407 |
+|---:|---:|---:|---:|
+| 1 | 3 | 9 (0,4%) | **0 (0,0%)** |
+| 2 | 2 | 8 (0,4%) | **0 (0,0%)** |
+| 3 | 1 | 3 (0,1%) | **0 (0,0%)** |
+| 5 | 0 | 0 (0,0%) | **0 (0,0%)** |
+
+Clases que califican (minSup=2): `GMA350|m1hu0h0t0v2` (n=2) y `GMA60RL|m1hu0h1t0v1` (n=3) —
+oscilobatientes de 1 hoja sin escuadra de alineamiento problemática. Cobertura **ponderada
+por € histórico** (`ImporteTotal`): **3.327 € de 1.295.946 € = 0,26%**.
+
+**(3) Por qué es tan bajo — DOS cuellos apilados, el primero arquitectónico.**
+- **86,5% de las líneas no tienen árbol de diseño** (`EstructurasDiseño`): 1.791 de 2.071.
+  **No es laguna del export** — verificado en la **MDB viva** (`EMP0016_Anterior.mdb`,
+  ODBC SOLO LECTURA): la tabla del árbol solo tiene instancia para ~269 (nDoc,nLinEstr) VPRES
+  distintos, igual que el CSV (~280). Esas 1.791 líneas se valoraron por otra vía (tarifa/
+  catálogo por dimensiones, precio almacenado; el 94% trae `Precio`≠0) que **no** descompone
+  en el recuento topológico y para la que **no** tenemos precio vigente (Tarifa/GM a 2022,
+  T.32). El **techo estructural** de plan (a) es por tanto **280/2071 = 13,5%** de líneas,
+  ANTES del guard de exactitud.
+- Dentro de ese 13,5%, el **residuo del recuento** (escuadra `GM4710`/alineamiento T.50,
+  tramo del oscilobatiente T.49/T.51) rompe la exactitud en casi toda clase: de 51 clases,
+  solo 1–3 resuelven al 100% OOS. Por eso caen a 8 líneas.
+- **Presupuestos completos = 0** a cualquier umbral: solo **38/407** presupuestos tienen
+  árbol en TODAS sus líneas estructurales (techo absoluto de "completo"), y la **mediana** de
+  (líneas con árbol / estructurales) por presupuesto es **0%**. Un presupuesto mezcla muchas
+  líneas; exigir que TODAS sean valorables es inalcanzable cuando el 86,5% ni siquiera es
+  modelable.
+
+**Consecuencia (regla 7, honesto): a nivel de presupuesto, el plan (a) es COSMÉTICO** — no
+existe hoy ni un solo presupuesto que pudiera mostrar un total limpio bajo la guarda "todo o
+sin valorar". A nivel de línea suelta, reconstruye 8–9 productos muy concretos (oscilobatientes
+GMA350/GMA60RL de 1 hoja). No es un fallo del recuento (que está tan afinado como el oráculo
+permite): el límite es la **fuente** — la mayoría de productos no se despiezan en este ERP, se
+tarifan. Corrige el optimismo implícito de "valorar solo lo recurrente ya es defendible"
+(T.53): es defendible como **honestidad** (no inventa), pero su **alcance es marginal**.
+
+**(4) Diseño de la guarda "todo o sin valorar" (especificado, NO implementado — pendiente de
+aprobación del titular).**
+- **Dónde.** Función pura nueva en core, p.ej. `packages/core/src/despiece/guardaValoracion.ts`:
+  `lineaValorable({ serie, topo, despiece, recuentoAsociados }): { valorable: boolean, motivo }`.
+  Devuelve `valorable=true` SOLO si: (a) `(serie, topoSig(topo)) ∈ CONJUNTO_CALIFICA` (la
+  whitelist MEDIDA por este script, congelada como dato generado, **no** escrita a mano —
+  regla 8; se re-deriva si crece el oráculo); (b) `despiece.incalculables === 0` (toda pieza
+  de perfil tiene medida); (c) `despiece.avisos.length === 0` (ninguna regla no-exacta usada,
+  p.ej. rebaje no exacto); (d) [cuando se cablee el frente de asociados] todo artículo asociado
+  obtuvo recuento exacto sin residuo. Si no → `valorable=false` con motivo.
+- **Enganche (línea).** En `packages/web/app/dashboard/presupuestos/_lib/acciones.ts`, rama
+  ESTRUCTURA, JUSTO antes de `precioUnitario = valoracion.importe` (~L497-498): calcular
+  `guarda = lineaValorable(...)`; si `!guarda.valorable` → `precioUnitario = null` y
+  `aviso = 'sin valorar — ' + guarda.motivo` (regla 3, **null nunca 0**; la rama ARTICULO ya
+  usa este patrón con `aviso='Importe incompleto…'`).
+- **Enganche (presupuesto).** El rollup del total del presupuesto muestra total limpio SOLO si
+  TODAS sus líneas son `valorable`; si hay ≥1 "sin valorar" → marcar **"presupuesto incompleto
+  — N/M líneas sin valorar"**, nunca un total parcial con apariencia de final (guarda del
+  titular). Con la cobertura de (2), hoy esto significa que **ningún** presupuesto mostraría
+  total limpio — consecuencia honesta, no bug.
+
+**Decisión del titular (pendiente, con el número delante):** activar o no la guarda en
+producción, y con qué `minSup`. La IA no fija el umbral de "recurrente suficiente" ni conecta
+nada (encargo). Caveat (regla 7): cifras en líneas/€-histórico; sin precios vigentes el € es
+reconstrucción del pasado, no cotización nueva.
+
+*Método:* `scripts/medir-cobertura-plan-a.mjs` (oráculo VPRES+VALB+VFAC desde CSV; 2-fold CV
+determinista) + verificación del árbol en MDB viva (`EstructurasDiseño`, ODBC SOLO LECTURA).
+
 ## T.5 Qué hacer, en orden
 
 1. **Medir de dónde sale el rebaje de hoja.** La hipótesis con fundamento
