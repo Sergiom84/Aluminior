@@ -24,10 +24,31 @@ esto PRIMERO; luego, solo si necesitas profundizar, ve a `PLAN.md`.
 `C:\Users\sergi\Desktop\Productor\Aluminio\` — instalación completa de GAIA
 Productor Aluminio. Contiene lo que los CSV **no** capturan:
 
-- `InfoSeries.mdb` (375 MB) — catálogo maestro de series.
+- `InfoSeries.mdb` (375 MB) — catálogo maestro de series. **Agotado (T.38):** no tabula
+  BOM/cantidades por serie (solo metadatos: `SerSeries`, `SerBibliotecas`, `SerSeriesCE`
+  de marcado CE, `SerActuaciones` con notas en texto libre). No volver a abrir salvo
+  nueva pregunta muy específica; su copia en Temp se borró (375 MB liberados, jul-2026).
 - `ConfigDis.mdb` — config de diseño: `MOConceptos` (mano de obra), `ConfigSeriesApertDesc`
-  (semántica de `AperturaTH`), `ConfigSeriesHerraje`, `DiseñoConfigV2`.
+  (semántica de `AperturaTH`), `ConfigSeriesHerraje`, `DiseñoConfigV2`. **Ojo:** varias
+  tablas (`ConfigSeriesAsoc`, `ConjuntosMO`) están **vacías en este catálogo global**;
+  la versión poblada real vive en el **export CSV de EMP0016** (`ConfigSeriesAsoc.csv`
+  1.137 filas — la fuente de fábrica de T.40/T.41/T.46/T.47), no aquí.
 - `EMP00xx/aluminio.mdb` (ACTIVA, NO abrir) + `EMP00xx/Anterior.mdb` (copia estática, sí).
+  **`EMP00xx` son EJERCICIOS FISCALES de la misma empresa (ALUMINIOS LARA), NO empresas
+  ni usuarios distintos** — verificado en `Empresas.mdb` (tabla `Empresas`: Codigo→
+  Descripcion→Ejercicio). `EMP0001`=2010 … `EMP0016`=2026 (el ejercicio en curso, por
+  eso es el correcto para `RUTA_CSV_ORIGEN`). Si algún día hace falta más oráculo para
+  series con `n_train` pequeño, ahí hay **15 ejercicios previos más** de la misma
+  empresa a consultar (con la salvedad de que el esquema pudo variar entre años).
+- `Tarifa/GM/Articulos.txt` (9,5 MB) — export de **tarifa de proveedor** (formato ancho
+  fijo, sin CSV-parse directo) con coste por artículo (`TarifaConfig.ini`: `Coste=SI`).
+  Es la única fuente de precios encontrada en todo `Productor`, pero **está fechada
+  23/06/2022** (`FechaTarifa` en el ini) — no es del ejercicio actual, no usable como
+  precio vigente sin contrastar con una versión más reciente (o con `articulos_pvp` en
+  Supabase, T.32). Resto de `Productor` revisado y sin datos relevantes: `Documentos`
+  (manuales/PDFs), `RPT` (plantillas Crystal Reports), `ManualUsr`, `BMP`, `Fuentes`,
+  `gaCopiasDeSeguridad` (nivel superior; es la herramienta de backup en sí, no una
+  copia de datos distinta).
 
 **Cómo leer las MDB en este portátil** (memoria `leer-mdb-portatil`): ACE OLEDB
 **no** está instalado; usar **PowerShell de 32 bits** + driver **ODBC de Access**.
