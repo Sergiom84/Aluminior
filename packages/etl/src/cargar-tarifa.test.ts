@@ -18,7 +18,7 @@ import { beforeAll, afterAll, beforeEach, describe, it, expect } from 'vitest'
 import { cargarTarifa, AbortoCarga } from './cargar-tarifa.ts'
 
 // URL del Postgres efímero (docker-compose de packages/db). Override con TEST_DATABASE_URL.
-const URL = process.env.TEST_DATABASE_URL ?? 'postgres://aluminior:aluminior@localhost:55432/aluminior_test'
+const URL = process.env.TEST_DATABASE_URL ?? 'postgres://aluminior:aluminior@localhost:55433/aluminior_test'
 const sql = postgres(URL, { ssl: false, max: 3, onnotice: () => {} })
 const noop = () => {}
 

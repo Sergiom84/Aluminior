@@ -10,8 +10,9 @@ efectos del cargador de tarifa en `@aluminior/etl`) corren contra un Postgres
 desechable en Docker, definido en [`docker-compose.yml`](./docker-compose.yml).
 
 Datos en `tmpfs` (RAM): el contenedor no persiste nada, arranca limpio siempre.
-Puerto host **55432** (el host ya tiene un cluster Postgres en 5432-5434 y Supabase
-local usa 54322).
+Puerto host **55433**: el 5432 lo ocupa un Postgres nativo, Supabase local usa el
+rango 543xx y el 55432 está tomado por la BD de test de MindFit. El reparto de
+puertos entre proyectos vive en `Learning/maps/port-map.md`.
 
 ```bash
 # Levantar (desde la raíz del repo)
@@ -21,7 +22,7 @@ docker compose -f packages/db/docker-compose.yml up -d
 docker compose -f packages/db/docker-compose.yml down
 ```
 
-Cadena de conexión: `postgres://aluminior:aluminior@localhost:55432/aluminior_test`
+Cadena de conexión: `postgres://aluminior:aluminior@localhost:55433/aluminior_test`
 
 ## Correr los tests de escritura del ETL
 

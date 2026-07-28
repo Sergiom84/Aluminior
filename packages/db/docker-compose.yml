@@ -4,8 +4,9 @@
 # para poder ejecutar los efectos de ESCRITURA del cargador de tarifa (ETL)
 # contra una base de datos desechable, sin tocar jamás producción.
 #
-# Puerto 55432 en el host: el titular ya tiene un cluster Postgres nativo ocupando
-# 5432-5434 y Supabase local usa 54322, así que se elige un puerto bien fuera de rango.
+# Puerto 55433 en el host: el 5432 lo ocupa un Postgres nativo, Supabase local usa
+# el rango 543xx, y el 55432 está tomado por la BD de test de MindFit
+# (scripts/arch002-test-db.ps1). Reparto completo en Learning/maps/port-map.md.
 #
 # Levantar:   docker compose -f packages/db/docker-compose.yml up -d
 # Parar:      docker compose -f packages/db/docker-compose.yml down
@@ -19,7 +20,7 @@ services:
       POSTGRES_PASSWORD: aluminior
       POSTGRES_DB: aluminior_test
     ports:
-      - "55432:5432"
+      - "55433:5432"
     # tmpfs: datos en RAM -> efímero de verdad, arranque rápido, nada persiste.
     tmpfs:
       - /var/lib/postgresql/data
