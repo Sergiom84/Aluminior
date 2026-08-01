@@ -5497,3 +5497,142 @@ que hoy no existe. **No se generó ninguna migración en T.64.**
 - **Datos:** Supabase a 0 presupuestos, así que el optimizador se ejercitó con
   datos SINTÉTICOS en los tests (longitudes verificables a mano). No se tocó la
   BD: cero escrituras en Supabase, cero PII/datos reales en el repo (regla 4).
+
+## T.65 La caza del configurador (RECON): la biblioteca no aporta nada nuevo, el catálogo da topología+artículo al 100%, y la cota de corte es memoria del histórico por serie — GO CONDICIONADO (presupuestar, no cortar)
+
+Ejecución completa de `RECON-CONFIGURADOR.md` (4 fases, 4 subagentes, verificación
+adversarial independiente). Solo lectura en todo el recorrido; única escritura:
+`scripts/medir-configurador.mjs`. Las cinco preguntas del §8 del plan, respondidas
+con números:
+
+### 1. ¿Existe la biblioteca de series en disco, poblada? (Puerta 1)
+
+Sí está poblada, pero **no aporta nada**: `ImpexpGM.mdb` (942 tablas, 122 con
+filas; 335 conjuntos, 55 series, 9.140 cotas) es un **subconjunto de EMP0016 al
+99,97%** — 0 series exclusivas en las tres tablas de serie, contención fila a fila
+(9.140/9.140 claves de cota presentes, 9.139 con valor idéntico), MDB ≤ EMP0016 en
+las 30 tablas comparables sin excepción. Lo único exclusivo: 4 juegos de herraje
+`GMC400` (34 filas de `ConjuntosAsoc`). Además `ImpexpGM` NO trae árbol de diseño
+(`EstructurasDiseño` = 0 filas) ni una sola estructura de ventana (sus 82
+`Estructuras` son accesorios con `DisAutoSN=False`).
+
+- `impexpES.mdb` = la gramática paramétrica genérica (292 ventanas
+  `DisAutoSN=True`, 3.716 filas de diseño, indexada por `TipoSerie` A/C/M/P/PC) —
+  también contenida en EMP0016 (9.089 filas de diseño, 548 estructuras).
+- `aluMode.mdb` = plantilla de empresa en blanco de GAIA (995 tablas, como la
+  `aluminio.mdb` viva; `Conjuntos.CodSerie` = solo `*`). OJO: trae
+  `ArticulosPVP`/`ArticulosCoste` con 6.400 valores > 0 (feb-2025) — probable demo,
+  pero el frente de tarifa (T.55–T.59) se cerró sin mirarlo. Pendiente barato.
+
+**Decisión de puerta:** el criterio literal (series exclusivas) da negativo, pero
+su propósito da SÍ: la biblioteca ya está instalada e íntegra DENTRO del export de
+EMP0016. EMP0016 = aluMode (plantilla) + ImpexpGM (catálogo GM) + impexpES
+(gramática) + lo propio de Aluminios Lara (`ELEGANTPVC`, `GMBASTIDOR`, conjuntos y
+artículos propios). Corpus de la caza: EMP0016.
+
+### 2. ¿Se puede leer estructura → perfiles → cotas sin inventar eslabones? (Puerta 2)
+
+**Sí hasta la medida en bruto; no hasta la cota de corte.** Cadena cerrada y
+declarada (cero eslabones inventados): `EstructurasArticulos` plantilla
+(`TipoDoc=''`; filtro de fábrica de `ImpexImportar.csv`) → `Articulos.Componente`
+(= `DisComponente` en 39/39 filas de `2O`) → `ConjuntosLin(serie, componente)` →
+perfil real. `DiseñoConfig.csv` (1 fila, 231 columnas) traduce los tokens `per*`
+de `alSeriesListaComp.csv` (84 filas, 2008) a códigos de artículo genérico; los
+prefijos de cota (`AbatMP_`+A,B,C,D…) casan exactamente con
+`ConfigSeriesCotas.NombreCota` y las columnas de `SeriesPerfiles`. Para
+`ELEGANTPVC` las cotas requeridas por la gramática están declaradas 86/86.
+
+**Lo que NO existe en el corpus:** la aritmética bruto → corte. Prueba negativa:
+el alfabeto completo de las 574 fórmulas distintas de las 14.909 filas plantilla
+es `A, L, CAJ, CGC, CVD, CVI, DV, F, FD, FI, FS, FT, FZ, HB, HO, II, LB, TD, TI,
+TR, VS, ZO` — dimensiones de estructura; ni una cota de serie aparece en ninguna
+fórmula. Además la gramática no cubre los `inf*` (herraje OB, escuadras, juntas,
+MO, vidrio: 27 de 39 filas de `2O`), no cubre `TipoSerie` PC/CRMP/PCMR/PCX, y no
+hay tabla `TipoHoja=8` → `2HA1O`. Convención medida: **A = ancho, L = alto**
+(HH usa siempre A, HV siempre L; literales 2010/1440 en HV, 600 en HH).
+
+### 3. ¿Con qué precisión reproduce el despiece real? (Puerta 3)
+
+`scripts/medir-configurador.mjs`: genera desde plantillas + `ConjuntosLin` +
+rebaje T.10 reutilizado (leave-one-instancia-out), enlaza al oráculo por id
+exacto (`nVDoc`+`nVLinEstr` → `VDatosLinDetDis.Componente` → `nVLinea`). Muestra:
+ELEGANTPVC·2O 293 instancias / 230 medidas distintas; ampliada 20 grupos
+(serie, topología), 5 series, 653 instancias / 472 medidas / 909 medidas de corte
+distintas / concentración máxima 1,2%. Cobertura del oráculo: 1.175/2.071 = 56,7%
+de líneas estructurales con `VDatosLinDetDis`; la muestra usa el 31,5%.
+
+| métrica (cobertura del oráculo: 56,7% del universo; muestra 31,5%) | ELEGANTPVC·2O | ampliada |
+|---|---:|---:|
+| (a) artículo correcto | 100,0% (4.365 piezas; solo 4 artículos distintos) | 100,0% (8.276; 20 artículos) |
+| (b) cota ±1 mm | 92,3% | 89,8% (+337 sin valorar) |
+| (c) estructura completa: TODAS las piezas de perfil que se cortan | **0,0%** | **21,4%** |
+| (c') solo marco+hoja `{MV,MH,HV,HH}` | 96,2% (100% en 280 canónicas) | 72,3% |
+| cantidad | 100,0% | 100,0% |
+
+El c=0% lo causa UNA pieza sistemática: el acople/inversor `BT` (`GM8785M`),
+Δ=145,5 mm en el 97,9% de 2O — la firma exacta de una regla T.10 fuera del
+alcance `{HV,HH}`. Experimento etiquetado (F4, held-out): tabular BT/TM (30
+grupos) lleva c a 96,2% (2O) / 70,6% (ampliada) sin fallos nuevos detrás.
+
+### 4. ¿Sobrevive el número a la verificación adversarial? (Fase 4)
+
+Parcialmente. **Sostiene:** reproducción exacta; muestra no trivial (c' solo
+−1,6 pts con medidas irrepetidas); sin estructuras de 1 pieza; leave-one-out real,
+sin fuga por documento ni por medida; bug de ejes confirmado. **Refuta:**
+
+- El titular 96,2% excluye BT/TM, que tienen `HojaCorteSN=True` (se cortan en
+  taller). El número honesto de hoja de corte de perfiles es **0,0% / 21,4%**.
+- **"La cota sale del catálogo" es falso para 2 de cada 3 piezas:** marco 31,5%
+  (catálogo puro, 99,8% acierto), hoja 62,2% (fórmula − constante del ORÁCULO;
+  cero piezas con rebaje 0), BT/TM 6,3% (catálogo puro, 0% acierto). Sin
+  histórico, la cota correcta cae a ≈32%.
+- **Held-out por serie: las reglas de rebaje NO transfieren.** c' con reglas
+  derivadas sin la propia serie: ELEGANTPVC 82,3%→1,7%, GMA65OPT 34,1%→0%. Una
+  serie sin histórico propio genera CERO piezas de hoja.
+- Degradación por volumen de oráculo (R4 confirmado): por serie, c' = ELEGANTPVC
+  82,3% · GMA65OPT 34,1% · GMA350 18,3% · GMA60RL 0,0%. Solo 2 de 20 grupos
+  superan el 90%; ocho están a 0%.
+
+### 5. Veredicto: ¿existe Aluminior como sustituto de Productor?
+
+**GO CONDICIONADO — presupuestar sí, cortar no** (banda 60–90 de la tabla, con la
+guarda de siempre: pieza sin regla → sin valorar). No es NO-GO: el artículo sale
+al 100%, la topología y las cantidades salen de plantilla, y el hueco 21,4→70,6%
+lo cierra una única familia de reglas del tipo ya validado. No es GO fuerte: la
+cota de hoja es memoria del histórico POR SERIE (no generaliza a serie nueva), la
+cobertura del oráculo es 56,7%, y el 11% de instancias modificadas en el
+diseñador necesita las cotas de instancia (input del usuario en producción).
+
+**Condiciones, en orden:** (1) arreglar el bug de ejes (abajo); (2) tabular BT/TM
+como familia de rebaje y re-medir c2; (3) declarar por escrito el alcance
+"presupuestación + configurador comercial" — la hoja de corte exige revisión
+humana pieza a pieza; (4) para series sin histórico, la vía es el dato del
+extrusor (§5 del RECON), no este método.
+
+### Correcciones explícitas (regla 6)
+
+- **`RECON-CONFIGURADOR.md` §FASE 3 atribuye el 13,5% a `VDatosLinDetDis`: es un
+  error del RECON, no de T.54.** El 13,5% (280/2.071) es `EstructurasDiseño`
+  (árbol de diseño); `VDatosLinDetDis` (enlace componente→línea hija) cubre
+  1.175/2.071 = 56,7%. PLAN.md:4076 era correcto. El oráculo del despiece es
+  2,3 veces mayor de lo que el RECON suponía.
+
+### Bug de producción encontrado de rebote (SIN tocar; decisión del titular)
+
+`packages/core/src/despiece/calcular.ts:183-187` liga `L ← anchoMm, A ← altoMm`;
+el catálogo demuestra lo contrario (pre-check 36/40 vs 0/40). La web
+(`acciones.ts:481/618/727`) no compensa; los scripts de medición sí
+(`probar-motor-con-rebaje.mjs:177`) y la tabla de rebaje se derivó con la
+convención correcta (`medir-rebaje-hoja.ts:160-161`). Consecuencia: en producción,
+un hueco no cuadrado sale con cortes vertical/horizontal intercambiados y rebaje
+aplicado bajo la convención contraria. Fallo silencioso (con hueco cuadrado no se
+ve). Arreglo: invertir el binding en `calcular.ts` y revisar los tres call sites.
+
+### Anomalías para el titular / Javi
+
+- `ELEGANTPVC` está dada de alta sobre perfilería de ALUMINIO 60 RPT (`GM8781M`
+  CERCO CANAL 16 ST.60RPT…) pese a `PVCsn=True` (`PVCPerfilesAluSN=True`), y hay
+  dos `Marco_Ancho` contradictorios para el mismo perfil (76 en
+  `ConfigSeriesCotas` vs 53 en `SeriesPerfiles`).
+- Licencia (§6 del RECON): el catálogo de series es probablemente de GAIA o de
+  los extrusores; mirar el contrato antes de construir el configurador.
