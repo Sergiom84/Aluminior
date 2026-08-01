@@ -171,7 +171,7 @@ function aNumero(v: string | number | null | undefined): number | null {
  * Calcula el despiece de una estructura.
  *
  * @param plantilla  Componentes del catálogo para esa estructura
- * @param medidas    Ancho (L) y alto (A) del hueco, en mm
+ * @param medidas    Ancho (A) y alto (L) del hueco, en mm
  * @param cotas      Valores de las cotas simbólicas: FI, FS, TD…
  */
 export function calcularDespiece(
@@ -181,8 +181,8 @@ export function calcularDespiece(
   opciones: OpcionesDespiece = {},
 ): ResultadoDespiece {
   const contexto: Contexto = {
-    L: medidas.anchoMm,
-    A: medidas.altoMm,
+    L: medidas.altoMm,
+    A: medidas.anchoMm,
     ...cotas,
   }
 

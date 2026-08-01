@@ -40,9 +40,18 @@ const medidas = { anchoMm: 1100, altoMm: 1140 }
 const exacta = (mm: number) => ({ mm, muestras: 10, totalMuestras: 10 })
 
 describe('rebaje de hoja', () => {
+  it('mantiene la convención A=ancho y L=alto en huecos no cuadrados', () => {
+    const r = calcularDespiece([
+      { ...marco, formulaLargo: 'A', funcion: 'MH' },
+      { ...marco, formulaLargo: 'L', funcion: 'MV' },
+    ], medidas)
+
+    expect(r.piezas.map((pieza) => pieza.largoMm)).toEqual([1100, 1140])
+  })
+
   it('sin tabla de reglas el motor se comporta como antes', () => {
     const r = calcularDespiece([hoja('HV', 'L')], medidas)
-    expect(r.piezas[0].largoMm).toBe(1100)
+    expect(r.piezas[0].largoMm).toBe(1140)
     expect(r.incalculables).toBe(0)
   })
 
@@ -51,7 +60,7 @@ describe('rebaje de hoja', () => {
       serie: 'GMA60RL',
       rebajeDeHoja: () => exacta(70),
     })
-    expect(r.piezas[0].largoMm).toBe(1030)
+    expect(r.piezas[0].largoMm).toBe(1070)
     expect(r.piezas[0].incidencia).toBeNull()
   })
 
@@ -68,7 +77,7 @@ describe('rebaje de hoja', () => {
       rebajeDeHoja: () => ({ mm: 70, muestras: 99, totalMuestras: 100 }),
     })
     // la medida es buena y la línea se valora...
-    expect(r.piezas[0].largoMm).toBe(1030)
+    expect(r.piezas[0].largoMm).toBe(1070)
     expect(r.incalculables).toBe(0)
     // ...pero el riesgo queda visible, nunca en silencio
     expect(r.piezas[0].aviso).toMatch(/99\/100 = 99\.0%/)
@@ -101,7 +110,7 @@ describe('rebaje de hoja', () => {
       serie: 'DESCONOCIDA',
       rebajeDeHoja: () => null,
     })
-    // Lo importante: NO vale 1100. Un cero silencioso o el hueco entero
+    // Lo importante: NO vale 1140. Un cero silencioso o el hueco entero
     // serían una hoja mal cortada.
     expect(r.piezas[0].largoMm).toBeNull()
     expect(r.piezas[0].incidencia).toMatch(/sin regla de rebaje/)
@@ -113,7 +122,7 @@ describe('rebaje de hoja', () => {
       serie: 'GMA60RL',
       rebajeDeHoja: () => { throw new Error('no debe consultarse para el marco') },
     })
-    expect(r.piezas[0].largoMm).toBe(1100)
+    expect(r.piezas[0].largoMm).toBe(1140)
   })
 
   it('un rebaje mayor que la medida avisa en vez de cortar en negativo', () => {
@@ -132,8 +141,8 @@ describe('rebaje de hoja', () => {
     expect(r.consumoPorArticulo.get('GM8783M')?.metrosLineales).toBe(0)
   })
 
-  it('reproduce el caso real del anexo T (estructura 2O)', () => {
-    // HV real 1030 (motor daba 1100), HH real 532 (motor daba 570).
+  it('aplica el rebaje sobre cada eje con la convención correcta', () => {
+    // HV usa L (alto) y HH usa A (ancho).
     const rebajes = new Map([['HV', 70], ['HH', 38]])
     const r = calcularDespiece(
       [hoja('HV', 'L'), hoja('HH', '(A)/2')],
@@ -147,6 +156,6 @@ describe('rebaje de hoja', () => {
         },
       },
     )
-    expect(r.piezas.map((p) => p.largoMm)).toEqual([1030, 532])
+    expect(r.piezas.map((p) => p.largoMm)).toEqual([1070, 512])
   })
 })

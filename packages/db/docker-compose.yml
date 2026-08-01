@@ -24,6 +24,8 @@ services:
     # tmpfs: datos en RAM -> efímero de verdad, arranque rápido, nada persiste.
     tmpfs:
       - /var/lib/postgresql/data
+    volumes:
+      - ./test-auth-bootstrap.sql:/docker-entrypoint-initdb.d/001-auth-bootstrap.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U aluminior -d aluminior_test"]
       interval: 2s

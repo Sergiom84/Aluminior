@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 
 /** Rutas públicas: sólo el login y su server action. Todo lo demás exige sesión. */
 function esRutaPublica(pathname: string): boolean {
-  return pathname === '/login'
+  return pathname === '/login' || pathname === '/alta-completada'
 }
 
 /**

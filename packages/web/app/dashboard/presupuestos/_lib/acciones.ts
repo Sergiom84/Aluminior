@@ -615,7 +615,7 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
               formulaLargo: r.formulaLargo,
               formulaAncho: r.formulaAncho,
             })),
-            { L: d.anchoMm, A: d.altoMm, ...cotas }, nodos,
+            { L: d.altoMm, A: d.anchoMm, ...cotas }, nodos,
             despiece.piezas.filter((pieza) => !genericos.has(pieza.articuloCodigo)),
             reglasFilas.map((r) => ({
               eje: r.eje as 'L' | 'A', limite1: r.limite1, limite2: r.limite2,
@@ -724,7 +724,7 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
               avisoVidrio = 'vidrio sin calcular: el descuento de galce no cabe en la medida'
             } else {
               dimsVidrio = dims
-              const contextoModulo = { L: d.anchoMm, A: d.altoMm, ...cotas }
+              const contextoModulo = { L: d.altoMm, A: d.anchoMm, ...cotas }
               cristalesAcris = ranuras.flatMap((r, i) => {
                 try {
                   if (!r.formulaLargo || !r.formulaAncho) return []
