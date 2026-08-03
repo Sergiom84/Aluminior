@@ -2996,22 +2996,39 @@ ancho/alto ≠ 0.
 
 ### T.32.2 El grueso del dinero es entrada manual
 
-| Vía | € aprox (VPRES) | % | Origen |
-|---|---:|---:|---|
-| Fabricación módulos (fórmula) | 59.080 | ~21% | recuento × `TiempoFabr` |
-| Extra fabricación (`HorasAdFabr`) | ~23.550 | ~9% | **manual** |
-| Colocación (`MOCOL`=`HorasColoc`) | ~187.900 | ~68% | **manual** |
+**Corregido el 3/8/2026 (T.67.1).** La primera versión de este apartado repartía
+el importe entre fórmula y entrada manual con cifras aproximadas y concluía un
+«~79% manual». Ese reparto **no se ha podido reproducir** y no debe citarse: las
+tablas de origen abarcan tipos de documento distintos y sus totales no son
+comparables sin acotar por tipo. Lo medido con denominador explícito, sobre
+`VPresupuestosLin` y todas las líneas con artículo que empieza por `MO`:
 
-Colocación y extra —**~79% del importe de MO**— son **horas que teclea el
-usuario**, sin fórmula (la tabla `MOConceptosColoc.TiempoColoc` está 0/579). Son
-un dato de entrada, no un cálculo.
+| Artículo | Líneas | Minutos | Importe |
+|---|---:|---:|---:|
+| `MOCOL` | 1.238 | 362.322,00 | **181.290,60 €** |
+| `MO` | 5.386 | 158.689,40 | 79.339,25 € |
+| `MOCOMP` | 597 | 8.580,00 | 4.288,80 € |
+| `MOTAP` | 24 | 0,00 | 0,00 € |
+| **Total** | **7.245** | **529.591,40** | **264.918,65 €** |
+
+- **Colocación: 181.290,60 € de 264.918,65 €, el 68,4%.** Demostrado. Es entrada
+  manual por construcción: `MOConceptosColoc.TiempoColoc` está a 0 en sus 579
+  filas, así que su único origen es `HorasColoc`.
+- **Fabricación adicional: todavía sin separar** de la fabricación base dentro
+  del mismo recorte. `MO` mezcla las dos y no se han podido repartir con los
+  datos disponibles.
+- **No se afirma ningún porcentaje conjunto** de entrada manual hasta medirlo con
+  el mismo denominador.
+
+Lo que sí queda establecido: la colocación es un dato de entrada, no un cálculo.
 
 ### T.32.3 Consecuencia: la MO no es un frente independiente
 
 **La parte modelable (fabricación) tiene como insumo el recuento de módulos —el
 MISMO tapón de T.31.** Sin resolver el recuento de asociados, la MO de fabricación
-tampoco se reconstruye. Y el 79% del dinero de MO es manual por diseño. Así que
-modelar MO ahora es prematuro: **converge en el recuento (T.31)**, no lo evita.
+tampoco se reconstruye. Y una parte grande del dinero de MO es manual por diseño
+—la colocación sola es el 68,4% medido en T.32.2—. Así que modelar MO ahora es
+prematuro: **converge en el recuento (T.31)**, no lo evita.
 
 **Cómo modelarla, cuando toque** (no se implementa aquí): fabricación como
 `recuento × TiempoFabr × 0,5 €` (acoplada al recuento); colocación y extra como
@@ -5743,6 +5760,21 @@ Comprobado en la base de Aluminior (solo lectura):
 
 ### T.67.2 Contrato del ajuste de mano de obra (propuesto, sin implementar)
 
+Confirmado por el titular el 3 de agosto de 2026: el operador **introduce
+horas**, y `1,5` significa una hora y media. Textual sobre la otra vía: «la
+fabricación de una estructura va por minutos». Son por tanto TRES conceptos
+distintos, y confundirlos es confundir un cálculo con un dato de entrada.
+
+| Concepto | Origen | Unidad que se teclea | Unidad que se valora |
+|---|---|---|---|
+| **Fabricación base** | Calculada por el sistema desde los conceptos de mano de obra de la estructura (T.32.1) | No se teclea | Minutos |
+| **Fabricación adicional** | Entrada manual del operador | Horas, con decimales (`1,5` = 1 h 30 min) | Minutos = horas × 60 |
+| **Colocación adicional** | Entrada manual del operador | Horas, con decimales | Minutos = horas × 60 |
+
+La fabricación base no tiene horas que guardar: nace ya en minutos, como
+`Σ (nº módulos × TiempoFabr)`. Las dos adicionales sí: la hora es el dato del
+operador y el minuto es su conversión.
+
 Horas y euros no son alternativas: guardar sólo euros pierde la entrada original
 del operador, y guardar sólo horas sin fijar el precio pierde la reproducibilidad
 económica del documento. Un presupuesto aceptado hace un año no puede
@@ -5751,12 +5783,15 @@ dos cosas y la operación que lleva de una a otra:
 
 | Dato | Papel |
 |---|---|
-| Horas adicionales de fabricación y colocación | Entrada del operador. Lo que teclea, tal cual |
+| Horas adicionales de fabricación y de colocación | Entrada del operador. Lo que teclea, tal cual |
 | Conversión `horas × 60` | Minutos, como hace el original (medido en T.67.1) |
 | Artículo de mano de obra aplicado | `MO`, `MOCOL` u otro demostrado para ese concepto |
 | Tarifa del documento | La vigente al valorar |
 | Precio por minuto aplicado | El PVP de ese artículo en esa tarifa, en ese momento |
 | Importe resultante | Congelado en el documento |
+
+Los tres conceptos comparten esta valoración: cada uno con SU artículo, la
+tarifa del documento y el precio por minuto de ese momento.
 
 Con los seis, el presupuesto es reproducible y auditable: se puede reconstruir
 por qué costó lo que costó, y recalcularlo a propósito es una acción explícita,
@@ -5772,7 +5807,6 @@ no un efecto secundario de tocar el catálogo.
   `total` de la línea `GRUPO` quedan en `null`, con su aviso. Nunca un cero,
   nunca un total parcial presentado como correcto.
 
-Nada de esto se implementa aquí. Requiere antes una decisión explícita de
-producto —si Aluminior pide horas como Productor, que es lo que el operador ya
-sabe teclear— y un diseño de persistencia de los seis campos, antes de tocar
-esquema o migración.
+La decisión de producto está tomada: Aluminior pide horas, como Productor. El
+diseño de persistencia vive en `SPEC-MANO-DE-OBRA.md` y debe revisarse antes de
+tocar esquema o migración.
