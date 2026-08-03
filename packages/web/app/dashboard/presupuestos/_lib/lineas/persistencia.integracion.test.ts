@@ -18,34 +18,15 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { eq, sql } from 'drizzle-orm'
 import { migrate } from 'drizzle-orm/postgres-js/migrator'
 import { crearDb, schema } from '@aluminior/db'
+import { urlDePruebasValidada } from '@aluminior/db/pruebas'
 import {
   anadirModuloCerramiento, crearConfiguracionCerramiento, plantillaDiseno, UNIONES_VISUALES,
 } from '@aluminior/core/estructuras'
 import { guardarLinea } from './guardar-linea.ts'
 import { comprobarPersistenciaCerramientos, prepararAltaCerramiento } from '../cerramientos/index.ts'
 
-const URL_EFIMERA = 'postgres://aluminior:aluminior@localhost:55433/aluminior_test'
-
-/**
- * Salvaguarda: sólo Postgres local cuya base termine en `_test`. Un descuido
- * aquí no daría un fallo de prueba, escribiría y borraría en datos reales.
- */
-function urlDePruebasValidada(valor: string): string {
-  const url = new global.URL(valor.replace(/^postgres(ql)?:/, 'http:'))
-  const esLocal = ['localhost', '127.0.0.1', '::1'].includes(url.hostname)
-  const esDePruebas = /_test$/.test(url.pathname.replace(/^\//, ''))
-  if (!esLocal || !esDePruebas) {
-    throw new Error(
-      'TEST_DATABASE_URL debe apuntar al Postgres efímero local y a una base ' +
-      `terminada en "_test" (recibido host ${url.hostname}, base ${url.pathname}). ` +
-      'Levántalo con: docker compose -f packages/db/docker-compose.yml up -d',
-    )
-  }
-  return valor
-}
-
-const urlPruebas = urlDePruebasValidada(process.env.TEST_DATABASE_URL ?? URL_EFIMERA)
-const migraciones = fileURLToPath(new global.URL('../../../../../../db/migrations', import.meta.url))
+const urlPruebas = urlDePruebasValidada(process.env.TEST_DATABASE_URL)
+const migraciones = fileURLToPath(new URL('../../../../../../db/migrations', import.meta.url))
 const NOMBRE_PRUEBA = 'PRUEBA AUTOMÁTICA ALTA CERRAMIENTO'
 
 const configuracion = anadirModuloCerramiento(

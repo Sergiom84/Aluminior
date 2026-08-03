@@ -6,13 +6,15 @@
   "main": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./schema": "./src/schema/index.ts"
+    "./schema": "./src/schema/index.ts",
+    "./pruebas": "./src/pruebas.ts"
   },
   "scripts": {
     "generate": "drizzle-kit generate",
     "migrate": "drizzle-kit migrate",
     "studio": "drizzle-kit studio",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "dependencies": {
     "drizzle-orm": "^0.36.4",
@@ -20,6 +22,7 @@
   },
   "devDependencies": {
     "drizzle-kit": "^0.28.1",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "@aluminior/core": "*"
   }
 }

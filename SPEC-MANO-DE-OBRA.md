@@ -3,7 +3,11 @@
 Fecha: 3 de agosto de 2026. Estado: **propuesta corregida, pendiente de aprobación**.
 Evidencia: `PLAN.md` anexos T.32, T.67.1 y T.67.2, más la medición del §13.
 
-Nada de esto está implementado. No hay esquema, migración ni valoración escritos.
+Implementado de la fase «Ahora» (§12): la aritmética decimal exacta y la
+valoración pura en `core`, el esquema `lineas_mano_obra` con sus restricciones y
+la migración aditiva **generada y probada contra el Postgres efímero, todavía sin
+aplicar en el entorno real**. El formulario en horas, la persistencia del
+snapshot y la regla «todo o sin valorar» siguen sin escribir.
 
 ## 1. Qué se está resolviendo
 
@@ -121,15 +125,28 @@ mensaje o al traducir.
 |---|---|---|
 | `SIN_PVP` | El artículo no tiene fila en `articulos_pvp` para esa tarifa | `null`, no existe |
 | `PVP_CERO` | La tarifa tiene el precio a `0,0000` | `0`, el valor real |
+| `PVP_NEGATIVO` | La tarifa tiene un precio menor que cero | **El precio real**, negativo |
 | `IMPORTE_FUERA_RANGO` | `minutos × precio_minuto` no cabe en `numeric(14,2)` | **El precio real**, positivo |
 
 `motivo_coste_codigo` — por qué no hay coste:
 
-| Código | Causa |
-|---|---|
-| `SIN_COSTE` | El artículo no tiene fila en `articulos_coste` |
-| `COSTE_AMBIGUO` | Varias filas con costes distintos y ninguna del acabado aplicado |
-| `COSTE_FUERA_RANGO` | `minutos × coste_minuto` no cabe en `numeric(14,2)` |
+| Código | Causa | `coste_minuto` guardado |
+|---|---|---|
+| `SIN_COSTE` | El artículo no tiene fila en `articulos_coste` | `null`, no existe |
+| `COSTE_AMBIGUO` | Varias filas con costes distintos y ninguna del acabado aplicado | `null`, no se elige |
+| `COSTE_NEGATIVO` | El catálogo tiene un coste menor que cero | **El coste real**, negativo |
+| `COSTE_FUERA_RANGO` | `minutos × coste_minuto` no cabe en `numeric(14,2)` | **El coste real**, positivo |
+
+**Un valor negativo del catálogo no es un descuento: es corrupción.** Y no puede
+llegar a PostgreSQL como excepción. Sin `PVP_NEGATIVO`, un precio menor que cero
+produciría un importe negativo que el `CHECK` de rango rechazaría **durante la
+escritura**, es decir un fallo técnico en pantalla en vez de un documento sin
+valorar con su motivo, que es exactamente lo que el §3.2 evita para el
+desbordamiento. El valor defectuoso se conserva, por el mismo motivo que en
+`IMPORTE_FUERA_RANGO`.
+
+Simetría, dicha explícitamente: **venta negativa deja la valoración incompleta;
+coste negativo no la toca**, igual que el resto de los motivos de coste.
 
 **El precio defectuoso se conserva.** En `IMPORTE_FUERA_RANGO`, `precio_minuto`
 guarda el valor real del catálogo. Ponerlo a `null` borraría la única evidencia
@@ -143,6 +160,39 @@ investigar después. Lo mismo con `PVP_CERO`: un cero guardado como cero dice
 catálogo se recarga por ETL y una FK convertiría una reimportación en un fallo
 de escritura sobre documentos históricos. El snapshot debe sobrevivir a que el
 artículo desaparezca: para eso guarda también descripción y unidad.
+
+### 3.1.1 Aritmética decimal exacta, no coma flotante
+
+`numeric` de PostgreSQL es decimal exacto y Drizzle lo devuelve como **cadena**.
+Convertirlo a `number` para multiplicar y redondear con
+`Math.round(valor * 100) / 100` corrompe el importe antes de escribirlo: `1,005`
+es `1,00499999999999989...` en doble precisión y redondea a `1,00`, no a `1,01`.
+
+Regla, sin excepción: **la mano de obra no toca `number` en ningún punto.**
+`packages/core/src/precios/decimal.ts` opera con enteros escalados (`bigint`),
+suma escalas al multiplicar y redondea **una sola vez al final, a la mitad hacia
+afuera**, que es lo que hace `ROUND(numeric, n)`.
+
+La frontera es **estricta, no una recomendación**: el tipo público es
+`Decimal = string` y ninguna función acepta `number`, ni siquiera para
+convertirlo. Admitirlo haría falsa la garantía, porque `1.005` ya vale
+`1,00499999999999989...` en el instante en que se escribe el literal y ninguna
+aritmética posterior lo recupera. Consecuencias, dichas sin adorno:
+
+- El factor de conversión es `MINUTOS_POR_HORA = '60'`, texto, no `60`.
+- Tampoco se admite notación exponencial: `numeric` no la produce, y aceptarla
+  sería la puerta trasera por la que volvería a entrar un `String(numero)`.
+- El rechazo se comprueba **en tiempo de ejecución** además de en los tipos: el
+  valor llega de la base o de un formulario, donde TypeScript no alcanza.
+- **El formulario debe conservar el texto que valida** y entregarlo tal cual a la
+  valoración. Un `parseFloat` en la capa de entrada anularía todo lo anterior, y
+  es exactamente donde reaparecería el fallo.
+
+| Magnitud | Escala | Dónde se redondea |
+|---|---|---|
+| `minutos` | 2 | Al convertir las horas |
+| `precio_minuto`, `coste_minuto` | 4 | Al normalizar lo leído del catálogo |
+| `importe`, `coste_total` | 2 | Una única vez, sobre el producto exacto |
 
 ### 3.2 Escalas, y el desbordamiento del producto
 
@@ -184,8 +234,8 @@ RLS activado sin políticas de cliente, igual que `lineas_cerramiento`.
 -- valores admitidos
 CHECK (concepto IN ('FABRICACION_ADICIONAL', 'COLOCACION'))
 CHECK (origen IN ('MANUAL'))
-CHECK (motivo_codigo IS NULL OR motivo_codigo IN ('SIN_PVP', 'PVP_CERO', 'IMPORTE_FUERA_RANGO'))
-CHECK (motivo_coste_codigo IS NULL OR motivo_coste_codigo IN ('SIN_COSTE', 'COSTE_AMBIGUO', 'COSTE_FUERA_RANGO'))
+CHECK (motivo_codigo IS NULL OR motivo_codigo IN ('SIN_PVP', 'PVP_CERO', 'PVP_NEGATIVO', 'IMPORTE_FUERA_RANGO'))
+CHECK (motivo_coste_codigo IS NULL OR motivo_coste_codigo IN ('SIN_COSTE', 'COSTE_AMBIGUO', 'COSTE_NEGATIVO', 'COSTE_FUERA_RANGO'))
 
 -- coherencia horas / minutos / origen
 CHECK (origen <> 'MANUAL' OR horas IS NOT NULL)
@@ -193,10 +243,19 @@ CHECK (horas IS NULL OR minutos = ROUND(horas * 60, 2))
 CHECK (horas IS NULL OR horas > 0)
 CHECK (minutos > 0)
 
--- rangos
-CHECK (precio_minuto IS NULL OR precio_minuto >= 0)
+-- rangos. El valor negativo del catálogo se conserva como evidencia, y sólo
+-- acompañado del código que lo declara. Los importes calculados nunca son
+-- negativos: cuando el factor lo es, no hay importe, hay motivo.
+--
+-- `IS NOT DISTINCT FROM` y NO `=`: con el motivo a NULL, `motivo = 'X'` da NULL,
+-- y un CHECK que evalúa a NULL SE CUMPLE. Escrito con `=`, el de coste dejaría
+-- pasar justo la fila que debe impedir —coste por minuto negativo sin ningún
+-- código que lo declare—. Es un fallo medido, no una precaución teórica.
+CHECK (precio_minuto IS NULL OR precio_minuto >= 0
+       OR motivo_codigo IS NOT DISTINCT FROM 'PVP_NEGATIVO')
 CHECK (importe IS NULL OR importe >= 0)
-CHECK (coste_minuto IS NULL OR coste_minuto >= 0)
+CHECK (coste_minuto IS NULL OR coste_minuto >= 0
+       OR motivo_coste_codigo IS NOT DISTINCT FROM 'COSTE_NEGATIVO')
 CHECK (coste_total IS NULL OR coste_total >= 0)
 
 -- estado de VENTA, bidireccional. El precio queda libre en la rama incompleta:
@@ -218,6 +277,8 @@ CHECK (motivo_codigo <> 'SIN_PVP' OR precio_minuto IS NULL)
 CHECK (motivo_codigo <> 'PVP_CERO' OR precio_minuto = 0)
 CHECK (motivo_codigo <> 'IMPORTE_FUERA_RANGO'
        OR (precio_minuto IS NOT NULL AND precio_minuto > 0))
+CHECK (motivo_codigo <> 'PVP_NEGATIVO'
+       OR (precio_minuto IS NOT NULL AND precio_minuto < 0))
 
 -- estado de COSTE, independiente de la venta
 CHECK (
@@ -225,6 +286,14 @@ CHECK (
   OR
   (coste_total IS NULL AND motivo_coste_codigo IS NOT NULL)
 )
+
+-- y cada código de coste exige el coste que le corresponde, igual que la venta
+CHECK (motivo_coste_codigo <> 'SIN_COSTE'      OR coste_minuto IS NULL)
+CHECK (motivo_coste_codigo <> 'COSTE_AMBIGUO'  OR coste_minuto IS NULL)
+CHECK (motivo_coste_codigo <> 'COSTE_FUERA_RANGO'
+       OR (coste_minuto IS NOT NULL AND coste_minuto > 0))
+CHECK (motivo_coste_codigo <> 'COSTE_NEGATIVO'
+       OR (coste_minuto IS NOT NULL AND coste_minuto < 0))
 ```
 
 Notas sobre lo que estas restricciones deciden:
@@ -242,9 +311,23 @@ Notas sobre lo que estas restricciones deciden:
   imposible sigue siendo imposible y la evidencia del catálogo defectuoso se
   conserva.
 - **El coste es independiente.** Su estado tiene su propia restricción y su
-  propio código. Un coste que falta, es ambiguo o desborda deja `coste_total` en
-  `null` con su motivo, y **no** toca `valoracion_completa`: lo que decide si el
-  documento está valorado es el precio de venta.
+  propio código. Un coste que falta, es ambiguo, es negativo o desborda deja
+  `coste_total` en `null` con su motivo, y **no** toca `valoracion_completa`: lo
+  que decide si el documento está valorado es el precio de venta.
+- **`mano_obra_precio_check` es redundante, y se conserva a sabiendas.** Un
+  precio negativo obliga a valoración incompleta, la incompleta obliga a motivo,
+  y cada motivo ya fija el signo: la restricción no añade estado observable y
+  eliminarla no rompe ninguna prueba. Se mantiene como defensa en profundidad y
+  por simetría con la de coste, que **sí** es necesaria —sin motivo de coste
+  ningún `CHECK` por código opina sobre el signo—. Quitar una y dejar la otra
+  haría creer que el precio está protegido por el mismo mecanismo, cuando lo
+  protege el estado de venta.
+- **El coste está protegido igual que la venta.** Cada código de coste exige el
+  `coste_minuto` que le corresponde —nulo en `SIN_COSTE` y `COSTE_AMBIGUO`,
+  positivo en `COSTE_FUERA_RANGO`, negativo en `COSTE_NEGATIVO`—. Sin esos
+  cuatro `CHECK`, `SIN_COSTE` podría guardar un coste por minuto y
+  `COSTE_AMBIGUO` el coste que se dijo no haber elegido: evidencia que se
+  contradice a sí misma y que ninguna consulta posterior podría creer.
 
 ## 4. Cuántas filas escribe cada línea
 
@@ -367,13 +450,14 @@ obra a `0,0000`, y `MOMOSQ` no tiene fila de PVP en ninguna tarifa.
 |---|---|---|---|---|
 | PVP presente y > 0 | valor | calculado | `true` | `null` |
 | PVP presente = `0,0000` | `0` | `null` | `false` | `PVP_CERO` |
+| PVP presente < 0 | **el precio real**, negativo | `null` | `false` | `PVP_NEGATIVO` |
 | Sin fila de PVP | `null` | `null` | `false` | `SIN_PVP` |
 | Producto fuera de rango (§3.2) | **el precio real** | `null` | `false` | `IMPORTE_FUERA_RANGO` |
 
 El texto que ve el operador se deriva del código —«mano de obra a precio cero en
 la tarifa 2»— y no se guarda. Y el coste corre por su cuenta: `SIN_COSTE`,
-`COSTE_AMBIGUO` o `COSTE_FUERA_RANGO` dejan `coste_total` en `null` sin afectar a
-`valoracion_completa`.
+`COSTE_AMBIGUO`, `COSTE_NEGATIVO` o `COSTE_FUERA_RANGO` dejan `coste_total` en
+`null` sin afectar a `valoracion_completa`.
 
 Un cero en la tarifa **no** es mano de obra gratis: es catálogo sin rellenar.
 
@@ -391,14 +475,22 @@ Ocultar tarifas podría romper otros usos que no se han inventariado.
 
 **Unitarias, en `packages/core` (puras, sin E/S):**
 
-- `horasAMinutos`: `1,5 → 90`; `0,25 → 15`; `2,37 → 142,2` (caso real del §13);
-  rechazo de negativos.
+- Aritmética decimal (§3.1.1): `1,005 → 1,01`, que es justo lo que la coma
+  flotante falla; redondeo a la mitad hacia afuera, también en negativos;
+  productos con cuatro decimales de precio; producto por encima del entero seguro
+  de JavaScript; rechazo de lo que no es un decimal, **de `number`** y de la
+  notación exponencial.
+- `minutosDeHoras`: `1,5 → 90`; `0,25 → 15`; `2,37 → 142,2` (caso real del §13);
+  `9.999,99 → 599.999,40`; rechazo de negativos.
 - Valoración de un concepto: importe con precio presente; `null` con `PVP_CERO`;
-  `null` con `SIN_PVP`; `null` con `IMPORTE_FUERA_RANGO` **conservando el precio
-  real**; redondeo a céntimo.
+  `null` con `SIN_PVP`; `null` con `PVP_NEGATIVO` y con `IMPORTE_FUERA_RANGO`,
+  **conservando en ambos el precio real**; redondeo a céntimo; caso histórico
+  `142,20 × 0,5000`; precio y minutos máximos de columna; importe máximo exacto
+  aceptado y un céntimo por encima rechazado.
 - Coste: ausente da `SIN_COSTE`; varios costes distintos sin acabado aplicable dan
-  `COSTE_AMBIGUO`; producto desbordado da `COSTE_FUERA_RANGO`. Ninguno de los tres
-  cambia `valoracion_completa` ni el importe de venta.
+  `COSTE_AMBIGUO`; negativo da `COSTE_NEGATIVO`; producto desbordado da
+  `COSTE_FUERA_RANGO`. Ninguno de los cuatro cambia `valoracion_completa` ni el
+  importe de venta.
 - `lineaValorable` con motivos de mano de obra: un concepto sin valorar deja la
   línea sin valorar.
 
@@ -406,6 +498,8 @@ Ocultar tarifas podría romper otros usos que no se han inventariado.
 
 - Escala de `horas`: acepta `1.5`, `0.25`, `2.37`; rechaza `0.001`, exponencial,
   coma decimal y negativos, con el mismo tratamiento que T.67.
+- **El texto validado llega intacto a la valoración**, sin `parseFloat` ni
+  `Number()` por el camino (§3.1.1).
 - Campo vacío = sin horas, no error.
 - Errores visibles con `aria-invalid` y `aria-describedby`.
 
@@ -430,8 +524,27 @@ Ocultar tarifas podría romper otros usos que no se han inventariado.
 - El `CHECK` de venta rechaza los cuatro estados imposibles: completa sin
   importe, completa con motivo, incompleta con importe, incompleta sin motivo.
 - El `CHECK` por código rechaza la evidencia falseada: `SIN_PVP` con precio,
-  `PVP_CERO` con precio distinto de cero, `IMPORTE_FUERA_RANGO` con precio nulo.
+  `PVP_CERO` con precio distinto de cero, `IMPORTE_FUERA_RANGO` con precio nulo,
+  `PVP_NEGATIVO` con precio positivo o nulo.
 - El `CHECK` de coste rechaza `coste_total` con motivo y `coste_total` nulo sin él.
+- El `CHECK` por código de coste rechaza `SIN_COSTE` y `COSTE_AMBIGUO` con coste
+  por minuto, `COSTE_FUERA_RANGO` sin coste o con coste cero, y `COSTE_NEGATIVO`
+  con coste positivo o nulo.
+- Un valor negativo bajo cualquier otro código se rechaza por el `CHECK` de rango.
+- El texto decimal que calcula `core` entra en `numeric` y vuelve **idéntico**:
+  ni la aplicación ni PostgreSQL redondean una segunda vez.
+
+Cada prueba de rechazo exige el **nombre exacto** de la restricción, no un fallo
+cualquiera: si sólo se comprobara que la escritura falla, un residuo de otra
+prueba la haría pasar por violar el índice único. Donde hay dos restricciones
+violadas a la vez se admiten ambas y se dice por qué.
+
+**Verificación por mutación.** Se elimina cada `CHECK` uno a uno del Postgres
+efímero y se comprueba qué prueba cae. Ocho de los nueve implicados producen un
+fallo atribuible a la prueba que los cubre. El noveno,
+`mano_obra_precio_check`, **no**: es lógicamente redundante (§3.3) y su
+eliminación deja la suite entera en verde. Eso se declara aquí en vez de
+presentarlo como cobertura.
 
 **Interfaz:**
 
@@ -443,6 +556,7 @@ Ocultar tarifas podría romper otros usos que no se han inventariado.
 
 | Módulo | Cambio |
 |---|---|
+| `packages/core/src/precios/decimal.ts` | **Nuevo.** Aritmética decimal exacta (§3.1.1) |
 | `packages/core/src/precios/mano-obra.ts` | **Nuevo.** Conversión y valoración puras |
 | `packages/core/src/precios/` | Motivos de mano de obra en `lineaValorable` |
 | `packages/db/src/schema/lineas.ts` | Tabla `lineasManoObra`; marcar obsoletos los dos ajustes |
@@ -558,6 +672,8 @@ citarse** hasta medirlo con el mismo recorte. Lo demostrado es el 68,4%.
 | Fabricación base atada al recuento | La valoración agregada sigue incompleta tras esta fase | Se declara: el `GRUPO` seguirá sin valorar hasta cerrar T.31 |
 | Reversión después de escribir | Pérdida de la mano de obra de los documentos del intervalo | Procedimiento del §6, con exportación previa |
 | Producto fuera de rango, en venta o en coste | Error crudo de PostgreSQL en pantalla | Guarda en aplicación para ambos, con su código (§3.2) |
+| PVP o coste negativo en el catálogo | Igual: error crudo durante la escritura | `PVP_NEGATIVO` / `COSTE_NEGATIVO`, conservando el valor (§3.0) |
+| Redondeo en coma flotante | Un céntimo de diferencia por línea frente al original | Decimal exacto de extremo a extremo, sin `number` (§3.1.1) |
 | Coste fuera del snapshot | Sin él, no habría rentabilidad histórica | Resuelto: se congela (§3) |
 | Snapshot desalineado con la tarifa del documento | Documento con tarifa N y precio de tarifa M | Hacer visible la discrepancia; revaloración explícita |
 

@@ -1,11 +1,21 @@
 # Aluminior — traspaso para una conversación nueva
 
-Actualizado: 2 de agosto de 2026.
+Actualizado: 3 de agosto de 2026.
 
 Este es el punto de entrada vigente. Leer después `AGENTS.md`,
 `ARQUITECTURA.md` y `PARIDAD-PRODUCTOR.md`. `PLAN.md` y `ENTREGA.md` contienen
 el registro histórico profundo, pero algunas secciones antiguas fueron
 superadas por las decisiones resumidas aquí.
+
+## 0. Estado del repositorio, primero
+
+- Rama `main` con **5 commits locales por delante de `origin/main`**, que sigue
+  en `01a0613`. **Nada se ha empujado.** El último es T.68.
+- **La migración `0018_pale_hulk` sólo existe en local y se ha aplicado
+  únicamente al Postgres efímero de Docker. NO está en el Supabase remoto.**
+  Aplicarla allí es una decisión pendiente, con alcance explícito y prueba
+  reversible (§6 de `SPEC-MANO-DE-OBRA.md`).
+- El árbol contiene además `design-qa.md` sin versionar, ajeno a esta unidad.
 
 ## 1. Objetivo y criterio de producto
 
@@ -151,6 +161,75 @@ y la cabecera descuadrada en 1000). Restaurada la transacción, pasan.
 - `git diff --check` sin errores;
 - servidor local en `http://localhost:3000`.
 
+## 6 bis. T.68 — contrato decimal y esquema de mano de obra (3/8/2026)
+
+Completada. Es la primera mitad de la fase «Ahora» de `SPEC-MANO-DE-OBRA.md`.
+
+**Qué resuelve.** Medido en T.67.1: lo que el operador teclea en «ajuste de
+fabricación» y «colocación» no son euros, son **horas**, y Productor las valora
+en minutos con `minutos = horas × 60` sin redondear a entero. Los dos campos en
+euros de `lineas_cerramiento` quedan obsoletos, no borrados (migración
+sustractiva posterior). Hay 0 filas reales que convertir.
+
+**Aritmética decimal exacta**, `packages/core/src/precios/decimal.ts`. `numeric`
+es decimal exacto y Drizzle lo devuelve como cadena; `Math.round(v * 100) / 100`
+convierte `1,005` en `1,00`. Todo va con enteros escalados `bigint`, escalas que
+se suman al multiplicar y **un único redondeo final a la mitad hacia afuera**,
+igual que `ROUND(numeric, n)`.
+
+La frontera es estricta: el tipo público es `Decimal = string` y **ninguna
+función acepta `number`**, ni siquiera para convertirlo; tampoco notación
+exponencial. `MINUTOS_POR_HORA` es `'60'`, texto. El rechazo se comprueba en
+ejecución además de en los tipos. **Consecuencia para la fase siguiente: el
+formulario debe conservar el texto que valida y entregarlo tal cual. Un
+`parseFloat` en la capa de entrada anula toda la garantía.**
+
+**Valoración pura**, `packages/core/src/precios/mano-obra.ts`. Venta y coste son
+independientes: un coste ausente, ambiguo, negativo o desbordado no toca
+`valoracion_completa`. El valor defectuoso del catálogo **se conserva siempre**,
+con un código estable que dice por qué no hay importe: `SIN_PVP`, `PVP_CERO`,
+`PVP_NEGATIVO`, `IMPORTE_FUERA_RANGO`; y para el coste `SIN_COSTE`,
+`COSTE_AMBIGUO`, `COSTE_NEGATIVO`, `COSTE_FUERA_RANGO`. Ningún valor absurdo del
+catálogo llega a PostgreSQL como excepción: da un documento sin valorar con su
+motivo, no una pantalla rota.
+
+**Esquema**, `packages/db/src/schema/mano-obra.ts` y migración
+`0018_pale_hulk.sql`. Tabla `lineas_mano_obra`, aditiva, FK a `lineas` con
+`ON DELETE CASCADE`, `UNIQUE (linea_id, concepto)`, RLS activo sin políticas de
+cliente. Cada código exige exactamente el precio o el coste que le corresponde,
+para que la evidencia no se pueda falsear desde la aplicación.
+
+Dos cosas que conviene saber antes de tocarlo:
+
+- Los `CHECK` de rango relajados usan **`IS NOT DISTINCT FROM`, no `=`**. Con el
+  motivo a `NULL`, `motivo = 'X'` evalúa a `NULL`, y un `CHECK` que da `NULL` se
+  cumple. Escrito con `=`, dejaba pasar un coste por minuto negativo sin código
+  que lo declarara. Fue un fallo real, encontrado por mutación.
+- `mano_obra_precio_check` es **lógicamente redundante** y se conserva a
+  sabiendas, por simetría con el de coste, que sí es necesario. Eliminarlo no
+  rompe ninguna prueba y eso está declarado, no presentado como cobertura.
+
+**Verificación.** 106 pruebas en `core`, 47 de integración en `db` contra el
+Postgres efímero, 9 en `etl`, 33 en `web`; typecheck y build de producción;
+`git diff --check` limpio. Cada prueba de rechazo exige el **nombre exacto** de
+la restricción. Mutación ejecutada eliminando los nueve `CHECK` implicados uno a
+uno: ocho producen un fallo atribuible a su prueba; el noveno es el redundante
+ya citado.
+
+Nota operativa: la base efímera conserva las tablas entre ejecuciones y las
+migraciones usan `CREATE TABLE IF NOT EXISTS`. Al regenerar una migración no
+aplicada hay que resetear el contenedor, o se prueba contra el esquema viejo:
+
+```
+docker exec aluminior_pg_test psql -U aluminior -d aluminior_test \
+  -c 'DROP SCHEMA public CASCADE; CREATE SCHEMA public; DROP SCHEMA IF EXISTS drizzle CASCADE;'
+```
+
+**Qué NO incluye T.68**, y por tanto sigue sin funcionar de punta a punta: el
+formulario en horas, la lectura del catálogo (`articulos`, `articulos_pvp`,
+`articulos_coste`), la escritura del snapshot y la propagación de «todo o sin
+valorar» a la línea `GRUPO`.
+
 ## 7. Arquitectura modular obligatoria
 
 El usuario quiere evolucionar por módulos pequeños para que una modificación no
@@ -207,7 +286,29 @@ descripción agregada `descripcionCerramiento`. Ambos se reexportan desde
 
 ## 8. Siguiente trabajo recomendado
 
-### Ahora
+### Ahora — segunda mitad de la mano de obra (continúa T.68)
+
+Es la fase siguiente inmediata, y son tres piezas que van juntas:
+
+1. **Formulario en horas.** `esquema-linea.ts` y `anyadir-linea.tsx` pasan de
+   `ajuste_fabricacion` / `ajuste_colocacion` en euros a horas con dos decimales,
+   misma disciplina de escala que T.67. **El texto validado debe llegar intacto a
+   la valoración**, sin `parseFloat` ni `Number()` (§3.1.1 de la spec).
+2. **Resolución de catálogo**, módulo nuevo `_lib/mano-obra/`. Artículo por
+   concepto (`FABRICACION_ADICIONAL → MO`, `COLOCACION → MOCOL`), descripción,
+   PVP por tarifa y acabado, y coste con el mismo criterio de desempate que ya
+   usa el despiece: acabado aplicado, si no coste único, si no `COSTE_AMBIGUO`.
+   No inventar un segundo criterio.
+3. **Persistencia transaccional.** Las filas de mano de obra se escriben dentro
+   de la MISMA transacción que la línea, por `guardar-linea.ts`. Una línea con
+   mano de obra sin su fila es un documento corrupto, igual que un `GRUPO` sin
+   configuración. Cero, una o dos filas por línea; un `0` tecleado no genera fila.
+   Después, conectar «todo o sin valorar» ampliando `lineaValorable` con los
+   motivos de mano de obra.
+
+Orden de despliegue, si se aplica en remoto: **migración primero, código después.**
+
+### Ahora — cerramientos, en paralelo
 
 1. Permitir abrir y editar una línea `CERRAMIENTO` ya guardada, reutilizando el
    módulo `cerramientos/` en vez de ampliar la acción.
@@ -235,14 +336,41 @@ descripción agregada `descripcionCerramiento`. Ambos se reexportan desde
 - No usar `EMP0016\aluminio.mdb` activa; investigar sólo sobre una copia como
   `EMP0016\Anterior.mdb`.
 - No ejecutar migraciones remotas sin alcance explícito y prueba reversible.
+  **`0018_pale_hulk` no está aplicada en remoto.**
 - No mezclar datos de clientes reales con fixtures, capturas o commits.
-- El árbol Git contiene cambios sin confirmar de esta iteración. Revisar el diff
-  por rutas y no descartar cambios ajenos antes de continuar.
+- El árbol Git contiene cambios sin confirmar ajenos a esta unidad
+  (`design-qa.md`). Revisar el diff por rutas y no descartar cambios ajenos.
+
+### Límites abiertos, declarados
+
+- **`FABRICACION_BASE` sigue bloqueada** por el recuento de módulos (T.31/T.32).
+  Hasta cerrarlo, la valoración agregada del `GRUPO` seguirá incompleta aunque la
+  mano de obra manual funcione. Admitirla costará ampliar los `CHECK` de
+  `concepto` y `origen`: una migración, no un cambio de datos.
+- **Reversión con datos escritos no es limpia.** Antes de que el código escriba,
+  `DROP TABLE lineas_mano_obra` revierte sin pérdida. Después, pierde datos: hay
+  que desplegar el código anterior, exportar y sólo entonces eliminar (§6 de la
+  spec). No presentarlo como reversible sin más.
+- **Tarifas 2 y 3 tienen la mano de obra a `0,0000` y `MOMOSQ` no tiene fila de
+  PVP.** Decisión del titular, tomada: no se restringen tarifas; el documento
+  queda sin valorar con el motivo visible y el catálogo se corrige.
+- **Coste igual a PVP (`0,5000` ambos, margen cero)** puede ser deliberado o
+  catálogo sin mantener. Sin responder; ahora quedará registrado documento a
+  documento.
+- **Sin medir:** si el descuento de línea aplica a la mano de obra; si se muestra
+  desglosada al cliente o embebida en el `GRUPO`; y qué son las 167 líneas `MO`
+  sin estructura asociada, que afecta a si la mano de obra puede existir fuera de
+  una línea.
+- El «~79%» del anexo T.32.2 **no se ha reproducido y no debe citarse**. Lo
+  demostrado con denominador explícito es el 68,4%.
 
 ## 10. Prompt corto para la conversación nueva
 
 > Continúa Aluminior desde `HANDOFF-CHATGPT.md`. Lee primero `AGENTS.md`,
-> `ARQUITECTURA.md` y `PARIDAD-PRODUCTOR.md`. Conserva la paridad funcional con
-> Productor y la regla «todo o sin valorar». Antes de añadir edición o valoración,
-> extrae la persistencia de cerramientos de `acciones.ts` en módulos pequeños y
-> verifica que el guardado reversible actual sigue funcionando.
+> `ARQUITECTURA.md`, `PARIDAD-PRODUCTOR.md` y `SPEC-MANO-DE-OBRA.md`. Conserva la
+> paridad funcional con Productor y la regla «todo o sin valorar». T.68 dejó el
+> contrato decimal, la valoración pura y la tabla `lineas_mano_obra` con su
+> migración 0018 **sólo local**. Sigue la segunda mitad: formulario en horas
+> conservando el texto validado sin `parseFloat`, resolución de catálogo en
+> `_lib/mano-obra/`, y escritura del snapshot dentro de la misma transacción que
+> la línea. No apliques la 0018 en remoto sin alcance explícito.
