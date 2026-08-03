@@ -1,5 +1,8 @@
 # RECON — Fuente de despiece POR UNIDAD FÍSICA (camino b)
 
+> Investigación histórica cerrada. No usar como punto de continuación. El
+> estado operativo vigente se mantiene en `HANDOFF-CHATGPT.md`.
+
 > **Para:** Claude Code en local (Windows, con acceso a las MDB del sistema original).
 > **De:** sesión Cowork (nube) actuando de arquitecto. Fecha: 2026-07-22.
 > **Decisión del titular (Sergio):** tomada. Se elige el **camino (b)** — buscar/adquirir
@@ -7,8 +10,8 @@
 > **Este documento NO es exploración libre.** Es una lista de caza acotada con criterio
 > go/no-go. Si te desvías a otra cosa, para y anótalo.
 
-Antes de nada: lee `CONTINUACION.md` entero (punto de arranque) y las reglas de
-`PROMPT-FABLE.md`. Este documento asume T.24–T.52 ya conocidos.
+Para interpretar esta investigación, lee primero `HANDOFF-CHATGPT.md`. Este
+documento asume T.24–T.52 ya conocidos.
 
 ---
 

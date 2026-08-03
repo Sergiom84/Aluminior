@@ -1,5 +1,8 @@
 # RECON — El CONFIGURADOR paramétrico (¿puede Aluminior generar el despiece?)
 
+> Investigación histórica ya ejecutada. No usar como lista activa de tareas.
+> El resultado vigente y el siguiente paso están en `HANDOFF-CHATGPT.md`.
+
 > **Para:** Fable, en local (Windows, con acceso a las MDB originales).
 > **De:** sesión Claude Code actuando de arquitecto. Fecha: 2026-07-31.
 > **Origen:** vídeo del uso real de Productor por Javi (11:17, un presupuesto completo
@@ -10,8 +13,8 @@
 > **Esto NO es exploración libre.** Es una caza acotada con criterio go/no-go escrito
 > ANTES de empezar. Si te desvías, para y anótalo.
 
-Antes de nada: lee `CONTINUACION.md` entero y las reglas 1–9 de `PROMPT-FABLE.md`.
-Este documento asume T.24–T.60 conocidos y **corrige dos afirmaciones** (§0.2).
+Para interpretar la evidencia, lee primero `HANDOFF-CHATGPT.md`. Este documento
+asume T.24–T.60 conocidos y **corrige dos afirmaciones** (§0.2).
 
 ---
 

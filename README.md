@@ -15,11 +15,71 @@ marcada cuando faltan datos.
 |---|---|
 | Análisis del sistema origen | Completado — ver [PLAN.md](PLAN.md) |
 | Decisiones de arquitectura | Completado — ver [ARQUITECTURA.md](ARQUITECTURA.md) |
-| Esquema de base de datos | 29 tablas y migraciones Drizzle |
+| Esquema de base de datos | Migraciones Drizzle versionadas; persistencia específica de cerramientos aplicada |
 | ETL desde el sistema original | Completado: 178.804 filas aplicables |
-| Interfaz web | Clientes, Artículos, Estructuras y Presupuestos operativos |
+| Interfaz web | Clientes, Artículos, Estructuras y Presupuestos; diseñador inicial de cerramientos operativo |
 | Motor de despiece | Operativo: 417/417 fórmulas; 99,6% de componentes |
 | Valoración | Perfiles y vidrio de hoja/fijo puro; incompletos se muestran sin valorar |
+
+## Dirección de producto
+
+**Productor Aluminio es la referencia funcional y de interacción de
+Aluminior.** El objetivo no es crear un ERP genérico inspirado en Productor,
+sino reconstruir con la máxima fidelidad posible la herramienta que ya conoce
+el taller, sobre una arquitectura moderna y mantenible.
+
+La paridad incluye, cuando exista evidencia suficiente:
+
+- arquitectura de pantallas, ventanas, pestañas y diálogos;
+- orden de las tareas y transiciones entre estados;
+- campos visibles, agrupaciones, tablas, totales y acciones contextuales;
+- vocabulario del dominio y significado de estados y documentos;
+- densidad operativa, navegación por teclado y atajos de función;
+- comportamiento de búsquedas, altas, edición, emisión y configuración de líneas;
+- reglas de negocio y resultados, salvo errores conocidos del sistema original.
+
+La paridad no obliga a copiar la estética de Windows XP. Aluminior debe usar una
+presentación contemporánea, clara y accesible, sin perder información ni añadir
+pasos. Se modernizan superficies, tipografía, iconografía, estados de foco,
+responsive y accesibilidad; no se sustituye el flujo probado por dashboards de
+tarjetas, navegación genérica o patrones importados de otros proyectos.
+
+En presupuestos, el **configurador de cerramientos es el núcleo del producto**.
+La cabecera debe resolverse en segundos —incluido el nombre libre sin alta de
+cliente— y llevar directamente al diseño. La selección de cliente permite
+buscar por código o por varios fragmentos del nombre (`ser her la`). El
+resultado del configurador se
+trata como una línea agregada de tipo `GRUPO`, con dibujo, descripción, medidas,
+precio y ajustes manuales trazables; la consulta histórica es infraestructura,
+no el flujo principal.
+
+Cada módulo se reconstruye a partir de evidencia: observación autorizada de
+Productor, capturas y manual CHM, datos y configuraciones propios, informes,
+entrevistas con usuarios y pruebas comparativas. Cuando la evidencia no alcance,
+la diferencia debe documentarse como hipótesis o decisión consciente, no
+presentarse como paridad confirmada.
+
+El mapa de pantallas, fuentes y criterios de aceptación se mantiene en
+[`PARIDAD-PRODUCTOR.md`](PARIDAD-PRODUCTOR.md).
+
+## Criterio de modularidad
+
+Aluminior se desarrolla por módulos verticales y archivos pequeños. Cada pieza
+debe tener una responsabilidad reconocible: composición de página, estado del
+diseñador, dibujo, catálogo, búsqueda, validación, persistencia o cálculo.
+
+- Las páginas y server actions coordinan; no concentran reglas de negocio ni SQL.
+- El dominio puro y comprobable vive en `packages/core`.
+- La persistencia y el esquema viven en `packages/db`.
+- Los componentes privados permanecen junto a la funcionalidad que los usa.
+- Al aproximarse a 250 líneas se revisa la cohesión; por encima de 400 líneas,
+  un archivo manual debe dividirse o justificar expresamente la excepción.
+- Los refactors se hacen por responsabilidad y con pruebas, nunca troceando un
+  archivo de forma mecánica.
+
+La deuda principal actual es el archivo de acciones de presupuestos, que reúne
+demasiados casos de uso. Debe descomponerse incrementalmente antes de añadirle
+nuevas áreas del configurador.
 
 ## Contexto
 
@@ -29,9 +89,18 @@ perfilado de las tablas reales redujo `Articulos` de 237 a 64 columnas útiles
 y `Clientes` de 236 a 35. El esquema nuevo parte de ese análisis, no de una
 copia literal.
 
-Los datos son propiedad de ALUMINIOS LARA SLU. El software original no se
-descompila ni se copia: la reconstrucción se hace desde el esquema de datos,
-el mapa de los 291 informes Crystal y la observación de la aplicación.
+Los datos son propiedad de ALUMINIOS LARA SLU. La reconstrucción puede apoyarse
+en análisis estático o dinámico del software original únicamente cuando exista
+autorización y sea necesario para comprender interoperabilidad, comportamiento
+o datos propios. No se eluden licencias, activaciones ni protecciones, y no se
+reutilizan ni distribuyen código o activos propietarios de terceros sin permiso.
+La fuente preferente para la interfaz sigue siendo la observación, el manual CHM,
+las capturas, los datos propios y las pruebas de comportamiento.
+
+El ejecutable de Productor **no se incrusta ni se ejecuta dentro de Aluminior**.
+La integración consiste en reconstruir en código propio sus flujos y reglas
+observadas, y en migrar los datos y configuraciones autorizados al modelo de
+Aluminior. El `.exe` se conserva únicamente como referencia verificable.
 
 ## Requisitos
 
@@ -56,10 +125,13 @@ packages/
   db/     Esquema Drizzle y migraciones
   etl/    Importación desde los CSV del sistema original
   core/   Dominio: estructuras, despiece, precios (sin dependencias de E/S)
-  api/    Servidor Fastify
-  web/    Interfaz React
+  api/    Scaffold histórico; la aplicación activa usa servidor Next.js
+  web/    Next.js: interfaz y orquestación server-side
 esquema/  Análisis del sistema original: DDL, perfilado, mapa de informes
 ```
+
+Para retomar el proyecto en otra conversación, empezar por
+[`HANDOFF-CHATGPT.md`](HANDOFF-CHATGPT.md).
 
 ## Datos
 

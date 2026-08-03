@@ -1,5 +1,9 @@
 # Aluminior — Estado de la valoración (resumen ejecutivo)
 
+> Documento histórico del cierre T.52–T.59. Para el estado operativo actual y
+> el diseñador de cerramientos, consultar `HANDOFF-CHATGPT.md`. Sus mediciones
+> siguen siendo evidencia válida, pero no describen por sí solas el flujo actual.
+
 _Fecha: 2026-07-22 · Cierre del frente de precio (anexos T.52–T.59)_
 
 ## En una frase

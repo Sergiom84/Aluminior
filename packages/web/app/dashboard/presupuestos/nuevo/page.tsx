@@ -4,13 +4,14 @@ import { useActionState } from 'react'
 import { useRouter } from 'next/navigation'
 import { crearPresupuesto, type Estado } from '../_lib/acciones.ts'
 import { Shell } from '../../_components/shell.tsx'
+import { SelectorCliente } from './selector-cliente.tsx'
 
 export default function NuevoPresupuesto() {
   const router = useRouter()
   const [estado, accion, enviando] = useActionState<Estado, FormData>(
     async (previo, datos) => {
       const r = await crearPresupuesto(previo, datos)
-      if (r?.ok) router.push(`/dashboard/presupuestos/${r.id}`)
+      if (r?.ok) router.push(`/dashboard/presupuestos/${r.id}#configurador`)
       return r
     },
     null,
@@ -22,43 +23,40 @@ export default function NuevoPresupuesto() {
 
   return (
     <Shell moduloActivo="presupuestos">
-      <form action={accion} className="max-w-2xl">
+      <form action={accion} className="al-new-document">
         {estado && !estado.ok && estado.mensaje && (
-          <div className="mb-5 rounded-md border p-3 text-sm"
+          <div className="al-form-alert"
             style={{ background: 'var(--al-error-soft)', borderColor: 'var(--al-error)' }}>
             {estado.mensaje}
           </div>
         )}
 
-        <fieldset className="mb-5 rounded-lg border p-5"
-          style={{ background: 'var(--al-surface)', borderColor: 'var(--al-border)' }}>
-          <legend className="px-2 text-sm font-semibold">Datos del presupuesto</legend>
+        <header className="al-document-heading">
+          <h2>Nuevo Documento</h2>
+        </header>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="col-span-1">
-              <label htmlFor="clienteCodigo" className="mb-1 block text-sm font-medium">
-                Código de cliente
-              </label>
-              <input id="clienteCodigo" name="clienteCodigo" className={entrada} style={estilo}
-                placeholder="00082" />
-              <p className="mt-1 text-xs" style={{ color: 'var(--al-text-faint)' }}>
-                Opcional si escribes un nombre abajo.
-              </p>
+        <fieldset className="al-new-document-fields">
+          <legend>Nuevo Documento de Ventas</legend>
+
+          <div className="al-new-document-grid">
+            <div>
+              <label htmlFor="delegacion">Delegación</label>
+              <input id="delegacion" value="0016" readOnly aria-readonly="true" className={entrada} style={estilo} />
             </div>
 
-            <div className="col-span-1">
-              <label htmlFor="tarifa" className="mb-1 block text-sm font-medium">Tarifa</label>
-              <input id="tarifa" name="tarifa" type="number" min={1} max={9} defaultValue={1}
-                className={entrada} style={estilo} />
+            <SelectorCliente errores={err.clienteCodigo} />
+
+            <div>
+              <label htmlFor="potencialCodigo">Potencial</label>
+              <input id="potencialCodigo" name="potencialCodigo" className={entrada} style={estilo}
+                placeholder="Código" />
             </div>
 
-            <div className="col-span-2">
-              <label htmlFor="nombreLibre" className="mb-1 block text-sm font-medium">
-                Nombre (si no hay ficha de cliente)
-              </label>
+            <div className="al-span-2">
+              <label htmlFor="nombreLibre">Nombre</label>
               <input id="nombreLibre" name="nombreLibre" className={entrada}
                 style={{ ...estilo, borderColor: err.nombreLibre ? 'var(--al-error)' : estilo.borderColor }}
-                placeholder="LUISFER" />
+                placeholder="Nombre libre" autoFocus />
               {err.nombreLibre && (
                 <p className="mt-1 text-xs" style={{ color: 'var(--al-error)' }}>
                   {err.nombreLibre.join('. ')}
@@ -66,30 +64,53 @@ export default function NuevoPresupuesto() {
               )}
             </div>
 
-            <div className="col-span-2">
-              <label htmlFor="obraTexto" className="mb-1 block text-sm font-medium">Obra</label>
+            <div className="al-span-2">
+              <label htmlFor="obraTexto">Obra</label>
               <input id="obraTexto" name="obraTexto" className={entrada} style={estilo}
-                placeholder="MANOJO DE ROSAS 120" />
+                placeholder="Descripción de la obra" />
             </div>
 
-            <div className="col-span-1">
-              <label htmlFor="formaPago" className="mb-1 block text-sm font-medium">Forma de pago</label>
-              <input id="formaPago" name="formaPago" className={entrada} style={estilo}
-                placeholder="TRANSFERENCIA" />
+            <div>
+              <label htmlFor="serie">Serie</label>
+              <input id="serie" value="A" readOnly aria-readonly="true" className={entrada} style={estilo} />
+            </div>
+
+            <div>
+              <label htmlFor="numero">Número</label>
+              <input id="numero" value="Automático" readOnly aria-readonly="true" className={entrada} style={estilo} />
+            </div>
+
+            <div>
+              <label htmlFor="estado">Estado</label>
+              <input id="estado" value="PENDIENTE" readOnly aria-readonly="true" className={entrada} style={estilo} />
+            </div>
+
+            <div>
+              <label htmlFor="tarifa">Tarifa</label>
+              <input id="tarifa" name="tarifa" type="number" min={1} max={9} defaultValue={1}
+                className={entrada} style={estilo} />
+            </div>
+
+            <div className="al-span-2">
+              <label htmlFor="formaPago">Forma de pago</label>
+              <input id="formaPago" name="formaPago" className={entrada} style={estilo} />
             </div>
           </div>
         </fieldset>
 
-        <div className="flex gap-3">
+        <fieldset className="al-new-document-notes">
+          <legend>Observaciones del cliente</legend>
+          <textarea id="observaciones" name="observaciones" rows={5} />
+        </fieldset>
+
+        <div className="al-new-document-actions">
           <button type="submit" disabled={enviando}
-            className="rounded-md px-5 py-2 text-sm font-medium disabled:opacity-50"
-            style={{ background: 'var(--al-accent)', color: 'var(--al-accent-contrast)' }}>
-            {enviando ? 'Creando…' : 'Crear presupuesto'}
+            className="al-command-primary disabled:opacity-50">
+            {enviando ? 'Creando…' : 'Aceptar y continuar'}
           </button>
           <button type="button" onClick={() => router.push('/dashboard/presupuestos')}
-            className="rounded-md border px-5 py-2 text-sm"
-            style={{ borderColor: 'var(--al-border-strong)' }}>
-            Cancelar
+            className="al-command">
+            Cerrar
           </button>
         </div>
       </form>

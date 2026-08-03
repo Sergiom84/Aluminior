@@ -15,7 +15,7 @@
  */
 
 import {
-  pgTable, text, integer, numeric, boolean, uuid, index, primaryKey,
+  pgTable, text, integer, numeric, boolean, uuid, index, primaryKey, jsonb,
 } from 'drizzle-orm/pg-core'
 import { presupuestos } from './comercial.ts'
 import { articulos } from './catalogo.ts'
@@ -105,6 +105,27 @@ export const lineasEstructura = pgTable('lineas_estructura', {
   // --- Mano de obra adicional, en horas ---
   horasFabricacion: numeric('horas_fabricacion', { precision: 8, scale: 2 }).notNull().default('0'),
   horasColocacion: numeric('horas_colocacion', { precision: 8, scale: 2 }).notNull().default('0'),
+})
+
+/**
+ * Entrada editable de una línea GRUPO/CERRAMIENTO.
+ *
+ * La configuración es un snapshot versionado, validado en servidor antes de
+ * guardarse. El despiece sigue siendo una salida separada en lineas_despiece.
+ */
+export const lineasCerramiento = pgTable('lineas_cerramiento', {
+  lineaId: uuid('linea_id').primaryKey()
+    .references(() => lineas.id, { onDelete: 'cascade' }),
+  version: integer('version').notNull().default(1),
+  configuracion: jsonb('configuracion').$type<Record<string, unknown>>().notNull(),
+  serieCodigo: text('serie_codigo'),
+  vidrioCodigo: text('vidrio_codigo'),
+  acabadoCodigo: text('acabado_codigo'),
+  varianteAcristalamiento: text('variante_acristalamiento').notNull().default('2'),
+  ajusteFabricacion: numeric('ajuste_fabricacion', { precision: 12, scale: 2 })
+    .notNull().default('0'),
+  ajusteColocacion: numeric('ajuste_colocacion', { precision: 12, scale: 2 })
+    .notNull().default('0'),
 })
 
 /**

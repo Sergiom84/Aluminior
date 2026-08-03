@@ -5636,3 +5636,27 @@ ve). Arreglo: invertir el binding en `calcular.ts` y revisar los tres call sites
   `ConfigSeriesCotas` vs 53 en `SeriesPerfiles`).
 - Licencia (§6 del RECON): el catálogo de series es probablemente de GAIA o de
   los extrusores; mirar el contrato antes de construir el configurador.
+
+## T.66 Diseñador inicial persistente y nueva frontera modular (02/08/2026)
+
+Este anexo actualiza el punto de continuación sin reescribir los anexos de
+investigación anteriores.
+
+- El bug de ejes de T.65 fue corregido y probado: `A=anchoMm`, `L=altoMm`.
+- Productor queda fijado como referencia de comportamiento y datos, no como
+  runtime incrustado en Aluminior.
+- La búsqueda de cliente de un presupuesto admite prefijo de código y varios
+  fragmentos parciales del nombre en cualquier orden.
+- Existe un diseñador inicial de cerramientos con módulos, medidas, plantillas
+  verificadas y uniones `GMU038`/`PSU001`.
+- La migración `0017_mean_skrulls.sql` crea `lineas_cerramiento` y está aplicada
+  en Supabase con RLS.
+- Un cerramiento vuelve al presupuesto como una sola línea `GRUPO`, con JSON
+  versionado y ajustes manuales. Sigue sin valoración agregada y, por tanto,
+  aparece honestamente como `sin valorar`.
+- El guardado real se verificó y se revirtió sin dejar datos de prueba.
+- La siguiente frontera no debe seguir creciendo dentro de `acciones.ts`.
+  Primero se extrae persistencia/validación del cerramiento en módulos pequeños;
+  después se añade edición y finalmente valoración agregada.
+
+El traspaso operativo completo vive en `HANDOFF-CHATGPT.md`.

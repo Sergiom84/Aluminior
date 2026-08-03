@@ -884,3 +884,24 @@ Tres opciones:
 - **RGPD:** 227 MB con nombres, NIF, direcciones y teléfonos. Región UE
   elegida explícitamente en Supabase. Nada de datos personales en el
   repositorio.
+
+---
+
+# 10. ACTUALIZACIÓN OPERATIVA — 02/08/2026
+
+Este documento conserva el análisis de entrega original. Para retomar el
+trabajo se debe leer `HANDOFF-CHATGPT.md`, que contiene el estado verificado más
+reciente.
+
+Desde el cierre descrito arriba se implementaron la búsqueda fragmentaria de
+clientes, el vocabulario visual inicial del diseñador, la composición de varios
+módulos y uniones, la línea agregada `GRUPO` y su persistencia en
+`lineas_cerramiento`. La migración está aplicada en Supabase y un guardado real
+fue comprobado y eliminado sin residuos. La valoración agregada del cerramiento
+sigue pendiente y se muestra como `sin valorar`.
+
+La arquitectura de continuación cambia de criterio: cada capacidad se entrega
+como módulo pequeño y cohesivo. `acciones.ts` de presupuestos es deuda conocida;
+no debe recibir más responsabilidades antes de extraer validación, persistencia
+y recálculo en servicios separados. Los umbrales y reglas completas están en
+`AGENTS.md` y `ARQUITECTURA.md`.

@@ -120,6 +120,13 @@
       "when": 1784762905826,
       "tag": "0016_faithful_raider",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1785677398192,
+      "tag": "0017_mean_skrulls",
+      "breakpoints": true
     }
   ]
 }

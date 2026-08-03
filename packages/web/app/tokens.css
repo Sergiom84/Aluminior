@@ -1,37 +1,39 @@
 /**
  * Tokens de diseño de Aluminior.
  *
- * Mismo sistema que F-Gestor-IA: la identidad visual vive aquí y los
- * componentes sólo consumen variables. Así, con muchas pantallas, la interfaz
- * no se descuadra y cambiar el tema es tocar un fichero.
+ * La identidad visual vive aquí y los componentes sólo consumen variables.
+ * Productor aporta la densidad y la jerarquía operativa; esta capa actualiza
+ * sus superficies sin reproducir el acabado de Windows XP.
  *
  * Convención de prefijos:
  *   --al-*  token de Aluminior
  */
 
 :root {
-  /* --- Acento: índigo, heredado de F-Gestor-IA --- */
-  --al-accent: #4f46e5;
-  --al-accent-strong: #4338ca;
-  --al-accent-soft: #eef0ff;
+  /* --- Acento: azul acero, continuidad moderna con Productor --- */
+  --al-accent: #17627a;
+  --al-accent-strong: #104b5e;
+  --al-accent-soft: #dcecf0;
   --al-accent-contrast: #ffffff;
 
   /* --- Superficies --- */
-  --al-sidebar: #0c1322;
-  --al-sidebar-hover: #16203a;
-  --al-sidebar-text: #94a3b8;
+  --al-sidebar: #17242c;
+  --al-sidebar-hover: #22343e;
+  --al-sidebar-text: #c7d1d5;
   --al-sidebar-text-active: #ffffff;
 
-  --al-page: #eef1f5;
-  --al-surface: #ffffff;
-  --al-surface-muted: #f8fafc;
-  --al-border: #e2e8f0;
-  --al-border-strong: #cbd5e1;
+  --al-page: #e7ebeb;
+  --al-surface: #fbfaf7;
+  --al-surface-muted: #f0f2ef;
+  --al-border: #d2d8d6;
+  --al-border-strong: #aeb9b7;
+  --al-row-hover: #e5f0f2;
+  --al-row-selected: #d3e7ec;
 
   /* --- Texto --- */
-  --al-text: #0f172a;
-  --al-text-muted: #64748b;
-  --al-text-faint: #94a3b8;
+  --al-text: #182329;
+  --al-text-muted: #536269;
+  --al-text-faint: #78868b;
 
   /* --- Estados --- */
   --al-ok: #0d9f6e;
@@ -42,21 +44,21 @@
   --al-error-soft: #fee2e2;
 
   /* --- Tipografía --- */
-  --al-font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --al-font: "Segoe UI Variable Text", "Segoe UI", Arial, sans-serif;
   /* Tabular para importes y medidas: las columnas de cifras deben alinearse. */
   --al-font-num: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, monospace;
 
   /* --- Radios y sombras --- */
-  --al-radius: 8px;
-  --al-radius-sm: 6px;
-  --al-radius-lg: 12px;
-  --al-shadow: 0 1px 2px rgb(15 23 42 / 0.06), 0 1px 3px rgb(15 23 42 / 0.1);
-  --al-shadow-lg: 0 4px 12px rgb(15 23 42 / 0.08);
+  --al-radius: 4px;
+  --al-radius-sm: 3px;
+  --al-radius-lg: 6px;
+  --al-shadow: 0 1px 2px rgb(24 35 41 / 0.08);
+  --al-shadow-lg: 0 8px 24px rgb(24 35 41 / 0.12);
 
   /* --- Densidad (por defecto: cómoda) --- */
-  --al-row-h: 40px;
-  --al-pad-x: 16px;
-  --al-pad-y: 10px;
+  --al-row-h: 34px;
+  --al-pad-x: 10px;
+  --al-pad-y: 6px;
 }
 
 /**
@@ -70,34 +72,7 @@
 }
 
 .al-comfy {
-  --al-row-h: 48px;
-  --al-pad-x: 20px;
-  --al-pad-y: 14px;
-}
-
-/* --- Tema oscuro: se activa por preferencia del sistema o por atributo --- */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    --al-page: #0b1120;
-    --al-surface: #111827;
-    --al-surface-muted: #0f172a;
-    --al-border: #1f2937;
-    --al-border-strong: #334155;
-    --al-text: #f1f5f9;
-    --al-text-muted: #94a3b8;
-    --al-text-faint: #64748b;
-    --al-accent-soft: #1e1b4b;
-  }
-}
-
-:root[data-theme='dark'] {
-  --al-page: #0b1120;
-  --al-surface: #111827;
-  --al-surface-muted: #0f172a;
-  --al-border: #1f2937;
-  --al-border-strong: #334155;
-  --al-text: #f1f5f9;
-  --al-text-muted: #94a3b8;
-  --al-text-faint: #64748b;
-  --al-accent-soft: #1e1b4b;
+  --al-row-h: 42px;
+  --al-pad-x: 16px;
+  --al-pad-y: 10px;
 }

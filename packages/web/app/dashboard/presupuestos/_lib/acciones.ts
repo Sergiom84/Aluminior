@@ -9,7 +9,7 @@
  */
 
 import { z } from 'zod'
-import { eq, sql, and, inArray, asc, gte } from 'drizzle-orm'
+import { eq, sql, and, or, ilike, inArray, asc, gte } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { crearDb, schema } from '@aluminior/db'
 import {
@@ -21,6 +21,15 @@ import {
 } from '@aluminior/core/precios'
 import { expandirCadena, construirResoluciones, resolverComponente } from '@aluminior/core/series'
 import { crearClienteServidor } from '../../../../lib/supabase/servidor.ts'
+import { actualizarTotales } from './totales.ts'
+import {
+  guardarLinea, type OpcionHerrajeElegida, type PiezaDespiece,
+  type RanuraAcristalamiento, type ValoresLinea,
+} from './lineas/guardar-linea.ts'
+import {
+  comprobarPersistenciaCerramientos, prepararAltaCerramiento,
+  MENSAJE_MIGRACION_PENDIENTE, type AltaCerramiento,
+} from './cerramientos/index.ts'
 
 /**
  * Email del usuario de la sesión, para el campo `creado_por` (antes vacío por
@@ -46,9 +55,59 @@ async function usuarioActual(): Promise<string | null> {
 const COMPONENTE_CRISTAL = '1'
 
 export type Estado =
-  | { ok: true; id: string }
+  | { ok: true; id: string; mensaje?: string }
   | { ok: false; errores: Record<string, string[]>; mensaje?: string }
   | null
+
+export interface ClienteEncontrado {
+  codigo: string
+  nombre: string
+  poblacion: string | null
+}
+
+/**
+ * Buscador incremental del selector de cliente.
+ *
+ * Cada fragmento escrito debe aparecer en el nombre o nombre comercial, por
+ * lo que `ser her la` encuentra `SERGIO HERNÁNDEZ LARA`. El código se busca
+ * además por prefijo. Se limita en servidor para no volcar el maestro entero.
+ */
+export async function buscarClientes(consulta: string): Promise<ClienteEncontrado[]> {
+  const texto = consulta.trim().slice(0, 120)
+  const fragmentos = texto
+    .split(/\s+/)
+    .map((fragmento) => fragmento
+      .normalize('NFD')
+      .replace(/\p{Diacritic}/gu, '')
+      .replace(/[%_]/g, '')
+      .toLowerCase())
+    .filter(Boolean)
+
+  const filtroNombre = fragmentos.length
+    ? and(...fragmentos.map((fragmento) => or(
+        sql<boolean>`translate(lower(${schema.clientes.nombre}), 'áéíóúüñ', 'aeiouun') LIKE ${`%${fragmento}%`}`,
+        sql<boolean>`translate(lower(coalesce(${schema.clientes.nombreComercial}, '')), 'áéíóúüñ', 'aeiouun') LIKE ${`%${fragmento}%`}`,
+      )))
+    : undefined
+
+  const filtro = texto
+    ? or(
+        ilike(schema.clientes.codigo, `${texto.replace(/[%_\s]/g, '')}%`),
+        filtroNombre,
+      )
+    : undefined
+
+  return crearDb()
+    .select({
+      codigo: schema.clientes.codigo,
+      nombre: schema.clientes.nombre,
+      poblacion: schema.clientes.poblacion,
+    })
+    .from(schema.clientes)
+    .where(and(eq(schema.clientes.activo, true), filtro))
+    .orderBy(asc(schema.clientes.nombre))
+    .limit(8)
+}
 
 interface CristalAcris {
   slot: number
@@ -164,10 +223,12 @@ async function siguienteNumero(db: ReturnType<typeof crearDb>): Promise<number> 
 
 const esquemaCabecera = z.object({
   clienteCodigo: z.string().trim().optional().transform((v) => v || null),
+  potencialCodigo: z.string().trim().optional().transform((v) => v || null),
   nombreLibre: z.string().trim().max(200).optional().transform((v) => v || null),
   obraTexto: z.string().trim().max(200).optional().transform((v) => v || null),
   tarifa: z.coerce.number().int().min(1).max(9).default(1),
   formaPago: z.string().trim().max(60).optional().transform((v) => v || null),
+  observaciones: z.string().trim().max(4000).optional().transform((v) => v || null),
 })
 
 export async function crearPresupuesto(_previo: Estado, datos: FormData): Promise<Estado> {
@@ -177,10 +238,16 @@ export async function crearPresupuesto(_previo: Estado, datos: FormData): Promis
   const d = p.data
   // Regla del sistema original: basta con identificar al destinatario de
   // ALGUNA forma. Muchos presupuestos reales sólo llevan un nombre a mano.
-  if (!d.clienteCodigo && !d.nombreLibre) {
+  if (!d.clienteCodigo && !d.potencialCodigo && !d.nombreLibre) {
     return {
       ok: false,
-      errores: { nombreLibre: ['Indica un cliente o al menos un nombre'] },
+      errores: { nombreLibre: ['Indica cliente, potencial o al menos un nombre'] },
+    }
+  }
+  if (d.clienteCodigo && d.potencialCodigo) {
+    return {
+      ok: false,
+      errores: { clienteCodigo: ['Elige cliente o potencial, no ambos'] },
     }
   }
 
@@ -194,10 +261,12 @@ export async function crearPresupuesto(_previo: Estado, datos: FormData): Promis
       serie: 'A',
       fecha: new Date().toISOString().slice(0, 10),
       clienteCodigo: d.clienteCodigo,
+      potencialCodigo: d.potencialCodigo,
       nombreLibre: d.nombreLibre,
       obraTexto: d.obraTexto,
       tarifa: d.tarifa,
       formaPago: d.formaPago,
+      observaciones: d.observaciones,
       estado: 'PENDIENTE',
       creadoPor,
     }).returning({ id: schema.presupuestos.id })
@@ -211,7 +280,7 @@ export async function crearPresupuesto(_previo: Estado, datos: FormData): Promis
 
 const esquemaLinea = z.object({
   presupuestoId: z.string().uuid(),
-  tipo: z.enum(['ARTICULO', 'ESTRUCTURA']),
+  tipo: z.enum(['ARTICULO', 'ESTRUCTURA', 'CERRAMIENTO']),
   codigo: z.string().trim().min(1, 'Elige un artículo o una estructura'),
   referencia: z.string().trim().max(60).optional().transform((v) => v || null),
   /** Serie de perfiles. Prerrequisito del tipo ESTRUCTURA: sin ella no hay
@@ -225,6 +294,9 @@ const esquemaLinea = z.object({
   anchoMm: z.coerce.number().int().min(0).optional(),
   altoMm: z.coerce.number().int().min(0).optional(),
   acabadoCodigo: z.string().trim().optional().transform((v) => v || null),
+  configuracionCerramiento: z.string().trim().optional().transform((v) => v || null),
+  ajusteFabricacion: z.coerce.number().min(0).default(0),
+  ajusteColocacion: z.coerce.number().min(0).default(0),
 })
 
 /**
@@ -239,6 +311,20 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
   if (!p.success) return { ok: false, errores: p.error.flatten().fieldErrors }
 
   const d = p.data
+  let altaCerramiento: AltaCerramiento | null = null
+  if (d.tipo === 'CERRAMIENTO') {
+    const resultado = prepararAltaCerramiento({
+      configuracionSerializada: d.configuracionCerramiento,
+      serieCodigo: d.serieCodigo,
+      vidrioCodigo: d.vidrioCodigo,
+      acabadoCodigo: d.acabadoCodigo,
+      varianteAcristalamiento: d.varianteAcristalamiento,
+      ajusteFabricacion: d.ajusteFabricacion,
+      ajusteColocacion: d.ajusteColocacion,
+    })
+    if (!resultado.ok) return { ok: false, errores: resultado.errores }
+    altaCerramiento = resultado.alta
+  }
   const db = crearDb()
 
   try {
@@ -246,6 +332,15 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
       .from(schema.presupuestos)
       .where(eq(schema.presupuestos.id, d.presupuestoId)).limit(1)
     if (!presupuesto) return { ok: false, errores: {}, mensaje: 'Presupuesto no encontrado' }
+
+    // La UI puede ejecutarse contra un entorno cuya migración aún no se haya
+    // desplegado. Comprobarlo ANTES de insertar evita una línea huérfana si el
+    // satélite lineas_cerramiento todavía no existe.
+    if (d.tipo === 'CERRAMIENTO') {
+      if (!await comprobarPersistenciaCerramientos(db)) {
+        return { ok: false, errores: {}, mensaje: MENSAJE_MIGRACION_PENDIENTE }
+      }
+    }
 
     const [{ orden }] = (await db.execute<{ orden: number }>(sql`
       SELECT COALESCE(MAX(orden), 0) + 1 AS orden FROM lineas
@@ -255,27 +350,21 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
     let descripcion = d.codigo
     let precioUnitario: number | null = null
     let aviso: string | null = null
+    /** Medidas de la línea. El cerramiento las deriva de su composición. */
+    let anchoLinea = d.anchoMm ?? null
+    let altoLinea = d.altoMm ?? null
 
     /** Despiece resuelto a persistir en lineas_despiece (trazabilidad + coste). */
-    let piezasAPersistir: {
-      articuloCodigo: string
-      cantidad: string
-      largoCorteMm: string | null
-      anchoCorteMm?: string | null
-      anguloIzquierdo: string | null
-      anguloDerecho: string | null
-      funcion: string | null
-      costeUnitario: string | null
-      costeTotal: string | null
-    }[] = []
-    let acristalamientoAPersistir: {
-      slot: number
-      vidrioHojas: string | null
-      vidrioFijos: string | null
-      variante: '1' | '2'
-    }[] = []
+    let piezasAPersistir: PiezaDespiece[] = []
+    let acristalamientoAPersistir: RanuraAcristalamiento[] = []
 
-    if (d.tipo === 'ARTICULO') {
+    if (d.tipo === 'CERRAMIENTO') {
+      descripcion = altaCerramiento!.descripcion
+      precioUnitario = altaCerramiento!.precioUnitario
+      aviso = altaCerramiento!.aviso
+      anchoLinea = altaCerramiento!.anchoMm
+      altoLinea = altaCerramiento!.altoMm
+    } else if (d.tipo === 'ARTICULO') {
       const [art] = await db.select()
         .from(schema.articulos).where(eq(schema.articulos.codigo, d.codigo)).limit(1)
       if (!art) return { ok: false, errores: { codigo: ['Artículo no encontrado'] } }
@@ -919,96 +1008,78 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
       ? null
       : Math.round(precioUnitario * d.cantidad * 100) / 100
 
-    await db.insert(schema.lineas).values({
+    // --- Opciones de herraje elegidas (anexo R) ---
+    // Se persisten para trazabilidad y para la futura selección de asociados;
+    // hoy no afectan a la valoración. Solo se aceptan opciones del catálogo de
+    // los conjuntos medidos para esta (serie, estructura); las ocultas entran
+    // con su default. Se resuelve ANTES de escribir: es lectura de catálogo y
+    // la transacción debe contener escrituras, no consultas.
+    const opcionesHerraje: OpcionHerrajeElegida[] = []
+    if (d.tipo === 'ESTRUCTURA') {
+      const [reglaHerraje] = await db.select({ conjuntos: schema.herrajeConjuntos.conjuntos })
+        .from(schema.herrajeConjuntos)
+        .where(and(
+          eq(schema.herrajeConjuntos.serieCodigo, d.serieCodigo ?? ''),
+          eq(schema.herrajeConjuntos.estructuraCodigo, d.codigo),
+        )).limit(1)
+      if (reglaHerraje) {
+        const catalogo = await db.select()
+          .from(schema.opcionesHerraje)
+          .where(inArray(schema.opcionesHerraje.conjuntoCodigo, reglaHerraje.conjuntos.split('+')))
+        const porClave = new Map(catalogo.map((f) => [`${f.conjuntoCodigo}|${f.opcionCodigo}`, f]))
+        const elegidas = new Map<string, typeof catalogo[number]>()
+        for (const v of datos.getAll('opcionHerraje')) {
+          const fila = porClave.get(String(v))
+          if (fila && !fila.oculta) elegidas.set(`${fila.conjuntoCodigo}|${fila.opcionCodigo}`, fila)
+        }
+        for (const fila of catalogo) {
+          if (fila.oculta && fila.porDefecto) {
+            elegidas.set(`${fila.conjuntoCodigo}|${fila.opcionCodigo}`, fila)
+          }
+        }
+        opcionesHerraje.push(...[...elegidas.values()].map((f) => ({
+          categoria: f.conjuntoCodigo,
+          opcionCodigo: f.opcionCodigo,
+          descripcion: f.descripcion,
+        })))
+      }
+    }
+
+    const valores: ValoresLinea = {
       presupuestoId: d.presupuestoId,
       orden,
-      tipo: d.tipo,
       articuloCodigo: d.tipo === 'ARTICULO' ? d.codigo : null,
       descripcion,
       referencia: d.referencia,
       cantidad: String(d.cantidad),
-      anchoMm: d.anchoMm ?? null,
-      altoMm: d.altoMm ?? null,
+      anchoMm: anchoLinea,
+      altoMm: altoLinea,
       precioUnitario: precioUnitario === null ? null : String(precioUnitario),
       total: total === null ? null : String(total),
       valoracionCompleta: precioUnitario !== null,
       avisoValoracion: aviso,
-    })
-
-    if (d.tipo === 'ESTRUCTURA') {
-      const [linea] = await db.select({ id: schema.lineas.id })
-        .from(schema.lineas)
-        .where(and(
-          eq(schema.lineas.presupuestoId, d.presupuestoId),
-          eq(schema.lineas.orden, orden),
-        )).limit(1)
-
-      if (linea) {
-        await db.insert(schema.lineasEstructura).values({
-          lineaId: linea.id,
-          serieCodigo: d.serieCodigo ?? '',
-          estructuraCodigo: d.codigo,
-          acabadoCodigo: d.acabadoCodigo,
-        })
-
-        if (piezasAPersistir.length) {
-          await db.insert(schema.lineasDespiece).values(
-            piezasAPersistir.map((pz) => ({ lineaId: linea.id, ...pz })),
-          )
-        }
-
-        if (acristalamientoAPersistir.length) {
-          await db.insert(schema.lineasAcristalamiento).values(
-            acristalamientoAPersistir.map((a) => ({ lineaId: linea.id, ...a })),
-          )
-        }
-
-        // --- Opciones de herraje elegidas (anexo R) ---
-        // Se persisten para trazabilidad y para la futura selección de
-        // asociados; hoy no afectan a la valoración. Solo se aceptan
-        // opciones del catálogo de los conjuntos medidos para esta
-        // (serie, estructura); las ocultas entran con su default.
-        const [reglaHerraje] = await db.select({ conjuntos: schema.herrajeConjuntos.conjuntos })
-          .from(schema.herrajeConjuntos)
-          .where(and(
-            eq(schema.herrajeConjuntos.serieCodigo, d.serieCodigo ?? ''),
-            eq(schema.herrajeConjuntos.estructuraCodigo, d.codigo),
-          )).limit(1)
-        if (reglaHerraje) {
-          const catalogo = await db.select()
-            .from(schema.opcionesHerraje)
-            .where(inArray(schema.opcionesHerraje.conjuntoCodigo, reglaHerraje.conjuntos.split('+')))
-          const porClave = new Map(catalogo.map((f) => [`${f.conjuntoCodigo}|${f.opcionCodigo}`, f]))
-          const elegidas = new Map<string, typeof catalogo[number]>()
-          for (const v of datos.getAll('opcionHerraje')) {
-            const fila = porClave.get(String(v))
-            if (fila && !fila.oculta) elegidas.set(`${fila.conjuntoCodigo}|${fila.opcionCodigo}`, fila)
-          }
-          for (const fila of catalogo) {
-            if (fila.oculta && fila.porDefecto) {
-              elegidas.set(`${fila.conjuntoCodigo}|${fila.opcionCodigo}`, fila)
-            }
-          }
-          if (elegidas.size) {
-            await db.insert(schema.lineasOpcionesHerraje).values(
-              [...elegidas.values()].map((f) => ({
-                lineaId: linea.id,
-                categoria: f.conjuntoCodigo,
-                opcionCodigo: f.opcionCodigo,
-                descripcion: f.descripcion,
-              })),
-            )
-          }
-        }
-      }
     }
 
-    await recalcularTotales(d.presupuestoId)
+    await guardarLinea(db, d.tipo === 'CERRAMIENTO'
+      ? { tipo: 'CERRAMIENTO', valores, cerramiento: altaCerramiento! }
+      : d.tipo === 'ESTRUCTURA'
+        ? {
+            tipo: 'ESTRUCTURA',
+            valores,
+            estructura: {
+              serieCodigo: d.serieCodigo ?? '',
+              estructuraCodigo: d.codigo,
+              acabadoCodigo: d.acabadoCodigo,
+              piezas: piezasAPersistir,
+              acristalamiento: acristalamientoAPersistir,
+              opcionesHerraje,
+            },
+          }
+        : { tipo: 'ARTICULO', valores })
+
     revalidatePath(`/dashboard/presupuestos/${d.presupuestoId}`)
 
-    return aviso
-      ? { ok: false, errores: {}, mensaje: aviso }
-      : { ok: true, id: d.presupuestoId }
+    return { ok: true, id: d.presupuestoId, mensaje: aviso ?? undefined }
   } catch (e) {
     return { ok: false, errores: {}, mensaje: (e as Error).message }
   }
@@ -1016,29 +1087,14 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
 
 export async function borrarLinea(lineaId: string, presupuestoId: string) {
   const db = crearDb()
-  await db.delete(schema.lineas).where(eq(schema.lineas.id, lineaId))
-  await recalcularTotales(presupuestoId)
+  await db.transaction(async (tx) => {
+    await tx.delete(schema.lineas).where(eq(schema.lineas.id, lineaId))
+    await actualizarTotales(tx, presupuestoId)
+  })
   revalidatePath(`/dashboard/presupuestos/${presupuestoId}`)
 }
 
-/**
- * Recalcula los totales desde las líneas.
- *
- * Se hace en SQL, en una sola sentencia: si se hiciera leyendo y escribiendo
- * desde la aplicación, dos usuarios editando a la vez dejarían el documento
- * descuadrado.
- */
+/** Recálculo de totales como acción suelta. La regla vive en `totales.ts`. */
 export async function recalcularTotales(presupuestoId: string) {
-  const db = crearDb()
-  await db.execute(sql`
-    UPDATE presupuestos p SET
-      subtotal       = t.suma,
-      base_imponible = t.suma,
-      cuota_iva      = ROUND(t.suma * p.tipo_iva / 100, 2),
-      total          = t.suma + ROUND(t.suma * p.tipo_iva / 100, 2)
-    FROM (
-      SELECT COALESCE(SUM(total), 0) AS suma FROM lineas WHERE presupuesto_id = ${presupuestoId}
-    ) t
-    WHERE p.id = ${presupuestoId}
-  `)
+  await actualizarTotales(crearDb(), presupuestoId)
 }
