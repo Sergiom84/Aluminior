@@ -17,10 +17,30 @@ import { migrate } from 'drizzle-orm/postgres-js/migrator'
 import { crearDb } from '@aluminior/db'
 import { urlDePruebasValidada } from '@aluminior/db/pruebas'
 
+/**
+ * Devuelve el `teardown` que CIERRA la conexión de la migración.
+ *
+ * Sin él, el pool queda abierto y vitest no puede terminar: espera diez
+ * segundos y avisa con «close timed out». No es sólo ruido —son diez segundos
+ * en cada ejecución, también al lanzar un único fichero— y deja conexiones
+ * vivas contra el contenedor.
+ *
+ * Este pool es EXCLUSIVO del proceso de `globalSetup`. Las suites corren en
+ * workers aparte, con su propio `crearDb`, así que cerrarlo aquí no toca
+ * ninguna conexión que las pruebas estén usando; y el `teardown` corre cuando
+ * ya han terminado todas.
+ */
 export async function setup() {
   // La misma salvaguarda que las suites: sólo Postgres local y base `_test`.
   const db = crearDb(urlDePruebasValidada(process.env.TEST_DATABASE_URL))
   await migrate(db, {
     migrationsFolder: fileURLToPath(new URL('../../db/migrations', import.meta.url)),
   })
+
+  return async () => {
+    // `$client` es la conexión postgres-js que envuelve Drizzle. El `timeout`
+    // acota la espera de las consultas en vuelo: aquí no debería haber ninguna,
+    // y si la hubiera es preferible cerrar a colgarse.
+    await db.$client.end({ timeout: 5 })
+  }
 }
