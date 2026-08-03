@@ -31,6 +31,10 @@ import {
 } from './lineas/guardar-linea.ts'
 import { prepararManoObra, type SnapshotManoObra } from './mano-obra/index.ts'
 import {
+  opcionesHerrajeDe as opcionesDeHerrajeOfrecidas, resolverOpcionesHerraje,
+  type GrupoOpcionesHerraje,
+} from './estructuras/index.ts'
+import {
   comprobarPersistenciaCerramientos, prepararAltaCerramiento,
   MENSAJE_MIGRACION_PENDIENTE, type AltaCerramiento,
 } from './cerramientos/index.ts'
@@ -170,49 +174,19 @@ async function piezasAcristalamiento(
   return { piezas, avisos }
 }
 
-export interface GrupoOpcionesHerraje {
-  conjuntoCodigo: string
-  opciones: { codigo: string; descripcion: string; porDefecto: boolean }[]
-}
+export type { GrupoOpcionesHerraje }
 
 /**
  * Opciones de herraje aplicables a una (serie, estructura).
  *
- * El juego de conjuntos sale de `herraje_conjuntos`, MEDIDO del histórico
- * (≥3 muestras, ≥90% de consistencia). Sin regla medida devuelve null y el
- * configurador no ofrece opciones: no se adivina qué herraje lleva una
- * combinación que la empresa nunca ha fabricado.
- *
- * Las opciones ocultas (el original no las muestra) se excluyen de la
- * interfaz pero sus defaults sí se persisten al añadir la línea.
+ * Server action fina: la regla vive en `_lib/estructuras/herraje.ts`, junto a la
+ * resolución de lo que se persiste, para que ofrecer y guardar no puedan
+ * divergir. Aquí sólo se abre la conexión.
  */
 export async function opcionesHerrajeDe(
   serieCodigo: string, estructuraCodigo: string,
 ): Promise<GrupoOpcionesHerraje[] | null> {
-  if (!serieCodigo || !estructuraCodigo) return null
-  const db = crearDb()
-  const [regla] = await db.select({ conjuntos: schema.herrajeConjuntos.conjuntos })
-    .from(schema.herrajeConjuntos)
-    .where(and(
-      eq(schema.herrajeConjuntos.serieCodigo, serieCodigo),
-      eq(schema.herrajeConjuntos.estructuraCodigo, estructuraCodigo),
-    )).limit(1)
-  if (!regla) return null
-
-  const codigos = regla.conjuntos.split('+')
-  const filas = await db.select()
-    .from(schema.opcionesHerraje)
-    .where(inArray(schema.opcionesHerraje.conjuntoCodigo, codigos))
-
-  const grupos: GrupoOpcionesHerraje[] = []
-  for (const conjuntoCodigo of codigos) {
-    const opciones = filas
-      .filter((f) => f.conjuntoCodigo === conjuntoCodigo && !f.oculta)
-      .sort((a, b) => Number(a.opcionCodigo) - Number(b.opcionCodigo))
-      .map((f) => ({ codigo: f.opcionCodigo, descripcion: f.descripcion, porDefecto: f.porDefecto }))
-    if (opciones.length) grupos.push({ conjuntoCodigo, opciones })
-  }
-  return grupos.length ? grupos : null
+  return opcionesDeHerrajeOfrecidas(crearDb(), serieCodigo, estructuraCodigo)
 }
 
 /** Siguiente número, con el patrón AASSSS del original: 260418 = nº 418 de 2026. */
@@ -1011,41 +985,15 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
       : Math.round(precioUnitario * d.cantidad * 100) / 100
 
     // --- Opciones de herraje elegidas (anexo R) ---
-    // Se persisten para trazabilidad y para la futura selección de asociados;
-    // hoy no afectan a la valoración. Solo se aceptan opciones del catálogo de
-    // los conjuntos medidos para esta (serie, estructura); las ocultas entran
-    // con su default. Se resuelve ANTES de escribir: es lectura de catálogo y
-    // la transacción debe contener escrituras, no consultas.
-    const opcionesHerraje: OpcionHerrajeElegida[] = []
-    if (d.tipo === 'ESTRUCTURA') {
-      const [reglaHerraje] = await db.select({ conjuntos: schema.herrajeConjuntos.conjuntos })
-        .from(schema.herrajeConjuntos)
-        .where(and(
-          eq(schema.herrajeConjuntos.serieCodigo, d.serieCodigo ?? ''),
-          eq(schema.herrajeConjuntos.estructuraCodigo, d.codigo),
-        )).limit(1)
-      if (reglaHerraje) {
-        const catalogo = await db.select()
-          .from(schema.opcionesHerraje)
-          .where(inArray(schema.opcionesHerraje.conjuntoCodigo, reglaHerraje.conjuntos.split('+')))
-        const porClave = new Map(catalogo.map((f) => [`${f.conjuntoCodigo}|${f.opcionCodigo}`, f]))
-        const elegidas = new Map<string, typeof catalogo[number]>()
-        for (const v of datos.getAll('opcionHerraje')) {
-          const fila = porClave.get(String(v))
-          if (fila && !fila.oculta) elegidas.set(`${fila.conjuntoCodigo}|${fila.opcionCodigo}`, fila)
-        }
-        for (const fila of catalogo) {
-          if (fila.oculta && fila.porDefecto) {
-            elegidas.set(`${fila.conjuntoCodigo}|${fila.opcionCodigo}`, fila)
-          }
-        }
-        opcionesHerraje.push(...[...elegidas.values()].map((f) => ({
-          categoria: f.conjuntoCodigo,
-          opcionCodigo: f.opcionCodigo,
-          descripcion: f.descripcion,
-        })))
-      }
-    }
+    // Se resuelven ANTES de escribir: es lectura de catálogo, y la transacción
+    // debe contener escrituras, no consultas.
+    const opcionesHerraje: OpcionHerrajeElegida[] = d.tipo === 'ESTRUCTURA'
+      ? await resolverOpcionesHerraje(db, {
+          serieCodigo: d.serieCodigo,
+          estructuraCodigo: d.codigo,
+          elegidas: datos.getAll('opcionHerraje').map(String),
+        })
+      : []
 
     const valores: ValoresLinea = {
       presupuestoId: d.presupuestoId,
