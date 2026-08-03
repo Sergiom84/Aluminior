@@ -5683,11 +5683,10 @@ Lo que sigue SIN evidencia y no se ha decidido:
    (9.999.999.999,99). Cuál es el importe máximo razonable requiere ver el rango
    real que teclea el comercial en Productor. Sin ese dato no se inventa un
    límite.
-2. **Unidad de los ajustes.** En Aluminior son euros; en Productor el campo
-   equivalente son **horas adicionales** de fabricación y colocación
-   (`ENTREGA.md`, pestaña Estructura), que el sistema convierte a importe por su
-   tarifa horaria. La divergencia afecta directamente a la valoración agregada
-   del cerramiento y debe resolverse antes de calcularla.
+2. **Unidad de los ajustes.** MEDIDO el 3/8/2026, ver T.67.1: en Productor son
+   **horas**, no euros. La conversión está verificada. Lo que queda es una
+   decisión de producto, no de investigación: si Aluminior teclea horas como el
+   original o mantiene euros. Afecta a la valoración agregada del cerramiento.
 3. **Fracciones de unidad en `cantidad`.** El campo es el `Cdad` del original,
    distinto del `Metraje` —la cantidad facturable en ML o m², que calcula el
    sistema (anexo J, punto 1)—. La columna admite dos decimales; el formulario
@@ -5698,3 +5697,82 @@ Lo que sigue SIN evidencia y no se ha decidido:
 
 Hasta que 1 y 2 se resuelvan, la línea de cerramiento sigue `sin valorar`, que
 es el comportamiento correcto: falta información, no vale un cero.
+
+
+### T.67.1 La unidad es HORAS, y la conversión está medida
+
+Medición SOLO LECTURA sobre `EMP0016\Anterior.mdb` (la copia; la activa
+`aluminio.mdb` no se abrió), por ODBC 32-bit con `ReadOnly=1`. Ninguna escritura,
+ningún fichero de bloqueo, marcas de tiempo de las dos MDB intactas.
+
+**Dónde vive el dato.** No está en `VPresupuestosLin` sino en `VDatosLinEstr`,
+clave `(TipoDoc, nVDoc, nVLinea)`, dos columnas `REAL`: `HorasAdFabr` y
+`HorasColoc`. 3.269 filas, 935 con `HorasColoc > 0` y 199 con `HorasAdFabr > 0`.
+
+**La conversión, verificada por dos vías independientes.** Las líneas hijas de
+mano de obra cuelgan de su línea estructural por `VPresupuestosLin.nEstr`:
+
+| Vía | Comprobación | Resultado |
+|---|---|---|
+| Colocación | `MOCOL.Cdad / HorasColoc` | **60 en 492 de 492** casos con `Cdad > 0` |
+| Fabricación extra | `(Σ MO.Cdad − Σ VConceptosMO.Cantidad) / HorasAdFabr` | **60 en 111 de 111** casos con ambos datos |
+
+Es decir: el campo se teclea en **horas**, el sistema lo materializa como línea
+de artículo con `Cdad` en **minutos** (`horas × 60`), y lo valora por el PVP de
+ese artículo. Los 302 `MOCOL` con `Cdad = 0` y los 88 casos sin `MO` o sin
+conceptos quedan fuera del cociente por indefinición, no lo contradicen.
+
+**La tarifa horaria no es una constante del programa: es el PVP de un artículo.**
+Comprobado en la base de Aluminior (solo lectura):
+
+- Familia `054`: `MO` «MANO DE OBRA DE TALLER (MINUTOS)`, `MOCOL` «MANO DE OBRA
+  DE COLOCACIÓN (MINUTOS)», más `MOCOMP`, `MOPREM`, `MOTAP`, `MOVID`, `MOMOSQ`.
+  Todos `tipo_metraje = UD`; la unidad real es el minuto, y lo dice la propia
+  descripción.
+- `articulos_pvp`: **0,5000 €/min en tarifa 1** para los seis con precio, es
+  decir **30 €/h**. Coincide con la valoración de fabricación medida en T.32.
+- `articulos_coste`: también 0,5000. Margen cero sobre la mano de obra.
+
+**Dos avisos que salen de la misma medición.**
+
+1. **Tarifas 2 y 3 tienen la mano de obra a `0,0000`**, no ausente. Un
+   presupuesto en esas tarifas valoraría la mano de obra en cero sin que nada lo
+   señale, que es exactamente el falso cero que la regla del dinero prohíbe. El
+   histórico no lo destapó porque todos sus documentos son tarifa 1.
+2. **`MOMOSQ` no tiene fila en `articulos_pvp`.** Sin precio en ninguna tarifa.
+
+### T.67.2 Contrato del ajuste de mano de obra (propuesto, sin implementar)
+
+Horas y euros no son alternativas: guardar sólo euros pierde la entrada original
+del operador, y guardar sólo horas sin fijar el precio pierde la reproducibilidad
+económica del documento. Un presupuesto aceptado hace un año no puede
+revalorizarse solo porque hoy cambie la tarifa. El contrato debe conservar las
+dos cosas y la operación que lleva de una a otra:
+
+| Dato | Papel |
+|---|---|
+| Horas adicionales de fabricación y colocación | Entrada del operador. Lo que teclea, tal cual |
+| Conversión `horas × 60` | Minutos, como hace el original (medido en T.67.1) |
+| Artículo de mano de obra aplicado | `MO`, `MOCOL` u otro demostrado para ese concepto |
+| Tarifa del documento | La vigente al valorar |
+| Precio por minuto aplicado | El PVP de ese artículo en esa tarifa, en ese momento |
+| Importe resultante | Congelado en el documento |
+
+Con los seis, el presupuesto es reproducible y auditable: se puede reconstruir
+por qué costó lo que costó, y recalcularlo a propósito es una acción explícita,
+no un efecto secundario de tocar el catálogo.
+
+**Interacción con la regla del dinero.** Sobre la valoración del `GRUPO`:
+
+- Precio **`0,0000`** cuenta como valoración INCOMPLETA, no como importe válido.
+  Es el caso real de las tarifas 2 y 3 medido arriba.
+- Precio **ausente** cuenta igualmente como valoración incompleta. Es el caso de
+  `MOMOSQ`.
+- En cualquiera de los dos, «todo o sin valorar» manda: `precio_unitario` y
+  `total` de la línea `GRUPO` quedan en `null`, con su aviso. Nunca un cero,
+  nunca un total parcial presentado como correcto.
+
+Nada de esto se implementa aquí. Requiere antes una decisión explícita de
+producto —si Aluminior pide horas como Productor, que es lo que el operador ya
+sabe teclear— y un diseño de persistencia de los seis campos, antes de tocar
+esquema o migración.
