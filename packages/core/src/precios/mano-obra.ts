@@ -52,6 +52,51 @@ export function articuloDeConcepto(concepto: ConceptoManoObra): string {
   return ARTICULOS[concepto]
 }
 
+const ETIQUETAS: Record<ConceptoManoObra, string> = {
+  FABRICACION_ADICIONAL: 'fabricación adicional',
+  COLOCACION: 'colocación',
+}
+
+/** Cómo se nombra cada concepto ante el operador. */
+export function etiquetaConcepto(concepto: ConceptoManoObra): string {
+  return ETIQUETAS[concepto]
+}
+
+const TEXTOS_VENTA: Record<MotivoVentaManoObra, string> = {
+  SIN_PVP: 'sin precio en la tarifa',
+  PVP_CERO: 'a precio cero en la tarifa',
+  PVP_NEGATIVO: 'con precio negativo en el catálogo',
+  IMPORTE_FUERA_RANGO: 'con un importe fuera de rango',
+}
+
+const TEXTOS_COSTE: Record<MotivoCosteManoObra, string> = {
+  SIN_COSTE: 'sin coste en el catálogo',
+  COSTE_AMBIGUO: 'con varios costes distintos y ninguno del acabado aplicado',
+  COSTE_NEGATIVO: 'con coste negativo en el catálogo',
+  COSTE_FUERA_RANGO: 'con un coste total fuera de rango',
+}
+
+/**
+ * Texto visible derivado del código, nunca persistido.
+ *
+ * El código es lo estable; la frase se puede reescribir o traducir sin tocar
+ * ningún dato ni ninguna restricción. Por eso la derivación vive aquí y no hay
+ * una columna de texto en `lineas_mano_obra`.
+ */
+export function textoMotivoVenta(
+  concepto: ConceptoManoObra,
+  motivo: MotivoVentaManoObra,
+): string {
+  return `mano de obra de ${ETIQUETAS[concepto]} ${TEXTOS_VENTA[motivo]}`
+}
+
+export function textoMotivoCoste(
+  concepto: ConceptoManoObra,
+  motivo: MotivoCosteManoObra,
+): string {
+  return `mano de obra de ${ETIQUETAS[concepto]} ${TEXTOS_COSTE[motivo]}`
+}
+
 /**
  * Horas tecleadas a minutos valorables.
  *

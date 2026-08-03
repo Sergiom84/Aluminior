@@ -2,6 +2,7 @@ import { crearDb, schema } from '@aluminior/db'
 import type { ClienteEscritura } from '../cliente-db.ts'
 import { actualizarTotales } from '../totales.ts'
 import { guardarAltaCerramiento, type AltaCerramiento } from '../cerramientos/index.ts'
+import { persistirManoObra, type SnapshotManoObra } from '../mano-obra/index.ts'
 
 type Db = ReturnType<typeof crearDb>
 
@@ -32,7 +33,13 @@ export type ValoresLinea = Omit<typeof schema.lineas.$inferInsert, 'tipo'>
  */
 export type EscrituraLinea =
   | { tipo: 'ARTICULO'; valores: ValoresLinea }
-  | { tipo: 'CERRAMIENTO'; valores: ValoresLinea; cerramiento: AltaCerramiento }
+  | {
+      tipo: 'CERRAMIENTO'
+      valores: ValoresLinea
+      cerramiento: AltaCerramiento
+      /** Cero, una o dos filas. Resueltas antes; aquí sólo se escriben. */
+      manoObra: readonly SnapshotManoObra[]
+    }
   | { tipo: 'ESTRUCTURA'; valores: ValoresLinea; estructura: SatelitesEstructura }
 
 /**
@@ -40,10 +47,12 @@ export type EscrituraLinea =
  *
  * Es el ÚNICO camino de escritura de una línea, y existe para que la
  * atomicidad no dependa de que quien llame se acuerde de abrir la transacción.
- * Una línea `GRUPO` sin su configuración, o una ESTRUCTURA sin su despiece, no
- * son un documento incompleto sino uno corrupto: no se pueden volver a
- * dibujar, describir ni valorar. Los totales entran en la misma transacción
- * para que la cabecera no refleje una línea que no llegó a confirmarse.
+ * Una línea `GRUPO` sin su configuración, sin su mano de obra, o una ESTRUCTURA
+ * sin su despiece, no son un documento incompleto sino uno corrupto: no se
+ * pueden volver a dibujar, describir ni valorar, y en el caso de la mano de obra
+ * se cobraría de menos sin que nada lo dijera. Los totales entran en la misma
+ * transacción para que la cabecera no refleje una línea que no llegó a
+ * confirmarse.
  *
  * Aquí no se decide nada: la valoración, la descripción y la resolución del
  * catálogo ya vienen resueltas. Esto sólo escribe.
@@ -57,6 +66,7 @@ export async function guardarLinea(db: Db, entrada: EscrituraLinea): Promise<str
 
     if (entrada.tipo === 'CERRAMIENTO') {
       await guardarAltaCerramiento(tx, linea.id, entrada.cerramiento)
+      await persistirManoObra(tx, linea.id, entrada.manoObra)
     } else if (entrada.tipo === 'ESTRUCTURA') {
       await escribirEstructura(tx, linea.id, entrada.estructura)
     }

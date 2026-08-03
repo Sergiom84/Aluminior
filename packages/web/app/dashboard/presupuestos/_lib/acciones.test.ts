@@ -36,21 +36,21 @@ describe('anyadirLinea con entrada inválida', () => {
     guardarLinea.mockClear()
   })
 
-  it('devuelve los errores de cantidad y de ambos ajustes a la vez', async () => {
+  it('devuelve los errores de cantidad y de ambos conceptos a la vez', async () => {
     const estado = await anyadirLinea(null, formulario({
-      ...valido, cantidad: '0', ajusteFabricacion: '-1', ajusteColocacion: '0.001',
+      ...valido, cantidad: '0', horasFabricacion: '-1', horasColocacion: '0.001',
     }))
 
     expect(estado?.ok).toBe(false)
     if (!estado || estado.ok) return
     expect(estado.errores.cantidad).toEqual(['Cantidad: debe ser mayor que cero'])
-    expect(estado.errores.ajusteFabricacion).toEqual(['Fabricación: no admite negativos'])
-    expect(estado.errores.ajusteColocacion).toEqual(['Colocación: máximo 2 decimales'])
+    expect(estado.errores.horasFabricacion).toEqual(['Fabricación: no admite negativos'])
+    expect(estado.errores.horasColocacion).toEqual(['Colocación: máximo 2 decimales'])
     expect(estado.mensaje).toBeUndefined()
   })
 
   it('no abre conexión ni escribe cuando la entrada no vale', async () => {
-    const estado = await anyadirLinea(null, formulario({ ...valido, ajusteFabricacion: '25,50' }))
+    const estado = await anyadirLinea(null, formulario({ ...valido, horasFabricacion: '25,50' }))
 
     expect(estado?.ok).toBe(false)
     expect(crearDb).not.toHaveBeenCalled()

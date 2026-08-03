@@ -10,8 +10,6 @@ export interface DatosPersistenciaCerramiento {
   vidrioCodigo: string | null
   acabadoCodigo: string | null
   varianteAcristalamiento: '1' | '2'
-  ajusteFabricacion: number
-  ajusteColocacion: number
 }
 
 /**
@@ -40,7 +38,9 @@ export async function persistirCerramiento(
     vidrioCodigo: datos.vidrioCodigo,
     acabadoCodigo: datos.acabadoCodigo,
     varianteAcristalamiento: datos.varianteAcristalamiento,
-    ajusteFabricacion: String(datos.ajusteFabricacion),
-    ajusteColocacion: String(datos.ajusteColocacion),
+    // `ajuste_fabricacion` y `ajuste_colocacion` NO se escriben: estaban en
+    // euros por un error de unidad (T.67.1) y los sustituye `lineas_mano_obra`
+    // en horas. Siguen en la tabla, con su DEFAULT 0, hasta la migración
+    // sustractiva (§5 de SPEC-MANO-DE-OBRA.md).
   })
 }

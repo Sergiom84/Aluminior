@@ -22,8 +22,6 @@ export interface DatosAltaCerramiento {
   vidrioCodigo: string | null
   acabadoCodigo: string | null
   varianteAcristalamiento: '1' | '2'
-  ajusteFabricacion: number
-  ajusteColocacion: number
 }
 
 /** Lo que el alta de línea necesita saber del cerramiento, ya resuelto. */
@@ -90,7 +88,5 @@ export async function guardarAltaCerramiento(
     vidrioCodigo: alta.datos.vidrioCodigo,
     acabadoCodigo: alta.datos.acabadoCodigo,
     varianteAcristalamiento: alta.datos.varianteAcristalamiento,
-    ajusteFabricacion: alta.datos.ajusteFabricacion,
-    ajusteColocacion: alta.datos.ajusteColocacion,
   })
 }

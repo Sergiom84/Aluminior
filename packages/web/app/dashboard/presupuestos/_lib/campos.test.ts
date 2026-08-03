@@ -7,12 +7,12 @@ const BORDE = 'var(--al-border-strong)'
 describe('cableado de errores de campo', () => {
   const errores = {
     cantidad: ['Cantidad: debe ser mayor que cero'],
-    ajusteFabricacion: ['Fabricación: no admite negativos'],
-    ajusteColocacion: ['Colocación: importe fuera de rango'],
+    horasFabricacion: ['Fabricación: no admite negativos'],
+    horasColocacion: ['Colocación: importe fuera de rango'],
   }
 
   it('marca el campo con error y lo asocia a su mensaje', () => {
-    for (const campo of ['cantidad', 'ajusteFabricacion', 'ajusteColocacion']) {
+    for (const campo of ['cantidad', 'horasFabricacion', 'horasColocacion']) {
       expect(atributosCampo(campo, errores)).toEqual({
         id: campo,
         name: campo,
@@ -33,7 +33,7 @@ describe('cableado de errores de campo', () => {
   })
 
   it('usa un identificador estable, no posicional', () => {
-    expect(idMensajeError('ajusteColocacion')).toBe('ajusteColocacion-error')
+    expect(idMensajeError('horasColocacion')).toBe('horasColocacion-error')
   })
 })
 

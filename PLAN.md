@@ -5810,3 +5810,26 @@ no un efecto secundario de tocar el catálogo.
 La decisión de producto está tomada: Aluminior pide horas, como Productor. El
 diseño de persistencia vive en `SPEC-MANO-DE-OBRA.md` y debe revisarse antes de
 tocar esquema o migración.
+
+### T.68 La mano de obra adicional, implementada (3/8/2026)
+
+Cierra lo que T.67.2 dejaba propuesto. El detalle de diseño está en
+`SPEC-MANO-DE-OBRA.md` y el estado operativo en `HANDOFF-CHATGPT.md`; aquí queda
+sólo lo que este anexo necesita para no quedarse desactualizado.
+
+- La decisión de T.67.1 —el operador teclea HORAS— está aplicada de punta a
+  punta: formulario, valoración y persistencia.
+- Existe `lineas_mano_obra` con su migración aditiva `0018_pale_hulk`,
+  **aplicada sólo al Postgres efímero de pruebas, no al Supabase remoto**.
+- La aritmética del dinero es decimal exacta: el texto validado del formulario
+  llega a la valoración sin pasar por `number`, y vuelve a `numeric` idéntico.
+- La regla del dinero de este anexo está conectada: un PVP ausente, cero,
+  negativo o desbordado deja `precio_unitario` y `total` del `GRUPO` en `null`.
+  Los problemas de coste no invalidan la venta, pero se registran.
+- `FABRICACION_BASE` sigue fuera, atada al recuento de módulos (T.31/T.32).
+
+Medido el 3/8/2026 contra el catálogo de producción, sólo lectura: `MO`, `MOCOL`,
+`MOCOMP`, `MOPREM`, `MOTAP` y `MOVID` tienen una sola fila de coste, un
+proveedor, acabado `UNI` y `0,5000`. El PVP de `MO` y `MOCOL` sólo existe en
+acabado `UNI`: `0,5000` en la tarifa 1 y `0,0000` en las tarifas 2 y 3, que es
+exactamente el caso que deja el documento sin valorar con su motivo.

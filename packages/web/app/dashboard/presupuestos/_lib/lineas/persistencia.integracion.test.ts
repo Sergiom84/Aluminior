@@ -13,10 +13,8 @@
  * quita la transacción de producción, estas pruebas fallan; si la prueba
  * abriera la suya, no probaría nada.
  */
-import { fileURLToPath } from 'node:url'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { eq, sql } from 'drizzle-orm'
-import { migrate } from 'drizzle-orm/postgres-js/migrator'
 import { crearDb, schema } from '@aluminior/db'
 import { urlDePruebasValidada } from '@aluminior/db/pruebas'
 import {
@@ -24,9 +22,36 @@ import {
 } from '@aluminior/core/estructuras'
 import { guardarLinea } from './guardar-linea.ts'
 import { comprobarPersistenciaCerramientos, prepararAltaCerramiento } from '../cerramientos/index.ts'
+import { comprobarPersistenciaManoObra, type SnapshotManoObra } from '../mano-obra/index.ts'
+
+/**
+ * Snapshot de mano de obra válido, para provocar fallos intermedios REALES.
+ *
+ * Se construye a mano, saltándose el resolutor, precisamente para poder
+ * duplicarlo o corromperlo: la interfaz no permite llegar a estos estados, y sin
+ * un fallo de la SEGUNDA escritura no se puede demostrar que la transacción
+ * deshace la primera.
+ */
+const snapshot = (): SnapshotManoObra => ({
+  concepto: 'COLOCACION',
+  origen: 'MANUAL',
+  horas: '1.50',
+  minutos: '90.00',
+  articuloCodigo: 'MOCOL',
+  articuloDescripcion: 'MANO DE OBRA DE COLOCACIÓN (MINUTOS)',
+  unidad: 'MINUTO',
+  acabadoCodigo: 'UNI',
+  tarifa: 1,
+  precioMinuto: '0.5000',
+  importe: '45.00',
+  costeMinuto: '0.5000',
+  costeTotal: '45.00',
+  valoracionCompleta: true,
+  motivoCodigo: null,
+  motivoCosteCodigo: null,
+})
 
 const urlPruebas = urlDePruebasValidada(process.env.TEST_DATABASE_URL)
-const migraciones = fileURLToPath(new URL('../../../../../../db/migrations', import.meta.url))
 const NOMBRE_PRUEBA = 'PRUEBA AUTOMÁTICA ALTA CERRAMIENTO'
 
 const configuracion = anadirModuloCerramiento(
@@ -41,8 +66,6 @@ const preparado = prepararAltaCerramiento({
   vidrioCodigo: 'V420AGS4',
   acabadoCodigo: 'L',
   varianteAcristalamiento: '2',
-  ajusteFabricacion: 25,
-  ajusteColocacion: 40,
 })
 if (!preparado.ok) throw new Error('la composición de prueba debería ser válida')
 const alta = preparado.alta
@@ -68,7 +91,6 @@ describe('persistencia del alta de línea', () => {
 
   beforeAll(async () => {
     db = crearDb(urlPruebas)
-    await migrate(db, { migrationsFolder: migraciones })
     await limpiar()
     const [fila] = await db.insert(schema.presupuestos).values({
       numero: 999999, revision: 0, serie: 'A',
@@ -80,13 +102,14 @@ describe('persistencia del alta de línea', () => {
 
   afterAll(async () => { await limpiar() })
 
-  it('tiene la migración satélite aplicada', async () => {
+  it('tiene las migraciones satélite aplicadas', async () => {
     expect(await comprobarPersistenciaCerramientos(db)).toBe(true)
+    expect(await comprobarPersistenciaManoObra(db)).toBe(true)
   })
 
   it('guarda línea y configuración juntas, y las devuelve intactas', async () => {
     const lineaId = await guardarLinea(db, {
-      tipo: 'CERRAMIENTO', valores: valoresLinea(1), cerramiento: alta,
+      tipo: 'CERRAMIENTO', valores: valoresLinea(1), cerramiento: alta, manoObra: [],
     })
 
     const [guardada] = await db.select().from(schema.lineas).where(eq(schema.lineas.id, lineaId))
@@ -109,9 +132,16 @@ describe('persistencia del alta de línea', () => {
       vidrioCodigo: 'V420AGS4',
       acabadoCodigo: 'L',
       varianteAcristalamiento: '2',
-      ajusteFabricacion: '25.00',
-      ajusteColocacion: '40.00',
+      // Obsoletos: ya no se escriben, y la columna aplica su DEFAULT.
+      ajusteFabricacion: '0.00',
+      ajusteColocacion: '0.00',
     })
+
+    // Sin horas tecleadas no hay filas de mano de obra que filtrar después.
+    const sinManoObra = (await db.execute<{ n: number }>(sql`
+      SELECT count(*)::int AS n FROM lineas_mano_obra WHERE linea_id = ${lineaId}
+    `)) as unknown as { n: number }[]
+    expect(sinManoObra[0].n).toBe(0)
 
     await db.delete(schema.lineas).where(eq(schema.lineas.id, lineaId))
     const residuo = (await db.execute<{ n: number }>(sql`
@@ -123,18 +153,15 @@ describe('persistencia del alta de línea', () => {
   it('no deja línea huérfana cuando falla la escritura de la configuración', async () => {
     const antes = await lineasDelPresupuesto()
 
-    // Fallo real de la SEGUNDA escritura: el satélite tiene un CHECK que exige
-    // ajustes no negativos, así que la línea entra y la configuración revienta.
-    // Se construye aquí, saltando el esquema de la acción, precisamente para
-    // provocar el fallo intermedio que la interfaz no permite.
-    const altaInvalida = {
-      ...alta,
-      datos: { ...alta.datos, ajusteFabricacion: -1 },
-    }
-
+    // Fallo real de la TERCERA escritura: dos filas del mismo concepto violan
+    // `mano_obra_linea_concepto_uq`. Para entonces la línea y la configuración
+    // ya están insertadas, que es justo el punto intermedio que interesa.
     await expect(guardarLinea(db, {
-      tipo: 'CERRAMIENTO', valores: valoresLinea(2), cerramiento: altaInvalida,
-    })).rejects.toThrow()
+      tipo: 'CERRAMIENTO',
+      valores: valoresLinea(2),
+      cerramiento: alta,
+      manoObra: [snapshot(), snapshot()],
+    })).rejects.toThrow(/mano_obra_linea_concepto_uq/)
 
     expect(await lineasDelPresupuesto()).toEqual(antes)
     const huerfanas = (await db.execute<{ n: number }>(sql`
@@ -143,6 +170,12 @@ describe('persistencia del alta de línea', () => {
       WHERE l.presupuesto_id = ${presupuestoId} AND l.tipo = 'CERRAMIENTO' AND c.linea_id IS NULL
     `)) as unknown as { n: number }[]
     expect(huerfanas[0].n).toBe(0)
+    // Y tampoco queda media mano de obra escrita.
+    const restos = (await db.execute<{ n: number }>(sql`
+      SELECT count(*)::int AS n FROM lineas_mano_obra mo
+      JOIN lineas l ON l.id = mo.linea_id WHERE l.presupuesto_id = ${presupuestoId}
+    `)) as unknown as { n: number }[]
+    expect(restos[0].n).toBe(0)
   })
 
   it('tampoco deja huérfana una ESTRUCTURA cuyo despiece no se puede escribir', async () => {
@@ -175,8 +208,11 @@ describe('persistencia del alta de línea', () => {
     await expect(guardarLinea(db, {
       tipo: 'CERRAMIENTO',
       valores: { ...valoresLinea(4), total: '1000.00', precioUnitario: '1000.0000' },
-      cerramiento: { ...alta, datos: { ...alta.datos, ajusteColocacion: -1 } },
-    })).rejects.toThrow()
+      cerramiento: alta,
+      // `minutos` que no son `horas × 60`: viola `mano_obra_conversion_check`
+      // después de haber insertado la línea con su total.
+      manoObra: [{ ...snapshot(), minutos: '80.00' }],
+    })).rejects.toThrow(/mano_obra_conversion_check/)
 
     // El invariante del documento: el total de la cabecera es la suma de sus
     // líneas. Una línea que se quedara escrita sin recalcular lo rompe.

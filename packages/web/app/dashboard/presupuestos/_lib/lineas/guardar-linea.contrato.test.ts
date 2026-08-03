@@ -18,11 +18,16 @@ const estructura = {
 
 // Válidas: cada tipo con lo que le corresponde.
 const articulo: EscrituraLinea = { tipo: 'ARTICULO', valores }
-const conCerramiento: EscrituraLinea = { tipo: 'CERRAMIENTO', valores, cerramiento }
+const conCerramiento: EscrituraLinea = {
+  tipo: 'CERRAMIENTO', valores, cerramiento, manoObra: [],
+}
 const conEstructura: EscrituraLinea = { tipo: 'ESTRUCTURA', valores, estructura }
 
 // @ts-expect-error CERRAMIENTO sin su configuración: la línea no se podría dibujar.
-const sinConfiguracion: EscrituraLinea = { tipo: 'CERRAMIENTO', valores }
+const sinConfiguracion: EscrituraLinea = { tipo: 'CERRAMIENTO', valores, manoObra: [] }
+
+// @ts-expect-error CERRAMIENTO sin mano de obra: se cobraría de menos en silencio.
+const sinManoObra: EscrituraLinea = { tipo: 'CERRAMIENTO', valores, cerramiento }
 
 // @ts-expect-error ESTRUCTURA sin su despiece.
 const sinDespiece: EscrituraLinea = { tipo: 'ESTRUCTURA', valores }
@@ -37,6 +42,7 @@ describe('contrato de escritura de línea', () => {
   it('sólo admite el satélite que corresponde al tipo', () => {
     expect([articulo, conCerramiento, conEstructura].map((e) => e.tipo))
       .toEqual(['ARTICULO', 'CERRAMIENTO', 'ESTRUCTURA'])
-    expect([sinConfiguracion, sinDespiece, articuloConfigurado, ambos]).toHaveLength(4)
+    expect([sinConfiguracion, sinManoObra, sinDespiece, articuloConfigurado, ambos])
+      .toHaveLength(5)
   })
 })

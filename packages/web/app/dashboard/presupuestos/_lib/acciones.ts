@@ -17,7 +17,8 @@ import {
   type ComponentePlantilla, type PiezaCortada, type NodoDisenyo,
 } from '@aluminior/core/despiece'
 import {
-  valorarDespiece, medidasVidrio, metrajeVidrioM2, lineaValorable, type DatosArticuloPrecio,
+  valorarDespiece, medidasVidrio, metrajeVidrioM2, lineaValorable,
+  resolverCosteCatalogo, type DatosArticuloPrecio,
 } from '@aluminior/core/precios'
 import { expandirCadena, construirResoluciones, resolverComponente } from '@aluminior/core/series'
 import { crearClienteServidor } from '../../../../lib/supabase/servidor.ts'
@@ -28,6 +29,7 @@ import {
   guardarLinea, type OpcionHerrajeElegida, type PiezaDespiece,
   type RanuraAcristalamiento, type ValoresLinea,
 } from './lineas/guardar-linea.ts'
+import { prepararManoObra, type SnapshotManoObra } from './mano-obra/index.ts'
 import {
   comprobarPersistenciaCerramientos, prepararAltaCerramiento,
   MENSAJE_MIGRACION_PENDIENTE, type AltaCerramiento,
@@ -300,8 +302,6 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
       vidrioCodigo: d.vidrioCodigo,
       acabadoCodigo: d.acabadoCodigo,
       varianteAcristalamiento: d.varianteAcristalamiento,
-      ajusteFabricacion: d.ajusteFabricacion,
-      ajusteColocacion: d.ajusteColocacion,
     })
     if (!resultado.ok) return { ok: false, errores: resultado.errores }
     altaCerramiento = resultado.alta
@@ -338,6 +338,8 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
     /** Despiece resuelto a persistir en lineas_despiece (trazabilidad + coste). */
     let piezasAPersistir: PiezaDespiece[] = []
     let acristalamientoAPersistir: RanuraAcristalamiento[] = []
+    /** Snapshots de mano de obra. Vacío mientras no se teclean horas. */
+    let manoObra: SnapshotManoObra[] = []
 
     if (d.tipo === 'CERRAMIENTO') {
       descripcion = altaCerramiento!.descripcion
@@ -345,6 +347,23 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
       aviso = altaCerramiento!.aviso
       anchoLinea = altaCerramiento!.anchoMm
       altoLinea = altaCerramiento!.altoMm
+
+      // --- Mano de obra adicional (T.68) ---
+      const preparada = await prepararManoObra(db, {
+        horas: { fabricacion: d.horasFabricacion, colocacion: d.horasColocacion },
+        tarifa: presupuesto.tarifa,
+      })
+      if (preparada.estado === 'MIGRACION_PENDIENTE') {
+        return { ok: false, errores: {}, mensaje: preparada.mensaje }
+      }
+      if (preparada.estado === 'PREPARADA') {
+        manoObra = preparada.filas
+        // Hoy `precioUnitario` ya es null —el cerramiento no tiene valoración
+        // agregada—, pero la regla queda escrita donde toca: cuando el precio
+        // del GRUPO exista, un concepto sin importe seguirá dejándolo en null.
+        if (!preparada.valorable) precioUnitario = null
+        if (preparada.notas.length) aviso = `${aviso} ${preparada.notas.join('; ')}.`
+      }
     } else if (d.tipo === 'ARTICULO') {
       const [art] = await db.select()
         .from(schema.articulos).where(eq(schema.articulos.codigo, d.codigo)).limit(1)
@@ -599,22 +618,24 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
           }).from(schema.articulosCoste)
             .where(inArray(schema.articulosCoste.articuloCodigo, codigos))
         : []
+      // El desempate vive en `resolverCosteCatalogo`, compartido con la mano de
+      // obra: un solo criterio, no dos con el mismo nombre. Aquí se colapsa a
+      // `null` porque el despiece no distingue «sin coste» de «ambiguo»; la
+      // mano de obra sí, y por eso la función devuelve los tres estados.
       const costePorArticulo = new Map<string, number | null>()
       {
-        const porArt = new Map<string, Map<string, number>>()
+        const porArt = new Map<string, { acabadoCodigo: string; coste: string }[]>()
         for (const c of costes) {
-          let m = porArt.get(c.articuloCodigo)
-          if (!m) porArt.set(c.articuloCodigo, (m = new Map()))
-          const v = Number(c.coste)
-          if (!m.has(c.acabadoCodigo)) m.set(c.acabadoCodigo, v)
+          const filas = porArt.get(c.articuloCodigo) ?? []
+          filas.push({ acabadoCodigo: c.acabadoCodigo, coste: c.coste })
+          porArt.set(c.articuloCodigo, filas)
         }
-        for (const [art, porAcabado] of porArt) {
-          if (d.acabadoCodigo && porAcabado.has(d.acabadoCodigo)) {
-            costePorArticulo.set(art, porAcabado.get(d.acabadoCodigo)!)
-            continue
-          }
-          const distintos = new Set(porAcabado.values())
-          costePorArticulo.set(art, distintos.size === 1 ? [...distintos][0] : null)
+        for (const [art, filas] of porArt) {
+          const resolucion = resolverCosteCatalogo(filas, d.acabadoCodigo)
+          costePorArticulo.set(
+            art,
+            resolucion.estado === 'RESUELTO' ? Number(resolucion.coste) : null,
+          )
         }
       }
 
@@ -1042,7 +1063,7 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
     }
 
     await guardarLinea(db, d.tipo === 'CERRAMIENTO'
-      ? { tipo: 'CERRAMIENTO', valores, cerramiento: altaCerramiento! }
+      ? { tipo: 'CERRAMIENTO', valores, cerramiento: altaCerramiento!, manoObra }
       : d.tipo === 'ESTRUCTURA'
         ? {
             tipo: 'ESTRUCTURA',

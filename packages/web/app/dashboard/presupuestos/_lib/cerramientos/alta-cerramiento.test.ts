@@ -20,8 +20,6 @@ const datos = {
   vidrioCodigo: 'V420AGS4',
   acabadoCodigo: 'L',
   varianteAcristalamiento: '2' as const,
-  ajusteFabricacion: 25,
-  ajusteColocacion: 40,
 }
 
 /**
@@ -82,8 +80,6 @@ describe('alta de cerramiento', () => {
       vidrioCodigo: 'V420AGS4',
       acabadoCodigo: 'L',
       varianteAcristalamiento: '2',
-      ajusteFabricacion: '25',
-      ajusteColocacion: '40',
     })
   })
 

@@ -6,6 +6,7 @@ import {
 } from '@aluminior/core/estructuras'
 import { anyadirLinea, borrarLinea, type Estado } from '../../_lib/acciones.ts'
 import { atributosCampo, bordeCampo } from '../../_lib/campos.ts'
+import { MAXIMO_HORAS } from '../../_lib/lineas/esquema-linea.ts'
 import { DisenadorEstructura } from './disenador-estructura.tsx'
 import { MensajeError } from './mensaje-error.tsx'
 
@@ -196,21 +197,21 @@ export function AnyadirLinea({
       {tipo === 'CERRAMIENTO' && (
         <fieldset className="mt-4 rounded-md border p-4"
           style={{ borderColor: 'var(--al-border)' }}>
-          <legend className="px-1 text-sm font-medium">Ajustes manuales</legend>
+          <legend className="px-1 text-sm font-medium">Mano de obra adicional</legend>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label htmlFor="ajusteFabricacion" className="mb-1 block text-sm">Fabricación (€)</label>
-              <input {...atributosCampo('ajusteFabricacion', err)} type="number" min={0} step="0.01"
-                defaultValue={0} className={`cifra ${entrada}`}
-                style={{ ...estilo, borderColor: bordeCampo('ajusteFabricacion', err, estilo.borderColor) }} />
-              <MensajeError campo="ajusteFabricacion" errores={err} />
+              <label htmlFor="horasFabricacion" className="mb-1 block text-sm">Fabricación (h)</label>
+              <input {...atributosCampo('horasFabricacion', err)} type="number" min={0} step="0.01"
+                max={MAXIMO_HORAS} defaultValue={0} className={`cifra ${entrada}`}
+                style={{ ...estilo, borderColor: bordeCampo('horasFabricacion', err, estilo.borderColor) }} />
+              <MensajeError campo="horasFabricacion" errores={err} />
             </div>
             <div>
-              <label htmlFor="ajusteColocacion" className="mb-1 block text-sm">Colocación (€)</label>
-              <input {...atributosCampo('ajusteColocacion', err)} type="number" min={0} step="0.01"
-                defaultValue={0} className={`cifra ${entrada}`}
-                style={{ ...estilo, borderColor: bordeCampo('ajusteColocacion', err, estilo.borderColor) }} />
-              <MensajeError campo="ajusteColocacion" errores={err} />
+              <label htmlFor="horasColocacion" className="mb-1 block text-sm">Colocación (h)</label>
+              <input {...atributosCampo('horasColocacion', err)} type="number" min={0} step="0.01"
+                max={MAXIMO_HORAS} defaultValue={0} className={`cifra ${entrada}`}
+                style={{ ...estilo, borderColor: bordeCampo('horasColocacion', err, estilo.borderColor) }} />
+              <MensajeError campo="horasColocacion" errores={err} />
             </div>
           </div>
         </fieldset>

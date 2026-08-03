@@ -48,6 +48,85 @@ describe('lineaValorable (guarda todo-o-sin-valorar)', () => {
   })
 })
 
+describe('lineaValorable con mano de obra', () => {
+  const sano = { incalculables: 0, sinPrecio: [] }
+
+  it('valora cuando la mano de obra resuelve', () => {
+    const v = lineaValorable({
+      ...sano,
+      manoObra: [{ concepto: 'COLOCACION', motivoCodigo: null, motivoCosteCodigo: null }],
+    })
+    expect(v.valorable).toBe(true)
+    expect(v.motivos).toEqual([])
+    expect(v.advertencias).toEqual([])
+  })
+
+  // Los cuatro motivos de VENTA tumban la línea. Un total sin la mano de obra
+  // se cobraría de menos, y un cero parecería trabajo regalado.
+  it.each([
+    ['SIN_PVP', 'mano de obra de colocación sin precio en la tarifa'],
+    ['PVP_CERO', 'mano de obra de colocación a precio cero en la tarifa'],
+    ['PVP_NEGATIVO', 'mano de obra de colocación con precio negativo en el catálogo'],
+    ['IMPORTE_FUERA_RANGO', 'mano de obra de colocación con un importe fuera de rango'],
+  ] as const)('NO valora con %s', (motivoCodigo, texto) => {
+    const v = lineaValorable({
+      ...sano,
+      manoObra: [{ concepto: 'COLOCACION', motivoCodigo, motivoCosteCodigo: null }],
+    })
+    expect(v.valorable).toBe(false)
+    expect(v.motivos).toEqual([texto])
+  })
+
+  // Los cuatro motivos de COSTE no tumban nada: no cambian lo que se cobra.
+  // Pero se registran, porque callarlos dejaría el margen mal sin que se note.
+  it.each([
+    ['SIN_COSTE', 'mano de obra de fabricación adicional sin coste en el catálogo'],
+    ['COSTE_AMBIGUO',
+      'mano de obra de fabricación adicional con varios costes distintos y ninguno del acabado aplicado'],
+    ['COSTE_NEGATIVO', 'mano de obra de fabricación adicional con coste negativo en el catálogo'],
+    ['COSTE_FUERA_RANGO',
+      'mano de obra de fabricación adicional con un coste total fuera de rango'],
+  ] as const)('valora igual con %s, pero lo advierte', (motivoCosteCodigo, texto) => {
+    const v = lineaValorable({
+      ...sano,
+      manoObra: [{
+        concepto: 'FABRICACION_ADICIONAL', motivoCodigo: null, motivoCosteCodigo,
+      }],
+    })
+    expect(v.valorable).toBe(true)
+    expect(v.motivos).toEqual([])
+    expect(v.advertencias).toEqual([texto])
+  })
+
+  it('distingue los dos conceptos y acumula sus motivos', () => {
+    const v = lineaValorable({
+      ...sano,
+      manoObra: [
+        { concepto: 'FABRICACION_ADICIONAL', motivoCodigo: 'SIN_PVP', motivoCosteCodigo: null },
+        { concepto: 'COLOCACION', motivoCodigo: 'PVP_CERO', motivoCosteCodigo: 'SIN_COSTE' },
+      ],
+    })
+    expect(v.valorable).toBe(false)
+    expect(v.motivos).toEqual([
+      'mano de obra de fabricación adicional sin precio en la tarifa',
+      'mano de obra de colocación a precio cero en la tarifa',
+    ])
+    expect(v.advertencias).toEqual(['mano de obra de colocación sin coste en el catálogo'])
+  })
+
+  it('un problema de coste no rescata ni tumba la venta del otro concepto', () => {
+    const v = lineaValorable({
+      ...sano,
+      manoObra: [
+        { concepto: 'FABRICACION_ADICIONAL', motivoCodigo: null, motivoCosteCodigo: 'COSTE_AMBIGUO' },
+        { concepto: 'COLOCACION', motivoCodigo: null, motivoCosteCodigo: null },
+      ],
+    })
+    expect(v.valorable).toBe(true)
+    expect(v.advertencias).toHaveLength(1)
+  })
+})
+
 describe('valorarDespiece — identidad del dinero', () => {
   it('UD: importe = precio × unidades', () => {
     const r = valorarDespiece([pieza('MO', 2, null)], new Map([['MO', art('MO', 'UD', 10)]]))

@@ -9,12 +9,13 @@ superadas por las decisiones resumidas aquí.
 
 ## 0. Estado del repositorio, primero
 
-- Rama `main` con **5 commits locales por delante de `origin/main`**, que sigue
-  en `01a0613`. **Nada se ha empujado.** El último es T.68.
+- Rama `main` con **6 commits locales por delante de `origin/main`**, que sigue
+  en `01a0613`. **Nada se ha empujado.** Los dos últimos son T.68.
 - **La migración `0018_pale_hulk` sólo existe en local y se ha aplicado
   únicamente al Postgres efímero de Docker. NO está en el Supabase remoto.**
   Aplicarla allí es una decisión pendiente, con alcance explícito y prueba
-  reversible (§6 de `SPEC-MANO-DE-OBRA.md`).
+  reversible (§6 de `SPEC-MANO-DE-OBRA.md`). Orden de despliegue: **migración
+  primero, código después**; el código lo comprueba antes de insertar.
 - El árbol contiene además `design-qa.md` sin versionar, ajeno a esta unidad.
 
 ## 1. Objetivo y criterio de producto
@@ -134,11 +135,14 @@ script manual:
   medidas, ausencia de precio, rechazo de composición manipulada, escritura por
   el cliente recibido conservando todos los campos, y propagación del fallo.
 - `_lib/lineas/persistencia.integracion.test.ts`: contra el Postgres efímero en
-  Docker, aplicando las migraciones reales. Ejecuta `guardarLinea`, el mismo
-  servicio que usa `anyadirLinea`; no reproduce la transacción por su cuenta.
-  Comprueba el guardado reversible del caso `2O + 2O` y tres fallos intermedios
-  reales: ajuste negativo que viola el CHECK del satélite, cantidad de despiece
-  fuera de rango en una ESTRUCTURA, y el cuadre entre cabecera y líneas.
+  Docker. Ejecuta `guardarLinea`, el mismo servicio que usa `anyadirLinea`; no
+  reproduce la transacción por su cuenta. Comprueba el guardado reversible del
+  caso `2O + 2O` y tres fallos intermedios reales: dos filas del mismo concepto
+  de mano de obra que violan su índice único, cantidad de despiece fuera de rango
+  en una ESTRUCTURA, y el cuadre entre cabecera y líneas.
+- `_lib/mano-obra/mano-obra.integracion.test.ts` (T.68): catálogo real, cero, una
+  y dos filas, tarifa sin PVP, y rollback con la primera fila de mano de obra ya
+  escrita. Las migraciones las aplica `pruebas/migrar.ts` una sola vez.
 
 ```
 docker compose -f packages/db/docker-compose.yml up -d
@@ -154,8 +158,7 @@ El rollback se validó por mutación **del código de producción**: sustituyend
 fallo intermedio fallan (una línea huérfana de cerramiento, otra de estructura,
 y la cabecera descuadrada en 1000). Restaurada la transacción, pasan.
 
-- 73 pruebas de `@aluminior/core` superadas;
-- 7 pruebas de `@aluminior/web` superadas con base de datos (4 sin ella);
+- al cerrar T.68: 129 pruebas en `core`, 47 en `db`, 9 en `etl` y 70 en `web`;
 - typecheck de todos los workspaces superado;
 - build de producción de Next.js superado;
 - `git diff --check` sin errores;
@@ -225,10 +228,92 @@ docker exec aluminior_pg_test psql -U aluminior -d aluminior_test \
   -c 'DROP SCHEMA public CASCADE; CREATE SCHEMA public; DROP SCHEMA IF EXISTS drizzle CASCADE;'
 ```
 
-**Qué NO incluye T.68**, y por tanto sigue sin funcionar de punta a punta: el
-formulario en horas, la lectura del catálogo (`articulos`, `articulos_pvp`,
-`articulos_coste`), la escritura del snapshot y la propagación de «todo o sin
-valorar» a la línea `GRUPO`.
+### T.68, segunda mitad: completada
+
+El flujo funciona de punta a punta para `FABRICACION_ADICIONAL` y `COLOCACION`.
+
+**Formulario en horas.** `ajusteFabricacion`/`ajusteColocacion` (euros) pasan a
+`horasFabricacion`/`horasColocacion`, dos decimales, tope técnico `9.999,99 h`,
+errores accesibles por el cableado `aria-invalid`/`aria-describedby` que ya
+existía. Cero es válido y significa «no hay mano de obra adicional»: no genera
+fila.
+
+**El esquema devuelve el TEXTO validado, no un `number`.** `decimalTecleado` ya
+no hace `.transform(Number)`, y el rango se compara con `compararDecimal`, no
+con `Number(texto) > maximo`: convertir para comparar reintroducía la coma
+flotante justo en la frontera que se quería proteger. `cantidad` conserva su
+`.transform(Number)` porque su aritmética aguas abajo sigue siendo flotante y
+quedaba fuera de alcance. **Si alguien añade un `parseFloat` o un `Number()` en
+la capa de entrada de horas, la garantía decimal se cae entera**; hay una prueba
+que compara el resultado exacto contra el que daba la aritmética anterior.
+
+**Módulo `_lib/mano-obra/`**, cinco piezas pequeñas: `conceptos` (cuántas filas),
+`catalogo` (lectura), `resolver-mano-obra` (snapshot puro), `preparar-mano-obra`
+(caso de uso) y `persistir-mano-obra` (escritura). La server action sólo conoce
+`prepararManoObra`, que devuelve `SIN_HORAS | MIGRACION_PENDIENTE | PREPARADA`.
+
+**El desempate del coste es compartido y estable.** Vivía escrito a mano dentro
+de `acciones.ts`; ahora es `resolverCosteCatalogo` en `core` y lo usan despiece y
+mano de obra. Reglas: mandan las filas del acabado aplicado y sólo ellas —si
+coinciden, resuelven; si difieren, `AMBIGUO`—; sin filas de ese acabado, el
+fallback mira todas las del artículo. **Nunca la primera fila**: la clave de
+`articulos_coste` es `(artículo, proveedor, acabado)` y sin `ORDER BY` PostgreSQL
+no promete orden, así que el margen dependía del plan de la consulta. El
+resultado se comprueba sobre todas las permutaciones de un caso de tres filas.
+
+**Snapshots transaccionales.** `EscrituraLinea` obliga por tipos a que un
+`CERRAMIENTO` lleve `manoObra`; línea, configuración y filas de mano de obra
+confirman o se deshacen juntas, por `ClienteEscritura`, sin que ningún módulo
+abra su propia conexión. Se guardan horas, minutos, artículo, descripción
+congelada, unidad, acabado, tarifa, PVP, importe, coste, coste total y los dos
+códigos de motivo. `ajuste_fabricacion` y `ajuste_colocacion` ya no se escriben:
+la columna aplica su `DEFAULT 0` hasta la migración sustractiva.
+
+**Todo o sin valorar.** `VeredictoGuarda` gana `advertencias`: los cuatro motivos
+de venta tumban la línea; los cuatro de coste no la tocan pero se registran en el
+aviso y en la fila.
+
+**`globalSetup` para las migraciones de pruebas.** Cada suite de integración
+migraba al arrancar y vitest paraleliza ficheros: al añadir el tercero, el DDL
+simultáneo reventaba con `duplicate key ... pg_namespace_nspname_index` y la
+suite perdedora se quedaba sin esquema. Con dos ficheros era una carrera latente
+que salía bien por poco. Ahora `packages/web/pruebas/migrar.ts` migra una vez
+antes del primer worker y las suites sólo leen y escriben. Se descartó un cerrojo
+consultivo: es de sesión y el pool no garantiza que el `unlock` salga por la
+misma conexión.
+
+### Medición del cambio de coste, hecha (3/8/2026)
+
+Sólo `SELECT` contra el catálogo de producción, sin modificar nada:
+
+| Medida | Valor |
+|---|---:|
+| Filas de `articulos_coste` | 27.817 |
+| Artículos distintos | 17.023 |
+| Pares `(artículo, acabado)` con **varias** filas | **0** |
+| ...de ellos, con costes distintos | **0** |
+| Artículos con algún acabado discrepante | **0** |
+| Artículos con más de un coste distinto en total | 1.181 |
+
+**El cambio no altera ningún despiece hoy.** Como no hay ni un par
+`(artículo, acabado)` repetido, quedarse con la primera fila y exigir unanimidad
+dan exactamente lo mismo, y el fallback global sobre todas las filas coincide con
+el que deduplicaba por acabado. Los 1.181 artículos con varios costes los tienen
+en acabados DISTINTOS, que es el caso que ambas versiones resuelven igual. La
+corrección es defensiva: protege de un dato que el catálogo permite y que hoy no
+se da.
+
+Mano de obra, confirmado: `MO`, `MOCOL`, `MOCOMP`, `MOPREM`, `MOTAP` y `MOVID`
+tienen **una sola fila de coste**, un proveedor, acabado `UNI`, `0,5000`. El PVP
+de `MO` y `MOCOL` existe sólo en acabado `UNI`, con `0,5000` en la tarifa 1 y
+`0,0000` en las tarifas 2 y 3 —el caso medido que deja el documento sin valorar
+con su motivo—.
+
+### Qué NO incluye T.68
+
+`FABRICACION_BASE`, que sigue bloqueada por el recuento de módulos (T.31), y la
+edición de líneas ya guardadas. Mientras la base no exista, la línea `GRUPO`
+seguirá sin precio aunque la mano de obra manual se valore bien.
 
 ## 7. Arquitectura modular obligatoria
 
@@ -286,27 +371,28 @@ descripción agregada `descripcionCerramiento`. Ambos se reexportan desde
 
 ## 8. Siguiente trabajo recomendado
 
-### Ahora — segunda mitad de la mano de obra (continúa T.68)
+### Ahora — desbloquear T.68 con el titular
 
-Es la fase siguiente inmediata, y son tres piezas que van juntas:
+Tres preguntas enviadas a Javi, **sin respuesta todavía**. No conviene anticipar
+ninguna: cada una cambia el modelo de datos o la presentación.
 
-1. **Formulario en horas.** `esquema-linea.ts` y `anyadir-linea.tsx` pasan de
-   `ajuste_fabricacion` / `ajuste_colocacion` en euros a horas con dos decimales,
-   misma disciplina de escala que T.67. **El texto validado debe llegar intacto a
-   la valoración**, sin `parseFloat` ni `Number()` (§3.1.1 de la spec).
-2. **Resolución de catálogo**, módulo nuevo `_lib/mano-obra/`. Artículo por
-   concepto (`FABRICACION_ADICIONAL → MO`, `COLOCACION → MOCOL`), descripción,
-   PVP por tarifa y acabado, y coste con el mismo criterio de desempate que ya
-   usa el despiece: acabado aplicado, si no coste único, si no `COSTE_AMBIGUO`.
-   No inventar un segundo criterio.
-3. **Persistencia transaccional.** Las filas de mano de obra se escriben dentro
-   de la MISMA transacción que la línea, por `guardar-linea.ts`. Una línea con
-   mano de obra sin su fila es un documento corrupto, igual que un `GRUPO` sin
-   configuración. Cero, una o dos filas por línea; un `0` tecleado no genera fila.
-   Después, conectar «todo o sin valorar» ampliando `lineaValorable` con los
-   motivos de mano de obra.
+1. **¿Se aplica descuento de línea a la mano de obra?** En el original es línea
+   hija con su propio `DescuentoPorc`. No medido.
+2. **¿La mano de obra se muestra desglosada al cliente o embebida en el importe
+   del `GRUPO`?** El vídeo mostró una sola línea agregada, pero eso no zanja qué
+   debe imprimirse.
+3. **¿Puede existir mano de obra independiente de una línea?** Hay 167 líneas
+   `MO` sin estructura asociada (`nEstr = 0`, 15.115,8 minutos, 7.557,90 €) cuyo
+   origen está sin medir. Si la respuesta es que sí, `linea_id` deja de poder ser
+   obligatoria y eso es una migración.
 
-Orden de despliegue, si se aplica en remoto: **migración primero, código después.**
+### Ahora — deuda que toca antes de la siguiente función
+
+`acciones.ts` sigue en 1.102 líneas y continúa siendo **deuda prioritaria**. T.68
+extrajo su parte a `_lib/mano-obra/`, así que el archivo dejó de crecer, pero
+sigue muy por encima del límite de 400. Antes de añadir edición de líneas o
+valoración agregada, cerrar los puntos 4 y 5 del apartado 7: acciones finas que
+sólo autentiquen, deleguen y revaliden.
 
 ### Ahora — cerramientos, en paralelo
 
@@ -357,10 +443,15 @@ Orden de despliegue, si se aplica en remoto: **migración primero, código despu
 - **Coste igual a PVP (`0,5000` ambos, margen cero)** puede ser deliberado o
   catálogo sin mantener. Sin responder; ahora quedará registrado documento a
   documento.
-- **Sin medir:** si el descuento de línea aplica a la mano de obra; si se muestra
-  desglosada al cliente o embebida en el `GRUPO`; y qué son las 167 líneas `MO`
-  sin estructura asociada, que afecta a si la mano de obra puede existir fuera de
-  una línea.
+- **Preguntado a Javi, sin respuesta:** descuento de línea sobre la mano de obra;
+  desglose al cliente frente a importe embebido en el `GRUPO`; y si la mano de
+  obra puede existir independiente de una línea (las 167 líneas `MO` sin
+  estructura asociada). Ver «Ahora — desbloquear T.68 con el titular».
+- **El desempate del coste sólo cambia comportamiento en datos que hoy no
+  existen.** Medido el 3/8/2026: cero pares `(artículo, acabado)` con varias
+  filas. Si el catálogo empieza a tener varios proveedores por acabado con
+  precios distintos, el despiece pasará a dejar el coste sin resolver donde antes
+  elegía uno; es lo correcto, pero conviene saberlo antes de que ocurra.
 - El «~79%» del anexo T.32.2 **no se ha reproducido y no debe citarse**. Lo
   demostrado con denominador explícito es el 68,4%.
 
@@ -370,7 +461,9 @@ Orden de despliegue, si se aplica en remoto: **migración primero, código despu
 > `ARQUITECTURA.md`, `PARIDAD-PRODUCTOR.md` y `SPEC-MANO-DE-OBRA.md`. Conserva la
 > paridad funcional con Productor y la regla «todo o sin valorar». T.68 dejó el
 > contrato decimal, la valoración pura y la tabla `lineas_mano_obra` con su
-> migración 0018 **sólo local**. Sigue la segunda mitad: formulario en horas
-> conservando el texto validado sin `parseFloat`, resolución de catálogo en
-> `_lib/mano-obra/`, y escritura del snapshot dentro de la misma transacción que
-> la línea. No apliques la 0018 en remoto sin alcance explícito.
+> migración 0018 **sólo local** y la mano de obra adicional funcionando de punta
+> a punta. No apliques la 0018 en remoto sin alcance explícito, no metas
+> `parseFloat` ni `Number()` en el camino de horas, y antes de añadir función
+> nueva reduce `acciones.ts`, que sigue en 1.102 líneas. `FABRICACION_BASE` y la
+> edición de líneas guardadas siguen fuera; tres preguntas al titular están sin
+> responder y no deben anticiparse.

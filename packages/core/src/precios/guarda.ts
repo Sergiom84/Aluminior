@@ -9,26 +9,56 @@
  * Función PURA: es la regla del dinero aislada del camino de servidor de
  * `acciones.ts` (que la usa) para poder protegerla con un test unitario.
  */
+
+import {
+  textoMotivoCoste, textoMotivoVenta,
+  type ConceptoManoObra, type MotivoCosteManoObra, type MotivoVentaManoObra,
+} from './mano-obra.ts'
 export interface VeredictoGuarda {
   /** true = la línea se puede valorar (todos sus componentes resuelven). */
   valorable: boolean
   /** Motivos por los que NO se valora (vacío si `valorable`). Mensajes de usuario. */
   motivos: string[]
+  /**
+   * Problemas que NO impiden valorar, pero que deben quedar registrados.
+   *
+   * Hoy son los del coste de la mano de obra: un coste ausente, ambiguo,
+   * negativo o desbordado no cambia lo que se cobra, así que no puede tumbar la
+   * valoración; pero callarlo dejaría el margen mal calculado sin que nadie lo
+   * supiera. Se separan de `motivos` a propósito, para que la regla del dinero
+   * no se relaje por el camino.
+   */
+  advertencias: string[]
+}
+
+/** Lo que un concepto de mano de obra aporta a la guarda, ya valorado. */
+export interface ManoObraEnGuarda {
+  concepto: ConceptoManoObra
+  motivoCodigo: MotivoVentaManoObra | null
+  motivoCosteCodigo: MotivoCosteManoObra | null
 }
 
 /**
- * Decide si la parte de despiece de una línea es valorable.
+ * Decide si una línea es valorable.
  *
  * @param incalculables      nº de piezas sin medida (de `calcularDespiece`).
  * @param sinPrecio          artículos sin precio en la tarifa (de `valorarDespiece`).
  * @param variablesFaltantes cotas/variables que faltaron al evaluar fórmulas (opcional).
+ * @param manoObra           conceptos de mano de obra ya valorados (opcional).
+ *
+ * La mano de obra entra por la misma puerta que el resto: si un concepto no
+ * tiene importe —falta el PVP, es cero, es negativo o el producto desborda—, la
+ * línea entera queda sin valorar. Nunca un total parcial que se cobraría de
+ * menos, ni un cero que parecería mano de obra regalada.
  */
 export function lineaValorable(args: {
   incalculables: number
   sinPrecio: readonly string[]
   variablesFaltantes?: readonly string[]
+  manoObra?: readonly ManoObraEnGuarda[]
 }): VeredictoGuarda {
   const motivos: string[] = []
+  const advertencias: string[] = []
   if (args.incalculables > 0) {
     motivos.push(
       `${args.incalculables} piezas sin medida` +
@@ -38,7 +68,13 @@ export function lineaValorable(args: {
   if (args.sinPrecio.length) {
     motivos.push(`${args.sinPrecio.length} artículos sin precio en la tarifa`)
   }
-  return { valorable: motivos.length === 0, motivos }
+  for (const mo of args.manoObra ?? []) {
+    if (mo.motivoCodigo) motivos.push(textoMotivoVenta(mo.concepto, mo.motivoCodigo))
+    if (mo.motivoCosteCodigo) {
+      advertencias.push(textoMotivoCoste(mo.concepto, mo.motivoCosteCodigo))
+    }
+  }
+  return { valorable: motivos.length === 0, motivos, advertencias }
 }
 
 /**

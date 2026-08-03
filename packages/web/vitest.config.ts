@@ -11,5 +11,8 @@ export default defineConfig({
   test: {
     include: ['app/**/*.test.ts', 'app/**/*.test.tsx'],
     exclude: ['**/node_modules/**', '.next/**'],
+    // Las migraciones se aplican UNA vez, antes del primer worker: varias
+    // suites migrando en paralelo se pisan el DDL. Ver `pruebas/migrar.ts`.
+    globalSetup: ['./pruebas/migrar.ts'],
   },
 })
