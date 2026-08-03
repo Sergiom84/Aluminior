@@ -5,7 +5,9 @@ import {
   crearConfiguracionCerramiento, plantillaDiseno, type ConfiguracionCerramiento,
 } from '@aluminior/core/estructuras'
 import { anyadirLinea, borrarLinea, type Estado } from '../../_lib/acciones.ts'
+import { atributosCampo, bordeCampo } from '../../_lib/campos.ts'
 import { DisenadorEstructura } from './disenador-estructura.tsx'
+import { MensajeError } from './mensaje-error.tsx'
 
 const entrada = 'w-full rounded-md border px-3 py-2 text-sm'
 const estilo = { background: 'var(--al-surface)', borderColor: 'var(--al-border-strong)' }
@@ -96,18 +98,18 @@ export function AnyadirLinea({
           <label htmlFor="codigo" className="mb-1 block text-sm font-medium">
             Artículo
           </label>
-          <input id="codigo" name="codigo" className={entrada}
-            style={{ ...estilo, borderColor: err.codigo ? 'var(--al-error)' : estilo.borderColor }}
+          <input {...atributosCampo('codigo', err)} className={entrada}
+            style={{ ...estilo, borderColor: bordeCampo('codigo', err, estilo.borderColor) }}
             placeholder="PSM001" />
-          {err.codigo && (
-            <p className="mt-1 text-xs" style={{ color: 'var(--al-error)' }}>{err.codigo.join('. ')}</p>
-          )}
+          <MensajeError campo="codigo" errores={err} />
         </div>}
 
         <div className={tipo === 'CERRAMIENTO' ? 'col-span-2' : 'col-span-3'}>
           <label htmlFor="referencia" className="mb-1 block text-sm font-medium">Ubicación</label>
-          <input id="referencia" name="referencia" className={entrada} style={estilo}
+          <input {...atributosCampo('referencia', err)} className={entrada}
+            style={{ ...estilo, borderColor: bordeCampo('referencia', err, estilo.borderColor) }}
             placeholder="SALÓN" />
+          <MensajeError campo="referencia" errores={err} />
         </div>
 
         {tipo === 'CERRAMIENTO' && (
@@ -116,27 +118,23 @@ export function AnyadirLinea({
                 son genéricos y no hay precio ("Indique Serie primero"). */}
             <div className="col-span-2">
               <label htmlFor="serieCodigo" className="mb-1 block text-sm font-medium">Serie</label>
-              <select id="serieCodigo" name="serieCodigo" defaultValue="" className={entrada}
+              <select {...atributosCampo('serieCodigo', err)} defaultValue="" className={entrada}
                 onChange={(e) => setSerie(e.target.value)}
-                style={{ ...estilo, borderColor: err.serieCodigo ? 'var(--al-error)' : estilo.borderColor }}>
+                style={{ ...estilo, borderColor: bordeCampo('serieCodigo', err, estilo.borderColor) }}>
                 <option value="" disabled>Elegir…</option>
                 {series.map((s) => <option key={s} value={s}>{s}</option>)}
               </select>
-              {err.serieCodigo && (
-                <p className="mt-1 text-xs" style={{ color: 'var(--al-error)' }}>{err.serieCodigo.join('. ')}</p>
-              )}
+              <MensajeError campo="serieCodigo" errores={err} />
             </div>
 
             {/* Vidrio del acristalamiento (código de familia 050). Sin él, el
                 cristal queda "sin valorar" — el aviso lo dice. */}
             <div className="col-span-2">
               <label htmlFor="vidrioCodigo" className="mb-1 block text-sm font-medium">Vidrio</label>
-              <input id="vidrioCodigo" name="vidrioCodigo" className={entrada}
-                style={{ ...estilo, borderColor: err.vidrioCodigo ? 'var(--al-error)' : estilo.borderColor }}
+              <input {...atributosCampo('vidrioCodigo', err)} className={entrada}
+                style={{ ...estilo, borderColor: bordeCampo('vidrioCodigo', err, estilo.borderColor) }}
                 placeholder="V420AGS4" />
-              {err.vidrioCodigo && (
-                <p className="mt-1 text-xs" style={{ color: 'var(--al-error)' }}>{err.vidrioCodigo.join('. ')}</p>
-              )}
+              <MensajeError campo="vidrioCodigo" errores={err} />
             </div>
 
             <div className="col-span-2">
@@ -163,22 +161,27 @@ export function AnyadirLinea({
             </div>
             <div className="col-span-2">
               <label htmlFor="anchoMm" className="mb-1 block text-sm font-medium">Ancho (mm)</label>
-              <input id="anchoMm" name="anchoMm" type="number" value={anchoMm} readOnly
+              <input {...atributosCampo('anchoMm', err)} type="number" value={anchoMm} readOnly
                 className={`cifra ${entrada}`}
-                style={{ ...estilo, borderColor: err.anchoMm ? 'var(--al-error)' : estilo.borderColor }} />
+                style={{ ...estilo, borderColor: bordeCampo('anchoMm', err, estilo.borderColor) }} />
+              <MensajeError campo="anchoMm" errores={err} />
             </div>
             <div className="col-span-2">
               <label htmlFor="altoMm" className="mb-1 block text-sm font-medium">Alto (mm)</label>
-              <input id="altoMm" name="altoMm" type="number" value={altoMm} readOnly
-                className={`cifra ${entrada}`} style={estilo} />
+              <input {...atributosCampo('altoMm', err)} type="number" value={altoMm} readOnly
+                className={`cifra ${entrada}`}
+                style={{ ...estilo, borderColor: bordeCampo('altoMm', err, estilo.borderColor) }} />
+              <MensajeError campo="altoMm" errores={err} />
             </div>
           </>
         )}
 
         <div className={tipo === 'CERRAMIENTO' ? 'col-span-1' : 'col-span-2'}>
           <label htmlFor="cantidad" className="mb-1 block text-sm font-medium">Cdad.</label>
-          <input id="cantidad" name="cantidad" type="number" defaultValue={1} min={1} step={1}
-            className={`cifra ${entrada}`} style={estilo} />
+          <input {...atributosCampo('cantidad', err)} type="number" defaultValue={1} min={1} step={1}
+            className={`cifra ${entrada}`}
+            style={{ ...estilo, borderColor: bordeCampo('cantidad', err, estilo.borderColor) }} />
+          <MensajeError campo="cantidad" errores={err} />
         </div>
 
         <div className={tipo === 'CERRAMIENTO' ? 'col-span-1' : 'col-span-4'}>
@@ -190,23 +193,25 @@ export function AnyadirLinea({
         </div>
       </div>
 
-      {err.anchoMm && (
-        <p className="mt-2 text-xs" style={{ color: 'var(--al-error)' }}>{err.anchoMm.join('. ')}</p>
-      )}
-
       {tipo === 'CERRAMIENTO' && (
         <fieldset className="mt-4 rounded-md border p-4"
           style={{ borderColor: 'var(--al-border)' }}>
           <legend className="px-1 text-sm font-medium">Ajustes manuales</legend>
           <div className="grid grid-cols-2 gap-3">
-            <label className="text-sm">Fabricación (€)
-              <input name="ajusteFabricacion" type="number" min={0} step="0.01"
-                defaultValue={0} className={`cifra mt-1 ${entrada}`} style={estilo} />
-            </label>
-            <label className="text-sm">Colocación (€)
-              <input name="ajusteColocacion" type="number" min={0} step="0.01"
-                defaultValue={0} className={`cifra mt-1 ${entrada}`} style={estilo} />
-            </label>
+            <div>
+              <label htmlFor="ajusteFabricacion" className="mb-1 block text-sm">Fabricación (€)</label>
+              <input {...atributosCampo('ajusteFabricacion', err)} type="number" min={0} step="0.01"
+                defaultValue={0} className={`cifra ${entrada}`}
+                style={{ ...estilo, borderColor: bordeCampo('ajusteFabricacion', err, estilo.borderColor) }} />
+              <MensajeError campo="ajusteFabricacion" errores={err} />
+            </div>
+            <div>
+              <label htmlFor="ajusteColocacion" className="mb-1 block text-sm">Colocación (€)</label>
+              <input {...atributosCampo('ajusteColocacion', err)} type="number" min={0} step="0.01"
+                defaultValue={0} className={`cifra ${entrada}`}
+                style={{ ...estilo, borderColor: bordeCampo('ajusteColocacion', err, estilo.borderColor) }} />
+              <MensajeError campo="ajusteColocacion" errores={err} />
+            </div>
           </div>
         </fieldset>
       )}

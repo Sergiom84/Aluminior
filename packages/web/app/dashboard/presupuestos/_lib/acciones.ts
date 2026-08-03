@@ -22,6 +22,8 @@ import {
 import { expandirCadena, construirResoluciones, resolverComponente } from '@aluminior/core/series'
 import { crearClienteServidor } from '../../../../lib/supabase/servidor.ts'
 import { actualizarTotales } from './totales.ts'
+import { registrarFallo } from './errores.ts'
+import { esquemaLinea } from './lineas/esquema-linea.ts'
 import {
   guardarLinea, type OpcionHerrajeElegida, type PiezaDespiece,
   type RanuraAcristalamiento, type ValoresLinea,
@@ -274,30 +276,9 @@ export async function crearPresupuesto(_previo: Estado, datos: FormData): Promis
     revalidatePath('/dashboard/presupuestos')
     return { ok: true, id: fila.id }
   } catch (e) {
-    return { ok: false, errores: {}, mensaje: (e as Error).message }
+    return { ok: false, errores: {}, mensaje: registrarFallo('crearPresupuesto', e) }
   }
 }
-
-const esquemaLinea = z.object({
-  presupuestoId: z.string().uuid(),
-  tipo: z.enum(['ARTICULO', 'ESTRUCTURA', 'CERRAMIENTO']),
-  codigo: z.string().trim().min(1, 'Elige un artículo o una estructura'),
-  referencia: z.string().trim().max(60).optional().transform((v) => v || null),
-  /** Serie de perfiles. Prerrequisito del tipo ESTRUCTURA: sin ella no hay
-   * artículos reales, y sin artículos reales no hay precio. */
-  serieCodigo: z.string().trim().optional().transform((v) => v || null),
-  /** Vidrio del acristalamiento (familia 050, facturable por m²). Opcional:
-   * sin él, el cristal queda "sin valorar". */
-  vidrioCodigo: z.string().trim().optional().transform((v) => v || null),
-  varianteAcristalamiento: z.enum(['1', '2']).default('2'),
-  cantidad: z.coerce.number().positive().default(1),
-  anchoMm: z.coerce.number().int().min(0).optional(),
-  altoMm: z.coerce.number().int().min(0).optional(),
-  acabadoCodigo: z.string().trim().optional().transform((v) => v || null),
-  configuracionCerramiento: z.string().trim().optional().transform((v) => v || null),
-  ajusteFabricacion: z.coerce.number().min(0).default(0),
-  ajusteColocacion: z.coerce.number().min(0).default(0),
-})
 
 /**
  * Añade una línea y la valora.
@@ -1081,7 +1062,7 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
 
     return { ok: true, id: d.presupuestoId, mensaje: aviso ?? undefined }
   } catch (e) {
-    return { ok: false, errores: {}, mensaje: (e as Error).message }
+    return { ok: false, errores: {}, mensaje: registrarFallo('anyadirLinea', e) }
   }
 }
 

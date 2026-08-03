@@ -5660,3 +5660,41 @@ investigación anteriores.
   después se añade edición y finalmente valoración agregada.
 
 El traspaso operativo completo vive en `HANDOFF-CHATGPT.md`.
+
+---
+
+## Anexo T.67 — Escala y unidad de los importes tecleados (abierto)
+
+Fecha: 3 de agosto de 2026. Estado: **protección técnica aplicada, decisión de
+negocio pendiente**.
+
+`lineas.cantidad` es `numeric(10,2)` y los ajustes manuales del cerramiento son
+`numeric(12,2)`. PostgreSQL redondea en silencio lo que sobra de escala: `0,001`
+se guarda como `0,00`. El esquema de entrada
+(`presupuestos/_lib/lineas/esquema-linea.ts`) valida rango Y escala contra la
+columna, de modo que un valor imposible es error de campo y no un redondeo
+invisible. La validación se hace sobre el texto tecleado, no sobre el número, y
+la coma decimal se rechaza en vez de traducirse: `1,500` es 1,5 o 1500 según
+quien lo escriba, y adivinarlo cambiaría el importe del presupuesto.
+
+Lo que sigue SIN evidencia y no se ha decidido:
+
+1. **Tope comercial de los ajustes manuales.** Sólo hay tope técnico
+   (9.999.999.999,99). Cuál es el importe máximo razonable requiere ver el rango
+   real que teclea el comercial en Productor. Sin ese dato no se inventa un
+   límite.
+2. **Unidad de los ajustes.** En Aluminior son euros; en Productor el campo
+   equivalente son **horas adicionales** de fabricación y colocación
+   (`ENTREGA.md`, pestaña Estructura), que el sistema convierte a importe por su
+   tarifa horaria. La divergencia afecta directamente a la valoración agregada
+   del cerramiento y debe resolverse antes de calcularla.
+3. **Fracciones de unidad en `cantidad`.** El campo es el `Cdad` del original,
+   distinto del `Metraje` —la cantidad facturable en ML o m², que calcula el
+   sistema (anexo J, punto 1)—. La columna admite dos decimales; el formulario
+   usa `step=1`. No hay evidencia de que el operador teclee fracciones de
+   unidad, así que el servidor acepta la escala de la columna y la interfaz
+   queda como está. Decidirlo requiere observar el alta de un artículo por
+   metros.
+
+Hasta que 1 y 2 se resuelvan, la línea de cerramiento sigue `sin valorar`, que
+es el comportamiento correcto: falta información, no vale un cero.
