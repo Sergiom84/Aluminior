@@ -18,7 +18,7 @@ import {
 } from '@aluminior/core/despiece'
 import {
   valorarDespiece, medidasVidrio, metrajeVidrioM2, lineaValorable,
-  resolverCosteCatalogo, type DatosArticuloPrecio,
+  type DatosArticuloPrecio,
 } from '@aluminior/core/precios'
 import { expandirCadena, construirResoluciones, resolverComponente } from '@aluminior/core/series'
 import { crearClienteServidor } from '../../../../lib/supabase/servidor.ts'
@@ -31,8 +31,8 @@ import {
 } from './lineas/guardar-linea.ts'
 import { prepararManoObra, type SnapshotManoObra } from './mano-obra/index.ts'
 import {
-  opcionesHerrajeDe as opcionesDeHerrajeOfrecidas, resolverOpcionesHerraje,
-  type GrupoOpcionesHerraje,
+  opcionesHerrajeDe as opcionesDeHerrajeOfrecidas, resolverCosteDespiece,
+  resolverOpcionesHerraje, type GrupoOpcionesHerraje,
 } from './estructuras/index.ts'
 import {
   comprobarPersistenciaCerramientos, prepararAltaCerramiento,
@@ -581,59 +581,14 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
       precioUnitario = valoracion.importe
 
       // --- Coste real por pieza, para persistir el despiece con trazabilidad ---
-      // El coste depende del acabado. Si la línea no fija acabado y el
-      // artículo tiene costes distintos por acabado, se deja null: un coste
-      // ambiguo no se adivina.
-      const costes = codigos.length
-        ? await db.select({
-            articuloCodigo: schema.articulosCoste.articuloCodigo,
-            acabadoCodigo: schema.articulosCoste.acabadoCodigo,
-            coste: schema.articulosCoste.coste,
-          }).from(schema.articulosCoste)
-            .where(inArray(schema.articulosCoste.articuloCodigo, codigos))
-        : []
-      // El desempate vive en `resolverCosteCatalogo`, compartido con la mano de
-      // obra: un solo criterio, no dos con el mismo nombre. Aquí se colapsa a
-      // `null` porque el despiece no distingue «sin coste» de «ambiguo»; la
-      // mano de obra sí, y por eso la función devuelve los tres estados.
-      const costePorArticulo = new Map<string, number | null>()
-      {
-        const porArt = new Map<string, { acabadoCodigo: string; coste: string }[]>()
-        for (const c of costes) {
-          const filas = porArt.get(c.articuloCodigo) ?? []
-          filas.push({ acabadoCodigo: c.acabadoCodigo, coste: c.coste })
-          porArt.set(c.articuloCodigo, filas)
-        }
-        for (const [art, filas] of porArt) {
-          const resolucion = resolverCosteCatalogo(filas, d.acabadoCodigo)
-          costePorArticulo.set(
-            art,
-            resolucion.estado === 'RESUELTO' ? Number(resolucion.coste) : null,
-          )
-        }
-      }
-
-      piezasAPersistir = despiece.piezas.map((pz) => {
-        const art = mapa.get(pz.articuloCodigo)
-        const coste = costePorArticulo.get(pz.articuloCodigo) ?? null
-        let costeTotal: number | null = null
-        if (coste !== null) {
-          if (art?.tipoMetraje === 'ML') {
-            costeTotal = pz.largoMm !== null ? coste * (pz.largoMm / 1000) * pz.cantidad : null
-          } else {
-            costeTotal = coste * pz.cantidad
-          }
-        }
-        return {
-          articuloCodigo: pz.articuloCodigo,
-          cantidad: String(pz.cantidad),
-          largoCorteMm: pz.largoMm !== null ? String(pz.largoMm) : null,
-          anguloIzquierdo: pz.anguloIzquierdo !== null ? String(pz.anguloIzquierdo) : null,
-          anguloDerecho: pz.anguloDerecho !== null ? String(pz.anguloDerecho) : null,
-          funcion: pz.funcion,
-          costeUnitario: coste !== null ? String(coste) : null,
-          costeTotal: costeTotal !== null ? String(Math.round(costeTotal * 10000) / 10000) : null,
-        }
+      // No interviene en el precio de venta: un coste que falta no deja la
+      // línea sin valorar. Reutiliza el mapa de artículos que ya leyó la
+      // valoración; sólo añade la lectura de `articulos_coste`.
+      piezasAPersistir = await resolverCosteDespiece(db, {
+        piezas: despiece.piezas,
+        codigos,
+        mapa,
+        acabadoCodigo: d.acabadoCodigo,
       })
 
       // --- Vidrio (PLAN.md anexo L) ---
