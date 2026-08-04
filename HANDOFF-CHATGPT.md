@@ -9,11 +9,12 @@ superadas por las decisiones resumidas aquí.
 
 ## 0. Estado del repositorio, primero
 
-- Rama `main` con **11 commits locales por delante de `origin/main`**, que sigue
-  en `01a0613`. **Nada se ha empujado.** Los cinco últimos son la descomposición
+- Rama `main` con **12 commits locales por delante de `origin/main`**, que sigue
+  en `01a0613`. **Nada se ha empujado.** Los seis últimos son la descomposición
   T.69 de `acciones.ts`: `7e53cb4` herraje (T.69.1), `3a8a092` cierre del pool de
   migraciones, `92a1b50` coste del despiece (T.69.2), `ee62703` coste del
-  acristalamiento (T.69.3) y el de resolución de perfiles (T.69.4).
+  acristalamiento (T.69.3), `523af70` resolución de perfiles (T.69.4) y el de
+  junquillos y juntas (T.69.5).
 - **La migración `0018_pale_hulk` sólo existe en local y se ha aplicado
   únicamente al Postgres efímero de Docker. NO está en el Supabase remoto.**
   Aplicarla allí es una decisión pendiente, con alcance explícito y prueba
@@ -151,6 +152,42 @@ script manual:
 docker compose -f packages/db/docker-compose.yml up -d
 npm test
 ```
+
+### Si Docker Desktop no arranca: clúster nativo en 55433 (4/8/2026)
+
+Docker Desktop dejó de arrancar en el portátil con un fallo del **Inference
+manager** (Docker Model Runner) al recrear su socket en
+`%LOCALAPPDATA%\Docker\run\dockerInference`. No es un problema del motor de
+contenedores ni de las pruebas, pero deja toda la integración sin ejecutar.
+
+Vía alternativa verificada, sin instalar nada: la máquina tiene PostgreSQL 16.14
+completo en `C:\Program Files\PostgreSQL\16\bin`. Se levanta un clúster PROPIO en
+`%TEMP%\aluminior_pg_test\data` con `initdb -U aluminior`, `-E UTF8 --locale=C`,
+`port = 55433` y `listen_addresses = 'localhost'`, y se crean `aluminior_test` y
+`aluminior_etl_test` (esta última con `packages/db/test-auth-bootstrap.sql`).
+
+Como el puerto y las credenciales son los del compose, **los defaults del
+proyecto ya sirven: no hay que definir `TEST_DATABASE_URL`**. Definirla en el
+entorno es contraproducente —`packages/etl` la respeta y acabaría corriendo su
+`DROP TABLE articulos` contra la base migrada, donde falla por dependencias—.
+
+Dos diferencias con el contenedor, que conviene saber: los datos **persisten**
+entre arranques (el compose usa `tmpfs`), así que una corrida limpia exige borrar
+y recrear; y vive en `%TEMP%`, que una limpieza de disco de Windows puede barrer.
+Se revierte por completo parando el clúster y borrando esa carpeta: no se
+registró servicio ni se tocó la instalación existente.
+
+**Aviso de seguridad detectado de paso:** el servicio `postgresql-x64-16` de la
+máquina escucha en el puerto **5434 con `listen_addresses = '*'`**, es decir
+expuesto a la red local y no sólo a loopback. No se ha tocado ni identificado su
+contenido; conviene revisar si esa exposición es intencionada. Por si fuese la
+base de trabajo con datos reales, NO se usó para pruebas: `packages/db/README.md`
+lo prohíbe, y por eso se creó un clúster aparte.
+
+Nota menor: `psql` del PATH está roto (`~/.local/bin/psql.cmd` apunta a una
+instalación 17/18 que ya no tiene binarios). Usar la ruta de la 16. El comentario
+de `docker-compose.yml` y del README que dice que el 5432 lo ocupa el Postgres
+nativo está desactualizado: hoy el nativo está en 5434 y el 5432 está libre.
 
 La prueba valida su destino antes de conectar: sólo Postgres local y base
 terminada en `_test`. Apuntar `TEST_DATABASE_URL` a Supabase aborta con un error
@@ -332,7 +369,8 @@ entrada `index.ts`, y cada uno tiene pruebas de caracterización propias.
 | — cierre del pool de migraciones | `3a8a092` | `pruebas/migrar.ts` |
 | T.69.2 coste del despiece | `92a1b50` | `coste-despiece.ts` |
 | T.69.3 coste del acristalamiento | `ee62703` | `coste-articulos.ts`, `coste-acristalamiento.ts` |
-| T.69.4 resolución de perfiles | este | `resolucion-perfiles.ts`, `componentes-disenyo.ts` |
+| T.69.4 resolución de perfiles | `523af70` | `resolucion-perfiles.ts`, `componentes-disenyo.ts` |
+| T.69.5 junquillos y juntas | este | `junquillos.ts` |
 
 **T.69.4, la mayor.** Saca la resolución genérico → perfil real (anexo J):
 lectura de delegaciones, expansión de la cadena de conjuntos, construcción de
@@ -344,8 +382,29 @@ entre perfil y asociado. Devuelve un resultado explícito
 `COMPONENTE_CRISTAL` y `COMPONENTES_HERRAJE` pasan a `componentes-disenyo.ts`,
 que son datos con su evidencia y los necesitan dos frentes.
 
-**Pruebas: 335 en total** (129 `core`, 47 `db`, 9 `etl`, 150 `web`). Typecheck de
+**T.69.5** saca junquillos y juntas (anexos M y N), que ya era una
+responsabilidad cerrada: recibe cristales dimensionados y clasificados como HOJA
+o FIJO, consulta la tabla de acristalamiento de la serie y devuelve las piezas
+`JUNQ`, `JEXT` y `JINT` con sus avisos. Se parte en dos: `piezasDeRanura` es pura
+y fija ocho comportamientos sin base de datos; el orquestador conserva las tres
+reglas que viven en SQL —qué tabla corresponde al alojamiento, qué fila gana para
+el grosor del vidrio y de qué tabla sale el ajuste—, que se prueban contra
+PostgreSQL de verdad porque un doble de cliente sólo probaría el doble.
+
+**Pruebas: 354 en total** (129 `core`, 47 `db`, 9 `etl`, 169 `web`). Typecheck de
 los cuatro workspaces limpio.
+
+### Omisiones silenciosas del acristalamiento, conservadas
+
+Fijadas por prueba en T.69.5, ninguna corregida:
+
+- un artículo nulo no genera pieza **ni aviso**: es el marcador «sin junquillos»
+  (V1000) y los huecos del catálogo;
+- una longitud que no sea positiva se descarta **en silencio**. Protege de un
+  ajuste que se come la medida, pero la pieza desaparece del despiece y nada lo
+  señala;
+- si hay junquillo y falta el ajuste medido, las juntas SÍ se emiten y sólo se
+  pierde el junquillo, con aviso. Un junquillo nulo no avisa.
 
 ### Comportamientos CONSERVADOS y no decididos
 
@@ -446,17 +505,21 @@ depende de ellas.
 
 ### Ahora — deuda que toca antes de la siguiente función
 
-`acciones.ts` está en **860 líneas** y sigue siendo **deuda prioritaria**: T.68 lo
-dejó de hacer crecer y T.69 le quitó 261 líneas en cuatro extracciones, pero
+`acciones.ts` está en **806 líneas** y sigue siendo **deuda prioritaria**: T.68 lo
+dejó de hacer crecer y T.69 le quitó 315 líneas en cinco extracciones, pero
 continúa por encima del límite de 400.
 
-**Siguiente unidad recomendada: separar el vidrio y los junquillos**, que es lo
-que queda de la ruta de dinero dentro de la acción (anexos L, M, N, Q). Ahí hay
-geometría —emparejamiento del cristal con su alojamiento, galces, medidas de
-módulo— y aritmética de importes, así que exige **caracterización previa**: fijar
-con pruebas lo que hace hoy, incluida la aritmética en `number`, antes de mover
-nada. Es la misma secuencia que funcionó en T.69.1–T.69.4, y la única forma de
-que la extracción sea revisable de una pieza.
+**Siguiente unidad recomendada: el bloque del vidrio**, que es lo que queda de la
+ruta de dinero dentro de la acción (anexos L, N, Q). Hoy mezcla seis
+responsabilidades: validación del artículo, clasificación de ranuras, geometría
+simple y mixta, consultas de galce y reglas de alojamiento, metraje/PVP/coste, y
+piezas persistibles con sus avisos. **No moverlo entero**: ocultaría las
+duplicaciones entre sus dos rutas —simple y mixta repiten la consulta de PVP, la
+de coste y el empujado de la pieza `VIDRIO`, con dos formas distintas de calcular
+el metraje—. Separar una responsabilidad por unidad, con **caracterización
+previa** que fije lo que hace hoy, incluida la aritmética en `number`. Es la
+secuencia que funcionó en T.69.1–T.69.5, y la única forma de que cada extracción
+sea revisable de una pieza.
 
 Después, cerrar los puntos 4 y 5 del apartado 7: acciones finas que sólo
 autentiquen, deleguen y revaliden.

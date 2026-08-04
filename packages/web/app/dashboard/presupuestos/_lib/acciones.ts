@@ -9,12 +9,12 @@
  */
 
 import { z } from 'zod'
-import { eq, sql, and, or, ilike, inArray, asc, gte } from 'drizzle-orm'
+import { eq, sql, and, or, ilike, inArray, asc } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { crearDb, schema } from '@aluminior/db'
 import {
   calcularDespiece, evaluar, calcularVidriosPorAlojamiento,
-  type ComponentePlantilla, type PiezaCortada, type NodoDisenyo,
+  type ComponentePlantilla, type NodoDisenyo,
 } from '@aluminior/core/despiece'
 import {
   valorarDespiece, medidasVidrio, metrajeVidrioM2, lineaValorable,
@@ -31,8 +31,9 @@ import {
 import { prepararManoObra, type SnapshotManoObra } from './mano-obra/index.ts'
 import {
   COMPONENTE_CRISTAL, opcionesHerrajeDe as opcionesDeHerrajeOfrecidas,
-  resolverCosteAcristalamiento, resolverCosteDespiece, resolverOpcionesHerraje,
-  resolverPerfiles, type GrupoOpcionesHerraje,
+  piezasAcristalamiento, resolverCosteAcristalamiento, resolverCosteDespiece,
+  resolverOpcionesHerraje, resolverPerfiles,
+  type CristalAcris, type GrupoOpcionesHerraje,
 } from './estructuras/index.ts'
 import {
   comprobarPersistenciaCerramientos, prepararAltaCerramiento,
@@ -109,63 +110,6 @@ export async function buscarClientes(consulta: string): Promise<ClienteEncontrad
     .where(and(eq(schema.clientes.activo, true), filtro))
     .orderBy(asc(schema.clientes.nombre))
     .limit(8)
-}
-
-interface CristalAcris {
-  slot: number
-  contexto: 'HOJA' | 'FIJO'
-  largoMm: number
-  anchoMm: number
-  moduloLargoMm: number
-  moduloAnchoMm: number
-}
-
-async function piezasAcristalamiento(
-  db: ReturnType<typeof crearDb>,
-  serieCodigo: string,
-  tamJunquillo: number,
-  cristales: CristalAcris[],
-): Promise<{ piezas: PiezaCortada[]; avisos: string[] }> {
-  const [conjunto] = await db.select({
-    tablaHojas: schema.conjuntos.tablaHojas,
-    tablaFijos: schema.conjuntos.tablaFijos,
-  }).from(schema.conjuntos).where(eq(schema.conjuntos.codigo, serieCodigo)).limit(1)
-  const piezas: PiezaCortada[] = []
-  const avisos: string[] = []
-  const anyadir = (articulo: string | null, largoMm: number, funcion: string) => {
-    if (!articulo || largoMm <= 0) return
-    piezas.push({
-      articuloCodigo: articulo, cantidad: 2, largoMm: Math.round(largoMm * 100) / 100,
-      formula: null, tipoCorte: null, anguloIzquierdo: null, anguloDerecho: null,
-      funcion, incidencia: null,
-    })
-  }
-  for (const cristal of cristales) {
-    const tabla = (cristal.contexto === 'FIJO' ? conjunto?.tablaFijos : conjunto?.tablaHojas) || null
-    const [fila] = tabla && tamJunquillo > 0
-      ? await db.select().from(schema.tacrisFilas)
-          .where(and(eq(schema.tacrisFilas.tabla, tabla), gte(schema.tacrisFilas.grosor, String(tamJunquillo))))
-          .orderBy(asc(schema.tacrisFilas.grosor)).limit(1)
-      : []
-    if (!fila) {
-      avisos.push(`ranura ${cristal.slot}: sin tabla de acristalamiento aplicable`)
-      continue
-    }
-    const tablaAjustes = cristal.contexto === 'FIJO' ? schema.junquilloAjustesFijo : schema.junquilloAjustes
-    const [ajuste] = await db.select().from(tablaAjustes)
-      .where(eq(tablaAjustes.serieCodigo, serieCodigo)).limit(1)
-    anyadir(fila.juntaExterior, cristal.moduloLargoMm, 'JEXT')
-    anyadir(fila.juntaExterior, cristal.moduloAnchoMm, 'JEXT')
-    anyadir(fila.juntaInterior, cristal.moduloLargoMm, 'JINT')
-    anyadir(fila.juntaInterior, cristal.moduloAnchoMm, 'JINT')
-    if (fila.junquillo && ajuste) {
-      anyadir(fila.junquillo, cristal.largoMm + Number(ajuste.ajusteLargoMm), 'JUNQ')
-      anyadir(fila.junquillo, cristal.anchoMm + Number(ajuste.ajusteAnchoMm), 'JUNQ')
-    } else if (fila.junquillo) {
-      avisos.push(`ranura ${cristal.slot}: sin ajuste medido de junquillo ${cristal.contexto.toLowerCase()}`)
-    }
-  }
-  return { piezas, avisos }
 }
 
 export type { GrupoOpcionesHerraje }
@@ -697,7 +641,11 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
       // del vidrio + ajuste MEDIDO del histórico. Artículos fuera del
       // catálogo (marcador V1000 "sin junquillos") no generan pieza.
       if (cristalesAcris.length) {
-          const calculoAcris = await piezasAcristalamiento(db, d.serieCodigo, tamJunqVidrio, cristalesAcris)
+          const calculoAcris = await piezasAcristalamiento(db, {
+            serieCodigo: d.serieCodigo,
+            tamJunquillo: tamJunqVidrio,
+            cristales: cristalesAcris,
+          })
           const piezasAcris = calculoAcris.piezas
           if (calculoAcris.avisos.length) {
             avisoAcris = `junquillos/juntas sin calcular: ${calculoAcris.avisos.join('; ')}`
