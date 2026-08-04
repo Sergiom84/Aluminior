@@ -31,8 +31,8 @@ import {
 } from './lineas/guardar-linea.ts'
 import { prepararManoObra, type SnapshotManoObra } from './mano-obra/index.ts'
 import {
-  opcionesHerrajeDe as opcionesDeHerrajeOfrecidas, resolverCosteDespiece,
-  resolverOpcionesHerraje, type GrupoOpcionesHerraje,
+  opcionesHerrajeDe as opcionesDeHerrajeOfrecidas, resolverCosteAcristalamiento,
+  resolverCosteDespiece, resolverOpcionesHerraje, type GrupoOpcionesHerraje,
 } from './estructuras/index.ts'
 import {
   comprobarPersistenciaCerramientos, prepararAltaCerramiento,
@@ -849,46 +849,15 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
               avisoAcris = `${valAcris.sinPrecio.length} artículos de acristalamiento sin precio en la tarifa`
             }
 
-            const costesAcris = await db.select({
-              articuloCodigo: schema.articulosCoste.articuloCodigo,
-              acabadoCodigo: schema.articulosCoste.acabadoCodigo,
-              coste: schema.articulosCoste.coste,
-            }).from(schema.articulosCoste)
-              .where(inArray(schema.articulosCoste.articuloCodigo, codigosAcris))
-            const costeAcris = new Map<string, number | null>()
-            {
-              const porArt = new Map<string, Map<string, number>>()
-              for (const c of costesAcris) {
-                let m = porArt.get(c.articuloCodigo)
-                if (!m) porArt.set(c.articuloCodigo, (m = new Map()))
-                if (!m.has(c.acabadoCodigo)) m.set(c.acabadoCodigo, Number(c.coste))
-              }
-              for (const [art, porAcabado] of porArt) {
-                if (d.acabadoCodigo && porAcabado.has(d.acabadoCodigo)) {
-                  costeAcris.set(art, porAcabado.get(d.acabadoCodigo)!)
-                  continue
-                }
-                const distintos = new Set(porAcabado.values())
-                costeAcris.set(art, distintos.size === 1 ? [...distintos][0] : null)
-              }
-            }
-            for (const pz of valorables) {
-              const coste = costeAcris.get(pz.articuloCodigo) ?? null
-              const esML = mapaAcris.get(pz.articuloCodigo)?.tipoMetraje === 'ML'
-              const costeTotal = coste !== null && pz.largoMm !== null
-                ? (esML ? coste * (pz.largoMm / 1000) * pz.cantidad : coste * pz.cantidad)
-                : null
-              piezasAPersistir.push({
-                articuloCodigo: pz.articuloCodigo,
-                cantidad: String(pz.cantidad),
-                largoCorteMm: pz.largoMm !== null ? String(pz.largoMm) : null,
-                anguloIzquierdo: null,
-                anguloDerecho: null,
-                funcion: pz.funcion,
-                costeUnitario: coste !== null ? String(coste) : null,
-                costeTotal: costeTotal !== null ? String(Math.round(costeTotal * 10000) / 10000) : null,
-              })
-            }
+            // Coste de junquillos y juntas. Su contrato NO es el del despiece:
+            // aquí el largo es obligatorio también por unidades y los ángulos
+            // se descartan. Ver `coste-acristalamiento.ts`.
+            piezasAPersistir.push(...await resolverCosteAcristalamiento(db, {
+              piezas: valorables,
+              codigos: codigosAcris,
+              mapa: mapaAcris,
+              acabadoCodigo: d.acabadoCodigo,
+            }))
           }
         }
 

@@ -17,70 +17,11 @@
  * caracterización dirán qué cambia.
  */
 
-import { inArray } from 'drizzle-orm'
-import { schema } from '@aluminior/db'
-import { resolverCosteCatalogo, type DatosArticuloPrecio } from '@aluminior/core/precios'
+import type { DatosArticuloPrecio } from '@aluminior/core/precios'
 import type { PiezaCortada } from '@aluminior/core/despiece'
 import type { ClienteEscritura } from '../cliente-db.ts'
 import type { PiezaDespiece } from '../lineas/guardar-linea.ts'
-
-/** Fila de `articulos_coste` tal y como la necesita el desempate. */
-export interface FilaCosteArticulo {
-  articuloCodigo: string
-  acabadoCodigo: string
-  coste: string
-}
-
-/**
- * Costes de los artículos del despiece, sin filtrar por acabado.
- *
- * Sin filtrar a propósito: el desempate necesita ver todas las filas para saber
- * si hay ambigüedad, y filtrar en SQL escondería justo el caso a detectar.
- */
-export async function leerCostesDespiece(
-  cliente: ClienteEscritura,
-  codigos: readonly string[],
-): Promise<FilaCosteArticulo[]> {
-  if (!codigos.length) return []
-  return cliente.select({
-    articuloCodigo: schema.articulosCoste.articuloCodigo,
-    acabadoCodigo: schema.articulosCoste.acabadoCodigo,
-    coste: schema.articulosCoste.coste,
-  }).from(schema.articulosCoste)
-    // `[...codigos]` porque `inArray` pide un array mutable; la entrada es
-    // `readonly` para dejar claro que este módulo no la toca.
-    .where(inArray(schema.articulosCoste.articuloCodigo, [...codigos]))
-}
-
-/**
- * Un coste por artículo, o `null` si no se puede decidir.
- *
- * El desempate es `resolverCosteCatalogo`, compartido con la mano de obra: un
- * solo criterio, no dos con el mismo nombre. Aquí se colapsa a `null` porque el
- * despiece no distingue «sin coste» de «ambiguo»; la mano de obra sí, y por eso
- * la función devuelve los tres estados.
- */
-export function costePorArticuloDe(
-  costes: readonly FilaCosteArticulo[],
-  acabadoAplicado: string | null,
-): Map<string, number | null> {
-  const porArticulo = new Map<string, FilaCosteArticulo[]>()
-  for (const fila of costes) {
-    const filas = porArticulo.get(fila.articuloCodigo) ?? []
-    filas.push(fila)
-    porArticulo.set(fila.articuloCodigo, filas)
-  }
-
-  const resultado = new Map<string, number | null>()
-  for (const [articuloCodigo, filas] of porArticulo) {
-    const resolucion = resolverCosteCatalogo(filas, acabadoAplicado)
-    resultado.set(
-      articuloCodigo,
-      resolucion.estado === 'RESUELTO' ? Number(resolucion.coste) : null,
-    )
-  }
-  return resultado
-}
+import { costePorArticuloDe, leerCostesArticulos } from './coste-articulos.ts'
 
 export interface EntradaPiezasDespiece {
   piezas: readonly PiezaCortada[]
@@ -137,7 +78,7 @@ export async function resolverCosteDespiece(
   cliente: ClienteEscritura,
   entrada: EntradaCosteDespiece,
 ): Promise<PiezaDespiece[]> {
-  const costes = await leerCostesDespiece(cliente, entrada.codigos)
+  const costes = await leerCostesArticulos(cliente, entrada.codigos)
   return prepararPiezasDespiece({
     piezas: entrada.piezas,
     mapa: entrada.mapa,

@@ -11,9 +11,7 @@
 import { describe, expect, it } from 'vitest'
 import type { DatosArticuloPrecio } from '@aluminior/core/precios'
 import type { PiezaCortada } from '@aluminior/core/despiece'
-import {
-  costePorArticuloDe, prepararPiezasDespiece, type FilaCosteArticulo,
-} from './coste-despiece.ts'
+import { prepararPiezasDespiece } from './coste-despiece.ts'
 
 const pieza = (
   articuloCodigo: string,
@@ -33,39 +31,6 @@ const articulo = (codigo: string, tipoMetraje: string): DatosArticuloPrecio => (
 
 const mapaDe = (...arts: DatosArticuloPrecio[]) => new Map(arts.map((a) => [a.codigo, a]))
 const costesDe = (...pares: [string, number | null][]) => new Map(pares)
-
-const fila = (
-  articuloCodigo: string, acabadoCodigo: string, coste: string,
-): FilaCosteArticulo => ({ articuloCodigo, acabadoCodigo, coste })
-
-describe('coste elegido por artículo', () => {
-  it('agrupa por artículo y aplica el desempate compartido', () => {
-    const costes = costePorArticuloDe(
-      [fila('A', 'UNI', '0.5000'), fila('B', 'L', '1.2500')], 'L',
-    )
-    expect(costes.get('A')).toBe(0.5)
-    expect(costes.get('B')).toBe(1.25)
-  })
-
-  // El despiece no distingue «sin coste» de «ambiguo»: los dos son null. La
-  // mano de obra sí los distingue, y por eso el resolutor devuelve tres estados.
-  it('colapsa el coste ambiguo a null', () => {
-    const costes = costePorArticuloDe(
-      [fila('A', 'L', '0.5000'), fila('A', 'ANOD', '0.9000')], null,
-    )
-    expect(costes.get('A')).toBeNull()
-  })
-
-  it('un artículo sin filas no entra en el mapa', () => {
-    expect(costePorArticuloDe([], 'L').has('A')).toBe(false)
-  })
-
-  // `resolverCosteCatalogo` normaliza a la escala de la columna y aquí se
-  // convierte a number: `0.5000` acaba siendo `0.5`, y así se persiste.
-  it('convierte a number, perdiendo los ceros de escala', () => {
-    expect(costePorArticuloDe([fila('A', 'UNI', '0.5000')], 'UNI').get('A')).toBe(0.5)
-  })
-})
 
 describe('piezas preparadas para persistir', () => {
   it('ML cobra metros: coste × largo/1000 × cantidad', () => {
