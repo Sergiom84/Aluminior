@@ -1,6 +1,6 @@
 # Aluminior — traspaso para una conversación nueva
 
-Actualizado: 3 de agosto de 2026.
+Actualizado: 4 de agosto de 2026.
 
 Este es el punto de entrada vigente. Leer después `AGENTS.md`,
 `ARQUITECTURA.md` y `PARIDAD-PRODUCTOR.md`. `PLAN.md` y `ENTREGA.md` contienen
@@ -9,8 +9,11 @@ superadas por las decisiones resumidas aquí.
 
 ## 0. Estado del repositorio, primero
 
-- Rama `main` con **6 commits locales por delante de `origin/main`**, que sigue
-  en `01a0613`. **Nada se ha empujado.** Los dos últimos son T.68.
+- Rama `main` con **11 commits locales por delante de `origin/main`**, que sigue
+  en `01a0613`. **Nada se ha empujado.** Los cinco últimos son la descomposición
+  T.69 de `acciones.ts`: `7e53cb4` herraje (T.69.1), `3a8a092` cierre del pool de
+  migraciones, `92a1b50` coste del despiece (T.69.2), `ee62703` coste del
+  acristalamiento (T.69.3) y el de resolución de perfiles (T.69.4).
 - **La migración `0018_pale_hulk` sólo existe en local y se ha aplicado
   únicamente al Postgres efímero de Docker. NO está en el Supabase remoto.**
   Aplicarla allí es una decisión pendiente, con alcance explícito y prueba
@@ -315,6 +318,59 @@ con su motivo—.
 edición de líneas ya guardadas. Mientras la base no exista, la línea `GRUPO`
 seguirá sin precio aunque la mano de obra manual se valore bien.
 
+## 6 ter. T.69 — descomposición de `acciones.ts` (4/8/2026)
+
+Cuatro extracciones consecutivas, una por unidad revisable, **sin cambiar
+comportamiento** salvo donde se declara. `acciones.ts` baja de **1.121 a 860
+líneas**. Los módulos nuevos viven en
+`packages/web/app/dashboard/presupuestos/_lib/estructuras/`, con su punto de
+entrada `index.ts`, y cada uno tiene pruebas de caracterización propias.
+
+| Unidad | Commit | Módulo |
+|---|---|---|
+| T.69.1 opciones de herraje | `7e53cb4` | `herraje.ts` |
+| — cierre del pool de migraciones | `3a8a092` | `pruebas/migrar.ts` |
+| T.69.2 coste del despiece | `92a1b50` | `coste-despiece.ts` |
+| T.69.3 coste del acristalamiento | `ee62703` | `coste-articulos.ts`, `coste-acristalamiento.ts` |
+| T.69.4 resolución de perfiles | este | `resolucion-perfiles.ts`, `componentes-disenyo.ts` |
+
+**T.69.4, la mayor.** Saca la resolución genérico → perfil real (anexo J):
+lectura de delegaciones, expansión de la cadena de conjuntos, construcción de
+resoluciones, detección de artículos genéricos por descripción `(**%`,
+aplicación de variante de acristalamiento, y el reparto de lo que no se resuelve
+entre perfil y asociado. Devuelve un resultado explícito
+—`plantillaResuelta`, `genericos`, `sinResolver`, `sinResolverAsoc`,
+`variantesAplicadas`— en vez de mutar variables sueltas dentro de un `map`.
+`COMPONENTE_CRISTAL` y `COMPONENTES_HERRAJE` pasan a `componentes-disenyo.ts`,
+que son datos con su evidencia y los necesitan dos frentes.
+
+**Pruebas: 335 en total** (129 `core`, 47 `db`, 9 `etl`, 150 `web`). Typecheck de
+los cuatro workspaces limpio.
+
+### Comportamientos CONSERVADOS y no decididos
+
+Los cinco estaban dentro de `acciones.ts` y ahora están escritos y fijados por
+pruebas. Ninguno se corrigió: cambiar cualquiera mueve clasificaciones o
+importes y necesita su propia unidad con evidencia.
+
+- **Los avisos cuentan artículos únicos aunque el texto dice «ranuras».**
+  `sinResolver` y `sinResolverAsoc` son conjuntos de `articuloCodigo`: el mismo
+  genérico en cinco ranuras cuenta uno. El mensaje subestima; la línea queda sin
+  valorar igual.
+- **La sustitución puede afectar a un artículo real.** `genericos` gobierna sólo
+  los avisos; la sustitución se intenta para todo componente con
+  `componenteDisenyo`, así que un artículo ya real se sustituye si la serie
+  resuelve su componente.
+- **`esAsociado` distingue mayúsculas.** `inf*` y `Acc*` van a asociado; `INF` y
+  `acc` caen en perfil.
+- **El CRISTAL nunca lo resuelve la serie.** La salida ocurre antes de consultar
+  la cadena: aunque existiera resolución para el componente `'1'`, no se
+  aplicaría. Es lo que T.22 corrigió, y evita que toda línea con cristal quede
+  sin valorar.
+- **Un genérico sin `componenteDisenyo` entra como perfil sin resolver.** No hay
+  ranura que resolver, pero termina en el mismo aviso que un perfil que la serie
+  no resuelve.
+
 ## 7. Arquitectura modular obligatoria
 
 El usuario quiere evolucionar por módulos pequeños para que una modificación no
@@ -329,8 +385,8 @@ afecte áreas independientes. Esta regla ya está incorporada en `AGENTS.md`,
 - No trocear mecánicamente: extraer responsabilidades con interfaces y pruebas.
 
 Deuda prioritaria: `packages/web/app/dashboard/presupuestos/_lib/acciones.ts`
-supera las mil líneas y mezcla demasiados casos de uso. Antes de añadir edición
-o valoración de cerramientos, extraer incrementalmente:
+está en **860 líneas** tras T.69 y todavía mezcla varios casos de uso. Antes de
+añadir edición o valoración de cerramientos, extraer incrementalmente:
 
 1. `cerramientos/validacion.ts` — hecho;
 2. `cerramientos/persistir-cerramiento.ts` — hecho;
@@ -373,8 +429,10 @@ descripción agregada `descripcionCerramiento`. Ambos se reexportan desde
 
 ### Ahora — desbloquear T.68 con el titular
 
-Tres preguntas enviadas a Javi, **sin respuesta todavía**. No conviene anticipar
-ninguna: cada una cambia el modelo de datos o la presentación.
+Tres preguntas enviadas a Javi, **sin respuesta al 4 de agosto de 2026**. No
+conviene anticipar ninguna: cada una cambia el modelo de datos o la
+presentación. La descomposición T.69 avanzó en paralelo justamente porque no
+depende de ellas.
 
 1. **¿Se aplica descuento de línea a la mano de obra?** En el original es línea
    hija con su propio `DescuentoPorc`. No medido.
@@ -388,11 +446,20 @@ ninguna: cada una cambia el modelo de datos o la presentación.
 
 ### Ahora — deuda que toca antes de la siguiente función
 
-`acciones.ts` sigue en 1.102 líneas y continúa siendo **deuda prioritaria**. T.68
-extrajo su parte a `_lib/mano-obra/`, así que el archivo dejó de crecer, pero
-sigue muy por encima del límite de 400. Antes de añadir edición de líneas o
-valoración agregada, cerrar los puntos 4 y 5 del apartado 7: acciones finas que
-sólo autentiquen, deleguen y revaliden.
+`acciones.ts` está en **860 líneas** y sigue siendo **deuda prioritaria**: T.68 lo
+dejó de hacer crecer y T.69 le quitó 261 líneas en cuatro extracciones, pero
+continúa por encima del límite de 400.
+
+**Siguiente unidad recomendada: separar el vidrio y los junquillos**, que es lo
+que queda de la ruta de dinero dentro de la acción (anexos L, M, N, Q). Ahí hay
+geometría —emparejamiento del cristal con su alojamiento, galces, medidas de
+módulo— y aritmética de importes, así que exige **caracterización previa**: fijar
+con pruebas lo que hace hoy, incluida la aritmética en `number`, antes de mover
+nada. Es la misma secuencia que funcionó en T.69.1–T.69.4, y la única forma de
+que la extracción sea revisable de una pieza.
+
+Después, cerrar los puntos 4 y 5 del apartado 7: acciones finas que sólo
+autentiquen, deleguen y revaliden.
 
 ### Ahora — cerramientos, en paralelo
 
@@ -454,6 +521,12 @@ sólo autentiquen, deleguen y revaliden.
   elegía uno; es lo correcto, pero conviene saberlo antes de que ocurra.
 - El «~79%» del anexo T.32.2 **no se ha reproducido y no debe citarse**. Lo
   demostrado con denominador explícito es el 68,4%.
+- **Cinco comportamientos de la resolución de perfiles están conservados, no
+  decididos** (§6 ter): los avisos cuentan artículos aunque digan «ranuras», la
+  sustitución puede afectar a un artículo real, `esAsociado` distingue
+  mayúsculas, el CRISTAL nunca se resuelve por serie, y un genérico sin
+  componente entra como perfil sin resolver. Están fijados por pruebas: al
+  cambiar cualquiera, las pruebas dirán exactamente qué se mueve.
 
 ## 10. Prompt corto para la conversación nueva
 
@@ -462,8 +535,13 @@ sólo autentiquen, deleguen y revaliden.
 > paridad funcional con Productor y la regla «todo o sin valorar». T.68 dejó el
 > contrato decimal, la valoración pura y la tabla `lineas_mano_obra` con su
 > migración 0018 **sólo local** y la mano de obra adicional funcionando de punta
-> a punta. No apliques la 0018 en remoto sin alcance explícito, no metas
-> `parseFloat` ni `Number()` en el camino de horas, y antes de añadir función
-> nueva reduce `acciones.ts`, que sigue en 1.102 líneas. `FABRICACION_BASE` y la
-> edición de líneas guardadas siguen fuera; tres preguntas al titular están sin
-> responder y no deben anticiparse.
+> a punta. T.69 descompuso `acciones.ts` de 1.121 a 860 líneas en cuatro
+> extracciones bajo `_lib/estructuras/`, con 335 pruebas y cinco comportamientos
+> conservados y declarados en §6 ter que no deben cambiarse de refilón. No
+> apliques la 0018 en remoto sin alcance explícito, no metas `parseFloat` ni
+> `Number()` en el camino de horas, y sigue reduciendo `acciones.ts`: la
+> siguiente unidad es separar vidrio y junquillos, caracterizando antes de mover.
+> `FABRICACION_BASE` y la edición de líneas guardadas siguen fuera; tres
+> preguntas al titular están sin responder y no deben anticiparse. `main` queda
+> 11 commits por delante de `origin/main` (`01a0613`), sin push, y `design-qa.md`
+> es ajeno a esta unidad.

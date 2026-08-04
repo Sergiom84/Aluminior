@@ -1,11 +1,11 @@
 /**
  * Punto de entrada del módulo de estructuras del presupuesto.
  *
- * Herraje (T.69.1), coste del despiece (T.69.2) y coste del acristalamiento
- * (T.69.3). La resolución de perfiles y el cálculo geométrico del vidrio y los
- * junquillos siguen dentro de `acciones.ts` y se extraerán de uno en uno,
- * verificando entre cada paso: es la ruta de dinero con más lógica del proyecto
- * y un movimiento grande no sería revisable.
+ * Herraje (T.69.1), coste del despiece (T.69.2), coste del acristalamiento
+ * (T.69.3) y resolución genérico -> perfil real (T.69.4). El cálculo geométrico
+ * del vidrio y los junquillos sigue dentro de `acciones.ts` y se extraerá
+ * después, verificando entre cada paso: es la ruta de dinero con más lógica del
+ * proyecto y un movimiento grande no sería revisable.
  *
  * Sale sólo lo que consume `acciones.ts`. Del coste del despiece, únicamente el
  * orquestador: la lectura, la agrupación y la preparación de piezas quedan
@@ -18,3 +18,7 @@ export { resolverCosteAcristalamiento } from './coste-acristalamiento.ts'
 export {
   opcionesHerrajeDe, resolverOpcionesHerraje, type GrupoOpcionesHerraje,
 } from './herraje.ts'
+export { resolverPerfiles } from './resolucion-perfiles.ts'
+// El CRISTAL lo necesita también la vía del acristalamiento, que sigue en
+// `acciones.ts`. La lista de herraje no sale: hoy sólo la usa la clasificación.
+export { COMPONENTE_CRISTAL } from './componentes-disenyo.ts'

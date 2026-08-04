@@ -20,7 +20,6 @@ import {
   valorarDespiece, medidasVidrio, metrajeVidrioM2, lineaValorable,
   type DatosArticuloPrecio,
 } from '@aluminior/core/precios'
-import { expandirCadena, construirResoluciones, resolverComponente } from '@aluminior/core/series'
 import { crearClienteServidor } from '../../../../lib/supabase/servidor.ts'
 import { actualizarTotales } from './totales.ts'
 import { registrarFallo } from './errores.ts'
@@ -31,8 +30,9 @@ import {
 } from './lineas/guardar-linea.ts'
 import { prepararManoObra, type SnapshotManoObra } from './mano-obra/index.ts'
 import {
-  opcionesHerrajeDe as opcionesDeHerrajeOfrecidas, resolverCosteAcristalamiento,
-  resolverCosteDespiece, resolverOpcionesHerraje, type GrupoOpcionesHerraje,
+  COMPONENTE_CRISTAL, opcionesHerrajeDe as opcionesDeHerrajeOfrecidas,
+  resolverCosteAcristalamiento, resolverCosteDespiece, resolverOpcionesHerraje,
+  resolverPerfiles, type GrupoOpcionesHerraje,
 } from './estructuras/index.ts'
 import {
   comprobarPersistenciaCerramientos, prepararAltaCerramiento,
@@ -55,12 +55,6 @@ async function usuarioActual(): Promise<string | null> {
     return null
   }
 }
-
-/**
- * `DisComponente` de la ranura de CRISTAL. No la resuelve la serie: la elige
- * el usuario y se valora por la vía del acristalamiento (anexo J, paso 4).
- */
-const COMPONENTE_CRISTAL = '1'
 
 export type Estado =
   | { ok: true; id: string; mensaje?: string }
@@ -393,127 +387,19 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
         .where(eq(schema.estructuraComponentes.estructuraCodigo, d.codigo))
 
       // --- Resolución genérico -> perfil real (PLAN.md anexo J) ---
-      // Cadena de conjuntos de la serie (la tabla completa de delegaciones es
-      // pequeña: ~700 filas) y resoluciones de esos conjuntos.
-      const delegacionesFilas = await db.select({
-        conjuntoCodigo: schema.conjuntoDelegaciones.conjuntoCodigo,
-        delegadoCodigo: schema.conjuntoDelegaciones.delegadoCodigo,
-      }).from(schema.conjuntoDelegaciones)
-      const delegaciones = new Map<string, string[]>()
-      for (const f of delegacionesFilas) {
-        const lista = delegaciones.get(f.conjuntoCodigo) ?? []
-        lista.push(f.delegadoCodigo)
-        delegaciones.set(f.conjuntoCodigo, lista)
-      }
-      const cadena = expandirCadena(d.serieCodigo, delegaciones)
-      const resolucionesFilas = await db.select({
-        conjuntoCodigo: schema.conjuntoResoluciones.conjuntoCodigo,
-        componente: schema.conjuntoResoluciones.componente,
-        articuloCodigo: schema.conjuntoResoluciones.articuloCodigo,
-      }).from(schema.conjuntoResoluciones)
-        .where(inArray(schema.conjuntoResoluciones.conjuntoCodigo, cadena))
-      const resoluciones = construirResoluciones(cadena, resolucionesFilas)
-
-      // Qué artículos de la plantilla son ranuras genéricas (descripción
-      // "(**…**)"): son los que DEBEN sustituirse para poder valorar.
-      const codigosPlantilla = [...new Set(plantilla.map((c) => c.articuloCodigo))]
-      const genericos = new Set(
-        (codigosPlantilla.length
-          ? await db.select({ codigo: schema.articulos.codigo })
-              .from(schema.articulos)
-              .where(and(
-                inArray(schema.articulos.codigo, codigosPlantilla),
-                sql`${schema.articulos.descripcion} LIKE '(**%'`,
-              ))
-          : []
-        ).map((a) => a.codigo),
-      )
-
-      // La empresa monta doble cristal en el 100% del histórico; la variante
-      // es una elección visible (se informa en el aviso si interviene).
-      const VARIANTE = d.varianteAcristalamiento
-      let variantesAplicadas = 0
-      // Dos clases de ranura sin resolver, y conviene no mezclarlas en el
-      // aviso: los PERFILES son el frente del anexo J (mecanismo demostrado),
-      // los ASOCIADOS —herrajes, escuadras, mano de obra— son el del anexo S,
-      // que sigue abierto. Un usuario que lee "20 ranuras que la serie no
-      // resuelve" no puede saber cuál de los dos le está bloqueando la línea.
-      const sinResolver = new Set<string>()
-      const sinResolverAsoc = new Set<string>()
-      const esAsociado = (fn: string | null) =>
-        !!fn && (fn.startsWith('inf') || fn.startsWith('Acc'))
-      // Herraje/asociado por `componente_disenyo` (anexo T.27). La heurística de
-      // `funcion` (inf*/Acc*) captura los asociados de mano de obra e informes,
-      // pero deja fuera compases, mecanismos, cremonas y correderas, que llevan
-      // `funcion` HV/HH igual que una hoja de perfil y por eso se colaban en el
-      // bucket de PERFIL (inflando el aviso "N ranuras de perfil que la serie no
-      // resuelve" con herraje que NUNCA se resuelve por ConjuntosLin). Es el
-      // mismo defecto que T.22 corrigió para el cristal (componente '1').
+      // La regla vive en `_lib/estructuras/resolucion-perfiles.ts`: qué lee de
+      // la serie, qué artículo es genérico y cómo se reparte lo que no se
+      // resuelve entre perfil y asociado. Aquí sólo se consume el resultado.
       //
-      // No hay señal estructural limpia en la plantilla que los separe (medido
-      // en T.24–T.26 y en scripts/medir-criterio-herraje.mjs): StFabricadoSN,
-      // AsociadoA, NoComputarCosteSN y Seccion son constantes en herraje Y en
-      // perfil; `funcion` HV/HH solapa; y "artículo genérico" o "no resuelve por
-      // la cadena" clasificarían como herraje cualquier perfil no resuelto —que
-      // es justo el hueco que no se debe ocultar—. Por eso se hardcodea la lista
-      // medida: HERRAJE = componente cuyas piezas de instancia son TODAS
-      // Articulo=0 en el oráculo (se valoran por el frente de asociados, anexo
-      // S, no por perfil). La regla es ADITIVA a `esAsociado`: solo mueve
-      // herraje de perfil→asociado, nunca a la inversa, así que no puede
-      // enmascarar un hueco de perfil real (un código fuera de la lista sigue
-      // cayendo al aviso ruidoso de perfil: falla en la dirección segura).
-      // Marcados (†) los de muestra fina (≤6 piezas en el oráculo): confianza
-      // menor, pero coherentes con su familia (OB*/EK*/…).
-      const COMPONENTES_HERRAJE = new Set<string>([
-        // correderas
-        '222', '223', '224', '225', '226', '227', '228', '229',
-        // oscilobatiente (compás/mecanismo/cremona)
-        'OBC', 'OBCR', 'OBM', 'OBP', 'OBPH',
-        // proyectante
-        'PRC', 'PRPH', 'PRPV',
-        // eje / kit (EKEE†, EKEF†)
-        'EKCC', 'EKEE', 'EKEF',
-        // herrajes de hoja / cierres / mecanismos varios
-        '39', '50', '51', '52', '53', '55', '56', '57', '58', '58R', '59',
-        '71', '130', '133', '134', 'EHC', 'EHH', 'EHF', 'EHFH', 'EMBF',
-        'CHC', 'CHH', 'JA', 'JB', 'JD', 'JI',
-        // muestra fina (†, ≤6 piezas): 30, 116, 135, 139, 143, 51MA, EHF, EHFH, EKEE, EKEF
-        '30', '116', '135', '139', '143', '51MA',
-      ])
-      const anotarSinResolver = (
-        c: { articuloCodigo: string; funcion: string | null; componenteDisenyo: string | null },
-      ) => {
-        if (!genericos.has(c.articuloCodigo)) return
-        if (esAsociado(c.funcion) ||
-          (c.componenteDisenyo !== null && COMPONENTES_HERRAJE.has(c.componenteDisenyo))) {
-          sinResolverAsoc.add(c.articuloCodigo)
-        } else {
-          sinResolver.add(c.articuloCodigo)
-        }
-      }
-
-      const plantillaResuelta = plantilla.map((c) => {
-        if (!c.componenteDisenyo) {
-          anotarSinResolver(c)
-          return c
-        }
-        // El componente 1 es el CRISTAL, y la serie no tiene que resolverlo:
-        // lo elige el usuario y se valora por la vía del acristalamiento
-        // (anexos L, M, N, Q). El paso 4 del anexo J ya lo decía. Contarlo
-        // aquí metía un `problema` en TODA línea con cristal y la dejaba sin
-        // valorar: 1.864 de 7.000 apariciones del histórico (T.21.3).
-        //
-        // Esto NO se traga fallos de esa vía: si el acristalamiento no se
-        // puede calcular o valorar, `avisoVidrio` / `avisoAcris` siguen
-        // entrando en `problemas` más abajo, igual que antes.
-        if (c.componenteDisenyo === COMPONENTE_CRISTAL) return c
-        const res = resolverComponente(c.componenteDisenyo, resoluciones, VARIANTE)
-        if (res.articuloCodigo) {
-          if (res.via === 'variante') variantesAplicadas++
-          return { ...c, articuloCodigo: res.articuloCodigo }
-        }
-        anotarSinResolver(c)
-        return c
+      // La empresa monta doble cristal en el 100% del histórico; la variante es
+      // una elección visible (se informa en el aviso si interviene).
+      const VARIANTE = d.varianteAcristalamiento
+      const {
+        plantillaResuelta, genericos, sinResolver, sinResolverAsoc, variantesAplicadas,
+      } = await resolverPerfiles(db, {
+        serieCodigo: d.serieCodigo,
+        plantilla,
+        variante: VARIANTE,
       })
 
       const cotasFilas = await db.select({
