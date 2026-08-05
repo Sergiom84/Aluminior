@@ -17,7 +17,7 @@ import {
   type ComponentePlantilla, type NodoDisenyo,
 } from '@aluminior/core/despiece'
 import {
-  valorarDespiece, medidasVidrio, metrajeVidrioM2, lineaValorable,
+  valorarDespiece, medidasVidrio, lineaValorable,
   type DatosArticuloPrecio,
 } from '@aluminior/core/precios'
 import { crearClienteServidor } from '../../../../lib/supabase/servidor.ts'
@@ -32,7 +32,7 @@ import { prepararManoObra, type SnapshotManoObra } from './mano-obra/index.ts'
 import {
   COMPONENTE_CRISTAL, opcionesHerrajeDe as opcionesDeHerrajeOfrecidas,
   piezasAcristalamiento, resolverCosteAcristalamiento, resolverCosteDespiece,
-  resolverOpcionesHerraje, resolverPerfiles,
+  resolverOpcionesHerraje, resolverPerfiles, resolverValoracionVidrio,
   type CristalAcris, type GrupoOpcionesHerraje,
 } from './estructuras/index.ts'
 import {
@@ -449,6 +449,13 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
         const tipos = new Set(ranuras.map((r) => r.tipoHojaDisenyo === -1 ? 'FIJO' : 'HOJA'))
         const esMixta = tipos.size > 1
         tamJunqVidrio = Number((vidrio.tamJunquilloGoma ?? '').replace(',', '.')) || 0
+        // Múltiplos y mínimo del artículo. Las dos rutas los leían por separado
+        // del mismo `vidrio`, con el mismo código: una sola lectura.
+        const reglasMetrajeVidrio = {
+          metrajeMinimo: vidrio.metrajeMinimo === null ? null : Number(vidrio.metrajeMinimo),
+          multiploLargoCm: vidrio.metrajeMultiploLargo === null ? null : Number(vidrio.metrajeMultiploLargo),
+          multiploAnchoCm: vidrio.metrajeMultiploAncho === null ? null : Number(vidrio.metrajeMultiploAncho),
+        }
 
         if (esMixta) {
           const nodosFilas = await db.select().from(schema.estructuraDisenoNodos)
@@ -476,39 +483,21 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
             avisoVidrio = `vidrio sin calcular: ranura ${calculo.slot}, ${calculo.motivo}`
           } else {
             cristalesAcris = calculo.vidrios
-            const opcionesMetraje = {
-              metrajeMinimo: vidrio.metrajeMinimo === null ? null : Number(vidrio.metrajeMinimo),
-              multiploLargoCm: vidrio.metrajeMultiploLargo === null ? null : Number(vidrio.metrajeMultiploLargo),
-              multiploAnchoCm: vidrio.metrajeMultiploAncho === null ? null : Number(vidrio.metrajeMultiploAncho),
-            }
-            const metrajes = calculo.vidrios.map((v) => metrajeVidrioM2(v.largoMm, v.anchoMm, opcionesMetraje))
-            const [pvpVidrio] = (await db.execute<{ precio: string }>(sql`
-              SELECT precio FROM articulos_pvp
-              WHERE articulo_codigo = ${d.vidrioCodigo} AND tarifa = ${presupuesto.tarifa}
-              ORDER BY (acabado_codigo = ${d.acabadoCodigo ?? ''}) DESC,
-                       (acabado_codigo = '*') DESC, acabado_codigo
-              LIMIT 1
-            `)) as unknown as { precio: string }[]
-            if (!pvpVidrio) {
-              avisoVidrio = `vidrio sin valorar: ${d.vidrioCodigo} no tiene precio en la tarifa ${presupuesto.tarifa}`
+            // Un cristal por alojamiento, cada uno con su medida: cantidad 1.
+            const valoracion = await resolverValoracionVidrio(db, {
+              vidrioCodigo: d.vidrioCodigo,
+              cristales: calculo.vidrios.map((v) => ({
+                largoMm: v.largoMm, anchoMm: v.anchoMm, cantidad: 1,
+              })),
+              reglasMetraje: reglasMetrajeVidrio,
+              tarifa: presupuesto.tarifa,
+              acabadoCodigo: d.acabadoCodigo,
+            })
+            if (!valoracion.ok) {
+              avisoVidrio = valoracion.aviso
             } else {
-              precioUnitario = Math.round((precioUnitario + metrajes.reduce((a, b) => a + b, 0) * Number(pvpVidrio.precio)) * 100) / 100
-              const [costeVidrio] = (await db.execute<{ coste: string }>(sql`
-                SELECT coste FROM articulos_coste WHERE articulo_codigo = ${d.vidrioCodigo}
-                ORDER BY (acabado_codigo = ${d.acabadoCodigo ?? ''}) DESC,
-                         (acabado_codigo = '*') DESC, acabado_codigo LIMIT 1
-              `)) as unknown as { coste: string }[]
-              const costeM2 = costeVidrio ? Number(costeVidrio.coste) : null
-              for (let i = 0; i < calculo.vidrios.length; i++) {
-                const v = calculo.vidrios[i]
-                piezasAPersistir.push({
-                  articuloCodigo: d.vidrioCodigo, cantidad: '1',
-                  largoCorteMm: String(v.largoMm), anchoCorteMm: String(v.anchoMm),
-                  anguloIzquierdo: null, anguloDerecho: null, funcion: 'VIDRIO',
-                  costeUnitario: costeM2 === null ? null : String(costeM2),
-                  costeTotal: costeM2 === null ? null : String(Math.round(costeM2 * metrajes[i] * 10000) / 10000),
-                })
-              }
+              precioUnitario = Math.round((precioUnitario + valoracion.importe) * 100) / 100
+              piezasAPersistir.push(...valoracion.piezas)
             }
           }
         } else {
@@ -588,45 +577,22 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
               if (cristalesAcris.length !== ranuras.length) {
                 avisoAcris = 'junquillos/juntas sin calcular: fórmulas de módulo incompletas'
               }
-              const metraje = metrajeVidrioM2(dims.largoMm, dims.anchoMm, {
-                metrajeMinimo: vidrio.metrajeMinimo === null ? null : Number(vidrio.metrajeMinimo),
-                multiploLargoCm: vidrio.metrajeMultiploLargo === null ? null : Number(vidrio.metrajeMultiploLargo),
-                multiploAnchoCm: vidrio.metrajeMultiploAncho === null ? null : Number(vidrio.metrajeMultiploAncho),
+              // Un único par de medidas repetido por cristal: una entrada con
+              // la cuenta como cantidad.
+              const valoracion = await resolverValoracionVidrio(db, {
+                vidrioCodigo: d.vidrioCodigo,
+                cristales: [{
+                  largoMm: dims.largoMm, anchoMm: dims.anchoMm, cantidad: nCristales,
+                }],
+                reglasMetraje: reglasMetrajeVidrio,
+                tarifa: presupuesto.tarifa,
+                acabadoCodigo: d.acabadoCodigo,
               })
-              const [pvpVidrio] = (await db.execute<{ precio: string }>(sql`
-                SELECT precio FROM articulos_pvp
-                WHERE articulo_codigo = ${d.vidrioCodigo} AND tarifa = ${presupuesto.tarifa}
-                ORDER BY (acabado_codigo = ${d.acabadoCodigo ?? ''}) DESC,
-                         (acabado_codigo = '*') DESC, acabado_codigo
-                LIMIT 1
-              `)) as unknown as { precio: string }[]
-              if (!pvpVidrio) {
-                avisoVidrio = `vidrio sin valorar: ${d.vidrioCodigo} no tiene precio en la tarifa ${presupuesto.tarifa}`
+              if (!valoracion.ok) {
+                avisoVidrio = valoracion.aviso
               } else {
-                const importeVidrio = nCristales * metraje * Number(pvpVidrio.precio)
-                precioUnitario = Math.round((precioUnitario + importeVidrio) * 100) / 100
-
-                const [costeVidrio] = (await db.execute<{ coste: string }>(sql`
-                  SELECT coste FROM articulos_coste
-                  WHERE articulo_codigo = ${d.vidrioCodigo}
-                  ORDER BY (acabado_codigo = ${d.acabadoCodigo ?? ''}) DESC,
-                           (acabado_codigo = '*') DESC, acabado_codigo
-                  LIMIT 1
-                `)) as unknown as { coste: string }[]
-                const costeM2 = costeVidrio ? Number(costeVidrio.coste) : null
-                piezasAPersistir.push({
-                  articuloCodigo: d.vidrioCodigo,
-                  cantidad: String(nCristales),
-                  largoCorteMm: String(dims.largoMm),
-                  anchoCorteMm: String(dims.anchoMm),
-                  anguloIzquierdo: null,
-                  anguloDerecho: null,
-                  funcion: 'VIDRIO',
-                  costeUnitario: costeM2 !== null ? String(costeM2) : null,
-                  costeTotal: costeM2 !== null
-                    ? String(Math.round(costeM2 * metraje * nCristales * 10000) / 10000)
-                    : null,
-                })
+                precioUnitario = Math.round((precioUnitario + valoracion.importe) * 100) / 100
+                piezasAPersistir.push(...valoracion.piezas)
               }
             }
           }
