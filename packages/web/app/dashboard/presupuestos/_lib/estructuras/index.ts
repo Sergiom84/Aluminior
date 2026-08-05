@@ -31,6 +31,7 @@ export { piezasAcristalamiento, type CristalAcris } from './junquillos.ts'
 // Sólo el orquestador: `prepararValoracionVidrio` es la parte pura y sus
 // pruebas la importan de su fichero. Quien valore vidrio debe leer catálogo.
 export { resolverValoracionVidrio } from './valoracion-vidrio.ts'
+export { emparejarVidrio, type ContextoVidrio } from './emparejamiento-vidrio.ts'
 // El CRISTAL lo necesita también la vía del acristalamiento, que sigue en
 // `acciones.ts`. La lista de herraje no sale: hoy sólo la usa la clasificación.
 export { COMPONENTE_CRISTAL } from './componentes-disenyo.ts'

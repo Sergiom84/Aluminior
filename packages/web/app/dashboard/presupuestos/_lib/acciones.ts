@@ -30,10 +30,10 @@ import {
 } from './lineas/guardar-linea.ts'
 import { prepararManoObra, type SnapshotManoObra } from './mano-obra/index.ts'
 import {
-  COMPONENTE_CRISTAL, opcionesHerrajeDe as opcionesDeHerrajeOfrecidas,
+  COMPONENTE_CRISTAL, emparejarVidrio, opcionesHerrajeDe as opcionesDeHerrajeOfrecidas,
   piezasAcristalamiento, resolverCosteAcristalamiento, resolverCosteDespiece,
   resolverOpcionesHerraje, resolverPerfiles, resolverValoracionVidrio,
-  type CristalAcris, type GrupoOpcionesHerraje,
+  type ContextoVidrio, type CristalAcris, type GrupoOpcionesHerraje,
 } from './estructuras/index.ts'
 import {
   comprobarPersistenciaCerramientos, prepararAltaCerramiento,
@@ -430,7 +430,7 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
       let dimsVidrio: { largoMm: number; anchoMm: number } | null = null
       let tamJunqVidrio = 0
       /** HOJA = vidrio alojado en hojas; FIJO = en cerco fijo. */
-      let contextoVidrio: 'HOJA' | 'FIJO' | null = null
+      let contextoVidrio: ContextoVidrio | null = null
       let cristalesAcris: CristalAcris[] = []
       let avisoAcris: string | null = null
       if (d.vidrioCodigo) {
@@ -502,52 +502,15 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
           }
         } else {
 
-        // Emparejamiento inequívoco del vidrio con su alojamiento:
-        //  - con hojas (HV/HH): vidrio de HOJA, descontado del corte de hoja
-        //  - sin hojas: vidrio de FIJO, descontado del corte del CERCO (MV/MH)
-        const hvs = despiece.piezas.filter((pz) => pz.funcion === 'HV' && pz.largoMm !== null)
         const nCristales = plantillaResuelta.filter((c) => c.componenteDisenyo === COMPONENTE_CRISTAL).length
+        const emparejamiento = emparejarVidrio(despiece.piezas, nCristales)
 
-        let perfilRef: string | null = null
-        let corteV: number | null = null
-        let corteH: number | null = null
-        if (hvs.length > 0) {
-          contextoVidrio = 'HOJA'
-          const artsHV = new Set(hvs.map((pz) => pz.articuloCodigo))
-          const cortesHV = new Set(hvs.map((pz) => pz.largoMm))
-          perfilRef = artsHV.size === 1 ? [...artsHV][0] : null
-          const cortesHH = new Set(
-            despiece.piezas
-              .filter((pz) => pz.funcion === 'HH' && pz.articuloCodigo === perfilRef && pz.largoMm !== null)
-              .map((pz) => pz.largoMm),
-          )
-          // Un cristal por hoja: si la estructura mezcla hojas y fijos, el
-          // recuento no cuadra y NO se extrapola el vidrio de hoja a los
-          // fijos (sería un precio inventado para esos huecos).
-          const nHojas = Math.round(hvs.reduce((acc, pz) => acc + pz.cantidad, 0) / 2)
-          if (perfilRef && cortesHV.size === 1 && cortesHH.size === 1 && nCristales === nHojas) {
-            corteV = [...cortesHV][0]
-            corteH = [...cortesHH][0]
-          }
-        } else {
-          contextoVidrio = 'FIJO'
-          const mvs = despiece.piezas.filter((pz) => pz.funcion === 'MV' && pz.largoMm !== null)
-          const artsMV = new Set(mvs.map((pz) => pz.articuloCodigo))
-          const cortesMV = new Set(mvs.map((pz) => pz.largoMm))
-          const cortesMH = new Set(
-            despiece.piezas.filter((pz) => pz.funcion === 'MH' && pz.largoMm !== null).map((pz) => pz.largoMm),
-          )
-          perfilRef = artsMV.size === 1 ? [...artsMV][0] : null
-          if (perfilRef && cortesMV.size === 1 && cortesMH.size === 1) {
-            corteV = [...cortesMV][0]
-            corteH = [...cortesMH][0]
-          }
-        }
-
-        if (!perfilRef || corteV === null || corteH === null || nCristales === 0) {
-          avisoVidrio = 'vidrio sin calcular: emparejamiento ambiguo para esta estructura (¿mezcla hojas y fijos?)'
+        if (!emparejamiento.ok) {
+          avisoVidrio = emparejamiento.aviso
           contextoVidrio = null
         } else {
+          const { perfilCodigo: perfilRef } = emparejamiento
+          contextoVidrio = emparejamiento.contexto
           const tablaGalce = contextoVidrio === 'FIJO' ? schema.vidrioGalceFijo : schema.vidrioGalce
           const [galce] = await db.select()
             .from(tablaGalce)
@@ -558,7 +521,10 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
           if (!galce) {
             avisoVidrio = `vidrio sin calcular: sin descuento de galce medido para ${d.serieCodigo} + ${perfilRef} (${contextoVidrio.toLowerCase()})`
           } else {
-            const dims = medidasVidrio(corteV, corteH, Number(galce.deltaMm))
+            const dims = medidasVidrio(
+              emparejamiento.corteVerticalMm, emparejamiento.corteHorizontalMm,
+              Number(galce.deltaMm),
+            )
             if (!dims) {
               avisoVidrio = 'vidrio sin calcular: el descuento de galce no cabe en la medida'
             } else {
