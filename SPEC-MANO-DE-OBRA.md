@@ -682,13 +682,66 @@ citarse** hasta medirlo con el mismo recorte. Lo demostrado es el 68,4%.
 1. **¿Tope comercial de horas?** Sigue abierto de T.67. Hoy sólo hay tope
    técnico, ahora `9.999,99 h`.
 2. **¿Se aplica descuento de línea a la mano de obra?** En el original es línea
-   hija con su propio `DescuentoPorc`. No medido.
+   hija con su propio `DescuentoPorc`. No medido. **Parcialmente contestado
+   (§15.1):** el descuento se decide **línea a línea, con un control por línea**
+   que dice si esa línea entra o no en el descuento, y hay además un ajuste final
+   del documento que puede descontar **o incrementar**. Lo que sigue sin decidirse
+   es si, dentro de una línea que sí entra, el porcentaje alcanza al importe de
+   mano de obra o sólo al material.
 3. **¿La mano de obra se muestra desglosada al cliente o embebida en el importe
-   del `GRUPO`?** El vídeo mostró una sola línea agregada.
+   del `GRUPO`?** El vídeo mostró una sola línea agregada. **Contestado
+   (§15.1):** el desglose es **opcional y elegible por documento**, porque el
+   cliente puede querer el cerramiento con instalación o sólo el material.
 4. **¿Coste igual a PVP es intencionado?** Ambos `0,5000`: margen cero. Puede ser
    deliberado o catálogo sin mantener. Ahora quedará registrado documento a
    documento, lo que permitirá responderlo con datos propios.
 5. **Las 167 líneas `MO` sin estructura asociada** (`nEstr = 0`, 15.115,8 minutos,
-   7.557,90 €) no cuelgan de ninguna línea estructural. Qué son —mano de obra
-   suelta del documento, o de otro origen— está sin medir, y afecta a si la mano
-   de obra puede existir fuera de una línea.
+   7.557,90 €) no cuelgan de ninguna línea estructural. **Contestado (§15.1):**
+   el titular confirma que la mano de obra puede añadirse como línea propia, con
+   una opción del documento que declara si se vende con mano de obra o sin ella.
+   Queda por decidir el modelo, no el hecho.
+
+### 15.1 Respuestas del titular, 5 de agosto de 2026
+
+Recogidas por entrevista, sin medición sobre el original. Lo que sigue es
+**testimonio**, no evidencia reproducida: cada punto debe contrastarse contra
+Productor antes de tratarlo como comportamiento verificado.
+
+| Afirmación del titular | Estado |
+|---|---|
+| El operador añade en cada línea el material y las ventanas, y **decide línea a línea si el descuento se le aplica**, con un control de edición en la propia línea | Nuevo. Sin medir |
+| Al final del documento hay **otra opción que aplica descuento o incrementa el precio** | Nuevo. El ajuste final tiene **signo**, no es sólo descuento |
+| Por cada ventana se puede añadir un aumento de mano de obra, en horas por ventana | Confirma el §1 de esta especificación |
+| **Fabricación y colocación se pueden desglosar o no, a elección**, según el cliente quiera el trabajo con instalación o sólo el material | Contesta el punto 3 |
+| El documento debe especificar al final si va **con colocación** | Nuevo. Afecta al PDF y a la cabecera |
+| Se puede añadir una línea de artículo libre con su precio, opcional (ejemplo: «4 tornillos, venta 6 €») | Nuevo. Fuera del alcance de esta especificación |
+| Existe una opción de vender **con mano de obra o sin ella**, y se materializa añadiendo una línea | Contesta el punto 5 |
+
+**Consecuencia sobre el `GRUPO`, y es la importante.** «Sólo el material» y «con
+instalación» son el mismo cerramiento con dos precios distintos. Eso significa
+que **el importe de colocación no puede quedar disuelto dentro de un precio
+agregado opaco**: tiene que seguir siendo identificable dentro del `GRUPO` para
+poder mostrarse aparte, o excluirse del total, sin recalcular el cerramiento
+entero. El modelo del §3 ya lo permite —cada concepto es su propia fila con su
+propio importe—, así que esto **no** obliga a cambiar el esquema; obliga a que
+el total del `GRUPO` se componga a partir de esas filas en vez de guardarse como
+un número cerrado.
+
+Consecuencia sobre la mano de obra como línea propia: `lineas_mano_obra` ata cada
+fila a una `linea_id` con `UNIQUE (linea_id, concepto)`. Esa venta cabe sin tocar
+el esquema **si** la línea propia es una línea de presupuesto normal con artículo
+`MO`/`MOCOL` —la fila de mano de obra cuelga de ella—. Sólo haría falta migración
+si la mano de obra suelta colgara del documento y no de ninguna línea. Cuál de
+las dos es la correcta no está decidido, y decidirlo requiere ver la pantalla del
+original, no deducirlo.
+
+Lo que sigue sin respuesta y condiciona esta fase:
+
+- Dentro de una línea marcada como «con descuento», ¿el porcentaje multiplica
+  también el importe de mano de obra, o sólo el material?
+- El control por línea, ¿es un **sí/no** que la mete o la saca del descuento
+  general, o un **porcentaje propio** de esa línea? La primera respuesta dijo
+  «descuento línea por línea» y la segunda «si le aplica o no»: son dos modelos
+  distintos y no se pueden implementar los dos a ciegas.
+- El ajuste final, ¿es porcentaje, importe, o ambos? Se sabe que puede subir el
+  precio, no en qué unidad.
