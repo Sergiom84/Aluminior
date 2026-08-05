@@ -502,7 +502,8 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
           }
         } else {
 
-        const nCristales = plantillaResuelta.filter((c) => c.componenteDisenyo === COMPONENTE_CRISTAL).length
+        // `ranuras` ya es ese mismo filtro sobre la plantilla resuelta.
+        const nCristales = ranuras.length
         const emparejamiento = emparejarVidrio(despiece.piezas, nCristales)
 
         if (!emparejamiento.ok) {

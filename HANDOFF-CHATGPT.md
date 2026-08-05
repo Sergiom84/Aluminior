@@ -1,6 +1,6 @@
 # Aluminior — traspaso para una conversación nueva
 
-Actualizado: 4 de agosto de 2026.
+Actualizado: 5 de agosto de 2026.
 
 Este es el punto de entrada vigente. Leer después `AGENTS.md`,
 `ARQUITECTURA.md` y `PARIDAD-PRODUCTOR.md`. `PLAN.md` y `ENTREGA.md` contienen
@@ -9,12 +9,14 @@ superadas por las decisiones resumidas aquí.
 
 ## 0. Estado del repositorio, primero
 
-- Rama `main` con **12 commits locales por delante de `origin/main`**, que sigue
-  en `01a0613`. **Nada se ha empujado.** Los seis últimos son la descomposición
-  T.69 de `acciones.ts`: `7e53cb4` herraje (T.69.1), `3a8a092` cierre del pool de
+- Rama `main` con **15 commits locales por delante de `origin/main`**, que sigue
+  en `01a0613`. **Nada se ha empujado.** Los seis de la descomposición T.69 de
+  `acciones.ts` —`7e53cb4` herraje (T.69.1), `3a8a092` cierre del pool de
   migraciones, `92a1b50` coste del despiece (T.69.2), `ee62703` coste del
-  acristalamiento (T.69.3), `523af70` resolución de perfiles (T.69.4) y el de
-  junquillos y juntas (T.69.5).
+  acristalamiento (T.69.3), `523af70` resolución de perfiles (T.69.4) y `a3759b6`
+  junquillos y juntas (T.69.5)—, más los tres del 5 de agosto: `ad1b7d5` las
+  respuestas del titular sobre mano de obra, `8291f4a` la valoración del vidrio
+  (T.70.1) y `2cc299a` su emparejamiento (T.70.2).
 - **La migración `0018_pale_hulk` sólo existe en local y se ha aplicado
   únicamente al Postgres efímero de Docker. NO está en el Supabase remoto.**
   Aplicarla allí es una decisión pendiente, con alcance explícito y prueba
@@ -486,40 +488,59 @@ descripción agregada `descripcionCerramiento`. Ambos se reexportan desde
 
 ## 8. Siguiente trabajo recomendado
 
-### Ahora — desbloquear T.68 con el titular
+### Ahora — el titular contestó dos de las tres preguntas (5/8/2026)
 
-Tres preguntas enviadas a Javi, **sin respuesta al 4 de agosto de 2026**. No
-conviene anticipar ninguna: cada una cambia el modelo de datos o la
-presentación. La descomposición T.69 avanzó en paralelo justamente porque no
-depende de ellas.
+Recogido en `SPEC-MANO-DE-OBRA.md` §15.1. Es **testimonio de entrevista, no
+medición sobre el original**: cada punto debe contrastarse contra Productor antes
+de tratarlo como comportamiento verificado.
 
-1. **¿Se aplica descuento de línea a la mano de obra?** En el original es línea
-   hija con su propio `DescuentoPorc`. No medido.
-2. **¿La mano de obra se muestra desglosada al cliente o embebida en el importe
-   del `GRUPO`?** El vídeo mostró una sola línea agregada, pero eso no zanja qué
-   debe imprimirse.
-3. **¿Puede existir mano de obra independiente de una línea?** Hay 167 líneas
-   `MO` sin estructura asociada (`nEstr = 0`, 15.115,8 minutos, 7.557,90 €) cuyo
-   origen está sin medir. Si la respuesta es que sí, `linea_id` deja de poder ser
-   obligatoria y eso es una migración.
+1. **Descuento de línea sobre la mano de obra.** Sigue sin respuesta útil, y el
+   titular decidió **aplazarlo al final**: opera sobre importes ya calculados, así
+   que se puede añadir después sin rehacer lo escrito. Lo que sí dijo: el
+   descuento se decide línea a línea con un control en la propia línea, y hay un
+   ajuste final del documento que puede descontar **o incrementar**. Sus dos
+   descripciones se contradicen —«línea por línea» es un porcentaje propio; «si
+   le aplica o no» es un sí/no sobre el descuento general— y no deben
+   implementarse las dos a ciegas.
+2. **Desglose al cliente: CONTESTADO.** Es opcional y elegible, porque el cliente
+   puede querer el cerramiento con instalación o sólo el material. Consecuencia:
+   el importe de colocación **no puede quedar disuelto en un precio agregado
+   opaco** del `GRUPO`. El esquema ya lo permite —una fila por concepto con su
+   importe—; lo que cambia es que el total debe componerse a partir de esas filas
+   en vez de guardarse como número cerrado.
+3. **Mano de obra independiente: CONTESTADO.** Existe, con una opción de vender
+   con o sin ella, materializada como una línea. Cabe **sin migración** si esa
+   línea es una línea de presupuesto normal con artículo `MO`/`MOCOL`; sólo la
+   exigiría si colgara del documento y no de ninguna línea. Cuál de las dos es
+   requiere ver la pantalla del original.
+
+Requisito nuevo, sin especificar: **línea de artículo libre y opcional** con
+descripción y precio tecleados por el operador («4 tornillos, venta 6 €»).
 
 ### Ahora — deuda que toca antes de la siguiente función
 
-`acciones.ts` está en **806 líneas** y sigue siendo **deuda prioritaria**: T.68 lo
-dejó de hacer crecer y T.69 le quitó 315 líneas en cinco extracciones, pero
-continúa por encima del límite de 400.
+`acciones.ts` está en **740 líneas** y sigue siendo **deuda prioritaria**: T.68 lo
+dejó de hacer crecer, T.69 le quitó 315 líneas en cinco extracciones y T.70 otras
+68 en dos, pero continúa por encima del límite de 400.
 
-**Siguiente unidad recomendada: el bloque del vidrio**, que es lo que queda de la
-ruta de dinero dentro de la acción (anexos L, N, Q). Hoy mezcla seis
-responsabilidades: validación del artículo, clasificación de ranuras, geometría
-simple y mixta, consultas de galce y reglas de alojamiento, metraje/PVP/coste, y
-piezas persistibles con sus avisos. **No moverlo entero**: ocultaría las
-duplicaciones entre sus dos rutas —simple y mixta repiten la consulta de PVP, la
-de coste y el empujado de la pieza `VIDRIO`, con dos formas distintas de calcular
-el metraje—. Separar una responsabilidad por unidad, con **caracterización
-previa** que fije lo que hace hoy, incluida la aritmética en `number`. Es la
-secuencia que funcionó en T.69.1–T.69.5, y la única forma de que cada extracción
-sea revisable de una pieza.
+**Unidad en curso: el bloque del vidrio** (anexos L, N, Q), que es lo que queda de
+la ruta de dinero dentro de la acción. Mezclaba seis responsabilidades y se está
+separando **una por una, con caracterización previa** que fija lo que hace hoy,
+incluida la aritmética en `number`. Hechas:
+
+- **T.70.1, valoración** (`estructuras/valoracion-vidrio.ts`): metraje, PVP,
+  coste y pieza persistible. Era la única responsabilidad **duplicada** —las dos
+  rutas repetían ambas consultas, el empujado de la pieza `VIDRIO` y el aviso de
+  «sin valorar», con dos formas distintas de sumar el metraje—. Ahora ambas se
+  expresan como una lista de cristales con cantidad. El importe sale **sin
+  redondear**: el redondeo a céntimo sigue en el acumulador, que es donde estaba.
+- **T.70.2, emparejamiento** (`estructuras/emparejamiento-vidrio.ts`): de qué
+  perfil y qué cortes sale el vidrio de una estructura no mixta. Función pura
+  sobre el despiece ya calculado.
+
+Quedan dentro de `acciones.ts`: validación del artículo, clasificación de ranuras,
+la ruta mixta con sus consultas de nodos y reglas de alojamiento, y la consulta de
+galce. **No moverlas de golpe**: cada extracción debe ser revisable de una pieza.
 
 Después, cerrar los puntos 4 y 5 del apartado 7: acciones finas que sólo
 autentiquen, deleguen y revaliden.
@@ -573,10 +594,22 @@ autentiquen, deleguen y revaliden.
 - **Coste igual a PVP (`0,5000` ambos, margen cero)** puede ser deliberado o
   catálogo sin mantener. Sin responder; ahora quedará registrado documento a
   documento.
-- **Preguntado a Javi, sin respuesta:** descuento de línea sobre la mano de obra;
-  desglose al cliente frente a importe embebido en el `GRUPO`; y si la mano de
-  obra puede existir independiente de una línea (las 167 líneas `MO` sin
-  estructura asociada). Ver «Ahora — desbloquear T.68 con el titular».
+- **Contestado por Javi el 5/8/2026:** el desglose al cliente es opcional, y la
+  mano de obra sí puede venderse como línea propia. **Sigue sin respuesta** si el
+  descuento de línea alcanza a la mano de obra, y el titular lo aplazó al final.
+  Ver «Ahora — el titular contestó dos de las tres preguntas» y
+  `SPEC-MANO-DE-OBRA.md` §15.1. Es testimonio, no medición.
+- **El desempate del coste del vidrio NO es el del despiece.** En el vidrio gana
+  el acabado de la línea y **siempre se elige uno**; en el despiece, varios
+  costes distintos dejan el coste sin resolver. La extracción T.70.1 conservó el
+  del vidrio en vez de unificarlos: sólo uno puede ser correcto, pero decidirlo
+  cambia costes ya persistidos y necesita su propia medición.
+- **Tres asimetrías del emparejamiento del vidrio están conservadas, no
+  decididas** (T.70.2): la rama de hoja filtra el corte horizontal por el perfil
+  de referencia y la de cerco fijo no; el recuento cristales = hojas sólo se
+  exige con hojas; y las hojas se deducen del total de montantes verticales entre
+  dos. Están fijadas por pruebas, y el aviso de ambigüedad sigue siendo uno solo
+  para las cinco causas.
 - **El desempate del coste sólo cambia comportamiento en datos que hoy no
   existen.** Medido el 3/8/2026: cero pares `(artículo, acabado)` con varias
   filas. Si el catálogo empieza a tener varios proveedores por acabado con
@@ -598,13 +631,15 @@ autentiquen, deleguen y revaliden.
 > paridad funcional con Productor y la regla «todo o sin valorar». T.68 dejó el
 > contrato decimal, la valoración pura y la tabla `lineas_mano_obra` con su
 > migración 0018 **sólo local** y la mano de obra adicional funcionando de punta
-> a punta. T.69 descompuso `acciones.ts` de 1.121 a 860 líneas en cuatro
-> extracciones bajo `_lib/estructuras/`, con 335 pruebas y cinco comportamientos
-> conservados y declarados en §6 ter que no deben cambiarse de refilón. No
-> apliques la 0018 en remoto sin alcance explícito, no metas `parseFloat` ni
-> `Number()` en el camino de horas, y sigue reduciendo `acciones.ts`: la
-> siguiente unidad es separar vidrio y junquillos, caracterizando antes de mover.
-> `FABRICACION_BASE` y la edición de líneas guardadas siguen fuera; tres
-> preguntas al titular están sin responder y no deben anticiparse. `main` queda
-> 11 commits por delante de `origin/main` (`01a0613`), sin push, y `design-qa.md`
-> es ajeno a esta unidad.
+> a punta. T.69 y T.70 descompusieron `acciones.ts` de 1.121 a 740 líneas en
+> siete extracciones bajo `_lib/estructuras/`, con 377 pruebas y comportamientos
+> conservados y declarados —los cinco de §6 ter, el desempate del coste del
+> vidrio y las tres asimetrías del emparejamiento— que no deben cambiarse de
+> refilón. No apliques la 0018 en remoto sin alcance explícito, no metas
+> `parseFloat` ni `Number()` en el camino de horas, y sigue reduciendo
+> `acciones.ts`: quedan la ruta mixta del vidrio y la consulta de galce,
+> caracterizando antes de mover. `FABRICACION_BASE` y la edición de líneas
+> guardadas siguen fuera. El titular contestó el desglose y la mano de obra como
+> línea propia (§15.1 de la spec, testimonio sin medir) y **aplazó el descuento
+> al final**. `main` queda 16 commits por delante de `origin/main` (`01a0613`),
+> sin push, y `design-qa.md` es ajeno a esta unidad.
