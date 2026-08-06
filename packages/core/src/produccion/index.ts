@@ -1,1 +1,5 @@
 export * from './optimizar.ts'
+export * from './despunte.ts'
+export * from './hojas.ts'
+export * from './hojas-corte.ts'
+export * from './hojas-produccion.ts'
