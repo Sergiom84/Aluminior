@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
-  compararDecimal, multiplicarDecimal, normalizarDecimal, signoDecimal,
+  compararDecimal, dividirDecimal, multiplicarDecimal, normalizarDecimal, signoDecimal,
 } from './decimal.ts'
 
 describe('normalización a una escala', () => {
@@ -93,5 +93,37 @@ describe('comparación y signo', () => {
     expect(signoDecimal('-0.0000')).toBe(0)
     expect(signoDecimal('-0.0001')).toBe(-1)
     expect(signoDecimal('0.0001')).toBe(1)
+  })
+})
+
+describe('dividirDecimal', () => {
+  it('divide exacto cuando el cociente cierra', () => {
+    expect(dividirDecimal('15', '0.8', 4)).toBe('18.7500')
+    expect(dividirDecimal('10', '4', 2)).toBe('2.50')
+  })
+
+  // Dividir no cierra: 10/3 es periodico y aqui el redondeo es inevitable,
+  // no un detalle de presentacion. Se redondea a la mitad hacia afuera.
+  it('redondea el cociente periodico a la escala pedida', () => {
+    expect(dividirDecimal('10', '3', 4)).toBe('3.3333')
+    expect(dividirDecimal('20', '3', 4)).toBe('6.6667')
+    expect(dividirDecimal('1', '3', 0)).toBe('0')
+    expect(dividirDecimal('2', '3', 0)).toBe('1')
+  })
+
+  it('respeta el signo de los dos operandos', () => {
+    expect(dividirDecimal('-10', '4', 2)).toBe('-2.50')
+    expect(dividirDecimal('10', '-4', 2)).toBe('-2.50')
+    expect(dividirDecimal('-10', '-4', 2)).toBe('2.50')
+  })
+
+  it('divide entre un decimal sin perder digitos', () => {
+    expect(dividirDecimal('1', '0.0001', 4)).toBe('10000.0000')
+  })
+
+  // Cero silencioso convertido en precio: el fallo mas caro posible aqui.
+  it('lanza al dividir entre cero', () => {
+    expect(() => dividirDecimal('10', '0', 2)).toThrow(/cero/)
+    expect(() => dividirDecimal('10', '0.00', 2)).toThrow(/cero/)
   })
 })

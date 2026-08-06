@@ -115,6 +115,38 @@ export function sumarDecimal(a: Decimal, b: Decimal, escala: number): Decimal {
   return formatear(redondear(combinar(a, b, 1n), escala), escala)
 }
 
+/**
+ * Cociente redondeado a la escala pedida.
+ *
+ * A diferencia de la suma y el producto, dividir NO cierra: 10/3 no tiene
+ * representación decimal finita, así que aquí el redondeo es inevitable y no un
+ * detalle de presentación. Por eso la escala es obligatoria y no hay versión
+ * «exacta»: quien divide tiene que decir con cuántos decimales se queda.
+ *
+ * El dividendo se amplía antes de dividir, de modo que la división entera de
+ * bigint ya produce todos los dígitos que pide la escala más uno de guarda, y
+ * el redondeo a la mitad hacia afuera se aplica una sola vez sobre ese resto.
+ *
+ * Dividir entre cero lanza: no existe un importe que devolver y un cero
+ * silencioso se convertiría en un precio.
+ */
+export function dividirDecimal(a: Decimal, b: Decimal, escala: number): Decimal {
+  const x = escalar(a)
+  const y = escalar(b)
+  if (y.unidades === 0n) throw new Error('dividirDecimal: división entre cero')
+
+  // a/b = (X · 10^ey) / (Y · 10^ex). Se amplía el numerador `escala + 1`
+  // posiciones para conservar un dígito de guarda con el que redondear.
+  const guarda = BigInt(escala + 1)
+  const numerador = x.unidades * 10n ** BigInt(y.escala) * 10n ** guarda
+  const denominador = y.unidades * 10n ** BigInt(x.escala)
+  const negativo = numerador < 0n !== denominador < 0n
+  const abs = (v: bigint): bigint => (v < 0n ? -v : v)
+  const bruto = abs(numerador) / abs(denominador)
+  const unidades = redondear({ unidades: negativo ? -bruto : bruto, escala: escala + 1 }, escala)
+  return formatear(unidades, escala)
+}
+
 /** Resta exacta, con el mismo criterio que `sumarDecimal`. */
 export function restarDecimal(a: Decimal, b: Decimal, escala: number): Decimal {
   return formatear(redondear(combinar(a, b, -1n), escala), escala)

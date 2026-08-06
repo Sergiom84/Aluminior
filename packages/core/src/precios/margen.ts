@@ -36,7 +36,14 @@
  * pendiente de confirmar. Este módulo modela la forma, no los números.
  */
 
-import { multiplicarDecimal, sumarDecimal, type Decimal } from './decimal.ts'
+import {
+  compararDecimal,
+  dividirDecimal,
+  multiplicarDecimal,
+  restarDecimal,
+  sumarDecimal,
+  type Decimal,
+} from './decimal.ts'
 import { admitirTarifaEnVentas, permitirActualizacionTarifa, type TarifaVenta } from './tarifa-venta.ts'
 
 /** Escala de `articulos_pvp.precio`: `numeric(12,4)`. */
@@ -50,12 +57,25 @@ export const ESCALA_PRECIO_VENTA = 4
  * único dentro de ella (`subfamilias.familia_codigo` en el esquema), y casar
  * sólo por subfamilia mezclaría márgenes de familias distintas.
  */
+/**
+ * Contra qué se mide el porcentaje. Es una opción de la familia en Productor,
+ * `Tipo de Margen`, y NO es cosmética: con el mismo 20% sobre un coste de 15 €
+ * el precio sale 18,00 sobre coste y 18,75 sobre venta. El fabricante publica
+ * ese mismo ejemplo en `docs/precios-de-coste-y-venta.md`.
+ *
+ * `SOBRE_VENTA` existe porque le resulta más cómodo a quien presupuesta: si
+ * sabe que aplica un 20% sobre venta, ese 20% del precio final es su beneficio,
+ * sin necesidad de conocer el coste.
+ */
+export type TipoMargen = 'SOBRE_COSTE' | 'SOBRE_VENTA'
+
 export interface MargenTarifa {
   tarifaCodigo: number
   familiaCodigo: string
   subfamiliaCodigo: string | null
-  /** Tanto por ciento sobre el coste, en texto decimal. */
+  /** Tanto por ciento, en texto decimal. Su base la fija `tipo`. */
   porcentaje: Decimal
+  tipo: TipoMargen
 }
 
 /** Lo que hace falta saber del artículo para resolver su margen. */
@@ -72,9 +92,15 @@ export type MotivoSinMargen =
   | 'TARIFA_NO_VALIDA_PARA_VENTAS'
   | 'ARTICULO_SIN_FAMILIA'
   | 'SIN_MARGEN_CONFIGURADO'
+  /**
+   * Margen sobre venta del 100% o más: el beneficio se comería el precio entero
+   * y la fórmula divide entre cero o cambia de signo. No hay precio que
+   * devolver, así que se reporta en vez de inventar uno.
+   */
+  | 'MARGEN_SOBRE_VENTA_IMPOSIBLE'
 
 export type ResolucionMargen =
-  | { estado: 'RESUELTO'; porcentaje: Decimal; origen: OrigenMargen }
+  | { estado: 'RESUELTO'; porcentaje: Decimal; origen: OrigenMargen; tipo: TipoMargen }
   | { estado: 'NO_RESOLUBLE'; motivo: MotivoSinMargen }
 
 /**
@@ -110,28 +136,53 @@ export function resolverMargen(
 
   if (articulo.subfamiliaCodigo !== null) {
     const deSubfamilia = deLaTarifa.find((m) => m.subfamiliaCodigo === articulo.subfamiliaCodigo)
-    if (deSubfamilia) {
-      return { estado: 'RESUELTO', porcentaje: deSubfamilia.porcentaje, origen: 'SUBFAMILIA' }
-    }
+    if (deSubfamilia) return resuelto(deSubfamilia, 'SUBFAMILIA')
   }
 
   const deFamilia = deLaTarifa.find((m) => m.subfamiliaCodigo === null)
-  if (deFamilia) return { estado: 'RESUELTO', porcentaje: deFamilia.porcentaje, origen: 'FAMILIA' }
+  if (deFamilia) return resuelto(deFamilia, 'FAMILIA')
 
   return { estado: 'NO_RESOLUBLE', motivo: 'SIN_MARGEN_CONFIGURADO' }
 }
 
+/**
+ * Empaqueta la fila encontrada, comprobando antes que sea aplicable.
+ *
+ * El único caso imposible es el margen sobre venta del 100% o más: `1 - %/100`
+ * vale cero o negativo, y ahí no hay precio. Se detecta al resolver y no al
+ * dividir, para que quien pregunte «¿qué margen aplica?» ya reciba el problema.
+ */
+function resuelto(fila: MargenTarifa, origen: OrigenMargen): ResolucionMargen {
+  if (fila.tipo === 'SOBRE_VENTA' && compararDecimal(fila.porcentaje, '100') >= 0) {
+    return { estado: 'NO_RESOLUBLE', motivo: 'MARGEN_SOBRE_VENTA_IMPOSIBLE' }
+  }
+  return { estado: 'RESUELTO', porcentaje: fila.porcentaje, origen, tipo: fila.tipo }
+}
+
 export type PrecioVenta =
-  | { estado: 'CALCULADO'; precio: Decimal; porcentaje: Decimal; origen: OrigenMargen }
+  | {
+      estado: 'CALCULADO'
+      precio: Decimal
+      porcentaje: Decimal
+      origen: OrigenMargen
+      tipo: TipoMargen
+    }
   | { estado: 'NO_CALCULABLE'; motivo: MotivoSinMargen }
 
 /**
- * Precio de venta = coste × (1 + %/100), con el margen que resuelva la tarifa.
+ * Del coste al precio, según contra qué mida el porcentaje su familia:
  *
- * El único redondeo es el de la escala de salida: el factor se construye exacto
- * y se multiplica una sola vez. Dividir el porcentaje entre cien es desplazar
- * la coma dos posiciones —exacto, sin división—, y sumarle uno alineando a la
- * escala del propio factor no descarta ningún dígito.
+ *   SOBRE_COSTE:  precio = coste × (1 + %/100)
+ *   SOBRE_VENTA:  precio = coste / (1 − %/100)
+ *
+ * Con 15 € de coste y un 20%, eso son 18,00 y 18,75 respectivamente. Aplicar la
+ * primera fórmula a una familia configurada con la segunda no es un decimal de
+ * diferencia: es vender por debajo del margen que el operador cree tener.
+ *
+ * Dividir el porcentaje entre cien es desplazar la coma —exacto, sin división—
+ * y la suma o resta contra uno no descarta ningún dígito. En `SOBRE_COSTE` el
+ * único redondeo sigue siendo el de la escala de salida; en `SOBRE_VENTA` el
+ * cociente redondea ahí también, porque dividir no cierra.
  */
 export function calcularPrecioVenta(
   tarifa: TarifaVenta,
@@ -145,12 +196,18 @@ export function calcularPrecioVenta(
   }
 
   const fraccion = dividirEntreCien(margen.porcentaje)
-  const factor = sumarDecimal('1', fraccion, decimalesDe(fraccion))
+  const decimales = decimalesDe(fraccion)
+  const precio =
+    margen.tipo === 'SOBRE_COSTE'
+      ? multiplicarDecimal(coste, sumarDecimal('1', fraccion, decimales), ESCALA_PRECIO_VENTA)
+      : dividirDecimal(coste, restarDecimal('1', fraccion, decimales), ESCALA_PRECIO_VENTA)
+
   return {
     estado: 'CALCULADO',
-    precio: multiplicarDecimal(coste, factor, ESCALA_PRECIO_VENTA),
+    precio,
     porcentaje: margen.porcentaje,
     origen: margen.origen,
+    tipo: margen.tipo,
   }
 }
 
