@@ -107,6 +107,83 @@ export function multiplicarDecimal(
   return formatear(redondear(producto, escala), escala)
 }
 
+/**
+ * Suma exacta. Las escalas se alinean a la mayor antes de sumar, así que no se
+ * pierde ningún dígito y el único redondeo es el de la escala de salida.
+ */
+export function sumarDecimal(a: Decimal, b: Decimal, escala: number): Decimal {
+  return formatear(redondear(combinar(a, b, 1n), escala), escala)
+}
+
+/** Resta exacta, con el mismo criterio que `sumarDecimal`. */
+export function restarDecimal(a: Decimal, b: Decimal, escala: number): Decimal {
+  return formatear(redondear(combinar(a, b, -1n), escala), escala)
+}
+
+function combinar(a: Decimal, b: Decimal, signo: 1n | -1n): Escalado {
+  const x = escalar(a)
+  const y = escalar(b)
+  const escala = Math.max(x.escala, y.escala)
+  const ux = x.unidades * 10n ** BigInt(escala - x.escala)
+  const uy = y.unidades * 10n ** BigInt(escala - y.escala)
+  return { unidades: ux + signo * uy, escala }
+}
+
+/**
+ * Reparte un importe entre varias partes en proporción a sus pesos, con la
+ * garantía de que **la suma de las partes es exactamente el total**.
+ *
+ * Repartir es dividir, y dividir no cierra: 10,00 € entre tres partes iguales
+ * da 3,33 tres veces y pierde un céntimo. Redondear cada cuota por su cuenta
+ * deja un descuadre que en un documento se ve. Aquí se usa el **método del
+ * mayor resto**: cada parte se lleva su cuota entera (truncada a la escala) y
+ * las unidades que sobran van, de una en una, a las partes cuyo resto de la
+ * división es mayor. A igualdad de resto decide el orden de entrada, de modo
+ * que el reparto es determinista y reproducible.
+ *
+ * Los pesos deben ser ≥ 0 y no pueden sumar cero: sin proporción no hay reparto
+ * posible, y repartir a partes iguales sería inventar un criterio que nadie ha
+ * pedido. Quien llama decide qué hacer con ese caso.
+ */
+export function repartirDecimal(
+  total: Decimal,
+  pesos: readonly Decimal[],
+  escala: number,
+): Decimal[] {
+  if (!pesos.length) throw new Error('repartirDecimal: no hay partes entre las que repartir')
+
+  const escalados = pesos.map(escalar)
+  const comun = escalados.reduce((maxima, p) => Math.max(maxima, p.escala), 0)
+  const unidades = escalados.map((p) => p.unidades * 10n ** BigInt(comun - p.escala))
+  if (unidades.some((u) => u < 0n)) {
+    throw new Error('repartirDecimal: un peso negativo no define ninguna proporción')
+  }
+  const suma = unidades.reduce((acc, u) => acc + u, 0n)
+  if (suma === 0n) throw new Error('repartirDecimal: los pesos suman cero')
+
+  // Se reparte el valor absoluto y el signo se aplica al final: así un importe
+  // negativo se reparte igual que su positivo, sin sesgo por el sentido del
+  // truncamiento de bigint.
+  const t = redondear(escalar(total), escala)
+  const negativo = t < 0n
+  const absoluto = negativo ? -t : t
+
+  const cuotas = unidades.map((u) => (absoluto * u) / suma)
+  const restos = unidades.map((u) => (absoluto * u) % suma)
+  let sobran = absoluto - cuotas.reduce((acc, c) => acc + c, 0n)
+
+  const porResto = restos
+    .map((resto, indice) => ({ resto, indice }))
+    .sort((a, b) => (a.resto === b.resto ? a.indice - b.indice : a.resto > b.resto ? -1 : 1))
+  for (const { indice } of porResto) {
+    if (sobran <= 0n) break
+    cuotas[indice] += 1n
+    sobran -= 1n
+  }
+
+  return cuotas.map((u) => formatear(negativo ? -u : u, escala))
+}
+
 /** `-1`, `0` o `1`. Sin restar en coma flotante. */
 export function compararDecimal(a: Decimal, b: Decimal): -1 | 0 | 1 {
   const x = escalar(a)
