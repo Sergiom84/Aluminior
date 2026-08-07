@@ -24,6 +24,7 @@ import { crearClienteServidor } from '../../../../lib/supabase/servidor.ts'
 import { actualizarTotales } from './totales.ts'
 import { registrarFallo } from './errores.ts'
 import { esquemaLinea } from './lineas/esquema-linea.ts'
+import { ejecutarConNumeracion, esColisionIdentidad, reservarNumeracion } from './numeracion/index.ts'
 import {
   guardarLinea, type OpcionHerrajeElegida, type PiezaDespiece,
   type RanuraAcristalamiento, type ValoresLinea,
@@ -127,16 +128,6 @@ export async function opcionesHerrajeDe(
   return opcionesDeHerrajeOfrecidas(crearDb(), serieCodigo, estructuraCodigo)
 }
 
-/** Siguiente número, con el patrón AASSSS del original: 260418 = nº 418 de 2026. */
-async function siguienteNumero(db: ReturnType<typeof crearDb>): Promise<number> {
-  const anyo = new Date().getFullYear() % 100
-  const [f] = (await db.execute<{ max: number | null }>(sql`
-    SELECT MAX(numero) AS max FROM presupuestos
-    WHERE numero >= ${anyo * 10000} AND numero < ${(anyo + 1) * 10000}
-  `)) as unknown as { max: number | null }[]
-  return f?.max ? Number(f.max) + 1 : anyo * 10000 + 1
-}
-
 const esquemaCabecera = z.object({
   clienteCodigo: z.string().trim().optional().transform((v) => v || null),
   potencialCodigo: z.string().trim().optional().transform((v) => v || null),
@@ -168,28 +159,39 @@ export async function crearPresupuesto(_previo: Estado, datos: FormData): Promis
   }
 
   const db = crearDb()
+  const fecha = new Date().toISOString().slice(0, 10)
   try {
-    const numero = await siguienteNumero(db)
     const creadoPor = await usuarioActual()
-    const [fila] = await db.insert(schema.presupuestos).values({
-      numero,
-      revision: 0,
-      serie: 'A',
-      fecha: new Date().toISOString().slice(0, 10),
-      clienteCodigo: d.clienteCodigo,
-      potencialCodigo: d.potencialCodigo,
-      nombreLibre: d.nombreLibre,
-      obraTexto: d.obraTexto,
-      tarifa: d.tarifa,
-      formaPago: d.formaPago,
-      observaciones: d.observaciones,
-      estado: 'PENDIENTE',
-      creadoPor,
-    }).returning({ id: schema.presupuestos.id })
+    // Reserva del número y alta de la cabecera en la MISMA transacción
+    // (decisión #6 de T.71): `_lib/numeracion/` es la única autoridad, la
+    // acción sólo autentica al usuario y revalida la ruta.
+    const id = await ejecutarConNumeracion(db, async (tx) => {
+      const numeracion = await reservarNumeracion(tx, { modo: 'NUMERO_NUEVO', fecha, serie: 'A' })
+      if (!numeracion.ok) throw new Error(numeracion.errores.join('; '))
+      const [fila] = await tx.insert(schema.presupuestos).values({
+        numero: numeracion.numero,
+        revision: numeracion.revision,
+        serie: numeracion.serie,
+        fecha,
+        clienteCodigo: d.clienteCodigo,
+        potencialCodigo: d.potencialCodigo,
+        nombreLibre: d.nombreLibre,
+        obraTexto: d.obraTexto,
+        tarifa: d.tarifa,
+        formaPago: d.formaPago,
+        observaciones: d.observaciones,
+        estado: 'PENDIENTE',
+        creadoPor,
+      }).returning({ id: schema.presupuestos.id })
+      return fila.id
+    }, { automatico: true })
 
     revalidatePath('/dashboard/presupuestos')
-    return { ok: true, id: fila.id }
+    return { ok: true, id }
   } catch (e) {
+    if (esColisionIdentidad(e)) {
+      return { ok: false, errores: {}, mensaje: 'No se pudo asignar el número: inténtalo de nuevo' }
+    }
     return { ok: false, errores: {}, mensaje: registrarFallo('crearPresupuesto', e) }
   }
 }

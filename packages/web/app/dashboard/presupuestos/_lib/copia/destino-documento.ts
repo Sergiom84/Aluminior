@@ -25,7 +25,11 @@ export type EstrategiaDestino = 'MISMO_NUMERO_NUEVA_REVISION' | 'NUEVO_NUMERO'
 export interface ContextoNumeracion {
   /** Revisiones ya existentes de ese número y serie, incluida la del origen. */
   readonly revisionesUsadas: readonly number[]
-  /** Siguiente número libre de la secuencia. Sólo lo sabe la base de datos. */
+  /**
+   * Siguiente número libre, para PREVISUALIZAR únicamente. No autoriza nada:
+   * `copiarPresupuesto` no lo usa, y quien lo pase aquí debe tratarlo como un
+   * dato que puede quedar desfasado en cuanto otra transacción escribe.
+   */
   readonly siguienteNumero?: number
 }
 
@@ -34,7 +38,13 @@ export type ResultadoDestino =
   | { ok: false; errores: readonly string[] }
 
 /**
- * Propone la numeración del destino.
+ * Propone la numeración del destino. NO es autoridad transaccional (T.71.2):
+ * es pura, no relee la base dentro de ningún lock, y `contexto` es una foto
+ * tomada antes de abrir la transacción que puede quedar desfasada por una
+ * escritura concurrente. Sirve sólo para una vista previa en UI; la reserva
+ * real —lock, relectura y comprobación de existencia— la hace
+ * `reservarNumeracion` de `_lib/numeracion/`, y es la única que
+ * `copiarPresupuesto` usa para escribir.
  *
  * La revisión nueva sale de la mayor existente, no de la del origen: copiar la
  * revisión 0 de un documento que ya tiene la 1 debe dar la 2, no chocar con la

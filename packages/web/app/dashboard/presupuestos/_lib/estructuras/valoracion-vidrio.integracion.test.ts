@@ -15,7 +15,7 @@
  * DESC, alfabético) declarada en `valoracion-vidrio.ts`: sólo se demuestra.
  */
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest'
-import { eq, inArray } from 'drizzle-orm'
+import { inArray } from 'drizzle-orm'
 import { crearDb, schema } from '@aluminior/db'
 import { urlDePruebasValidada } from '@aluminior/db/pruebas'
 import { resolverValoracionVidrio } from './valoracion-vidrio.ts'
