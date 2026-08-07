@@ -8,10 +8,11 @@
  * Del bloque del vidrio sale primero la valoración —metraje, PVP, coste y pieza
  * persistible— porque era la única responsabilidad DUPLICADA entre sus dos
  * rutas. Siguen dentro de `acciones.ts` la validación del artículo, la
- * clasificación de ranuras, la geometría simple y mixta, y las consultas de
- * galce y alojamiento. Se separan una por una, verificando entre cada paso: es
- * la ruta de dinero con más lógica del proyecto y un movimiento grande no sería
- * revisable.
+ * clasificación de ranuras, la geometría simple y mixta, la consulta de
+ * alojamiento (ruta mixta) y los mensajes y medidas del galce —la lectura del
+ * delta ya salió a `galce-vidrio.ts` (T.70.3). Se separan una por una,
+ * verificando entre cada paso: es la ruta de dinero con más lógica del
+ * proyecto y un movimiento grande no sería revisable.
  *
  * Sale sólo lo que consume `acciones.ts`. Del coste del despiece, únicamente el
  * orquestador: la lectura, la agrupación y la preparación de piezas quedan

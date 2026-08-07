@@ -1,7 +1,7 @@
 /**
  * Descuento de galce del vidrio: hoja consulta `vidrio_galce`, fijo consulta
  * `vidrio_galce_fijo` (el vidrio de un fijo se descuenta del corte del CERCO,
- * no de una hoja). Extraído de `acciones.ts` en T.70.2 SIN cambiar
+ * no de una hoja). Extraído de `acciones.ts` en T.70.3 SIN cambiar
  * comportamiento: misma coincidencia exacta por (serie, perfil), mismo
  * `limit(1)`, ausencia de fila sigue devolviendo `null`.
  *
