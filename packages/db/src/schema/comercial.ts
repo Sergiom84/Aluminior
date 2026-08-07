@@ -9,7 +9,7 @@
  */
 
 import {
-  pgTable, text, integer, numeric, boolean, timestamp, date, index, uuid, check,
+  pgTable, text, integer, numeric, boolean, timestamp, date, index, uuid, check, unique,
 } from 'drizzle-orm/pg-core'
 import { sql } from 'drizzle-orm'
 
@@ -143,6 +143,9 @@ export const presupuestos = pgTable('presupuestos', {
   creadoEn: timestamp('creado_en', { withTimezone: true }).notNull().defaultNow(),
   creadoPor: text('creado_por'),
 }, (t) => ({
+  // Se conserva aunque la UNIQUE de abajo cubra las mismas columnas: la
+  // política de lectura (listados por numero+revision) es un motivo aparte
+  // del de la identidad, y no se revisó como parte de T.71.
   numeroIdx: index('presupuestos_numero_idx').on(t.numero, t.revision),
   clienteIdx: index('presupuestos_cliente_idx').on(t.clienteCodigo),
   fechaIdx: index('presupuestos_fecha_idx').on(t.fecha),
@@ -151,4 +154,9 @@ export const presupuestos = pgTable('presupuestos', {
     'presupuestos_destinatario_check',
     sql`${t.clienteCodigo} IS NOT NULL OR ${t.potencialCodigo} IS NOT NULL OR ${t.nombreLibre} IS NOT NULL`,
   ),
+  // T.71: la identidad de un presupuesto es (serie, numero, revision). Última
+  // defensa ante procesos externos o código que no respete el advisory lock
+  // de `_lib/numeracion/`; el lock evita la carrera, esto evita el dato malo
+  // si el lock se salta.
+  identidad: unique('presupuestos_identidad_uq').on(t.serie, t.numero, t.revision),
 }))
