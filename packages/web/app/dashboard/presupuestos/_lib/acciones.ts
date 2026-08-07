@@ -30,7 +30,7 @@ import {
 } from './lineas/guardar-linea.ts'
 import { prepararManoObra, type SnapshotManoObra } from './mano-obra/index.ts'
 import {
-  COMPONENTE_CRISTAL, emparejarVidrio, opcionesHerrajeDe as opcionesDeHerrajeOfrecidas,
+  COMPONENTE_CRISTAL, emparejarVidrio, leerGalceVidrio, opcionesHerrajeDe as opcionesDeHerrajeOfrecidas,
   piezasAcristalamiento, resolverCosteAcristalamiento, resolverCosteDespiece,
   resolverOpcionesHerraje, resolverPerfiles, resolverValoracionVidrio,
   type ContextoVidrio, type CristalAcris, type GrupoOpcionesHerraje,
@@ -512,19 +512,13 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
         } else {
           const { perfilCodigo: perfilRef } = emparejamiento
           contextoVidrio = emparejamiento.contexto
-          const tablaGalce = contextoVidrio === 'FIJO' ? schema.vidrioGalceFijo : schema.vidrioGalce
-          const [galce] = await db.select()
-            .from(tablaGalce)
-            .where(and(
-              eq(tablaGalce.serieCodigo, d.serieCodigo),
-              eq(tablaGalce.perfilCodigo, perfilRef),
-            )).limit(1)
-          if (!galce) {
+          const deltaGalce = await leerGalceVidrio(db, contextoVidrio, d.serieCodigo, perfilRef)
+          if (deltaGalce === null) {
             avisoVidrio = `vidrio sin calcular: sin descuento de galce medido para ${d.serieCodigo} + ${perfilRef} (${contextoVidrio.toLowerCase()})`
           } else {
             const dims = medidasVidrio(
               emparejamiento.corteVerticalMm, emparejamiento.corteHorizontalMm,
-              Number(galce.deltaMm),
+              deltaGalce,
             )
             if (!dims) {
               avisoVidrio = 'vidrio sin calcular: el descuento de galce no cabe en la medida'

@@ -32,6 +32,9 @@ export { piezasAcristalamiento, type CristalAcris } from './junquillos.ts'
 // pruebas la importan de su fichero. Quien valore vidrio debe leer catálogo.
 export { resolverValoracionVidrio } from './valoracion-vidrio.ts'
 export { emparejarVidrio, type ContextoVidrio } from './emparejamiento-vidrio.ts'
+// Sólo la lectura del delta: el aviso de "sin galce medido" y la llamada a
+// `medidasVidrio` siguen en `acciones.ts`, que decide qué hacer sin fila.
+export { leerGalceVidrio } from './galce-vidrio.ts'
 // El CRISTAL lo necesita también la vía del acristalamiento, que sigue en
 // `acciones.ts`. La lista de herraje no sale: hoy sólo la usa la clasificación.
 export { COMPONENTE_CRISTAL } from './componentes-disenyo.ts'

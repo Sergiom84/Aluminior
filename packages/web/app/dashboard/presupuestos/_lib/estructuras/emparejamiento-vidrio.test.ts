@@ -56,6 +56,19 @@ describe('estructura con hojas', () => {
     expect(emparejarVidrio(dos, 3)).toEqual({ ok: false, aviso: AVISO })
   })
 
+  it('total de HV impar: distingue round de floor en (3)', () => {
+    // 3 HV (1 hoja de cantidad 3) con un HH compatible. round(3/2) = 2 = nCristales
+    // -> ok. floor(3/2) = 1 sería ambiguo. Fija el redondeo actual, no lo corrige.
+    const impar = [pieza('HV', 'P100', 1200, 3), pieza('HH', 'P100', 600, 3)]
+    expect(emparejarVidrio(impar, 2)).toEqual({
+      ok: true,
+      contexto: 'HOJA',
+      perfilCodigo: 'P100',
+      corteVerticalMm: 1200,
+      corteHorizontalMm: 600,
+    })
+  })
+
   it('dos perfiles verticales distintos son ambiguos', () => {
     const mezcla = [
       pieza('HV', 'P100', 1200), pieza('HV', 'P200', 1200),
