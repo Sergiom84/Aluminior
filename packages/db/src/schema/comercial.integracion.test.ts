@@ -14,13 +14,11 @@ import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { eq, sql } from 'drizzle-orm'
-import { migrate } from 'drizzle-orm/postgres-js/migrator'
 import { crearDb } from '../index.ts'
 import { urlDePruebasValidada } from '../pruebas.ts'
 import * as schema from './index.ts'
 
 const urlPruebas = urlDePruebasValidada(process.env.TEST_DATABASE_URL)
-const migraciones = fileURLToPath(new URL('../../migrations', import.meta.url))
 const NOMBRE_PRUEBA = 'PRUEBA AUTOMÁTICA IDENTIDAD PRESUPUESTO'
 
 /** Lee la migración 0019 tal cual quedó en disco: la prueba de la migración
@@ -45,13 +43,16 @@ describe('identidad documental de presupuestos, contra PostgreSQL', () => {
   const limpiar = () => db.delete(schema.presupuestos)
     .where(eq(schema.presupuestos.nombreLibre, NOMBRE_PRUEBA))
 
-  beforeAll(async () => {
-    db = crearDb(urlPruebas)
-    await migrate(db, { migrationsFolder: migraciones })
-  }, 60_000)
+  beforeAll(async () => { db = crearDb(urlPruebas) })
 
   beforeEach(limpiar)
-  afterAll(async () => { await limpiar() })
+  afterAll(async () => {
+    try {
+      await limpiar()
+    } finally {
+      await db.$client.end({ timeout: 5 })
+    }
+  })
 
   describe('la restricción única', () => {
     it('rechaza la misma (serie, numero, revision) repetida', async () => {

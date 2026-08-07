@@ -9,17 +9,14 @@
  *   docker compose -f packages/db/docker-compose.yml up -d
  *   npm run -w @aluminior/db test
  */
-import { fileURLToPath } from 'node:url'
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { eq, sql } from 'drizzle-orm'
-import { migrate } from 'drizzle-orm/postgres-js/migrator'
 import { valorarManoObra } from '@aluminior/core/precios'
 import { crearDb } from '../index.ts'
 import { urlDePruebasValidada } from '../pruebas.ts'
 import * as schema from './index.ts'
 
 const urlPruebas = urlDePruebasValidada(process.env.TEST_DATABASE_URL)
-const migraciones = fileURLToPath(new URL('../../migrations', import.meta.url))
 const NOMBRE_PRUEBA = 'PRUEBA AUTOMÁTICA MANO DE OBRA'
 
 type Fila = typeof schema.lineasManoObra.$inferInsert
@@ -60,7 +57,6 @@ describe('restricciones de lineas_mano_obra', () => {
 
   beforeAll(async () => {
     db = crearDb(urlPruebas)
-    await migrate(db, { migrationsFolder: migraciones })
     await limpiar()
     const [presupuesto] = await db.insert(schema.presupuestos).values({
       numero: 999998, revision: 0, serie: 'A',
@@ -79,7 +75,13 @@ describe('restricciones de lineas_mano_obra', () => {
   // por violar el índice único en vez de la restricción que se quiere probar.
   beforeEach(async () => { if (lineaId) await borrarTodo() })
 
-  afterAll(async () => { await limpiar() })
+  afterAll(async () => {
+    try {
+      await limpiar()
+    } finally {
+      await db.$client.end({ timeout: 5 })
+    }
+  })
 
   describe('lo que el esquema debe aceptar', () => {
     it('guarda una fila completa y la devuelve intacta', async () => {
