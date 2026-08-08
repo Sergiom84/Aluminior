@@ -29,3 +29,4 @@ export {
 } from './plan-copia.ts'
 export { copiarPresupuesto, type EntradaCopia, type ResultadoCopia } from './copiar-presupuesto.ts'
 export { copiarComoRevision, type ResultadoCopiarRevision } from './copiar-revision-identica.ts'
+export { copiarComoNuevo, type ResultadoCopiarComoNuevo } from './copiar-como-nuevo.ts'
