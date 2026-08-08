@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { desc, sql, or, ilike } from 'drizzle-orm'
 import { crearDb, schema } from '@aluminior/db'
 import { Shell } from '../_components/shell.tsx'
+import { CopiarRevisionBoton } from './_components/copiar-revision-boton.tsx'
 
 export const dynamic = 'force-dynamic'
 
@@ -73,6 +74,14 @@ export default async function Presupuestos({
             </a>
           ) : (
             <span className="al-command" aria-disabled="true">Emitir</span>
+          )}
+          {presupuestoActivo && (
+            <CopiarRevisionBoton
+              presupuestoId={presupuestoActivo.id}
+              numero={presupuestoActivo.numero}
+              revision={presupuestoActivo.revision}
+              serie={presupuestoActivo.serie}
+            />
           )}
           <form className="al-search" role="search">
             <label htmlFor="buscar-presupuesto" className="sr-only">Buscar presupuesto</label>

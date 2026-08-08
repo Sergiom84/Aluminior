@@ -20,8 +20,8 @@ import {
   valorarDespiece, medidasVidrio, lineaValorable,
   type DatosArticuloPrecio,
 } from '@aluminior/core/precios'
-import { crearClienteServidor } from '../../../../lib/supabase/servidor.ts'
 import { actualizarTotales } from './totales.ts'
+import { usuarioActual } from './usuario-actual.ts'
 import { registrarFallo } from './errores.ts'
 import { esquemaLinea } from './lineas/esquema-linea.ts'
 import { crearPresupuestoAlta } from './presupuestos/crear-presupuesto.ts'
@@ -40,23 +40,6 @@ import {
   comprobarPersistenciaCerramientos, prepararAltaCerramiento,
   MENSAJE_MIGRACION_PENDIENTE, type AltaCerramiento,
 } from './cerramientos/index.ts'
-
-/**
- * Email del usuario de la sesión, para el campo `creado_por` (antes vacío por
- * no haber auth, T.61). Nunca rompe la creación: ante cualquier fallo devuelve
- * null y el presupuesto se crea igual.
- */
-async function usuarioActual(): Promise<string | null> {
-  try {
-    const supabase = await crearClienteServidor()
-    const { data, error } = await supabase.auth.getClaims()
-    if (error || !data?.claims) return null
-    const claims = data.claims as { email?: string; sub?: string }
-    return claims.email ?? claims.sub ?? null
-  } catch {
-    return null
-  }
-}
 
 export type Estado =
   | { ok: true; id: string; mensaje?: string }

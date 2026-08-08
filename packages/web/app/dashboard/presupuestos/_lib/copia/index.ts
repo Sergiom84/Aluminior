@@ -28,3 +28,4 @@ export {
   type LineaOrigen, type OpcionesCopia, type PlanCopia, type TipoLinea,
 } from './plan-copia.ts'
 export { copiarPresupuesto, type EntradaCopia, type ResultadoCopia } from './copiar-presupuesto.ts'
+export { copiarComoRevision, type ResultadoCopiarRevision } from './copiar-revision-identica.ts'
