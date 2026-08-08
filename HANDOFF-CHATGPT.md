@@ -9,23 +9,27 @@ superadas por las decisiones resumidas aquí.
 
 ## 0. Estado del repositorio, primero
 
-- Rama `main` con **29 commits locales por delante de `origin/main`**. **Nada se
+- Rama `main` con **33 commits locales por delante de `origin/main`**. **Nada se
   ha empujado.** Cadena reciente: T.69 (descomposición de `acciones.ts` en cinco
   extracciones), T.70.1–T.70.3.1 (valoración y emparejamiento del vidrio, y
   extracción de la consulta de galce), T.71.1–T.71.4 (identidad documental y
-  numeración transaccional de presupuestos — ver §6 quater).
+  numeración transaccional de presupuestos — ver §6 quater), T.72.1 (copia
+  idéntica de un presupuesto como nueva revisión — ver §6 quinquies).
 - **Las migraciones `0018_pale_hulk` y `0019_fixed_ken_ellis` sólo existen en
   local y sólo se han probado contra el Postgres efímero de Docker. NINGUNA de
   las dos está aplicada en el Supabase remoto.** Aplicarlas allí sigue siendo una
   decisión pendiente, con alcance explícito y prueba reversible (§6 de
   `SPEC-MANO-DE-OBRA.md` para la 0018). Orden de despliegue: **migración
   primero, código después**; el código comprueba antes de insertar/reservar.
-- `acciones.ts` está en **727 líneas** (era 737 antes de T.71.4 — ver §6 quater).
-- G3 (copia de presupuesto con sustitución masiva) sigue **sin consumidor
-  productivo**: el módulo `_lib/copia/` existe y está probado, pero ninguna
-  server action ni superficie de UI lo invoca todavía. Las sustituciones de
-  detalle (`GENERAR_NUEVO`) siguen bloqueadas porque el motor de despiece vive
-  en `acciones.ts` y el módulo de copia no lo alcanza.
+- `acciones.ts` está en **710 líneas** (bajó de 727 en T.72.1: `usuarioActual`
+  salió a `_lib/usuario-actual.ts` — ver §6 quinquies).
+- G3 (copia de presupuesto con sustitución masiva) tiene ya un **consumidor
+  productivo limitado**: copiar un presupuesto idéntico como nueva revisión del
+  mismo documento (T.72.1). Sustitución de códigos, selección parcial de
+  líneas, destino manual y regeneración de descripción/dibujo siguen **sin
+  consumidor y bloqueadas** — el motor de despiece que necesitaría
+  `GENERAR_NUEVO` vive en `acciones.ts` y el módulo de copia no lo alcanza.
+- Suite en **589 pruebas** tras T.72.1.
 - El árbol contiene además `design-qa.md` sin versionar, ajeno a esta unidad.
 
 ## 1. Objetivo y criterio de producto
@@ -489,6 +493,45 @@ cuatro workspaces, build de producción de `@aluminior/web` correcto,
 `git diff --check` limpio. Las migraciones `0018` y `0019` siguen sin aplicarse
 en Supabase remoto — sólo se han probado contra el Postgres efímero de Docker.
 
+## 6 quinquies. T.72.1 — copia idéntica como nueva revisión (8/8/2026)
+
+Primer consumidor productivo de `_lib/copia/` (G3), en tres unidades.
+
+- **`824887f`, copia idéntica como revisión.** `copiarComoRevision` en
+  `_lib/copia/copiar-revision-identica.ts`: fija por dentro
+  `MISMO_NUMERO_NUEVA_REVISION` y `MAPA_VACIO` sobre `copiarPresupuesto`, sin
+  aceptar mapa, selección, destino manual ni regeneración desde `FormData`.
+  Control en el listado de presupuestos junto a Editar/Emitir.
+- **`95f8ce5`, autorización, UUID, selección por fila y rollback real.**
+  Guardas en orden: UUID válido antes de tocar sesión, `usuarioActual()` no
+  nulo antes de crear `Db` o llamar al motor, errores envueltos en mensaje
+  genérico sin SQL ni nombres de restricción. El control pasa de la barra de
+  comandos sobre `filas[0]` a la columna de acciones de cada fila —
+  desviación temporal declarada mientras el listado no tenga modelo de
+  selección de fila, como sí lo tiene Productor. `CopiarRevisionBoton` pasa a
+  un reducer puro (`_components/estado-copia-revision.ts`, sin DOM: el
+  proyecto no tiene testing-library ni jsdom) con fases
+  INACTIVO/ARMADO/ENVIANDO/ERROR; un fallo queda en ERROR (no vuelve a
+  INACTIVO), con el mensaje visible en `role="alert"` y opción de reintentar
+  o cancelar. La prueba de rollback pasa a llamar a `copiarPresupuesto` de
+  punta a punta —no a `escribirCopia` sola— con un trigger de PostgreSQL real
+  instalado y retirado por la propia suite, activo sólo sobre un marcador
+  único para no interferir con suites paralelas.
+- **`8c7dabb`, fecha Europe/Madrid y cierre postcommit.**
+  `_lib/fecha-local.ts` calcula la fecha comercial con
+  `Intl.DateTimeFormat.formatToParts` en vez de
+  `new Date().toISOString().slice(0, 10)`, que da la fecha UTC y de noche ya
+  va un día atrasada respecto a Madrid. La acción separa tres fases:
+  validación/autorización, copia, y revalidación posterior — un fallo de
+  `revalidatePath` ya NO se lee como fallo de la copia (que puede estar
+  confirmada en PostgreSQL), se registra con `registrarFallo` y la acción
+  sigue devolviendo `ok:true` con el id ya creado.
+
+**Verificación de cierre**: 589 pruebas totales, typecheck limpio en los
+cuatro workspaces, build de producción de `@aluminior/web` correcto,
+`git diff --check` limpio. Verificación visual autenticada sigue pendiente:
+el listado exige sesión y no se han introducido credenciales.
+
 ## 7. Arquitectura modular obligatoria
 
 El usuario quiere evolucionar por módulos pequeños para que una modificación no
@@ -690,12 +733,14 @@ autentiquen, deleguen y revaliden.
 > migración 0018 **sólo local** y la mano de obra adicional funcionando de punta
 > a punta. T.69–T.70 descompusieron `acciones.ts` de 1.121 a 735 líneas; T.71
 > (§6 quater) cerró la identidad documental (serie, número, revisión) y la
-> serialización transaccional de la numeración de presupuestos, bajándolo a
-> **727 líneas**. `_lib/copia/` (G3) existe y está probado pero **sin consumidor
-> productivo**. No apliques la 0018 ni la 0019 en remoto sin alcance explícito,
-> no metas `parseFloat` ni `Number()` en el camino de horas ni en la numeración.
-> `FABRICACION_BASE` y la edición de líneas guardadas siguen fuera. El titular
-> contestó el desglose y la mano de obra como línea propia (§15.1 de la spec,
-> testimonio sin medir) y **aplazó el descuento al final**. `main` queda 29
-> commits por delante de `origin/main`, sin push, y `design-qa.md` es ajeno a
-> esta unidad.
+> serialización transaccional de la numeración de presupuestos. T.72.1
+> (§6 quinquies) dio a `_lib/copia/` (G3) su primer consumidor productivo —
+> copiar un presupuesto idéntico como nueva revisión del mismo documento—,
+> bajando `acciones.ts` a **710 líneas**. Sustitución de códigos, selección
+> parcial, destino manual y regeneración siguen sin consumidor. No apliques la
+> 0018 ni la 0019 en remoto sin alcance explícito, no metas `parseFloat` ni
+> `Number()` en el camino de horas ni en la numeración. `FABRICACION_BASE` y la
+> edición de líneas guardadas siguen fuera. El titular contestó el desglose y
+> la mano de obra como línea propia (§15.1 de la spec, testimonio sin medir) y
+> **aplazó el descuento al final**. `main` queda 33 commits por delante de
+> `origin/main`, sin push, y `design-qa.md` es ajeno a esta unidad.
