@@ -1,6 +1,6 @@
 # Aluminior — traspaso para una conversación nueva
 
-Actualizado: 5 de agosto de 2026.
+Actualizado: 8 de agosto de 2026.
 
 Este es el punto de entrada vigente. Leer después `AGENTS.md`,
 `ARQUITECTURA.md` y `PARIDAD-PRODUCTOR.md`. `PLAN.md` y `ENTREGA.md` contienen
@@ -9,19 +9,23 @@ superadas por las decisiones resumidas aquí.
 
 ## 0. Estado del repositorio, primero
 
-- Rama `main` con **15 commits locales por delante de `origin/main`**, que sigue
-  en `01a0613`. **Nada se ha empujado.** Los seis de la descomposición T.69 de
-  `acciones.ts` —`7e53cb4` herraje (T.69.1), `3a8a092` cierre del pool de
-  migraciones, `92a1b50` coste del despiece (T.69.2), `ee62703` coste del
-  acristalamiento (T.69.3), `523af70` resolución de perfiles (T.69.4) y `a3759b6`
-  junquillos y juntas (T.69.5)—, más los tres del 5 de agosto: `ad1b7d5` las
-  respuestas del titular sobre mano de obra, `8291f4a` la valoración del vidrio
-  (T.70.1) y `2cc299a` su emparejamiento (T.70.2).
-- **La migración `0018_pale_hulk` sólo existe en local y se ha aplicado
-  únicamente al Postgres efímero de Docker. NO está en el Supabase remoto.**
-  Aplicarla allí es una decisión pendiente, con alcance explícito y prueba
-  reversible (§6 de `SPEC-MANO-DE-OBRA.md`). Orden de despliegue: **migración
-  primero, código después**; el código lo comprueba antes de insertar.
+- Rama `main` con **29 commits locales por delante de `origin/main`**. **Nada se
+  ha empujado.** Cadena reciente: T.69 (descomposición de `acciones.ts` en cinco
+  extracciones), T.70.1–T.70.3.1 (valoración y emparejamiento del vidrio, y
+  extracción de la consulta de galce), T.71.1–T.71.4 (identidad documental y
+  numeración transaccional de presupuestos — ver §6 quater).
+- **Las migraciones `0018_pale_hulk` y `0019_fixed_ken_ellis` sólo existen en
+  local y sólo se han probado contra el Postgres efímero de Docker. NINGUNA de
+  las dos está aplicada en el Supabase remoto.** Aplicarlas allí sigue siendo una
+  decisión pendiente, con alcance explícito y prueba reversible (§6 de
+  `SPEC-MANO-DE-OBRA.md` para la 0018). Orden de despliegue: **migración
+  primero, código después**; el código comprueba antes de insertar/reservar.
+- `acciones.ts` está en **727 líneas** (era 737 antes de T.71.4 — ver §6 quater).
+- G3 (copia de presupuesto con sustitución masiva) sigue **sin consumidor
+  productivo**: el módulo `_lib/copia/` existe y está probado, pero ninguna
+  server action ni superficie de UI lo invoca todavía. Las sustituciones de
+  detalle (`GENERAR_NUEVO`) siguen bloqueadas porque el motor de despiece vive
+  en `acciones.ts` y el módulo de copia no lo alcanza.
 - El árbol contiene además `design-qa.md` sin versionar, ajeno a esta unidad.
 
 ## 1. Objetivo y criterio de producto
@@ -432,6 +436,59 @@ importes y necesita su propia unidad con evidencia.
   ranura que resolver, pero termina en el mismo aviso que un perfil que la serie
   no resuelve.
 
+## 6 quater. T.70.3–T.71.4 — galce extraído y numeración cerrada (7–8/8/2026)
+
+**T.70.3, extracción de galce** (`d1c994b`): la consulta de galce del vidrio sale
+de `acciones.ts` a `estructuras/`. **T.70.3.1** (`74a90ff`) refuerza su evidencia:
+`valoracion-vidrio.integracion.test.ts` pasa de 5 a 12 pruebas contra Postgres
+real (aislamiento por artículo, tarifa sin datos, fallback alfabético en PVP y
+coste por separado, prioridad del comodín, `acabadoCodigo` null). Cinco
+mutaciones ejecutadas y revertidas, cada una tumba exactamente 1 prueba;
+`valoracion-vidrio.ts` queda sin diff.
+
+**T.71 — identidad y numeración de presupuestos.** Cuatro unidades, la misma
+frontera: `_lib/numeracion/` pasa a ser la única autoridad para reservar número
+o revisión de un presupuesto, dentro de la transacción que escribe la cabecera.
+
+- **T.71.1** (`933b7d8`): la identidad de un presupuesto es (serie, número,
+  revisión). Migración **0019** (local, no aplicada en remoto) añade
+  `presupuestos_identidad_uq` UNIQUE sobre las tres columnas, con preflight que
+  aborta sin borrar filas si ya hubiera un duplicado (0 duplicados medidos en el
+  Postgres efímero antes de generar la migración). `presupuestos_numero_idx` se
+  conserva sin revisar: es un índice de lectura, no de identidad.
+- **T.71.2** (`883bf2e`): serialización real. `pg_advisory_xact_lock` con claves
+  parametrizadas (nunca concatenadas) serializa la asignación normal;
+  `presupuestos_identidad_uq` decide ante cualquier carrera residual.
+  `NUMERO_NUEVO` bloquea por ejercicio (de la fecha del documento, nunca de un
+  reloj interno) y relee el `MAX` del rango anual con secuencia global;
+  `REVISION_NUEVA` bloquea por (serie, número); `MANUAL` comprueba existencia
+  dentro de la transacción y nunca elige otro número si está ocupado.
+  `ejecutarConNumeracion` detecta `SQLSTATE 23505` por código y por el nombre de
+  la restricción — nunca por texto de mensaje — y reintenta una vez sólo si la
+  asignación era automática.
+- **T.71.3** (`63efa59`): `npm run test` fallaba de forma intermitente porque dos
+  suites de integración migraban cada una en su `beforeAll` y vitest las lanza en
+  paralelo. `packages/db/vitest.config.ts` + `packages/db/pruebas/migrar.ts`
+  replican el patrón de `packages/web`: `globalSetup` migra una sola vez.
+  `fileParallelism: false` queda sólo en `packages/db`, porque es el único
+  paquete donde una prueba quita y recrea una restricción global a mitad de
+  ejecución.
+- **T.71.4** (`5b31f7e`): tipo `Tx` exclusivo (no `Db | Tx`) en toda la frontera
+  de numeración, con prueba de tipos `@ts-expect-error` que demuestra que
+  `reservarNumeracion(db, ...)` no compila. El gancho de pausa para pruebas de
+  concurrencia sale del contrato público (`EntradaNumeracion`); guarda de
+  ausencia barre los ficheros reales de producción. `validarFechaDocumento`
+  sustituye un `slice(0,4)` crudo: formato `YYYY-MM-DD` real, secuencia anual
+  agotada da error explícito (nunca `AA+10000`). `presupuestos/crear-presupuesto.ts`
+  extrae la escritura de la cabecera de `crearPresupuesto`: recibe `Db`, fecha
+  explícita y datos ya validados; `acciones.ts` queda sólo en parseo, validación,
+  usuario y `revalidatePath`. **`acciones.ts` pasa de 737 a 727 líneas.**
+
+**Verificación de cierre de T.71**: 564 pruebas totales, typecheck limpio en los
+cuatro workspaces, build de producción de `@aluminior/web` correcto,
+`git diff --check` limpio. Las migraciones `0018` y `0019` siguen sin aplicarse
+en Supabase remoto — sólo se han probado contra el Postgres efímero de Docker.
+
 ## 7. Arquitectura modular obligatoria
 
 El usuario quiere evolucionar por módulos pequeños para que una modificación no
@@ -631,15 +688,14 @@ autentiquen, deleguen y revaliden.
 > paridad funcional con Productor y la regla «todo o sin valorar». T.68 dejó el
 > contrato decimal, la valoración pura y la tabla `lineas_mano_obra` con su
 > migración 0018 **sólo local** y la mano de obra adicional funcionando de punta
-> a punta. T.69 y T.70 descompusieron `acciones.ts` de 1.121 a 740 líneas en
-> siete extracciones bajo `_lib/estructuras/`, con 377 pruebas y comportamientos
-> conservados y declarados —los cinco de §6 ter, el desempate del coste del
-> vidrio y las tres asimetrías del emparejamiento— que no deben cambiarse de
-> refilón. No apliques la 0018 en remoto sin alcance explícito, no metas
-> `parseFloat` ni `Number()` en el camino de horas, y sigue reduciendo
-> `acciones.ts`: quedan la ruta mixta del vidrio y la consulta de galce,
-> caracterizando antes de mover. `FABRICACION_BASE` y la edición de líneas
-> guardadas siguen fuera. El titular contestó el desglose y la mano de obra como
-> línea propia (§15.1 de la spec, testimonio sin medir) y **aplazó el descuento
-> al final**. `main` queda 16 commits por delante de `origin/main` (`01a0613`),
-> sin push, y `design-qa.md` es ajeno a esta unidad.
+> a punta. T.69–T.70 descompusieron `acciones.ts` de 1.121 a 735 líneas; T.71
+> (§6 quater) cerró la identidad documental (serie, número, revisión) y la
+> serialización transaccional de la numeración de presupuestos, bajándolo a
+> **727 líneas**. `_lib/copia/` (G3) existe y está probado pero **sin consumidor
+> productivo**. No apliques la 0018 ni la 0019 en remoto sin alcance explícito,
+> no metas `parseFloat` ni `Number()` en el camino de horas ni en la numeración.
+> `FABRICACION_BASE` y la edición de líneas guardadas siguen fuera. El titular
+> contestó el desglose y la mano de obra como línea propia (§15.1 de la spec,
+> testimonio sin medir) y **aplazó el descuento al final**. `main` queda 29
+> commits por delante de `origin/main`, sin push, y `design-qa.md` es ajeno a
+> esta unidad.
