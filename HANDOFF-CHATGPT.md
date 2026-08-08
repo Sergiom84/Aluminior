@@ -9,27 +9,34 @@ superadas por las decisiones resumidas aquí.
 
 ## 0. Estado del repositorio, primero
 
-- Rama `main` con **33 commits locales por delante de `origin/main`**. **Nada se
+- Rama `main` con **36 commits locales por delante de `origin/main`**. **Nada se
   ha empujado.** Cadena reciente: T.69 (descomposición de `acciones.ts` en cinco
   extracciones), T.70.1–T.70.3.1 (valoración y emparejamiento del vidrio, y
   extracción de la consulta de galce), T.71.1–T.71.4 (identidad documental y
   numeración transaccional de presupuestos — ver §6 quater), T.72.1 (copia
-  idéntica de un presupuesto como nueva revisión — ver §6 quinquies).
+  idéntica de un presupuesto como nueva revisión — ver §6 quinquies), T.72.2 y
+  T.72.2.1 (segundo destino de copia idéntica, nuevo presupuesto, y prueba
+  adversarial del lock que lo protege — ver §6 sexies).
 - **Las migraciones `0018_pale_hulk` y `0019_fixed_ken_ellis` sólo existen en
   local y sólo se han probado contra el Postgres efímero de Docker. NINGUNA de
   las dos está aplicada en el Supabase remoto.** Aplicarlas allí sigue siendo una
   decisión pendiente, con alcance explícito y prueba reversible (§6 de
   `SPEC-MANO-DE-OBRA.md` para la 0018). Orden de despliegue: **migración
   primero, código después**; el código comprueba antes de insertar/reservar.
-- `acciones.ts` está en **710 líneas** (bajó de 727 en T.72.1: `usuarioActual`
-  salió a `_lib/usuario-actual.ts` — ver §6 quinquies).
-- G3 (copia de presupuesto con sustitución masiva) tiene ya un **consumidor
-  productivo limitado**: copiar un presupuesto idéntico como nueva revisión del
-  mismo documento (T.72.1). Sustitución de códigos, selección parcial de
-  líneas, destino manual y regeneración de descripción/dibujo siguen **sin
-  consumidor y bloqueadas** — el motor de despiece que necesitaría
-  `GENERAR_NUEVO` vive en `acciones.ts` y el módulo de copia no lo alcanza.
-- Suite en **589 pruebas** tras T.72.1.
+- `acciones.ts` sigue en **710 líneas**: T.72.2 no le añadió nada, ambas
+  acciones de copia idéntica viven en `_lib/copia/`.
+- G3 (copia de presupuesto con sustitución masiva) tiene ya **dos acciones
+  productivas seguras**: copiar un presupuesto idéntico como nueva revisión
+  del mismo documento (`copiarComoRevision`, T.72.1) y como nuevo presupuesto
+  con número automático (`copiarComoNuevo`, T.72.2) — ver §6 sexies. Sustitución
+  de códigos, selección parcial de líneas, destino manual y regeneración de
+  descripción/dibujo siguen **sin consumidor y bloqueadas** — el motor de
+  despiece que necesitaría `GENERAR_NUEVO` vive en `acciones.ts` y el módulo de
+  copia no lo alcanza.
+- Suite en **599 pruebas** tras T.72.2.1.
+- **Verificación visual autenticada de la copia idéntica sigue pendiente**: no
+  hay sesión disponible en este entorno y no se han introducido credenciales
+  para conseguirla. Es el único límite declarado de T.72.
 - El árbol contiene además `design-qa.md` sin versionar, ajeno a esta unidad.
 
 ## 1. Objetivo y criterio de producto
@@ -532,6 +539,44 @@ cuatro workspaces, build de producción de `@aluminior/web` correcto,
 `git diff --check` limpio. Verificación visual autenticada sigue pendiente:
 el listado exige sesión y no se han introducido credenciales.
 
+## 6 sexies. T.72.2–T.72.2.1 — copia idéntica como nuevo presupuesto, lock probado (8/8/2026)
+
+Segundo destino observado de la copia idéntica (EVIDENCIA-VIDEO-PRESUPUESTO.md
+§8), y la prueba adversarial que le faltaba a T.72.1 sobre el propio lock.
+
+- **`fe9faaf`, T.72.2.** `_lib/copia/copia-identica.ts` extrae la orquestación
+  compartida —autorización, UUID, fecha Europe/Madrid, `MAPA_VACIO` +
+  `OPCIONES_COPIA_IDENTICA`, error genérico, revalidación postcommit— de
+  `copiarComoRevision` (T.72.1) a una función interna `copiarIdentica(estrategia,
+  id)` que recibe la estrategia YA cerrada (`EstrategiaDestino`, sin tipo
+  nuevo). `copiarComoRevision` y `copiarComoNuevo` quedan como wrappers de una
+  línea, cada uno con firma pública `(presupuestoId: string)`: ninguna acepta
+  estrategia, número, revisión, serie, mapa, selección ni regeneración desde
+  fuera. `acciones.ts` sin tocar. El reducer de UI se generaliza a fases
+  INACTIVO/ELIGIENDO/ENVIANDO(operación)/ERROR(operación, mensaje):
+  `CopiarRevisionBoton` pasa de un botón fijo a "Copiar…" que abre "Nueva
+  revisión / Nuevo presupuesto / Cancelar", con la operación fallida
+  conservada para reintentar.
+- **T.72.2.1, prueba adversarial del lock.** La concurrencia forzada de
+  T.72.2 con SÓLO dos contendientes no demostraba que el lock de
+  `NUMERO_NUEVO` fuera necesario: la restricción `presupuestos_identidad_uq`
+  más el reintento automático único (T.71.2) absorbía esa carrera de dos vías
+  aunque el lock no sirviera de nada. `copia-nuevo-numero.integracion.test.ts`
+  pasa a TRES contendientes, los tres atravesando el mismo gancho de pruebas
+  (`copiarPresupuestoParaPruebas`/`pausaTrasLecturaMs`) y lanzados a la vez por
+  `Promise.all` — ninguno es una llamada normal retrasada con `setTimeout`.
+  Confirmado por mutación real, cada una tumba la prueba exactamente por
+  agotar el único reintento automático: quitar `lockNumeroNuevo` (uno de los
+  tres queda `ok:false`), y leer el máximo del ejercicio ANTES de adquirir el
+  lock (mismo resultado). Ambas mutaciones restauradas sin diff.
+
+**Verificación de cierre de T.72.2/T.72.2.1**: 599 pruebas totales, typecheck
+limpio en los cuatro workspaces, build de producción de `@aluminior/web`
+correcto, `git diff --check` limpio. Con el lock probado adversarialmente,
+T.72 queda cerrada técnicamente; el único límite declarado que sigue abierto
+es la verificación visual autenticada — no hay sesión disponible en este
+entorno y no se han introducido credenciales para conseguirla.
+
 ## 7. Arquitectura modular obligatoria
 
 El usuario quiere evolucionar por módulos pequeños para que una modificación no
@@ -733,14 +778,20 @@ autentiquen, deleguen y revaliden.
 > migración 0018 **sólo local** y la mano de obra adicional funcionando de punta
 > a punta. T.69–T.70 descompusieron `acciones.ts` de 1.121 a 735 líneas; T.71
 > (§6 quater) cerró la identidad documental (serie, número, revisión) y la
-> serialización transaccional de la numeración de presupuestos. T.72.1
-> (§6 quinquies) dio a `_lib/copia/` (G3) su primer consumidor productivo —
-> copiar un presupuesto idéntico como nueva revisión del mismo documento—,
-> bajando `acciones.ts` a **710 líneas**. Sustitución de códigos, selección
-> parcial, destino manual y regeneración siguen sin consumidor. No apliques la
-> 0018 ni la 0019 en remoto sin alcance explícito, no metas `parseFloat` ni
-> `Number()` en el camino de horas ni en la numeración. `FABRICACION_BASE` y la
-> edición de líneas guardadas siguen fuera. El titular contestó el desglose y
-> la mano de obra como línea propia (§15.1 de la spec, testimonio sin medir) y
-> **aplazó el descuento al final**. `main` queda 33 commits por delante de
-> `origin/main`, sin push, y `design-qa.md` es ajeno a esta unidad.
+> serialización transaccional de la numeración de presupuestos. T.72.1–T.72.2.1
+> (§6 quinquies, §6 sexies) dieron a `_lib/copia/` (G3) dos acciones productivas
+> seguras — `copiarComoRevision` y `copiarComoNuevo`, ambas sobre la misma
+> frontera interna `copiarIdentica` —, sin añadir nada a `acciones.ts`, que
+> sigue en **710 líneas**. T.72.2.1 probó adversarialmente con TRES
+> contendientes forzados que el lock de `NUMERO_NUEVO` es necesario: con dos
+> contendientes la restricción `presupuestos_identidad_uq` más el reintento
+> automático único bastaba para tapar su ausencia. Sustitución de códigos,
+> selección parcial, destino manual y regeneración siguen sin consumidor. No
+> apliques la 0018 ni la 0019 en remoto sin alcance explícito, no metas
+> `parseFloat` ni `Number()` en el camino de horas ni en la numeración.
+> `FABRICACION_BASE` y la edición de líneas guardadas siguen fuera. El titular
+> contestó el desglose y la mano de obra como línea propia (§15.1 de la spec,
+> testimonio sin medir) y **aplazó el descuento al final**. `main` queda 36
+> commits por delante de `origin/main`, sin push, y `design-qa.md` es ajeno a
+> esta unidad. Único límite declarado de T.72: la verificación visual
+> autenticada sigue pendiente, sin sesión disponible en este entorno.

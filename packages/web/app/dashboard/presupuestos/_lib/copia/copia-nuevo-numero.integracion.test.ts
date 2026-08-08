@@ -145,31 +145,52 @@ describe('copiarPresupuesto con NUEVO_NUMERO, contra PostgreSQL', () => {
     expect(despiece).toHaveLength(1)
   })
 
-  it('con intercalación FORZADA (no azar): dos copias como NUEVO_NUMERO dan números consecutivos', async () => {
-    const [r1, r2] = await Promise.all([
-      copiarPresupuestoParaPruebas(db, {
-        presupuestoId: origenId,
-        destino: { estrategia: 'NUEVO_NUMERO' },
-        opciones: { ...OPCIONES_COPIA_IDENTICA, mapa: MAPA_VACIO },
-        fecha: FECHA,
-      }, { pausaTrasLecturaMs: 200 }),
-      (async () => {
-        await new Promise((resolver) => setTimeout(resolver, 40))
-        return copiarPresupuesto(db, {
-          presupuestoId: origenId,
-          destino: { estrategia: 'NUEVO_NUMERO' },
-          opciones: { ...OPCIONES_COPIA_IDENTICA, mapa: MAPA_VACIO },
-          fecha: FECHA,
-        })
-      })(),
+  it('con intercalación FORZADA de TRES contendientes (no azar, no un rezagado artificial): números consecutivos', async () => {
+    // Los TRES atraviesan el mismo gancho de pruebas
+    // (`copiarPresupuestoParaPruebas`/`pausaTrasLecturaMs`), lanzados a la vez
+    // por `Promise.all`. Ninguno es una llamada normal retrasada con
+    // `setTimeout`: los tres quedan expuestos a la misma carrera real, dentro
+    // de la ventana que ensancha la pausa tras leer el máximo.
+    const entrada = () => ({
+      presupuestoId: origenId,
+      destino: { estrategia: 'NUEVO_NUMERO' as const },
+      opciones: { ...OPCIONES_COPIA_IDENTICA, mapa: MAPA_VACIO },
+      fecha: FECHA,
+    })
+
+    const [r1, r2, r3] = await Promise.all([
+      copiarPresupuestoParaPruebas(db, entrada(), { pausaTrasLecturaMs: 150 }),
+      copiarPresupuestoParaPruebas(db, entrada(), { pausaTrasLecturaMs: 150 }),
+      copiarPresupuestoParaPruebas(db, entrada(), { pausaTrasLecturaMs: 150 }),
     ])
 
     expect(r1.ok).toBe(true)
     expect(r2.ok).toBe(true)
-    if (!r1.ok || !r2.ok) return
-    expect(new Set([r1.numero, r2.numero]).size).toBe(2)
-    expect(Math.abs(r1.numero - r2.numero)).toBe(1)
+    expect(r3.ok).toBe(true)
+    if (!r1.ok || !r2.ok || !r3.ok) return
+
+    // Tres presupuestos DISTINTOS.
+    const ids = new Set([r1.presupuestoId, r2.presupuestoId, r3.presupuestoId])
+    expect(ids.size).toBe(3)
+
+    // Tres números DISTINTOS y CONSECUTIVOS: sin el lock, la pausa forzada
+    // tras leer el máximo deja a los tres contendientes calculando el mismo
+    // `MAX(numero) + 1` y colisionando (o, peor, sólo uno sobrevive el único
+    // reintento automático y el resto se pierde).
+    const numeros = [r1.numero, r2.numero, r3.numero].sort((a, b) => a - b)
+    expect(new Set(numeros).size).toBe(3)
+    expect(numeros[1] - numeros[0]).toBe(1)
+    expect(numeros[2] - numeros[1]).toBe(1)
+
     expect(r1.revision).toBe(0)
     expect(r2.revision).toBe(0)
+    expect(r3.revision).toBe(0)
+
+    // Limpieza garantizada: la copia conserva `nombreLibre` del origen (T.72,
+    // copia idéntica), así que el `afterAll` de esta suite —que borra por ese
+    // marcador— alcanza también a los tres presupuestos nuevos.
+    const marcados = await db.select({ id: schema.presupuestos.id }).from(schema.presupuestos)
+      .where(eq(schema.presupuestos.nombreLibre, NOMBRE_PRUEBA))
+    for (const id of ids) expect(marcados.some((fila) => fila.id === id)).toBe(true)
   })
 })
