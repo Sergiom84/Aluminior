@@ -187,6 +187,13 @@ body {
   opacity: 0.48;
 }
 
+.al-row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
 .al-confirm-inline {
   display: flex;
   flex-wrap: wrap;

@@ -75,14 +75,6 @@ export default async function Presupuestos({
           ) : (
             <span className="al-command" aria-disabled="true">Emitir</span>
           )}
-          {presupuestoActivo && (
-            <CopiarRevisionBoton
-              presupuestoId={presupuestoActivo.id}
-              numero={presupuestoActivo.numero}
-              revision={presupuestoActivo.revision}
-              serie={presupuestoActivo.serie}
-            />
-          )}
           <form className="al-search" role="search">
             <label htmlFor="buscar-presupuesto" className="sr-only">Buscar presupuesto</label>
             <input id="buscar-presupuesto" name="q" defaultValue={busqueda}
@@ -140,7 +132,19 @@ export default async function Presupuestos({
                     <td><span className="al-status" data-status={p.estado}>{p.estado}</span></td>
                     <td className="cifra">{p.lineas}</td>
                     <td className="cifra font-semibold">{eur.format(Number(p.total))}</td>
-                    <td><Link href={`/dashboard/presupuestos/${p.id}`} className="font-semibold" style={{ color: 'var(--al-accent-strong)' }}>Editar</Link></td>
+                    {/*
+                      T.72.1.1: la acción va en la fila, no en la barra de
+                      comandos sobre `filas[0]` — un presupuesto sin elegir
+                      explícitamente no debe poder copiarse. Desviación
+                      temporal y segura de Productor, que opera sobre la fila
+                      SELECCIONADA de la tabla: Aluminior todavía no tiene
+                      modelo de selección, así que cada control recibe los
+                      datos de SU propia fila hasta que exista uno.
+                    */}
+                    <td className="al-row-actions">
+                      <Link href={`/dashboard/presupuestos/${p.id}`} className="font-semibold" style={{ color: 'var(--al-accent-strong)' }}>Editar</Link>
+                      <CopiarRevisionBoton presupuestoId={p.id} numero={p.numero} revision={p.revision} serie={p.serie} />
+                    </td>
                   </tr>
                 ))}
               </tbody>
