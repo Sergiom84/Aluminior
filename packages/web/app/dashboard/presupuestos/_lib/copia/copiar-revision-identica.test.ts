@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { fechaLocalMadrid } from '../fecha-local.ts'
 
 /**
  * `copiarComoRevision`, en sus caminos de guarda y de error (T.72.1.1).
@@ -93,5 +94,34 @@ describe('copiarComoRevision', () => {
     )
     expect(revalidatePath).toHaveBeenCalledWith('/dashboard/presupuestos')
     expect(revalidatePath).toHaveBeenCalledWith('/dashboard/presupuestos/nuevo-id')
+  })
+
+  it('pasa la fecha local de Madrid explícita a copiarPresupuesto, no la deja implícita', async () => {
+    usuarioActual.mockResolvedValue('operador@aluminior')
+    copiarPresupuesto.mockResolvedValue({
+      ok: true, presupuestoId: 'nuevo-id', numero: 11, revision: 1,
+      lineasCopiadas: 2, sustitucionesAplicadas: 0, avisos: [],
+    })
+
+    await copiarComoRevision(ID_VALIDO)
+
+    expect(copiarPresupuesto).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ fecha: fechaLocalMadrid() }),
+    )
+  })
+
+  it('un fallo de revalidación NO se convierte en fallo de copia: la copia ya está confirmada', async () => {
+    usuarioActual.mockResolvedValue('operador@aluminior')
+    copiarPresupuesto.mockResolvedValue({
+      ok: true, presupuestoId: 'nuevo-id', numero: 11, revision: 1,
+      lineasCopiadas: 2, sustitucionesAplicadas: 0, avisos: [],
+    })
+    revalidatePath.mockImplementation(() => { throw new Error('fallo de revalidación') })
+
+    const resultado = await copiarComoRevision(ID_VALIDO)
+
+    expect(resultado).toEqual({ ok: true, presupuestoId: 'nuevo-id' })
+    expect(copiarPresupuesto).toHaveBeenCalledTimes(1)
   })
 })
