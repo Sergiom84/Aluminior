@@ -7,9 +7,9 @@
  */
 
 import type { crearDb } from '@aluminior/db'
+import type { Tx } from './tipos.ts'
 
 type Db = ReturnType<typeof crearDb>
-type Tx = Parameters<Parameters<Db['transaction']>[0]>[0]
 
 /** Forma mínima de un error de `postgres` que nos interesa: no importamos su tipo. */
 interface ErrorPostgres {

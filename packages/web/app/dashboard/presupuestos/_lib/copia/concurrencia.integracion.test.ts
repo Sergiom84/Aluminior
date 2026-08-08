@@ -17,7 +17,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { and, eq } from 'drizzle-orm'
 import { crearDb, schema } from '@aluminior/db'
 import { urlDePruebasValidada } from '@aluminior/db/pruebas'
-import { copiarPresupuesto } from './copiar-presupuesto.ts'
+import { copiarPresupuesto, copiarPresupuestoParaPruebas } from './copiar-presupuesto.ts'
 import { MAPA_VACIO } from './mapa-sustitucion.ts'
 import { OPCIONES_COPIA_IDENTICA } from './plan-copia.ts'
 
@@ -63,6 +63,30 @@ describe('concurrencia de copiarPresupuesto, contra PostgreSQL', () => {
         destino: { estrategia: 'MISMO_NUMERO_NUEVA_REVISION' },
         opciones: { ...OPCIONES_COPIA_IDENTICA, mapa: MAPA_VACIO },
       }),
+    ])
+
+    expect(r1.ok).toBe(true)
+    expect(r2.ok).toBe(true)
+    if (!r1.ok || !r2.ok) return
+    expect(new Set([r1.revision, r2.revision]).size).toBe(2)
+    expect(Math.abs(r1.revision - r2.revision)).toBe(1)
+  })
+
+  it('con intercalación FORZADA (no azar): dos copias dan revisiones consecutivas', async () => {
+    const [r1, r2] = await Promise.all([
+      copiarPresupuestoParaPruebas(db, {
+        presupuestoId: origenId,
+        destino: { estrategia: 'MISMO_NUMERO_NUEVA_REVISION' },
+        opciones: { ...OPCIONES_COPIA_IDENTICA, mapa: MAPA_VACIO },
+      }, { pausaTrasLecturaMs: 200 }),
+      (async () => {
+        await new Promise((resolver) => setTimeout(resolver, 40))
+        return copiarPresupuesto(db, {
+          presupuestoId: origenId,
+          destino: { estrategia: 'MISMO_NUMERO_NUEVA_REVISION' },
+          opciones: { ...OPCIONES_COPIA_IDENTICA, mapa: MAPA_VACIO },
+        })
+      })(),
     ])
 
     expect(r1.ok).toBe(true)

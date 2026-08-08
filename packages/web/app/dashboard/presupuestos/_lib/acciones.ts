@@ -24,7 +24,7 @@ import { crearClienteServidor } from '../../../../lib/supabase/servidor.ts'
 import { actualizarTotales } from './totales.ts'
 import { registrarFallo } from './errores.ts'
 import { esquemaLinea } from './lineas/esquema-linea.ts'
-import { ejecutarConNumeracion, esColisionIdentidad, reservarNumeracion } from './numeracion/index.ts'
+import { crearPresupuestoAlta } from './presupuestos/crear-presupuesto.ts'
 import {
   guardarLinea, type OpcionHerrajeElegida, type PiezaDespiece,
   type RanuraAcristalamiento, type ValoresLinea,
@@ -162,36 +162,26 @@ export async function crearPresupuesto(_previo: Estado, datos: FormData): Promis
   const fecha = new Date().toISOString().slice(0, 10)
   try {
     const creadoPor = await usuarioActual()
-    // Reserva del número y alta de la cabecera en la MISMA transacción
-    // (decisión #6 de T.71): `_lib/numeracion/` es la única autoridad, la
-    // acción sólo autentica al usuario y revalida la ruta.
-    const id = await ejecutarConNumeracion(db, async (tx) => {
-      const numeracion = await reservarNumeracion(tx, { modo: 'NUMERO_NUEVO', fecha, serie: 'A' })
-      if (!numeracion.ok) throw new Error(numeracion.errores.join('; '))
-      const [fila] = await tx.insert(schema.presupuestos).values({
-        numero: numeracion.numero,
-        revision: numeracion.revision,
-        serie: numeracion.serie,
-        fecha,
-        clienteCodigo: d.clienteCodigo,
-        potencialCodigo: d.potencialCodigo,
-        nombreLibre: d.nombreLibre,
-        obraTexto: d.obraTexto,
-        tarifa: d.tarifa,
-        formaPago: d.formaPago,
-        observaciones: d.observaciones,
-        estado: 'PENDIENTE',
-        creadoPor,
-      }).returning({ id: schema.presupuestos.id })
-      return fila.id
-    }, { automatico: true })
+    // Parseo, validación, usuario y revalidate se quedan aquí; reservar el
+    // número y escribir la cabecera es responsabilidad de
+    // `presupuestos/crear-presupuesto.ts` (T.71.4).
+    const resultado = await crearPresupuestoAlta(db, {
+      serie: 'A',
+      fecha,
+      clienteCodigo: d.clienteCodigo,
+      potencialCodigo: d.potencialCodigo,
+      nombreLibre: d.nombreLibre,
+      obraTexto: d.obraTexto,
+      tarifa: d.tarifa,
+      formaPago: d.formaPago,
+      observaciones: d.observaciones,
+      creadoPor,
+    })
+    if (!resultado.ok) return { ok: false, errores: {}, mensaje: resultado.errores.join('; ') }
 
     revalidatePath('/dashboard/presupuestos')
-    return { ok: true, id }
+    return { ok: true, id: resultado.id }
   } catch (e) {
-    if (esColisionIdentidad(e)) {
-      return { ok: false, errores: {}, mensaje: 'No se pudo asignar el número: inténtalo de nuevo' }
-    }
     return { ok: false, errores: {}, mensaje: registrarFallo('crearPresupuesto', e) }
   }
 }

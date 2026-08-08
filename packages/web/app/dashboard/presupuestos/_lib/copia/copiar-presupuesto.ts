@@ -12,6 +12,7 @@
 
 import type { crearDb } from '@aluminior/db'
 import { ejecutarConNumeracion, esColisionIdentidad, reservarNumeracion } from '../numeracion/index.ts'
+import { reservarNumeracionParaPruebas } from '../numeracion/reservar.ts'
 import {
   validarDestino,
   type EstrategiaDestino, type NumeracionDocumento,
@@ -46,6 +47,11 @@ export type ResultadoCopia =
     }
   | { ok: false; errores: readonly string[] }
 
+/** Sólo pruebas: ver `_lib/numeracion/reservar.ts`. Nunca la usa `copiarPresupuesto`. */
+interface GanchosDePrueba {
+  readonly pausaTrasLecturaMs?: number
+}
+
 /** Reserva el destino dentro de la transacción: la única fuente de verdad. */
 async function reservarDestino(
   tx: Tx,
@@ -53,16 +59,21 @@ async function reservarDestino(
   origen: NumeracionDocumento,
   revisionesUsadas: readonly number[],
   fecha: string,
+  ganchos: GanchosDePrueba,
 ): Promise<{ ok: true; destino: NumeracionDocumento } | { ok: false; errores: readonly string[] }> {
   if ('estrategia' in entrada.destino) {
     if (entrada.destino.estrategia === 'NUEVO_NUMERO') {
-      const reserva = await reservarNumeracion(tx, { modo: 'NUMERO_NUEVO', fecha, serie: origen.serie })
+      const entradaNumeracion = { modo: 'NUMERO_NUEVO' as const, fecha, serie: origen.serie }
+      const reserva = ganchos.pausaTrasLecturaMs
+        ? await reservarNumeracionParaPruebas(tx, entradaNumeracion, ganchos)
+        : await reservarNumeracion(tx, entradaNumeracion)
       if (!reserva.ok) return reserva
       return { ok: true, destino: { numero: reserva.numero, revision: reserva.revision, serie: reserva.serie } }
     }
-    const reserva = await reservarNumeracion(tx, {
-      modo: 'REVISION_NUEVA', serie: origen.serie, numero: origen.numero,
-    })
+    const entradaNumeracion = { modo: 'REVISION_NUEVA' as const, serie: origen.serie, numero: origen.numero }
+    const reserva = ganchos.pausaTrasLecturaMs
+      ? await reservarNumeracionParaPruebas(tx, entradaNumeracion, ganchos)
+      : await reservarNumeracion(tx, entradaNumeracion)
     if (!reserva.ok) return reserva
     return { ok: true, destino: { numero: reserva.numero, revision: reserva.revision, serie: reserva.serie } }
   }
@@ -81,7 +92,9 @@ async function reservarDestino(
   return { ok: true, destino: { numero: reserva.numero, revision: reserva.revision, serie: reserva.serie } }
 }
 
-export async function copiarPresupuesto(db: Db, entrada: EntradaCopia): Promise<ResultadoCopia> {
+async function copiarPresupuestoConGanchos(
+  db: Db, entrada: EntradaCopia, ganchos: GanchosDePrueba,
+): Promise<ResultadoCopia> {
   const fecha = entrada.fecha ?? new Date().toISOString().slice(0, 10)
   const esManual = !('estrategia' in entrada.destino)
 
@@ -95,7 +108,7 @@ export async function copiarPresupuesto(db: Db, entrada: EntradaCopia): Promise<
       serie: origen.presupuesto.serie,
     }
 
-    const reservado = await reservarDestino(tx, entrada, numeracionOrigen, origen.revisionesUsadas, fecha)
+    const reservado = await reservarDestino(tx, entrada, numeracionOrigen, origen.revisionesUsadas, fecha, ganchos)
     if (!reservado.ok) return reservado
 
     const plan = planificarCopia(origen.lineas.map(lineaOrigenDe), entrada.opciones)
@@ -131,4 +144,19 @@ export async function copiarPresupuesto(db: Db, entrada: EntradaCopia): Promise<
     if (esColisionIdentidad(error)) return { ok: false, errores: ['El destino ya está ocupado'] }
     throw error
   }
+}
+
+export async function copiarPresupuesto(db: Db, entrada: EntradaCopia): Promise<ResultadoCopia> {
+  return copiarPresupuestoConGanchos(db, entrada, {})
+}
+
+/**
+ * SÓLO PRUEBAS. No la usa ningún consumidor de producción: fuerza la
+ * intercalación determinista de una prueba de concurrencia, igual que
+ * `reservarNumeracionParaPruebas`.
+ */
+export async function copiarPresupuestoParaPruebas(
+  db: Db, entrada: EntradaCopia, ganchos: { readonly pausaTrasLecturaMs: number },
+): Promise<ResultadoCopia> {
+  return copiarPresupuestoConGanchos(db, entrada, ganchos)
 }

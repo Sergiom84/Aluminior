@@ -1,15 +1,16 @@
 /**
- * Reserva de numeración de presupuestos, contra PostgreSQL de verdad (T.71.2).
+ * Reserva de numeración de presupuestos, contra PostgreSQL de verdad (T.71.2,
+ * endurecida en T.71.4).
  *
  *   docker compose -f packages/db/docker-compose.yml up -d
  *   npm run -w @aluminior/web test
  *
  * El advisory lock y `presupuestos_identidad_uq` (T.71.1) sólo se demuestran
  * con Postgres real y dos transacciones que compiten de verdad. Las pruebas
- * de concurrencia usan `_pausaTrasLecturaMs` para forzar la intercalación que
- * el lock debe impedir: sin ese seam, un `Promise.all` podría pasar por
- * casualidad —las dos transacciones son rápidas y no llegan a solaparse— sin
- * haber probado nada.
+ * de concurrencia usan `reservarNumeracionParaPruebas` (sólo de pruebas, no
+ * sale de `index.ts`) para forzar la intercalación que el lock debe impedir:
+ * sin ese seam, un `Promise.all` podría pasar por casualidad —las dos
+ * transacciones son rápidas y no llegan a solaparse— sin haber probado nada.
  */
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { and, eq } from 'drizzle-orm'
@@ -18,12 +19,14 @@ import { urlDePruebasValidada } from '@aluminior/db/pruebas'
 import {
   ejecutarConNumeracion, esColisionIdentidad, MENSAJE_DESTINO_OCUPADO, reservarNumeracion,
 } from './index.ts'
+import { reservarNumeracionParaPruebas } from './reservar.ts'
 
 const urlPruebas = urlDePruebasValidada(process.env.TEST_DATABASE_URL)
 const NOMBRE_PRUEBA = 'PRUEBA AUTOMÁTICA NUMERACIÓN'
 // Ejercicio 31 -> rango 310000-319999, aislado de las demás suites (que usan
 // 900001, 999998 o `ZZ*`).
 const FECHA = '2031-05-20'
+const EJERCICIO = 31
 
 type Fila = typeof schema.presupuestos.$inferInsert
 
@@ -47,7 +50,13 @@ describe('reserva de numeración, contra PostgreSQL', () => {
 
   beforeAll(async () => { db = crearDb(urlPruebas) })
   beforeEach(limpiar)
-  afterAll(async () => { await limpiar() })
+  afterAll(async () => {
+    try {
+      await limpiar()
+    } finally {
+      await db.$client.end({ timeout: 5 })
+    }
+  })
 
   describe('número nuevo', () => {
     it('ejercicio vacío: AASSSS con secuencia 0001', async () => {
@@ -64,6 +73,46 @@ describe('reserva de numeración, contra PostgreSQL', () => {
         reservarNumeracion(tx, { modo: 'NUMERO_NUEVO', fecha: FECHA, serie: 'A' }))
       // El máximo es 310006, de la serie B: la secuencia no es por serie.
       expect(resultado).toEqual({ ok: true, numero: 310007, revision: 0, serie: 'A' })
+    })
+
+    it('filtra por ejercicio, de forma AUTÓNOMA: un número fuera del rango no debe intervenir', async () => {
+      // Esta prueba siembra su propia contaminación (dentro Y fuera del
+      // rango de 2031) para que la mutación "quitar el filtro por ejercicio"
+      // caiga aunque se ejecute SOLA, sin depender de que otra suite deje
+      // datos con numero alto en la base compartida.
+      await db.insert(schema.presupuestos).values(fila({ numero: 310050, serie: 'A' }))
+      await db.insert(schema.presupuestos).values(fila({ numero: 999500, serie: 'A' })) // fuera de 2031
+
+      const resultado = await db.transaction((tx) =>
+        reservarNumeracion(tx, { modo: 'NUMERO_NUEVO', fecha: FECHA, serie: 'A' }))
+      // Si el filtro por ejercicio fallara, el máximo sería 999500, no 310050.
+      expect(resultado).toEqual({ ok: true, numero: 310051, revision: 0, serie: 'A' })
+    })
+
+    it('secuencia anual agotada (AA9999): error explícito, no salta de ejercicio', async () => {
+      await db.insert(schema.presupuestos).values(fila({ numero: 319999, serie: 'A' }))
+
+      const resultado = await db.transaction((tx) =>
+        reservarNumeracion(tx, { modo: 'NUMERO_NUEVO', fecha: FECHA, serie: 'A' }))
+      expect(resultado).toEqual({
+        ok: false,
+        errores: [`Secuencia del ejercicio ${EJERCICIO} agotada (máximo 319999)`],
+      })
+      expect(await contarFilas(320000)).toBe(0)
+    })
+  })
+
+  describe('fecha del documento', () => {
+    it('formato inválido: no reserva nada', async () => {
+      const resultado = await db.transaction((tx) =>
+        reservarNumeracion(tx, { modo: 'NUMERO_NUEVO', fecha: 'no-es-una-fecha', serie: 'A' }))
+      expect(resultado.ok).toBe(false)
+    })
+
+    it('30 de febrero no existe: no reserva nada', async () => {
+      const resultado = await db.transaction((tx) =>
+        reservarNumeracion(tx, { modo: 'NUMERO_NUEVO', fecha: '2031-02-30', serie: 'A' }))
+      expect(resultado.ok).toBe(false)
     })
   })
 
@@ -116,9 +165,9 @@ describe('reserva de numeración, contra PostgreSQL', () => {
     it('dos reservas simultáneas con retraso tras leer el máximo dan números consecutivos', async () => {
       const numeros = await Promise.all([
         db.transaction(async (tx) => {
-          const r = await reservarNumeracion(tx, {
-            modo: 'NUMERO_NUEVO', fecha: FECHA, serie: 'A', _pausaTrasLecturaMs: 200,
-          })
+          const r = await reservarNumeracionParaPruebas(
+            tx, { modo: 'NUMERO_NUEVO', fecha: FECHA, serie: 'A' }, { pausaTrasLecturaMs: 200 },
+          )
           if (!r.ok) throw new Error(r.errores.join('; '))
           await tx.insert(schema.presupuestos).values(fila({ numero: r.numero, revision: 0, serie: 'A' }))
           return r.numero
@@ -147,9 +196,9 @@ describe('reserva de numeración, contra PostgreSQL', () => {
 
       const revisiones = await Promise.all([
         db.transaction(async (tx) => {
-          const r = await reservarNumeracion(tx, {
-            modo: 'REVISION_NUEVA', serie: 'A', numero: 310030, _pausaTrasLecturaMs: 200,
-          })
+          const r = await reservarNumeracionParaPruebas(
+            tx, { modo: 'REVISION_NUEVA', serie: 'A', numero: 310030 }, { pausaTrasLecturaMs: 200 },
+          )
           if (!r.ok) throw new Error(r.errores.join('; '))
           await tx.insert(schema.presupuestos).values(fila({ numero: 310030, revision: r.revision, serie: 'A' }))
           return r.revision
