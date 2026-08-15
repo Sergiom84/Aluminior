@@ -3,6 +3,7 @@ import { desc, sql, or, ilike } from 'drizzle-orm'
 import { crearDb, schema } from '@aluminior/db'
 import { Shell } from '../_components/shell.tsx'
 import { CopiarRevisionBoton } from './_components/copiar-revision-boton.tsx'
+import { textoTotalListado } from './_lib/listado-presupuestos.ts'
 
 export const dynamic = 'force-dynamic'
 
@@ -22,6 +23,8 @@ export default async function Presupuestos({
     ? or(
         ilike(schema.presupuestos.nombreLibre, patron),
         ilike(schema.presupuestos.obraTexto, patron),
+        ilike(schema.clientes.nombre, patron),
+        ilike(schema.presupuestos.clienteCodigo, patron),
         sql`CAST(${schema.presupuestos.numero} AS TEXT) ILIKE ${patron}`,
       )
     : undefined
@@ -43,14 +46,17 @@ export default async function Presupuestos({
       lineas: sql<number>`(
         SELECT COUNT(*)::int FROM lineas l WHERE l.presupuesto_id = ${schema.presupuestos.id}
       )`,
+      tieneLineaSinValorar: sql<boolean>`EXISTS (
+        SELECT 1 FROM lineas l
+        WHERE l.presupuesto_id = ${schema.presupuestos.id}
+          AND (l.valoracion_completa IS NOT TRUE OR l.total IS NULL)
+      )`,
     })
     .from(schema.presupuestos)
     .leftJoin(schema.clientes, sql`${schema.clientes.codigo} = ${schema.presupuestos.clienteCodigo}`)
     .where(filtro)
     .orderBy(desc(schema.presupuestos.numero))
     .limit(100)
-
-  const presupuestoActivo = filas[0]
 
   return (
     <Shell moduloActivo="presupuestos">
@@ -60,21 +66,9 @@ export default async function Presupuestos({
         </header>
 
         <div className="al-commandbar" aria-label="Acciones de presupuestos">
-          {presupuestoActivo && (
-            <Link href={`/dashboard/presupuestos/${presupuestoActivo.id}`} className="al-command">
-              Editar
-            </Link>
-          )}
           <Link href="/dashboard/presupuestos/nuevo" className="al-command-primary">
             Nuevo
           </Link>
-          {presupuestoActivo ? (
-            <a href={`/dashboard/presupuestos/${presupuestoActivo.id}/pdf`} target="_blank" rel="noopener" className="al-command">
-              Emitir
-            </a>
-          ) : (
-            <span className="al-command" aria-disabled="true">Emitir</span>
-          )}
           <form className="al-search" role="search">
             <label htmlFor="buscar-presupuesto" className="sr-only">Buscar presupuesto</label>
             <input id="buscar-presupuesto" name="q" defaultValue={busqueda}
@@ -82,12 +76,6 @@ export default async function Presupuestos({
             <button type="submit" className="al-command">Buscar</button>
             {busqueda && <Link href="/dashboard/presupuestos" className="al-command">Limpiar</Link>}
           </form>
-          {presupuestoActivo && (
-            <div className="al-document-context" aria-label="Documento activo">
-              <span>Revisión <strong>{presupuestoActivo.revision}</strong></span>
-              <span>Serie <strong>{presupuestoActivo.serie}</strong></span>
-            </div>
-          )}
         </div>
 
         {filas.length === 0 ? (
@@ -131,7 +119,9 @@ export default async function Presupuestos({
                     <td className="font-mono">{p.serie}</td>
                     <td><span className="al-status" data-status={p.estado}>{p.estado}</span></td>
                     <td className="cifra">{p.lineas}</td>
-                    <td className="cifra font-semibold">{eur.format(Number(p.total))}</td>
+                    <td className="cifra font-semibold">
+                      {textoTotalListado(p.total, p.tieneLineaSinValorar, (valor) => eur.format(valor))}
+                    </td>
                     {/*
                       T.72.1.1: la acción va en la fila, no en la barra de
                       comandos sobre `filas[0]` — un presupuesto sin elegir
@@ -143,6 +133,7 @@ export default async function Presupuestos({
                     */}
                     <td className="al-row-actions">
                       <Link href={`/dashboard/presupuestos/${p.id}`} className="font-semibold" style={{ color: 'var(--al-accent-strong)' }}>Editar</Link>
+                      <a href={`/dashboard/presupuestos/${p.id}/pdf`} target="_blank" rel="noopener">Emitir</a>
                       <CopiarRevisionBoton presupuestoId={p.id} numero={p.numero} revision={p.revision} serie={p.serie} />
                     </td>
                   </tr>

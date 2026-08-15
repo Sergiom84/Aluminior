@@ -25,6 +25,7 @@ import { usuarioActual } from './usuario-actual.ts'
 import { registrarFallo } from './errores.ts'
 import { esquemaLinea } from './lineas/esquema-linea.ts'
 import { crearPresupuestoAlta } from './presupuestos/crear-presupuesto.ts'
+import { fechaLocalMadrid } from './fecha-local.ts'
 import {
   guardarLinea, type OpcionHerrajeElegida, type PiezaDespiece,
   type RanuraAcristalamiento, type ValoresLinea,
@@ -142,7 +143,7 @@ export async function crearPresupuesto(_previo: Estado, datos: FormData): Promis
   }
 
   const db = crearDb()
-  const fecha = new Date().toISOString().slice(0, 10)
+  const fecha = fechaLocalMadrid()
   try {
     const creadoPor = await usuarioActual()
     // Parseo, validación, usuario y revalidate se quedan aquí; reservar el

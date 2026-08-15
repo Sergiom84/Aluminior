@@ -5,6 +5,7 @@ import { crearDb, schema } from '@aluminior/db'
 import { presupuestoIncompleto } from '@aluminior/core/precios'
 import { Shell } from '../../_components/shell.tsx'
 import { AnyadirLinea, BotonBorrarLinea } from './_components/anyadir-linea.tsx'
+import { referenciaPresupuesto } from '../_lib/identidad-documento.ts'
 
 export const dynamic = 'force-dynamic'
 
@@ -63,7 +64,7 @@ export default async function DetallePresupuesto({
         </Link>
         <div className="mt-3 flex flex-wrap items-baseline gap-4">
           <h2 className="text-2xl font-semibold">
-            Presupuesto <span className="cifra">{p.numero}</span>
+            Presupuesto <span className="cifra">{referenciaPresupuesto(p.numero, p.revision)}</span>
           </h2>
           <span className="rounded px-2 py-0.5 text-xs uppercase tracking-wide"
             style={{ background: 'var(--al-accent-soft)', color: 'var(--al-accent-strong)' }}>
