@@ -96,15 +96,33 @@ export function AnyadirLinea({
       )}
 
       <div className={styles.fields}>
-        {tipo === 'ARTICULO' && <div className="col-span-3">
-          <label htmlFor="codigo" className="mb-1 block text-sm font-medium">
-            Artículo
-          </label>
-          <input {...atributosCampo('codigo', err)} className={entrada}
-            style={{ ...estilo, borderColor: bordeCampo('codigo', err, estilo.borderColor) }}
-            placeholder="PSM001" />
-          <MensajeError campo="codigo" errores={err} />
-        </div>}
+        {tipo === 'ARTICULO' && (
+          <>
+            <div className="col-span-3">
+              <label htmlFor="codigo" className="mb-1 block text-sm font-medium">
+                Artículo
+              </label>
+              <input {...atributosCampo('codigo', err)} className={entrada}
+                style={{ ...estilo, borderColor: bordeCampo('codigo', err, estilo.borderColor) }}
+                placeholder="PSM001" />
+              <MensajeError campo="codigo" errores={err} />
+            </div>
+            <div className="col-span-3">
+              <label htmlFor="acabadoCodigo" className="mb-1 block text-sm font-medium">
+                Acabado
+              </label>
+              <select id="acabadoCodigo" name="acabadoCodigo" defaultValue=""
+                className={entrada} style={estilo}>
+                <option value="">Genérico / no aplica</option>
+                {acabados.map((acabado) => (
+                  <option key={acabado.codigo} value={acabado.codigo}>
+                    {acabado.codigo} · {acabado.descripcion}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </>
+        )}
 
         <div className={tipo === 'CERRAMIENTO' ? 'col-span-2' : 'col-span-3'}>
           <label htmlFor="referencia" className="mb-1 block text-sm font-medium">Ubicación</label>
@@ -178,7 +196,7 @@ export function AnyadirLinea({
           </>
         )}
 
-        <div className={tipo === 'CERRAMIENTO' ? 'col-span-1' : 'col-span-2'}>
+        <div className="col-span-1">
           <label htmlFor="cantidad" className="mb-1 block text-sm font-medium">Cdad.</label>
           <input {...atributosCampo('cantidad', err)} type="number" defaultValue={1} min={1} step={1}
             className={`cifra ${entrada}`}
@@ -186,7 +204,7 @@ export function AnyadirLinea({
           <MensajeError campo="cantidad" errores={err} />
         </div>
 
-        <div className={tipo === 'CERRAMIENTO' ? 'col-span-1' : 'col-span-4'}>
+        <div className={tipo === 'CERRAMIENTO' ? 'col-span-1' : 'col-span-2'}>
           <button type="submit" disabled={enviando}
             className="w-full rounded-md px-4 py-2 text-sm font-medium disabled:opacity-50"
             style={{ background: 'var(--al-accent)', color: 'var(--al-accent-contrast)' }}>

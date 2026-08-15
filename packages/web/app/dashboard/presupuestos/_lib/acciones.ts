@@ -17,6 +17,7 @@ import { registrarFallo } from './errores.ts'
 import { esquemaLinea } from './lineas/esquema-linea.ts'
 import { crearPresupuestoAlta } from './presupuestos/crear-presupuesto.ts'
 import { fechaLocalMadrid } from './fecha-local.ts'
+import { valorarArticulo } from './articulos/valorar-articulo.ts'
 import {
   guardarLinea, type OpcionHerrajeElegida, type PiezaDespiece,
   type RanuraAcristalamiento, type ValoresLinea,
@@ -243,22 +244,19 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
         if (preparada.notas.length) aviso = `${aviso} ${preparada.notas.join('; ')}.`
       }
     } else if (d.tipo === 'ARTICULO') {
-      const [art] = await db.select()
-        .from(schema.articulos).where(eq(schema.articulos.codigo, d.codigo)).limit(1)
-      if (!art) return { ok: false, errores: { codigo: ['Artículo no encontrado'] } }
-      descripcion = art.descripcion
-
-      const precios = await db.select({ precio: schema.articulosPvp.precio })
-        .from(schema.articulosPvp)
-        .where(and(
-          eq(schema.articulosPvp.articuloCodigo, d.codigo),
-          eq(schema.articulosPvp.tarifa, presupuesto.tarifa),
-          d.acabadoCodigo ? eq(schema.articulosPvp.acabadoCodigo, d.acabadoCodigo) : undefined,
-        ))
-        .limit(1)
-
-      if (precios.length) precioUnitario = Number(precios[0].precio)
-      else aviso = 'Importe incompleto: el artículo no tiene precio en esta tarifa.'
+      const valoracion = await valorarArticulo(db, {
+        codigo: d.codigo,
+        tarifa: presupuesto.tarifa,
+        acabadoCodigo: d.acabadoCodigo,
+      })
+      if (!valoracion.ok) {
+        return { ok: false, errores: { codigo: [valoracion.error] } }
+      }
+      descripcion = valoracion.descripcion
+      precioUnitario = valoracion.precioUnitario === null
+        ? null
+        : Number(valoracion.precioUnitario)
+      aviso = valoracion.aviso
     } else {
       const resultado = await valorarEstructura(db, {
         codigo: d.codigo,
