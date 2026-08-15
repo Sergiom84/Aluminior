@@ -11,17 +11,18 @@ import {
 
 type ParteVisual = 'marco' | 'hoja' | 'vidrio' | 'travesano' | 'union'
 type ParteSeleccionada = { elemento: string; parte: ParteVisual }
-
 export function DisenadorEstructura({
-  codigo, anchoMm, altoMm, onConfiguracionChange, onDimensionesChange,
+  codigo, anchoMm, altoMm, configuracionInicial, onConfiguracionChange, onDimensionesChange,
 }: {
   codigo: string
   anchoMm: number
   altoMm: number
+  configuracionInicial?: ConfiguracionCerramiento
   onConfiguracionChange: (configuracion: ConfiguracionCerramiento) => void
   onDimensionesChange: (anchoMm: number, altoMm: number) => void
 }) {
   const [configuracion, setConfiguracion] = useState<ConfiguracionCerramiento>(() => {
+    if (configuracionInicial) return configuracionInicial
     const base = crearConfiguracionCerramiento(plantillaDiseno(codigo) ?? PLANTILLAS_DISENO[0])
     return {
       ...base,

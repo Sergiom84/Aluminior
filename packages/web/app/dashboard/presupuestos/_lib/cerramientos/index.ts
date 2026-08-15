@@ -11,3 +11,8 @@ export {
   type AltaCerramiento, type DatosAltaCerramiento, type ResultadoAltaCerramiento,
 } from './alta-cerramiento.ts'
 export { comprobarPersistenciaCerramientos } from './persistir-cerramiento.ts'
+export {
+  actualizarCerramiento, escribirEdicionCerramiento,
+  type EdicionCerramientoPreparada, type EntradaEdicionCerramiento,
+  type ResultadoEdicionCerramiento,
+} from './editar-cerramiento.ts'
