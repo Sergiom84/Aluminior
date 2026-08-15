@@ -55,7 +55,7 @@ export function anadirModuloCerramiento(
     Number(modulo.id.match(/(\d+)$/)?.[1] ?? 0))) + 1
   const numeroUnion = Math.max(0, ...configuracion.uniones.map((enlace) =>
     Number(enlace.id.match(/(\d+)$/)?.[1] ?? 0))) + 1
-  const altoReferencia = configuracion.modulos[0]?.altoMm ?? plantilla.altoMm
+  const altoReferencia = configuracion.modulos.at(-1)?.altoMm ?? plantilla.altoMm
   return {
     ...configuracion,
     modulos: [...configuracion.modulos, {
@@ -71,6 +71,36 @@ export function anadirModuloCerramiento(
       grosorMm: union.grosorMm,
     }],
   }
+}
+
+/**
+ * Actualiza un módulo y mantiene coherentes únicamente las uniones cuya altura
+ * queda determinada sin ambigüedad por dos módulos adyacentes iguales.
+ * Cuando las alturas difieren, la longitud de unión puede ser una decisión
+ * manual del operador y se conserva.
+ */
+export function actualizarModuloCerramiento(
+  configuracion: ConfiguracionCerramiento,
+  id: string,
+  cambios: Partial<Pick<ModuloCerramiento, 'anchoMm' | 'altoMm'>>,
+): ConfiguracionCerramiento {
+  const indice = configuracion.modulos.findIndex((modulo) => modulo.id === id)
+  if (indice < 0) return configuracion
+
+  const modulos = configuracion.modulos.map((modulo, actual) => actual === indice
+    ? { ...modulo, ...cambios }
+    : modulo)
+  if (cambios.altoMm === undefined) return { ...configuracion, modulos }
+
+  const uniones = configuracion.uniones.map((union, actual) => {
+    const izquierdo = modulos[actual]
+    const derecho = modulos[actual + 1]
+    return izquierdo.altoMm === derecho.altoMm
+      ? { ...union, longitudMm: izquierdo.altoMm }
+      : union
+  })
+
+  return { ...configuracion, modulos, uniones }
 }
 
 export function eliminarModuloCerramiento(

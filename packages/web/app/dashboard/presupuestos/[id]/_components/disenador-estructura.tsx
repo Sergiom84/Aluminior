@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import {
-  anadirModuloCerramiento, buscarHueco, crearConfiguracionCerramiento,
+  actualizarModuloCerramiento, anadirModuloCerramiento, buscarHueco, crearConfiguracionCerramiento,
   distribuirComposicion, eliminarModuloCerramiento, medidasCerramiento,
   plantillaDiseno, PLANTILLAS_DISENO, primerHueco, UNIONES_VISUALES,
   type AperturaVisual, type ClaseSeparador, type ConfiguracionCerramiento,
@@ -50,12 +50,7 @@ export function DisenadorEstructura({
   }
 
   const actualizarModulo = (cambios: Partial<{ anchoMm: number; altoMm: number }>) => {
-    setConfiguracion((actual) => ({
-      ...actual,
-      modulos: actual.modulos.map((modulo) => modulo.id === moduloActivo.id
-        ? { ...modulo, ...cambios }
-        : modulo),
-    }))
+    setConfiguracion((actual) => actualizarModuloCerramiento(actual, moduloActivo.id, cambios))
   }
 
   const anadirModulo = () => {
