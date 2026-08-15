@@ -68,8 +68,8 @@ export function Shell({
           </ul>
         </nav>
 
-        <form action={cerrarSesion} className="flex shrink-0 items-center px-3">
-          <button type="submit" className="text-xs" style={{ color: 'var(--al-sidebar-text)' }}>
+        <form action={cerrarSesion} className="al-session-form">
+          <button type="submit" className="al-session-exit" style={{ color: 'var(--al-sidebar-text)' }}>
             Salir
           </button>
         </form>
