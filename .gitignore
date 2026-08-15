@@ -66,3 +66,6 @@ next-env.d.ts
 # --- Sistema ---
 Thumbs.db
 desktop.ini
+output/
+design-qa.md
+Plan_15_08.txt
