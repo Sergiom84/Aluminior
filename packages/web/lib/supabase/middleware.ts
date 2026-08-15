@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { qaLocalActiva } from '../qa-local.ts'
 
 /** Rutas públicas: sólo el login y su server action. Todo lo demás exige sesión. */
 function esRutaPublica(pathname: string): boolean {
@@ -23,6 +24,15 @@ function esRutaPublica(pathname: string): boolean {
  */
 export async function actualizarSesion(request: NextRequest): Promise<NextResponse> {
   const { pathname } = request.nextUrl
+
+  if (qaLocalActiva({ host: request.nextUrl.host })) {
+    if (pathname === '/login') {
+      const destino = request.nextUrl.clone()
+      destino.pathname = '/dashboard'
+      return NextResponse.redirect(destino)
+    }
+    return NextResponse.next({ request })
+  }
 
   let supabaseResponse = NextResponse.next({ request })
 
