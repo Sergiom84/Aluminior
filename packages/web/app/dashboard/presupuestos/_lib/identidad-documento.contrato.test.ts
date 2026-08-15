@@ -8,7 +8,9 @@ describe('contratos de identidad del alta y el detalle', () => {
   it('el alta obtiene la fecha civil mediante la autoridad Europe/Madrid', () => {
     const acciones = leer(new URL('./acciones.ts', import.meta.url))
 
-    expect(acciones).toMatch(/import\s*\{\s*fechaLocalMadrid\s*\}\s*from\s*['"]\.\/fecha-local\.ts['"]/) 
+    expect(acciones).toMatch(
+      /import\s*\{\s*fechaLocalMadrid\s*\}\s*from\s*['"]\.\/fecha-local\.ts['"]/
+    )
     expect(acciones).toMatch(/const fecha = fechaLocalMadrid\(\)/)
     expect(acciones).not.toMatch(/const fecha = new Date\(\)\.toISOString\(\)\.slice\(0, 10\)/)
   })
