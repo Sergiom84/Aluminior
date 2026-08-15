@@ -3,16 +3,8 @@
  *
  * Herraje (T.69.1), coste del despiece (T.69.2), coste del acristalamiento
  * (T.69.3), resolución genérico -> perfil real (T.69.4), junquillos y juntas
- * (T.69.5) y la valoración del vidrio (T.70.1).
- *
- * Del bloque del vidrio sale primero la valoración —metraje, PVP, coste y pieza
- * persistible— porque era la única responsabilidad DUPLICADA entre sus dos
- * rutas. Siguen dentro de `acciones.ts` la validación del artículo, la
- * clasificación de ranuras, la geometría simple y mixta, la consulta de
- * alojamiento (ruta mixta) y los mensajes y medidas del galce —la lectura del
- * delta ya salió a `galce-vidrio.ts` (T.70.3). Se separan una por una,
- * verificando entre cada paso: es la ruta de dinero con más lógica del
- * proyecto y un movimiento grande no sería revisable.
+ * (T.69.5), valoración del vidrio (T.70.1) y el caso de uso completo de una
+ * estructura. `acciones.ts` sólo coordina ese caso de uso.
  *
  * Sale sólo lo que consume `acciones.ts`. Del coste del despiece, únicamente el
  * orquestador: la lectura, la agrupación y la preparación de piezas quedan
@@ -36,6 +28,4 @@ export { emparejarVidrio, type ContextoVidrio } from './emparejamiento-vidrio.ts
 // Sólo la lectura del delta: el aviso de "sin galce medido" y la llamada a
 // `medidasVidrio` siguen en `acciones.ts`, que decide qué hacer sin fila.
 export { leerGalceVidrio } from './galce-vidrio.ts'
-// El CRISTAL lo necesita también la vía del acristalamiento, que sigue en
-// `acciones.ts`. La lista de herraje no sale: hoy sólo la usa la clasificación.
-export { COMPONENTE_CRISTAL } from './componentes-disenyo.ts'
+export { valorarEstructura, type ResultadoValoracionEstructura } from './valorar-estructura.ts'
