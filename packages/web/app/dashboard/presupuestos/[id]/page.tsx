@@ -9,6 +9,7 @@ import { AnyadirLinea } from './_components/anyadir-linea.tsx'
 import { LineaPresupuesto } from './_components/linea-presupuesto.tsx'
 import type { DatosEdicionCerramiento } from './_components/editar-cerramiento.tsx'
 import { referenciaPresupuesto } from '../_lib/identidad-documento.ts'
+import styles from './presupuesto-movil.module.css'
 
 export const dynamic = 'force-dynamic'
 const eur = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' })
@@ -68,18 +69,18 @@ export default async function DetallePresupuesto({ params }: { params: Promise<{
 
   return (
     <Shell moduloActivo="presupuestos">
-      <div className="mb-6">
+      <div className={`${styles.detailHeader} mb-6`}>
         <Link href="/dashboard/presupuestos" className="text-sm" style={{ color: 'var(--al-accent)' }}>
           ← Volver a presupuestos
         </Link>
-        <div className="mt-3 flex flex-wrap items-baseline gap-4">
+        <div className={`${styles.headerRow} mt-3`}>
           <h2 className="text-2xl font-semibold">Presupuesto <span className="cifra">
             {referenciaPresupuesto(p.numero, p.revision)}
           </span></h2>
           <span className="rounded px-2 py-0.5 text-xs uppercase tracking-wide"
             style={{ background: 'var(--al-accent-soft)', color: 'var(--al-accent-strong)' }}>{presupuesto.estado}</span>
           <a href={`/dashboard/presupuestos/${id}/pdf`} target="_blank" rel="noopener"
-            className="ml-auto rounded border px-3 py-1 text-sm"
+            className={`${styles.pdfAction} rounded border px-3 py-1 text-sm`}
             style={{ borderColor: 'var(--al-border)', color: 'var(--al-accent)' }}>PDF</a>
         </div>
         <div className="mt-1 flex flex-wrap gap-4 text-sm" style={{ color: 'var(--al-text-muted)' }}>
@@ -92,9 +93,10 @@ export default async function DetallePresupuesto({ params }: { params: Promise<{
       <div className="mb-6">
         <AnyadirLinea presupuestoId={id} series={series.map((serie) => serie.codigo)} acabados={acabados} />
       </div>
-      <div className="overflow-hidden rounded-lg border"
+      <div className={`${styles.tableScroll} rounded-lg border`} tabIndex={0}
+        aria-label="Líneas del presupuesto, tabla desplazable"
         style={{ background: 'var(--al-surface)', borderColor: 'var(--al-border)' }}>
-        <table className="w-full text-sm">
+        <table className={`${styles.budgetTable} text-sm`}>
           <thead><tr style={{ background: 'var(--al-surface-muted)' }}>
             {['#', 'Descripción', 'Ubicación', 'Medidas', 'Cdad.', 'Precio', 'Total', ''].map((titulo, indice) => (
               <th key={titulo + indice} className="border-b px-3 py-2.5 font-medium" style={{
@@ -115,7 +117,7 @@ export default async function DetallePresupuesto({ params }: { params: Promise<{
         </table>
       </div>
       <div className="mt-5 flex justify-end">
-        <dl className="w-72 rounded-lg border p-4 text-sm"
+        <dl className={`${styles.totals} w-72 rounded-lg border p-4 text-sm`}
           style={{ background: 'var(--al-surface)', borderColor: 'var(--al-border)' }}>
           {[['Base imponible', presupuesto.baseImponible], [`IVA ${Number(presupuesto.tipoIva)}%`, presupuesto.cuotaIva]].map(([etiqueta, importe]) => (
             <div key={etiqueta} className="flex justify-between py-1">

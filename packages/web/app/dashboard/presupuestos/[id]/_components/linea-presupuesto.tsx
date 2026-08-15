@@ -3,6 +3,7 @@
 import { useCallback, useState } from 'react'
 import { BotonBorrarLinea } from './anyadir-linea.tsx'
 import { EditarCerramiento, type DatosEdicionCerramiento } from './editar-cerramiento.tsx'
+import styles from '../presupuesto-movil.module.css'
 
 const eur = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' })
 
@@ -98,7 +99,7 @@ export function LineaPresupuesto({
       </tr>
       {editando && edicion && (
         <tr className="border-b" style={{ borderColor: 'var(--al-border)' }}>
-          <td colSpan={8} className="p-3">
+          <td colSpan={8} className={`${styles.editorCell} p-3`}>
             <EditarCerramiento presupuestoId={presupuestoId} lineaId={l.id} datos={edicion}
               series={series} acabados={acabados} onCancelar={cerrarEditor} />
           </td>
@@ -112,34 +113,36 @@ export function LineaPresupuesto({
                 Despiece: {despiece.length} piezas · coste de perfiles {eur.format(costeTotal)}
                 {sinCoste > 0 && ` · ${sinCoste} piezas sin coste`}
               </summary>
-              <table className="mb-2 mt-1 w-full text-xs">
-                <thead><tr style={{ color: 'var(--al-text-muted)' }}>
-                  {['Artículo', 'Función', 'Cdad.', 'Corte (mm)', 'Coste ud.', 'Coste'].map((titulo, indice) => (
-                    <th key={titulo} className={`px-2 py-1 font-medium ${indice > 1 ? 'text-right' : 'text-left'}`}>{titulo}</th>
-                  ))}
-                </tr></thead>
-                <tbody>{despiece.map((pieza) => (
-                  <tr key={pieza.id}>
-                    <td className="px-2 py-0.5">{pieza.articuloCodigo}</td>
-                    <td className="px-2 py-0.5" style={{ color: 'var(--al-text-muted)' }}>{pieza.funcion ?? '—'}</td>
-                    <td className="cifra px-2 py-0.5 text-right">{Number(pieza.cantidad)}</td>
-                    <td className="cifra px-2 py-0.5 text-right">
-                      {pieza.largoCorteMm !== null
-                        ? Number(pieza.largoCorteMm).toLocaleString('es-ES') +
-                          (pieza.anchoCorteMm !== null ? ` × ${Number(pieza.anchoCorteMm).toLocaleString('es-ES')}` : '')
-                        : '—'}
-                    </td>
-                    <td className="cifra px-2 py-0.5 text-right">
-                      {pieza.costeUnitario !== null ? eur.format(Number(pieza.costeUnitario)) : (
-                        <span style={{ color: 'var(--al-warn)' }}>sin coste</span>
-                      )}
-                    </td>
-                    <td className="cifra px-2 py-0.5 text-right">
-                      {pieza.costeTotal !== null ? eur.format(Number(pieza.costeTotal)) : '—'}
-                    </td>
-                  </tr>
-                ))}</tbody>
-              </table>
+              <div className={styles.partsScroll} tabIndex={0} aria-label="Despiece desplazable">
+                <table className={`${styles.partsTable} mb-2 mt-1 text-xs`}>
+                  <thead><tr style={{ color: 'var(--al-text-muted)' }}>
+                    {['Artículo', 'Función', 'Cdad.', 'Corte (mm)', 'Coste ud.', 'Coste'].map((titulo, indice) => (
+                      <th key={titulo} className={`px-2 py-1 font-medium ${indice > 1 ? 'text-right' : 'text-left'}`}>{titulo}</th>
+                    ))}
+                  </tr></thead>
+                  <tbody>{despiece.map((pieza) => (
+                    <tr key={pieza.id}>
+                      <td className="px-2 py-0.5">{pieza.articuloCodigo}</td>
+                      <td className="px-2 py-0.5" style={{ color: 'var(--al-text-muted)' }}>{pieza.funcion ?? '—'}</td>
+                      <td className="cifra px-2 py-0.5 text-right">{Number(pieza.cantidad)}</td>
+                      <td className="cifra px-2 py-0.5 text-right">
+                        {pieza.largoCorteMm !== null
+                          ? Number(pieza.largoCorteMm).toLocaleString('es-ES') +
+                            (pieza.anchoCorteMm !== null ? ` × ${Number(pieza.anchoCorteMm).toLocaleString('es-ES')}` : '')
+                          : '—'}
+                      </td>
+                      <td className="cifra px-2 py-0.5 text-right">
+                        {pieza.costeUnitario !== null ? eur.format(Number(pieza.costeUnitario)) : (
+                          <span style={{ color: 'var(--al-warn)' }}>sin coste</span>
+                        )}
+                      </td>
+                      <td className="cifra px-2 py-0.5 text-right">
+                        {pieza.costeTotal !== null ? eur.format(Number(pieza.costeTotal)) : '—'}
+                      </td>
+                    </tr>
+                  ))}</tbody>
+                </table>
+              </div>
             </details>
           </td>
         </tr>

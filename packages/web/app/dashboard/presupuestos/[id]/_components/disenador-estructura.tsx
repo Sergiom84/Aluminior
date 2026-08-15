@@ -8,6 +8,7 @@ import {
   type AperturaVisual, type ClaseSeparador, type ConfiguracionCerramiento,
   type PlantillaDiseno,
 } from '@aluminior/core/estructuras'
+import styles from '../presupuesto-movil.module.css'
 
 type ParteVisual = 'marco' | 'hoja' | 'vidrio' | 'travesano' | 'union'
 type ParteSeleccionada = { elemento: string; parte: ParteVisual }
@@ -89,7 +90,7 @@ export function DisenadorEstructura({
   )
 
   return (
-    <section className="al-designer" aria-label="Diseñador de cerramientos">
+    <section className={`${styles.designer} al-designer`} aria-label="Diseñador de cerramientos">
       <aside className="al-designer-catalog" aria-label="Catálogo de estructuras">
         <div className="al-designer-catalog-title">Estructuras</div>
         {familias.map((familia) => (

@@ -1,0 +1,180 @@
+.detailHeader,
+.formCard,
+.designer,
+.tableScroll,
+.editorForm {
+  min-width: 0;
+}
+
+.headerRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.pdfAction {
+  margin-left: auto;
+}
+
+.formCard {
+  padding: 1.25rem;
+}
+
+.modeTabs {
+  display: flex;
+  gap: .5rem;
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  align-items: end;
+  gap: .75rem;
+}
+
+.workFields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .75rem;
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: .5rem;
+}
+
+.tableScroll,
+.partsScroll {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.budgetTable {
+  width: 100%;
+  min-width: 760px;
+}
+
+.partsTable {
+  width: 100%;
+  min-width: 620px;
+}
+
+@media (max-width: 620px) {
+  .detailHeader {
+    margin-bottom: 1rem;
+  }
+
+  .headerRow {
+    align-items: stretch;
+    gap: .625rem;
+  }
+
+  .headerRow h2 {
+    width: 100%;
+    font-size: 1.25rem;
+    line-height: 1.5rem;
+  }
+
+  .pdfAction {
+    margin-left: 0;
+    text-align: center;
+  }
+
+  .formCard {
+    padding: .75rem;
+  }
+
+  .modeTabs {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .modeTabs button {
+    width: 100%;
+  }
+
+  .fields {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: stretch;
+  }
+
+  .fields > * {
+    grid-column: 1 / -1 !important;
+    min-width: 0;
+  }
+
+  .workFields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .formActions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .formActions button {
+    width: 100%;
+  }
+
+  .designer :global(.al-designer-toolbar) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: .25rem;
+  }
+
+  .designer :global(.al-designer-toolbar strong) {
+    white-space: normal;
+  }
+
+  .designer :global(.al-designer-catalog),
+  .designer :global(.al-designer-union-editor) {
+    max-width: 100%;
+    overscroll-behavior-inline: contain;
+  }
+
+  .designer :global(.al-designer-properties) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .625rem;
+    overflow: visible;
+  }
+
+  .designer :global(.al-designer-properties > div),
+  .designer :global(.al-designer-measure) {
+    min-width: 0;
+  }
+
+  .designer :global(.al-designer-properties .al-designer-part-picker) {
+    grid-column: 1 / -1;
+    margin-left: 0;
+    flex-wrap: wrap;
+  }
+
+  .designer :global(.al-designer-measure input) {
+    width: 100%;
+  }
+
+  .editorCell {
+    position: sticky;
+    left: 0;
+    width: calc(100vw - 2rem);
+    max-width: calc(100vw - 2rem);
+    padding: .5rem;
+  }
+
+  .editorForm {
+    position: sticky;
+    left: .5rem;
+    width: calc(100vw - 3rem);
+    max-width: calc(100vw - 3rem);
+    padding: .75rem;
+  }
+
+  .totals {
+    width: 100%;
+  }
+}

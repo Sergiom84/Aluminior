@@ -9,6 +9,7 @@ import { atributosCampo, bordeCampo } from '../../_lib/campos.ts'
 import { MAXIMO_HORAS } from '../../_lib/lineas/esquema-linea.ts'
 import { DisenadorEstructura } from './disenador-estructura.tsx'
 import { MensajeError } from './mensaje-error.tsx'
+import styles from '../presupuesto-movil.module.css'
 
 const entrada = 'w-full rounded-md border px-3 py-2 text-sm'
 const estilo = { background: 'var(--al-surface)', borderColor: 'var(--al-border-strong)' }
@@ -54,7 +55,7 @@ export function AnyadirLinea({
 
   return (
     <form action={accion} id="configurador"
-      className="rounded-lg border p-5"
+      className={`${styles.formCard} rounded-lg border`}
       style={{ background: 'var(--al-surface)', borderColor: 'var(--al-border)' }}>
       <input type="hidden" name="presupuestoId" value={presupuestoId} />
       <input type="hidden" name="tipo" value={tipo} />
@@ -66,7 +67,7 @@ export function AnyadirLinea({
         </>
       )}
 
-      <div className="mb-4 flex gap-2">
+      <div className={`${styles.modeTabs} mb-4`}>
         {(['CERRAMIENTO', 'ARTICULO'] as const).map((t) => (
           <button key={t} type="button" onClick={() => setTipo(t)}
             className="rounded-md border px-4 py-1.5 text-sm"
@@ -94,7 +95,7 @@ export function AnyadirLinea({
           onDimensionesChange={actualizarDimensiones} />
       )}
 
-      <div className="grid grid-cols-12 items-end gap-3">
+      <div className={styles.fields}>
         {tipo === 'ARTICULO' && <div className="col-span-3">
           <label htmlFor="codigo" className="mb-1 block text-sm font-medium">
             Artículo
@@ -198,7 +199,7 @@ export function AnyadirLinea({
         <fieldset className="mt-4 rounded-md border p-4"
           style={{ borderColor: 'var(--al-border)' }}>
           <legend className="px-1 text-sm font-medium">Mano de obra adicional</legend>
-          <div className="grid grid-cols-2 gap-3">
+          <div className={styles.workFields}>
             <div>
               <label htmlFor="horasFabricacion" className="mb-1 block text-sm">Fabricación (h)</label>
               <input {...atributosCampo('horasFabricacion', err)} type="number" min={0} step="0.01"

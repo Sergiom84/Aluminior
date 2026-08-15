@@ -5,6 +5,7 @@ import { medidasCerramiento, type ConfiguracionCerramiento } from '@aluminior/co
 import { editarCerramiento, type EstadoEdicionCerramiento } from '../../_lib/editar-cerramiento-action.ts'
 import { MAXIMO_HORAS } from '../../_lib/lineas/esquema-linea.ts'
 import { DisenadorEstructura } from './disenador-estructura.tsx'
+import styles from '../presupuesto-movil.module.css'
 
 export interface DatosEdicionCerramiento {
   configuracion: ConfiguracionCerramiento
@@ -58,7 +59,7 @@ export function EditarCerramiento({
   ) : null
 
   return (
-    <form action={accion} className="rounded-md border p-4"
+    <form action={accion} className={`${styles.editorForm} rounded-md border p-4`}
       style={{ background: 'var(--al-surface)', borderColor: 'var(--al-accent)' }}>
       <input type="hidden" name="presupuestoId" value={presupuestoId} />
       <input type="hidden" name="lineaId" value={lineaId} />
@@ -77,7 +78,7 @@ export function EditarCerramiento({
         </div>
       )}
 
-      <div className="mt-4 grid grid-cols-12 items-end gap-3">
+      <div className={`${styles.fields} mt-4`}>
         <div className="col-span-2">
           <label htmlFor={identificador('referencia')} className="mb-1 block text-sm">Ubicación</label>
           <input {...campo('referencia')} defaultValue={datos.referencia ?? ''} className={entrada} style={estilo} />
@@ -127,7 +128,7 @@ export function EditarCerramiento({
 
       <fieldset className="mt-4 rounded-md border p-3" style={{ borderColor: 'var(--al-border)' }}>
         <legend className="px-1 text-sm">Mano de obra adicional</legend>
-        <div className="grid grid-cols-2 gap-3">
+        <div className={styles.workFields}>
           {([
             ['horasFabricacion', 'Fabricación (h)', datos.horasFabricacion],
             ['horasColocacion', 'Colocación (h)', datos.horasColocacion],
@@ -142,7 +143,7 @@ export function EditarCerramiento({
         </div>
       </fieldset>
 
-      <div className="mt-4 flex justify-end gap-2">
+      <div className={`${styles.formActions} mt-4`}>
         <button type="button" onClick={onCancelar} disabled={guardando}
           className="rounded-md border px-4 py-2 text-sm" style={{ borderColor: 'var(--al-border-strong)' }}>
           Cancelar
