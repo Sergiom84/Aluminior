@@ -3,6 +3,8 @@ import type { ClienteEscritura } from '../cliente-db.ts'
 import { actualizarTotales } from '../totales.ts'
 import { guardarAltaCerramiento, type AltaCerramiento } from '../cerramientos/index.ts'
 import { persistirManoObra, type SnapshotManoObra } from '../mano-obra/index.ts'
+import { bloquearPresupuesto } from './bloquear-presupuesto.ts'
+import { sql } from 'drizzle-orm'
 
 type Db = ReturnType<typeof crearDb>
 
@@ -20,7 +22,10 @@ export interface SatelitesEstructura {
 }
 
 /** Campos comunes a los tres tipos. El tipo lo aporta la variante. */
-export type ValoresLinea = Omit<typeof schema.lineas.$inferInsert, 'tipo'>
+export type ValoresLinea = Omit<typeof schema.lineas.$inferInsert, 'tipo' | 'orden'> & {
+  /** Sólo las copias/restauraciones aportan un orden ya decidido. */
+  orden?: number
+}
 
 /**
  * Qué se escribe, por tipo de línea.
@@ -42,6 +47,12 @@ export type EscrituraLinea =
     }
   | { tipo: 'ESTRUCTURA'; valores: ValoresLinea; estructura: SatelitesEstructura }
 
+/** Punto de sincronización exclusivo de pruebas de concurrencia. */
+interface HooksGuardarLinea {
+  antesDeBloquearPresupuesto?: () => Promise<void>
+  despuesDeBloquearPresupuesto?: () => Promise<void>
+}
+
 /**
  * Escribe una línea de presupuesto con todo lo que la acompaña.
  *
@@ -57,10 +68,24 @@ export type EscrituraLinea =
  * Aquí no se decide nada: la valoración, la descripción y la resolución del
  * catálogo ya vienen resueltas. Esto sólo escribe.
  */
-export async function guardarLinea(db: Db, entrada: EscrituraLinea): Promise<string> {
+async function guardarLineaConGanchos(
+  db: Db,
+  entrada: EscrituraLinea,
+  hooks: HooksGuardarLinea,
+): Promise<string> {
   return db.transaction(async (tx) => {
+    await hooks.antesDeBloquearPresupuesto?.()
+    if (!await bloquearPresupuesto(tx, entrada.valores.presupuestoId)) {
+      throw new Error('Presupuesto no encontrado')
+    }
+    await hooks.despuesDeBloquearPresupuesto?.()
+
+    const orden = entrada.valores.orden ?? await siguienteOrden(
+      tx,
+      entrada.valores.presupuestoId,
+    )
     const [linea] = await tx.insert(schema.lineas)
-      .values({ ...entrada.valores, tipo: entrada.tipo })
+      .values({ ...entrada.valores, orden, tipo: entrada.tipo })
       .returning({ id: schema.lineas.id })
     if (!linea) throw new Error('No se pudo crear la línea')
 
@@ -74,6 +99,37 @@ export async function guardarLinea(db: Db, entrada: EscrituraLinea): Promise<str
     await actualizarTotales(tx, entrada.valores.presupuestoId)
     return linea.id
   })
+}
+
+/** Camino de producción: no permite introducir pausas dentro de la transacción. */
+export async function guardarLinea(db: Db, entrada: EscrituraLinea): Promise<string> {
+  return guardarLineaConGanchos(db, entrada, {})
+}
+
+/**
+ * Sólo pruebas. Fuerza una intercalación observable sin cambiar el algoritmo
+ * ni abrir una transacción distinta de la que se ejecuta en producción.
+ */
+export async function guardarLineaParaPruebas(
+  db: Db,
+  entrada: EscrituraLinea,
+  hooks: HooksGuardarLinea,
+): Promise<string> {
+  return guardarLineaConGanchos(db, entrada, hooks)
+}
+
+async function siguienteOrden(
+  cliente: ClienteEscritura,
+  presupuestoId: string,
+): Promise<number> {
+  const [fila] = (await cliente.execute<{ orden: number }>(sql`
+    SELECT COALESCE(MAX(orden), 0)::int + 1 AS orden
+    FROM lineas
+    WHERE presupuesto_id = ${presupuestoId}
+  `)) as unknown as { orden: number }[]
+
+  if (!fila) throw new Error('No se pudo calcular el orden de la línea')
+  return fila.orden
 }
 
 async function escribirEstructura(

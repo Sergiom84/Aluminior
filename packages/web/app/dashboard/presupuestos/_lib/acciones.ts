@@ -22,6 +22,7 @@ import {
   guardarLinea, type OpcionHerrajeElegida, type PiezaDespiece,
   type RanuraAcristalamiento, type ValoresLinea,
 } from './lineas/guardar-linea.ts'
+import { borrarLineaDePresupuesto } from './lineas/borrar-linea.ts'
 import { prepararManoObra, type SnapshotManoObra } from './mano-obra/index.ts'
 import {
   opcionesHerrajeDe as opcionesDeHerrajeOfrecidas, valorarEstructura,
@@ -201,11 +202,6 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
       }
     }
 
-    const [{ orden }] = (await db.execute<{ orden: number }>(sql`
-      SELECT COALESCE(MAX(orden), 0) + 1 AS orden FROM lineas
-      WHERE presupuesto_id = ${d.presupuestoId}
-    `)) as unknown as { orden: number }[]
-
     let descripcion = d.codigo
     let precioUnitario: number | null = null
     let aviso: string | null = null
@@ -283,7 +279,6 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
 
     const valores: ValoresLinea = {
       presupuestoId: d.presupuestoId,
-      orden,
       articuloCodigo: d.tipo === 'ARTICULO' ? d.codigo : null,
       descripcion,
       referencia: d.referencia,
@@ -322,12 +317,9 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
 }
 
 export async function borrarLinea(lineaId: string, presupuestoId: string) {
-  const db = crearDb()
-  await db.transaction(async (tx) => {
-    await tx.delete(schema.lineas).where(eq(schema.lineas.id, lineaId))
-    await actualizarTotales(tx, presupuestoId)
-  })
-  revalidatePath(`/dashboard/presupuestos/${presupuestoId}`)
+  if (await borrarLineaDePresupuesto(crearDb(), lineaId, presupuestoId)) {
+    revalidatePath(`/dashboard/presupuestos/${presupuestoId}`)
+  }
 }
 
 /** Recálculo de totales como acción suelta. La regla vive en `totales.ts`. */
