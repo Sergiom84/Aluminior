@@ -72,22 +72,22 @@ describe('cálculo del coste total', () => {
     expect(preparadas.map((p) => p.costeUnitario)).toEqual(['2.7', '2.7'])
   })
 
-  it('cualquier metraje que no sea ML se cobra por unidades', () => {
+  it('M2 sin superficie no se costea por unidades', () => {
     const preparadas = prepararPiezasAcristalamiento({
       piezas: [pieza('A', 3, 1000), pieza('B', 3, 1000)],
       mapa: mapaDe(articulo('A', 'M2'), articulo('B', '?')),
       costePorArticulo: costesDe(['A', 1.1], ['B', 1.1]),
     })
-    expect(preparadas.map((p) => p.costeTotal)).toEqual(['3.3', '3.3'])
+    expect(preparadas.map((p) => p.costeTotal)).toEqual([null, '3.3'])
   })
 
-  it('un artículo fuera del mapa se trata como no-ML', () => {
+  it('un artículo fuera del mapa conserva coste desconocido', () => {
     const [p] = prepararPiezasAcristalamiento({
       piezas: [pieza('DESCONOCIDO', 3, 1000)],
       mapa: mapaDe(),
       costePorArticulo: costesDe(['DESCONOCIDO', 1.1]),
     })
-    expect(p.costeTotal).toBe('3.3')
+    expect(p.costeTotal).toBeNull()
   })
 
   it('sin coste no hay coste total, ni cero', () => {

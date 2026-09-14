@@ -1,3 +1,6 @@
+import type { ResultadoCerramientoV1 } from '@aluminior/core/estructuras'
+import { escribirResultadosCerramiento } from '../cerramientos/escribir-resultados.ts'
+import { conPresupuestoBloqueado, type CabeceraBloqueada } from './con-presupuesto-bloqueado.ts'
 import { crearDb, schema } from '@aluminior/db'
 import type { ClienteEscritura } from '../cliente-db.ts'
 import { actualizarTotales } from '../totales.ts'
@@ -6,7 +9,7 @@ import { persistirManoObra, type SnapshotManoObra } from '../mano-obra/index.ts'
 import { bloquearPresupuesto } from './bloquear-presupuesto.ts'
 import { sql } from 'drizzle-orm'
 
-type Db = ReturnType<typeof crearDb>
+type Db = Pick<ReturnType<typeof crearDb>, 'transaction'>
 
 export type PiezaDespiece = Omit<typeof schema.lineasDespiece.$inferInsert, 'lineaId'>
 export type RanuraAcristalamiento = Omit<typeof schema.lineasAcristalamiento.$inferInsert, 'lineaId'>
@@ -80,6 +83,26 @@ async function guardarLineaConGanchos(
     }
     await hooks.despuesDeBloquearPresupuesto?.()
 
+    return escribirLineaPreparada(tx, entrada)
+  })
+}
+
+export type EscrituraValorada = Extract<EscrituraLinea, { tipo: 'CERRAMIENTO' }> & {
+  resultado: ResultadoCerramientoV1
+}
+
+/** Preparar catálogo y escribir bajo la misma cabecera bloqueada. */
+export async function guardarLineaValorada(db: Db, presupuestoId: string,
+  preparar: (tx: ClienteEscritura, cabecera: CabeceraBloqueada) => Promise<EscrituraValorada>,
+): Promise<string> {
+  return conPresupuestoBloqueado(db, presupuestoId, async (tx, cabecera) => {
+    const entrada = await preparar(tx, cabecera)
+    if (entrada.valores.presupuestoId !== presupuestoId) throw new Error('Presupuesto de escritura diferente')
+    return escribirLineaPreparada(tx, entrada)
+  })
+}
+
+async function escribirLineaPreparada(tx: ClienteEscritura, entrada: EscrituraLinea | EscrituraValorada) {
     const orden = entrada.valores.orden ?? await siguienteOrden(
       tx,
       entrada.valores.presupuestoId,
@@ -91,14 +114,14 @@ async function guardarLineaConGanchos(
 
     if (entrada.tipo === 'CERRAMIENTO') {
       await guardarAltaCerramiento(tx, linea.id, entrada.cerramiento)
-      await persistirManoObra(tx, linea.id, entrada.manoObra)
+      if ('resultado' in entrada) await escribirResultadosCerramiento(tx, linea.id, entrada.resultado, entrada.manoObra)
+      else await persistirManoObra(tx, linea.id, entrada.manoObra)
     } else if (entrada.tipo === 'ESTRUCTURA') {
       await escribirEstructura(tx, linea.id, entrada.estructura)
     }
 
     await actualizarTotales(tx, entrada.valores.presupuestoId)
     return linea.id
-  })
 }
 
 /** Camino de producción: no permite introducir pausas dentro de la transacción. */

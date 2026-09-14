@@ -104,19 +104,26 @@ Aluminior. El `.exe` se conserva únicamente como referencia verificable.
 
 ## Requisitos
 
-- Node.js 20 o superior
+- Node.js 20.9 o superior
 - PostgreSQL 15 o superior (local, o Supabase en región UE)
 
 ## Puesta en marcha
 
 ```bash
-npm install
+npx --yes --package=npm@10.9.8 npm ci
 
 cp .env.example .env
 # Edita .env con tu cadena de conexión
 
 npm run db:migrate
 ```
+
+Para instalar o actualizar dependencias se utiliza npm 10.9.8 mediante `npx`,
+sin cambiar npm global. npm 11 presenta un [defecto con overrides en workspaces](https://github.com/npm/cli/issues/9514)
+que puede restablecer versiones vulnerables. `packageManager` documenta la
+versión; no la impone. Los comandos `npm run` habituales siguen siendo válidos.
+La reproducción local con datos sintéticos está en
+`output/ejecucion-javi/J02/REPRODUCIR-EJECUTOR.md`.
 
 ## Estructura
 

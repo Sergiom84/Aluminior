@@ -277,7 +277,7 @@ describe('reserva de numeración, contra PostgreSQL', () => {
         // ocupa justo antes de que esta transacción llegue a insertar.
         await db.insert(schema.presupuestos).values(fila({ numero: 310040, revision: 0, serie: 'A' }))
         await tx.insert(schema.presupuestos).values(fila({ numero: 310040, revision: 0, serie: 'A' }))
-      }, { automatico: false })).rejects.toMatchObject({ code: '23505', constraint_name: 'presupuestos_identidad_uq' })
+      }, { automatico: false })).rejects.toMatchObject({ cause: { code: '23505', constraint_name: 'presupuestos_identidad_uq' } })
 
       expect(llamadas).toBe(1)
       expect(await contarFilas(310040)).toBe(1)

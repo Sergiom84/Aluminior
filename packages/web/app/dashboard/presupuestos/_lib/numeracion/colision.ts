@@ -6,19 +6,13 @@
  * servidor y no es un contrato estable).
  */
 
-import type { crearDb } from '@aluminior/db'
+import { diagnosticoPostgres, type crearDb } from '@aluminior/db'
 import type { Tx } from './tipos.ts'
 
-type Db = ReturnType<typeof crearDb>
-
-/** Forma mínima de un error de `postgres` que nos interesa: no importamos su tipo. */
-interface ErrorPostgres {
-  readonly code?: string
-  readonly constraint_name?: string
-}
+type Db = Pick<ReturnType<typeof crearDb>, 'transaction'>
 
 export function esColisionIdentidad(error: unknown): boolean {
-  const e = error as ErrorPostgres
+  const e = diagnosticoPostgres(error)
   return e?.code === '23505' && e?.constraint_name === 'presupuestos_identidad_uq'
 }
 

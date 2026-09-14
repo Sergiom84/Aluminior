@@ -3,6 +3,7 @@ import postgres from 'postgres'
 import * as schema from './schema/index.ts'
 
 export * as schema from './schema/index.ts'
+export { diagnosticoPostgres } from './error-postgres.ts'
 
 /**
  * Caché del pool por cadena de conexión.

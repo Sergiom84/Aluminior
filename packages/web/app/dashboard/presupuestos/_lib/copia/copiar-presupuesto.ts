@@ -10,7 +10,9 @@
  * escritura quedan en sus dos módulos, ambos sin reglas.
  */
 
-import type { crearDb } from '@aluminior/db'
+import { schema, type crearDb } from '@aluminior/db'
+import { eq } from 'drizzle-orm'
+import { bloquearPresupuesto } from '../lineas/bloquear-presupuesto.ts'
 import { ejecutarConNumeracion, esColisionIdentidad, reservarNumeracion } from '../numeracion/index.ts'
 import { reservarNumeracionParaPruebas } from '../numeracion/reservar.ts'
 import {
@@ -21,7 +23,7 @@ import { escribirCopia } from './escribir-copia.ts'
 import { leerDocumentoOrigen, lineaOrigenDe } from './leer-origen.ts'
 import { planificarCopia, type OpcionesCopia } from './plan-copia.ts'
 
-type Db = ReturnType<typeof crearDb>
+type Db = Pick<ReturnType<typeof crearDb>, 'transaction'>
 type Tx = Parameters<Parameters<Db['transaction']>[0]>[0]
 
 export interface EntradaCopia {
@@ -99,20 +101,31 @@ async function copiarPresupuestoConGanchos(
   const esManual = !('estrategia' in entrada.destino)
 
   const intento = async (tx: Tx): Promise<ResultadoCopia> => {
-    const origen = await leerDocumentoOrigen(tx, entrada.presupuestoId)
-    if (!origen) return { ok: false, errores: ['Presupuesto de origen no encontrado'] }
+    const [identidad] = await tx.select().from(schema.presupuestos)
+      .where(eq(schema.presupuestos.id, entrada.presupuestoId)).limit(1)
+    if (!identidad) return { ok: false, errores: ['Presupuesto de origen no encontrado'] }
 
     const numeracionOrigen: NumeracionDocumento = {
-      numero: origen.presupuesto.numero,
-      revision: origen.presupuesto.revision,
-      serie: origen.presupuesto.serie,
+      numero: identidad.numero,
+      revision: identidad.revision,
+      serie: identidad.serie,
     }
 
-    const reservado = await reservarDestino(tx, entrada, numeracionOrigen, origen.revisionesUsadas, fecha, ganchos)
+    const reservado = await reservarDestino(tx, entrada, numeracionOrigen, [], fecha, ganchos)
     if (!reservado.ok) return reservado
+
+    if (!await bloquearPresupuesto(tx, entrada.presupuestoId))
+      return { ok: false, errores: ['Presupuesto de origen no encontrado'] }
+    const origen = await leerDocumentoOrigen(tx, entrada.presupuestoId)
+    if (!origen) return { ok: false, errores: ['Presupuesto de origen no encontrado'] }
+    if (origen.presupuesto.numero !== identidad.numero || origen.presupuesto.serie !== identidad.serie)
+      throw new Error('La identidad del presupuesto cambió durante la copia')
 
     const plan = planificarCopia(origen.lineas.map(lineaOrigenDe), entrada.opciones)
     if (!plan.ok) return plan
+    if (plan.plan.lineas.some(c => c.sustituciones.length > 0 &&
+      origen.lineas.some(l => l.linea.id === c.lineaId && l.linea.tipo === 'CERRAMIENTO')))
+      return { ok: false, errores: ['La sustitución de materiales de cerramientos requiere revaloración y no está disponible'] }
 
     const escrito = await escribirCopia(tx, {
       origen: origen.presupuesto,

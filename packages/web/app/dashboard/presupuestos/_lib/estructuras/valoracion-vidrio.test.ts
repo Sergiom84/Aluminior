@@ -29,11 +29,19 @@ const REGLAS = { metrajeMinimo: 0.5, multiploLargoCm: 1, multiploAnchoCm: 1 }
  * Depende del ORDEN de las dos lecturas, y eso es deliberado: si alguien las
  * invierte, el coste pasaría a leerse de `articulos_pvp` y estas pruebas deben
  * caer. Comprobar el texto del SQL ataría la prueba a su formato.
+ *
+ * Desde T.73 las dos lecturas usan el query builder (`select().from().where()`)
+ * en vez de `execute`, porque traen todas las filas del artículo para que el
+ * desempate las vea; el doble imita esa cadena y sigue resolviendo por orden.
  */
 function clienteFalso(filas: readonly unknown[][]): ClienteEscritura {
   let llamada = 0
   return {
-    execute: async () => filas[llamada++] ?? [],
+    select: () => ({
+      from: () => ({
+        where: async () => filas[llamada++] ?? [],
+      }),
+    }),
   } as unknown as ClienteEscritura
 }
 
@@ -182,6 +190,12 @@ describe('el importe NO se redondea aquí', () => {
 })
 
 describe('lectura de catálogo', () => {
+  /** Filas tal y como las devuelven ahora las dos lecturas, sin filtrar. */
+  const pvp = (acabadoCodigo: string, precio: string) =>
+    ({ articuloCodigo: 'V420AGS4', acabadoCodigo, precio })
+  const coste = (acabadoCodigo: string, importe: string) =>
+    ({ articuloCodigo: 'V420AGS4', acabadoCodigo, coste: importe })
+
   const entrada = {
     vidrioCodigo: 'V420AGS4',
     cristales: [{ largoMm: 1000, anchoMm: 500, cantidad: 1 }],
@@ -202,7 +216,7 @@ describe('lectura de catálogo', () => {
   it('no consulta el coste cuando no hay precio', async () => {
     let llamadas = 0
     const cliente = {
-      execute: async () => { llamadas++; return [] },
+      select: () => ({ from: () => ({ where: async () => { llamadas++; return [] } }) }),
     } as unknown as ClienteEscritura
 
     await resolverValoracionVidrio(cliente, entrada)
@@ -210,8 +224,31 @@ describe('lectura de catálogo', () => {
     expect(llamadas).toBe(1)
   })
 
+  it('varios precios y ninguno aplicable: aviso propio, distinto del de ausencia', async () => {
+    const cliente = clienteFalso([[pvp('UNI', '41.37'), pvp('*', '50.00')]])
+
+    const r = await resolverValoracionVidrio(cliente, entrada)
+
+    expect(r).toEqual({
+      ok: false,
+      aviso: 'vidrio sin valorar: V420AGS4 tiene varios precios en la tarifa 1 y ninguno aplicable al acabado',
+    })
+  })
+
+  it('sólo precios de acabados ajenos: no se cobra ninguno', async () => {
+    // Antes de T.73 esto valía 7,00: 'BBB' ganaba por orden alfabético.
+    const cliente = clienteFalso([[pvp('CCC', '9.00'), pvp('BBB', '7.00')]])
+
+    const r = await resolverValoracionVidrio(cliente, entrada)
+
+    expect(r).toEqual({
+      ok: false,
+      aviso: 'vidrio sin valorar: V420AGS4 no tiene precio en la tarifa 1',
+    })
+  })
+
   it('con PVP y sin coste: valora la venta y deja la pieza sin coste', async () => {
-    const cliente = clienteFalso([[{ precio: '41.37' }], []])
+    const cliente = clienteFalso([[pvp('BLA', '41.37')], []])
 
     const r = await resolverValoracionVidrio(cliente, entrada)
 
@@ -222,7 +259,7 @@ describe('lectura de catálogo', () => {
   })
 
   it('con PVP y coste: ambos entran en la pieza', async () => {
-    const cliente = clienteFalso([[{ precio: '41.37' }], [{ coste: '18.9' }]])
+    const cliente = clienteFalso([[pvp('BLA', '41.37')], [coste('BLA', '18.9')]])
 
     const r = await resolverValoracionVidrio(cliente, entrada)
 
@@ -232,5 +269,34 @@ describe('lectura de catálogo', () => {
     expect(r.piezas[0].costeTotal).toBe(
       String(Math.round(18.9 * metrajeVidrioM2(1000, 500, REGLAS) * 1 * 10000) / 10000),
     )
+  })
+
+  it('el coste conserva el comodín, que el criterio del despiece no reconoce', async () => {
+    const cliente = clienteFalso([
+      [pvp('BLA', '41.37')],
+      [coste('AAA', '5'), coste('*', '8')],
+    ])
+
+    const r = await resolverValoracionVidrio(cliente, entrada)
+
+    expect(r.ok).toBe(true)
+    if (!r.ok) return
+    expect(r.piezas[0].costeUnitario).toBe('8')
+  })
+
+  it('el coste sí pierde el desempate alfabético', async () => {
+    // Antes de T.73 la pieza salía con coste 7. Ahora sale sin coste, que NO
+    // deja la línea sin valorar: sólo sin margen.
+    const cliente = clienteFalso([
+      [pvp('BLA', '41.37')],
+      [coste('CCC', '9'), coste('BBB', '7')],
+    ])
+
+    const r = await resolverValoracionVidrio(cliente, entrada)
+
+    expect(r.ok).toBe(true)
+    if (!r.ok) return
+    expect(r.piezas[0].costeUnitario).toBeNull()
+    expect(r.importe).toBe(metrajeVidrioM2(1000, 500, REGLAS) * 41.37)
   })
 })

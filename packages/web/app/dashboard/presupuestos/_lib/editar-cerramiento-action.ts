@@ -1,7 +1,9 @@
 'use server'
 
+import { ErrorOperacionCerramiento } from './cerramientos/error-operativo.ts'
 import { revalidatePath } from 'next/cache'
 import { crearDb } from '@aluminior/db'
+import { usuarioActual } from './usuario-actual.ts'
 import { registrarFallo } from './errores.ts'
 import { esquemaLinea } from './lineas/esquema-linea.ts'
 import { actualizarCerramiento } from './cerramientos/index.ts'
@@ -24,6 +26,7 @@ export async function editarCerramiento(
   }
 
   try {
+    if (!await usuarioActual()) return { ok: false, errores: {}, mensaje: 'Sesión no válida' }
     const resultado = await actualizarCerramiento(crearDb(), {
       presupuestoId: p.data.presupuestoId,
       lineaId,
@@ -42,6 +45,7 @@ export async function editarCerramiento(
     revalidatePath('/dashboard/presupuestos')
     return { ok: true, mensaje: resultado.aviso }
   } catch (error) {
+    if (error instanceof ErrorOperacionCerramiento) return { ok: false, errores: {}, mensaje: error.message }
     return { ok: false, errores: {}, mensaje: registrarFallo('editarCerramiento', error) }
   }
 }

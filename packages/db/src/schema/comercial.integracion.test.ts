@@ -59,7 +59,7 @@ describe('identidad documental de presupuestos, contra PostgreSQL', () => {
       await db.insert(schema.presupuestos).values(fila())
 
       await expect(db.insert(schema.presupuestos).values(fila())).rejects.toMatchObject({
-        code: '23505',
+        cause: { code: '23505', constraint_name: 'presupuestos_identidad_uq' },
       })
     })
 

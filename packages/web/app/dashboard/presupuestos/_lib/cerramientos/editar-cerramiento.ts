@@ -1,11 +1,16 @@
+import { ErrorOperacionCerramiento } from './error-operativo.ts'
+import type { ResultadoCerramientoV1 } from '@aluminior/core/estructuras'
+import { conPresupuestoBloqueado } from '../lineas/con-presupuesto-bloqueado.ts'
+import { prepararLineaValorada } from './preparar-linea-valorada.ts'
+import { escribirResultadosCerramiento } from './escribir-resultados.ts'
 import { and, eq } from 'drizzle-orm'
 import { crearDb, schema } from '@aluminior/db'
 import type { ClienteEscritura } from '../cliente-db.ts'
 import { actualizarTotales } from '../totales.ts'
-import { prepararManoObra, persistirManoObra, type SnapshotManoObra } from '../mano-obra/index.ts'
+import { persistirManoObra, type SnapshotManoObra } from '../mano-obra/index.ts'
 import { prepararAltaCerramiento, type AltaCerramiento } from './alta-cerramiento.ts'
 
-type Db = ReturnType<typeof crearDb>
+type Db = Pick<ReturnType<typeof crearDb>, 'transaction'>
 
 export interface EntradaEdicionCerramiento {
   presupuestoId: string
@@ -49,34 +54,15 @@ export async function actualizarCerramiento(
   })
   if (!alta.ok) return alta
 
-  const [documento] = await db.select({ tarifa: schema.presupuestos.tarifa })
-    .from(schema.presupuestos)
-    .where(eq(schema.presupuestos.id, entrada.presupuestoId)).limit(1)
-  if (!documento) return { ok: false, errores: {}, mensaje: 'Presupuesto no encontrado' }
-
-  const manoObra = await prepararManoObra(db, {
-    horas: { fabricacion: entrada.horasFabricacion, colocacion: entrada.horasColocacion },
-    tarifa: documento.tarifa,
+  return conPresupuestoBloqueado(db, entrada.presupuestoId, async (tx, documento) => {
+    const linea = await lineaEditable(tx, entrada)
+    if (!linea) return { ok: false, errores: {}, mensaje: 'La línea no pertenece al presupuesto o no es un cerramiento' }
+    const preparada = await prepararLineaValorada(tx, alta.alta, { ...entrada, tarifa: documento.tarifa })
+    await escribirEdicionPreparada(tx, { ...entrada, alta: alta.alta,
+      manoObra: preparada.manoObra, aviso: preparada.aviso ?? '',
+      resultado: preparada.resultado, importes: preparada.importes })
+    return { ok: true, aviso: preparada.aviso ?? 'Cerramiento actualizado' }
   })
-  if (manoObra.estado === 'MIGRACION_PENDIENTE') {
-    return { ok: false, errores: {}, mensaje: manoObra.mensaje }
-  }
-  const filas = manoObra.estado === 'PREPARADA' ? manoObra.filas : []
-  const notas = manoObra.estado === 'PREPARADA' ? manoObra.notas : []
-  const aviso = [alta.alta.aviso, ...notas].join(' ')
-
-  const escrito = await escribirEdicionCerramiento(db, {
-    presupuestoId: entrada.presupuestoId,
-    lineaId: entrada.lineaId,
-    referencia: entrada.referencia,
-    cantidad: entrada.cantidad,
-    alta: alta.alta,
-    manoObra: filas,
-    aviso,
-  })
-  return escrito ? { ok: true, aviso } : {
-    ok: false, errores: {}, mensaje: 'La línea no pertenece al presupuesto o no es un cerramiento',
-  }
 }
 
 /**
@@ -87,35 +73,53 @@ export async function escribirEdicionCerramiento(
   db: Db,
   entrada: EdicionCerramientoPreparada,
 ): Promise<boolean> {
-  return db.transaction(async (tx) => {
-    const [linea] = await tx.select({ id: schema.lineas.id })
-      .from(schema.lineas)
-      .where(and(
-        eq(schema.lineas.id, entrada.lineaId),
-        eq(schema.lineas.presupuestoId, entrada.presupuestoId),
-        eq(schema.lineas.tipo, 'CERRAMIENTO'),
-      )).limit(1)
-    if (!linea) return false
+  return conPresupuestoBloqueado(db, entrada.presupuestoId, tx => escribirEdicionPreparada(tx, entrada))
+}
 
+type EdicionValorada = EdicionCerramientoPreparada & {
+  resultado: ResultadoCerramientoV1
+  importes: { precioUnitario: string | null; total: string | null; valoracionCompleta: boolean }
+}
+
+async function lineaEditable(tx: ClienteEscritura, entrada: { lineaId: string; presupuestoId: string }) {
+  const [linea] = await tx.select().from(schema.lineas).where(and(
+    eq(schema.lineas.id, entrada.lineaId), eq(schema.lineas.presupuestoId, entrada.presupuestoId),
+    eq(schema.lineas.tipo, 'CERRAMIENTO'),
+  )).limit(1)
+  if (linea && (Number(linea.descuento) !== 0 || Number(linea.descuento2) !== 0 || linea.pvpManual))
+    throw new ErrorOperacionCerramiento('La revaloración de un cerramiento con descuentos o precio manual no está disponible')
+  return linea
+}
+
+async function escribirEdicionPreparada(tx: ClienteEscritura,
+  entrada: EdicionCerramientoPreparada | EdicionValorada,
+): Promise<boolean> {
+    if (!await lineaEditable(tx, entrada)) return false
+    if (!('resultado' in entrada)) {
+      const [actual] = await tx.select({ lineaId: schema.lineasCerramientoResultados.lineaId })
+        .from(schema.lineasCerramientoResultados)
+        .where(eq(schema.lineasCerramientoResultados.lineaId, entrada.lineaId)).limit(1)
+      if (actual) throw new ErrorOperacionCerramiento('La línea valorada requiere una revaloración completa')
+    }
     await tx.update(schema.lineas).set({
       descripcion: entrada.alta.descripcion,
       referencia: entrada.referencia,
       cantidad: String(entrada.cantidad),
       anchoMm: entrada.alta.anchoMm,
       altoMm: entrada.alta.altoMm,
-      precioUnitario: null,
-      total: null,
-      valoracionCompleta: false,
+      ...('resultado' in entrada ? entrada.importes : { precioUnitario: null, total: null, valoracionCompleta: false }),
       avisoValoracion: entrada.aviso,
     }).where(eq(schema.lineas.id, entrada.lineaId))
 
     await actualizarSatelite(tx, entrada.lineaId, entrada.alta)
+    if ('resultado' in entrada) await escribirResultadosCerramiento(tx, entrada.lineaId, entrada.resultado, entrada.manoObra)
+    else {
     await tx.delete(schema.lineasManoObra)
       .where(eq(schema.lineasManoObra.lineaId, entrada.lineaId))
     await persistirManoObra(tx, entrada.lineaId, entrada.manoObra)
+    }
     await actualizarTotales(tx, entrada.presupuestoId)
     return true
-  })
 }
 
 async function actualizarSatelite(

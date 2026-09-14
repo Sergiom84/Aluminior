@@ -54,6 +54,7 @@ export interface ManoObraEnGuarda {
 export function lineaValorable(args: {
   incalculables: number
   sinPrecio: readonly string[]
+  sinMedida?: readonly string[]
   variablesFaltantes?: readonly string[]
   manoObra?: readonly ManoObraEnGuarda[]
 }): VeredictoGuarda {
@@ -67,6 +68,9 @@ export function lineaValorable(args: {
   }
   if (args.sinPrecio.length) {
     motivos.push(`${args.sinPrecio.length} artículos sin precio en la tarifa`)
+  }
+  if (args.sinMedida?.length) {
+    motivos.push(`${args.sinMedida.length} artículos sin medidas suficientes para calcular el metraje`)
   }
   for (const mo of args.manoObra ?? []) {
     if (mo.motivoCodigo) motivos.push(textoMotivoVenta(mo.concepto, mo.motivoCodigo))

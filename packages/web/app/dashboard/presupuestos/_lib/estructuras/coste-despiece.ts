@@ -43,7 +43,7 @@ export function prepararPiezasDespiece(entrada: EntradaPiezasDespiece): PiezaDes
     const art = entrada.mapa.get(pz.articuloCodigo)
     const coste = entrada.costePorArticulo.get(pz.articuloCodigo) ?? null
     let costeTotal: number | null = null
-    if (coste !== null) {
+    if (coste !== null && art && art.tipoMetraje !== 'M2') {
       if (art?.tipoMetraje === 'ML') {
         // Sin largo no hay metros que cobrar: queda sin coste total, no en cero.
         costeTotal = pz.largoMm !== null ? coste * (pz.largoMm / 1000) * pz.cantidad : null

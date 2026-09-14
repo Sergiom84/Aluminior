@@ -30,7 +30,7 @@ export interface LineaValorada {
   articuloCodigo: string
   tipoMetraje: string
   /** Cantidad facturable ya ajustada (metros, unidades o m²). */
-  cantidadFacturable: number
+  cantidadFacturable: number | null
   precioUnitario: number | null
   importe: number | null
   incidencia: string | null
@@ -42,6 +42,8 @@ export interface ResultadoValoracion {
   importe: number
   /** Artículos sin precio en la tarifa. El importe está incompleto si los hay. */
   sinPrecio: string[]
+  /** Artículos cuyo metraje no se puede determinar; no son precios ausentes. */
+  sinMedida: string[]
   completa: boolean
 }
 
@@ -69,17 +71,19 @@ export function valorarDespiece(
 ): ResultadoValoracion {
   // Agrupar consumo por artículo antes de valorar: los mínimos y múltiplos
   // aplican al total del elemento, no a cada corte por separado.
-  const porArticulo = new Map<string, { unidades: number; metros: number }>()
+  const porArticulo = new Map<string, { unidades: number; metros: number; sinLargo: boolean }>()
 
   for (const p of piezas) {
-    const acc = porArticulo.get(p.articuloCodigo) ?? { unidades: 0, metros: 0 }
+    const acc = porArticulo.get(p.articuloCodigo) ?? { unidades: 0, metros: 0, sinLargo: false }
     acc.unidades += p.cantidad
+    if (p.largoMm === null || !Number.isFinite(p.largoMm) || p.largoMm <= 0) acc.sinLargo = true
     if (p.largoMm !== null) acc.metros += (p.largoMm / 1000) * p.cantidad
     porArticulo.set(p.articuloCodigo, acc)
   }
 
   const lineas: LineaValorada[] = []
   const sinPrecio: string[] = []
+  const sinMedida: string[] = []
   let importe = 0
 
   for (const [codigo, consumo] of porArticulo) {
@@ -95,15 +99,23 @@ export function valorarDespiece(
       continue
     }
 
+    if (art.tipoMetraje === 'M2' || (art.tipoMetraje === 'ML' && consumo.sinLargo)) {
+      lineas.push({
+        articuloCodigo: codigo, tipoMetraje: art.tipoMetraje, cantidadFacturable: null,
+        precioUnitario: art.precio, importe: null,
+        incidencia: art.tipoMetraje === 'M2'
+          ? 'superficie no disponible para valorar por m²'
+          : 'largo no disponible para valorar por metro lineal',
+      })
+      sinMedida.push(codigo)
+      if (art.precio === null) sinPrecio.push(codigo)
+      continue
+    }
+
     let cantidad: number
     switch (art.tipoMetraje) {
       case 'ML':
         cantidad = ajustarMetraje(consumo.metros, art.metrajeMinimo, art.metrajeMultiploLargo)
-        break
-      case 'M2':
-        // Sin datos de ancho por pieza, se factura por unidades. Pendiente de
-        // modelar la superficie real cuando se incorporen los vidrios.
-        cantidad = consumo.unidades
         break
       default:
         cantidad = consumo.unidades
@@ -131,6 +143,7 @@ export function valorarDespiece(
     lineas,
     importe: Math.round(importe * 100) / 100,
     sinPrecio,
-    completa: sinPrecio.length === 0,
+    sinMedida,
+    completa: sinPrecio.length === 0 && sinMedida.length === 0,
   }
 }

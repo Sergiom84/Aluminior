@@ -1,0 +1,597 @@
+{
+  "version": 1,
+  "redondeoVenta": "ESTRUCTURA_NUMBER_V1",
+  "configuracion": {
+    "version": 1,
+    "modulos": [
+      {
+        "id": "m1",
+        "estructuraCodigo": "0",
+        "anchoMm": 1200,
+        "altoMm": 800
+      },
+      {
+        "id": "m2",
+        "estructuraCodigo": "0",
+        "anchoMm": 700,
+        "altoMm": 800
+      }
+    ],
+    "uniones": [
+      {
+        "id": "u1",
+        "codigo": "GMU038",
+        "longitudMm": 800,
+        "grosorMm": 60
+      }
+    ]
+  },
+  "motor": {
+    "codigo": "CATALOGO_CERRAMIENTO",
+    "version": "1"
+  },
+  "tarifa": 9,
+  "unidadMateriales": "COMPOSICION",
+  "ambitoManoObraManual": "LINEA",
+  "origenes": [
+    {
+      "origen": {
+        "tipo": "MODULO",
+        "id": "m1"
+      },
+      "codigo": "0",
+      "serieCodigo": "QA-J04-S",
+      "acabadoCodigo": "QA-J04-L",
+      "vidrioCodigo": "QA-J04-V",
+      "varianteAcristalamiento": "1",
+      "reglaMaterial": "estructura:0",
+      "venta": {
+        "completo": true,
+        "importe": "76.84"
+      },
+      "coste": {
+        "completo": true,
+        "importe": "28.8960"
+      },
+      "piezas": [
+        {
+          "ordinal": 0,
+          "articuloCodigo": "QA-J04-P",
+          "acabadoCodigo": "QA-J04-L",
+          "unidad": "ML",
+          "cantidad": "2",
+          "largoCorteMm": "800",
+          "anchoCorteMm": null,
+          "anguloIzquierdo": "45",
+          "anguloDerecho": "45",
+          "funcion": "MV",
+          "posicionTrabajo": null,
+          "costeUnitario": "4",
+          "costeTotal": "6.4"
+        },
+        {
+          "ordinal": 1,
+          "articuloCodigo": "QA-J04-P",
+          "acabadoCodigo": "QA-J04-L",
+          "unidad": "ML",
+          "cantidad": "2",
+          "largoCorteMm": "1200",
+          "anchoCorteMm": null,
+          "anguloIzquierdo": "45",
+          "anguloDerecho": "45",
+          "funcion": "MH",
+          "posicionTrabajo": null,
+          "costeUnitario": "4",
+          "costeTotal": "9.6"
+        },
+        {
+          "ordinal": 2,
+          "articuloCodigo": "QA-J04-V",
+          "acabadoCodigo": "QA-J04-L",
+          "unidad": "M2",
+          "cantidad": "1",
+          "largoCorteMm": "780",
+          "anchoCorteMm": "1180",
+          "anguloIzquierdo": null,
+          "anguloDerecho": null,
+          "funcion": "VIDRIO",
+          "posicionTrabajo": null,
+          "costeUnitario": "8",
+          "costeTotal": "7.36"
+        },
+        {
+          "ordinal": 3,
+          "articuloCodigo": "QA-J04-E",
+          "acabadoCodigo": "QA-J04-L",
+          "unidad": "ML",
+          "cantidad": "2",
+          "largoCorteMm": "800",
+          "anchoCorteMm": null,
+          "anguloIzquierdo": null,
+          "anguloDerecho": null,
+          "funcion": "JEXT",
+          "posicionTrabajo": null,
+          "costeUnitario": "0.4",
+          "costeTotal": "0.64"
+        },
+        {
+          "ordinal": 4,
+          "articuloCodigo": "QA-J04-E",
+          "acabadoCodigo": "QA-J04-L",
+          "unidad": "ML",
+          "cantidad": "2",
+          "largoCorteMm": "1200",
+          "anchoCorteMm": null,
+          "anguloIzquierdo": null,
+          "anguloDerecho": null,
+          "funcion": "JEXT",
+          "posicionTrabajo": null,
+          "costeUnitario": "0.4",
+          "costeTotal": "0.96"
+        },
+        {
+          "ordinal": 5,
+          "articuloCodigo": "QA-J04-I",
+          "acabadoCodigo": "QA-J04-L",
+          "unidad": "ML",
+          "cantidad": "2",
+          "largoCorteMm": "800",
+          "anchoCorteMm": null,
+          "anguloIzquierdo": null,
+          "anguloDerecho": null,
+          "funcion": "JINT",
+          "posicionTrabajo": null,
+          "costeUnitario": "0.2",
+          "costeTotal": "0.32"
+        },
+        {
+          "ordinal": 6,
+          "articuloCodigo": "QA-J04-I",
+          "acabadoCodigo": "QA-J04-L",
+          "unidad": "ML",
+          "cantidad": "2",
+          "largoCorteMm": "1200",
+          "anchoCorteMm": null,
+          "anguloIzquierdo": null,
+          "anguloDerecho": null,
+          "funcion": "JINT",
+          "posicionTrabajo": null,
+          "costeUnitario": "0.2",
+          "costeTotal": "0.48"
+        },
+        {
+          "ordinal": 7,
+          "articuloCodigo": "QA-J04-J",
+          "acabadoCodigo": "QA-J04-L",
+          "unidad": "ML",
+          "cantidad": "2",
+          "largoCorteMm": "780",
+          "anchoCorteMm": null,
+          "anguloIzquierdo": null,
+          "anguloDerecho": null,
+          "funcion": "JUNQ",
+          "posicionTrabajo": null,
+          "costeUnitario": "0.8",
+          "costeTotal": "1.248"
+        },
+        {
+          "ordinal": 8,
+          "articuloCodigo": "QA-J04-J",
+          "acabadoCodigo": "QA-J04-L",
+          "unidad": "ML",
+          "cantidad": "2",
+          "largoCorteMm": "1180",
+          "anchoCorteMm": null,
+          "anguloIzquierdo": null,
+          "anguloDerecho": null,
+          "funcion": "JUNQ",
+          "posicionTrabajo": null,
+          "costeUnitario": "0.8",
+          "costeTotal": "1.888"
+        }
+      ],
+      "partidasValoracion": [
+        {
+          "ordinal": 0,
+          "grupoValoracion": "MATERIALES",
+          "articuloCodigo": "QA-J04-P",
+          "unidad": "ML",
+          "cantidadFacturable": "4.000000",
+          "precioUnitario": "10.0000",
+          "importeExacto": "40.0000000000",
+          "incidencia": null,
+          "tarifa": 9,
+          "criterioPrecio": "EXACTO",
+          "acabadoCodigo": "QA-J04-L"
+        },
+        {
+          "ordinal": 1,
+          "grupoValoracion": "VIDRIO",
+          "articuloCodigo": "QA-J04-V",
+          "unidad": "M2",
+          "cantidadFacturable": "0.920000",
+          "precioUnitario": "25.0000",
+          "importeExacto": "23.0000000000",
+          "incidencia": null,
+          "tarifa": 9,
+          "criterioPrecio": "EXACTO",
+          "acabadoCodigo": "QA-J04-L"
+        },
+        {
+          "ordinal": 2,
+          "grupoValoracion": "ACRISTALAMIENTO",
+          "articuloCodigo": "QA-J04-E",
+          "unidad": "ML",
+          "cantidadFacturable": "4.000000",
+          "precioUnitario": "1.0000",
+          "importeExacto": "4.0000000000",
+          "incidencia": null,
+          "tarifa": 9,
+          "criterioPrecio": "EXACTO",
+          "acabadoCodigo": "QA-J04-L"
+        },
+        {
+          "ordinal": 3,
+          "grupoValoracion": "ACRISTALAMIENTO",
+          "articuloCodigo": "QA-J04-I",
+          "unidad": "ML",
+          "cantidadFacturable": "4.000000",
+          "precioUnitario": "0.5000",
+          "importeExacto": "2.0000000000",
+          "incidencia": null,
+          "tarifa": 9,
+          "criterioPrecio": "EXACTO",
+          "acabadoCodigo": "QA-J04-L"
+        },
+        {
+          "ordinal": 4,
+          "grupoValoracion": "ACRISTALAMIENTO",
+          "articuloCodigo": "QA-J04-J",
+          "unidad": "ML",
+          "cantidadFacturable": "3.920000",
+          "precioUnitario": "2.0000",
+          "importeExacto": "7.8400000000",
+          "incidencia": null,
+          "tarifa": 9,
+          "criterioPrecio": "EXACTO",
+          "acabadoCodigo": "QA-J04-L"
+        }
+      ],
+      "acristalamiento": [
+        {
+          "slot": 1,
+          "vidrioHojas": null,
+          "vidrioFijos": "QA-J04-V",
+          "variante": "1"
+        }
+      ],
+      "opcionesHerraje": [],
+      "diagnosticos": []
+    },
+    {
+      "origen": {
+        "tipo": "MODULO",
+        "id": "m2"
+      },
+      "codigo": "0",
+      "serieCodigo": "QA-J04-S",
+      "acabadoCodigo": "QA-J04-L",
+      "vidrioCodigo": "QA-J04-V",
+      "varianteAcristalamiento": "1",
+      "reglaMaterial": "estructura:0",
+      "venta": {
+        "completo": true,
+        "importe": "53.59"
+      },
+      "coste": {
+        "completo": true,
+        "importe": "20.3760"
+      },
+      "piezas": [
+        {
+          "ordinal": 0,
+          "articuloCodigo": "QA-J04-P",
+          "acabadoCodigo": "QA-J04-L",
+          "unidad": "ML",
+          "cantidad": "2",
+          "largoCorteMm": "800",
+          "anchoCorteMm": null,
+          "anguloIzquierdo": "45",
+          "anguloDerecho": "45",
+          "funcion": "MV",
+          "posicionTrabajo": null,
+          "costeUnitario": "4",
+          "costeTotal": "6.4"
+        },
+        {
+          "ordinal": 1,
+          "articuloCodigo": "QA-J04-P",
+          "acabadoCodigo": "QA-J04-L",
+          "unidad": "ML",
+          "cantidad": "2",
+          "largoCorteMm": "700",
+          "anchoCorteMm": null,
+          "anguloIzquierdo": "45",
+          "anguloDerecho": "45",
+          "funcion": "MH",
+          "posicionTrabajo": null,
+          "costeUnitario": "4",
+          "costeTotal": "5.6"
+        },
+        {
+          "ordinal": 2,
+          "articuloCodigo": "QA-J04-V",
+          "acabadoCodigo": "QA-J04-L",
+          "unidad": "M2",
+          "cantidad": "1",
+          "largoCorteMm": "780",
+          "anchoCorteMm": "680",
+          "anguloIzquierdo": null,
+          "anguloDerecho": null,
+          "funcion": "VIDRIO",
+          "posicionTrabajo": null,
+          "costeUnitario": "8",
+          "costeTotal": "4.24"
+        },
+        {
+          "ordinal": 3,
+          "articuloCodigo": "QA-J04-E",
+          "acabadoCodigo": "QA-J04-L",
+          "unidad": "ML",
+          "cantidad": "2",
+          "largoCorteMm": "800",
+          "anchoCorteMm": null,
+          "anguloIzquierdo": null,
+          "anguloDerecho": null,
+          "funcion": "JEXT",
+          "posicionTrabajo": null,
+          "costeUnitario": "0.4",
+          "costeTotal": "0.64"
+        },
+        {
+          "ordinal": 4,
+          "articuloCodigo": "QA-J04-E",
+          "acabadoCodigo": "QA-J04-L",
+          "unidad": "ML",
+          "cantidad": "2",
+          "largoCorteMm": "700",
+          "anchoCorteMm": null,
+          "anguloIzquierdo": null,
+          "anguloDerecho": null,
+          "funcion": "JEXT",
+          "posicionTrabajo": null,
+          "costeUnitario": "0.4",
+          "costeTotal": "0.56"
+        },
+        {
+          "ordinal": 5,
+          "articuloCodigo": "QA-J04-I",
+          "acabadoCodigo": "QA-J04-L",
+          "unidad": "ML",
+          "cantidad": "2",
+          "largoCorteMm": "800",
+          "anchoCorteMm": null,
+          "anguloIzquierdo": null,
+          "anguloDerecho": null,
+          "funcion": "JINT",
+          "posicionTrabajo": null,
+          "costeUnitario": "0.2",
+          "costeTotal": "0.32"
+        },
+        {
+          "ordinal": 6,
+          "articuloCodigo": "QA-J04-I",
+          "acabadoCodigo": "QA-J04-L",
+          "unidad": "ML",
+          "cantidad": "2",
+          "largoCorteMm": "700",
+          "anchoCorteMm": null,
+          "anguloIzquierdo": null,
+          "anguloDerecho": null,
+          "funcion": "JINT",
+          "posicionTrabajo": null,
+          "costeUnitario": "0.2",
+          "costeTotal": "0.28"
+        },
+        {
+          "ordinal": 7,
+          "articuloCodigo": "QA-J04-J",
+          "acabadoCodigo": "QA-J04-L",
+          "unidad": "ML",
+          "cantidad": "2",
+          "largoCorteMm": "780",
+          "anchoCorteMm": null,
+          "anguloIzquierdo": null,
+          "anguloDerecho": null,
+          "funcion": "JUNQ",
+          "posicionTrabajo": null,
+          "costeUnitario": "0.8",
+          "costeTotal": "1.248"
+        },
+        {
+          "ordinal": 8,
+          "articuloCodigo": "QA-J04-J",
+          "acabadoCodigo": "QA-J04-L",
+          "unidad": "ML",
+          "cantidad": "2",
+          "largoCorteMm": "680",
+          "anchoCorteMm": null,
+          "anguloIzquierdo": null,
+          "anguloDerecho": null,
+          "funcion": "JUNQ",
+          "posicionTrabajo": null,
+          "costeUnitario": "0.8",
+          "costeTotal": "1.088"
+        }
+      ],
+      "partidasValoracion": [
+        {
+          "ordinal": 0,
+          "grupoValoracion": "MATERIALES",
+          "articuloCodigo": "QA-J04-P",
+          "unidad": "ML",
+          "cantidadFacturable": "3.000000",
+          "precioUnitario": "10.0000",
+          "importeExacto": "30.0000000000",
+          "incidencia": null,
+          "tarifa": 9,
+          "criterioPrecio": "EXACTO",
+          "acabadoCodigo": "QA-J04-L"
+        },
+        {
+          "ordinal": 1,
+          "grupoValoracion": "VIDRIO",
+          "articuloCodigo": "QA-J04-V",
+          "unidad": "M2",
+          "cantidadFacturable": "0.530000",
+          "precioUnitario": "25.0000",
+          "importeExacto": "13.2500000000",
+          "incidencia": null,
+          "tarifa": 9,
+          "criterioPrecio": "EXACTO",
+          "acabadoCodigo": "QA-J04-L"
+        },
+        {
+          "ordinal": 2,
+          "grupoValoracion": "ACRISTALAMIENTO",
+          "articuloCodigo": "QA-J04-E",
+          "unidad": "ML",
+          "cantidadFacturable": "3.000000",
+          "precioUnitario": "1.0000",
+          "importeExacto": "3.0000000000",
+          "incidencia": null,
+          "tarifa": 9,
+          "criterioPrecio": "EXACTO",
+          "acabadoCodigo": "QA-J04-L"
+        },
+        {
+          "ordinal": 3,
+          "grupoValoracion": "ACRISTALAMIENTO",
+          "articuloCodigo": "QA-J04-I",
+          "unidad": "ML",
+          "cantidadFacturable": "3.000000",
+          "precioUnitario": "0.5000",
+          "importeExacto": "1.5000000000",
+          "incidencia": null,
+          "tarifa": 9,
+          "criterioPrecio": "EXACTO",
+          "acabadoCodigo": "QA-J04-L"
+        },
+        {
+          "ordinal": 4,
+          "grupoValoracion": "ACRISTALAMIENTO",
+          "articuloCodigo": "QA-J04-J",
+          "unidad": "ML",
+          "cantidadFacturable": "2.920000",
+          "precioUnitario": "2.0000",
+          "importeExacto": "5.8400000000",
+          "incidencia": null,
+          "tarifa": 9,
+          "criterioPrecio": "EXACTO",
+          "acabadoCodigo": "QA-J04-L"
+        }
+      ],
+      "acristalamiento": [
+        {
+          "slot": 1,
+          "vidrioHojas": null,
+          "vidrioFijos": "QA-J04-V",
+          "variante": "1"
+        }
+      ],
+      "opcionesHerraje": [],
+      "diagnosticos": []
+    },
+    {
+      "origen": {
+        "tipo": "UNION",
+        "id": "u1"
+      },
+      "codigo": "GMU038",
+      "serieCodigo": "QA-J04-S",
+      "acabadoCodigo": "QA-J04-L",
+      "vidrioCodigo": null,
+      "varianteAcristalamiento": "1",
+      "reglaMaterial": "estructura:GMU038",
+      "venta": {
+        "completo": true,
+        "importe": "10.40"
+      },
+      "coste": {
+        "completo": true,
+        "importe": "4.4000"
+      },
+      "piezas": [
+        {
+          "ordinal": 0,
+          "articuloCodigo": "QA-J04-U",
+          "acabadoCodigo": "QA-J04-L",
+          "unidad": "ML",
+          "cantidad": "1",
+          "largoCorteMm": "800",
+          "anchoCorteMm": null,
+          "anguloIzquierdo": null,
+          "anguloDerecho": null,
+          "funcion": "UNION",
+          "posicionTrabajo": null,
+          "costeUnitario": "5",
+          "costeTotal": "4"
+        },
+        {
+          "ordinal": 1,
+          "articuloCodigo": "QA-J04-T",
+          "acabadoCodigo": "QA-J04-L",
+          "unidad": "UD",
+          "cantidad": "4",
+          "largoCorteMm": null,
+          "anchoCorteMm": null,
+          "anguloIzquierdo": null,
+          "anguloDerecho": null,
+          "funcion": "TORNILLO",
+          "posicionTrabajo": null,
+          "costeUnitario": "0.1",
+          "costeTotal": "0.4"
+        }
+      ],
+      "partidasValoracion": [
+        {
+          "ordinal": 0,
+          "grupoValoracion": "MATERIALES",
+          "articuloCodigo": "QA-J04-U",
+          "unidad": "ML",
+          "cantidadFacturable": "0.800000",
+          "precioUnitario": "12.0000",
+          "importeExacto": "9.6000000000",
+          "incidencia": null,
+          "tarifa": 9,
+          "criterioPrecio": "EXACTO",
+          "acabadoCodigo": "QA-J04-L"
+        },
+        {
+          "ordinal": 1,
+          "grupoValoracion": "MATERIALES",
+          "articuloCodigo": "QA-J04-T",
+          "unidad": "UD",
+          "cantidadFacturable": "4.000000",
+          "precioUnitario": "0.2000",
+          "importeExacto": "0.8000000000",
+          "incidencia": null,
+          "tarifa": 9,
+          "criterioPrecio": "EXACTO",
+          "acabadoCodigo": "QA-J04-L"
+        }
+      ],
+      "acristalamiento": [],
+      "opcionesHerraje": [],
+      "diagnosticos": []
+    }
+  ],
+  "ventaMateriales": {
+    "completo": true,
+    "importe": "140.83"
+  },
+  "costeMateriales": {
+    "completo": true,
+    "importe": "53.6720"
+  }
+}

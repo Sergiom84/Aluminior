@@ -216,7 +216,7 @@ export function AnyadirLinea({
       {tipo === 'CERRAMIENTO' && (
         <fieldset className="mt-4 rounded-md border p-4"
           style={{ borderColor: 'var(--al-border)' }}>
-          <legend className="px-1 text-sm font-medium">Mano de obra adicional</legend>
+          <legend className="px-1 text-sm font-medium">Mano de obra adicional · total de línea</legend>
           <div className={styles.workFields}>
             <div>
               <label htmlFor="horasFabricacion" className="mb-1 block text-sm">Fabricación (h)</label>

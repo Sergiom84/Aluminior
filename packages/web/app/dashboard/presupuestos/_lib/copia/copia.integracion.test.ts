@@ -118,7 +118,7 @@ describe('copia de presupuesto', () => {
     const resultado = await copiarPresupuesto(db, {
       presupuestoId: origenId,
       destino: { estrategia: 'MISMO_NUMERO_NUEVA_REVISION' },
-      opciones: { ...OPCIONES_COPIA_IDENTICA, mapa },
+      opciones: { ...OPCIONES_COPIA_IDENTICA, mapa, seleccion: seleccionDeLineas([lineaEstructuraId]) },
       fecha: '2026-02-01',
       creadoPor: 'prueba@aluminior',
     })
@@ -127,8 +127,8 @@ describe('copia de presupuesto', () => {
     expect(resultado.numero).toBe(NUMERO)
     expect(resultado.revision).toBe(1)
     expect(resultado.lineasCopiadas).toBe(2)
-    // Cerramiento: serie + vidrio. Estructura: serie + vidrio + accesorios.
-    expect(resultado.sustitucionesAplicadas).toBe(5)
+    // J05: sólo ESTRUCTURA admite sustituciones sin revaloración de CERRAMIENTO.
+    expect(resultado.sustitucionesAplicadas).toBe(3)
 
     // El origen no ha cambiado ni una fila.
     expect(await lineasDe(origenId)).toEqual(antes)
@@ -148,8 +148,8 @@ describe('copia de presupuesto', () => {
     expect(copia).toHaveLength(2)
     const [nuevoCerramiento] = await db.select().from(schema.lineasCerramiento)
       .where(eq(schema.lineasCerramiento.lineaId, copia[0].id))
-    expect(nuevoCerramiento.serieCodigo).toBe('ELEGANT70RPT')
-    expect(nuevoCerramiento.vidrioCodigo).toBe('V644AGS4')
+    expect(nuevoCerramiento.serieCodigo).toBe('ELEGANTPVC')
+    expect(nuevoCerramiento.vidrioCodigo).toBe('V420AGS4')
     expect(nuevoCerramiento.configuracion).toEqual(configuracion)
 
     const [nuevaEstructura] = await db.select().from(schema.lineasEstructura)
@@ -174,18 +174,18 @@ describe('copia de presupuesto', () => {
       .where(eq(schema.lineasOpcionesHerraje.lineaId, copia[1].id))
     expect(herraje).toHaveLength(1)
 
-    // Regla del dinero: la línea cambió de código, su precio ya no vale.
-    expect(copia[0].precioUnitario).toBeNull()
-    expect(copia[0].total).toBeNull()
-    expect(copia[0].valoracionCompleta).toBe(false)
-    expect(copia[0].avisoValoracion).toContain('Importe incompleto')
+    // El cerramiento no cambia; la estructura sustituida queda sin precio.
+    expect(copia[0].precioUnitario).toBe('100.0000')
+    expect(copia[0].total).toBe('100.00')
+    expect(copia[0].valoracionCompleta).toBe(true)
+    expect(copia[1].avisoValoracion).toContain('Importe incompleto')
 
     const [cabecera] = await db.select().from(schema.presupuestos)
       .where(eq(schema.presupuestos.id, resultado.presupuestoId))
     expect(cabecera.observaciones).toBe('texto de cabecera que debe viajar a la copia')
     expect(cabecera.fecha).toBe('2026-02-01')
     expect(cabecera.creadoPor).toBe('prueba@aluminior')
-    expect(Number(cabecera.total)).toBe(0)
+    expect(Number(cabecera.total)).toBe(121)
   })
 
   it('aplica la sustitución sólo a la línea seleccionada y copia la otra intacta', async () => {

@@ -4,7 +4,7 @@
  * sustituye por un resultado neutro para aislar perfiles, acabado y satélites.
  */
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
-import { eq } from 'drizzle-orm'
+import { and, eq, inArray } from 'drizzle-orm'
 import { crearDb, schema } from '@aluminior/db'
 import { urlDePruebasValidada } from '@aluminior/db/pruebas'
 
@@ -131,6 +131,23 @@ describe('valorarEstructura', () => {
     })])
   })
 
+  it('J01: un componente M2 sin superficie propaga incompleto hasta la estructura', async () => {
+    await db.update(schema.articulos).set({ tipoMetraje: 'M2' })
+      .where(eq(schema.articulos.codigo, PERFIL))
+    try {
+      const resultado = await valorarEstructura(db, {
+        codigo: ESTRUCTURA, serieCodigo: SERIE, anchoMm: 1200, altoMm: 1000,
+        vidrioCodigo: null, varianteAcristalamiento: '2', acabadoCodigo: 'L',
+        tarifa: 1, opcionesHerraje: [],
+      })
+      expect(resultado).toMatchObject({ ok: true, precioUnitario: null })
+      expect(resultado.ok && resultado.aviso).toContain('sin medidas suficientes')
+    } finally {
+      await db.update(schema.articulos).set({ tipoMetraje: 'ML' })
+        .where(eq(schema.articulos.codigo, PERFIL))
+    }
+  })
+
   it('propaga acristalamiento y avisos, pero anula el subtotal parcial', async () => {
     const resultado = await valorarEstructura(db, {
       codigo: ESTRUCTURA,
@@ -153,6 +170,113 @@ describe('valorarEstructura', () => {
     if (!resultado.ok) return
     expect(resultado.piezas.map((pieza) => pieza.articuloCodigo))
       .toEqual([PERFIL, 'VIDRIO_CON_PROBLEMA'])
+  })
+
+  describe('desempate del PVP por acabado (T.73)', () => {
+    const base = {
+      codigo: ESTRUCTURA,
+      serieCodigo: SERIE,
+      anchoMm: 1200,
+      altoMm: 1000,
+      vidrioCodigo: null,
+      varianteAcristalamiento: '2' as const,
+      tarifa: 1,
+      opcionesHerraje: [],
+    }
+    /** Filas añadidas por un caso concreto, sobre las 'A' y 'L' del sembrado. */
+    const conPvpExtra = async (
+      filas: { acabadoCodigo: string; precio: string }[],
+      caso: () => Promise<void>,
+    ) => {
+      await db.insert(schema.articulosPvp).values(
+        filas.map((f) => ({ articuloCodigo: PERFIL, tarifa: 1, ...f })),
+      )
+      try {
+        await caso()
+      } finally {
+        await db.delete(schema.articulosPvp)
+          .where(and(
+            eq(schema.articulosPvp.articuloCodigo, PERFIL),
+            inArray(schema.articulosPvp.acabadoCodigo, filas.map((f) => f.acabadoCodigo)),
+          ))
+      }
+    }
+
+    it('un acabado sin fila propia NO cobra el precio de otro acabado', async () => {
+      // Sembrado: 'A' = 99 y 'L' = 10, ninguno genérico. Antes de T.73 el
+      // `ORDER BY ... acabado_codigo LIMIT 1` devolvía 99 —'A' es el primero—,
+      // así que un acabado sin tarifa se facturaba al precio más caro de la
+      // lista. Ahora la línea queda sin valorar.
+      const r = await valorarEstructura(db, { ...base, acabadoCodigo: 'NO_TARIFADO' })
+
+      expect(r.ok).toBe(true)
+      if (!r.ok) return
+      expect(r.precioUnitario).toBeNull()
+      expect(r.aviso).toMatch(/^Importe incompleto:/)
+      // El despiece sí se calcula: lo que falta es el precio, no la geometría.
+      expect(r.piezas).toHaveLength(1)
+    })
+
+    it('el genérico UNI resuelve cuando no hay acabado exacto', async () => {
+      await conPvpExtra([{ acabadoCodigo: 'UNI', precio: '5.0000' }], async () => {
+        const r = await valorarEstructura(db, { ...base, acabadoCodigo: 'NO_TARIFADO' })
+
+        expect(r.ok).toBe(true)
+        if (!r.ok) return
+        // 2 piezas × 1,2 m × 5 €/ml. El 99 de 'A' sigue sin entrar.
+        expect(r.precioUnitario).toBe(12)
+        expect(r.aviso).toBeNull()
+      })
+    })
+
+    it('el acabado exacto sigue ganando al genérico', async () => {
+      await conPvpExtra([{ acabadoCodigo: 'UNI', precio: '5.0000' }], async () => {
+        const r = await valorarEstructura(db, { ...base, acabadoCodigo: 'L' })
+
+        expect(r.ok).toBe(true)
+        if (!r.ok) return
+        expect(r.precioUnitario).toBe(24) // 'L' = 10, no el genérico
+      })
+    })
+
+    it('dos precios genéricos incompatibles bloquean y lo dicen', async () => {
+      await conPvpExtra(
+        [{ acabadoCodigo: 'UNI', precio: '5.0000' }, { acabadoCodigo: '*', precio: '7.0000' }],
+        async () => {
+          const r = await valorarEstructura(db, { ...base, acabadoCodigo: 'NO_TARIFADO' })
+
+          expect(r.ok).toBe(true)
+          if (!r.ok) return
+          expect(r.precioUnitario).toBeNull()
+          expect(r.aviso).toContain('con varios precios en la tarifa y ninguno aplicable al acabado')
+          expect(r.aviso).toContain(PERFIL)
+          // Y NO se cuenta ademas como ausente: son diagnosticos opuestos.
+          expect(r.aviso).not.toContain('artículos sin precio en la tarifa')
+        },
+      )
+    })
+
+    it('un artículo ausente sí se cuenta como sin precio', () => {
+      // El contraste del caso anterior: sin ambigüedad, el mensaje de ausencia
+      // sigue emitiéndose. Si la resta de ambiguos se llevara por delante a los
+      // ausentes, esta prueba caería.
+      return valorarEstructura(db, { ...base, acabadoCodigo: 'NO_TARIFADO' })
+        .then((r) => {
+          expect(r.ok).toBe(true)
+          if (!r.ok) return
+          expect(r.aviso).toContain('artículos sin precio en la tarifa')
+        })
+    })
+
+    it('una tarifa distinta no presta su precio', async () => {
+      await conPvpExtra([{ acabadoCodigo: 'UNI', precio: '5.0000' }], async () => {
+        const r = await valorarEstructura(db, { ...base, acabadoCodigo: 'L', tarifa: 2 })
+
+        expect(r.ok).toBe(true)
+        if (!r.ok) return
+        expect(r.precioUnitario).toBeNull()
+      })
+    })
   })
 
   it('mantiene los rechazos de estructura, medidas y serie como errores de campo', async () => {

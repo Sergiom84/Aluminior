@@ -60,6 +60,8 @@ export interface PerfilDespunte {
   /** Código que identifica el perfil en el documento (artículo o artículo-acabado). */
   perfil: string
   plan: PlanCorte
+  /** Barra bruta comprada; el plan puede utilizar una longitud menor tras saneamiento. */
+  longitudBarraCompradaMm?: number
   /** €/m como texto decimal. `null` cuando el catálogo no da precio: no se sustituye por cero. */
   precioMetroLineal: Decimal | null
 }
@@ -185,9 +187,12 @@ export function calcularDespunte(
   const cortesNoValorados: CorteNoValorado[] = []
   const mlDeBarras: Decimal[] = []
 
-  for (const { perfil, plan, precioMetroLineal } of perfiles) {
+  for (const { perfil, plan, precioMetroLineal, longitudBarraCompradaMm } of perfiles) {
+    const comprada = longitudBarraCompradaMm ?? plan.longitudBarra
+    if (!Number.isFinite(comprada) || comprada <= 0 || comprada < plan.longitudBarra)
+      throw new Error(`longitud de barra comprada no válida en ${perfil}`)
     const mlNecesario = metros(plan.totalUtil)
-    const mlBarras = metros(plan.nBarras * plan.longitudBarra)
+    const mlBarras = metros(plan.nBarras * comprada)
     mlDeBarras.push(mlBarras)
 
     for (const imposible of plan.imposibles) {

@@ -97,7 +97,7 @@ describe('copiarPresupuesto, atomicidad real contra PostgreSQL', () => {
       presupuestoId: origenId,
       destino: { estrategia: 'MISMO_NUMERO_NUEVA_REVISION' },
       opciones: { ...OPCIONES_COPIA_IDENTICA, mapa: MAPA_VACIO },
-    })).rejects.toThrow(/T\.72\.1\.1/)
+    })).rejects.toMatchObject({ cause: { code: 'P0001', message: expect.stringMatching(/T\.72\.1\.1/) } })
 
     // El origen no perdió ni ganó ninguna línea.
     const despuesLineas = await db.select().from(schema.lineas)

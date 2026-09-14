@@ -3,11 +3,11 @@
 import { useEffect, useId, useRef, useState, useTransition } from 'react'
 import { buscarClientes, type ClienteEncontrado } from '../_lib/acciones.ts'
 
-export function SelectorCliente({ errores = [] }: { errores?: string[] }) {
+export function SelectorCliente({ errores = [], inicial }: { errores?: string[]; inicial?: { codigo: string; nombre: string } | null }) {
   const listaId = useId()
   const contenedor = useRef<HTMLDivElement>(null)
-  const [consulta, setConsulta] = useState('')
-  const [codigo, setCodigo] = useState('')
+  const [consulta, setConsulta] = useState(inicial ? `${inicial.codigo} · ${inicial.nombre}` : '')
+  const [codigo, setCodigo] = useState(inicial?.codigo ?? '')
   const [resultados, setResultados] = useState<ClienteEncontrado[]>([])
   const [abierto, setAbierto] = useState(false)
   const [activo, setActivo] = useState(-1)
@@ -46,10 +46,12 @@ export function SelectorCliente({ errores = [] }: { errores?: string[] }) {
         if (!contenedor.current?.contains(evento.relatedTarget as Node | null)) setAbierto(false)
       }}
     >
-      <label htmlFor="clienteBusqueda">Cliente</label>
+      <label htmlFor={`${listaId}-busqueda`}>Cliente</label>
       <input type="hidden" name="clienteCodigo" value={codigo} />
       <input
-        id="clienteBusqueda"
+        id={`${listaId}-busqueda`}
+        aria-invalid={errores.length ? true : undefined}
+        aria-describedby={errores.length ? `${listaId}-error` : undefined}
         value={consulta}
         placeholder="Código o nombre"
         autoComplete="off"
@@ -114,9 +116,9 @@ export function SelectorCliente({ errores = [] }: { errores?: string[] }) {
         </div>
       )}
 
-      {errores.map((error) => (
+      <div id={`${listaId}-error`}>{errores.map((error) => (
         <p key={error} className="mt-1 text-xs" style={{ color: 'var(--al-error)' }}>{error}</p>
-      ))}
+      ))}</div>
     </div>
   )
 }

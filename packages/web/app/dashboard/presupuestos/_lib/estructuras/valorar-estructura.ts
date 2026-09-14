@@ -1,15 +1,16 @@
-import { eq, inArray, sql } from 'drizzle-orm'
-import { schema } from '@aluminior/db'
-import { calcularDespiece, type ComponentePlantilla } from '@aluminior/core/despiece'
-import { lineaValorable, valorarDespiece, type DatosArticuloPrecio } from '@aluminior/core/precios'
+import { partidasValoracion } from './partidas-valoracion.ts'
+import type { PartidaValoracionCerramiento } from '@aluminior/core/estructuras'
+import { resolverMaterialesEstructura } from './materiales-estructura.ts'
+import { lineaValorable } from '@aluminior/core/precios'
 import type { ClienteEscritura } from '../cliente-db.ts'
 import type {
   OpcionHerrajeElegida, PiezaDespiece, RanuraAcristalamiento,
 } from '../lineas/guardar-linea.ts'
 import { resolverAcristalamientoEstructura } from './acristalamiento-estructura.ts'
-import { resolverCosteDespiece } from './coste-despiece.ts'
 import { resolverOpcionesHerraje } from './herraje.ts'
-import { resolverPerfiles } from './resolucion-perfiles.ts'
+import {
+  articulosAmbiguos, avisoAmbiguos,
+} from './pvp-articulos.ts'
 
 export interface EntradaValoracionEstructura {
   codigo: string
@@ -21,6 +22,7 @@ export interface EntradaValoracionEstructura {
   acabadoCodigo: string | null
   tarifa: number
   opcionesHerraje: readonly string[]
+  trazabilidad?: boolean
 }
 
 export type ResultadoValoracionEstructura =
@@ -33,6 +35,8 @@ export type ResultadoValoracionEstructura =
       piezas: PiezaDespiece[]
       acristalamiento: RanuraAcristalamiento[]
       opcionesHerraje: OpcionHerrajeElegida[]
+      partidas?: PartidaValoracionCerramiento[]
+      materialCompleto?: boolean
     }
 
 /**
@@ -46,104 +50,12 @@ export async function valorarEstructura(
   cliente: ClienteEscritura,
   entrada: EntradaValoracionEstructura,
 ): Promise<ResultadoValoracionEstructura> {
-  const [estructura] = await cliente.select()
-    .from(schema.estructuras).where(eq(schema.estructuras.codigo, entrada.codigo)).limit(1)
-  if (!estructura) return { ok: false, errores: { codigo: ['Estructura no encontrada'] } }
-
-  if (!entrada.anchoMm || !entrada.altoMm) {
-    return { ok: false, errores: { anchoMm: ['Indica ancho y alto del hueco'] } }
-  }
-  if (!entrada.serieCodigo) {
-    return { ok: false, errores: { serieCodigo: ['Indique Serie primero'] } }
-  }
-  const [serie] = await cliente.select()
-    .from(schema.series).where(eq(schema.series.codigo, entrada.serieCodigo)).limit(1)
-  if (!serie) return { ok: false, errores: { serieCodigo: ['Serie no encontrada'] } }
-
-  const plantilla = await cliente.select({
-    articuloCodigo: schema.estructuraComponentes.articuloCodigo,
-    cantidad: schema.estructuraComponentes.cantidad,
-    formulaLargo: schema.estructuraComponentes.formulaLargo,
-    formulaAncho: schema.estructuraComponentes.formulaAncho,
-    tipoCorte: schema.estructuraComponentes.tipoCorte,
-    anguloIzquierdo: schema.estructuraComponentes.anguloIzquierdo,
-    anguloDerecho: schema.estructuraComponentes.anguloDerecho,
-    funcion: schema.estructuraComponentes.funcion,
-    medidaMinima: schema.estructuraComponentes.medidaMinima,
-    medidaMaxima: schema.estructuraComponentes.medidaMaxima,
-    componenteDisenyo: schema.estructuraComponentes.componenteDisenyo,
-    idItemDisenyo: schema.estructuraComponentes.idItemDisenyo,
-    grupoDisenyo: schema.estructuraComponentes.grupoDisenyo,
-    tipoHojaDisenyo: schema.estructuraComponentes.tipoHojaDisenyo,
-  }).from(schema.estructuraComponentes)
-    .where(eq(schema.estructuraComponentes.estructuraCodigo, entrada.codigo))
-
-  const {
-    plantillaResuelta, genericos, sinResolver, sinResolverAsoc, variantesAplicadas,
-  } = await resolverPerfiles(cliente, {
-    serieCodigo: entrada.serieCodigo,
-    plantilla,
-    variante: entrada.varianteAcristalamiento,
-  })
-
-  const cotasFilas = await cliente.select({
-    simbolo: schema.estructuraCotas.simbolo,
-    valor: schema.estructuraCotas.valorPorDefecto,
-  }).from(schema.estructuraCotas)
-    .where(eq(schema.estructuraCotas.estructuraCodigo, entrada.codigo))
-  const cotas: Record<string, number> = {}
-  for (const c of cotasFilas) cotas[c.simbolo] ??= Number(c.valor ?? 0)
-
-  const rebajesFilas = await cliente.select().from(schema.hojaRebajes)
-    .where(eq(schema.hojaRebajes.serieCodigo, entrada.serieCodigo))
-  const rebajes = new Map(rebajesFilas.map((f) => [
-    `${f.perfilCodigo}|${f.eje}|${f.formula}`,
-    { mm: Number(f.rebajeMm), muestras: f.muestras, totalMuestras: f.totalMuestras },
-  ]))
-  const despiece = calcularDespiece(
-    plantillaResuelta as ComponentePlantilla[],
-    { anchoMm: entrada.anchoMm, altoMm: entrada.altoMm },
-    cotas,
-    {
-      serie: entrada.serieCodigo,
-      rebajeDeHoja: (c) => rebajes.get(`${c.articuloCodigo}|${c.funcion}|${c.formula}`) ?? null,
-    },
-  )
-
-  const codigos = [...new Set(despiece.piezas.map((x) => x.articuloCodigo))]
-  const articulos = codigos.length
-    ? await cliente.select({
-        codigo: schema.articulos.codigo,
-        tipoMetraje: schema.articulos.tipoMetraje,
-        metrajeMinimo: schema.articulos.metrajeMinimo,
-        metrajeMultiploLargo: schema.articulos.metrajeMultiploLargo,
-        precio: sql<string | null>`(
-          SELECT p.precio FROM articulos_pvp p
-          WHERE p.articulo_codigo = ${schema.articulos.codigo}
-            AND p.tarifa = ${entrada.tarifa}
-          ORDER BY (p.acabado_codigo = ${entrada.acabadoCodigo ?? ''}) DESC, p.acabado_codigo
-          LIMIT 1
-        )`,
-      }).from(schema.articulos).where(inArray(schema.articulos.codigo, codigos))
-    : []
-  const mapa = new Map<string, DatosArticuloPrecio>(
-    articulos.map((a) => [a.codigo, {
-      codigo: a.codigo,
-      tipoMetraje: a.tipoMetraje,
-      precio: a.precio === null ? null : Number(a.precio),
-      metrajeMinimo: a.metrajeMinimo === null ? null : Number(a.metrajeMinimo),
-      metrajeMultiploLargo: a.metrajeMultiploLargo === null
-        ? null : Number(a.metrajeMultiploLargo),
-    }]),
-  )
-  const valoracion = valorarDespiece(despiece.piezas, mapa)
-  let precioUnitario: number | null = valoracion.importe
-  const piezas = await resolverCosteDespiece(cliente, {
-    piezas: despiece.piezas,
-    codigos,
-    mapa,
-    acabadoCodigo: entrada.acabadoCodigo,
-  })
+  const material = await resolverMaterialesEstructura(cliente, entrada)
+  if (!material.ok) return { ok: false, errores: material.errores }
+  if (!entrada.anchoMm || !entrada.altoMm || !entrada.serieCodigo) throw new Error('Material válido sin medidas')
+  const { estructura, plantillaResuelta, genericos, sinResolver, sinResolverAsoc,
+    variantesAplicadas, cotas, despiece, valoracion, piezas, pvp } = material
+  let precioUnitario: number | null = material.precioUnitario
 
   const acristalamiento = await resolverAcristalamientoEstructura(cliente, {
     serieCodigo: entrada.serieCodigo,
@@ -159,12 +71,23 @@ export async function valorarEstructura(
     cotas,
     despiece,
     precioInicial: precioUnitario,
+    trazabilidad: entrada.trazabilidad,
   })
   if (!acristalamiento.ok) return acristalamiento
   precioUnitario = acristalamiento.precio
   piezas.push(...acristalamiento.piezas)
 
   const problemas = [...acristalamiento.problemas]
+  // Faltar un precio y sobrar son incidencias distintas y se arreglan en sitios
+  // distintos del catálogo, así que cada una tiene su aviso. Los ambiguos se
+  // RESTAN de `sinPrecio` antes de contarlos: sin eso, el mismo artículo salía
+  // en los dos mensajes y el operador leía a la vez que no tiene precio y que
+  // tiene varios, sin poder saber cuántos artículos distintos hay.
+  const ambiguos = articulosAmbiguos(pvp)
+  const avisoAmbiguo = avisoAmbiguos(ambiguos, 'artículos del despiece')
+  if (avisoAmbiguo) problemas.push(avisoAmbiguo)
+  const soloAmbiguos = new Set(ambiguos)
+  const sinPrecio = valoracion.sinPrecio.filter((codigo) => !soloAmbiguos.has(codigo))
   if (sinResolver.size) {
     problemas.push(
       `${sinResolver.size} ranuras de perfil que la serie ${entrada.serieCodigo} no resuelve (quedan sin valorar)`,
@@ -177,7 +100,8 @@ export async function valorarEstructura(
   }
   problemas.push(...lineaValorable({
     incalculables: despiece.incalculables,
-    sinPrecio: valoracion.sinPrecio,
+    sinPrecio,
+    sinMedida: valoracion.sinMedida,
     variablesFaltantes: despiece.variablesFaltantes,
   }).motivos)
 
@@ -210,5 +134,11 @@ export async function valorarEstructura(
     piezas,
     acristalamiento: acristalamiento.acristalamiento,
     opcionesHerraje,
+    materialCompleto: sinResolver.size === 0 && sinResolverAsoc.size === 0 &&
+      despiece.incalculables === 0 && valoracion.sinMedida.length === 0 &&
+      despiece.piezas.every(p => material.mapa.has(p.articuloCodigo)) &&
+      acristalamiento.materialCompleto !== false,
+    partidas: [...(entrada.trazabilidad ? partidasValoracion(valoracion.lineas, entrada, 'MATERIALES', material.filasPvp) : []),
+      ...(acristalamiento.partidas ?? [])].map((p, ordinal) => ({ ...p, ordinal })),
   }
 }

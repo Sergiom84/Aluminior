@@ -51,7 +51,7 @@ export function prepararPiezasAcristalamiento(
     const esML = entrada.mapa.get(pz.articuloCodigo)?.tipoMetraje === 'ML'
     // El largo condiciona AMBAS ramas, no sólo la de metro lineal. Es la
     // diferencia con el despiece, y se conserva tal cual.
-    const costeTotal = coste !== null && pz.largoMm !== null
+    const costeTotal = coste !== null && entrada.mapa.has(pz.articuloCodigo) && entrada.mapa.get(pz.articuloCodigo)?.tipoMetraje !== 'M2' && pz.largoMm !== null
       ? (esML ? coste * (pz.largoMm / 1000) * pz.cantidad : coste * pz.cantidad)
       : null
     return {

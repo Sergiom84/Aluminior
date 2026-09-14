@@ -1,6 +1,8 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import type { ResultadoCerramientoV1 } from '@aluminior/core/estructuras'
+import { useCallback, useRef, useState } from 'react'
+import { EditarArticulo } from './editar-articulo'
 import { BotonBorrarLinea } from './anyadir-linea.tsx'
 import { EditarCerramiento, type DatosEdicionCerramiento } from './editar-cerramiento.tsx'
 import styles from '../presupuesto-movil.module.css'
@@ -25,6 +27,9 @@ export interface LineaDetalle {
 export interface PiezaDetalle {
   id: string
   articuloCodigo: string
+  origenTipo: string | null
+  origenId: string | null
+  origenOrdinal: number | null
   cantidad: string
   largoCorteMm: string | null
   anchoCorteMm: string | null
@@ -34,9 +39,12 @@ export interface PiezaDetalle {
 }
 
 export function LineaPresupuesto({
-  linea: l, presupuestoId, despiece, edicion, series, acabados,
+  linea: l, presupuestoId, despiece, edicion, series, acabados, resultado, manoObra, articuloEditable,
 }: {
+  articuloEditable: boolean
   linea: LineaDetalle
+  resultado: ResultadoCerramientoV1 | null
+  manoObra: { id: string; concepto: string; horas: string | null; importe: string | null }[]
   presupuestoId: string
   despiece: PiezaDetalle[]
   edicion: DatosEdicionCerramiento | null
@@ -44,7 +52,9 @@ export function LineaPresupuesto({
   acabados: { codigo: string; descripcion: string }[]
 }) {
   const [editando, setEditando] = useState(false)
-  const cerrarEditor = useCallback(() => setEditando(false), [])
+  const botonEditar = useRef<HTMLButtonElement>(null)
+  const cerrarEditor = useCallback(() => { setEditando(false); requestAnimationFrame(() => botonEditar.current?.focus()) }, [])
+  const esArticuloEditable = articuloEditable && l.tipo === 'ARTICULO'
   const costeTotal = despiece.reduce((acc, pieza) => acc + (pieza.costeTotal ? Number(pieza.costeTotal) : 0), 0)
   const sinCoste = despiece.filter((pieza) => pieza.costeTotal === null).length
   const etiqueta = l.tipo === 'ESTRUCTURA' ? 'estr' : l.tipo === 'CERRAMIENTO' ? 'cerr' : 'art'
@@ -84,11 +94,14 @@ export function LineaPresupuesto({
         </td>
         <td className="cifra px-3 py-2 font-medium">
           {!l.valoracionCompleta || l.total === null ? '—' : eur.format(Number(l.total))}
+          {manoObra.map(f => <div key={f.id} className="mt-1 text-xs font-normal" style={{ color: 'var(--al-text-muted)' }}>
+            {f.concepto === 'COLOCACION' ? 'Colocación' : 'Fabricación'} {f.horas === null ? '—' : Number(f.horas)} h total línea: {f.importe === null ? 'sin valorar' : eur.format(Number(f.importe))}
+          </div>)}
         </td>
         <td className="px-3 py-2 text-right">
           <div className="flex justify-end gap-2">
-            {edicion && (
-              <button type="button" onClick={() => setEditando((actual) => !actual)}
+            {(edicion || esArticuloEditable) && (
+              <button ref={botonEditar} type="button" onClick={() => setEditando((actual) => !actual)}
                 className="text-xs" style={{ color: 'var(--al-accent)' }} aria-expanded={editando}>
                 {editando ? 'Cerrar edición' : 'Editar'}
               </button>
@@ -105,23 +118,30 @@ export function LineaPresupuesto({
           </td>
         </tr>
       )}
+      {editando && esArticuloEditable && <tr><td colSpan={8} className={`${styles.editorCell} p-3`}>
+        <EditarArticulo presupuestoId={presupuestoId} lineaId={l.id} cantidad={l.cantidad}
+          referencia={l.referencia} onCancelar={cerrarEditor} />
+      </td></tr>}
       {despiece.length > 0 && (
         <tr className="border-b" style={{ borderColor: 'var(--al-border)' }}>
           <td colSpan={8} className="px-3 py-1" style={{ background: 'var(--al-surface-muted)' }}>
             <details>
               <summary className="cursor-pointer py-1 text-xs" style={{ color: 'var(--al-text-muted)' }}>
-                Despiece: {despiece.length} piezas · coste de perfiles {eur.format(costeTotal)}
+                Despiece: {despiece.length} piezas · {l.tipo === 'CERRAMIENTO'
+                  ? `coste de materiales por composición ${resultado?.costeMateriales.importe != null ? eur.format(Number(resultado.costeMateriales.importe)) : 'sin valorar'}`
+                  : `coste de perfiles ${eur.format(costeTotal)}`}
                 {sinCoste > 0 && ` · ${sinCoste} piezas sin coste`}
               </summary>
               <div className={styles.partsScroll} tabIndex={0} aria-label="Despiece desplazable">
                 <table className={`${styles.partsTable} mb-2 mt-1 text-xs`}>
                   <thead><tr style={{ color: 'var(--al-text-muted)' }}>
-                    {['Artículo', 'Función', 'Cdad.', 'Corte (mm)', 'Coste ud.', 'Coste'].map((titulo, indice) => (
+                    {['Origen', 'Artículo', 'Función', 'Cdad.', 'Corte (mm)', 'Coste ud.', 'Coste'].map((titulo, indice) => (
                       <th key={titulo} className={`px-2 py-1 font-medium ${indice > 1 ? 'text-right' : 'text-left'}`}>{titulo}</th>
                     ))}
                   </tr></thead>
                   <tbody>{despiece.map((pieza) => (
                     <tr key={pieza.id}>
+                      <td className="px-2 py-0.5">{pieza.origenId ? `${pieza.origenTipo === 'UNION' ? 'Unión' : 'Módulo'} ${pieza.origenId} · ${pieza.origenOrdinal}` : '—'}</td>
                       <td className="px-2 py-0.5">{pieza.articuloCodigo}</td>
                       <td className="px-2 py-0.5" style={{ color: 'var(--al-text-muted)' }}>{pieza.funcion ?? '—'}</td>
                       <td className="cifra px-2 py-0.5 text-right">{Number(pieza.cantidad)}</td>

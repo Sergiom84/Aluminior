@@ -1,3 +1,4 @@
+import { resolverDestinatarioPresupuesto } from './_lib/destinatario'
 import Link from 'next/link'
 import { desc, sql, or, ilike } from 'drizzle-orm'
 import { crearDb, schema } from '@aluminior/db'
@@ -43,6 +44,7 @@ export default async function Presupuestos({
       obraTexto: schema.presupuestos.obraTexto,
       total: schema.presupuestos.total,
       cliente: schema.clientes.nombre,
+      potencial: schema.clientesPotenciales.nombre,
       lineas: sql<number>`(
         SELECT COUNT(*)::int FROM lineas l WHERE l.presupuesto_id = ${schema.presupuestos.id}
       )`,
@@ -54,6 +56,7 @@ export default async function Presupuestos({
     })
     .from(schema.presupuestos)
     .leftJoin(schema.clientes, sql`${schema.clientes.codigo} = ${schema.presupuestos.clienteCodigo}`)
+    .leftJoin(schema.clientesPotenciales, sql`${schema.clientesPotenciales.codigo} = ${schema.presupuestos.potencialCodigo}`)
     .where(filtro)
     .orderBy(desc(schema.presupuestos.numero))
     .limit(100)
@@ -111,7 +114,7 @@ export default async function Presupuestos({
                     <td className="cifra" style={{ textAlign: 'left' }}>{p.revision}</td>
                     <td>{p.fecha ? new Date(p.fecha).toLocaleDateString('es-ES') : '—'}</td>
                     <td className="font-mono text-[11px]">{p.clienteCodigo ?? '—'}</td>
-                    <td className="max-w-72 overflow-hidden text-ellipsis">{p.cliente ?? p.nombreLibre ?? '—'}</td>
+                    <td className="max-w-72 overflow-hidden text-ellipsis">{resolverDestinatarioPresupuesto({ clienteNombre: p.cliente, potencialNombre: p.potencial, nombreLibre: p.nombreLibre })}</td>
                     <td className="max-w-64 overflow-hidden text-ellipsis" style={{ color: 'var(--al-text-muted)' }}>
                       {p.obraTexto ?? '—'}
                     </td>

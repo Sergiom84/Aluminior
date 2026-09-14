@@ -127,7 +127,7 @@ export function EditarCerramiento({
       </div>
 
       <fieldset className="mt-4 rounded-md border p-3" style={{ borderColor: 'var(--al-border)' }}>
-        <legend className="px-1 text-sm">Mano de obra adicional</legend>
+        <legend className="px-1 text-sm">Mano de obra adicional · total de línea</legend>
         <div className={styles.workFields}>
           {([
             ['horasFabricacion', 'Fabricación (h)', datos.horasFabricacion],

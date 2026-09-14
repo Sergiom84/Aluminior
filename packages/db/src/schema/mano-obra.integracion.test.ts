@@ -202,7 +202,7 @@ describe('restricciones de lineas_mano_obra', () => {
      * la vez se admiten ambas, y se dice por qué.
      */
     const rechaza = (caso: string, cambios: Partial<Fila>, restriccion: RegExp) =>
-      it(caso, async () => { await expect(insertar(cambios)).rejects.toThrow(restriccion) })
+      it(caso, async () => { await expect(insertar(cambios)).rejects.toMatchObject({ cause: { code: '23514', constraint_name: expect.stringMatching(restriccion) } }) })
 
     // Estado de venta imposible
     rechaza('completa sin importe', { importe: null }, /mano_obra_venta_check/)
@@ -315,7 +315,7 @@ describe('restricciones de lineas_mano_obra', () => {
 
     it('rechaza dos filas del mismo concepto en la misma línea', async () => {
       await insertar()
-      await expect(insertar()).rejects.toThrow(/mano_obra_linea_concepto_uq/)
+      await expect(insertar()).rejects.toMatchObject({ cause: { code: '23505', constraint_name: 'mano_obra_linea_concepto_uq' } })
     })
   })
 

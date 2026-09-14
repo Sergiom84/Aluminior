@@ -15,8 +15,9 @@
  */
 
 import {
-  pgTable, text, integer, numeric, boolean, uuid, index, primaryKey, jsonb,
+  pgTable, text, integer, numeric, boolean, uuid, index, primaryKey, jsonb, check, unique,
 } from 'drizzle-orm/pg-core'
+import { sql } from 'drizzle-orm'
 import { presupuestos } from './comercial.ts'
 import { articulos } from './catalogo.ts'
 
@@ -165,6 +166,11 @@ export const lineasDespiece = pgTable('lineas_despiece', {
   id: uuid('id').primaryKey().defaultRandom(),
   lineaId: uuid('linea_id').notNull().references(() => lineas.id, { onDelete: 'cascade' }),
 
+  /** Null conjunto en filas anteriores: no se inventa su módulo de origen. */
+  origenTipo: text('origen_tipo'),
+  origenId: text('origen_id'),
+  origenOrdinal: integer('origen_ordinal'),
+
   articuloCodigo: text('articulo_codigo').notNull(),
   acabadoCodigo: text('acabado_codigo'),
 
@@ -186,4 +192,11 @@ export const lineasDespiece = pgTable('lineas_despiece', {
 }, (t) => ({
   lineaIdx: index('despiece_linea_idx').on(t.lineaId),
   articuloIdx: index('despiece_articulo_idx').on(t.articuloCodigo),
+  origenUnico: unique('despiece_origen_uq')
+    .on(t.lineaId, t.origenTipo, t.origenId, t.origenOrdinal),
+  origenValido: check('despiece_origen_check', sql`
+    (${t.origenTipo} IS NULL AND ${t.origenId} IS NULL AND ${t.origenOrdinal} IS NULL)
+    OR (${t.origenTipo} IS NOT NULL AND ${t.origenId} IS NOT NULL AND ${t.origenOrdinal} IS NOT NULL
+      AND ${t.origenTipo} IN ('MODULO', 'UNION') AND length(trim(${t.origenId})) > 0
+      AND ${t.origenOrdinal} >= 0)`),
 }))

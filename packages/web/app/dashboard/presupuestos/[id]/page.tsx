@@ -1,3 +1,6 @@
+import { EditarCabecera } from './_components/editar-cabecera'
+import { resolverDestinatarioPresupuesto } from '../_lib/destinatario'
+import { leerResultadoCerramiento } from '../_lib/cerramientos/resultado-persistido.ts'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { asc, eq, inArray } from 'drizzle-orm'
@@ -24,6 +27,9 @@ export default async function DetallePresupuesto({ params }: { params: Promise<{
     ? await db.select({ nombre: schema.clientes.nombre }).from(schema.clientes)
         .where(eq(schema.clientes.codigo, presupuesto.clienteCodigo)).limit(1)
     : []
+  const [potencial] = presupuesto.potencialCodigo
+    ? await db.select({ nombre: schema.clientesPotenciales.nombre }).from(schema.clientesPotenciales)
+      .where(eq(schema.clientesPotenciales.codigo, presupuesto.potencialCodigo)).limit(1) : []
   const lineas = await db.select().from(schema.lineas)
     .where(eq(schema.lineas.presupuestoId, id)).orderBy(asc(schema.lineas.orden))
   const series = await db.select({ codigo: schema.series.codigo })
@@ -39,6 +45,8 @@ export default async function DetallePresupuesto({ params }: { params: Promise<{
   const manoObra = idsLineas.length
     ? await db.select().from(schema.lineasManoObra).where(inArray(schema.lineasManoObra.lineaId, idsLineas)) : []
 
+  const resultadosPorLinea = new Map(await Promise.all(cerramientos.map(async c =>
+    [c.lineaId, await leerResultadoCerramiento(db, c.lineaId)] as const)))
   const piezasPorLinea = new Map<string, typeof piezas>()
   for (const pieza of piezas) {
     const lista = piezasPorLinea.get(pieza.lineaId) ?? []
@@ -84,12 +92,15 @@ export default async function DetallePresupuesto({ params }: { params: Promise<{
             style={{ borderColor: 'var(--al-border)', color: 'var(--al-accent)' }}>PDF</a>
         </div>
         <div className="mt-1 flex flex-wrap gap-4 text-sm" style={{ color: 'var(--al-text-muted)' }}>
-          <span>{cliente?.nombre ?? presupuesto.nombreLibre ?? 'Sin destinatario'}</span>
+          <span>{resolverDestinatarioPresupuesto({ clienteNombre: cliente?.nombre, potencialNombre: potencial?.nombre, nombreLibre: presupuesto.nombreLibre })}</span>
           {presupuesto.obraTexto && <span>Obra: {presupuesto.obraTexto}</span>}
           <span>Tarifa {presupuesto.tarifa}</span>
           <span>{presupuesto.fecha ? new Date(presupuesto.fecha).toLocaleDateString('es-ES') : ''}</span>
         </div>
       </div>
+      {p.estado === 'PENDIENTE' && <EditarCabecera datos={{ presupuestoId: id, clienteCodigo: p.clienteCodigo,
+        clienteNombre: cliente?.nombre ?? null, potencialCodigo: p.potencialCodigo, nombreLibre: p.nombreLibre,
+        obraTexto: p.obraTexto, formaPago: p.formaPago, observaciones: p.observaciones }} />}
       <div className="mb-6">
         <AnyadirLinea presupuestoId={id} series={series.map((serie) => serie.codigo)} acabados={acabados} />
       </div>
@@ -110,7 +121,9 @@ export default async function DetallePresupuesto({ params }: { params: Promise<{
               Todavía no hay líneas. Añade la primera arriba.
             </td></tr>
           ) : lineas.map((linea) => (
-            <LineaPresupuesto key={linea.id} linea={linea} presupuestoId={id}
+            <LineaPresupuesto key={linea.id} linea={linea} presupuestoId={id} articuloEditable={p.estado === 'PENDIENTE'}
+              resultado={resultadosPorLinea.get(linea.id) ?? null}
+              manoObra={manoObra.filter(f => f.lineaId === linea.id)}
               despiece={piezasPorLinea.get(linea.id) ?? []} edicion={edicionPorLinea.get(linea.id) ?? null}
               series={series.map((serie) => serie.codigo)} acabados={acabados} />
           ))}</tbody>

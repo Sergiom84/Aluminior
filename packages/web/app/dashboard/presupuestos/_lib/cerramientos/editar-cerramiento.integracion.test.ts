@@ -123,6 +123,11 @@ describe('edición atómica de un CERRAMIENTO', () => {
   })
 
   it('restaura línea y satélites si falla la segunda mano de obra', async () => {
+    // El escritor preparado sólo admite líneas heredadas sin snapshot J03.
+    const heredada = preparar(1200, 1200)
+    const lineaId = await guardarLinea(db, { tipo: 'CERRAMIENTO', cerramiento: heredada, manoObra: [],
+      valores: { presupuestoId, descripcion: heredada.descripcion, cantidad: '1',
+        precioUnitario: null, total: null, valoracionCompleta: false } })
     const antesLinea = await db.select().from(schema.lineas).where(eq(schema.lineas.id, lineaId))
     const antesCerramiento = await db.select().from(schema.lineasCerramiento)
       .where(eq(schema.lineasCerramiento.lineaId, lineaId))
@@ -133,7 +138,7 @@ describe('edición atómica de un CERRAMIENTO', () => {
     await expect(escribirEdicionCerramiento(db, {
       presupuestoId, lineaId, referencia: 'FALLO', cantidad: 9,
       alta, manoObra: [snapshot(), snapshot()], aviso: alta.aviso,
-    })).rejects.toThrow(/mano_obra_linea_concepto_uq/)
+    })).rejects.toMatchObject({ cause: { code: '23505', constraint_name: 'mano_obra_linea_concepto_uq' } })
 
     expect(await db.select().from(schema.lineas).where(eq(schema.lineas.id, lineaId))).toEqual(antesLinea)
     expect(await db.select().from(schema.lineasCerramiento)

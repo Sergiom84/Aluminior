@@ -1,3 +1,4 @@
+import { esResultadoCerramiento, type ResultadoCerramientoV1 } from '@aluminior/core/estructuras'
 /**
  * Lectura del documento origen de una copia.
  *
@@ -12,6 +13,7 @@ import type { ClienteEscritura } from '../cliente-db.ts'
 import type { CodigosLinea, LineaOrigen, TipoLinea } from './plan-copia.ts'
 
 export interface LineaConSatelites {
+  readonly resultadoCerramiento: ResultadoCerramientoV1 | null
   readonly linea: typeof schema.lineas.$inferSelect
   readonly cerramiento: typeof schema.lineasCerramiento.$inferSelect | null
   readonly estructura: typeof schema.lineasEstructura.$inferSelect | null
@@ -102,7 +104,7 @@ export async function leerDocumentoOrigen(
     .orderBy(asc(schema.lineas.orden))
   const ids = lineas.map((linea) => linea.id)
 
-  const [cerramientos, estructuras, despiece, acristalamiento, opciones, manoObra] = ids.length
+  const [cerramientos, estructuras, despiece, acristalamiento, opciones, manoObra, resultados] = ids.length
     ? await Promise.all([
         cliente.select().from(schema.lineasCerramiento)
           .where(inArray(schema.lineasCerramiento.lineaId, ids)),
@@ -116,8 +118,10 @@ export async function leerDocumentoOrigen(
           .where(inArray(schema.lineasOpcionesHerraje.lineaId, ids)),
         cliente.select().from(schema.lineasManoObra)
           .where(inArray(schema.lineasManoObra.lineaId, ids)),
+        cliente.select().from(schema.lineasCerramientoResultados)
+          .where(inArray(schema.lineasCerramientoResultados.lineaId, ids)),
       ])
-    : [[], [], [], [], [], []]
+    : [[], [], [], [], [], [], []]
 
   // Revisiones ya escritas de ESTE número y serie: es lo que impide que la
   // copia pise una revisión existente.
@@ -135,6 +139,11 @@ export async function leerDocumentoOrigen(
   const opcionesPorLinea = porLinea(opciones)
   const manoObraPorLinea = porLinea(manoObra)
 
+  const resultadosPorLinea = new Map(resultados.map(fila => {
+    if (!esResultadoCerramiento(fila.resultado) || fila.version !== fila.resultado.version)
+      throw new Error('Snapshot económico de cerramiento no válido')
+    return [fila.lineaId, fila.resultado] as const
+  }))
   const avisos: string[] = []
   const conSatelites: LineaConSatelites[] = lineas.map((linea) => {
     const ranuras = acrisPorLinea.get(linea.id) ?? []
@@ -143,6 +152,7 @@ export async function leerDocumentoOrigen(
     }
     return {
       linea,
+      resultadoCerramiento: resultadosPorLinea.get(linea.id) ?? null,
       cerramiento: cerramientoPorLinea.get(linea.id) ?? null,
       estructura: estructuraPorLinea.get(linea.id) ?? null,
       despiece: despiecePorLinea.get(linea.id) ?? [],

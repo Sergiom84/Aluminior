@@ -1,4 +1,6 @@
-import { eq, inArray, sql } from 'drizzle-orm'
+import { partidasValoracion } from './partidas-valoracion.ts'
+import type { PartidaValoracionCerramiento } from '@aluminior/core/estructuras'
+import { eq, inArray } from 'drizzle-orm'
 import { schema } from '@aluminior/db'
 import {
   evaluar, calcularVidriosPorAlojamiento,
@@ -13,6 +15,9 @@ import { emparejarVidrio } from './emparejamiento-vidrio.ts'
 import { leerGalceVidrio } from './galce-vidrio.ts'
 import { piezasAcristalamiento, type CristalAcris } from './junquillos.ts'
 import { resolverValoracionVidrio } from './valoracion-vidrio.ts'
+import {
+  articulosAmbiguos, avisoAmbiguos, leerPvpArticulos, precioDe, pvpPorArticuloDe,
+} from './pvp-articulos.ts'
 
 export interface EntradaAcristalamientoEstructura {
   serieCodigo: string
@@ -28,6 +33,7 @@ export interface EntradaAcristalamientoEstructura {
   cotas: Readonly<Record<string, number>>
   despiece: ResultadoDespiece
   precioInicial: number
+  trazabilidad?: boolean
 }
 
 /** Columnas de diseño que el acristalamiento necesita además del despiece. */
@@ -46,6 +52,8 @@ export type ResultadoAcristalamientoEstructura =
       piezas: PiezaDespiece[]
       acristalamiento: RanuraAcristalamiento[]
       problemas: string[]
+      partidas?: PartidaValoracionCerramiento[]
+      materialCompleto?: boolean
     }
 
 /**
@@ -59,6 +67,8 @@ export async function resolverAcristalamientoEstructura(
   cliente: ClienteEscritura,
   entrada: EntradaAcristalamientoEstructura,
 ): Promise<ResultadoAcristalamientoEstructura> {
+  const partidas: PartidaValoracionCerramiento[] = []
+  let materialCompleto = true
   let precio = entrada.precioInicial
   const piezas: PiezaDespiece[] = []
   const acristalamiento: RanuraAcristalamiento[] = []
@@ -66,6 +76,8 @@ export async function resolverAcristalamientoEstructura(
   let tamJunqVidrio = 0
   let cristalesAcris: CristalAcris[] = []
   let avisoAcris: string | null = null
+  /** Aparte de `avisoAcris`: faltar un precio y sobrar no son el mismo arreglo. */
+  let avisoAmbiguoAcris: string | null = null
 
   if (entrada.vidrioCodigo) {
     const [vidrio] = await cliente.select()
@@ -116,7 +128,8 @@ export async function resolverAcristalamientoEstructura(
         })),
       )
       if (!calculo.ok) {
-        avisoVidrio = `vidrio sin calcular: ranura ${calculo.slot}, ${calculo.motivo}`
+        materialCompleto = false
+          avisoVidrio = `vidrio sin calcular: ranura ${calculo.slot}, ${calculo.motivo}`
       } else {
         cristalesAcris = calculo.vidrios
         const valoracion = await resolverValoracionVidrio(cliente, {
@@ -125,13 +138,19 @@ export async function resolverAcristalamientoEstructura(
             largoMm: v.largoMm, anchoMm: v.anchoMm, cantidad: 1,
           })),
           reglasMetraje: reglasMetrajeVidrio,
+          trazabilidad: entrada.trazabilidad,
           tarifa: entrada.tarifa,
           acabadoCodigo: entrada.acabadoCodigo,
         })
-        if (!valoracion.ok) avisoVidrio = valoracion.aviso
+        if (!valoracion.ok) {
+          avisoVidrio = valoracion.aviso
+          piezas.push(...(valoracion.piezas ?? []))
+          partidas.push(...(valoracion.partidas ?? []))
+        }
         else {
           precio = Math.round((precio + valoracion.importe) * 100) / 100
           piezas.push(...valoracion.piezas)
+          partidas.push(...(valoracion.partidas ?? []))
         }
       }
     } else {
@@ -139,6 +158,7 @@ export async function resolverAcristalamientoEstructura(
       const emparejamiento = emparejarVidrio(entrada.despiece.piezas, nCristales)
 
       if (!emparejamiento.ok) {
+        materialCompleto = false
         avisoVidrio = emparejamiento.aviso
       } else {
         const { perfilCodigo: perfilRef } = emparejamiento
@@ -147,12 +167,14 @@ export async function resolverAcristalamientoEstructura(
           cliente, contextoVidrio, entrada.serieCodigo, perfilRef,
         )
         if (deltaGalce === null) {
+          materialCompleto = false
           avisoVidrio = `vidrio sin calcular: sin descuento de galce medido para ${entrada.serieCodigo} + ${perfilRef} (${contextoVidrio.toLowerCase()})`
         } else {
           const dims = medidasVidrio(
             emparejamiento.corteVerticalMm, emparejamiento.corteHorizontalMm, deltaGalce,
           )
           if (!dims) {
+            materialCompleto = false
             avisoVidrio = 'vidrio sin calcular: el descuento de galce no cabe en la medida'
           } else {
             const contextoModulo = { L: entrada.altoMm, A: entrada.anchoMm, ...entrada.cotas }
@@ -168,6 +190,7 @@ export async function resolverAcristalamientoEstructura(
               } catch { return [] }
             })
             if (cristalesAcris.length !== ranuras.length) {
+              materialCompleto = false
               avisoAcris = 'junquillos/juntas sin calcular: fórmulas de módulo incompletas'
             }
             const valoracion = await resolverValoracionVidrio(cliente, {
@@ -176,13 +199,19 @@ export async function resolverAcristalamientoEstructura(
                 largoMm: dims.largoMm, anchoMm: dims.anchoMm, cantidad: nCristales,
               }],
               reglasMetraje: reglasMetrajeVidrio,
+          trazabilidad: entrada.trazabilidad,
               tarifa: entrada.tarifa,
               acabadoCodigo: entrada.acabadoCodigo,
             })
-            if (!valoracion.ok) avisoVidrio = valoracion.aviso
+            if (!valoracion.ok) {
+          avisoVidrio = valoracion.aviso
+          piezas.push(...(valoracion.piezas ?? []))
+          partidas.push(...(valoracion.partidas ?? []))
+        }
             else {
               precio = Math.round((precio + valoracion.importe) * 100) / 100
               piezas.push(...valoracion.piezas)
+          partidas.push(...(valoracion.partidas ?? []))
             }
           }
         }
@@ -198,6 +227,7 @@ export async function resolverAcristalamientoEstructura(
     })
     const piezasAcris = calculoAcris.piezas
     if (calculoAcris.avisos.length) {
+      materialCompleto = false
       avisoAcris = `junquillos/juntas sin calcular: ${calculoAcris.avisos.join('; ')}`
     }
     if (piezasAcris.length) {
@@ -207,30 +237,41 @@ export async function resolverAcristalamientoEstructura(
         tipoMetraje: schema.articulos.tipoMetraje,
         metrajeMinimo: schema.articulos.metrajeMinimo,
         metrajeMultiploLargo: schema.articulos.metrajeMultiploLargo,
-        precio: sql<string | null>`(
-          SELECT p.precio FROM articulos_pvp p
-          WHERE p.articulo_codigo = ${schema.articulos.codigo}
-            AND p.tarifa = ${entrada.tarifa}
-          ORDER BY (p.acabado_codigo = ${entrada.acabadoCodigo ?? ''}) DESC,
-                   (p.acabado_codigo = '*') DESC, p.acabado_codigo
-          LIMIT 1
-        )`,
       }).from(schema.articulos).where(inArray(schema.articulos.codigo, codigosAcris))
+      // Mismo desempate que el despiece desde T.73: exacto, genérico, o nada.
+      const filasPvp = await leerPvpArticulos(cliente, codigosAcris, entrada.tarifa)
+      const pvpAcris = pvpPorArticuloDe(
+        filasPvp,
+        entrada.acabadoCodigo,
+      )
       const mapaAcris = new Map<string, DatosArticuloPrecio>(
         artsAcris.map((a) => [a.codigo, {
           codigo: a.codigo,
           tipoMetraje: a.tipoMetraje,
-          precio: a.precio === null ? null : Number(a.precio),
+          precio: precioDe(pvpAcris.get(a.codigo)),
           metrajeMinimo: a.metrajeMinimo === null ? null : Number(a.metrajeMinimo),
           metrajeMultiploLargo: a.metrajeMultiploLargo === null
             ? null : Number(a.metrajeMultiploLargo),
         }]),
       )
-      const valorables = piezasAcris.filter((p) => mapaAcris.has(p.articuloCodigo))
+      const ambiguosAcris = articulosAmbiguos(pvpAcris)
+      avisoAmbiguoAcris = avisoAmbiguos(ambiguosAcris, 'artículos de acristalamiento')
+      const valorables = piezasAcris.filter((p) => p.articuloCodigo !== '0' && p.articuloCodigo !== 'V1000')
+      if (valorables.some(p => !mapaAcris.has(p.articuloCodigo))) materialCompleto = false
       const valAcris = valorarDespiece(valorables, mapaAcris)
+      if (entrada.trazabilidad) partidas.push(...partidasValoracion(valAcris.lineas, entrada, 'ACRISTALAMIENTO', filasPvp))
+      if (valAcris.sinMedida.length) {
+        materialCompleto = false
+        avisoAcris = `${valAcris.sinMedida.length} artículos de acristalamiento sin medidas suficientes para calcular el metraje`
+      }
       precio = Math.round((precio + valAcris.importe) * 100) / 100
-      if (valAcris.sinPrecio.length) {
-        avisoAcris = `${valAcris.sinPrecio.length} artículos de acristalamiento sin precio en la tarifa`
+      // Los ambiguos ya tienen su aviso: contarlos aquí los duplicaría diciendo
+      // que no tienen precio, que es lo contrario de lo que les pasa.
+      const soloAmbiguos = new Set(ambiguosAcris)
+      const sinPrecioAcris = valAcris.sinPrecio.filter((c) => !soloAmbiguos.has(c))
+      if (sinPrecioAcris.length) {
+        avisoAcris = [avisoAcris, `${sinPrecioAcris.length} artículos de acristalamiento sin precio en la tarifa`]
+          .filter(Boolean).join('; ')
       }
       piezas.push(...await resolverCosteAcristalamiento(cliente, {
         piezas: valorables,
@@ -244,8 +285,10 @@ export async function resolverAcristalamientoEstructura(
   const problemas: string[] = []
   if (avisoVidrio) problemas.push(avisoVidrio)
   if (avisoAcris) problemas.push(avisoAcris)
+  if (avisoAmbiguoAcris) problemas.push(avisoAmbiguoAcris)
   if (!entrada.vidrioCodigo) {
+    materialCompleto = false
     problemas.push('sin vidrio elegido: el acristalamiento no se valora')
   }
-  return { ok: true, precio, piezas, acristalamiento, problemas }
+  return { ok: true, precio, piezas, acristalamiento, problemas, partidas, materialCompleto }
 }

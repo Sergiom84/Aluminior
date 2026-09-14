@@ -214,7 +214,7 @@ describe('mano de obra de una línea, contra PostgreSQL', () => {
       },
       cerramiento: alta,
       manoObra: [filas[0], { ...filas[1], minutos: '7.00' }],
-    })).rejects.toThrow(/mano_obra_conversion_check/)
+    })).rejects.toMatchObject({ cause: { code: '23514', constraint_name: 'mano_obra_conversion_check' } })
 
     expect(await db.select({ id: schema.lineas.id }).from(schema.lineas)
       .where(eq(schema.lineas.presupuestoId, presupuestoId))).toEqual(antes)

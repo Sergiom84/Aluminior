@@ -161,7 +161,7 @@ describe('persistencia del alta de línea', () => {
       valores: valoresLinea(2),
       cerramiento: alta,
       manoObra: [snapshot(), snapshot()],
-    })).rejects.toThrow(/mano_obra_linea_concepto_uq/)
+    })).rejects.toMatchObject({ cause: { code: '23505', constraint_name: 'mano_obra_linea_concepto_uq' } })
 
     expect(await lineasDelPresupuesto()).toEqual(antes)
     const huerfanas = (await db.execute<{ n: number }>(sql`
@@ -212,7 +212,7 @@ describe('persistencia del alta de línea', () => {
       // `minutos` que no son `horas × 60`: viola `mano_obra_conversion_check`
       // después de haber insertado la línea con su total.
       manoObra: [{ ...snapshot(), minutos: '80.00' }],
-    })).rejects.toThrow(/mano_obra_conversion_check/)
+    })).rejects.toMatchObject({ cause: { code: '23514', constraint_name: 'mano_obra_conversion_check' } })
 
     // El invariante del documento: el total de la cabecera es la suma de sus
     // líneas. Una línea que se quedara escrita sin recalcular lo rompe.

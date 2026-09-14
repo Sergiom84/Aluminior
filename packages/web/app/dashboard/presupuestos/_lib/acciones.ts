@@ -7,8 +7,9 @@
  * delega en `_lib/estructuras`; el cálculo sigue ocurriendo SIEMPRE en servidor.
  */
 
-import { z } from 'zod'
+import { esquemaCabeceraAlta } from './cabecera/esquema'
 import { eq, sql, and, or, ilike, asc } from 'drizzle-orm'
+import { ErrorOperacionCerramiento } from './cerramientos/error-operativo.ts'
 import { revalidatePath } from 'next/cache'
 import { crearDb, schema } from '@aluminior/db'
 import { actualizarTotales } from './totales.ts'
@@ -17,21 +18,10 @@ import { registrarFallo } from './errores.ts'
 import { esquemaLinea } from './lineas/esquema-linea.ts'
 import { crearPresupuestoAlta } from './presupuestos/crear-presupuesto.ts'
 import { fechaLocalMadrid } from './fecha-local.ts'
-import { valorarArticulo } from './articulos/valorar-articulo.ts'
-import {
-  guardarLinea, type OpcionHerrajeElegida, type PiezaDespiece,
-  type RanuraAcristalamiento, type ValoresLinea,
-} from './lineas/guardar-linea.ts'
+import { prepararAltaCerramiento } from './cerramientos/index.ts'
+import { altaLinea } from './lineas/alta-linea.ts'
 import { borrarLineaDePresupuesto } from './lineas/borrar-linea.ts'
-import { prepararManoObra, type SnapshotManoObra } from './mano-obra/index.ts'
-import {
-  opcionesHerrajeDe as opcionesDeHerrajeOfrecidas, valorarEstructura,
-  type GrupoOpcionesHerraje,
-} from './estructuras/index.ts'
-import {
-  comprobarPersistenciaCerramientos, prepararAltaCerramiento,
-  MENSAJE_MIGRACION_PENDIENTE, type AltaCerramiento,
-} from './cerramientos/index.ts'
+import { opcionesHerrajeDe as opcionesDeHerrajeOfrecidas, type GrupoOpcionesHerraje } from './estructuras/index.ts'
 
 export type Estado =
   | { ok: true; id: string; mensaje?: string }
@@ -103,36 +93,11 @@ export async function opcionesHerrajeDe(
   return opcionesDeHerrajeOfrecidas(crearDb(), serieCodigo, estructuraCodigo)
 }
 
-const esquemaCabecera = z.object({
-  clienteCodigo: z.string().trim().optional().transform((v) => v || null),
-  potencialCodigo: z.string().trim().optional().transform((v) => v || null),
-  nombreLibre: z.string().trim().max(200).optional().transform((v) => v || null),
-  obraTexto: z.string().trim().max(200).optional().transform((v) => v || null),
-  tarifa: z.coerce.number().int().min(1).max(9).default(1),
-  formaPago: z.string().trim().max(60).optional().transform((v) => v || null),
-  observaciones: z.string().trim().max(4000).optional().transform((v) => v || null),
-})
-
 export async function crearPresupuesto(_previo: Estado, datos: FormData): Promise<Estado> {
-  const p = esquemaCabecera.safeParse(Object.fromEntries(datos))
+  const p = esquemaCabeceraAlta.safeParse(Object.fromEntries(datos))
   if (!p.success) return { ok: false, errores: p.error.flatten().fieldErrors }
 
   const d = p.data
-  // Regla del sistema original: basta con identificar al destinatario de
-  // ALGUNA forma. Muchos presupuestos reales sólo llevan un nombre a mano.
-  if (!d.clienteCodigo && !d.potencialCodigo && !d.nombreLibre) {
-    return {
-      ok: false,
-      errores: { nombreLibre: ['Indica cliente, potencial o al menos un nombre'] },
-    }
-  }
-  if (d.clienteCodigo && d.potencialCodigo) {
-    return {
-      ok: false,
-      errores: { clienteCodigo: ['Elige cliente o potencial, no ambos'] },
-    }
-  }
-
   const db = crearDb()
   const fecha = fechaLocalMadrid()
   try {
@@ -157,6 +122,7 @@ export async function crearPresupuesto(_previo: Estado, datos: FormData): Promis
     revalidatePath('/dashboard/presupuestos')
     return { ok: true, id: resultado.id }
   } catch (e) {
+    if (e instanceof ErrorOperacionCerramiento) return { ok: false, errores: {}, mensaje: e.message }
     return { ok: false, errores: {}, mensaje: registrarFallo('crearPresupuesto', e) }
   }
 }
@@ -172,146 +138,17 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
   const p = esquemaLinea.safeParse(Object.fromEntries(datos))
   if (!p.success) return { ok: false, errores: p.error.flatten().fieldErrors }
 
-  const d = p.data
-  let altaCerramiento: AltaCerramiento | null = null
-  if (d.tipo === 'CERRAMIENTO') {
-    const resultado = prepararAltaCerramiento({
-      configuracionSerializada: d.configuracionCerramiento,
-      serieCodigo: d.serieCodigo,
-      vidrioCodigo: d.vidrioCodigo,
-      acabadoCodigo: d.acabadoCodigo,
-      varianteAcristalamiento: d.varianteAcristalamiento,
-    })
-    if (!resultado.ok) return { ok: false, errores: resultado.errores }
-    altaCerramiento = resultado.alta
+  if (p.data.tipo === 'CERRAMIENTO') {
+    const alta = prepararAltaCerramiento({ ...p.data, configuracionSerializada: p.data.configuracionCerramiento })
+    if (!alta.ok) return alta
   }
-  const db = crearDb()
-
   try {
-    const [presupuesto] = await db.select()
-      .from(schema.presupuestos)
-      .where(eq(schema.presupuestos.id, d.presupuestoId)).limit(1)
-    if (!presupuesto) return { ok: false, errores: {}, mensaje: 'Presupuesto no encontrado' }
-
-    // La UI puede ejecutarse contra un entorno cuya migración aún no se haya
-    // desplegado. Comprobarlo ANTES de insertar evita una línea huérfana si el
-    // satélite lineas_cerramiento todavía no existe.
-    if (d.tipo === 'CERRAMIENTO') {
-      if (!await comprobarPersistenciaCerramientos(db)) {
-        return { ok: false, errores: {}, mensaje: MENSAJE_MIGRACION_PENDIENTE }
-      }
-    }
-
-    let descripcion = d.codigo
-    let precioUnitario: number | null = null
-    let aviso: string | null = null
-    /** Medidas de la línea. El cerramiento las deriva de su composición. */
-    let anchoLinea = d.anchoMm ?? null
-    let altoLinea = d.altoMm ?? null
-
-    /** Despiece resuelto a persistir en lineas_despiece (trazabilidad + coste). */
-    let piezasAPersistir: PiezaDespiece[] = []
-    let acristalamientoAPersistir: RanuraAcristalamiento[] = []
-    let opcionesHerraje: OpcionHerrajeElegida[] = []
-    /** Snapshots de mano de obra. Vacío mientras no se teclean horas. */
-    let manoObra: SnapshotManoObra[] = []
-
-    if (d.tipo === 'CERRAMIENTO') {
-      descripcion = altaCerramiento!.descripcion
-      precioUnitario = altaCerramiento!.precioUnitario
-      aviso = altaCerramiento!.aviso
-      anchoLinea = altaCerramiento!.anchoMm
-      altoLinea = altaCerramiento!.altoMm
-
-      // --- Mano de obra adicional (T.68) ---
-      const preparada = await prepararManoObra(db, {
-        horas: { fabricacion: d.horasFabricacion, colocacion: d.horasColocacion },
-        tarifa: presupuesto.tarifa,
-      })
-      if (preparada.estado === 'MIGRACION_PENDIENTE') {
-        return { ok: false, errores: {}, mensaje: preparada.mensaje }
-      }
-      if (preparada.estado === 'PREPARADA') {
-        manoObra = preparada.filas
-        // Hoy `precioUnitario` ya es null —el cerramiento no tiene valoración
-        // agregada—, pero la regla queda escrita donde toca: cuando el precio
-        // del GRUPO exista, un concepto sin importe seguirá dejándolo en null.
-        if (!preparada.valorable) precioUnitario = null
-        if (preparada.notas.length) aviso = `${aviso} ${preparada.notas.join('; ')}.`
-      }
-    } else if (d.tipo === 'ARTICULO') {
-      const valoracion = await valorarArticulo(db, {
-        codigo: d.codigo,
-        tarifa: presupuesto.tarifa,
-        acabadoCodigo: d.acabadoCodigo,
-      })
-      if (!valoracion.ok) {
-        return { ok: false, errores: { codigo: [valoracion.error] } }
-      }
-      descripcion = valoracion.descripcion
-      precioUnitario = valoracion.precioUnitario === null
-        ? null
-        : Number(valoracion.precioUnitario)
-      aviso = valoracion.aviso
-    } else {
-      const resultado = await valorarEstructura(db, {
-        codigo: d.codigo,
-        serieCodigo: d.serieCodigo,
-        anchoMm: d.anchoMm ?? null,
-        altoMm: d.altoMm ?? null,
-        vidrioCodigo: d.vidrioCodigo,
-        varianteAcristalamiento: d.varianteAcristalamiento,
-        acabadoCodigo: d.acabadoCodigo,
-        tarifa: presupuesto.tarifa,
-        opcionesHerraje: datos.getAll('opcionHerraje').map(String),
-      })
-      if (!resultado.ok) return { ok: false, errores: resultado.errores }
-      descripcion = resultado.descripcion
-      precioUnitario = resultado.precioUnitario
-      aviso = resultado.aviso
-      piezasAPersistir = resultado.piezas
-      acristalamientoAPersistir = resultado.acristalamiento
-      opcionesHerraje = resultado.opcionesHerraje
-    }
-    const total = precioUnitario === null
-      ? null
-      : Math.round(precioUnitario * d.cantidad * 100) / 100
-
-    const valores: ValoresLinea = {
-      presupuestoId: d.presupuestoId,
-      articuloCodigo: d.tipo === 'ARTICULO' ? d.codigo : null,
-      descripcion,
-      referencia: d.referencia,
-      cantidad: String(d.cantidad),
-      anchoMm: anchoLinea,
-      altoMm: altoLinea,
-      precioUnitario: precioUnitario === null ? null : String(precioUnitario),
-      total: total === null ? null : String(total),
-      valoracionCompleta: precioUnitario !== null,
-      avisoValoracion: aviso,
-    }
-
-    await guardarLinea(db, d.tipo === 'CERRAMIENTO'
-      ? { tipo: 'CERRAMIENTO', valores, cerramiento: altaCerramiento!, manoObra }
-      : d.tipo === 'ESTRUCTURA'
-        ? {
-            tipo: 'ESTRUCTURA',
-            valores,
-            estructura: {
-              serieCodigo: d.serieCodigo ?? '',
-              estructuraCodigo: d.codigo,
-              acabadoCodigo: d.acabadoCodigo,
-              piezas: piezasAPersistir,
-              acristalamiento: acristalamientoAPersistir,
-              opcionesHerraje,
-            },
-          }
-        : { tipo: 'ARTICULO', valores })
-
-    revalidatePath(`/dashboard/presupuestos/${d.presupuestoId}`)
-
-    return { ok: true, id: d.presupuestoId, mensaje: aviso ?? undefined }
+    if (!await usuarioActual()) return { ok: false, errores: {}, mensaje: 'Sesión no válida' }
+    const resultado = await altaLinea(crearDb(), p.data, datos.getAll('opcionHerraje').map(String))
+    if (resultado.ok) revalidatePath(`/dashboard/presupuestos/${p.data.presupuestoId}`)
+    return resultado
   } catch (e) {
+    if (e instanceof ErrorOperacionCerramiento) return { ok: false, errores: {}, mensaje: e.message }
     return { ok: false, errores: {}, mensaje: registrarFallo('anyadirLinea', e) }
   }
 }

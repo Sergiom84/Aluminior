@@ -1,3 +1,5 @@
+import { partidasValoracion } from './partidas-valoracion.ts'
+import type { PartidaValoracionCerramiento } from '@aluminior/core/estructuras'
 /**
  * Valoración del vidrio: metraje, PVP de la tarifa, coste y pieza persistible.
  *
@@ -16,22 +18,32 @@
  *    N cristales de cantidad 1. La aritmética resultante es la misma que había
  *    en cada una, no una nueva: `metraje × cantidad` sumado y multiplicado una
  *    vez por el precio.
- *  - NO unifica el desempate del coste con el del despiece. Aquí gana el acabado
- *    de la línea, luego el comodín `*`, luego el alfabético, y **siempre se elige
- *    uno**; el despiece, en cambio, deja el coste sin resolver cuando hay varios
- *    distintos (`coste-articulos.ts`). Son dos criterios y sólo uno puede ser el
- *    correcto, pero decidirlo cambia costes ya persistidos y necesita su propia
- *    medición. Se conserva el del vidrio.
+ *  - Desde T.73 SÍ unifica el desempate con el del despiece, que era la deuda
+ *    que este comentario declaraba. Aquí ganaba el acabado de la línea, luego el
+ *    comodín `*`, luego el alfabético, y **siempre se elegía uno**: un vidrio sin
+ *    precio en su acabado se facturaba al del acabado que saliera antes por
+ *    orden de código. Ahora el PVP y el coste pasan por el mismo criterio por
+ *    acabado que gobierna el resto de la línea: exacto, genérico, o nada.
+ *    Consecuencia buscada: un vidrio que sólo tenga precio en acabados ajenos
+ *    deja de valorarse en vez de valorarse mal.
+ *
+ *    El coste NO usa `resolverCosteCatalogo`, aunque sea un coste: aquel no
+ *    conoce el comodín. El porqué está en `leerCosteVidrio`, y cambiarlo es una
+ *    regresión, no una limpieza.
  *
  * ARITMÉTICA: se conserva la que había, en `number`. El contrato decimal exacto
  * de `@aluminior/core/precios/decimal` cubre hoy la mano de obra; traerlo aquí
  * movería importes de vidrio ya calculados y es una unidad aparte.
  */
 
-import { sql } from 'drizzle-orm'
-import { metrajeVidrioM2, type ReglasMetrajeVidrio } from '@aluminior/core/precios'
+import {
+  ESCALA_COSTE_CATALOGO, metrajeVidrioM2, resolverPorAcabado, resolverPvpCatalogo,
+  type ReglasMetrajeVidrio,
+} from '@aluminior/core/precios'
 import type { ClienteEscritura } from '../cliente-db.ts'
 import type { PiezaDespiece } from '../lineas/guardar-linea.ts'
+import { leerCostesArticulos } from './coste-articulos.ts'
+import { leerPvpArticulos } from './pvp-articulos.ts'
 
 /** Un vidrio a valorar: sus medidas de corte y cuántas veces se repite. */
 export interface CristalValorable {
@@ -48,6 +60,7 @@ export interface EntradaValoracionVidrio {
   vidrioCodigo: string
   cristales: readonly CristalValorable[]
   reglasMetraje: ReglasMetrajeVidrio
+  trazabilidad?: boolean
   /** Tarifa del documento. */
   tarifa: number
   /** Acabado de la línea. `null` = la línea no fija acabado. */
@@ -56,7 +69,7 @@ export interface EntradaValoracionVidrio {
 
 export type ValoracionVidrio =
   /** Sin PVP en la tarifa: ni importe ni piezas. El vidrio queda sin valorar. */
-  | { ok: false; aviso: string }
+  | { ok: false; aviso: string; piezas?: PiezaDespiece[]; partidas?: PartidaValoracionCerramiento[] }
   | {
     ok: true
     /**
@@ -68,47 +81,33 @@ export type ValoracionVidrio =
      */
     importe: number
     piezas: PiezaDespiece[]
+    partidas?: PartidaValoracionCerramiento[]
   }
 
 /**
- * Precio por m² del vidrio en la tarifa. `null` si no tiene fila.
- *
- * Desempate por acabado: el de la línea, luego el comodín `*`, luego el
- * alfabético. Es el mismo `ORDER BY` que estaba escrito dos veces en
- * `acciones.ts`.
- */
-async function leerPrecioVidrio(
-  cliente: ClienteEscritura,
-  entrada: { vidrioCodigo: string; tarifa: number; acabadoCodigo: string | null },
-): Promise<number | null> {
-  const [fila] = (await cliente.execute<{ precio: string }>(sql`
-    SELECT precio FROM articulos_pvp
-    WHERE articulo_codigo = ${entrada.vidrioCodigo} AND tarifa = ${entrada.tarifa}
-    ORDER BY (acabado_codigo = ${entrada.acabadoCodigo ?? ''}) DESC,
-             (acabado_codigo = '*') DESC, acabado_codigo
-    LIMIT 1
-  `)) as unknown as { precio: string }[]
-  return fila ? Number(fila.precio) : null
-}
-
-/**
- * Coste por m² del vidrio. `null` si no tiene fila.
+ * Coste por m² del vidrio. `null` si no hay uno aplicable.
  *
  * Sin tarifa: `articulos_coste` no la tiene. Un coste ausente NO deja la línea
  * sin valorar; sólo deja la pieza sin coste, como el resto del despiece.
+ *
+ * T.73 retira también aquí el desempate alfabético, con el MISMO criterio que el
+ * PVP —exacto, genérico, o nada— y no con `resolverCosteCatalogo`. La razón es
+ * el comodín: `articulos_coste` del vidrio lo usa, y aquel resolvedor no lo
+ * conoce, de modo que `AAA = 5` junto a `* = 8` le resultaría ambiguo cuando el
+ * catálogo declara que el genérico son 8. Unificar por ahí habría cambiado
+ * costes que hoy se resuelven bien, que es más de lo que esta unidad pide.
  */
 async function leerCosteVidrio(
   cliente: ClienteEscritura,
   entrada: { vidrioCodigo: string; acabadoCodigo: string | null },
 ): Promise<number | null> {
-  const [fila] = (await cliente.execute<{ coste: string }>(sql`
-    SELECT coste FROM articulos_coste
-    WHERE articulo_codigo = ${entrada.vidrioCodigo}
-    ORDER BY (acabado_codigo = ${entrada.acabadoCodigo ?? ''}) DESC,
-             (acabado_codigo = '*') DESC, acabado_codigo
-    LIMIT 1
-  `)) as unknown as { coste: string }[]
-  return fila ? Number(fila.coste) : null
+  const filas = await leerCostesArticulos(cliente, [entrada.vidrioCodigo])
+  const resolucion = resolverPorAcabado(
+    filas.map((fila) => ({ acabadoCodigo: fila.acabadoCodigo, valor: fila.coste })),
+    entrada.acabadoCodigo,
+    ESCALA_COSTE_CATALOGO,
+  )
+  return resolucion.estado === 'RESUELTO' ? Number(resolucion.valor) : null
 }
 
 /**
@@ -131,6 +130,16 @@ export function prepararValoracionVidrio(entrada: {
     (acc, m, i) => acc + m * entrada.cristales[i].cantidad,
     0,
   )
+  const piezas = prepararPiezasVidrio(entrada)
+  return { importe: metrajeTotal * entrada.precioM2, piezas }
+}
+
+/** El coste y las medidas sobreviven a un PVP ausente. */
+function prepararPiezasVidrio(entrada: {
+  vidrioCodigo: string; cristales: readonly CristalValorable[];
+  reglasMetraje: ReglasMetrajeVidrio; costeM2: number | null;
+}): PiezaDespiece[] {
+  const metrajes = entrada.cristales.map(c => metrajeVidrioM2(c.largoMm, c.anchoMm, entrada.reglasMetraje))
   const piezas = entrada.cristales.map((c, i): PiezaDespiece => {
     const costeTotal = entrada.costeM2 === null
       ? null
@@ -147,7 +156,7 @@ export function prepararValoracionVidrio(entrada: {
       costeTotal: costeTotal === null ? null : String(costeTotal),
     }
   })
-  return { importe: metrajeTotal * entrada.precioM2, piezas }
+  return piezas
 }
 
 /**
@@ -161,13 +170,22 @@ export async function resolverValoracionVidrio(
   cliente: ClienteEscritura,
   entrada: EntradaValoracionVidrio,
 ): Promise<ValoracionVidrio> {
-  const precioM2 = await leerPrecioVidrio(cliente, entrada)
-  if (precioM2 === null) {
-    return {
-      ok: false,
-      aviso: `vidrio sin valorar: ${entrada.vidrioCodigo} no tiene precio en la tarifa ${entrada.tarifa}`,
-    }
-  }
+  const filasPvp = await leerPvpArticulos(cliente, [entrada.vidrioCodigo], entrada.tarifa)
+  const pvp = resolverPvpCatalogo(filasPvp, entrada.acabadoCodigo)
+  const avisoOriginal = pvp.estado === 'AMBIGUO'
+    ? `vidrio sin valorar: ${entrada.vidrioCodigo} tiene varios precios en la tarifa ${entrada.tarifa} y ninguno aplicable al acabado`
+    : `vidrio sin valorar: ${entrada.vidrioCodigo} no tiene precio en la tarifa ${entrada.tarifa}`
+  if (!entrada.trazabilidad && pvp.estado !== 'RESUELTO') return { ok: false, aviso: avisoOriginal }
   const costeM2 = await leerCosteVidrio(cliente, entrada)
-  return { ok: true, ...prepararValoracionVidrio({ ...entrada, precioM2, costeM2 }) }
+  const cantidad = entrada.cristales.reduce((total, c) => total + metrajeVidrioM2(c.largoMm, c.anchoMm, entrada.reglasMetraje) * c.cantidad, 0)
+  const precio = pvp.estado === 'RESUELTO' ? Number(pvp.precio) : null
+  const aviso = pvp.estado === 'AMBIGUO'
+    ? 'Vidrio con precio ambiguo en la tarifa y acabado solicitados'
+    : 'Vidrio sin precio en la tarifa y acabado solicitados'
+  const partidas = entrada.trazabilidad ? partidasValoracion([{ articuloCodigo: entrada.vidrioCodigo,
+    tipoMetraje: 'M2', cantidadFacturable: cantidad, precioUnitario: precio,
+    importe: precio === null ? null : cantidad * precio, incidencia: precio === null ? aviso : null }], entrada, 'VIDRIO', filasPvp) : []
+  const piezas = prepararPiezasVidrio({ ...entrada, costeM2 })
+  if (precio === null) return { ok: false, aviso: avisoOriginal, piezas, partidas }
+  return { ok: true, importe: cantidad * precio, piezas, partidas }
 }

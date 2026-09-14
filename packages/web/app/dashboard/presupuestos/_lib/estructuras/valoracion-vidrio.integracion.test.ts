@@ -11,8 +11,10 @@
  * ejecuta la consulta de verdad, con datos propios de códigos `ZZ*` que no
  * existen en el catálogo real y se borran al terminar.
  *
- * NO se cambia la política de desempate (acabado exacto DESC, comodín `*`
- * DESC, alfabético) declarada en `valoracion-vidrio.ts`: sólo se demuestra.
+ * La política de desempate es la de T.73: acabado exacto, genérico (`UNI`, `*`,
+ * vacío), y si no hay ninguno **no hay precio**. Antes terminaba en un
+ * desempate alfabético que cobraba el precio del primer acabado por orden de
+ * código; los casos que lo ejercían siguen aquí, ahora exigiendo el bloqueo.
  */
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest'
 import { inArray } from 'drizzle-orm'
@@ -99,9 +101,10 @@ describe('valoración del vidrio, SQL real contra PostgreSQL', () => {
       expect(r.importe).toBeCloseTo(0.5 * 20, 10)
     })
 
-    it('sin exacto ni comodín: gana el primero por orden alfabético', async () => {
-      // Ninguno de los dos casa con 'BLA' ni es '*': sólo queda el desempate
-      // alfabético (ORDER BY ... acabado_codigo, ASC por defecto).
+    it('sin exacto ni genérico: NO se cobra ninguno', async () => {
+      // Antes de T.73 esto valía 7,00 por orden alfabético: 'BBB' precede a
+      // 'CCC'. Ninguno de los dos es el acabado de la línea ni el genérico, así
+      // que ninguno es el precio de lo que se vende.
       await db.insert(schema.articulosPvp).values([
         { articuloCodigo: VIDRIO, acabadoCodigo: 'CCC', tarifa: 1, precio: '9.0000' },
         { articuloCodigo: VIDRIO, acabadoCodigo: 'BBB', tarifa: 1, precio: '7.0000' },
@@ -109,9 +112,37 @@ describe('valoración del vidrio, SQL real contra PostgreSQL', () => {
 
       const r = await resolverValoracionVidrio(db, entradaBase)
 
+      expect(r).toEqual({
+        ok: false,
+        aviso: `vidrio sin valorar: ${VIDRIO} no tiene precio en la tarifa 1`,
+      })
+    })
+
+    it('dos precios genéricos incompatibles bloquean con aviso propio', async () => {
+      await db.insert(schema.articulosPvp).values([
+        { articuloCodigo: VIDRIO, acabadoCodigo: 'UNI', tarifa: 1, precio: '20.0000' },
+        { articuloCodigo: VIDRIO, acabadoCodigo: '*', tarifa: 1, precio: '25.0000' },
+      ])
+
+      const r = await resolverValoracionVidrio(db, entradaBase)
+
+      expect(r).toEqual({
+        ok: false,
+        aviso: `vidrio sin valorar: ${VIDRIO} tiene varios precios en la tarifa 1 y ninguno aplicable al acabado`,
+      })
+    })
+
+    it("'UNI' y '*' son el mismo genérico y con el mismo precio no bloquean", async () => {
+      await db.insert(schema.articulosPvp).values([
+        { articuloCodigo: VIDRIO, acabadoCodigo: 'UNI', tarifa: 1, precio: '20.0000' },
+        { articuloCodigo: VIDRIO, acabadoCodigo: '*', tarifa: 1, precio: '20.0000' },
+      ])
+
+      const r = await resolverValoracionVidrio(db, entradaBase)
+
       expect(r.ok).toBe(true)
       if (!r.ok) return
-      expect(r.importe).toBeCloseTo(0.5 * 7, 10)
+      expect(r.importe).toBeCloseTo(0.5 * 20, 10)
     })
 
     it('el comodín gana con prioridad explícita, aunque un acabado le preceda alfabéticamente', async () => {
@@ -183,7 +214,10 @@ describe('valoración del vidrio, SQL real contra PostgreSQL', () => {
       expect(r.piezas[0].costeUnitario).toBe('8')
     })
 
-    it('fallback alfabético: gana el primero sin exacto ni comodín', async () => {
+    it('sin exacto ni comodín: la pieza queda SIN coste, no con el alfabético', async () => {
+      // Antes de T.73 la pieza salía con coste 7. Un coste ausente no deja la
+      // línea sin valorar: sólo deja la pieza sin margen, que es lo correcto
+      // frente a inventarle el coste de otro acabado.
       await conPvp()
       await db.insert(schema.articulosCoste).values([
         { articuloCodigo: VIDRIO, proveedorCodigo: PROVEEDOR, acabadoCodigo: 'CCC', coste: '9.0000' },
@@ -194,21 +228,39 @@ describe('valoración del vidrio, SQL real contra PostgreSQL', () => {
 
       expect(r.ok).toBe(true)
       if (!r.ok) return
-      expect(r.piezas[0].costeUnitario).toBe('7')
+      expect(r.piezas[0].costeUnitario).toBeNull()
+      expect(r.importe).toBeCloseTo(0.5 * 30, 10)
+    })
+
+    it('dos costes del mismo acabado que no coinciden dejan la pieza sin coste', async () => {
+      // La clave de `articulos_coste` incluye el proveedor: el mismo acabado
+      // puede venir dos veces con precios distintos y ninguno manda.
+      await conPvp()
+      await db.insert(schema.articulosCoste).values([
+        { articuloCodigo: VIDRIO, proveedorCodigo: PROVEEDOR, acabadoCodigo: 'BLA', coste: '12.0000' },
+        { articuloCodigo: VIDRIO, proveedorCodigo: 'ZZPROV2', acabadoCodigo: 'BLA', coste: '15.0000' },
+      ])
+
+      const r = await resolverValoracionVidrio(db, entradaBase)
+
+      expect(r.ok).toBe(true)
+      if (!r.ok) return
+      expect(r.piezas[0].costeUnitario).toBeNull()
     })
   })
 
   describe('aislamiento por artículo', () => {
     it('el señuelo con filas más prioritarias no afecta a PVP ni a coste', async () => {
       // El señuelo tiene acabado EXACTO ('BLA') en ambas tablas, que ganaría
-      // el desempate si el WHERE por artículo no filtrara. El vidrio real
-      // sólo tiene un acabado que no es exacto ni comodín (fallback).
+      // el desempate si el WHERE por artículo no filtrara. El vidrio real sólo
+      // tiene genérico, que es lo más débil que aún resuelve: si las filas se
+      // mezclaran, el exacto del señuelo ganaría y se vería.
       await db.insert(schema.articulosPvp).values([
-        { articuloCodigo: VIDRIO, acabadoCodigo: 'AAA', tarifa: 1, precio: '10.0000' },
+        { articuloCodigo: VIDRIO, acabadoCodigo: '*', tarifa: 1, precio: '10.0000' },
         { articuloCodigo: SENUELO, acabadoCodigo: 'BLA', tarifa: 1, precio: '777.0000' },
       ])
       await db.insert(schema.articulosCoste).values([
-        { articuloCodigo: VIDRIO, proveedorCodigo: PROVEEDOR, acabadoCodigo: 'AAA', coste: '5.0000' },
+        { articuloCodigo: VIDRIO, proveedorCodigo: PROVEEDOR, acabadoCodigo: '*', coste: '5.0000' },
         { articuloCodigo: SENUELO, proveedorCodigo: PROVEEDOR, acabadoCodigo: 'BLA', coste: '777.0000' },
       ])
 

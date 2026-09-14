@@ -54,13 +54,13 @@ describe('piezas preparadas para persistir', () => {
 
   // Cualquier metraje que no sea ML se cobra por unidades. M2 incluido: el
   // despiece no tiene ancho por pieza, así que no puede calcular superficie.
-  it('M2 y cualquier otro metraje se cobran como unidades', () => {
+  it('M2 sin superficie conserva coste desconocido', () => {
     const preparadas = prepararPiezasDespiece({
       piezas: [pieza('A', 3, 1000), pieza('B', 3, 1000)],
       mapa: mapaDe(articulo('A', 'M2'), articulo('B', '?')),
       costePorArticulo: costesDe(['A', 1.1], ['B', 1.1]),
     })
-    expect(preparadas.map((p) => p.costeTotal)).toEqual(['3.3', '3.3'])
+    expect(preparadas.map((p) => p.costeTotal)).toEqual([null, '3.3'])
   })
 
   it('ML sin largo queda sin coste total, no en cero', () => {
@@ -111,13 +111,13 @@ describe('piezas preparadas para persistir', () => {
    * ante datos inconsistentes, un doble de prueba mal construido o un cambio
    * futuro del esquema que relajara la clave ajena.
    */
-  it('un artículo ausente del mapa se costea como unidades', () => {
+  it('un artículo ausente del mapa conserva coste desconocido', () => {
     const [p] = prepararPiezasDespiece({
       piezas: [pieza('DESCONOCIDO', 3, 1000)],
       mapa: mapaDe(),
       costePorArticulo: costesDe(['DESCONOCIDO', 1.1]),
     })
-    expect(p.costeTotal).toBe('3.3')
+    expect(p.costeTotal).toBeNull()
   })
 
   // No agrega: dos cortes del mismo artículo dan dos filas, cada una con su
