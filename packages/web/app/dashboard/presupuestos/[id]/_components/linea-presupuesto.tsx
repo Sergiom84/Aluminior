@@ -1,9 +1,10 @@
 'use client'
 
-import type { ResultadoCerramientoV1 } from '@aluminior/core/estructuras'
+import { plantillaDiseno, type ResultadoCerramientoV1 } from '@aluminior/core/estructuras'
 import { useCallback, useRef, useState } from 'react'
 import { EditarArticulo } from './editar-articulo'
 import { BotonBorrarLinea } from './anyadir-linea.tsx'
+import { DibujoEstructura } from './dibujo-estructura.tsx'
 import { EditarCerramiento, type DatosEdicionCerramiento } from './editar-cerramiento.tsx'
 import styles from '../presupuesto-movil.module.css'
 
@@ -13,12 +14,14 @@ export interface LineaDetalle {
   id: string
   orden: number
   tipo: string
+  articuloCodigo: string | null
   descripcion: string
   referencia: string | null
   anchoMm: number | null
   altoMm: number | null
   cantidad: string
   precioUnitario: string | null
+  descuento: string | null
   total: string | null
   valoracionCompleta: boolean
   avisoValoracion: string | null
@@ -57,30 +60,32 @@ export function LineaPresupuesto({
   const esArticuloEditable = articuloEditable && l.tipo === 'ARTICULO'
   const costeTotal = despiece.reduce((acc, pieza) => acc + (pieza.costeTotal ? Number(pieza.costeTotal) : 0), 0)
   const sinCoste = despiece.filter((pieza) => pieza.costeTotal === null).length
-  const etiqueta = l.tipo === 'ESTRUCTURA' ? 'estr' : l.tipo === 'CERRAMIENTO' ? 'cerr' : 'art'
+  const modulo = edicion?.configuracion.modulos[0]
+  const plantilla = modulo ? plantillaDiseno(modulo.estructuraCodigo) : null
+  const articulo = l.tipo === 'ARTICULO'
+    ? (l.articuloCodigo ?? '—')
+    : l.tipo === 'CERRAMIENTO'
+      ? (edicion && edicion.configuracion.modulos.length === 1
+        ? edicion.configuracion.modulos[0].estructuraCodigo
+        : 'GRUPO')
+      : (l.articuloCodigo ?? '—')
+  const acabado = edicion?.acabadoCodigo ?? '—'
 
   return (
     <>
       <tr className="border-b" style={{ borderColor: 'var(--al-border)' }}>
-        <td className="cifra px-3 py-2" style={{ textAlign: 'left', color: 'var(--al-text-faint)' }}>{l.orden}</td>
+        <td className="px-3 py-2 font-mono text-[11px]">{articulo}</td>
         <td className="px-3 py-2">
-          <span className="mr-2 rounded px-1.5 py-0.5 text-[10px] uppercase"
-            style={{
-              background: l.tipo === 'ESTRUCTURA' ? 'var(--al-accent-soft)' : 'var(--al-surface-muted)',
-              color: l.tipo === 'ESTRUCTURA' ? 'var(--al-accent-strong)' : 'var(--al-text-muted)',
-            }}>
-            {etiqueta}
-          </span>
           {l.descripcion}
           {l.valoracionCompleta && l.avisoValoracion && (
             <div className="mt-0.5 text-xs" style={{ color: 'var(--al-warn)' }}>{l.avisoValoracion}</div>
           )}
         </td>
         <td className="px-3 py-2" style={{ color: 'var(--al-text-muted)' }}>{l.referencia ?? '—'}</td>
-        <td className="px-3 py-2" style={{ color: 'var(--al-text-muted)' }}>
-          {l.anchoMm && l.altoMm ? `${l.anchoMm} × ${l.altoMm}` : '—'}
-        </td>
+        <td className="px-3 py-2 font-mono text-[11px]">{acabado}</td>
         <td className="cifra px-3 py-2">{Number(l.cantidad)}</td>
+        <td className="cifra px-3 py-2">{l.anchoMm ?? '—'}</td>
+        <td className="cifra px-3 py-2">{l.altoMm ?? '—'}</td>
         <td className="cifra px-3 py-2">
           {!l.valoracionCompleta ? (
             <span className="text-xs" style={{ color: 'var(--al-warn)' }}
@@ -92,11 +97,19 @@ export function LineaPresupuesto({
             </>
           )}
         </td>
+        <td className="cifra px-3 py-2">{Number(l.descuento ?? 0)}</td>
         <td className="cifra px-3 py-2 font-medium">
           {!l.valoracionCompleta || l.total === null ? '—' : eur.format(Number(l.total))}
           {manoObra.map(f => <div key={f.id} className="mt-1 text-xs font-normal" style={{ color: 'var(--al-text-muted)' }}>
             {f.concepto === 'COLOCACION' ? 'Colocación' : 'Fabricación'} {f.horas === null ? '—' : Number(f.horas)} h total línea: {f.importe === null ? 'sin valorar' : eur.format(Number(f.importe))}
           </div>)}
+        </td>
+        <td className="px-2 py-1">
+          {plantilla && (
+            <div className="al-line-thumb">
+              <DibujoEstructura plantilla={plantilla} compacto />
+            </div>
+          )}
         </td>
         <td className="px-3 py-2 text-right">
           <div className="flex justify-end gap-2">
@@ -112,19 +125,19 @@ export function LineaPresupuesto({
       </tr>
       {editando && edicion && (
         <tr className="border-b" style={{ borderColor: 'var(--al-border)' }}>
-          <td colSpan={8} className={`${styles.editorCell} p-3`}>
+          <td colSpan={12} className={`${styles.editorCell} p-3`}>
             <EditarCerramiento presupuestoId={presupuestoId} lineaId={l.id} datos={edicion}
               series={series} acabados={acabados} onCancelar={cerrarEditor} />
           </td>
         </tr>
       )}
-      {editando && esArticuloEditable && <tr><td colSpan={8} className={`${styles.editorCell} p-3`}>
+      {editando && esArticuloEditable && <tr><td colSpan={12} className={`${styles.editorCell} p-3`}>
         <EditarArticulo presupuestoId={presupuestoId} lineaId={l.id} cantidad={l.cantidad}
           referencia={l.referencia} onCancelar={cerrarEditor} />
       </td></tr>}
       {despiece.length > 0 && (
         <tr className="border-b" style={{ borderColor: 'var(--al-border)' }}>
-          <td colSpan={8} className="px-3 py-1" style={{ background: 'var(--al-surface-muted)' }}>
+          <td colSpan={12} className="px-3 py-1" style={{ background: 'var(--al-surface-muted)' }}>
             <details>
               <summary className="cursor-pointer py-1 text-xs" style={{ color: 'var(--al-text-muted)' }}>
                 Despiece: {despiece.length} piezas · {l.tipo === 'CERRAMIENTO'

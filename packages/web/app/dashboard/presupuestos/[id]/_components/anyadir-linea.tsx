@@ -3,21 +3,20 @@
 import { useActionState, useCallback, useEffect, useState } from 'react'
 import {
   crearConfiguracionCerramiento, plantillaDiseno, type ConfiguracionCerramiento,
+  type PlantillaDiseno,
 } from '@aluminior/core/estructuras'
 import { anyadirLinea, borrarLinea, type Estado } from '../../_lib/acciones.ts'
-import { atributosCampo, bordeCampo } from '../../_lib/campos.ts'
-import { MAXIMO_HORAS } from '../../_lib/lineas/esquema-linea.ts'
 import { DisenadorEstructura } from './disenador-estructura.tsx'
-import { MensajeError } from './mensaje-error.tsx'
+import { EditorLineaEstructura } from './editor-linea.tsx'
+import { Escaparate } from './escaparate.tsx'
+import { CamposArticulo, CamposCerramiento, acabadoPorDefecto } from './campos-alta.tsx'
 import styles from '../presupuesto-movil.module.css'
 
-const entrada = 'w-full rounded-md border px-3 py-2 text-sm'
-const estilo = { background: 'var(--al-surface)', borderColor: 'var(--al-border-strong)' }
+type TipoLinea = 'ESTRUCTURA' | 'ARTICULO' | 'CERRAMIENTO'
 
 /**
- * Alta de línea. Dos modos, como en el sistema original:
- *   ARTICULO    producto de tarifa, precio directo
- *   CERRAMIENTO conjunto configurado que vuelve como una línea GRUPO
+ * Alta de línea. Flujo de Productor: tipo → escaparate → edición.
+ * Tras Aceptar, el diálogo se reabre para seguir añadiendo.
  */
 export function AnyadirLinea({
   presupuestoId, series, acabados,
@@ -26,10 +25,13 @@ export function AnyadirLinea({
   series: string[]
   acabados: { codigo: string; descripcion: string }[]
 }) {
-  const [tipo, setTipo] = useState<'ARTICULO' | 'CERRAMIENTO'>('CERRAMIENTO')
+  const [tipo, setTipo] = useState<TipoLinea>('ESTRUCTURA')
+  const [plantilla, setPlantilla] = useState<PlantillaDiseno | null>(null)
   const [estado, accion, enviando] = useActionState<Estado, FormData>(anyadirLinea, null)
-
   const [serie, setSerie] = useState('')
+  const [vidrio, setVidrio] = useState('')
+  const [acabado, setAcabado] = useState(() => acabadoPorDefecto(acabados))
+  const [variante, setVariante] = useState<'1' | '2'>('2')
   const [anchoMm, setAnchoMm] = useState(1200)
   const [altoMm, setAltoMm] = useState(1200)
   const [configuracion, setConfiguracion] = useState<ConfiguracionCerramiento>(() =>
@@ -41,17 +43,34 @@ export function AnyadirLinea({
     setAltoMm(alto)
   }, [])
 
-  useEffect(() => {
-    if (!estado?.ok) return
-
-    setSerie('')
+  const resetTrasAlta = useCallback(() => {
+    setPlantilla(null)
     setAnchoMm(1200)
     setAltoMm(1200)
     setConfiguracion(crearConfiguracionCerramiento(plantillaDiseno('2O')!))
     setEdicion((actual) => actual + 1)
-  }, [estado])
+  }, [])
+
+  useEffect(() => {
+    if (estado?.ok) resetTrasAlta()
+  }, [estado, resetTrasAlta])
+
+  const elegirTipo = (siguiente: TipoLinea) => {
+    setTipo(siguiente)
+    setPlantilla(null)
+  }
+
+  const elegirPlantilla = (siguiente: PlantillaDiseno) => {
+    setPlantilla(siguiente)
+    setAnchoMm(siguiente.anchoMm)
+    setAltoMm(siguiente.altoMm)
+    setConfiguracion(crearConfiguracionCerramiento(siguiente))
+    setEdicion((actual) => actual + 1)
+  }
 
   const err = estado && !estado.ok ? estado.errores : {}
+  const enEscaparate = (tipo === 'ESTRUCTURA' || tipo === 'CERRAMIENTO') && !plantilla
+  const codigoLinea = tipo === 'CERRAMIENTO' ? 'GRUPO' : plantilla?.codigo ?? ''
 
   return (
     <form action={accion} id="configurador"
@@ -59,29 +78,39 @@ export function AnyadirLinea({
       style={{ background: 'var(--al-surface)', borderColor: 'var(--al-border)' }}>
       <input type="hidden" name="presupuestoId" value={presupuestoId} />
       <input type="hidden" name="tipo" value={tipo} />
-      {tipo === 'CERRAMIENTO' && (
-        <>
-          <input type="hidden" name="codigo" value="GRUPO" />
-          <input type="hidden" name="configuracionCerramiento"
-            value={JSON.stringify(configuracion)} />
-        </>
+      {tipo === 'CERRAMIENTO' && plantilla && (
+        <input type="hidden" name="configuracionCerramiento" value={JSON.stringify(configuracion)} />
+      )}
+      {tipo === 'CERRAMIENTO' && plantilla && (
+        <input type="hidden" name="codigo" value={codigoLinea} />
       )}
 
       <div className={`${styles.modeTabs} mb-4`}>
-        {(['CERRAMIENTO', 'ARTICULO'] as const).map((t) => (
-          <button key={t} type="button" onClick={() => setTipo(t)}
+        {([
+          ['ESTRUCTURA', 'Estructuras'],
+          ['ARTICULO', 'Artículos'],
+        ] as const).map(([valor, etiqueta]) => (
+          <button key={valor} type="button" onClick={() => elegirTipo(valor)}
             className="rounded-md border px-4 py-1.5 text-sm"
             style={{
-              background: tipo === t ? 'var(--al-accent)' : 'var(--al-surface)',
-              color: tipo === t ? 'var(--al-accent-contrast)' : 'var(--al-text)',
-              borderColor: tipo === t ? 'var(--al-accent)' : 'var(--al-border-strong)',
+              background: tipo === valor ? 'var(--al-accent)' : 'var(--al-surface)',
+              color: tipo === valor ? 'var(--al-accent-contrast)' : 'var(--al-text)',
+              borderColor: tipo === valor ? 'var(--al-accent)' : 'var(--al-border-strong)',
             }}>
-            {t === 'CERRAMIENTO' ? 'Cerramiento configurado' : 'Artículo de catálogo'}
+            {etiqueta}
           </button>
         ))}
+        <button type="button" onClick={() => elegirTipo('CERRAMIENTO')}
+          className="rounded-md border px-4 py-1.5 text-sm"
+          style={{
+            background: tipo === 'CERRAMIENTO' ? 'var(--al-accent)' : 'var(--al-surface)',
+            color: tipo === 'CERRAMIENTO' ? 'var(--al-accent-contrast)' : 'var(--al-text)',
+            borderColor: tipo === 'CERRAMIENTO' ? 'var(--al-accent)' : 'var(--al-border-strong)',
+          }}>
+          Cerramiento
+        </button>
       </div>
 
-      {/* Mensaje de aviso: importe incompleto, no bloquea pero se ve */}
       {estado?.mensaje && (
         <div className="mb-4 rounded-md border p-3 text-sm"
           style={{ background: 'var(--al-warn-soft)', borderColor: 'var(--al-warn)' }}>
@@ -89,151 +118,41 @@ export function AnyadirLinea({
         </div>
       )}
 
-      {tipo === 'CERRAMIENTO' && (
-        <DisenadorEstructura key={edicion} codigo="2O" anchoMm={anchoMm} altoMm={altoMm}
-          onConfiguracionChange={setConfiguracion}
-          onDimensionesChange={actualizarDimensiones} />
+      {enEscaparate && <Escaparate onElegir={elegirPlantilla} />}
+
+      {tipo === 'ESTRUCTURA' && plantilla && (
+        <EditorLineaEstructura
+          plantilla={plantilla} series={series} acabados={acabados}
+          serie={serie} setSerie={setSerie} anchoMm={anchoMm} setAnchoMm={setAnchoMm}
+          altoMm={altoMm} setAltoMm={setAltoMm} vidrio={vidrio} setVidrio={setVidrio}
+          acabado={acabado} setAcabado={setAcabado} variante={variante} setVariante={setVariante}
+          err={err} onCambiarEstructura={() => setPlantilla(null)} />
       )}
 
-      <div className={styles.fields}>
-        {tipo === 'ARTICULO' && (
-          <>
-            <div className="col-span-3">
-              <label htmlFor="codigo" className="mb-1 block text-sm font-medium">
-                Artículo
-              </label>
-              <input {...atributosCampo('codigo', err)} className={entrada}
-                style={{ ...estilo, borderColor: bordeCampo('codigo', err, estilo.borderColor) }}
-                placeholder="PSM001" />
-              <MensajeError campo="codigo" errores={err} />
-            </div>
-            <div className="col-span-3">
-              <label htmlFor="acabadoCodigo" className="mb-1 block text-sm font-medium">
-                Acabado
-              </label>
-              <select id="acabadoCodigo" name="acabadoCodigo" defaultValue=""
-                className={entrada} style={estilo}>
-                <option value="">Genérico / no aplica</option>
-                {acabados.map((acabado) => (
-                  <option key={acabado.codigo} value={acabado.codigo}>
-                    {acabado.codigo} · {acabado.descripcion}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </>
-        )}
+      {tipo === 'CERRAMIENTO' && plantilla && (
+        <>
+          <DisenadorEstructura key={edicion} codigo={plantilla.codigo} anchoMm={anchoMm} altoMm={altoMm}
+            configuracionInicial={configuracion}
+            onConfiguracionChange={setConfiguracion}
+            onDimensionesChange={actualizarDimensiones} />
+          <CamposCerramiento err={err} series={series} acabados={acabados}
+            serie={serie} setSerie={setSerie} />
+        </>
+      )}
 
-        <div className={tipo === 'CERRAMIENTO' ? 'col-span-2' : 'col-span-3'}>
-          <label htmlFor="referencia" className="mb-1 block text-sm font-medium">Ubicación</label>
-          <input {...atributosCampo('referencia', err)} className={entrada}
-            style={{ ...estilo, borderColor: bordeCampo('referencia', err, estilo.borderColor) }}
-            placeholder="SALÓN" />
-          <MensajeError campo="referencia" errores={err} />
-        </div>
+      {tipo === 'ARTICULO' && <CamposArticulo key={edicion} err={err} acabados={acabados} />}
 
-        {tipo === 'CERRAMIENTO' && (
-          <>
-            {/* La serie es prerrequisito: sin ella los perfiles del despiece
-                son genéricos y no hay precio ("Indique Serie primero"). */}
-            <div className="col-span-2">
-              <label htmlFor="serieCodigo" className="mb-1 block text-sm font-medium">Serie</label>
-              <select {...atributosCampo('serieCodigo', err)} defaultValue="" className={entrada}
-                onChange={(e) => setSerie(e.target.value)}
-                style={{ ...estilo, borderColor: bordeCampo('serieCodigo', err, estilo.borderColor) }}>
-                <option value="" disabled>Elegir…</option>
-                {series.map((s) => <option key={s} value={s}>{s}</option>)}
-              </select>
-              <MensajeError campo="serieCodigo" errores={err} />
-            </div>
-
-            {/* Vidrio del acristalamiento (código de familia 050). Sin él, el
-                cristal queda "sin valorar" — el aviso lo dice. */}
-            <div className="col-span-2">
-              <label htmlFor="vidrioCodigo" className="mb-1 block text-sm font-medium">Vidrio</label>
-              <input {...atributosCampo('vidrioCodigo', err)} className={entrada}
-                style={{ ...estilo, borderColor: bordeCampo('vidrioCodigo', err, estilo.borderColor) }}
-                placeholder="V420AGS4" />
-              <MensajeError campo="vidrioCodigo" errores={err} />
-            </div>
-
-            <div className="col-span-2">
-              <label htmlFor="varianteAcristalamiento" className="mb-1 block text-sm font-medium">
-                Acristalamiento
-              </label>
-              <select id="varianteAcristalamiento" name="varianteAcristalamiento"
-                defaultValue="2" className={entrada} style={estilo}>
-                <option value="2">Doble cristal</option>
-                <option value="1">Cristal sencillo</option>
-              </select>
-            </div>
-
-            {/* El coste real depende del acabado; sin él, las piezas con coste
-                distinto por acabado quedan "sin coste" en vez de adivinarse. */}
-            <div className="col-span-2">
-              <label htmlFor="acabadoCodigo" className="mb-1 block text-sm font-medium">Acabado</label>
-              <select id="acabadoCodigo" name="acabadoCodigo" defaultValue="" className={entrada} style={estilo}>
-                <option value="">— sin acabado —</option>
-                {acabados.map((a) => (
-                  <option key={a.codigo} value={a.codigo}>{a.codigo} · {a.descripcion}</option>
-                ))}
-              </select>
-            </div>
-            <div className="col-span-2">
-              <label htmlFor="anchoMm" className="mb-1 block text-sm font-medium">Ancho (mm)</label>
-              <input {...atributosCampo('anchoMm', err)} type="number" value={anchoMm} readOnly
-                className={`cifra ${entrada}`}
-                style={{ ...estilo, borderColor: bordeCampo('anchoMm', err, estilo.borderColor) }} />
-              <MensajeError campo="anchoMm" errores={err} />
-            </div>
-            <div className="col-span-2">
-              <label htmlFor="altoMm" className="mb-1 block text-sm font-medium">Alto (mm)</label>
-              <input {...atributosCampo('altoMm', err)} type="number" value={altoMm} readOnly
-                className={`cifra ${entrada}`}
-                style={{ ...estilo, borderColor: bordeCampo('altoMm', err, estilo.borderColor) }} />
-              <MensajeError campo="altoMm" errores={err} />
-            </div>
-          </>
-        )}
-
-        <div className="col-span-1">
-          <label htmlFor="cantidad" className="mb-1 block text-sm font-medium">Cdad.</label>
-          <input {...atributosCampo('cantidad', err)} type="number" defaultValue={1} min={1} step={1}
-            className={`cifra ${entrada}`}
-            style={{ ...estilo, borderColor: bordeCampo('cantidad', err, estilo.borderColor) }} />
-          <MensajeError campo="cantidad" errores={err} />
-        </div>
-
-        <div className={tipo === 'CERRAMIENTO' ? 'col-span-1' : 'col-span-2'}>
-          <button type="submit" disabled={enviando}
-            className="w-full rounded-md px-4 py-2 text-sm font-medium disabled:opacity-50"
-            style={{ background: 'var(--al-accent)', color: 'var(--al-accent-contrast)' }}>
-            {enviando ? '…' : 'Añadir'}
+      {!enEscaparate && (
+        <div className={`${styles.formActions} mt-4`}>
+          <button type="submit" disabled={enviando} className="al-command-primary disabled:opacity-50">
+            {enviando ? 'Añadiendo…' : 'Aceptar'}
           </button>
+          {(tipo === 'ESTRUCTURA' || tipo === 'CERRAMIENTO') && (
+            <button type="button" className="al-command" onClick={() => setPlantilla(null)}>
+              Cerrar
+            </button>
+          )}
         </div>
-      </div>
-
-      {tipo === 'CERRAMIENTO' && (
-        <fieldset className="mt-4 rounded-md border p-4"
-          style={{ borderColor: 'var(--al-border)' }}>
-          <legend className="px-1 text-sm font-medium">Mano de obra adicional · total de línea</legend>
-          <div className={styles.workFields}>
-            <div>
-              <label htmlFor="horasFabricacion" className="mb-1 block text-sm">Fabricación (h)</label>
-              <input {...atributosCampo('horasFabricacion', err)} type="number" min={0} step="0.01"
-                max={MAXIMO_HORAS} defaultValue={0} className={`cifra ${entrada}`}
-                style={{ ...estilo, borderColor: bordeCampo('horasFabricacion', err, estilo.borderColor) }} />
-              <MensajeError campo="horasFabricacion" errores={err} />
-            </div>
-            <div>
-              <label htmlFor="horasColocacion" className="mb-1 block text-sm">Colocación (h)</label>
-              <input {...atributosCampo('horasColocacion', err)} type="number" min={0} step="0.01"
-                max={MAXIMO_HORAS} defaultValue={0} className={`cifra ${entrada}`}
-                style={{ ...estilo, borderColor: bordeCampo('horasColocacion', err, estilo.borderColor) }} />
-              <MensajeError campo="horasColocacion" errores={err} />
-            </div>
-          </div>
-        </fieldset>
       )}
     </form>
   )
@@ -244,14 +163,10 @@ export function BotonBorrarLinea({
 }: { lineaId: string; presupuestoId: string }) {
   const [borrando, setBorrando] = useState(false)
   return (
-    <button
-      type="button"
-      disabled={borrando}
+    <button type="button" disabled={borrando}
       onClick={async () => { setBorrando(true); await borrarLinea(lineaId, presupuestoId) }}
-      className="text-xs disabled:opacity-40"
-      style={{ color: 'var(--al-error)' }}
-      aria-label="Eliminar línea"
-    >
+      className="text-xs disabled:opacity-40" style={{ color: 'var(--al-error)' }}
+      aria-label="Eliminar línea">
       {borrando ? '…' : 'Eliminar'}
     </button>
   )

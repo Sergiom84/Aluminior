@@ -1,4 +1,6 @@
 export * from './codigo.ts'
 export * from './diseno.ts'
 export * from './cerramiento.ts'
+export * from './escaparate.ts'
+export * from './descripcion-linea.ts'
 export * from './resultado-cerramiento/index.ts'

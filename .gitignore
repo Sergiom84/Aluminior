@@ -46,6 +46,8 @@ appsettings.*.local.json
 **/.env.*
 !.env.example
 !**/.env.example
+# Copia local sin punto; contiene secretos. No versionar.
+/env
 
 # --- Build / entorno ---
 bin/

@@ -55,7 +55,7 @@
 
 .budgetTable {
   width: 100%;
-  min-width: 760px;
+  min-width: 980px;
 }
 
 .partsTable {
@@ -65,7 +65,7 @@
 
 @media (max-width: 620px) {
   .detailHeader {
-    margin-bottom: 1rem;
+    margin-bottom: 0;
   }
 
   .headerRow {

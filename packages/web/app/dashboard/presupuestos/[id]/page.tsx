@@ -11,6 +11,7 @@ import { Shell } from '../../_components/shell.tsx'
 import { AnyadirLinea } from './_components/anyadir-linea.tsx'
 import { LineaPresupuesto } from './_components/linea-presupuesto.tsx'
 import type { DatosEdicionCerramiento } from './_components/editar-cerramiento.tsx'
+import { PestanasDocumento, PestanasFicha } from '../_components/pestanas-documento.tsx'
 import { referenciaPresupuesto } from '../_lib/identidad-documento.ts'
 import styles from './presupuesto-movil.module.css'
 
@@ -75,77 +76,90 @@ export default async function DetallePresupuesto({ params }: { params: Promise<{
   const incompleto = presupuestoIncompleto(lineas)
   const p = presupuesto
 
+  const destinatario = resolverDestinatarioPresupuesto({
+    clienteNombre: cliente?.nombre, potencialNombre: potencial?.nombre, nombreLibre: presupuesto.nombreLibre,
+  })
+
   return (
     <Shell moduloActivo="presupuestos">
-      <div className={`${styles.detailHeader} mb-6`}>
-        <Link href="/dashboard/presupuestos" className="text-sm" style={{ color: 'var(--al-accent)' }}>
-          ← Volver a presupuestos
-        </Link>
-        <div className={`${styles.headerRow} mt-3`}>
-          <h2 className="text-2xl font-semibold">Presupuesto <span className="cifra">
-            {referenciaPresupuesto(p.numero, p.revision)}
-          </span></h2>
-          <span className="rounded px-2 py-0.5 text-xs uppercase tracking-wide"
-            style={{ background: 'var(--al-accent-soft)', color: 'var(--al-accent-strong)' }}>{presupuesto.estado}</span>
+      <section className="al-document-window" aria-labelledby="titulo-presupuesto">
+        <header className={`${styles.detailHeader} al-document-heading`}>
+          <h2 id="titulo-presupuesto">Presupuestos de Clientes. Detalle</h2>
+        </header>
+
+        <div className="al-commandbar" aria-label="Acciones del presupuesto">
+          <Link href="/dashboard/presupuestos" className="al-command-primary" title="Grabar datos (F9)">
+            Aceptar
+          </Link>
+          <Link href="/dashboard/presupuestos" className="al-command">Cerrar</Link>
           <a href={`/dashboard/presupuestos/${id}/pdf`} target="_blank" rel="noopener"
-            className={`${styles.pdfAction} rounded border px-3 py-1 text-sm`}
-            style={{ borderColor: 'var(--al-border)', color: 'var(--al-accent)' }}>PDF</a>
+            className={`${styles.pdfAction} al-command`}>Emitir</a>
+          <span className="al-status" data-status={presupuesto.estado}>{presupuesto.estado}</span>
         </div>
-        <div className="mt-1 flex flex-wrap gap-4 text-sm" style={{ color: 'var(--al-text-muted)' }}>
-          <span>{resolverDestinatarioPresupuesto({ clienteNombre: cliente?.nombre, potencialNombre: potencial?.nombre, nombreLibre: presupuesto.nombreLibre })}</span>
-          {presupuesto.obraTexto && <span>Obra: {presupuesto.obraTexto}</span>}
+
+        <div className={`${styles.headerRow} al-ficha-meta`}>
+          <span>Nº <strong className="cifra">{referenciaPresupuesto(p.numero, p.revision)}</strong></span>
+          <span>Fecha {presupuesto.fecha ? new Date(presupuesto.fecha).toLocaleDateString('es-ES') : '—'}</span>
+          <span>Serie {presupuesto.serie}</span>
           <span>Tarifa {presupuesto.tarifa}</span>
-          <span>{presupuesto.fecha ? new Date(presupuesto.fecha).toLocaleDateString('es-ES') : ''}</span>
+          <span>{destinatario}</span>
+          {presupuesto.obraTexto && <span>Obra: {presupuesto.obraTexto}</span>}
         </div>
-      </div>
-      {p.estado === 'PENDIENTE' && <EditarCabecera datos={{ presupuestoId: id, clienteCodigo: p.clienteCodigo,
-        clienteNombre: cliente?.nombre ?? null, potencialCodigo: p.potencialCodigo, nombreLibre: p.nombreLibre,
-        obraTexto: p.obraTexto, formaPago: p.formaPago, observaciones: p.observaciones }} />}
-      <div className="mb-6">
-        <AnyadirLinea presupuestoId={id} series={series.map((serie) => serie.codigo)} acabados={acabados} />
-      </div>
-      <div className={`${styles.tableScroll} rounded-lg border`} tabIndex={0}
-        aria-label="Líneas del presupuesto, tabla desplazable"
-        style={{ background: 'var(--al-surface)', borderColor: 'var(--al-border)' }}>
-        <table className={`${styles.budgetTable} text-sm`}>
-          <thead><tr style={{ background: 'var(--al-surface-muted)' }}>
-            {['#', 'Descripción', 'Ubicación', 'Medidas', 'Cdad.', 'Precio', 'Total', ''].map((titulo, indice) => (
-              <th key={titulo + indice} className="border-b px-3 py-2.5 font-medium" style={{
-                borderColor: 'var(--al-border)', color: 'var(--al-text-muted)',
-                textAlign: indice >= 4 && indice <= 6 ? 'right' : 'left',
-              }}>{titulo}</th>
+
+        {p.estado === 'PENDIENTE' && <div className="al-ficha-edit">
+          <EditarCabecera datos={{ presupuestoId: id, clienteCodigo: p.clienteCodigo,
+            clienteNombre: cliente?.nombre ?? null, potencialCodigo: p.potencialCodigo, nombreLibre: p.nombreLibre,
+            obraTexto: p.obraTexto, formaPago: p.formaPago, observaciones: p.observaciones }} />
+        </div>}
+
+        {p.estado === 'PENDIENTE' && (
+          <AnyadirLinea presupuestoId={id} series={series.map((serie) => serie.codigo)} acabados={acabados} />
+        )}
+
+        <div className={`${styles.tableScroll} al-ficha-lines`} tabIndex={0}
+          aria-label="Líneas del presupuesto, tabla desplazable">
+          <table className={`${styles.budgetTable} text-sm`}>
+            <thead><tr>
+              {['Artículo', 'Descripción', 'Referencia', 'Acabado', 'Cdad.', 'Ancho(mm)', 'Alto(mm)', 'Precio', 'Dto', 'Total', 'Dibujo', ''].map((titulo, indice) => (
+                <th key={titulo + indice} className="border-b px-3 py-2.5 font-medium" style={{
+                  borderColor: 'var(--al-border)', color: 'var(--al-text-muted)',
+                  textAlign: indice >= 4 && indice <= 9 ? 'right' : 'left',
+                }}>{titulo}</th>
+              ))}
+            </tr></thead>
+            <tbody>{lineas.length === 0 ? (
+              <tr><td colSpan={12} className="px-4 py-10 text-center" style={{ color: 'var(--al-text-muted)' }}>
+                Todavía no hay líneas. Elige una estructura en el escaparate.
+              </td></tr>
+            ) : lineas.map((linea) => (
+              <LineaPresupuesto key={linea.id} linea={linea} presupuestoId={id} articuloEditable={p.estado === 'PENDIENTE'}
+                resultado={resultadosPorLinea.get(linea.id) ?? null}
+                manoObra={manoObra.filter(f => f.lineaId === linea.id)}
+                despiece={piezasPorLinea.get(linea.id) ?? []} edicion={edicionPorLinea.get(linea.id) ?? null}
+                series={series.map((serie) => serie.codigo)} acabados={acabados} />
+            ))}</tbody>
+          </table>
+        </div>
+
+        <div className="al-ficha-totals">
+          <dl className={`${styles.totals} w-72 text-sm`}>
+            {[['Base imponible', presupuesto.baseImponible], [`IVA ${Number(presupuesto.tipoIva)}%`, presupuesto.cuotaIva]].map(([etiqueta, importe]) => (
+              <div key={etiqueta} className="flex justify-between py-1">
+                <dt style={{ color: 'var(--al-text-muted)' }}>{etiqueta}</dt>
+                <dd className="cifra">{incompleto ? 'sin valorar' : eur.format(Number(importe))}</dd>
+              </div>
             ))}
-          </tr></thead>
-          <tbody>{lineas.length === 0 ? (
-            <tr><td colSpan={8} className="px-4 py-10 text-center" style={{ color: 'var(--al-text-muted)' }}>
-              Todavía no hay líneas. Añade la primera arriba.
-            </td></tr>
-          ) : lineas.map((linea) => (
-            <LineaPresupuesto key={linea.id} linea={linea} presupuestoId={id} articuloEditable={p.estado === 'PENDIENTE'}
-              resultado={resultadosPorLinea.get(linea.id) ?? null}
-              manoObra={manoObra.filter(f => f.lineaId === linea.id)}
-              despiece={piezasPorLinea.get(linea.id) ?? []} edicion={edicionPorLinea.get(linea.id) ?? null}
-              series={series.map((serie) => serie.codigo)} acabados={acabados} />
-          ))}</tbody>
-        </table>
-      </div>
-      <div className="mt-5 flex justify-end">
-        <dl className={`${styles.totals} w-72 rounded-lg border p-4 text-sm`}
-          style={{ background: 'var(--al-surface)', borderColor: 'var(--al-border)' }}>
-          {[['Base imponible', presupuesto.baseImponible], [`IVA ${Number(presupuesto.tipoIva)}%`, presupuesto.cuotaIva]].map(([etiqueta, importe]) => (
-            <div key={etiqueta} className="flex justify-between py-1">
-              <dt style={{ color: 'var(--al-text-muted)' }}>{etiqueta}</dt>
-              <dd className="cifra">{incompleto ? 'sin valorar' : eur.format(Number(importe))}</dd>
+            <div className="mt-2 flex justify-between border-t pt-2 text-base font-semibold" style={{ borderColor: 'var(--al-border)' }}>
+              <dt>Total</dt><dd className="cifra">{incompleto ? 'sin valorar' : eur.format(Number(presupuesto.total))}</dd>
             </div>
-          ))}
-          <div className="mt-2 flex justify-between border-t pt-2 text-base font-semibold" style={{ borderColor: 'var(--al-border)' }}>
-            <dt>Total</dt><dd className="cifra">{incompleto ? 'sin valorar' : eur.format(Number(presupuesto.total))}</dd>
-          </div>
-          {incompleto && <p className="mt-2 text-xs" style={{ color: 'var(--al-warn)' }}>
-            Hay líneas con cálculo pendiente. El presupuesto no tiene un total válido.
-          </p>}
-        </dl>
-      </div>
+            {incompleto && <p className="mt-2 text-xs" style={{ color: 'var(--al-warn)' }}>
+              Hay líneas con cálculo pendiente. El presupuesto no tiene un total válido.
+            </p>}
+          </dl>
+        </div>
+        <PestanasFicha />
+        <PestanasDocumento vista="ficha" fichaHref={`/dashboard/presupuestos/${id}`} />
+      </section>
     </Shell>
   )
 }

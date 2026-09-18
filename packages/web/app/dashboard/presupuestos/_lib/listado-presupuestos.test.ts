@@ -28,9 +28,17 @@ describe('lista de presupuestos', () => {
 
   it('no aplica acciones globales a la primera fila y ofrece acciones inequívocas por fila', () => {
     const pagina = readFileSync(new URL('../page.tsx', import.meta.url), 'utf8')
+    const lista = readFileSync(new URL('../_components/lista-presupuestos.tsx', import.meta.url), 'utf8')
 
     expect(pagina).not.toContain('const presupuestoActivo = filas[0]')
-    expect(pagina).toContain('href={`/dashboard/presupuestos/${p.id}/pdf`}')
-    expect(pagina).toContain('<CopiarRevisionBoton presupuestoId={p.id}')
+    expect(lista).not.toContain('filas[0]')
+    expect(lista).toContain('href={`/dashboard/presupuestos/${p.id}/pdf`}')
+    expect(lista).toContain('<CopiarRevisionBoton presupuestoId={p.id}')
+  })
+
+  it('opera sobre la fila seleccionada, no sobre la primera', () => {
+    const lista = readFileSync(new URL('../_components/lista-presupuestos.tsx', import.meta.url), 'utf8')
+    expect(lista).toContain('aria-selected={seleccionado === p.id}')
+    expect(lista).toContain('disabled={!activo}')
   })
 })
