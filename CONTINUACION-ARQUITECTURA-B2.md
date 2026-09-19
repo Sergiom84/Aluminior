@@ -79,3 +79,10 @@ geometría física/render/fórmulas. Sigue autorizado únicamente a corregir el
 informe. Falta revisar su commit de corrección final. No hay encargo de código,
 porque siguen pendientes segunda medida, edición, límite y persistencia.
 No se han hecho cargas, cambios de código, activaciones, push ni merge a main.
+
+Revisión documental terminada: Sol bd9dc05 revisado, diff --check correcto y
+worktree limpio. Informe integrado en feature como 0dc0ffb + 3644248; solo
+PREPARACION-TECNICA-COTAS-B2.md. Ningún código implementado. La base del worktree
+Sol conserva su informe y se actualizará al concretar el encargo de código.
+Bloqueo actual: respuesta del usuario sobre Nuevo Documento; no hay alta nueva
+confirmada ni segunda medida observada. Estado feature: solo env.example ajeno.
