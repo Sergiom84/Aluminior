@@ -1,5 +1,6 @@
 import {
-  distribuirComposicion, esConfiguracionCerramiento, medidasCerramiento, plantillaDiseno,
+  distribuirComposicion, esConfiguracionCerramiento, geometriaAperturaVisual,
+  medidasCerramiento, plantillaDiseno,
   type AperturaVisual, type ConfiguracionCerramiento, type RectVisual,
 } from '@aluminior/core/estructuras'
 
@@ -43,14 +44,39 @@ export function geometriaCerramientoPdf(configuracion: ConfiguracionCerramiento,
 
 /** Mismo sentido de los triángulos del diseñador; sólo cambia la primitiva SVG. */
 export function trazosAperturaPdf(apertura: AperturaVisual, rect: RectVisual): string[] {
-  if (apertura === 'fijo') return []
-  const { x, y, ancho: w, alto: h } = rect
-  const derecha = apertura.endsWith('derecha')
-  const bisagra = derecha ? x : x + w
-  const cierre = derecha ? x + w : x
-  const trazos = [`M ${bisagra} ${y} L ${cierre} ${y + h / 2} L ${bisagra} ${y + h}`]
-  if (apertura.startsWith('oscilobatiente')) {
-    trazos.push(`M ${x} ${y + h} L ${x + w / 2} ${y} L ${x + w} ${y + h}`)
-  }
-  return trazos
+  const geometria = geometriaAperturaVisual(apertura, rect)
+  return geometria?.trazos.map((trazo) => trazo
+    .map((punto, indice) => `${indice === 0 ? 'M' : 'L'} ${punto.x} ${punto.y}`)
+    .join(' ')) ?? []
+}
+
+/** Accesorios gráficos acotados al rectángulo de hoja; no son cotas de fabricación. */
+export function geometriaHerrajesPdf(
+  apertura: AperturaVisual,
+  manilla: boolean,
+  rect: RectVisual,
+): { bisagras: readonly [RectVisual, RectVisual]; manilla: RectVisual | null } | null {
+  const geometria = geometriaAperturaVisual(apertura, rect)
+  if (!geometria) return null
+  const margenMarco = Math.min(3, rect.ancho / 6, rect.alto / 6)
+  const anchoHerraje = Math.min(1.8, margenMarco)
+  const altoBisagra = Math.min(8, rect.alto / 8)
+  const margenVertical = Math.min(6, rect.alto / 6)
+  const limitarX = (centro: number) => Math.max(rect.x, Math.min(
+    rect.x + rect.ancho - anchoHerraje, centro - anchoHerraje / 2,
+  ))
+  const xBisagra = limitarX(geometria.xBisagras)
+  const bisagras: [RectVisual, RectVisual] = [
+    { x: xBisagra, y: rect.y + margenVertical, ancho: anchoHerraje, alto: altoBisagra },
+    { x: xBisagra, y: rect.y + rect.alto - margenVertical - altoBisagra,
+      ancho: anchoHerraje, alto: altoBisagra },
+  ]
+  if (!manilla) return { bisagras, manilla: null }
+  const altoManilla = Math.min(10, rect.alto / 4)
+  const xCentroManilla = geometria.ladoCierre === 'izquierda'
+    ? rect.x + margenMarco / 2 : rect.x + rect.ancho - margenMarco / 2
+  return { bisagras, manilla: {
+    x: limitarX(xCentroManilla), y: rect.y + (rect.alto - altoManilla) / 2,
+    ancho: anchoHerraje, alto: altoManilla,
+  } }
 }

@@ -18,6 +18,8 @@ export interface HuecoVisual {
   tipo: 'hueco'
   id: string
   apertura: AperturaVisual
+  /** Por defecto, toda hoja móvil conserva manilla y un fijo no la tiene. */
+  manilla?: boolean
 }
 
 export interface HijoVisual {
@@ -52,8 +54,8 @@ export interface PlantillaDiseno {
   composicion: NodoVisual
 }
 
-const hueco = (id: string, apertura: AperturaVisual): HuecoVisual => ({
-  tipo: 'hueco', id, apertura,
+const hueco = (id: string, apertura: AperturaVisual, manilla?: boolean): HuecoVisual => ({
+  tipo: 'hueco', id, apertura, ...(manilla === undefined ? {} : { manilla }),
 })
 
 const division = (
@@ -119,16 +121,16 @@ export const PLANTILLAS_DISENO: readonly PlantillaDiseno[] = [
     codigo: '2', descripcion: 'VENTANA ABATIBLE DE DOS HOJAS', familia: 'VENTANAS ABATIBLES', familiaCodigo: '003',
     anchoMm: 1200, altoMm: 1200,
     composicion: division('division-hojas', 'vertical', 'division-invisible', [
-      hijo(hueco('hoja-1', 'abatible-derecha')),
-      hijo(hueco('hoja-2', 'abatible-izquierda')),
+      hijo(hueco('hoja-1', 'abatible-izquierda', false)),
+      hijo(hueco('hoja-2', 'abatible-derecha', true)),
     ]),
   },
   {
     codigo: '2O', descripcion: 'VENTANA ABATIBLE DE DOS HOJAS, UNA OSCILOBATIENTE', familiaCodigo: '020',
     familia: 'OSCILOBATIENTES', anchoMm: 1200, altoMm: 1200,
     composicion: division('division-hojas', 'vertical', 'division-invisible', [
-      hijo(hueco('hoja-1', 'abatible-derecha')),
-      hijo(hueco('hoja-2', 'oscilobatiente-izquierda')),
+      hijo(hueco('hoja-1', 'abatible-izquierda', false)),
+      hijo(hueco('hoja-2', 'oscilobatiente-derecha', true)),
     ]),
   },
   {
@@ -152,7 +154,7 @@ export const PLANTILLAS_DISENO: readonly PlantillaDiseno[] = [
     familia: 'COMBINACIONES', anchoMm: 1400, altoMm: 1200,
     composicion: division('travesanos-laterales', 'vertical', 'travesano', [
       hijo(hueco('fijo-izquierdo', 'fijo'), 3),
-      hijo(hueco('hoja-central', 'oscilobatiente-izquierda'), 8),
+      hijo(hueco('hoja-central', 'oscilobatiente-derecha'), 8),
       hijo(hueco('fijo-derecho', 'fijo'), 3),
     ]),
   },
@@ -160,19 +162,19 @@ export const PLANTILLAS_DISENO: readonly PlantillaDiseno[] = [
     codigo: '1O+1F+1O', descripcion: '2 VENTANAS ABATIBLES OSCILO Y UN FIJO', familiaCodigo: '003',
     familia: 'COMBINACIONES', anchoMm: 2100, altoMm: 1200,
     composicion: division('cadena-3', 'vertical', 'division-invisible', [
-      hijo(hueco('hoja-izquierda', 'oscilobatiente-derecha')),
+      hijo(hueco('hoja-izquierda', 'oscilobatiente-izquierda')),
       hijo(hueco('fijo-central', 'fijo')),
-      hijo(hueco('hoja-derecha', 'oscilobatiente-izquierda')),
+      hijo(hueco('hoja-derecha', 'oscilobatiente-derecha')),
     ]),
   },
   {
     codigo: '1O+2F+1O', descripcion: '2 VENTANAS ABATIBLES OSCILO Y 2 FIJOS', familiaCodigo: '003',
     familia: 'COMBINACIONES', anchoMm: 2800, altoMm: 1200,
     composicion: division('cadena-4', 'vertical', 'division-invisible', [
-      hijo(hueco('hoja-izquierda', 'oscilobatiente-derecha')),
+      hijo(hueco('hoja-izquierda', 'oscilobatiente-izquierda')),
       hijo(hueco('fijo-central-1', 'fijo')),
       hijo(hueco('fijo-central-2', 'fijo')),
-      hijo(hueco('hoja-derecha', 'oscilobatiente-izquierda')),
+      hijo(hueco('hoja-derecha', 'oscilobatiente-derecha')),
     ]),
   },
   {
@@ -180,8 +182,8 @@ export const PLANTILLAS_DISENO: readonly PlantillaDiseno[] = [
     familia: 'COMBINACIONES', anchoMm: 1200, altoMm: 1500,
     composicion: division('travesano-fijo-inferior', 'horizontal', 'travesano', [
       hijo(division('encuentro-hojas', 'vertical', 'division-invisible', [
-        hijo(hueco('hoja-izquierda', 'oscilobatiente-derecha')),
-        hijo(hueco('hoja-derecha', 'oscilobatiente-izquierda')),
+        hijo(hueco('hoja-izquierda', 'abatible-izquierda', false)),
+        hijo(hueco('hoja-derecha', 'oscilobatiente-derecha', true)),
       ]), 4),
       hijo(hueco('fijo-inferior', 'fijo'), 1),
     ]),
@@ -211,6 +213,7 @@ export interface HuecoColocado extends RectVisual {
   tipo: 'hueco'
   id: string
   apertura: AperturaVisual
+  manilla: boolean
 }
 
 export interface SeparadorColocado extends RectVisual {
@@ -231,7 +234,9 @@ export function distribuirComposicion(
   rect: RectVisual,
   grosorSeparador = 12,
 ): ElementoColocado[] {
-  if (nodo.tipo === 'hueco') return [{ ...rect, ...nodo }]
+  if (nodo.tipo === 'hueco') return [{
+    ...rect, ...nodo, manilla: nodo.apertura !== 'fijo' && (nodo.manilla ?? true),
+  }]
   if (nodo.hijos.length === 0) return []
 
   const grosor = nodo.separador === 'division-invisible' ? 2 : grosorSeparador

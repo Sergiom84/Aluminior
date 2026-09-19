@@ -56,6 +56,28 @@ describe('generador conservador de candidatas visuales', () => {
     expect(generarPlantillaCatalogo(e)).toMatchObject({ estado: 'pendiente', motivos: ['tipo de hoja 999/0'] })
   })
 
+  it.each([
+    [7, ['abatible-izquierda', 'abatible-derecha']],
+    [8, ['abatible-izquierda', 'oscilobatiente-derecha']],
+  ] as const)('etiqueta el par experimental tipo %s con bisagras exteriores sin deducir manillas',
+    (tipoHoja, aperturas) => {
+      const e = entrada([
+        nodo(0, 1, -1),
+        nodo(1, 6, 0, { division: 1, travesano: 'VI', invisible: true, equidistantes: 2 }),
+        nodo(2, 2, 0, { division: 1, posicion: 1 }),
+        nodo(3, 2, 0, { division: 1, posicion: 2 }),
+        nodo(4, 3, 2, { hoja: tipoHoja, numeroHoja: 1 }), nodo(5, 5, 4),
+        nodo(6, 3, 3, { hoja: tipoHoja, numeroHoja: 2 }), nodo(7, 5, 6),
+      ])
+      const resultado = generarPlantillaCatalogo(e)
+      expect(resultado.estado).toBe('dibujable')
+      if (resultado.estado !== 'dibujable' || resultado.plantilla.composicion.tipo !== 'division') return
+      expect(resultado.plantilla.composicion.hijos.map((hijo) => {
+        if (hijo.nodo.tipo !== 'hueco') throw new Error('Se esperaba hueco')
+        return [hijo.nodo.apertura, hijo.nodo.manilla]
+      })).toEqual(aperturas.map((apertura) => [apertura, undefined]))
+    })
+
   it('rechaza IDs duplicados, nodos huérfanos y cotas imposibles', () => {
     const e = dividido()
     expect(generarPlantillaCatalogo({ ...e, nodos: [...e.nodos, e.nodos[0]] }))

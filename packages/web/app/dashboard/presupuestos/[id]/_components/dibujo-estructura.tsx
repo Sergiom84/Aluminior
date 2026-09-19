@@ -1,7 +1,8 @@
 'use client'
 
 import {
-  distribuirComposicion, type AperturaVisual, type ClaseSeparador, type PlantillaDiseno,
+  distribuirComposicion, geometriaAperturaVisual,
+  type AperturaVisual, type ClaseSeparador, type PlantillaDiseno,
 } from '@aluminior/core/estructuras'
 
 export type ParteVisual = 'marco' | 'hoja' | 'vidrio' | 'travesano' | 'union'
@@ -58,7 +59,7 @@ export function DibujoEstructura({
               w={Math.max(3, w - marco * 2)} h={Math.max(3, h - marco * 2)} />
             {!esFijo && !compacto && (
               <>
-                <Tirador apertura={hueco.apertura} x={x} y={y} w={w} h={h} />
+                {hueco.manilla && <Tirador apertura={hueco.apertura} x={x} y={y} w={w} h={h} />}
                 <Bisagras apertura={hueco.apertura} x={x} y={y} w={w} h={h} />
               </>
             )}
@@ -119,19 +120,14 @@ function Vidrio({ x, y, w, h, seleccionado, onClick }: {
 function SimboloApertura({ apertura, x, y, w, h }: {
   apertura: AperturaVisual; x: number; y: number; w: number; h: number
 }) {
-  if (apertura === 'fijo') return null
-  const derecha = apertura.endsWith('derecha')
-  const bisagraX = derecha ? x : x + w
-  const cierreX = derecha ? x + w : x
-  const oscilo = apertura.startsWith('oscilobatiente')
+  const geometria = geometriaAperturaVisual(apertura, { x, y, ancho: w, alto: h })
+  if (!geometria) return null
+  const ruta = (puntos: readonly { x: number; y: number }[]) =>
+    puntos.map((punto, indice) => `${indice === 0 ? 'M' : 'L'} ${punto.x} ${punto.y}`).join(' ')
   return (
     <g pointerEvents="none">
-      <path d={`M ${bisagraX} ${y} L ${cierreX} ${y + h / 2} L ${bisagraX} ${y + h}`}
-        className="al-opening-line" />
-      {oscilo && (
-        <path d={`M ${x} ${y + h} L ${x + w / 2} ${y} L ${x + w} ${y + h}`}
-          className="al-opening-line al-opening-tilt" />
-      )}
+      {geometria.trazos.map((trazo, indice) => <path key={indice} d={ruta(trazo)}
+        className={`al-opening-line${indice === 1 ? ' al-opening-tilt' : ''}`} />)}
     </g>
   )
 }
@@ -139,7 +135,9 @@ function SimboloApertura({ apertura, x, y, w, h }: {
 function Tirador({ apertura, x, y, w, h }: {
   apertura: AperturaVisual; x: number; y: number; w: number; h: number
 }) {
-  const derecha = apertura.endsWith('derecha')
+  const geometria = geometriaAperturaVisual(apertura, { x, y, ancho: w, alto: h })
+  if (!geometria) return null
+  const derecha = geometria.ladoCierre === 'derecha'
   const tx = derecha ? x + w - 12 : x + 12
   return (
     <g className="al-handle" pointerEvents="none">
@@ -152,8 +150,9 @@ function Tirador({ apertura, x, y, w, h }: {
 function Bisagras({ apertura, x, y, w, h }: {
   apertura: AperturaVisual; x: number; y: number; w: number; h: number
 }) {
-  const derecha = apertura.endsWith('derecha')
-  const bx = derecha ? x - 3 : x + w - 3
+  const geometria = geometriaAperturaVisual(apertura, { x, y, ancho: w, alto: h })
+  if (!geometria) return null
+  const bx = geometria.xBisagras - 3
   return (
     <g className="al-hinge" pointerEvents="none">
       <rect x={bx} y={y + 24} width={6} height={30} rx={2} />

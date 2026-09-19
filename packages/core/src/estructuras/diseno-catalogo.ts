@@ -34,11 +34,11 @@ export type ResultadoPlantilla =
 function apertura(nodo: NodoCatalogo): AperturaVisual | null {
   if (nodo.hoja === 5) return 'oscilobatiente-derecha'
   if (nodo.hoja === 6) return 'oscilobatiente-izquierda'
-  // Equivalencia experimental con las etiquetas del golden 2/2O, NO con mano
-  // física: el renderer actual invierte bisagras. Auditar antes de activar.
-  if ([7, 8].includes(nodo.hoja) && nodo.numeroHoja === 1) return 'abatible-derecha'
-  if (nodo.hoja === 7 && nodo.numeroHoja === 2) return 'abatible-izquierda'
-  if (nodo.hoja === 8 && nodo.numeroHoja === 2) return 'oscilobatiente-izquierda'
+  // Pares experimentales: etiquetas físicas con bisagras exteriores. La
+  // presencia de manilla no se infiere aquí porque aún no está observada.
+  if ([7, 8].includes(nodo.hoja) && nodo.numeroHoja === 1) return 'abatible-izquierda'
+  if (nodo.hoja === 7 && nodo.numeroHoja === 2) return 'abatible-derecha'
+  if (nodo.hoja === 8 && nodo.numeroHoja === 2) return 'oscilobatiente-derecha'
   return null
 }
 

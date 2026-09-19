@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import type { ConfiguracionCerramiento } from '@aluminior/core/estructuras'
-import { geometriaCerramientoPdf, trazosAperturaPdf } from './geometria-cerramiento'
+import {
+  geometriaCerramientoPdf, geometriaHerrajesPdf, trazosAperturaPdf,
+} from './geometria-cerramiento'
 
 const configuracion = (primero = 1200): ConfiguracionCerramiento => ({ version: 1,
   modulos: [
@@ -72,13 +74,44 @@ describe('símbolos con coordenadas declaradas y sentido del diseñador', () => 
   const rect = { x: 10, y: 20, ancho: 100, alto: 200 }
   it('fijo sin símbolo', () => expect(trazosAperturaPdf('fijo', rect)).toEqual([]))
   it('abatible derecha', () => expect(trazosAperturaPdf('abatible-derecha', rect))
-    .toEqual(['M 10 20 L 110 120 L 10 220']))
-  it('abatible izquierda', () => expect(trazosAperturaPdf('abatible-izquierda', rect))
     .toEqual(['M 110 20 L 10 120 L 110 220']))
+  it('abatible izquierda', () => expect(trazosAperturaPdf('abatible-izquierda', rect))
+    .toEqual(['M 10 20 L 110 120 L 10 220']))
   it.each(['izquierda', 'derecha'] as const)('oscilo %s añade triángulo vertical', (mano) => {
     expect(trazosAperturaPdf(`oscilobatiente-${mano}`, rect)).toEqual([
-      mano === 'derecha' ? 'M 10 20 L 110 120 L 10 220' : 'M 110 20 L 10 120 L 110 220',
+      mano === 'derecha' ? 'M 110 20 L 10 120 L 110 220' : 'M 10 20 L 110 120 L 10 220',
       'M 10 220 L 60 20 L 110 220',
     ])
+  })
+
+  it('sitúa bisagras y manilla en lados contrarios dentro del rectángulo de hoja', () => {
+    const herrajes = geometriaHerrajesPdf('oscilobatiente-derecha', true, rect)!
+    expect(herrajes.bisagras.map((bisagra) => bisagra.x)).toEqual([108.2, 108.2])
+    expect(herrajes.manilla?.x).toBe(10.6)
+    for (const accesorio of [...herrajes.bisagras, herrajes.manilla!]) {
+      expect(accesorio.x).toBeGreaterThanOrEqual(rect.x)
+      expect(accesorio.y).toBeGreaterThanOrEqual(rect.y)
+      expect(accesorio.x + accesorio.ancho).toBeLessThanOrEqual(rect.x + rect.ancho)
+      expect(accesorio.y + accesorio.alto).toBeLessThanOrEqual(rect.y + rect.alto)
+    }
+  })
+
+  it.each(['izquierda', 'derecha'] as const)('mantiene manilla %s fuera del vidrio', (mano) => {
+    const herrajes = geometriaHerrajesPdf(`abatible-${mano}`, true, rect)!
+    const vidrio = { x1: rect.x + 3, x2: rect.x + rect.ancho - 3 }
+    const manilla = herrajes.manilla!
+    expect(manilla.x + manilla.ancho <= vidrio.x1 || manilla.x >= vidrio.x2).toBe(true)
+  })
+
+  it('reduce herrajes en huecos mínimos sin desbordar y respeta ausencia de manilla', () => {
+    const pequeno = { x: 2, y: 3, ancho: 4, alto: 5 }
+    const herrajes = geometriaHerrajesPdf('abatible-izquierda', false, pequeno)!
+    expect(herrajes.manilla).toBeNull()
+    for (const bisagra of herrajes.bisagras) {
+      expect(bisagra.x).toBeGreaterThanOrEqual(pequeno.x)
+      expect(bisagra.y).toBeGreaterThanOrEqual(pequeno.y)
+      expect(bisagra.x + bisagra.ancho).toBeLessThanOrEqual(pequeno.x + pequeno.ancho)
+      expect(bisagra.y + bisagra.alto).toBeLessThanOrEqual(pequeno.y + pequeno.alto)
+    }
   })
 })

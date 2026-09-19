@@ -1,11 +1,28 @@
 import React from 'react'
 import { G, Path, Rect, Svg, Text, View } from '@react-pdf/renderer'
-import type { ConfiguracionCerramiento, RectVisual } from '@aluminior/core/estructuras'
-import { geometriaCerramientoPdf, trazosAperturaPdf } from './geometria-cerramiento'
+import {
+  type AperturaVisual, type ConfiguracionCerramiento, type RectVisual,
+} from '@aluminior/core/estructuras'
+import {
+  geometriaCerramientoPdf, geometriaHerrajesPdf, trazosAperturaPdf,
+} from './geometria-cerramiento'
 
 function Rectangulo({ rect, fill }: { rect: RectVisual; fill: string }) {
   return <Rect x={rect.x} y={rect.y} width={rect.ancho} height={rect.alto}
     fill={fill} stroke="#334155" strokeWidth={0.45} />
+}
+
+function HerrajesPdf({ apertura, manilla, rect }: {
+  apertura: AperturaVisual; manilla: boolean; rect: RectVisual
+}) {
+  const geometria = geometriaHerrajesPdf(apertura, manilla, rect)
+  if (!geometria) return null
+  return <G>
+    {geometria.bisagras.map((bisagra, indice) => <Rect key={indice}
+      x={bisagra.x} y={bisagra.y} width={bisagra.ancho} height={bisagra.alto} fill="#334155" />)}
+    {geometria.manilla && <Rect x={geometria.manilla.x} y={geometria.manilla.y}
+      width={geometria.manilla.ancho} height={geometria.manilla.alto} fill="#334155" />}
+  </G>
 }
 
 /** Bloque indivisible y acotado; recibe la configuración validada de la misma revisión. */
@@ -30,6 +47,7 @@ export function DibujoCerramientoPdf({ configuracion, ancho = 240, alto = 150 }:
             {trazosAperturaPdf(elemento.apertura, vidrio).map((d, indice) =>
               <Path key={indice} d={d} fill="none" stroke="#475569" strokeWidth={0.55}
                 strokeDasharray={indice === 1 ? '2 2' : undefined} />)}
+            <HerrajesPdf apertura={elemento.apertura} manilla={elemento.manilla} rect={elemento} />
           </G>
         })}
       </G>)}
