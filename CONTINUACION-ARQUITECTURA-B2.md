@@ -59,3 +59,23 @@ CHM extraído bajo C:/Users/laral/AppData/Local/Temp/claude/C--Users-laral-Docum
 propiedades de cotas: 5_1_2_2_1_1_2_4_propiedades_de.htm.
 Los 888 casos siguen pendientes; 3HO no está en ese banco y su herraje histórico
 no demuestra unión de catálogos. Mantener separados dibujo, despiece, precio y uso.
+
+## Continuación B2: observación parcial registrada
+
+Tarea responsable 01a0ba4e-570d-74f2-a0c5-554edccb2608, único controlador del
+escritorio. Commit 4707a5d registra las consultas de 1O2FL y ambas cadenas.
+FI/FD de 1O2FL son dos variables distintas; las cadenas usan travesaños visibles
+con equidistancia 3/4 y ambas hojas Dchas. Ver EVIDENCIA-COTAS-0017.md.
+
+El usuario abrió manualmente 0017 al retomar y se verificó el rótulo. Tras aviso,
+se inició Nuevo Documento sin cliente para segundo tamaño. Aceptar/Return no
+produjeron alta confirmada y Return devolvió timeout. Usuario avisado para
+comprobar si responde/aceptar manualmente. No repetir alta hasta conocer resultado;
+no hay número de presupuesto nuevo confirmado. No se cerró ni reinició Productor.
+
+Sol entregó preparación 37e85dd en su worktree y recibió revisión: ausencia de
+cota no es cero, compatibilidad v1 visual separada de económica y separación
+geometría física/render/fórmulas. Sigue autorizado únicamente a corregir el
+informe. Falta revisar su commit de corrección final. No hay encargo de código,
+porque siguen pendientes segunda medida, edición, límite y persistencia.
+No se han hecho cargas, cambios de código, activaciones, push ni merge a main.
