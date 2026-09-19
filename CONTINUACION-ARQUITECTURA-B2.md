@@ -107,3 +107,29 @@ dentro del presupuesto abierto; no el ciclo completo de cierre del documento.
 Error de opciones pendiente, por lo que no dar precio por validado. Editor
 cerrado sin cambios; 260494 permanece abierto con esa linea. Bateria baja
 notificada al usuario. No hay nuevo bloqueo que autorice reparar instalaciones.
+
+## Estado vigente 19/09/2026 19:03: cierre acotado de 1OFI
+
+Esta actualizacion sustituye expresamente, solo para `1OFI`, los pendientes
+obsoletos de segunda medida, referencia al eje, persistencia completa y consulta
+de cortes indicados en secciones anteriores. No declara B2 terminado.
+
+En empresa `0017` se grabo, cerro y reabrio el presupuesto existente `260494`.
+Productor exigio Forma de Pago y se dejo `01 CONTADO`. El round-trip conserva
+`1OFI` a `900x1800`, `GMA65OPT`, `L33I`, superior `300` e inferior `400`; FI queda
+en `400`. Propiedades confirma `Horizontal (Abajo)`, `Cota Variable`, `FIJO
+INFERIOR`/`FI`, y `GM16197L`. La ayuda confirma que esta cota va del exterior del
+elemento contenedor al eje del travesano; no usa borde de perfil ni la excepcion
+`Fija desde elemento Exterior`.
+
+Se consulto el despiece FI=400: `GM16197L` corta a `856 mm`; vidrios `L33I` de
+`756x1270` y `836x350`; herrajes oscilobatientes y `95` minutos de mano de obra.
+Ver detalle y resto de cortes en `EVIDENCIA-COTAS-0017.md`. Precio visible
+`633,07 EUR` sin IVA, no validado. Una unica aceptacion normal reprodujo el error
+`alVLinOpciones_codEstr.OpcionesSeleccionadas`, `-2146233088`, `SessionFactory`
+invalida/incompleta. No repetir ni reparar instalacion.
+
+Puede pasar a implementacion solo el contrato geometrico, grafico y persistente
+de FI para `1OFI`, con default `300` en altas y override persistido. Deben esperar
+valoracion/despiece calculado, limites inviables y cualquier efecto de `FIJO
+SUPERIOR`. Documento `260494` queda abierto; no se creo otro presupuesto.

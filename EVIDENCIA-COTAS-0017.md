@@ -133,3 +133,55 @@ precio validado o el calculo integro. Reapertura de linea dentro del documento
 abierto confirmada; guardado/cierre/reapertura del presupuesto completo aun no.
 Se cerro el editor sin cambios; presupuesto260494 queda abierto con una linea.
 Windows aviso de bateria baja; se aviso al usuario para enchufar el equipo.
+
+## Cierre de verificacion 1OFI (19/09/2026, 19:03)
+
+Esta seccion sustituye expresamente los pendientes anteriores de segunda medida,
+referencia geometrica, ciclo completo de persistencia y consulta de despiece para
+`1OFI`. No sustituye los pendientes de limites ni valida la valoracion.
+
+- Empresa confirmada: `PRUEBAS ALUMINIOR - 2026 [0017]`. Documento existente
+  `260494`, `PRUEBA COTAS B2`; no se creo otro presupuesto.
+- Para poder grabar, Productor exigio Forma de Pago. Se asigno `01 CONTADO` al
+  documento de prueba. `Aceptar` termino sin error; se cerro solo la ficha, se
+  volvio al listado y se reabrio el mismo `260494`.
+- Tras el ciclo completo se conservaron la unica linea `1OFI`, `900 x 1800`,
+  `GMA65OPT`, `L33I`, `FIJO SUPERIOR=300` y `FIJO INFERIOR=400`. La descripcion
+  persistida tambien contiene ambas variables. El documento queda abierto y el
+  valor final dejado para FI es `400 mm`.
+- En Diseno V3 se selecciono el travesano inferior. Propiedades muestra
+  `Horizontal (Abajo)`, modo activo `Cota Variable`, nombre `FIJO INFERIOR`,
+  simbolo `FI`, `Cota por 400 mm`; Principal muestra `GM16197L`, `PILASTRA 27 MM
+  ALG 65`. Los campos de `Cota Fija` y `Fija desde elemento Exterior` no son el
+  modo activo.
+- La ayuda CHM, apartado `5.1.2.2.1.1.2.4 Propiedades de Travesano`, establece
+  que la cota ordinaria se mide desde el exterior del elemento que contiene el
+  travesano hasta el eje del travesano. `Cota Variable` hereda la regla de `Cota
+  Fija`. La opcion separada `Fija desde elemento Exterior` cambia el origen al
+  elemento mas exterior y no esta seleccionada en `1OFI`. Por tanto FI=400 es
+  exterior inferior del marco contenedor a eje del travesano; no es borde de
+  perfil ni grosor deducido del dibujo.
+- El detalle de estructura de la configuracion FI=400 estuvo disponible. Datos
+  relevantes: `GM16197L` una unidad, corte `856 mm`; perfiles de hoja `GM16064L`
+  con cortes `858` y `1372 mm`; cerco `GM16068L` con cortes `900` y `1800 mm`;
+  junquillos `GM8627` con cortes `316`, `766`, `846` y `1236 mm`.
+- Vidrio `L33I`: una pieza de corte `756 x 1270 mm` y otra de `836 x 350 mm`.
+- Herrajes destacados: `GM5147` manilla NP ALUGOM, `GM5416` kit oscilobatiente
+  cremona/brazo largo T2, `GM4017` angulo de reenvio y `GM8412` pletina falleba.
+  Mano de obra mostrada: `95` minutos. Estos datos describen la consulta actual;
+  no constituyen aun formulas de fabricacion para Aluminior.
+- Precio visible: `633,07 EUR` sin IVA; base `633,07`, IVA `132,94`, total
+  `766,01`. Sigue **no validado**.
+- Se hizo una sola aceptacion normal de la linea sin cambios. Volvio a aparecer
+  `alVLinOpciones_codEstr.OpcionesSeleccionadas`, error `-2146233088`, por
+  configuracion `SessionFactory` invalida o incompleta. Se cerro solo el informe,
+  no se repitio la accion ni se reparo la instalacion. Productor recupero tras
+  pausas breves de `No responde` al cerrar detalle/editor.
+
+Conclusion acotada: estan demostrados el valor absoluto editable de FI, su
+referencia exterior del contenedor a eje, su efecto geometrico, el round-trip del
+documento y el despiece visible para FI=400. Sigue siendo hipotesis que `FIJO
+SUPERIOR` afecte a esta estructura; no se han probado limites o medidas inviables.
+Puede implementarse con seguridad la geometria/representacion y persistencia de
+FI para `1OFI`, manteniendo FI=300 solo como default de alta. Deben esperar la
+valoracion, la generacion contractual de despiece y cualquier regla de limites.
