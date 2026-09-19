@@ -74,7 +74,7 @@ La tarea se creó sin proyecto guardado porque el único proyecto de la app apun
 a OneDrive; sus instrucciones fijan exclusivamente el worktree correcto.
 node_modules enlaza dependencias existentes; no se modifican ni se instala nada.
 El arquitecto conserva los documentos; Sol sólo posee los nuevos archivos de diagnóstico.
-Implementación y revisión pendientes al escribir esta sección.
+Implementación y revisión completadas; resultados en la sección final.
 
 ## Siguiente evidencia
 
@@ -85,3 +85,46 @@ ofrecido, opciones visibles y marcas. Un ensayo posterior autorizado puede varia
 sólo la pareja/hojas conservando medidas y serie para discriminar dependencia del
 diseño frente a filtrado/prioridad. No crear ni alterar documentos ahora.
 No hace falta ampliar lecturas históricas para preparar ese experimento.
+
+
+## Implementación y verificación cerradas
+
+Sol entregó 6119eb24a1fdbd5d4e0de5989bf0f91f6e400741. Tras revisar diff,
+corregir los hallazgos y repetir las comprobaciones relevantes, se integró
+mediante cherry-pick en la rama feature como 3d82f03. Sin merge a main ni push.
+
+Ocho archivos nuevos: scripts/lib/banco-motor/ (seis módulos),
+scripts/banco-motor.test.ts y scripts/tsconfig.banco-motor.json.
+El módulo ejecuta las APIs públicas reales de core sobre entradas preparadas;
+no consulta tablas, ficheros ni entorno y no altera el comparador v1.
+
+Correcciones exigidas en revisión y cubiertas por regresiones:
+- ausencia de cotas/tablas, raíz nula y campos mal tipados: bloqueo explícito;
+- precioManual=0 sigue siendo manual; PVP textual "0" puede ser válido;
+- PVP conserva Decimal textual hasta resolver catálogo, sin conversión previa;
+- cotas a/l no sobrescriben dimensiones y no se admiten claves equivalentes;
+- fórmulas léxicamente inválidas no hacen lanzar el diagnóstico;
+- comparar un diagnóstico bloqueado es seguro y devuelve no-comparable.
+
+Comprobación independiente del responsable sobre el commit final:
+- node --import tsx --test scripts/banco-motor.test.ts scripts/banco-precios.test.mjs:
+  19/19 (15 nuevas, 4 banco v1), cero omitidas.
+- node node_modules/typescript/bin/tsc -p scripts/tsconfig.banco-motor.json: correcto.
+- npm run -w @aluminior/core typecheck: correcto.
+- git diff --check: correcto; ocho archivos dentro del alcance, sin datos reales,
+  secretos, migraciones ni cambios de aplicación.
+- Revisión de cohesión: módulos de ejecución/validación/comparación separados;
+  test de 334 líneas conserva una fixture técnica compartida y sus invariantes,
+  sin responsabilidades de producción. Ningún archivo nuevo supera 400 líneas.
+
+Límites: importe por una composición de materiales parciales; no total comercial,
+vidrio, asociaciones completas de herraje, ajustes manuales ni adaptador general
+de las filas históricas. La comparación conserva faltantes/sobrantes exactos;
+el resumen de cambios empareja por artículo/función, sin identidad de pieza de fabricación.
+La igualdad parcial no certifica fabricación ni paridad Productor.
+Los 888 casos reales mantienen sus motivos originales y no se han ejecutado.
+
+La observación B sigue pendiente de confirmación de presencia del usuario.
+No se ha controlado Productor ni modificado el servidor web durante este apartado.
+env.example permanece ajeno y sin seguimiento. Se conserva el worktree de Sol
+limpio para revisión; no borrarlo ni reutilizarlo concurrentemente.

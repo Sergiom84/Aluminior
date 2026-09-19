@@ -164,3 +164,25 @@ pequeñas bien especificadas si se prioriza consumo. No basta con un plan para
 eliminar incertidumbre: cualquier ejecutor debe parar una inferencia no probada.
 Referencia oficial consultada: https://developers.openai.com/api/docs/models/compare
 No se deducen créditos de Codex ni límites de cuenta a partir de precios API.
+
+## Actualización tras preparación A (19/09/2026)
+
+Apartado A local completado en su alcance verificable. Leer primero
+PREPARACION-LOCAL-A.md y ESPEC-ADAPTADOR-BANCO-MOTOR.md para no repetirlo.
+Commits nuevos: bebce2c (especificación), 6907a8c (evidencia), 3d82f03
+(adaptador Sol integrado en feature tras revisión; origen 6119eb2).
+Las cuatro muestras 3HO tienen diseño específico y sólo registran opciones
+GM306+GMA65OHS: no prueban el algoritmo de la plantilla. 3HO no está en el banco.
+Registrado, seleccionado, ofrecido y aportación de piezas son hechos distintos.
+
+Adaptador puro local preparado y probado con fixtures sintéticos. Materiales y
+precio separados, rebajes explícitos, PVP Decimal y bloqueos conservadores.
+19 pruebas y typechecks adaptador/core aprobados por Sol y por el responsable.
+No ejecuta los 888 casos ni certifica valoración completa. Ninguna estructura activada.
+
+Siguiente paso: B con presencia del usuario confirmada para la sesión, manos
+simples/pareja y después cotas. No hubo observación Productor en este apartado.
+Conservar permisos anteriores; no repetir cargas ni pedir otra vez su autorización.
+No hubo push, merge a main ni nuevas operaciones Supabase.
+Tarea Sol 01a0b9d5-8b3b-7aa3-9ac8-0a2de9f74a30 terminada y revisada;
+worktree limpio en C:/Users/laral/Documents/Aluminior-worktrees/banco-motor-local.

@@ -113,3 +113,11 @@ Typecheck estricto del nuevo TS (config acotada) y npm run -w @aluminior/core ty
 Revisar git diff --check y status. No repetir suite/UI porque no cambia flujo operativo.
 Entregar commit local, archivos, resultados y límites; no push, merge ni cherry-pick.
 El arquitecto revisa diff/pruebas y pide correcciones antes de integrar en rama feature.
+
+## Precisiones verificadas durante revisión
+PVP preparado conserva Decimal textual conforme a core; Number sólo después de
+resolverPvpCatalogo en la frontera existente con valorarDespiece. Rechazar A/L
+sin distinguir mayúsculas, duplicados de cotas normalizadas y fórmulas léxicamente
+inválidas. Diagnósticos bloqueados también son entradas seguras del comparador.
+Implementación revisada: 3d82f03 en feature; origen Sol 6119eb2. Evidencia y
+resultados completos en PREPARACION-LOCAL-A.md.

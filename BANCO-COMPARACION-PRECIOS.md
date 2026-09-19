@@ -85,3 +85,13 @@ cero descripciones, referencias, observaciones o identificadores documentales.
 hija sin tarifa explícita, 214 diseño específico, 15 precio manual/respetado y
 uno medidas inválidas. Todos siguen pendientes de reproducir: no hay aún ninguna
 comparación ejecutada contra el motor de Aluminior ni declaración de igualdad.
+
+## Adaptador diagnóstico parcial (apartado A)
+
+Disponible en scripts/lib/banco-motor/index.ts: ejecutarDiagnosticoMotor y
+compararMateriales. Recibe contexto preparado explícito y ejecuta core sin I/O.
+Separa comparación física parcial de precio material por composición; no convierte
+las filas de este banco automáticamente ni sustituye compararCaso v1.
+Sólo se han ejecutado fixtures sintéticos (15 pruebas nuevas y 4 v1).
+Los 888 casos siguen pendientes con sus motivos intactos. Contrato y límites:
+ESPEC-ADAPTADOR-BANCO-MOTOR.md y PREPARACION-LOCAL-A.md.
