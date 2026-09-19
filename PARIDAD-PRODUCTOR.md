@@ -73,8 +73,24 @@ texto del código.
 | Travesaño y división invisible | Campo `TipoTrav` y `bInvisible`; estructuras de dos hojas y fijos partidos | Implementado como conceptos distintos |
 | Fijo inferior y fijos laterales | `1OFI`, `1O1FL`, `1O2FL` y cotas observadas | Implementado |
 | Combinaciones de hojas y fijos | `1O+1F+1O`, `1O+2F+1O` y `2O+ FIJO` | Implementado |
-| Unión entre cerramientos | Captura de la pestaña Unión y artículos `GMU038` / `PSU001` | Edición de tipo, longitud y grosor implementada |
+| Unión entre cerramientos | Captura de la pestaña Unión, artículos `GMU038` / `PSU001` y observación en vivo (`RECON-CERRAMIENTOS.md` §4) | Edición de tipo, longitud y grosor implementada. **Regla de medida pendiente de corregir**: ver abajo |
 | Línea agregada `GRUPO` | Captura del presupuesto 260446 y vídeo real de Javi | Persistencia inicial como `CERRAMIENTO`; valoración agregada pendiente y explícitamente sin valorar |
+
+### Regla de medida de la unión (observada 19/09/2026, empresa 0017)
+
+Productor no suma el grosor de una unión con artículo al ancho del
+cerramiento: lo reparte entre los módulos contiguos.
+
+| Composición | Productor | Aluminior hoy |
+|---|---|---|
+| 1200 + unión sin artículo (grosor 20) + 1200 | Ancho 2420 (la unión separa) | 2420 |
+| 1200 + `GMU038` TUBO 60x60 (grosor 60) + 1200 | Módulos fabricados a **1170** (1200 − 60/2), línea `GRUPO` **2400** | 2460 |
+
+- Evidencia: `Det.Grupo` del presupuesto 260492 (sublíneas `0` y `04` a
+  1170 x 1200, `GMU038` 0 x 1200) y `Diseño V3` del fijo (`Ancho 1170`).
+- Estado: **observado en un caso**; pendiente de confirmación de Javi y de un
+  segundo tipo de unión (tubo 40x40, H 100) antes de fijarlo en
+  `packages/core/src/estructuras/cerramiento.ts`.
 
 ### Después
 

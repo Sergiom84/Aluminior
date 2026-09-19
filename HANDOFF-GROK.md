@@ -159,6 +159,30 @@ Orden sugerido, todo sobre presupuestos salvo que el titular pida otra cosa:
 6. No mezclar el motor de despiece en `acciones.ts` (710 líneas, deuda
    conocida). Extraer antes de añadir regeneración de copia masiva.
 
+## 7 bis. Actualización Claude, 19/09/2026 (tarde)
+
+- Reconocimiento en vivo de cerramientos y del editor de línea en la 0017:
+  `RECON-CERRAMIENTOS.md` (incluye comparación con Aluminior y propuesta
+  ordenada en §7 ter). Evidencia del editor: `EVIDENCIA-EDITOR-LINEA.md`.
+- §7.2 avanzado: el editor de línea ya tiene pestañas Estructura /
+  Opc.Herraje / Cargos Adic. (deshabilitada) / Acristalamiento
+  (`[id]/_components/editor-linea/`). Core: fórmulas y opciones de herraje,
+  acristalamiento 1–5, compacto (tramos 155/185/200), mosquitera y metraje
+  por superficie, cargos adicionales.
+- Migración **0021_editor_linea aplicada en Supabase** el 19/09 tras probar la
+  cadena completa en PGlite: `opciones_herraje.activa_solo_si /
+  incompatible / descripcion_auto`, `opciones_herraje_categorias`,
+  `conjunto_acristalamientos`, `tablas_acristalamiento`,
+  `lineas_estructura.opcion_acristalamiento`, `lineas_cargos`. Tablas
+  nuevas vacías hasta cargar datos.
+- Carga pendiente: el importador completo (`npm run -w @aluminior/etl
+  import`) hace `TRUNCATE` de presupuestos, líneas y clientes; para las
+  tablas nuevas hace falta un cargador de catálogo acotado
+  (`packages/etl/src/propuestas/editor-linea.ts` tiene los mapeos).
+  `herraje_conjuntos` solo tiene 22 reglas medidas del histórico.
+- Regla de unión observada (tubo 60 → módulos a 1170, total 2400):
+  `PARIDAD-PRODUCTOR.md`, pendiente de confirmar con Javi.
+
 ## 8. Archivos tocados en este commit
 
 Presupuestos / core: `escaparate.ts`, `descripcion-linea.ts`, componentes
