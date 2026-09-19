@@ -88,7 +88,7 @@ de esa hipótesis. No se sustituyen por reglas vacías.
 
 Contraejemplo importante: **GMA65OHS / 3HO**. La plantilla tiene tipos 6 y 8,
 de modo que la unión ingenua propone GM306+GM309+GMA65OHS. Las cuatro muestras
-históricas usan GM306+GMA65OHS. Puede intervenir un diseño particular de línea,
+históricas registran opciones de GM306+GMA65OHS. Puede intervenir un diseño particular de línea,
 una selección diferente o una regla de prioridad. No se ha resuelto todavía;
 este contraejemplo impide desplegar la unión automática de conjuntos.
 
@@ -108,3 +108,13 @@ este contraejemplo impide desplegar la unión automática de conjuntos.
 No se añade aún el resolver: promover ahora el mapeo propuesto a comportamiento
 operativo introduciría una discrepancia conocida y daría falsa certeza a tipos
 todavía no contrastados. Los dos scripts son herramientas de investigación.
+
+## Revisión del apartado A (19/09/2026)
+
+Las cuatro muestras del contraejemplo tienen diseño específico; los tres CSV
+autorizados no contienen su árbol efectivo. No prueban equivalencia con la
+plantilla de catálogo ni refutan por sí solas la unión de conjuntos.
+3HO no está incluido en el banco de 888 casos. Ver PREPARACION-LOCAL-A.md
+para recuentos reproducidos, semántica del manual y experimento pendiente.
+Las firmas medidas describen conjuntos registrados, no necesariamente
+opciones ofrecidas ni conjuntos que aportan piezas. No se cambia el resolver.
