@@ -20,7 +20,7 @@ services:
       POSTGRES_PASSWORD: aluminior
       POSTGRES_DB: aluminior_test
     ports:
-      - "55433:5432"
+      - "127.0.0.1:55433:5432"
     # tmpfs: datos en RAM -> efímero de verdad, arranque rápido, nada persiste.
     tmpfs:
       - /var/lib/postgresql/data

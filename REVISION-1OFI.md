@@ -7,10 +7,10 @@ Base y ascendencia comprobadas: `bde6a5f` -> `d086021` -> `7741dd6`.
 
 ## Veredicto
 
-**Pendiente de integrar.** Tras la corrección descrita abajo no queda un defecto
-concreto conocido en el código revisado, pero la prueba PostgreSQL real de la
-escritura atómica y su rollback sigue sin poder ejecutarse. La garantía prioritaria
-de atomicidad no debe darse por superada sólo con dobles o inspección estática.
+**Apto para integrar, sin ejecutar todavía la integración.** Tras las correcciones
+descritas abajo no queda un defecto concreto conocido en el alcance revisado. La
+prueba PostgreSQL real de escritura atómica, invalidación y rollback se ejecutó
+contra el contenedor efímero local y aprobó sus 11 casos.
 
 No se declara paridad económica ni de fabricación.
 
@@ -44,8 +44,8 @@ prueba que verifica el eje de `900 x 1800 / FI 400` en la caja compacta.
    valoración incompleta y eliminan snapshot, despiece y mano de obra anteriores.
    No se observó cero ficticio.
 7. La actualización de línea, configuración, resultados y totales comparte el
-   límite transaccional existente. La prueba real que demuestra rollback queda
-   pendiente por falta de PostgreSQL local disponible.
+   límite transaccional existente. La prueba PostgreSQL real confirmó el rollback
+   conjunto ante fallos posteriores a la escritura de satélites.
 8. Las pruebas sin DB cubren regresiones de manos/manillas, valoración, copias,
    descuentos e importes. La edición de líneas con descuentos o PVP manual sigue
    bloqueada antes de escribir, como antes del cambio.
@@ -72,7 +72,7 @@ prueba que verifica el eje de `900 x 1800 / FI 400` en la caja compacta.
   desborda; el catálogo conserva su scroll horizontal. Es QA de componente, no
   del flujo integrado con persistencia.
 
-## Pendientes y bloqueos
+## Pendientes y bloqueos de la primera revisión
 
 - `docker` no está instalado o no está disponible en `PATH`. El procedimiento
   documentado sí es seguro y aislado (`packages/db/docker-compose.yml`, Postgres
@@ -139,3 +139,54 @@ Antes de ejecutar la suite se debe comprobar que el contenedor publicado es
 `aluminior_pg_test`, que escucha sólo mediante el mapeo local `55433:5432` y que
 la URL validada termina en `/aluminior_test`. Esta instalación o cambio de
 servicio del sistema requiere aprobación explícita y no se realizó.
+
+## Cierre de la prueba transaccional real
+
+Tras quedar Docker Engine disponible, se comprobó primero la configuración
+resuelta del compose. Se detectó que `"55433:5432"` publicaba PostgreSQL en todas
+las interfaces pese a que la documentación lo describía como local. Se corrigió
+el mapeo a `"127.0.0.1:55433:5432"` antes de iniciar el contenedor.
+
+Destino acreditado antes de migrar o probar:
+
+- contenedor: `aluminior_pg_test`;
+- imagen: `postgres:16-alpine`;
+- estado: saludable;
+- listener: `127.0.0.1:55433` exclusivamente;
+- base: `aluminior_test`;
+- usuario: `aluminior`;
+- directorio de datos: `/var/lib/postgresql/data` sobre `tmpfs`.
+
+Comando ejecutado desde `packages/web`:
+
+```powershell
+$env:TEST_DATABASE_URL = 'postgres://aluminior:aluminior@localhost:55433/aluminior_test'
+npx vitest run linea-valorada.integracion.test.ts
+```
+
+Resultado: **1 fichero y 11 pruebas aprobadas**. La URL usa `localhost` de forma
+intencionada porque `crearDb` reconoce esa forma canónica y desactiva TLS para el
+PostgreSQL local; el listener continúa limitado a IPv4 loopback.
+
+Quedaron demostrados en PostgreSQL real:
+
+- guardado y recuperación de la configuración con FI explícito;
+- invalidación conjunta de precio, total, snapshot, despiece y mano de obra;
+- recálculo de totales dentro de la misma transacción;
+- rollback de configuración e invalidaciones ante un fallo posterior provocado;
+- rollback tras escribir configuración, snapshot y despiece cuando falla la mano
+  de obra;
+- rechazo del escritor heredado si dejaría snapshot y geometría contradictorios;
+- continuidad de los casos v1 valorados, cantidades, mano de obra, copias,
+  descuentos y estados incompletos.
+
+Comprobación posterior directa:
+
+- `presupuestos_j05=0`;
+- `restriccion_j05=0`;
+- 22 migraciones registradas en la base efímera.
+
+La prueba no dejó fixtures ni la restricción temporal usada para provocar el
+fallo. No se contactó con Supabase ni con ninguna base remota. La conclusión de
+esta revisión pasa de pendiente a apta para integrar, sin declarar paridad
+económica ni de fabricación.
