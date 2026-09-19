@@ -1,54 +1,54 @@
 # Evidencia B1: manos y manillas (19/09/2026)
 
-Base a77abc3 en feat/cerramientos-editor-linea. Observación directa del responsable,
-Productor abierto en PRUEBAS ALUMINIOR - 2026 [0017], sesión continuada por el usuario.
-Consulta de fichas y Diseño V3; salida por X del título, sin Aceptar ni guardar.
+## Fuente y condiciones
+Observación directa del responsable en Productor abierto, empresa visible
+PRUEBAS ALUMINIOR - 2026 [0017], sesión continuada por el usuario.
+Consulta de fichas y Diseño V3, salida por X del título sin Aceptar ni guardar.
 Capturas locales ignoradas: output/evidencia-manos-20260919/.
+La descripción se refiere a la vista predeterminada mostrada, no a perspectiva
+interior/exterior de cámara, que no ha quedado establecida.
 
-| Caso | Medida inicial | Bisagras en pantalla | Manilla en pantalla | Apertura visible |
+| Caso | Medida Productor | Bisagras | Manilla | Apertura visible |
 | --- | --- | --- | --- | --- |
-| 1OD | 800 x 1200 | derecha | izquierda | oscilobatiente |
-| 1OI | 800 x 1200 | izquierda | derecha | oscilobatiente |
-| 2 | 1200 x 1200 | extremos exteriores de ambas hojas | una, hoja derecha junto al encuentro | ambas abatibles |
-| 2O | 1200 x 1200 | extremos exteriores de ambas hojas | una, hoja derecha junto al encuentro | izquierda abatible, derecha oscilobatiente |
+| 1OD | 800 x 1200 | derecha | izquierda | oscilo |
+| 1OI | 800 x 1200 | izquierda | derecha | oscilo |
+| 2 | 1200 x 1200 | extremos exteriores de ambas hojas | una, hoja derecha al encuentro | ambas abatibles |
+| 2O | 1200 x 1200 | extremos exteriores de ambas hojas | una, hoja derecha al encuentro | izquierda abatible, derecha oscilo |
+| 1OFI | 900 x 1500 | izquierda | derecha | oscilo sobre fijo inferior |
+| 2O+ FIJO | 1200 x 1200 | extremos exteriores de ambas hojas | una, hoja derecha al encuentro | izquierda abatible, derecha oscilo; fijo inferior |
+| 1O1FL | 1200 x 1200 | derecha de la hoja | izquierda de la hoja | hoja oscilo a la izquierda del fijo |
 
-Fichas 1OD/1OI dicen MANO DERECHA/IZQUIERDA respectivamente. Árbol:
-Hoja (1 H.Oscilo. Dchas.) / Hoja (1 H.Oscilo. Izdas.).
-2: dos Hoja (2 H.Abat.) bajo Sep. Hojas (Trav. Invisible), con Hueco intermedio.
-2O: dos Hoja (2 H.Dcha.Oscilo.), misma organización del árbol.
-Los triángulos laterales tienen el vértice opuesto a bisagras. El triángulo
-adicional de oscilo aparece solo en la hoja derecha de 2O.
+## Literales y trazabilidad
+- 1OD/1OI: fichas MANO DERECHA/IZQUIERDA; árbol Hoja (1 H.Oscilo. Dchas.)
+  / Hoja (1 H.Oscilo. Izdas.). Capturas 1OD-ficha/diseno,1OI-ficha/diseno.
+- 2: dos Hoja (2 H.Abat.) bajo Sep. Hojas (Trav. Invisible), Hueco intermedio.
+  Capturas02-pareja-general,02-hoja-primera,02-hoja-primera-avanzada:
+  el prefijo02 del archivo no es el código de estructura, que es2.
+- 2O: dos Hoja (2 H.Dcha.Oscilo.), misma organización del árbol. Capturas
+  2O-ficha/diseno. Triángulo adicional de oscilo solo en hoja derecha.
+- 1OFI: Hoja (1 H.Oscilo. Izdas.) sobre fijo; capturas1OFI-ficha/diseno/cota.
+- 2O+ FIJO: dos Hoja (2 H.Dcha.Oscilo.) sobre fijo;2O-FIJO-ficha/diseno/cota.
+- 1O1FL: Hoja (1 H.Oscilo. Dchas.), fijo a su derecha;1O1FL-ficha/diseno/cota.
+Los triángulos laterales tienen su vértice en el lado opuesto a bisagras.
 
-En 2, seleccionar la primera hoja ilumina la izquierda: Principal muestra
-Apertura Interior y Avanzada Tipo de Apertura 1 + 1. No se deduce de ello que
-la cámara sea interior. Esta evidencia describe la vista predeterminada mostrada;
-no se observó un cambio de vista ni se probó apertura Exterior. Hoja con manilla
-no demuestra por sí sola todas las reglas de hoja activa o herraje del despiece.
+En2, seleccionar primera hoja ilumina izquierda; Principal muestra Apertura
+Interior y Avanzada Tipo de Apertura1+1. No se deduce cámara interior ni se
+extrapola apertura Exterior. Manilla visible no demuestra las reglas completas
+de hoja activa o herraje del despiece.
+CHM worddocuments_configuracindefijosdecorredera1.htm (§5.1.2.2.1.1.2.3)
+documenta Interior/Exterior, Tipo Apertura y numeración izquierda a derecha,
+pero no define explícitamente perspectiva. No convertir esa hipótesis en regla.
 
-Capturas: 1OD-ficha, 1OD-diseno, 1OI-ficha, 1OI-diseno, 2O-ficha, 2O-diseno.
-Los ficheros 02-pareja-general, 02-hoja-primera y 02-hoja-primera-avanzada
-corresponden al código 2 (el prefijo 02 es solo el nombre de captura).
+## Decisión de implementación
+Sufijo de AperturaVisual expresará lado físico de bisagra en la vista dibujada.
+Corregir los siete casos observados con geometría común web/PDF y manilla por
+hueco. Las otras siete plantillas conservan físico previo; no se certifican.
+Generador experimental mantiene reservas, no se activan estructuras.
 
-CHM: worddocuments_configuracindefijosdecorredera1.htm (§5.1.2.2.1.1.2.3)
-documenta Interior/Exterior, Tipo Apertura y numeración izquierda a derecha.
-No define explícitamente la perspectiva de cámara. No delegar esa hipótesis.
+Las configuraciones v1 guardan código/medidas, no árbol visual. Se corrige su
+representación al reconstruir, sin migraciones ni escritura ni revisión de
+importes. No versionar el dibujo erróneo ni reescribir PDF emitidos.
 
-## Decisión técnica
-El sufijo izquierda/derecha de AperturaVisual expresará lado físico de bisagra
-en la vista representada. El renderer actual lo invierte. Corregir 1OD/1OI y
-conservar el aspecto físico previo del resto cambiando coordinadamente sus
-etiquetas; 2/2O además tendrán manilla explícita solo en la hoja derecha.
-No extender ausencia de manilla a otras composiciones sin evidencia.
-Una función pura común gobernará lados y trazos para web/PDF.
-
-Las configuraciones v1 guardadas contienen código/medidas, no el árbol visual.
-Decisión: corregir retrospectivamente su representación al reconstruirla,
-sin migraciones ni escritura documental ni modificación de importes. No añadir
-versionado de dibujos erróneos. Los PDF ya emitidos no se reescriben.
-No es certificación de cortes, herrajes o precio. Persistencia, motor material,
-valoración y las 14 estructuras operativas se conservan.
-
-## Pendiente separado
-Cotas de las seis combinaciones y segundo tamaño; dimensiones 1O2FL 1300 frente
-1400 siguen pendientes. No modificar medidas/proporciones en este cambio.
-La unión de herrajes, C2 y las 888 comparaciones siguen pendientes.
+Medidas/proporciones/cotas permanecen fuera de B1, incluidas discrepancias en
+1OFI,1O1FL,2O+ FIJO y la previa1O2FL. Consultar EVIDENCIA-COTAS-0017.md.
+No es certificación de despiece, herrajes, precio o uso real completo.
