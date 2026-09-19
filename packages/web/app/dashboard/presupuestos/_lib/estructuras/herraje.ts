@@ -24,7 +24,8 @@ import type { OpcionHerrajeElegida } from '../lineas/guardar-linea.ts'
 
 export interface GrupoOpcionesHerraje {
   conjuntoCodigo: string
-  opciones: { codigo: string; descripcion: string; porDefecto: boolean }[]
+  /** `categoria`: `CategoriaOH` del catálogo, para la lista `Categoría` de la pestaña. */
+  opciones: { codigo: string; descripcion: string; porDefecto: boolean; categoria: string | null }[]
 }
 
 type FilaOpcion = typeof schema.opcionesHerraje.$inferSelect
@@ -81,7 +82,9 @@ export async function opcionesHerrajeDe(
     const opciones = catalogo.filas
       .filter((f) => f.conjuntoCodigo === conjuntoCodigo && !f.oculta)
       .sort((a, b) => Number(a.opcionCodigo) - Number(b.opcionCodigo))
-      .map((f) => ({ codigo: f.opcionCodigo, descripcion: f.descripcion, porDefecto: f.porDefecto }))
+      .map((f) => ({
+        codigo: f.opcionCodigo, descripcion: f.descripcion, porDefecto: f.porDefecto, categoria: f.categoria,
+      }))
     if (opciones.length) grupos.push({ conjuntoCodigo, opciones })
   }
   return grupos.length ? grupos : null

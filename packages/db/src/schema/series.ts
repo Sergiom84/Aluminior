@@ -17,8 +17,9 @@
  */
 
 import {
-  pgTable, text, boolean, integer, numeric, index, primaryKey,
+  pgTable, text, boolean, integer, numeric, index, primaryKey, smallint, check,
 } from 'drizzle-orm/pg-core'
+import { sql } from 'drizzle-orm'
 
 /**
  * Series configuradas en la empresa (57 en EMP0016).
@@ -237,9 +238,42 @@ export const opcionesHerraje = pgTable('opciones_herraje', {
   /** OcultaSN: el original no la muestra al usuario. */
   oculta: boolean('oculta').notNull().default(false),
   categoria: text('categoria'),
+  /** fOpcSoloActiva: fórmula `oN+oM` que debe cumplirse para poder marcarla. */
+  activaSoloSi: text('activa_solo_si'),
+  /** fOpcIncompatible: fórmula de opciones que la bloquean (simétrica en pantalla). */
+  incompatible: text('incompatible'),
+  /** DescrAutoSN: la opción entra en la descripción automática de la línea. */
+  descripcionAuto: boolean('descripcion_auto').notNull().default(false),
 }, (t) => ({
   pk: primaryKey({ columns: [t.conjuntoCodigo, t.opcionCodigo] }),
 }))
+
+/** Categorías de opciones por conjunto (ConjuntosCatOH). */
+export const opcionesHerrajeCategorias = pgTable('opciones_herraje_categorias', {
+  conjuntoCodigo: text('conjunto_codigo').notNull(),
+  codigo: text('codigo').notNull(),
+  descripcion: text('descripcion').notNull().default(''),
+  excluyentes: boolean('excluyentes').notNull().default(false),
+}, (t) => ({
+  pk: primaryKey({ name: 'opciones_herraje_categorias_pk', columns: [t.conjuntoCodigo, t.codigo] }),
+}))
+
+/** Las 5 opciones de acristalamiento de un conjunto (Conjuntos.TablaHojas..5 / TablaFijos..5). */
+export const conjuntoAcristalamientos = pgTable('conjunto_acristalamientos', {
+  conjuntoCodigo: text('conjunto_codigo').notNull(),
+  opcion: smallint('opcion').notNull(),
+  tablaHojas: text('tabla_hojas'),
+  tablaFijos: text('tabla_fijos'),
+}, (t) => ({
+  pk: primaryKey({ name: 'conjunto_acristalamientos_pk', columns: [t.conjuntoCodigo, t.opcion] }),
+  opcionValida: check('conjunto_acristalamientos_opcion_check', sql`${t.opcion} BETWEEN 1 AND 5`),
+}))
+
+/** Descripción de cada tabla de junquillos (TAcristalamiento). */
+export const tablasAcristalamiento = pgTable('tablas_acristalamiento', {
+  codigo: text('codigo').primaryKey(),
+  descripcion: text('descripcion').notNull().default(''),
+})
 
 /**
  * Juego de conjuntos de herraje que usa cada (serie, estructura), MEDIDO del

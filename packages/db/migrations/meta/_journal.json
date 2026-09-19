@@ -148,6 +148,13 @@
       "when": 1788856430356,
       "tag": "0020_chubby_wendigo",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1789808930815,
+      "tag": "0021_editor_linea",
+      "breakpoints": true
     }
   ]
 }

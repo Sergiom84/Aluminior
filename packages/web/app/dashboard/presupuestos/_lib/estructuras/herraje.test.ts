@@ -120,13 +120,15 @@ describe('opciones ofrecidas al configurar', () => {
     expect(await opcionesHerrajeDe(cliente, 'ELEGANTPVC', '2O')).toBeNull()
   })
 
-  it('conserva descripción y marca por defecto', async () => {
+  it('conserva descripción, marca por defecto y categoría', async () => {
+    // La categoría se añadió para la lista `Categoría` de la pestaña Opc.Herraje
+    // (RECON-CERRAMIENTOS.md §5); no cambia qué se ofrece ni en qué orden.
     const { cliente } = clienteFalso({ conjuntos: 'C1' }, [
-      opcion('C1', '1', { descripcion: 'MANILLA ESTÁNDAR', porDefecto: true }),
+      opcion('C1', '1', { descripcion: 'MANILLA ESTÁNDAR', porDefecto: true, categoria: 'MAN' }),
     ])
     const grupos = await opcionesHerrajeDe(cliente, 'ELEGANTPVC', '2O')
     expect(grupos?.[0].opciones[0])
-      .toEqual({ codigo: '1', descripcion: 'MANILLA ESTÁNDAR', porDefecto: true })
+      .toEqual({ codigo: '1', descripcion: 'MANILLA ESTÁNDAR', porDefecto: true, categoria: 'MAN' })
   })
 })
 

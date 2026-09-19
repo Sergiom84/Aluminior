@@ -15,7 +15,7 @@
  */
 
 import {
-  pgTable, text, integer, numeric, boolean, uuid, index, primaryKey, jsonb, check, unique,
+  pgTable, text, integer, smallint, numeric, boolean, uuid, index, primaryKey, jsonb, check, unique,
 } from 'drizzle-orm/pg-core'
 import { sql } from 'drizzle-orm'
 import { presupuestos } from './comercial.ts'
@@ -106,7 +106,41 @@ export const lineasEstructura = pgTable('lineas_estructura', {
   // --- Mano de obra adicional, en horas ---
   horasFabricacion: numeric('horas_fabricacion', { precision: 8, scale: 2 }).notNull().default('0'),
   horasColocacion: numeric('horas_colocacion', { precision: 8, scale: 2 }).notNull().default('0'),
-})
+
+  /** Radio 1..5 de la pestaña Acristalamiento (tabla de junquillos del conjunto). */
+  opcionAcristalamiento: smallint('opcion_acristalamiento').notNull().default(1),
+}, (t) => ({
+  opcionAcristalamientoValida: check('lineas_estructura_opcion_acris_check',
+    sql`${t.opcionAcristalamiento} BETWEEN 1 AND 5`),
+}))
+
+/**
+ * Cargos adicionales de una línea (pestaña `Cargos Adic.`, origen VCargosAd).
+ * Importes nulos significan sin valorar; nunca se sustituyen por cero.
+ */
+export const lineasCargos = pgTable('lineas_cargos', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  lineaId: uuid('linea_id').notNull().references(() => lineas.id, { onDelete: 'cascade' }),
+  orden: integer('orden').notNull(),
+  articuloCodigo: text('articulo_codigo').notNull().references(() => articulos.codigo),
+  descripcion: text('descripcion'),
+  acabadoCodigo: text('acabado_codigo'),
+  tonalidadCodigo: text('tonalidad_codigo'),
+  cantidad: numeric('cantidad', { precision: 10, scale: 3 }).notNull().default('0'),
+  anchoMm: numeric('ancho_mm', { precision: 10, scale: 2 }),
+  largoMm: numeric('largo_mm', { precision: 10, scale: 2 }),
+  tipoMetraje: text('tipo_metraje').notNull(),
+  metraje: numeric('metraje', { precision: 12, scale: 3 }),
+  precio: numeric('precio', { precision: 12, scale: 4 }),
+  total: numeric('total', { precision: 14, scale: 2 }),
+  respetarPrecio: boolean('respetar_precio').notNull().default(false),
+  costeManual: numeric('coste_manual', { precision: 12, scale: 4 }),
+  observaciones: text('observaciones'),
+}, (t) => ({
+  ordenUnico: unique('lineas_cargos_orden_uq').on(t.lineaId, t.orden),
+  cantidadValida: check('lineas_cargos_cantidad_check', sql`${t.cantidad} >= 0`),
+  lineaIdx: index('lineas_cargos_linea_idx').on(t.lineaId),
+}))
 
 /**
  * Entrada editable de una línea GRUPO/CERRAMIENTO.
