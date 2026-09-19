@@ -107,7 +107,7 @@ export function LineaPresupuesto({
         <td className="px-2 py-1">
           {plantilla && (
             <div className="al-line-thumb">
-              <DibujoEstructura plantilla={plantilla} compacto />
+              <DibujoEstructura plantilla={plantilla} modulo={modulo} compacto />
             </div>
           )}
         </td>
