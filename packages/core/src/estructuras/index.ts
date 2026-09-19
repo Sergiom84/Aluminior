@@ -1,6 +1,7 @@
 export * from './codigo.ts'
 export * from './diseno.ts'
 export * from './geometria-apertura.ts'
+export * from './geometria-1ofi.ts'
 export * from './diseno-catalogo.ts'
 export * from './cerramiento.ts'
 export * from './escaparate.ts'
