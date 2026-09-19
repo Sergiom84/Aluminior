@@ -88,3 +88,54 @@ Para levantar el único bloqueo: disponer de Docker, ejecutar
 `docker compose -f packages/db/docker-compose.yml up -d`, verificar de nuevo que
 `TEST_DATABASE_URL` es `postgres://aluminior:aluminior@localhost:55433/aluminior_test`
 y correr al menos la suite de integración de `linea-valorada`.
+
+## Continuación: disponibilidad del PostgreSQL transaccional real
+
+Comprobación realizada desde `b3f969b1676fd1a46422bd7e0edcf3314ffc18f7`,
+sin repetir la conexión ya fallida a `localhost:55433`:
+
+- La única topología local soportada por la documentación y los scripts es el
+  contenedor de `packages/db/docker-compose.yml`: PostgreSQL 16, host loopback,
+  puerto 55433, base `aluminior_test` y datos en `tmpfs`.
+- `packages/db/pruebas/entorno-local.mjs` impide usar destinos distintos de
+  `localhost:55433` y de las bases permitidas terminadas en `_test`.
+- No hay `psql`, `pg_ctl`, `initdb`, `postgres`, `createdb` ni `dropdb` en
+  `PATH`, ni instalación bajo las ubicaciones habituales de Windows.
+- No hay servicio, proceso o listener PostgreSQL detectado en 5432 o 55433. La
+  referencia del README a un PostgreSQL nativo en 5432 no coincide con el estado
+  actual de esta máquina.
+- WSL no está instalado. Tampoco están disponibles Docker, Podman o Nerdctl.
+- No existe `TEST_DATABASE_URL`, `ALUMINIOR_TEST_DB_URL`, configuración J00 ni
+  fichero `.env` local que apunte a otro PostgreSQL de pruebas.
+
+Por tanto, **no existe actualmente una alternativa local ya instalada,
+configurada y aislada** que permita ejecutar la prueba sin instalar o reparar
+componentes del sistema. No se inició ningún servicio, no se aplicaron
+migraciones y no se contactó con Supabase ni con una base remota.
+
+La suite pertinente es:
+
+```powershell
+$env:TEST_DATABASE_URL = 'postgres://aluminior:aluminior@localhost:55433/aluminior_test'
+npm run -w @aluminior/web test -- app/dashboard/presupuestos/_lib/cerramientos/linea-valorada.integracion.test.ts
+```
+
+Sus casos cubren la conservación de FI, la eliminación de precio, total,
+snapshot, despiece y mano de obra anteriores, el recálculo de totales dentro de
+la transacción, un rollback provocado después de escribir satélites y el flujo
+v1 valorado usado como origen y regresión. La suite no se ejecutó en esta
+continuación porque el servidor requerido no existe.
+
+### Única propuesta para preparar el entorno
+
+Instalar y dejar operativo Docker Desktop (motor y CLI), y después levantar
+exclusivamente el compose efímero versionado con:
+
+```powershell
+docker compose -f packages/db/docker-compose.yml up -d
+```
+
+Antes de ejecutar la suite se debe comprobar que el contenedor publicado es
+`aluminior_pg_test`, que escucha sólo mediante el mapeo local `55433:5432` y que
+la URL validada termina en `/aluminior_test`. Esta instalación o cambio de
+servicio del sistema requiere aprobación explícita y no se realizó.
