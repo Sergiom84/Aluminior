@@ -39,3 +39,12 @@ Decisión tras estas dos observaciones: corregir también las manos/manillas de
 1OFI y 2O+ FIJO en B1. Esto sustituye la conservación provisional de sus dibujos
 erróneos. Medidas y cotas quedan fuera (1OFI sigue800x1500 y2O+ FIJO1200x1500
 en Aluminior hasta B2), sin afirmar coincidencia integral de estos dos casos.
+
+## 1O1FL: observación adicional
+Diseño V3 1200 x 1200. Hoja a la izquierda del fijo, pero su mano es DERECHA:
+Hoja (1 H.Oscilo. Dchas.), bisagras derecha/manilla izquierda. Travesaño de
+derecha; pestaña Posición Vertical (Derecha), Cota Variable activa,
+FIJO LATERAL / símbolo F / default300 mm. Capturas1O1FL-ficha/diseno/cota.
+No se ha cambiado medida ni regla. B1 corrige también su mano, conservando
+1100x1200/proporciones actuales hasta B2. Las otras siete plantillas mantienen
+su aspecto anterior; no se amplía a geometría, despiece ni precio.

@@ -83,3 +83,13 @@ sobre divergencia 1OFI; las otras ocho plantillas siguen conservando aspecto.
   desde esta observación, no desde el golden. No inferir cotas ni herraje.
 El arquitecto incorporará esta adenda mediante lectura del repo principal;
 no necesitas traer commits de documentación ni editar sus archivos en worktree.
+
+## Adenda final de manos: 1O1FL
+Consulta directa adicional registrada en EVIDENCIA-COTAS-0017.md:
+1O1FL tiene hoja físicamente a la izquierda del fijo, de mano DERECHA
+(bisagra derecha, manilla izquierda). Su etiqueta final es oscilo-derecha
+con nombre completo oscilobatiente-derecha. Esta observación sustituye la
+conservación provisional de su mano antigua. Incluir expected de render.
+Conservar medidas1100x1200 y reparto8:3: se verificará otra medida en B2.
+Alcance final observado de B1:1OD,1OI,2,2O,1OFI,2O+ FIJO,1O1FL.
+Resto siete plantillas: regresión sin cambios físicos. No más ampliaciones B1.
