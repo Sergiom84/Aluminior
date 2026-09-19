@@ -77,3 +77,59 @@ Nuevo Documento quedó pendiente tras Aceptar y un timeout de Return. No hay aú
 número nuevo confirmado; no repetir alta sin comprobar si llegó a crearse.
 Se solicitó ayuda del usuario para comprobar ese diálogo. No se modificaron
 presupuestos existentes, no se abrió MDB ni se hicieron operaciones remotas.
+
+## Prueba de linea B2 y bloqueo de guardado (19/09/2026, 18:33)
+
+Esta actualizacion sustituye el estado anterior de alta no confirmada. El usuario
+respondio expresamente si a crear el presupuesto de prueba en 0017. Se abrio
+260494, revision 0, serie A, tarifa 1, sin cliente, nombre PRUEBA COTAS B2.
+No se modificaron documentos anteriores ni catalogo.
+
+En el editor de una linea nueva 1OFI se observo:
+- Perfiles GMA65OPT: (GM) ALG 65 OPTIMA (RPT); acabado/accesorios L/*.
+- Dos variables visibles: FIJO SUPERIOR=300 y FIJO INFERIOR=300. No inferir
+  que ambas afectan a la topologia: el diseno solo tiene fijo inferior.
+- Primera inspeccion 900 x 1500; segunda 900 x 1800. A 1800, Diseno V3
+  conserva hoja 1 H.Oscilo. Izdas. arriba y fijo abajo. Travesano Ventana,
+  Horizontal (Abajo), Cota Variable, FIJO INFERIOR, FI, Cota por 300.
+- Perfil visible del travesano GM16197L, PILASTRA 27 MM ALG 65. No se verifico
+  el conjunto de secciones ni cortes; no deducir milimetros del grosor dibujado.
+- Se cambio FIJO INFERIOR a 400 mediante pulsaciones de teclado (el pegado
+  en esa celda no funcionaba), se valido con Tab y se reabrio Diseno V3.
+  A igual 900 x 1800, el fijo inferior crecio y la hoja superior se redujo.
+  Se cerro Diseno por X del titulo sin guardar modificaciones de catalogo.
+- Aceptar linea exigio vidrio; se asigno L33I, validado como LAMINAR 3+3 INCOLORO.
+  Al aceptar de nuevo surgio Informe de Errores:
+  alVLinOpciones_codEstr.OpcionesSeleccionadas. Error -2146233088:
+  An invalid or incomplete configuration was used while creating a
+  SessionFactory. Check PotentialReasons collection, and InnerException
+  for more detail.
+- Se cerro solamente el informe. El editor seguia abierto con 900 x 1800,
+  FI inferior 400, superior 300, GMA65OPT y L33I. No hay guardado/reapertura
+  confirmados ni precio valido. No repetir alta, no forzar cierre del proceso.
+
+Incidente previo: Alt+F4 sobre ventana padre propago cierre de Diseno y del
+primer borrador de linea e intento salir de Productor; se cancelo la salida.
+Ese borrador no quedo guardado. La prueba descrita arriba se realizo despues
+con una nueva linea del mismo 260494. Evitar Alt+F4 y Ctrl+A. Alt+Espacio
+abre ChatGPT Classic por atajo global; tampoco usarlo. Para Diseno maximizado,
+doble clic sobre titulo (coordenada padre x500,y0) restaura; arrastrar titulo
+al interior del padre permite consultar propiedades y cerrar por X del titulo.
+Las capturas estan en el historial computer-use, no exportadas a PNG.
+
+Resultado acotado: segunda medida y efecto visual de override FI observados
+para 1OFI. Persistencia, cortes, limites y precio siguen pendientes; no activar
+cotas en produccion ni declarar paridad economica. El error de Productor bloquea
+la verificacion de guardado y requiere diagnostico antes de continuar ese paso.
+
+### Comprobacion posterior, 18:37 (sustituye estado de bloqueo total)
+
+Tras cerrar el informe, el proceso continuo y agrego una linea al 260494.
+Se cerro el editor vacio que aparecio para otra linea, se selecciono la unica
+linea 1OFI y se reabrio con el boton lapiz. Conserva 900x1800, GMA65OPT, L33I,
+FIJO SUPERIOR300 y FIJO INFERIOR400. Precio mostrado633,07 EUR sin IVA;
+base633,07, IVA132,94, total766,01. El error previo impide considerar este
+precio validado o el calculo integro. Reapertura de linea dentro del documento
+abierto confirmada; guardado/cierre/reapertura del presupuesto completo aun no.
+Se cerro el editor sin cambios; presupuesto260494 queda abierto con una linea.
+Windows aviso de bateria baja; se aviso al usuario para enchufar el equipo.

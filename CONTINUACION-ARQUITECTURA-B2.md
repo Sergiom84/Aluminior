@@ -86,3 +86,24 @@ PREPARACION-TECNICA-COTAS-B2.md. Ningún código implementado. La base del workt
 Sol conserva su informe y se actualizará al concretar el encargo de código.
 Bloqueo actual: respuesta del usuario sobre Nuevo Documento; no hay alta nueva
 confirmada ni segunda medida observada. Estado feature: solo env.example ajeno.
+
+## Estado vigente 19/09/2026 18:33
+
+Sustituye los bloqueos de alta indicados arriba: autorizado explicitamente por
+el usuario y confirmado presupuesto nuevo 260494, PRUEBA COTAS B2, empresa0017.
+1OFI observado a 900x1500 y 900x1800; FI300 permanece y override FI400 aumenta
+el fijo inferior en Diseno V3. Ver detalle en EVIDENCIA-COTAS-0017.md.
+Al aceptar la linea con GMA65OPT y L33I, Productor fallo en
+alVLinOpciones_codEstr.OpcionesSeleccionadas, error -2146233088, configuracion
+SessionFactory invalida/incompleta. Informe cerrado, editor de linea abierto.
+No confirmar persistencia, precio ni cortes. No repetir alta ni cerrar proceso.
+No se ha encargado codigo a Sol ni cambiado alcance: falta contrato verificado
+y pruebas de persistencia/calculo. No hay cargas remotas, push ni merge main.
+
+Actualizacion18:37: el proceso continuo tras el error y anadio una unica linea.
+Reabierta con lapiz: 1OFI900x1800, GMA65OPT/L33I, superior300/inferior400,
+precio mostrado633,07 sin IVA. Verificada conservacion en reapertura de linea
+dentro del presupuesto abierto; no el ciclo completo de cierre del documento.
+Error de opciones pendiente, por lo que no dar precio por validado. Editor
+cerrado sin cambios; 260494 permanece abierto con esa linea. Bateria baja
+notificada al usuario. No hay nuevo bloqueo que autorice reparar instalaciones.
