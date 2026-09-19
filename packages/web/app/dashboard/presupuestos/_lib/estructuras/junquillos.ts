@@ -110,6 +110,7 @@ export function piezasDeRanura(
 }
 
 export interface EntradaAcristalamiento {
+  opcionAcristalamiento?: number
   serieCodigo: string
   /** `TamJunqGoma` del vidrio elegido. 0 = desconocido: no hay fila aplicable. */
   tamJunquillo: number
@@ -127,12 +128,17 @@ export async function piezasAcristalamiento(
   cliente: ClienteEscritura,
   entrada: EntradaAcristalamiento,
 ): Promise<{ piezas: PiezaCortada[]; avisos: string[] }> {
-  const [conjunto] = await cliente.select({
+  const opcion = entrada.opcionAcristalamiento ?? 1
+  const [alternativa] = entrada.opcionAcristalamiento === undefined ? [] : await cliente.select().from(schema.conjuntoAcristalamientos)
+    .where(and(eq(schema.conjuntoAcristalamientos.conjuntoCodigo, entrada.serieCodigo),
+      eq(schema.conjuntoAcristalamientos.opcion, opcion))).limit(1)
+  const [predeterminada] = await cliente.select({
     tablaHojas: schema.conjuntos.tablaHojas,
     tablaFijos: schema.conjuntos.tablaFijos,
   }).from(schema.conjuntos)
     .where(eq(schema.conjuntos.codigo, entrada.serieCodigo)).limit(1)
 
+  const conjunto = alternativa ?? (opcion === 1 ? predeterminada : undefined)
   const piezas: PiezaCortada[] = []
   const avisos: string[] = []
 
@@ -150,10 +156,10 @@ export async function piezasAcristalamiento(
           .orderBy(asc(schema.tacrisFilas.grosor)).limit(1)
       : []
 
-    // El ajuste se lee siempre que haya fila, aunque no haya junquillo que
-    // ajustar. Es lo que hacía el código original; el número de consultas por
-    // ranura es un detalle mejorable, no un comportamiento de negocio.
-    const ajuste = fila
+    // El ajuste medido sólo acredita la tabla original, nunca otra opción.
+    const tablaBase = cristal.contexto === 'FIJO' ? predeterminada?.tablaFijos : predeterminada?.tablaHojas
+    // Ajustes históricos medidos por serie: sólo demostrados para la tabla original.
+    const ajuste = fila && tabla === tablaBase
       ? await leerAjuste(cliente, entrada.serieCodigo, cristal.contexto)
       : null
 

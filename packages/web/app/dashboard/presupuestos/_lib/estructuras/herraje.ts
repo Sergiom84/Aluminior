@@ -17,6 +17,7 @@
  * pruebas que fijan ese comportamiento.
  */
 
+import { evaluarFormulaOpciones, parsearFormulaOpciones } from '@aluminior/core/estructuras'
 import { and, eq, inArray } from 'drizzle-orm'
 import { schema } from '@aluminior/db'
 import type { ClienteEscritura } from '../cliente-db.ts'
@@ -25,8 +26,11 @@ import type { OpcionHerrajeElegida } from '../lineas/guardar-linea.ts'
 export interface GrupoOpcionesHerraje {
   conjuntoCodigo: string
   /** `categoria`: `CategoriaOH` del catálogo, para la lista `Categoría` de la pestaña. */
-  opciones: { codigo: string; descripcion: string; porDefecto: boolean; categoria: string | null }[]
+  categorias?: { codigo: string; descripcion: string; excluyentes: boolean }[]
+  opciones: { codigo: string; descripcion: string; porDefecto: boolean; categoria: string | null; oculta?: boolean; activaSoloSi?: string | null; incompatible?: string | null }[]
 }
+
+export class ErrorSeleccionHerraje extends Error {}
 
 type FilaOpcion = typeof schema.opcionesHerraje.$inferSelect
 
@@ -63,7 +67,7 @@ async function leerCatalogo(
 /**
  * Lo que se OFRECE al configurar.
  *
- * Las ocultas se excluyen —el original no las muestra—, los grupos salen en el
+ * Las ocultas viajan para evaluar fórmulas, pero core no las muestra. Los grupos salen en el
  * orden de la regla y las opciones ordenadas por su código como número. Un
  * grupo sin opciones visibles no se ofrece, y si no queda ninguno se devuelve
  * `null` para que la interfaz no pinte una sección vacía.
@@ -77,15 +81,19 @@ export async function opcionesHerrajeDe(
   const catalogo = await leerCatalogo(cliente, serieCodigo, estructuraCodigo)
   if (!catalogo) return null
 
+  const categorias = await cliente.select().from(schema.opcionesHerrajeCategorias)
+    .where(inArray(schema.opcionesHerrajeCategorias.conjuntoCodigo, catalogo.codigos))
   const grupos: GrupoOpcionesHerraje[] = []
   for (const conjuntoCodigo of catalogo.codigos) {
     const opciones = catalogo.filas
-      .filter((f) => f.conjuntoCodigo === conjuntoCodigo && !f.oculta)
+      .filter((f) => f.conjuntoCodigo === conjuntoCodigo)
       .sort((a, b) => Number(a.opcionCodigo) - Number(b.opcionCodigo))
       .map((f) => ({
         codigo: f.opcionCodigo, descripcion: f.descripcion, porDefecto: f.porDefecto, categoria: f.categoria,
+        oculta: f.oculta, activaSoloSi: f.activaSoloSi, incompatible: f.incompatible,
       }))
-    if (opciones.length) grupos.push({ conjuntoCodigo, opciones })
+    if (opciones.some(o => !o.oculta)) grupos.push({ conjuntoCodigo, opciones,
+      categorias: categorias.filter(c => c.conjuntoCodigo === conjuntoCodigo) })
   }
   return grupos.length ? grupos : null
 }
@@ -109,10 +117,7 @@ export interface EntradaOpcionesElegidas {
  * El orden del resultado es el de inserción: primero lo elegido, en el orden en
  * que llegó del formulario, y después los defaults ocultos en orden de catálogo.
  *
- * NOTA sobre el estado actual: el formulario todavía no emite `opcionHerraje`,
- * así que `elegidas` llega vacío en producción y lo único que se persiste son
- * los defaults ocultos. La rama de elección existe para el selector que vendrá,
- * y hoy sólo la ejercitan las pruebas.
+ * El formulario emite las marcas visibles; el servidor valida las fórmulas.
  */
 export async function resolverOpcionesHerraje(
   cliente: ClienteEscritura,
@@ -135,6 +140,29 @@ export async function resolverOpcionesHerraje(
   }
   for (const fila of catalogo.filas) {
     if (fila.oculta && fila.porDefecto) elegidas.set(clave(fila), fila)
+  }
+
+  const categorias = await cliente.select().from(schema.opcionesHerrajeCategorias)
+    .where(inArray(schema.opcionesHerrajeCategorias.conjuntoCodigo, catalogo.codigos))
+  // El formulario no puede forzar dos incompatibles ni una condición falsa.
+  for (const fila of elegidas.values()) {
+    if (fila.oculta) continue
+    const otras = new Set([...elegidas.values()]
+      .filter(f => f.conjuntoCodigo === fila.conjuntoCodigo && f.opcionCodigo !== fila.opcionCodigo)
+      .map(f => String(Number(f.opcionCodigo))))
+    if (fila.categoria && categorias.some(c => c.conjuntoCodigo === fila.conjuntoCodigo && c.codigo === fila.categoria && c.excluyentes)
+      && [...elegidas.values()].some(f => f !== fila && f.conjuntoCodigo === fila.conjuntoCodigo && f.categoria === fila.categoria)) {
+      throw new ErrorSeleccionHerraje('Categoría de herraje excluyente')
+    }
+    let activa, incompatible
+    try {
+      activa = parsearFormulaOpciones(fila.activaSoloSi)
+      incompatible = parsearFormulaOpciones(fila.incompatible)
+    } catch { throw new ErrorSeleccionHerraje('Fórmula de herraje no válida en el catálogo') }
+    if ((activa && !evaluarFormulaOpciones(activa, otras))
+      || (incompatible && evaluarFormulaOpciones(incompatible, otras))) {
+      throw new ErrorSeleccionHerraje('Selección de herraje incompatible o no activa')
+    }
   }
 
   return [...elegidas.values()].map((f) => ({

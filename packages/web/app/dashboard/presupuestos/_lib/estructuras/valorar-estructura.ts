@@ -1,3 +1,4 @@
+import { opcionesAcristalamientoDeSerie } from './acristalamiento-serie.ts'
 import { partidasValoracion } from './partidas-valoracion.ts'
 import type { PartidaValoracionCerramiento } from '@aluminior/core/estructuras'
 import { resolverMaterialesEstructura } from './materiales-estructura.ts'
@@ -7,7 +8,7 @@ import type {
   OpcionHerrajeElegida, PiezaDespiece, RanuraAcristalamiento,
 } from '../lineas/guardar-linea.ts'
 import { resolverAcristalamientoEstructura } from './acristalamiento-estructura.ts'
-import { resolverOpcionesHerraje } from './herraje.ts'
+import { resolverOpcionesHerraje, ErrorSeleccionHerraje } from './herraje.ts'
 import {
   articulosAmbiguos, avisoAmbiguos,
 } from './pvp-articulos.ts'
@@ -18,6 +19,7 @@ export interface EntradaValoracionEstructura {
   anchoMm: number | null
   altoMm: number | null
   vidrioCodigo: string | null
+  opcionAcristalamiento?: number
   varianteAcristalamiento: '1' | '2'
   acabadoCodigo: string | null
   tarifa: number
@@ -50,6 +52,12 @@ export async function valorarEstructura(
   cliente: ClienteEscritura,
   entrada: EntradaValoracionEstructura,
 ): Promise<ResultadoValoracionEstructura> {
+  const numero = entrada.opcionAcristalamiento ?? 1
+  if (!Number.isInteger(numero) || numero < 1 || numero > 5) return { ok: false, errores: { opcionAcristalamiento: ['Opción de acristalamiento inválida'] } }
+  if (numero !== 1) {
+    const opciones = await opcionesAcristalamientoDeSerie(cliente, entrada.serieCodigo ?? '')
+    if (!opciones.some(o => o.numero === numero)) return { ok: false, errores: { opcionAcristalamiento: ['Opción no disponible para la serie'] } }
+  }
   const material = await resolverMaterialesEstructura(cliente, entrada)
   if (!material.ok) return { ok: false, errores: material.errores }
   if (!entrada.anchoMm || !entrada.altoMm || !entrada.serieCodigo) throw new Error('Material válido sin medidas')
@@ -62,6 +70,7 @@ export async function valorarEstructura(
     estructuraCodigo: entrada.codigo,
     vidrioCodigo: entrada.vidrioCodigo,
     varianteAcristalamiento: entrada.varianteAcristalamiento,
+    opcionAcristalamiento: entrada.opcionAcristalamiento,
     acabadoCodigo: entrada.acabadoCodigo,
     anchoMm: entrada.anchoMm,
     altoMm: entrada.altoMm,
@@ -121,11 +130,15 @@ export async function valorarEstructura(
     if (informativos.length) aviso = `Valorado con avisos: ${informativos.join('; ')}.`
   }
 
-  const opcionesHerraje = await resolverOpcionesHerraje(cliente, {
-    serieCodigo: entrada.serieCodigo,
-    estructuraCodigo: entrada.codigo,
-    elegidas: entrada.opcionesHerraje,
-  })
+  let opcionesHerraje: OpcionHerrajeElegida[]
+  try {
+    opcionesHerraje = await resolverOpcionesHerraje(cliente, {
+      serieCodigo: entrada.serieCodigo, estructuraCodigo: entrada.codigo, elegidas: entrada.opcionesHerraje,
+    })
+  } catch (error) {
+    if (error instanceof ErrorSeleccionHerraje) return { ok: false, errores: { opcionHerraje: [error.message] } }
+    throw error
+  }
   return {
     ok: true,
     descripcion: estructura.descripcion,

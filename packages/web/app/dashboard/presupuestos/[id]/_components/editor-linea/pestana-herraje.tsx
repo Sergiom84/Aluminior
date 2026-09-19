@@ -41,19 +41,20 @@ export function PestanaHerraje({ serie, estructuraCodigo }: { serie: string; est
   const grupo = grupos.find((g) => g.conjuntoCodigo === conjunto) ?? null
   const catalogo = useMemo(() => (grupo ? catalogoDe(grupo) : []), [grupo])
   const marcadas = marcas[conjunto] ?? new Set<string>()
-  const estados = filtrarPorCategoriaHerraje(estadoOpcionesHerraje(catalogo, marcadas), categoria)
+  const excluyentes = new Set(grupo?.categorias?.filter(c => c.excluyentes).map(c => c.codigo) ?? [])
+  const estados = filtrarPorCategoriaHerraje(estadoOpcionesHerraje(catalogo, marcadas, excluyentes), categoria)
 
   const alternar = (codigo: string) => setMarcas((actual) => ({
-    ...actual, [conjunto]: alternarOpcionHerraje(catalogo, actual[conjunto] ?? new Set(), codigo),
+    ...actual, [conjunto]: alternarOpcionHerraje(catalogo, actual[conjunto] ?? new Set(), codigo, excluyentes),
   }))
 
   return (
     <div>
       {grupos.flatMap((g) => [...(marcas[g.conjuntoCodigo] ?? [])]
-        .filter((codigo) => g.opciones.some((o) => o.codigo === codigo))
+        .filter((codigo) => g.opciones.some((o) => String(Number(o.codigo)) === codigo && !o.oculta))
         .map((codigo) => (
           <input key={`${g.conjuntoCodigo}|${codigo}`} type="hidden" name="opcionHerraje"
-            value={`${g.conjuntoCodigo}|${codigo}`} />
+            value={`${g.conjuntoCodigo}|${g.opciones.find(o => String(Number(o.codigo)) === codigo)?.codigo ?? codigo}`} />
         )))}
 
       <div className={styles.filtros}>
@@ -68,7 +69,7 @@ export function PestanaHerraje({ serie, estructuraCodigo }: { serie: string; est
           <label htmlFor="herrajeCategoria">Categoría</label>
           <select id="herrajeCategoria" value={categoria} disabled={!grupo}
             onChange={(evento) => setCategoria(evento.target.value)}>
-            {categoriasOpcionesHerraje(catalogo).map((c) => <option key={c.codigo} value={c.codigo}>{c.etiqueta}</option>)}
+            {categoriasOpcionesHerraje(catalogo, Object.fromEntries((grupo?.categorias ?? []).map(c => [c.codigo, c.descripcion]))).map((c) => <option key={c.codigo} value={c.codigo}>{c.etiqueta}</option>)}
           </select>
         </div>
       </div>
@@ -98,12 +99,11 @@ export function PestanaHerraje({ serie, estructuraCodigo }: { serie: string; est
 }
 
 /**
- * Catálogo para las reglas de core. Las fórmulas (`fOpcSoloActiva`,
- * `fOpcIncompatible`) aún no están en la base: sin ellas ninguna opción se
- * bloquea. Las columnas existen desde la migración 0021; faltan los datos.
+ * Catálogo completo para core: las ocultas conservan sus marcas para fórmulas.
  */
 function catalogoDe(grupo: GrupoOpcionesHerraje): OpcionHerrajeCatalogo[] {
   return grupo.opciones.map((o) => ({
-    codigo: o.codigo, descripcion: o.descripcion, porDefecto: o.porDefecto, oculta: false, categoria: o.categoria,
+    codigo: o.codigo, descripcion: o.descripcion, porDefecto: o.porDefecto, oculta: o.oculta ?? false, categoria: o.categoria,
+    activaSoloSi: o.activaSoloSi, incompatible: o.incompatible,
   }))
 }

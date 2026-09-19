@@ -10,8 +10,7 @@ import styles from './editor-linea.module.css'
  * con la tabla de junquillo de `Hojas` y de `Fijos`; la 1 por defecto y las
  * posiciones sin tabla deshabilitadas.
  *
- * No emite campo: con la base actual sólo existe la opción 1, que es la que ya
- * usa el despiece (`junquillos.ts`). Elegir otra exige la migración propuesta.
+ * La opción elegida viaja al servidor para seleccionar tablas y persistirla.
  */
 export function PestanaAcristalamiento({ serie }: { serie: string }) {
   const [opciones, setOpciones] = useState<OpcionAcristalamiento[]>([])
@@ -39,8 +38,8 @@ export function PestanaAcristalamiento({ serie }: { serie: string }) {
         const id = `acristalamiento-${numero}`
         return (
           <div key={numero} className={styles.radio} data-deshabilitada={!opcion}>
-            <input type="radio" id={id} name="opcionAcristalamientoVista" value={numero}
-              checked={elegida === numero} disabled={!opcion || numero !== 1}
+            <input type="radio" id={id} name="opcionAcristalamiento" value={numero}
+              checked={elegida === numero} disabled={!opcion}
               onChange={() => setElegida(numero)} aria-describedby={`${id}-hojas ${id}-fijos`} />
             <label htmlFor={id} className={styles.codigo}>{numero}</label>
             <span id={`${id}-hojas`}><span className="sr-only">Hojas </span>{tabla(opcion?.hojas ?? null)}</span>

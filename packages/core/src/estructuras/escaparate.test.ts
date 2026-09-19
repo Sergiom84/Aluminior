@@ -16,8 +16,12 @@ describe('escaparate de estructuras', () => {
       expect.arrayContaining(['0', '02H', '02V', '04']),
     )
     expect(itemsEscaparate('ventanas-abatibles').map((item) => item.codigo)).toEqual(
-      expect.arrayContaining(['2', '2O', '1OFI']),
+      expect.arrayContaining(['2', '1O+1F+1O']),
     )
+    expect(itemsEscaparate('oscilobatientes').map(item => item.codigo)).toEqual(
+      expect.arrayContaining(['2O', '1OFI']),
+    )
+    expect(itemsEscaparate('ventanas-abatibles').some(item => item.codigo === '2O')).toBe(false)
     expect(itemsEscaparate('correderas-perimetrales')).toEqual([])
     expect(itemsEscaparate('mosquiteras')).toEqual([])
   })
@@ -32,9 +36,11 @@ describe('escaparate de estructuras', () => {
     expect(fuera.pagina).toBe(fuera.totalPaginas)
   })
 
-  it('no inventa categorías: el listado es el observado en el vídeo', () => {
+  it('usa familias del catálogo y orden observado en la 0017', () => {
     expect(CATEGORIAS_ESCAPARATE.map((c) => c.nombre)).toContain('VENTANAS ABATIBLES')
-    expect(CATEGORIAS_ESCAPARATE.map((c) => c.nombre)).toContain('FIJOS')
+    expect(CATEGORIAS_ESCAPARATE.map((c) => c.nombre)).toContain('FIJOS ABATIBLES')
     expect(CATEGORIAS_ESCAPARATE.map((c) => c.nombre)).toContain('PUERTAS PLEGABLES')
+    expect(CATEGORIAS_ESCAPARATE.slice(0, 9).map(c => c.familias[0]))
+      .toEqual(['001', '002', '011', '003', '020', '004', '021', '005', '006'])
   })
 })

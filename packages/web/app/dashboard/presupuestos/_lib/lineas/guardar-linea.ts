@@ -16,6 +16,7 @@ export type RanuraAcristalamiento = Omit<typeof schema.lineasAcristalamiento.$in
 export type OpcionHerrajeElegida = Omit<typeof schema.lineasOpcionesHerraje.$inferInsert, 'lineaId'>
 
 export interface SatelitesEstructura {
+  opcionAcristalamiento?: number
   serieCodigo: string
   estructuraCodigo: string
   acabadoCodigo: string | null
@@ -163,6 +164,7 @@ async function escribirEstructura(
   await cliente.insert(schema.lineasEstructura).values({
     lineaId,
     serieCodigo: estructura.serieCodigo,
+    opcionAcristalamiento: estructura.opcionAcristalamiento ?? 1,
     estructuraCodigo: estructura.estructuraCodigo,
     acabadoCodigo: estructura.acabadoCodigo,
   })

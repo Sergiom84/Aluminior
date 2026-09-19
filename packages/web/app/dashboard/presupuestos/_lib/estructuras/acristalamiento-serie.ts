@@ -1,15 +1,5 @@
-/**
- * Opciones de acristalamiento (tablas de junquillo) de una serie, para la
- * pestaña `Acristalamiento` de la edición de línea.
- *
- * Lee el mismo registro de `conjuntos` que `junquillos.ts` (conjunto = serie).
- * Hoy la base sólo tiene la opción 1 (`tabla_hojas` / `tabla_fijos`); las
- * opciones 2..5 y las descripciones de `TAcristalamiento` esperan a la
- * carga de `conjunto_acristalamientos` (migración 0021, tabla aún vacía). La regla de
- * qué se ofrece vive en core (`opcionesAcristalamiento`).
- */
-
-import { eq } from 'drizzle-orm'
+/** Catálogo 0021; durante la transición la opción 1 conserva el catálogo previo. */
+import { eq, inArray } from 'drizzle-orm'
 import { schema } from '@aluminior/db'
 import { opcionesAcristalamiento, type OpcionAcristalamiento } from '@aluminior/core/estructuras'
 import type { ClienteEscritura } from '../cliente-db.ts'
@@ -19,12 +9,19 @@ export async function opcionesAcristalamientoDeSerie(
   serieCodigo: string,
 ): Promise<OpcionAcristalamiento[]> {
   if (!serieCodigo) return []
-  const [conjunto] = await cliente.select({
-    tablaHojas: schema.conjuntos.tablaHojas,
-    tablaFijos: schema.conjuntos.tablaFijos,
+  const filas = await cliente.select().from(schema.conjuntoAcristalamientos)
+    .where(eq(schema.conjuntoAcristalamientos.conjuntoCodigo, serieCodigo))
+  if (!filas.length) {
+    const [conjunto] = await cliente.select().from(schema.conjuntos)
+      .where(eq(schema.conjuntos.codigo, serieCodigo)).limit(1)
+    return conjunto ? opcionesAcristalamiento([{ hojas: conjunto.tablaHojas, fijos: conjunto.tablaFijos }]) : []
+  }
+  const codigos = [...new Set(filas.flatMap(f => [f.tablaHojas, f.tablaFijos]).filter((c): c is string => !!c))]
+  const nombres = codigos.length ? await cliente.select().from(schema.tablasAcristalamiento)
+    .where(inArray(schema.tablasAcristalamiento.codigo, codigos)) : []
+  const tablas = Array.from({ length: 5 }, (_, i) => {
+    const fila = filas.find(f => f.opcion === i + 1)
+    return { hojas: fila?.tablaHojas ?? null, fijos: fila?.tablaFijos ?? null }
   })
-    .from(schema.conjuntos)
-    .where(eq(schema.conjuntos.codigo, serieCodigo)).limit(1)
-  if (!conjunto) return []
-  return opcionesAcristalamiento([{ hojas: conjunto.tablaHojas, fijos: conjunto.tablaFijos }])
+  return opcionesAcristalamiento(tablas, new Map(nombres.map(n => [n.codigo, n.descripcion])))
 }

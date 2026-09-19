@@ -104,6 +104,7 @@ export const esquemaLinea = z.object({
   /** Vidrio del acristalamiento (familia 050, facturable por m²). Opcional:
    * sin él, el cristal queda "sin valorar". */
   vidrioCodigo: z.string().trim().optional().transform((v) => v || null),
+  opcionAcristalamiento: z.coerce.number().int().min(1).max(5).default(1),
   varianteAcristalamiento: z.enum(['1', '2']).default('2'),
   /** Unidades del documento. Es el `Cdad` del original, distinto del `Metraje`
    * (la cantidad facturable en ML o m², que calcula el sistema). Se acepta la

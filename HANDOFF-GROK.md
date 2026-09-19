@@ -183,6 +183,37 @@ Orden sugerido, todo sobre presupuestos salvo que el titular pida otra cosa:
 - Regla de unión observada (tubo 60 → módulos a 1170, total 2400):
   `PARIDAD-PRODUCTOR.md`, pendiente de confirmar con Javi.
 
+### Continuación Codex, 19/09/2026
+
+La copia vigente es `C:\Users\laral\Documents\Aluminior`; la carpeta de
+OneDrive contiene otra copia anterior en main. Se continúa en
+`feat/cerramientos-editor-linea`, sin unir ni publicar.
+
+- Fase 1 implementada localmente: cargador de catálogo acotado con dry-run,
+  transacción y rollback; fórmulas/categorías de herraje y elección de tabla
+  de acristalamiento conectadas hasta persistencia y valoración. No se
+  reutilizan ajustes de corte medidos para otra tabla.
+- Pruebas PGlite con cadena completa 0000–0021: 6/6 aprobadas, incluida la
+  prueba real tras autorización explícita para los cuatro CSV de catálogo
+  históricos EMP0016. Resultado local: 11.854 opciones, 2.058 categorías,
+  143 alternativas de 50 conjuntos y 70 tablas. GM252/4 conserva la fórmula
+  completa `o1+o508+o509`; GMA65OPT ofrece GM69–72. Carga Supabase aplicada
+  después de autorización explícita, simulación con 11.854 coincidencias sin
+  ausentes y respaldo local ignorado. Se corrigió doble serialización JSON en
+  el adaptador postgres.js; 6/6 ETL y typecheck ETL aprobados de nuevo.
+  Recuentos protegidos antes/después: 3 presupuestos, 1 línea y 504 clientes.
+  Web verificada: CERRADURA bloqueada frente a CREMONA y cuatro opciones con
+  nombres GM69–72; editor cerrado sin guardar documentos.
+- Fase 2 parcial: generador conservador, informe de 541 estructuras y
+  categorías por familia real. No se habilitan estructuras nuevas. Ver
+  `EVIDENCIA-ESCAPARATE.md` para discrepancias del control de 14 plantillas.
+- Consulta visual en Productor 0017 de `1O2FL`: Diseño V3 indica
+  `Hoja (1 H.Oscilo. Dchas.)`, bisagras a la derecha y 1300 × 1200 mm.
+  La semántica de mano de las plantillas y los dibujadores requiere revisión
+  conjunta; no basta cambiar una etiqueta sin comprobar las parejas de hojas.
+- Detalle de verificaciones y límites: `VERIFICACION-CODEX-2026-09-19.md`.
+  C2, regla de unión y merge siguen pendientes; no se ha alterado la 0016.
+
 ## 8. Archivos tocados en este commit
 
 Presupuestos / core: `escaparate.ts`, `descripcion-linea.ts`, componentes

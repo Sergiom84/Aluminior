@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { descripcionLineaEstructura } from '@aluminior/core/estructuras'
 import { PestanasEditor, type PestanaEditor } from './editor-linea/pestanas-editor.tsx'
 import { PestanaEstructura, type PropsPestanaEstructura } from './editor-linea/pestana-estructura.tsx'
+import { ErroresSeleccion } from './editor-linea/errores-seleccion.tsx'
 import { PestanaHerraje } from './editor-linea/pestana-herraje.tsx'
 import { PestanaAcristalamiento } from './editor-linea/pestana-acristalamiento.tsx'
 
@@ -46,6 +47,8 @@ export function EditorLineaEstructura(props: PropsPestanaEstructura & { onCambia
           herraje: <PestanaHerraje serie={serie} estructuraCodigo={plantilla.codigo} />,
           acristalamiento: <PestanaAcristalamiento serie={serie} />,
         }} />
+
+      <ErroresSeleccion errores={props.err} />
 
       <label className="al-line-editor-desc">
         Descripción

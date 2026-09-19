@@ -15,6 +15,7 @@
     "postgres": "^3.4.5"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "0.5.8",
     "tsx": "^4.19.2",
     "typescript": "^5.6.3",
     "vitest": "3.2.6"

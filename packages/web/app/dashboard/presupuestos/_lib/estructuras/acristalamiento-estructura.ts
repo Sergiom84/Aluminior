@@ -23,6 +23,7 @@ export interface EntradaAcristalamientoEstructura {
   serieCodigo: string
   estructuraCodigo: string
   vidrioCodigo: string | null
+  opcionAcristalamiento?: number
   varianteAcristalamiento: '1' | '2'
   acabadoCodigo: string | null
   anchoMm: number
@@ -221,6 +222,7 @@ export async function resolverAcristalamientoEstructura(
 
   if (cristalesAcris.length) {
     const calculoAcris = await piezasAcristalamiento(cliente, {
+      opcionAcristalamiento: entrada.opcionAcristalamiento,
       serieCodigo: entrada.serieCodigo,
       tamJunquillo: tamJunqVidrio,
       cristales: cristalesAcris,

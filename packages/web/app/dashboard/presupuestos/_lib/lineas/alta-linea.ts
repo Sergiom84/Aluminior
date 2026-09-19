@@ -54,6 +54,7 @@ export async function altaLinea(db: ReturnType<typeof crearDb>, d: EntradaAltaLi
         altoMm: d.altoMm ?? null,
         vidrioCodigo: d.vidrioCodigo,
         varianteAcristalamiento: d.varianteAcristalamiento,
+        opcionAcristalamiento: d.opcionAcristalamiento,
         acabadoCodigo: d.acabadoCodigo,
         tarifa: presupuesto.tarifa,
         opcionesHerraje: opcionesElegidas,
@@ -91,6 +92,7 @@ export async function altaLinea(db: ReturnType<typeof crearDb>, d: EntradaAltaLi
             estructura: {
               serieCodigo: d.serieCodigo ?? '',
               estructuraCodigo: d.codigo,
+              opcionAcristalamiento: d.opcionAcristalamiento,
               acabadoCodigo: d.acabadoCodigo,
               piezas: piezasAPersistir,
               acristalamiento: acristalamientoAPersistir,

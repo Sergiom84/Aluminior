@@ -19,6 +19,8 @@ interface FilaOpcion {
   porDefecto: boolean
   oculta: boolean
   categoria: string | null
+  activaSoloSi?: string | null
+  incompatible?: string | null
 }
 
 const opcion = (
@@ -96,12 +98,13 @@ describe('opciones ofrecidas al configurar', () => {
     expect(grupos?.[0].opciones.map((o) => o.codigo)).toEqual(['2', '9', '10'])
   })
 
-  it('excluye las ocultas, que el original no muestra', async () => {
+  it('conserva las ocultas para evaluar fórmulas sin mostrarlas', async () => {
     const { cliente } = clienteFalso({ conjuntos: 'C1' }, [
       opcion('C1', '1'), opcion('C1', '2', { oculta: true }),
     ])
     const grupos = await opcionesHerrajeDe(cliente, 'ELEGANTPVC', '2O')
-    expect(grupos?.[0].opciones.map((o) => o.codigo)).toEqual(['1'])
+    expect(grupos?.[0].opciones.filter(o => !o.oculta).map((o) => o.codigo)).toEqual(['1'])
+    expect(grupos?.[0].opciones.find(o => o.codigo === '2')?.oculta).toBe(true)
   })
 
   it('omite el grupo que se queda sin opciones visibles', async () => {
@@ -128,7 +131,7 @@ describe('opciones ofrecidas al configurar', () => {
     ])
     const grupos = await opcionesHerrajeDe(cliente, 'ELEGANTPVC', '2O')
     expect(grupos?.[0].opciones[0])
-      .toEqual({ codigo: '1', descripcion: 'MANILLA ESTÁNDAR', porDefecto: true, categoria: 'MAN' })
+      .toMatchObject({ codigo: '1', descripcion: 'MANILLA ESTÁNDAR', porDefecto: true, categoria: 'MAN' })
   })
 })
 
@@ -233,4 +236,18 @@ describe('opciones persistidas al añadir la línea', () => {
         categoria: 'CIERRE', opcionCodigo: '7', descripcion: 'CREMONA OSCILOBATIENTE',
       }])
   })
+})
+
+it('rechaza un formulario que fuerza cremona y cerradura simultáneas', async () => {
+  const { cliente } = clienteFalso({ conjuntos: 'GM252' }, [
+    opcion('GM252', '1', { incompatible: 'o4' }), opcion('GM252', '4', { incompatible: 'o1' }),
+  ])
+  await expect(resolverOpcionesHerraje(cliente, { serieCodigo: 'GMA65OPT', estructuraCodigo: '2O', elegidas: ['GM252|1', 'GM252|4'] })).rejects.toThrow('incompatible')
+})
+
+it('una opción oculta por defecto participa en Activa sólo Si', async () => {
+  const { cliente } = clienteFalso({ conjuntos: 'C1' }, [
+    opcion('C1', '8', { activaSoloSi: 'o9' }), opcion('C1', '9', { oculta: true, porDefecto: true }),
+  ])
+  expect(await resolverOpcionesHerraje(cliente, { serieCodigo: 'S', estructuraCodigo: 'E', elegidas: ['C1|8'] })).toHaveLength(2)
 })
