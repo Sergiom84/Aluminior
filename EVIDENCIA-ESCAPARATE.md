@@ -153,9 +153,12 @@ estructura nueva en escritorio/móvil. La fase 2 no está terminada.
 - Móvil 390×844: ancho de documento 375 px, sin desbordamiento horizontal.
 - Teclado: flecha izquierda desde Acristalamiento selecciona Opc.Herraje,
   saltando Cargos Adic. deshabilitada (trabajo paralelo de fase 1).
-- No se compara ni afirma precio de nuevas estructuras. La carga remota
-  pendiente impide validar el catálogo completo del editor en esta sesión.
+- No se compara ni afirma precio de nuevas estructuras. La carga remota del
+  editor se completó posteriormente con autorización y verificación visual;
+  consultar `VERIFICACION-CODEX-2026-09-19.md`.
 
 Pruebas: suite core completa **377/377** y typecheck de core correctos.
-El control local de 14 se midió al generar el informe, pero no se reejecutó
-tras suspender nuevas lecturas de CSV histórico hasta aclarar autorización.
+Tras delegar el usuario la continuidad de la investigación funcional, se
+reejecutó `node --import tsx --test scripts/control-escaparate.test.mjs`:
+14 controles aprobados, ninguno omitido. Esto acredita que se mantienen
+las ocho coincidencias y seis divergencias documentadas, no paridad plena.

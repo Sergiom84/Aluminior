@@ -4,6 +4,16 @@ Preparado el 19/09/2026 al cerrar la sesión de reconocimiento de cerramientos.
 Rama de trabajo: `feat/cerramientos-editor-linea` (commits `4066dc6` y
 `bc2758a` sobre `ba1bc9c`). No está unida a `main`.
 
+## Actualización de continuidad
+
+El catálogo de fase 1 ya se cargó con autorización y se verificó en Supabase
+y en la web. La fase 2 conserva 14 estructuras operativas y 46 candidatas
+visuales aún sin activar. Ese avance quedó en el commit local `3bbe321`.
+Las secciones de situación de partida siguientes describen el estado previo.
+Para el orden actual delegado por el usuario, consultar
+`PLAN-PARIDAD-OPERATIVA.md`; detalle de pruebas y carga en
+`VERIFICACION-CODEX-2026-09-19.md`.
+
 ## 0. Cómo arrancar la conversación nueva
 
 Pega esto como primer mensaje:

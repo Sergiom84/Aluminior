@@ -214,6 +214,32 @@ OneDrive contiene otra copia anterior en main. Se continúa en
 - Detalle de verificaciones y límites: `VERIFICACION-CODEX-2026-09-19.md`.
   C2, regla de unión y merge siguen pendientes; no se ha alterado la 0016.
 
+### Investigación funcional posterior, 19/09/2026
+
+- El usuario delegó el orden técnico para reconstruir comportamiento de
+  Productor. Plan actual: `PLAN-PARIDAD-OPERATIVA.md`.
+- Avance del editor/escaparate guardado en commit local `3bbe321`, sin push
+  ni merge. `env.example` sigue fuera del commit por ser ajeno al trabajo.
+- Herrajes: Estructuras.Conjunto1..4 están vacíos en las 541 fichas.
+  ConfigSeries contiene referencias por apertura, documentadas en el CHM.
+  Hipótesis contrastada contra 22 reglas: 12 coinciden, 1 discrepa, 9 quedan
+  desconocidas. No se cambió el resolver ni se cargaron reglas adicionales.
+  Ver `EVIDENCIA-ASIGNACION-HERRAJE.md` y sus scripts reproducibles.
+- Banco local de comparación preparado con proyección técnica sin datos
+  libres ni identificadores de documentos. Cobertura: 888 líneas de 14 de
+  las 46 candidatas; las otras 32 requieren evidencia nueva. Todos los casos
+  pendientes de reproducción; igualdad numérica no certifica la tarifa,
+  vidrio, diseño específico o modo de valoración. Ver `BANCO-COMPARACION-PRECIOS.md`.
+- Ante bloqueo automático de generación, se pidió y obtuvo autorización
+  explícita para leer VPresupuestosLin, VDatosLinEstr y VOpcionesHerraje
+  históricos y guardar el banco técnico local ignorado por Git.
+- Verificación: 4 pruebas sintéticas del banco y 14 controles de catálogo
+  aprobados; los 14 controles preservan las divergencias conocidas, no
+  significan que las 14 plantillas tengan paridad plena.
+- Siguiente evidencia necesaria: diseño efectivo del contraejemplo 3HO,
+  herencia de series, manos y cotas de las seis plantillas; después C2.
+  Sin nuevas escrituras remotas ni modificación de Productor en este trabajo.
+
 ## 8. Archivos tocados en este commit
 
 Presupuestos / core: `escaparate.ts`, `descripcion-linea.ts`, componentes
