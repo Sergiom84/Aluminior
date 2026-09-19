@@ -15,7 +15,8 @@ export async function altaCerramientoValorado(db: Pick<ReturnType<typeof crearDb
     const preparada = await prepararLineaValorada(tx, alta.alta, { ...entrada, tarifa: cabecera.tarifa })
     aviso = preparada.aviso
     return { tipo: 'CERRAMIENTO', cerramiento: alta.alta,
-      resultado: preparada.resultado, manoObra: preparada.manoObra,
+      ...(preparada.estado === 'VALORADA' ? { resultado: preparada.resultado } : {}),
+      manoObra: preparada.manoObra,
       valores: { presupuestoId: entrada.presupuestoId, descripcion: alta.alta.descripcion,
         referencia: entrada.referencia, cantidad: String(entrada.cantidad),
         anchoMm: alta.alta.anchoMm, altoMm: alta.alta.altoMm,

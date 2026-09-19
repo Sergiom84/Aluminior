@@ -91,10 +91,12 @@ async function guardarLineaConGanchos(
 export type EscrituraValorada = Extract<EscrituraLinea, { tipo: 'CERRAMIENTO' }> & {
   resultado: ResultadoCerramientoV1
 }
+type EscrituraCerramiento = Extract<EscrituraLinea, { tipo: 'CERRAMIENTO' }>
 
 /** Preparar catálogo y escribir bajo la misma cabecera bloqueada. */
 export async function guardarLineaValorada(db: Db, presupuestoId: string,
-  preparar: (tx: ClienteEscritura, cabecera: CabeceraBloqueada) => Promise<EscrituraValorada>,
+  preparar: (tx: ClienteEscritura, cabecera: CabeceraBloqueada) =>
+    Promise<EscrituraCerramiento | EscrituraValorada>,
 ): Promise<string> {
   return conPresupuestoBloqueado(db, presupuestoId, async (tx, cabecera) => {
     const entrada = await preparar(tx, cabecera)

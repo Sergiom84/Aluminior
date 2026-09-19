@@ -9,6 +9,7 @@ import type { ClienteEscritura } from '../cliente-db.ts'
 import { actualizarTotales } from '../totales.ts'
 import { persistirManoObra, type SnapshotManoObra } from '../mano-obra/index.ts'
 import { prepararAltaCerramiento, type AltaCerramiento } from './alta-cerramiento.ts'
+import { configuracionTieneFiExplicito } from '@aluminior/core/estructuras'
 
 type Db = Pick<ReturnType<typeof crearDb>, 'transaction'>
 
@@ -60,7 +61,9 @@ export async function actualizarCerramiento(
     const preparada = await prepararLineaValorada(tx, alta.alta, { ...entrada, tarifa: documento.tarifa })
     await escribirEdicionPreparada(tx, { ...entrada, alta: alta.alta,
       manoObra: preparada.manoObra, aviso: preparada.aviso ?? '',
-      resultado: preparada.resultado, importes: preparada.importes })
+      ...(preparada.estado === 'VALORADA'
+        ? { resultado: preparada.resultado, importes: preparada.importes }
+        : {}) })
     return { ok: true, aviso: preparada.aviso ?? 'Cerramiento actualizado' }
   })
 }
@@ -96,10 +99,12 @@ async function escribirEdicionPreparada(tx: ClienteEscritura,
 ): Promise<boolean> {
     if (!await lineaEditable(tx, entrada)) return false
     if (!('resultado' in entrada)) {
-      const [actual] = await tx.select({ lineaId: schema.lineasCerramientoResultados.lineaId })
-        .from(schema.lineasCerramientoResultados)
-        .where(eq(schema.lineasCerramientoResultados.lineaId, entrada.lineaId)).limit(1)
-      if (actual) throw new ErrorOperacionCerramiento('La línea valorada requiere una revaloración completa')
+      if (!configuracionTieneFiExplicito(entrada.alta.configuracion)) {
+        const [actual] = await tx.select({ lineaId: schema.lineasCerramientoResultados.lineaId })
+          .from(schema.lineasCerramientoResultados)
+          .where(eq(schema.lineasCerramientoResultados.lineaId, entrada.lineaId)).limit(1)
+        if (actual) throw new ErrorOperacionCerramiento('La línea valorada requiere una revaloración completa')
+      }
     }
     await tx.update(schema.lineas).set({
       descripcion: entrada.alta.descripcion,
@@ -114,9 +119,15 @@ async function escribirEdicionPreparada(tx: ClienteEscritura,
     await actualizarSatelite(tx, entrada.lineaId, entrada.alta)
     if ('resultado' in entrada) await escribirResultadosCerramiento(tx, entrada.lineaId, entrada.resultado, entrada.manoObra)
     else {
-    await tx.delete(schema.lineasManoObra)
-      .where(eq(schema.lineasManoObra.lineaId, entrada.lineaId))
-    await persistirManoObra(tx, entrada.lineaId, entrada.manoObra)
+      if (configuracionTieneFiExplicito(entrada.alta.configuracion)) {
+        await tx.delete(schema.lineasCerramientoResultados)
+          .where(eq(schema.lineasCerramientoResultados.lineaId, entrada.lineaId))
+        await tx.delete(schema.lineasDespiece)
+          .where(eq(schema.lineasDespiece.lineaId, entrada.lineaId))
+      }
+      await tx.delete(schema.lineasManoObra)
+        .where(eq(schema.lineasManoObra.lineaId, entrada.lineaId))
+      await persistirManoObra(tx, entrada.lineaId, entrada.manoObra)
     }
     await actualizarTotales(tx, entrada.presupuestoId)
     return true

@@ -42,3 +42,15 @@ it.each(['ausente', 'version', 'corrupto', 'geometria', 'medidas'] as const)(
   },
 )
 
+it('rechaza un snapshot anterior frente a una configuración con FI distinto', () => {
+  const fuente = entrada()
+  fuente.configuracion = { version: 2, modulos: [{
+    id: 'modulo-1', estructuraCodigo: '1OFI', anchoMm: 900, altoMm: 1800, fiMm: 400,
+  }], uniones: [] }
+  fuente.version = 2
+  fuente.anchoMm = 900
+  fuente.altoMm = 1800
+
+  expect(() => adaptarCerramientoPdf(fuente)).toThrow(DatosPdfIncoherentes)
+})
+

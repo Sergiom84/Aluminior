@@ -12,6 +12,17 @@ const configuracion = (primero = 1200): ConfiguracionCerramiento => ({ version: 
 })
 
 describe('adaptador geométrico PDF', () => {
+  it.each([[1500, 300, 1200], [1800, 300, 1500], [1800, 400, 1400]])(
+    'sitúa el eje 1OFI en %s mm para FI %s', (altoMm, fiMm, ejeY) => {
+      const dibujo = geometriaCerramientoPdf({ version: 2, modulos: [{
+        id: 'modulo-1', estructuraCodigo: '1OFI', anchoMm: 900, altoMm, fiMm,
+      }], uniones: [] })
+      const modulo = dibujo.modulos[0]
+      const travesano = modulo.elementos.find((elemento) => elemento.tipo === 'separador')!
+      expect((travesano.y + travesano.alto / 2 - modulo.rect.y) / dibujo.escala)
+        .toBeCloseTo(ejeY)
+    },
+  )
   it.each([[1200, 2460, 1260], [900, 2160, 960]])(
     'conserva mm e identidad con primer módulo de %s', (primero, total, inicioDerecho) => {
       const fuente = configuracion(primero)

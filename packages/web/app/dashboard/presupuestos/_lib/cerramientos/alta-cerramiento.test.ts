@@ -41,6 +41,17 @@ function clienteEspia(fallar = false) {
 }
 
 describe('alta de cerramiento', () => {
+  it('recupera FI y versión exactamente desde el JSON existente', () => {
+    const unoFi = crearConfiguracionCerramiento(plantillaDiseno('1OFI')!)
+    unoFi.modulos[0].fiMm = 400
+    const resultado = prepararAltaCerramiento({
+      ...datos, configuracionSerializada: JSON.stringify(unoFi),
+    })
+
+    expect(resultado.ok).toBe(true)
+    if (resultado.ok) expect(resultado.alta.configuracion).toEqual(unoFi)
+  })
+
   it('deriva descripción, medidas y ausencia de precio de la composición', () => {
     const resultado = prepararAltaCerramiento(datos)
     expect(resultado.ok).toBe(true)

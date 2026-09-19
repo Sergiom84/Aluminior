@@ -36,6 +36,7 @@ export function EditarCerramiento({
     editarCerramiento, null,
   )
   const [configuracion, setConfiguracion] = useState(datos.configuracion)
+  const [configuracionValida, setConfiguracionValida] = useState(true)
   const medidasIniciales = medidasCerramiento(datos.configuracion)
   const [anchoMm, setAnchoMm] = useState(medidasIniciales.anchoMm)
   const [altoMm, setAltoMm] = useState(medidasIniciales.altoMm)
@@ -69,7 +70,8 @@ export function EditarCerramiento({
 
       <DisenadorEstructura codigo={configuracion.modulos[0].estructuraCodigo}
         anchoMm={anchoMm} altoMm={altoMm} configuracionInicial={datos.configuracion}
-        onConfiguracionChange={setConfiguracion} onDimensionesChange={actualizarDimensiones} />
+        onConfiguracionChange={setConfiguracion} onDimensionesChange={actualizarDimensiones}
+        onValidezChange={setConfiguracionValida} />
 
       {estado?.mensaje && (
         <div className="mb-3 mt-4 rounded-md border p-3 text-sm"
@@ -148,7 +150,8 @@ export function EditarCerramiento({
           className="rounded-md border px-4 py-2 text-sm" style={{ borderColor: 'var(--al-border-strong)' }}>
           Cancelar
         </button>
-        <button type="submit" disabled={guardando} className="rounded-md px-4 py-2 text-sm font-medium"
+        <button type="submit" disabled={guardando || !configuracionValida}
+          className="rounded-md px-4 py-2 text-sm font-medium"
           style={{ background: 'var(--al-accent)', color: 'var(--al-accent-contrast)' }}>
           {guardando ? 'Guardando…' : 'Guardar cambios'}
         </button>

@@ -38,6 +38,7 @@ export function AnyadirLinea({
     crearConfiguracionCerramiento(plantillaDiseno('2O')!),
   )
   const [edicion, setEdicion] = useState(0)
+  const [configuracionValida, setConfiguracionValida] = useState(true)
   const actualizarDimensiones = useCallback((ancho: number, alto: number) => {
     setAnchoMm(ancho)
     setAltoMm(alto)
@@ -134,7 +135,8 @@ export function AnyadirLinea({
           <DisenadorEstructura key={edicion} codigo={plantilla.codigo} anchoMm={anchoMm} altoMm={altoMm}
             configuracionInicial={configuracion}
             onConfiguracionChange={setConfiguracion}
-            onDimensionesChange={actualizarDimensiones} />
+            onDimensionesChange={actualizarDimensiones}
+            onValidezChange={setConfiguracionValida} />
           <CamposCerramiento err={err} series={series} acabados={acabados}
             serie={serie} setSerie={setSerie} />
         </>
@@ -144,7 +146,8 @@ export function AnyadirLinea({
 
       {!enEscaparate && (
         <div className={`${styles.formActions} mt-4`}>
-          <button type="submit" disabled={enviando} className="al-command-primary disabled:opacity-50">
+          <button type="submit" disabled={enviando || (tipo === 'CERRAMIENTO' && !configuracionValida)}
+            className="al-command-primary disabled:opacity-50">
             {enviando ? 'Añadiendo…' : 'Aceptar'}
           </button>
           {(tipo === 'ESTRUCTURA' || tipo === 'CERRAMIENTO') && (

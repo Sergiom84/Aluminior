@@ -11,6 +11,7 @@ import { copiarPresupuesto } from '../copia/copiar-presupuesto.ts'
 import { OPCIONES_COPIA_IDENTICA } from '../copia/plan-copia.ts'
 import { MAPA_VACIO, normalizarMapa } from '../copia/mapa-sustitucion.ts'
 import { J04, configuracionJ04, sembrarCatalogoJ04 } from './catalogo-j04.fixture.ts'
+import { crearConfiguracionCerramiento, plantillaDiseno } from '@aluminior/core/estructuras'
 
 const db = crearDb(urlDePruebasValidada(process.env.TEST_DATABASE_URL))
 type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0]
@@ -37,9 +38,51 @@ const documento = async (tx: Tx, id: string) => {
   if (!d) throw new Error('Documento esperado ausente')
   return d
 }
+const configuracionFi = () => {
+  const base = crearConfiguracionCerramiento(plantillaDiseno('1OFI')!)
+  return { ...base, modulos: [{ ...base.modulos[0], anchoMm: 900, altoMm: 1800, fiMm: 400 }] }
+}
 afterAll(() => db.$client.end())
 
 describe('J05 línea valorada: servicio productivo y PostgreSQL', () => {
+  it('FI explícito invalida precio, snapshot, despiece y MO anteriores en la misma edición', () => caso(async (tx, id) => {
+    await altaCerramientoValorado(tx, entradaJ05(id))
+    const original = (await documento(tx, id)).lineas[0]
+    const configuracion = configuracionFi()
+
+    const resultado = await actualizarCerramiento(tx, {
+      ...entradaJ05(id), lineaId: original.linea.id,
+      configuracionSerializada: JSON.stringify(configuracion),
+    })
+
+    expect(resultado.ok).toBe(true)
+    const actual = (await documento(tx, id)).lineas[0]
+    expect(actual.cerramiento?.configuracion).toEqual(configuracion)
+    expect(actual.linea).toMatchObject({
+      precioUnitario: null, total: null, valoracionCompleta: false,
+    })
+    expect(actual.resultadoCerramiento).toBeNull()
+    expect(actual.despiece).toEqual([])
+    expect(actual.manoObra).toEqual([])
+  }))
+
+  it('un fallo posterior revierte juntos FI y la invalidación de resultados', () => caso(async (tx, id) => {
+    await altaCerramientoValorado(tx, entradaJ05(id))
+    const antes = await documento(tx, id)
+    const original = antes.lineas[0]
+    const alta = prepararAltaCerramiento({
+      ...entradaJ05(id), configuracionSerializada: JSON.stringify(configuracionFi()),
+    })
+    if (!alta.ok) throw new Error('Alta FI sintética inválida')
+    const { id: _id, lineaId: _lineaId, ...manoObra } = original.manoObra[0]
+
+    await expect(escribirEdicionCerramiento(tx, {
+      presupuestoId: id, lineaId: original.linea.id, referencia: null, cantidad: 2,
+      alta: alta.alta, manoObra: [manoObra, manoObra], aviso: alta.alta.aviso,
+    })).rejects.toThrow()
+    expect(await documento(tx, id)).toEqual(antes)
+  }))
+
   it.each([[2, '311.66'], [3, '452.49']])('cantidad %s conserva MO de toda la línea', (cantidad, total) => caso(async (tx, id) => {
     expect((await altaCerramientoValorado(tx, entradaJ05(id, Number(cantidad)))).ok).toBe(true)
     const d = await documento(tx, id); const l = d.lineas[0]

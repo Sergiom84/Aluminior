@@ -5,10 +5,22 @@ import { prepararManoObra } from '../mano-obra/index.ts'
 import type { AltaCerramiento } from './alta-cerramiento.ts'
 import { valorarCerramiento } from './valorar-cerramiento.ts'
 import { importesLineaCerramiento } from './importes-linea.ts'
+import { configuracionTieneFiExplicito } from '@aluminior/core/estructuras'
+
+export const AVISO_FI_SIN_VALORAR =
+  'Configuración guardada sin valorar: la cota FI de 1OFI aún no dispone de despiece ni cálculo económico verificados.'
 
 export async function prepararLineaValorada(tx: ClienteEscritura, alta: AltaCerramiento,
   entrada: { tarifa: number; cantidad: number; horasFabricacion: string; horasColocacion: string },
 ) {
+  if (configuracionTieneFiExplicito(alta.configuracion)) {
+    return {
+      estado: 'FI_PENDIENTE' as const,
+      manoObra: [],
+      importes: { precioUnitario: null, total: null, valoracionCompleta: false },
+      aviso: AVISO_FI_SIN_VALORAR,
+    }
+  }
   const tablas = await tx.execute<{ tabla: string | null }>(sql`SELECT to_regclass('public.lineas_cerramiento_resultados')::text AS tabla`)
   if (!tablas[0]?.tabla) throw new ErrorOperacionCerramiento('Falta aplicar la migración de resultados de cerramientos en este entorno')
   const resultado = await valorarCerramiento(tx, { configuracion: alta.configuracion,
@@ -19,7 +31,8 @@ export async function prepararLineaValorada(tx: ClienteEscritura, alta: AltaCerr
   const notas = resultado.origenes.flatMap(o => o.diagnosticos.map(d =>
     `${o.origen.tipo} ${o.origen.id}: ${d.detalle}`))
   if (manoObra.estado === 'PREPARADA') notas.push(...manoObra.notas)
-  return { resultado, manoObra: manoObra.estado === 'PREPARADA' ? manoObra.filas : [],
+  return { estado: 'VALORADA' as const, resultado,
+    manoObra: manoObra.estado === 'PREPARADA' ? manoObra.filas : [],
     importes: importesLineaCerramiento(resultado, String(entrada.cantidad), manoObra),
     aviso: notas.length ? [...new Set(notas)].join('; ') : null }
 }

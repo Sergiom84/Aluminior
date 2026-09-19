@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { plantillaDiseno, UNIONES_VISUALES } from './diseno.ts'
 import {
-  actualizarModuloCerramiento, anadirModuloCerramiento, crearConfiguracionCerramiento, descripcionCerramiento,
+  actualizarFiModuloCerramiento, actualizarModuloCerramiento, anadirModuloCerramiento,
+  cambiarEstructuraModuloCerramiento, crearConfiguracionCerramiento, descripcionCerramiento,
   eliminarModuloCerramiento, esConfiguracionCerramiento, medidasCerramiento,
 } from './cerramiento.ts'
 
@@ -111,5 +112,68 @@ describe('configuración del cerramiento', () => {
       }],
     }
     expect(descripcionCerramiento(configuracion)).toBe('CERRAMIENTO SEGÚN DIBUJO · 1OFI')
+  })
+
+  it('crea cada módulo 1OFI nuevo con FI 300 y versión 2', () => {
+    const inicial = crearConfiguracionCerramiento(plantillaDiseno('1OFI')!)
+    const ampliado = anadirModuloCerramiento(inicial, plantillaDiseno('1OFI')!)
+
+    expect(ampliado.version).toBe(2)
+    expect(ampliado.modulos.map((modulo) => modulo.fiMm)).toEqual([300, 300])
+    expect(esConfiguracionCerramiento(ampliado)).toBe(true)
+  })
+
+  it('edita FI por módulo, conserva el valor al cambiar altura y serializa exactamente', () => {
+    const inicial = anadirModuloCerramiento(
+      crearConfiguracionCerramiento(plantillaDiseno('1OFI')!),
+      plantillaDiseno('1OFI')!,
+    )
+    const editado = actualizarFiModuloCerramiento(inicial, 'modulo-2', 400)
+    const alto = actualizarModuloCerramiento(editado, 'modulo-2', { altoMm: 1800 })
+    const recuperado = JSON.parse(JSON.stringify(alto)) as unknown
+
+    expect(alto.modulos.map((modulo) => modulo.fiMm)).toEqual([300, 400])
+    expect(esConfiguracionCerramiento(recuperado)).toBe(true)
+    expect(recuperado).toEqual(alto)
+  })
+
+  it('mantiene v1 y su ausencia de FI al guardar cambios ajenos', () => {
+    const legado = {
+      version: 1 as const,
+      modulos: [{ id: 'modulo-1', estructuraCodigo: '1OFI', anchoMm: 900, altoMm: 1500 }],
+      uniones: [],
+    }
+    const editado = actualizarModuloCerramiento(legado, 'modulo-1', { anchoMm: 950 })
+
+    expect(editado.version).toBe(1)
+    expect(Object.hasOwn(editado.modulos[0], 'fiMm')).toBe(false)
+    expect(esConfiguracionCerramiento(editado)).toBe(true)
+  })
+
+  it('convierte v1 solo al editar FI y rechaza FI geométricamente inválido', () => {
+    const legado = {
+      version: 1 as const,
+      modulos: [{ id: 'modulo-1', estructuraCodigo: '1OFI', anchoMm: 900, altoMm: 1500 }],
+      uniones: [],
+    }
+    const convertido = actualizarFiModuloCerramiento(legado, 'modulo-1', 400)
+    expect(convertido.version).toBe(2)
+    expect(convertido.modulos[0].fiMm).toBe(400)
+    expect(esConfiguracionCerramiento(convertido)).toBe(true)
+
+    const demasiadoAlto = actualizarModuloCerramiento(convertido, 'modulo-1', { altoMm: 400 })
+    expect(demasiadoAlto.modulos[0].fiMm).toBe(400)
+    expect(esConfiguracionCerramiento(demasiadoAlto)).toBe(false)
+  })
+
+  it('al seleccionar 1OFI asigna FI y al salir elimina su significado específico', () => {
+    const base = crearConfiguracionCerramiento(plantillaDiseno('2O')!)
+    const unoFi = cambiarEstructuraModuloCerramiento(base, 'modulo-1', plantillaDiseno('1OFI')!)
+    const otra = cambiarEstructuraModuloCerramiento(unoFi, 'modulo-1', plantillaDiseno('2O')!)
+
+    expect(unoFi).toMatchObject({ version: 2, modulos: [{ estructuraCodigo: '1OFI', fiMm: 300 }] })
+    expect(Object.hasOwn(otra.modulos[0], 'fiMm')).toBe(false)
+    expect(otra.version).toBe(1)
+    expect(esConfiguracionCerramiento(otra)).toBe(true)
   })
 })

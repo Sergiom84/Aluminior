@@ -14,6 +14,15 @@ const posiciones = (html: string, clase: string) => [...html.matchAll(
 const render = (codigo: string, compacto = false) => renderToStaticMarkup(
   <DibujoEstructura plantilla={plantillaDiseno(codigo)!} compacto={compacto} />,
 )
+const ejeTravesano = (altoMm: number, fiMm: number) => {
+  const plantilla = plantillaDiseno('1OFI')!
+  const html = renderToStaticMarkup(<DibujoEstructura plantilla={plantilla}
+    anchoMm={900} altoMm={altoMm}
+    modulo={{ id: 'modulo-1', estructuraCodigo: '1OFI', anchoMm: 900, altoMm, fiMm }} />)
+  const coincidencia = html.match(/<rect x="[\d.]+" y="([\d.]+)" width="[\d.]+" height="([\d.]+)" class="al-traverse"/)
+  if (!coincidencia) throw new Error('Travesaño no renderizado')
+  return Number(coincidencia[1]) + Number(coincidencia[2]) / 2
+}
 
 describe('SVG real de manos y manillas', () => {
   it.each([
@@ -46,5 +55,13 @@ describe('SVG real de manos y manillas', () => {
     expect(contar(html, 'class="al-opening-line al-opening-tilt"')).toBe(1)
     expect(html).not.toContain('class="al-handle"')
     expect(html).not.toContain('class="al-hinge"')
+  })
+
+  it.each([
+    [1500, 300, 377.2],
+    [1800, 300, 391.3333333333333],
+    [1800, 400, 367.77777777777777],
+  ])('sitúa el eje 1OFI compartido para alto %s y FI %s', (altoMm, fiMm, eje) => {
+    expect(ejeTravesano(altoMm, fiMm)).toBeCloseTo(eje)
   })
 })

@@ -1,10 +1,13 @@
 'use client'
 
+import React from 'react'
 import { useEffect, useMemo, useState } from 'react'
 import {
-  actualizarModuloCerramiento, anadirModuloCerramiento, buscarHueco, crearConfiguracionCerramiento,
-  eliminarModuloCerramiento, medidasCerramiento,
+  actualizarFiModuloCerramiento, actualizarModuloCerramiento, anadirModuloCerramiento, buscarHueco,
+  cambiarEstructuraModuloCerramiento, crearConfiguracionCerramiento,
+  eliminarModuloCerramiento, esConfiguracionCerramiento, medidasCerramiento,
   plantillaDiseno, PLANTILLAS_DISENO, primerHueco, UNIONES_VISUALES,
+  resolverGeometriaFi1Ofi,
   type ConfiguracionCerramiento, type PlantillaDiseno,
 } from '@aluminior/core/estructuras'
 import { DibujoEstructura, type ParteSeleccionada } from './dibujo-estructura.tsx'
@@ -12,6 +15,7 @@ import styles from '../presupuesto-movil.module.css'
 
 export function DisenadorEstructura({
   codigo, anchoMm, altoMm, configuracionInicial, onConfiguracionChange, onDimensionesChange,
+  onValidezChange,
 }: {
   codigo: string
   anchoMm: number
@@ -19,6 +23,7 @@ export function DisenadorEstructura({
   configuracionInicial?: ConfiguracionCerramiento
   onConfiguracionChange: (configuracion: ConfiguracionCerramiento) => void
   onDimensionesChange: (anchoMm: number, altoMm: number) => void
+  onValidezChange?: (valida: boolean) => void
 }) {
   const [configuracion, setConfiguracion] = useState<ConfiguracionCerramiento>(() => {
     if (configuracionInicial) return configuracionInicial
@@ -38,12 +43,9 @@ export function DisenadorEstructura({
   })
 
   const elegir = (siguiente: PlantillaDiseno) => {
-    setConfiguracion((actual) => ({
-      ...actual,
-      modulos: actual.modulos.map((modulo) => modulo.id === moduloActivo.id
-        ? { ...modulo, estructuraCodigo: siguiente.codigo }
-        : modulo),
-    }))
+    setConfiguracion((actual) => cambiarEstructuraModuloCerramiento(
+      actual, moduloActivo.id, siguiente,
+    ))
     setSeleccion({ elemento: primerHueco(siguiente.composicion).id, parte: 'vidrio' })
   }
 
@@ -73,9 +75,13 @@ export function DisenadorEstructura({
     const medidas = medidasCerramiento(configuracion)
     onConfiguracionChange(configuracion)
     onDimensionesChange(medidas.anchoMm, medidas.altoMm)
-  }, [configuracion, onConfiguracionChange, onDimensionesChange])
+    onValidezChange?.(esConfiguracionCerramiento(configuracion))
+  }, [configuracion, onConfiguracionChange, onDimensionesChange, onValidezChange])
 
   const huecoSeleccionado = buscarHueco(plantilla.composicion, seleccion.elemento)
+  const geometriaFi = plantilla.codigo === '1OFI' && Object.hasOwn(moduloActivo, 'fiMm')
+    ? resolverGeometriaFi1Ofi(moduloActivo.anchoMm, moduloActivo.altoMm, moduloActivo.fiMm)
+    : null
 
   const familias = useMemo(
     () => [...new Set(PLANTILLAS_DISENO.map((item) => item.familia))],
@@ -123,7 +129,7 @@ export function DisenadorEstructura({
                       setModuloActivoId(modulo.id)
                       setSeleccion({ elemento: primerHueco(dibujo.composicion).id, parte: 'vidrio' })
                     }}>
-                    <DibujoEstructura plantilla={dibujo} anchoMm={modulo.anchoMm}
+                    <DibujoEstructura plantilla={dibujo} modulo={modulo} anchoMm={modulo.anchoMm}
                       altoMm={modulo.altoMm}
                       seleccion={modulo.id === moduloActivo.id ? seleccion : undefined}
                       onSeleccion={modulo.id === moduloActivo.id ? setSeleccion : undefined} />
@@ -166,6 +172,24 @@ export function DisenadorEstructura({
             <input type="number" min={100} step={10} value={moduloActivo.altoMm}
               onChange={(evento) => actualizarModulo({ altoMm: Number(evento.target.value) })} />
           </label>
+          {plantilla.codigo === '1OFI' && (
+            <label className="al-designer-measure">
+              <span className="al-designer-properties-label">FIJO INFERIOR</span>
+              <input type="number" step="any" value={moduloActivo.fiMm ?? ''}
+                aria-invalid={geometriaFi?.valido === false || undefined}
+                aria-describedby={geometriaFi?.valido === false ? `fi-error-${moduloActivo.id}` : undefined}
+                onChange={(evento) => setConfiguracion((actual) => actualizarFiModuloCerramiento(
+                  actual, moduloActivo.id,
+                  evento.target.value === '' ? Number.NaN : Number(evento.target.value),
+                ))} />
+              <span>mm</span>
+              {geometriaFi?.valido === false && (
+                <small id={`fi-error-${moduloActivo.id}`} style={{ color: 'var(--al-error)' }}>
+                  FI debe ser un número mayor que 0 y menor que el alto del elemento.
+                </small>
+              )}
+            </label>
+          )}
           <div className="al-designer-part-picker" aria-label="Seleccionar elemento">
             {(['marco', 'hoja', 'vidrio'] as const).map((parte) => (
               <button key={parte} type="button"

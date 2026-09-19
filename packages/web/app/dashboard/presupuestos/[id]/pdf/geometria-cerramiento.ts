@@ -1,6 +1,6 @@
 import {
-  distribuirComposicion, esConfiguracionCerramiento, geometriaAperturaVisual,
-  medidasCerramiento, plantillaDiseno,
+  distribuirModuloCerramiento, esConfiguracionCerramiento, geometriaAperturaVisual,
+  medidasCerramiento,
   type AperturaVisual, type ConfiguracionCerramiento, type RectVisual,
 } from '@aluminior/core/estructuras'
 
@@ -27,7 +27,7 @@ export function geometriaCerramientoPdf(configuracion: ConfiguracionCerramiento,
   let cursor = 0
   const modulos = configuracion.modulos.map((modulo, indice) => {
     const rectMm = { x: cursor, y: 0, ancho: modulo.anchoMm, alto: modulo.altoMm }
-    const elementos = distribuirComposicion(plantillaDiseno(modulo.estructuraCodigo)!.composicion, rectMm)
+    const elementos = distribuirModuloCerramiento(modulo, rectMm)
       .map((elemento) => ({ ...elemento, ...transformar(elemento) }))
     cursor += modulo.anchoMm + (configuracion.uniones[indice]?.grosorMm ?? 0)
     return { id: modulo.id, rect: transformar(rectMm), elementos }

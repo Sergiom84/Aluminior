@@ -1,8 +1,9 @@
 'use client'
 
+import React from 'react'
 import {
-  distribuirComposicion, geometriaAperturaVisual,
-  type AperturaVisual, type ClaseSeparador, type PlantillaDiseno,
+  distribuirComposicion, distribuirModuloCerramiento, geometriaAperturaVisual,
+  type AperturaVisual, type ClaseSeparador, type ModuloCerramiento, type PlantillaDiseno,
 } from '@aluminior/core/estructuras'
 
 export type ParteVisual = 'marco' | 'hoja' | 'vidrio' | 'travesano' | 'union'
@@ -10,12 +11,13 @@ export type ParteSeleccionada = { elemento: string; parte: ParteVisual }
 
 export function DibujoEstructura({
   plantilla, compacto = false, anchoMm = plantilla.anchoMm, altoMm = plantilla.altoMm,
-  seleccion, onSeleccion,
+  modulo, seleccion, onSeleccion,
 }: {
   plantilla: PlantillaDiseno
   compacto?: boolean
   anchoMm?: number
   altoMm?: number
+  modulo?: ModuloCerramiento
   seleccion?: ParteSeleccionada
   onSeleccion?: (seleccion: ParteSeleccionada) => void
 }) {
@@ -27,9 +29,12 @@ export function DibujoEstructura({
     : anchoMm / Math.max(1, altoMm)
   const proporcion = Math.max(0.25, Math.min(4, proporcionReal))
   const viewW = Math.max(260, Math.min(820, altoDibujo * proporcion + margen * 2))
-  const elementos = distribuirComposicion(plantilla.composicion, {
+  const rect = {
     x: margen, y: margen, ancho: viewW - margen * 2, alto: viewH - margen * 2,
-  }, compacto ? 12 : 18)
+  }
+  const elementos = modulo
+    ? distribuirModuloCerramiento(modulo, rect, compacto ? 12 : 18)
+    : distribuirComposicion(plantilla.composicion, rect, compacto ? 12 : 18)
   const marco = compacto ? 13 : 20
 
   return (
