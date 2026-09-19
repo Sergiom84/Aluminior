@@ -185,3 +185,156 @@ SUPERIOR` afecte a esta estructura; no se han probado limites o medidas inviable
 Puede implementarse con seguridad la geometria/representacion y persistencia de
 FI para `1OFI`, manteniendo FI=300 solo como default de alta. Deben esperar la
 valoracion, la generacion contractual de despiece y cualquier regla de limites.
+
+## Intento inicial de cierre de limites y FIJO SUPERIOR (19/09/2026, 23:09)
+
+> Estado: **superado parcialmente por la continuacion de las 23:23**. El fallo
+> no era Productor ni el acceso nativo, sino el uso del canal
+> `mcp__cua_repl`. La continuacion uso `mcp__node_repl__js` y `@oai/sky`, como
+> exige la skill `computer-use`, y encontro la ventana abierta.
+
+Alcance solicitado: empresa `0017`, presupuesto existente `260494`, sin crear
+otro documento, sin Supabase y sin consultar datos de `0016`.
+
+Se verifico antes de actuar que el repositorio correcto era
+`C:/Users/laral/Documents/Aluminior`, rama `feat/cerramientos-editor-linea`, y
+que el unico cambio ajeno era `env.example` sin seguimiento. No se modifico ese
+fichero ni codigo de produccion.
+
+No fue posible ejecutar nuevas observaciones controladas. El controlador visual
+de Windows no devolvio ninguna aplicacion o ventana nativa. Se inicio la copia
+preexistente `C:/Productor/Aluminio/aluminio.exe` y, como comprobacion adicional,
+`aluminioApp.exe`; ambos dejaron procesos `aluminioApp` receptivos pero sin
+ventana principal (`MainWindowHandle=0`, titulo vacio). Por tanto no se pudo
+confirmar visualmente la empresa, abrir `260494`, ni editar/revertir cotas. No se
+intento automatizacion alternativa, lectura de `EMP0016`, reparacion, registro de
+componentes ni acceso remoto. Los dos procesos iniciados no realizaron una
+operacion visible sobre datos.
+
+### Resultado epistemico vigente
+
+- Minimo aceptado de `FIJO INFERIOR`: **no demostrado**.
+- Maximo aceptado de `FIJO INFERIOR`: **no demostrado**.
+- Reaccion ante valores inviables o fuera de rango: **no demostrada**.
+- Conservacion o ajuste de FI al cambiar ancho/alto fuera de los dos casos ya
+  observados (`900x1500/FI300` y `900x1800/FI300-400`): **no demostrada**.
+- Efecto de `FIJO SUPERIOR` sobre geometria, despiece o precio: **no demostrado**.
+- Coexistencia semantica de ambas cotas: solo esta demostrada su persistencia
+  simultanea (`FS=300`, `FI=400`) y su presencia en la descripcion. No esta
+  demostrado que ambas gobiernen geometria simultaneamente.
+
+No cambia la evidencia positiva anterior: en la estructura observada existe un
+solo travesano y sus propiedades lo vinculan exclusivamente a `FIJO INFERIOR`.
+Esto permite afirmar que no se ha identificado un consumidor geometrico de
+`FIJO SUPERIOR`; no permite afirmar que sea un residuo ni que nunca intervenga.
+
+### Matriz reproducible pendiente
+
+La siguiente prueba debe hacerse sobre la unica linea `1OFI` de `260494`. Antes
+de cada caso se anotan ancho, alto, FS, FI, geometria, filas/cortes del detalle y
+precio sin IVA; despues se restaura el estado inicial persistido
+`900x1800`, `FS=300`, `FI=400` y se verifica cerrando y reabriendo la linea.
+
+1. Limite inferior FI: probar `1`, `0` y, solo si `0` es aceptado, `-1`; registrar
+   si la celda rechaza, corrige, muestra error o permite llegar a Diseno/detalle.
+2. Limite superior FI: con alto `1800`, probar `1799`, `1800` y `1801`; si existe
+   rechazo, acotar por busqueda binaria el ultimo entero aceptado, sin inferir el
+   limite a partir del grosor dibujado.
+3. Dependencia del alto: restaurar FI=400, cambiar alto a `1500` y `2000`; medir
+   si FI se conserva, se corrige o se invalida. Repetir el valor frontera hallado
+   a ambos altos para distinguir limite absoluto de limite dependiente del alto.
+4. Dependencia del ancho: con alto y FI restaurados, cambiar solo ancho a `800` y
+   `1000`; comparar geometria, cortes y precio.
+5. Funcion de FS: mantener FI=400 y cambiar exclusivamente FS de `300` a `400`;
+   comparar el eje del unico travesano, todos los cortes/medidas del detalle y el
+   precio. Repetir con FS=1 y FS=1799 solo si Productor los admite sin correccion.
+6. Coexistencia: probar pares distintos (`FS=350/FI=400` y `FS=400/FI=350`) y
+   comprobar si el resultado depende de uno, de ambos, del ultimo editado o si
+   aparece una restriccion conjunta. No guardar un estado intermedio invalido.
+
+Cada comparacion economica exige que Productor no muestre el error ya observado
+de `OpcionesSeleccionadas`; si reaparece, geometria, despiece y precio deben
+registrarse como dimensiones separadas y el precio no se declara validado.
+
+## Continuacion controlada mediante node_repl (19/09/2026, 23:23-23:41)
+
+Herramienta usada: `mcp__node_repl__js`, paquete `@oai/sky`. La llamada
+`sky.list_windows()` devolvio Productor abierto. Se selecciono la ventana
+`process:C:/Productor/Aluminio/aluminioApp.exe`; no se reinicio el programa.
+
+Se confirmo visualmente:
+
+- empresa `PRUEBAS ALUMINIOR - 2026 [0017]`;
+- presupuesto existente `260494`, revision 0, `PRUEBA COTAS B2`;
+- una unica linea `1OFI`, `900 x 1800`, precio visible `633,07 EUR`;
+- estado persistido inicial y final: `FIJO SUPERIOR=300`,
+  `FIJO INFERIOR=400`.
+
+No se creo ningun documento, no se acepto la linea ni el presupuesto y no se
+guardo ningun estado experimental. Al terminar se cerro el editor de linea y la
+descripcion de la ficha seguia mostrando FS=300/FI=400.
+
+### Limites de entrada observados para FIJO INFERIOR
+
+En la celda de variables se introdujeron mediante pulsaciones y se validaron con
+Tab los valores `1`, `0`, `-1` y `1800`, con alto exterior `1800`. Productor
+conservo cada valor en la celda sin mensaje, correccion automatica ni rechazo
+inmediato. El intento `1799` mediante la accion de accesibilidad `set_value`
+agoto el tiempo y no cambio el valor; no cuenta como prueba del numero 1799.
+
+Esto demuestra que **el editor de la celda no impone** el predicado
+`0 < FI < alto`: acepta al menos un negativo, cero y un valor igual al alto. No
+demuestra que esos estados puedan abrir Diseno V3, calcular despiece, valorar o
+guardarse. Por tanto no existe todavia un minimo/maximo constructivo demostrado.
+La distincion es obligatoria: valor aceptado por la celda no equivale a
+configuracion valida.
+
+No se probo `1801`; tras confirmar que el propio alto era aceptado, ampliar la
+entrada sin poder ejecutar el calculo no aportaba evidencia sobre el limite
+constructivo. Tampoco se realizo una busqueda binaria ficticia sobre un control
+que ya habia demostrado no validar la geometria.
+
+### FIJO SUPERIOR y coexistencia
+
+Con FI restaurado a `400`, se cambio exclusivamente FS de `300` a `400` y se
+valido con Tab. La celda acepto `FS=400` mientras `FI=400`: ambas variables
+pueden coexistir en el editor con valores iguales y distintos. Durante ese
+estado experimental:
+
+- el texto calculado seguia mostrando FS=300/FI=400;
+- el precio visible seguia en `633,07 EUR`;
+- la miniatura persistida de la ficha no cambio.
+
+Esos tres consumidores no se actualizaron porque la linea no se recalculo ni se
+acepto. No constituyen prueba de que FS sea economicamente inerte. El control
+`Calcula` fue identificado por accesibilidad, pero Productor lo situo fuera de
+los limites de la ventana (`x=-4116`) y la activacion fue rechazada antes de
+enviar entrada. No se obtuvo una comparacion valida de Diseno, despiece o precio.
+
+La unica asociacion geometrica demostrada sigue siendo la del travesano de 1OFI
+con `FIJO INFERIOR`. FS es un parametro descriptivo/persistido visible cuya
+funcion en 1OFI continua sin consumidor identificado; no debe llamarse residuo
+ni incorporarse a geometria, despiece o valoracion.
+
+### Incidencias y restauracion
+
+Productor mostro sus pausas habituales de `No responde` al abrir presupuesto y
+editor; se espero sin repetir acciones. Un aviso de bateria baja interrumpio la
+restauracion de FS y dejo temporalmente el texto parcial; se cerro el aviso, se
+selecciono de nuevo la celda completa y se restauro exactamente `300`. FI se
+restauro previamente a `400`. La ficha final confirmo ancho 900, alto 1800,
+descripcion FS=300/FI=400 y precio 633,07.
+
+### Conclusion vigente
+
+- No hay minimo/maximo constructivo demostrado para FI.
+- Si hay evidencia inequívoca de que la capa de entrada de Productor tolera
+  `FI=-1`, `0`, `1` y `alto` sin validacion inmediata.
+- El cambio de alto ya demostrado (`1500 -> 1800`) conserva FI=300; esta sesion
+  no amplio la evidencia de redimensionado porque no pudo recalcular estados
+  experimentales.
+- FS y FI coexisten en persistencia y en el editor, pero solo FI tiene un
+  travesano consumidor identificado.
+- No se ha demostrado efecto de FS sobre geometria, despiece o precio.
+- No procede cambiar codigo de produccion ni relajar la validacion segura de
+  Aluminior a partir de esta observacion.

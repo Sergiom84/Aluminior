@@ -141,3 +141,40 @@ Pruebas existentes a ampliar: `diseno.test.ts`, `cerramiento.test.ts`,
   `1OFI` no observada?
 - ¿Que despiece y precio produce una instalacion Productor sin el fallo de
   `SessionFactory`, y que filas cambian exclusivamente entre FI=300 y FI=400?
+
+## Propuesta minima tras el intento de limites de 19/09/2026
+
+No ampliar el modelo vigente hasta completar la matriz reproducible de
+`EVIDENCIA-COTAS-0017.md`. En particular:
+
+- conservar `fiMm` como unica cota geometrica de `1OFI` y no anadir `fsMm` al
+  resolver, al renderer, al PDF, al despiece ni a la identidad economica;
+- mantener la validacion geometrica interna actual (`0 < FI < alto`) como
+  proteccion de estados imposibles de Aluminior, documentandola como regla propia
+  y no como limite demostrado de Productor;
+- no aplicar clamp, minimo comercial, margen por perfil ni suma `FS + FI`;
+- si una futura observacion demuestra efecto de FS, incorporarlo primero como
+  dato explicito versionado y opcional, con un resolver puro y pruebas que separen
+  geometria, despiece y valoracion;
+- no habilitar valoracion/despiece contractual para FI/FS hasta disponer de dos
+  estados Productor comparables sin el error de `OpcionesSeleccionadas`.
+
+El intento de observacion de las 23:09 no produjo ventana controlable de
+Productor mediante `mcp__cua_repl`. La continuacion correcta mediante
+`mcp__node_repl__js` y `@oai/sky` si permitio observar Productor; sus resultados
+estan en `EVIDENCIA-COTAS-0017.md`.
+
+La nueva evidencia no cambia el contrato implementado:
+
+- Productor acepta en la celda FI los valores `-1`, `0`, `1` y `alto`, pero no
+  se demostro que puedan calcularse o guardarse. No replicar esa ausencia de
+  validacion en Aluminior.
+- Mantener `0 < FI < alto` como invariante geometrica propia, no como limite de
+  Productor. Un futuro mensaje de validacion debe explicar que el eje tiene que
+  quedar dentro del modulo, sin atribuir el umbral al sistema original.
+- FS=400 y FI=400 coexistieron temporalmente en el editor; FS=300/FI=400 ya
+  coexistian en persistencia. Esto prueba cardinalidad de entrada, no dos ejes ni
+  una restriccion de suma.
+- El cambio aislado de FS no fue recalculado: descripcion y precio permanecieron
+  en su snapshot anterior. No usar esa ausencia de refresco como prueba de
+  neutralidad geometrica o economica.
