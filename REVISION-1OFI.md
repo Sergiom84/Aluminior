@@ -9,12 +9,41 @@ Base y ascendencia comprobadas: `bde6a5f` -> `d086021` -> `7741dd6` ->
 
 ## Veredicto
 
-**Apto para integrar, sin ejecutar todavía la integración.** Tras las correcciones
-descritas abajo no queda un defecto concreto conocido en el alcance revisado. La
-prueba PostgreSQL real de escritura atómica, invalidación y rollback se ejecutó
-contra el contenedor efímero local y aprobó sus 11 casos.
+**Integrado localmente en `feat/cerramientos-editor-linea` por avance rápido hasta
+`51e7b75`; no se ha hecho push ni merge a `main`.** Tras las correcciones y la
+verificación de flujo completo descritas abajo no queda un defecto concreto
+conocido en el alcance revisado. La prueba PostgreSQL real de escritura atómica,
+invalidación y rollback se ejecutó contra el contenedor efímero local y aprobó
+sus 11 casos.
 
 No se declara paridad económica ni de fabricación.
+
+## Verificación posterior a la integración
+
+Se ejecutó el flujo real de Aluminior contra PostgreSQL 16 efímero local, con el
+servidor web en modo desarrollo y bypass de autenticación limitado a loopback:
+
+- alta de un presupuesto sintético y una línea `1OFI` de `900 x 1800 mm`;
+- cambio explícito de `FIJO INFERIOR` de 300 a 400 mm y guardado;
+- cierre al listado, reapertura del presupuesto y reapertura de la línea;
+- conservación de `FI 400`, medidas, ubicación y miniatura;
+- bloqueo económico visible en ficha y PDF: precio, base, IVA y total permanecen
+  `sin valorar`, sin cero ficticio;
+- PDF A4 de una página renderizado e inspeccionado, con geometría FI, aviso de
+  documento incompleto y sin recortes ni solapes;
+- escritorio 1440x900 y Chrome 390x844 inspeccionados. En móvil el documento no
+  desborda (`scrollWidth=375`, `innerWidth=390`), el editor se adapta y FI 400 es
+  alcanzable por teclado con foco visible.
+
+La comprobación directa de la fila persistida confirmó configuración y snapshot
+de entrada v2, estructura `1OFI`, `fiMm=400`, ancho 900, alto 1800,
+`valoracion_completa=false`, precio y total nulos, y cero filas residuales de
+resultado, despiece y mano de obra.
+
+Este QA no valida catálogo real, `GMA65OPT`, vidrio `L33I`, despiece, precio ni
+fabricación: la base efímera carece de ese catálogo y el bloqueo de valoración es
+el comportamiento esperado. Tampoco sustituye una nueva comparación visual lado
+a lado con Productor; usa como referencia la evidencia Productor ya documentada.
 
 ## Hallazgo corregido
 
