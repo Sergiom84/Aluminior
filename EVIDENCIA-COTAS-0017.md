@@ -27,3 +27,15 @@ al exterior del elemento contenedor y eje del travesaño; opción separada desde
 el elemento exterior máximo. Cota variable dispone de nombre/símbolo/default;
 equidistantes no implica igualdad de huecos libres. La proyección concreta de
 los perfiles debe contrastarse en Productor, no deducirse del helper visual.
+
+## Ampliación observada antes de terminar B1
+1OFI: ficha familia020; Diseño V3 900 x 1500; árbol Hoja (1 H.Oscilo. Izdas.),
+bisagras IZQUIERDA y manilla DERECHA. Travesaño de abajo, Cota Variable activa,
+FIJO INFERIOR / FI / default300. Capturas 1OFI-ficha/diseno/cota en misma carpeta.
+No probar otro tamaño todavía. Aparición ocasional de árbol con cuadrados al
+seleccionar el travesaño es defecto visual del programa, no topología distinta.
+
+Decisión tras estas dos observaciones: corregir también las manos/manillas de
+1OFI y 2O+ FIJO en B1. Esto sustituye la conservación provisional de sus dibujos
+erróneos. Medidas y cotas quedan fuera (1OFI sigue800x1500 y2O+ FIJO1200x1500
+en Aluminior hasta B2), sin afirmar coincidencia integral de estos dos casos.

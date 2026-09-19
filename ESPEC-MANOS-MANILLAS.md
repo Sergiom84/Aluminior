@@ -66,3 +66,20 @@ No cambiar package*.json; comunicar si una dependencia resulta imprescindible.
 Entregar un commit local limpio, resumen de pruebas/limitaciones y rutas de
 artefactos ignorados. Pedir criterio al arquitecto si aparece inferencia no probada.
 No ampliar alcance a cotas/herraje/precio por iniciativa propia.
+
+## Adenda B1: evidencia adicional 19/09, antes de cierre de implementación
+El responsable ha observado ahora también 1OFI y2O+ FIJO, recogido en
+EVIDENCIA-COTAS-0017.md. Esta adenda sustituye SOLO para estos dos casos las
+instrucciones de conservar orientación/manillas previas y la alerta provisional
+sobre divergencia 1OFI; las otras ocho plantillas siguen conservando aspecto.
+- 1OFI: bisagra izquierda, manilla derecha, oscilobatiente. Su etiqueta final
+  es oscilobatiente-izquierda (no invertirla para conservar el antiguo error).
+- 2O+ FIJO: hoja izquierda abatible/bisagra izquierda/sin manilla;
+  hoja derecha oscilobatiente/bisagra derecha/con manilla al encuentro.
+- NO cambiar dimensiones ni proporciones de estos casos en B1. Sus diferencias
+  de medidas quedan reconocidas hasta B2 y no se declara paridad integral.
+- Añadir estos dos casos al expected independiente de geometría y consumidores.
+  En 1OFI la firma de apertura puede ahora coincidir con generador: justificar
+  desde esta observación, no desde el golden. No inferir cotas ni herraje.
+El arquitecto incorporará esta adenda mediante lectura del repo principal;
+no necesitas traer commits de documentación ni editar sus archivos en worktree.
