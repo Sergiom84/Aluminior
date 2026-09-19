@@ -1,9 +1,11 @@
 # Revisión de integración 1OFI
 
-Fecha: 2026-09-19  
-Rama revisada: `codex/1ofi-geometria`  
-Commit revisado: `7741dd6f07eb66c2a727ebe56d457f8e4cf93753`  
-Base y ascendencia comprobadas: `bde6a5f` -> `d086021` -> `7741dd6`.
+Fecha: 2026-09-19
+Rama revisada: `codex/1ofi-geometria`
+Último commit funcional revisado: `b3f969b1676fd1a46422bd7e0edcf3314ffc18f7`
+Cierre transaccional documentado: `e3cf50229280042700bd10d3067512e6689e3708`
+Base y ascendencia comprobadas: `bde6a5f` -> `d086021` -> `7741dd6` ->
+`b3f969b` -> `47d2315` -> `e3cf502`.
 
 ## Veredicto
 
