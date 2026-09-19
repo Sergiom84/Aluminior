@@ -1,50 +1,44 @@
-# B2: observación parcial de cotas (19/09/2026)
+# B2: cotas observadas y experimento pendiente (19/09/2026)
 
 Productor 0017, consulta sin guardar. Capturas ignoradas en
-output/evidencia-manos-20260919/2O-FIJO-{ficha,diseno,cota}.png.
+output/evidencia-manos-20260919/. B1 resuelve únicamente manos y manillas;
+este documento separa medidas/cotas de esa corrección.
 
-## 2O+ FIJO
-- Ficha: familia 003 VENTANAS ABATIBLES, descripción 2 hojas + fijo oscilo.
-- Medida inicial Diseño V3: 1200 x 1200 (Aluminior todavía 1200 x 1500).
-- Marco Normal > Trav. Marco (de abajo); hueco superior con Sep. Hojas
-  (Trav. Invisible) y dos Hoja (2 H.Dcha.Oscilo.); hueco inferior Vidrio.
-- Bisagras exteriores; una manilla solo en hoja derecha junto al encuentro.
-  Izquierda abatible, derecha oscilobatiente. Aluminior tiene ambas oscilo
-  y dos manillas: discrepancia conocida, fuera del alcance B1 ya delegado.
-- Selección del travesaño en el dibujo, pestaña Posición:
-  Horizontal (Abajo), Cota Variable seleccionada, Nombre FIJO INFERIOR,
-  Símbolo FI, Cota por Defecto 300 mm. Los campos deshabilitados de Cota Fija
-  y Fija desde elemento Exterior también muestran 300: NO son la regla activa.
-- No se cambió ningún valor ni se aceptó/guardó el catálogo.
+| Caso | Medida Productor | Medida Aluminior conservada B1 | Regla activa en Posición |
+| --- | --- | --- | --- |
+| 1OFI | 900 x 1500 | 800 x 1500 | Horizontal (Abajo), Cota Variable, FIJO INFERIOR, FI, default300 mm |
+| 2O+ FIJO | 1200 x 1200 | 1200 x 1500 | Horizontal (Abajo), Cota Variable, FIJO INFERIOR, FI, default300 mm |
+| 1O1FL | 1200 x 1200 | 1100 x 1200 | Vertical (Derecha), Cota Variable, FIJO LATERAL, F, default300 mm |
 
-Falta otra medida en una línea de prueba, comprobar referencia geométrica del
-valor FI y editar FI de forma controlada. No implementar proporcionalidad ni
-cota fija por observar solamente la forma inicial. Los demás cinco casos B2
-siguen pendientes de consulta conjunta y segundo tamaño.
+En cada caso se seleccionó el travesaño en el dibujo y se leyó Posición.
+Los campos deshabilitados de Cota Fija/Fija desde elemento Exterior también
+muestran300: NO son la regla activa. No se cambió ningún valor.
+Capturas con prefijos1OFI,2O-FIJO,1O1FL, sufijos ficha/diseno/cota.
+La aparición ocasional de cuadrados en el árbol al seleccionar un travesaño
+es un defecto gráfico conocido de Productor, no una topología distinta.
 
-CHM §5.1.2.2.1.1.2.4, 5_1_2_2_1_1_2_4_propiedades_de.htm: cota fija respecto
-al exterior del elemento contenedor y eje del travesaño; opción separada desde
+## Árboles y manos observados
+1OFI: Marco Normal > Trav. Marco (de abajo); hoja Hoja (1 H.Oscilo. Izdas.)
+sobre fijo inferior. Bisagras izquierda/manilla derecha.
+2O+ FIJO: Marco Normal > Trav. Marco (de abajo); hueco superior con
+Sep. Hojas (Trav. Invisible), dos Hoja (2 H.Dcha.Oscilo.); fijo inferior.
+Izquierda abatible sin manilla, derecha oscilo con manilla, bisagras exteriores.
+1O1FL: Marco Normal > Trav. Marco (de derecha); hoja izquierda
+Hoja (1 H.Oscilo. Dchas.), fijo derecho. Bisagras derecha/manilla izquierda.
+Estas manos sí tienen evidencia suficiente y se incorporaron a B1.
+
+## Límites y siguiente prueba
+Todavía NO se ha probado otra medida. No deducir cota fija ni proporcionalidad
+del dibujo inicial. Falta observar las otras tres composiciones B2:
+1O2FL (sesión anterior1300x1200, web1400x1200),1O+1F+1O y1O+2F+1O.
+Con usuario presente, explicar creación de presupuesto de prueba0017 y trabajar
+en líneas de ese documento, nunca modificar/guardar catálogo ni documentos
+existentes. Registrar medida inicial y segunda que distinga cota absoluta de
+proporción, valor FI/F antes/después, referencia geométrica, corte y límites.
+No cambiar serie arbitrariamente ni extrapolar restricciones sin observación.
+
+CHM §5.1.2.2.1.1.2.4,5_1_2_2_1_1_2_4_propiedades_de.htm: cota fija respecto
+al exterior del elemento contenedor y eje de travesaño; opción separada desde
 el elemento exterior máximo. Cota variable dispone de nombre/símbolo/default;
-equidistantes no implica igualdad de huecos libres. La proyección concreta de
-los perfiles debe contrastarse en Productor, no deducirse del helper visual.
-
-## Ampliación observada antes de terminar B1
-1OFI: ficha familia020; Diseño V3 900 x 1500; árbol Hoja (1 H.Oscilo. Izdas.),
-bisagras IZQUIERDA y manilla DERECHA. Travesaño de abajo, Cota Variable activa,
-FIJO INFERIOR / FI / default300. Capturas 1OFI-ficha/diseno/cota en misma carpeta.
-No probar otro tamaño todavía. Aparición ocasional de árbol con cuadrados al
-seleccionar el travesaño es defecto visual del programa, no topología distinta.
-
-Decisión tras estas dos observaciones: corregir también las manos/manillas de
-1OFI y 2O+ FIJO en B1. Esto sustituye la conservación provisional de sus dibujos
-erróneos. Medidas y cotas quedan fuera (1OFI sigue800x1500 y2O+ FIJO1200x1500
-en Aluminior hasta B2), sin afirmar coincidencia integral de estos dos casos.
-
-## 1O1FL: observación adicional
-Diseño V3 1200 x 1200. Hoja a la izquierda del fijo, pero su mano es DERECHA:
-Hoja (1 H.Oscilo. Dchas.), bisagras derecha/manilla izquierda. Travesaño de
-derecha; pestaña Posición Vertical (Derecha), Cota Variable activa,
-FIJO LATERAL / símbolo F / default300 mm. Capturas1O1FL-ficha/diseno/cota.
-No se ha cambiado medida ni regla. B1 corrige también su mano, conservando
-1100x1200/proporciones actuales hasta B2. Las otras siete plantillas mantienen
-su aspecto anterior; no se amplía a geometría, despiece ni precio.
+equidistantes no implica igualdad de huecos libres. Contrastar referencia
+concreta de perfiles en Productor, no deducirla del helper visual.

@@ -250,3 +250,11 @@ Artículos (Claude): ficha modular y borrado de `formulario.tsx`.
 Evidencia: `RECON-DETALLE-PRESUPUESTO.md`, `RECON-ARTICULOS.md`.
 
 Este handoff: `HANDOFF-GROK.md`.
+
+### Continuación19/09/2026: B1 manos verificado
+Commit9727fe2 integra Sol63b9bea tras observación0017, revisión de diff y
+correcciones de accesorios PDF/pruebas. Ver VERIFICACION-MANOS-B1.md para
+resultados/límites y EVIDENCIA-COTAS-0017.md para siguiente experimento B2.
+A ya completado; no repetir banco ni cargas. Siguen14 estructuras operativas.
+Manos/manillas comprobadas en siete casos; no es paridad de despiece/precio.
+No guardar catálogo, cargar remoto ni merge a main sin su autorización específica.

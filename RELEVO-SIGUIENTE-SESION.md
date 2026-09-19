@@ -186,3 +186,28 @@ Conservar permisos anteriores; no repetir cargas ni pedir otra vez su autorizaci
 No hubo push, merge a main ni nuevas operaciones Supabase.
 Tarea Sol 01a0b9d5-8b3b-7aa3-9ac8-0a2de9f74a30 terminada y revisada;
 worktree limpio en C:/Users/laral/Documents/Aluminior-worktrees/banco-motor-local.
+## Actualización B1 revisada (19/09/2026)
+
+B1 completado en su alcance de manos/manillas. Commit9727fe2, origen Sol63b9bea,
+con revisión independiente y correcciones devueltas durante implementación.
+Leer VERIFICACION-MANOS-B1.md, EVIDENCIA-MANOS-0017.md y EVIDENCIA-COTAS-0017.md.
+Siete casos observados en0017; modelo/web/PDF corregidos juntos. Se conservan14
+plantillas operativas y todas las medidas/proporciones anteriores; no se activó nada.
+
+Verificación:48 core+41 web/PDF y tipos ambos por responsable;406 core por Sol;
+14 controles catálogo local tras integración. No confundir estos controles con
+paridad completa: firmas omiten manilla y mantienen divergencias conocidas.
+PDF real y web1366/375 revisados con fixtures sintéticos; flujo real/despiece/
+precio todavía pendientes. Capturas y artefactos ignorados en output/.
+
+Siguiente: completar B2, no repetir A ni B1. Ya consultados1OFI,2O+ FIJO,1O1FL:
+FI/F son Cota Variable default300, NO cota fija activa. Falta segundo tamaño en
+líneas de presupuesto de prueba0017, con usuario presente y aviso de creación;
+nunca cambiar catálogo. Faltan consultas completas de1O2FL y cadenas1O+1F+1O/
+1O+2F+1O. Documento de cotas contiene medidas observadas y diferencias exactas.
+
+Tarea Sol01a0ba1f-1b04-70e2-9c52-3b05b74904cc terminada, worktree limpio
+C:/Users/laral/Documents/Aluminior-worktrees/manos-manillas-0017.
+Productor quedó en lista Estructuras, filtro1o y selección1O1FL, sin guardar.
+Servidor QA temporal cerrado; no quedó web activa3001 de esta tarea.
+Permisos previos intactos; no nuevas cargas, push ni merge a main.
