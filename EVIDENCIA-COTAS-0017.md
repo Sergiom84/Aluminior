@@ -42,3 +42,38 @@ al exterior del elemento contenedor y eje de travesaño; opción separada desde
 el elemento exterior máximo. Cota variable dispone de nombre/símbolo/default;
 equidistantes no implica igualdad de huecos libres. Contrastar referencia
 concreta de perfiles en Productor, no deducirla del helper visual.
+
+## Observación B2 ampliada en 0017 (19/09/2026)
+
+Responsable: tarea de arquitectura 01a0ba4e-570d-74f2-a0c5-554edccb2608.
+Al retomar, el selector de empresas mostraba 0016 seleccionada; no se editó ni
+se guardó catálogo. El usuario abrió manualmente 0017 y se verificó el rótulo
+PRUEBAS ALUMINIOR - 2026 [0017] antes de las consultas siguientes.
+Capturas disponibles en las llamadas computer-use de esta tarea (17:41–17:46);
+no se han exportado todavía a ficheros. No confundir con las capturas B1 locales.
+
+| Caso | Medida inicial | Topología y regla observadas |
+| --- | --- | --- |
+| 1O2FL | 1300 x 1200 | Fijo/hoja/fijo. Primer travesaño desde izquierda: Cota Variable, FIJO IZQUIERDO, FI=300. Segundo, dentro del hueco restante, desde derecha: Cota Variable, FIJO DERECHO, FD=300. |
+| 1O+1F+1O | 1500 x 1200 | Hoja/fijo/hoja; ambos travesaños visibles tipo Ventana, Vertical (Izquierda), Equidistante 3 huecos. |
+| 1O+2F+1O | 2100 x 1500 | Fijo/hoja/fijo/hoja; tres travesaños visibles tipo Ventana, Vertical (Izquierda), Equidistante 4 huecos. Ficha De Usuario marcada. |
+
+Todas las hojas de estos tres casos son literalmente 1 H.Oscilo. Dchas.,
+bisagras derecha y manilla izquierda. Las cadenas tienen una manilla por hoja.
+Se consultaron individualmente los dos/tres travesaños. En las cadenas, las
+variables no están activas y sus nombres/símbolos están vacíos. El árbol muestra
+respectivamente Trav. Marco (1/3 de izquierda) y (1/4 de izquierda).
+FI no tiene significado global: en 1O2FL es FIJO IZQUIERDO y en 1OFI es inferior.
+Conservar ámbito de estructura/módulo y referencia de cada divisor.
+
+No se pulsó Aceptar ni guardar en las fichas o Diseño V3. Se cerró por X de título.
+Segunda medida, edición manual de variables, límites, persistencia, cortes y
+precio siguen pendientes. Estos hallazgos no autorizan proporcionalidad ni
+activación de plantillas. El CHM confirma referencia exterior contenedor a eje;
+no se han identificado aún perfiles físicos para validar fabricación.
+
+Se avisó al usuario antes de iniciar un presupuesto nuevo de prueba. El diálogo
+Nuevo Documento quedó pendiente tras Aceptar y un timeout de Return. No hay aún
+número nuevo confirmado; no repetir alta sin comprobar si llegó a crearse.
+Se solicitó ayuda del usuario para comprobar ese diálogo. No se modificaron
+presupuestos existentes, no se abrió MDB ni se hicieron operaciones remotas.
