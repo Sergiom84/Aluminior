@@ -21,6 +21,6 @@ export async function altaCerramientoValorado(db: Pick<ReturnType<typeof crearDb
         referencia: entrada.referencia, cantidad: String(entrada.cantidad),
         anchoMm: alta.alta.anchoMm, altoMm: alta.alta.altoMm,
         ...preparada.importes, avisoValoracion: preparada.aviso } }
-  })
+  }, entrada.solicitudId ? { id: entrada.solicitudId, alRepetir: valor => { aviso = valor } } : undefined)
   return { ok: true, id: entrada.presupuestoId, mensaje: aviso ?? undefined }
 }

@@ -94,10 +94,12 @@ const horasManoObra = (etiqueta: string) =>
   decimalTecleado(etiqueta, { maximo: MAXIMO_HORAS, porDefecto: '0' })
 
 export const esquemaLinea = z.object({
+  /** Identidad de alta; se conserva al reintentar y se renueva tras éxito. */
+  solicitudId: z.string().uuid().optional(),
   presupuestoId: z.string().uuid(),
   tipo: z.enum(['ARTICULO', 'ESTRUCTURA', 'CERRAMIENTO']),
   codigo: z.string().trim().min(1, 'Elige un artículo o una estructura'),
-  referencia: z.string().trim().max(60).optional().transform((v) => v || null),
+  referencia: z.string().trim().max(60, 'Ubicación: máximo 60 caracteres').optional().transform((v) => v || null),
   /** Serie de perfiles. Prerrequisito del tipo ESTRUCTURA: sin ella no hay
    * artículos reales, y sin artículos reales no hay precio. */
   serieCodigo: z.string().trim().optional().transform((v) => v || null),

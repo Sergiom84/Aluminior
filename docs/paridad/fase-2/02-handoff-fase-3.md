@@ -8,7 +8,13 @@
 - `DibujoEstructura` representa exclusivamente las miniaturas del catálogo y no participa en la geometría del conjunto.
 - La selección se identifica por `{ moduloId, elemento, parte }`.
 
-## Deuda pendiente antes de fase 3
+## Actualización de continuidad
+
+Los puntos técnicos 1–3 de abajo están atendidos: guardado/reintento, PDF valorado
+y teclado verificados en [03-aceptacion-local.md](03-aceptacion-local.md).
+El punto 4 sigue abierto. No reiniciar servidores por el relato histórico.
+
+## Deuda histórica al entregar fase 2
 
 1. Repetir el reintento de edición después de cerrar las pestañas con la petición anterior y reiniciar el servidor local; la doble interceptación del formulario ya se eliminó.
 2. Revalorar la línea QA con las recetas sintéticas ampliadas, recargar y examinar su PDF real.

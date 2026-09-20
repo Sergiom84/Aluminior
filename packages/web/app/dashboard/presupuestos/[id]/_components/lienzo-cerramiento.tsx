@@ -76,11 +76,12 @@ function ElementoModulo({ elemento, moduloId, seleccion, onSeleccion }: {
     const clase = elemento.clase === 'union' ? 'al-union' : elemento.clase === 'travesano'
       ? 'al-traverse' : 'al-invisible-divider'
     return <rect {...svgRect(elemento)} role="button" tabIndex={0}
+      aria-label={`${parte === 'union' ? 'Unión' : 'Travesaño'} ${elemento.id}`}
       className={`${clase}${seleccionado ? ' al-part-selected' : ''}`}
       onClick={(evento) => { evento.stopPropagation(); onSeleccion({ moduloId, elemento: elemento.id, parte }) }}
       onKeyDown={(evento) => {
         if (evento.key === 'Enter' || evento.key === ' ') {
-          evento.preventDefault(); onSeleccion({ moduloId, elemento: elemento.id, parte })
+          evento.preventDefault(); evento.stopPropagation(); onSeleccion({ moduloId, elemento: elemento.id, parte })
         }
       }} />
   }
@@ -90,11 +91,12 @@ function ElementoModulo({ elemento, moduloId, seleccion, onSeleccion }: {
     <g>
       {elemento.apertura !== 'fijo' && <rect {...svgRect(elemento)} className="al-sash" />}
       <rect {...svgRect(interior)} role="button" tabIndex={0}
+        aria-label={`Vidrio ${elemento.id}`}
         className={seleccionado && seleccion.parte === 'vidrio' ? 'al-glass al-part-selected' : 'al-glass'}
         onClick={(evento) => { evento.stopPropagation(); onSeleccion({ moduloId, elemento: elemento.id, parte: 'vidrio' }) }}
         onKeyDown={(evento) => {
           if (evento.key === 'Enter' || evento.key === ' ') {
-            evento.preventDefault(); onSeleccion({ moduloId, elemento: elemento.id, parte: 'vidrio' })
+            evento.preventDefault(); evento.stopPropagation(); onSeleccion({ moduloId, elemento: elemento.id, parte: 'vidrio' })
           }
         }} />
       <Simbolo elemento={elemento} rect={interior} />

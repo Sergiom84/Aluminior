@@ -1,6 +1,6 @@
 # Fase 2 — resumen
 
-Fecha: 20/09/2026. Estado: **implementación geométrica y modularización completadas; aceptación visual final pendiente del desbloqueo de fase 1**.
+Fecha: 20/09/2026. Estado: **implementación geométrica completada y aceptación local de navegador/PDF realizada; contraste directo con Productor pendiente**.
 
 ## Resultado
 
@@ -24,6 +24,12 @@ Fecha: 20/09/2026. Estado: **implementación geométrica y modularización compl
 
 La batería pura cubre siete casos: medidas y razones del caso 6640×1020, factor común, unión más larga, módulo de 12 mm sin mínimo deformante, alturas distintas alineadas arriba, invariancia en viewports 1440×900/1024×768/375×812 y rechazo de límites no representables. El fichero específico ejecutó 7/7 pruebas correctamente; los typechecks de Core y Web también finalizaron correctamente.
 
-## Límite de aceptación
+## Aceptación vigente
 
-La receta persistida se reabrió con 6640×1020 y U1 correcta y se inspeccionó a 1440×900, 1024×768 y 375×812. En móvil el documento no mostró overflow horizontal de página; la tabla mantiene su desplazamiento interno. No se afirma todavía PDF final ni igualdad económica porque la línea de seis módulos continúa sin valorar. Se eliminó la doble interceptación del envío (`action` más `onSubmit` manual), pero la comprobación posterior quedó retenida por la petición anterior del navegador; debe repetirse tras cerrar esas pestañas y reiniciar el servidor local.
+La continuación ha resuelto el bloqueo de guardado, comprobado el reintento,
+la selección por teclado, tres viewports y el PDF real de seis módulos valorados
+con catálogo sintético. Ver [03-aceptacion-local.md](03-aceptacion-local.md) para
+resultados, correcciones y límites. No equivale a cierre de paridad directa con
+Productor ni de toda la ergonomía móvil. La descripción histórica del bloqueo
+de petición se conserva en los informes anteriores, sin atribuirle una causa
+no reproducida en esta copia.

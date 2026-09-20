@@ -8,6 +8,7 @@ import { guardarAltaCerramiento, type AltaCerramiento } from '../cerramientos/in
 import { persistirManoObra, type SnapshotManoObra } from '../mano-obra/index.ts'
 import { bloquearPresupuesto } from './bloquear-presupuesto.ts'
 import { sql } from 'drizzle-orm'
+import { leerAltaRepetida } from './alta-repetida.ts'
 
 type Db = Pick<ReturnType<typeof crearDb>, 'transaction'>
 
@@ -84,6 +85,9 @@ async function guardarLineaConGanchos(
     }
     await hooks.despuesDeBloquearPresupuesto?.()
 
+    const repetida = await leerAltaRepetida(tx, entrada.valores.presupuestoId, entrada.valores.id)
+    if (repetida) return repetida.id
+
     return escribirLineaPreparada(tx, entrada)
   })
 }
@@ -97,10 +101,17 @@ type EscrituraCerramiento = Extract<EscrituraLinea, { tipo: 'CERRAMIENTO' }>
 export async function guardarLineaValorada(db: Db, presupuestoId: string,
   preparar: (tx: ClienteEscritura, cabecera: CabeceraBloqueada) =>
     Promise<EscrituraCerramiento | EscrituraValorada>,
+  solicitud?: { id: string; alRepetir: (aviso: string | null) => void },
 ): Promise<string> {
   return conPresupuestoBloqueado(db, presupuestoId, async (tx, cabecera) => {
+    const repetida = await leerAltaRepetida(tx, presupuestoId, solicitud?.id)
+    if (repetida) {
+      solicitud!.alRepetir(repetida.avisoValoracion)
+      return repetida.id
+    }
     const entrada = await preparar(tx, cabecera)
     if (entrada.valores.presupuestoId !== presupuestoId) throw new Error('Presupuesto de escritura diferente')
+    if (solicitud) entrada.valores.id = solicitud.id
     return escribirLineaPreparada(tx, entrada)
   })
 }

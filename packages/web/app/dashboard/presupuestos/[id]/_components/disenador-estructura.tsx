@@ -119,7 +119,10 @@ export function DisenadorEstructura({
         </header>
         <div className="al-designer-canvas" data-testid="designer-canvas">
           <LienzoCerramiento configuracion={configuracion} moduloActivoId={moduloActivo.id}
-            seleccion={seleccion} onModuloActivo={setModuloActivoId} onSeleccion={setSeleccion} />
+            seleccion={seleccion} onModuloActivo={setModuloActivoId} onSeleccion={(parte) => {
+              setSeleccion(parte)
+              if (configuracion.modulos.some(m => m.id === parte.moduloId)) setModuloActivoId(parte.moduloId)
+            }} />
         </div>
         <div className="al-designer-properties">
           <div>
@@ -184,7 +187,7 @@ export function DisenadorEstructura({
             {configuracion.uniones.map((union, indice) => (
               <fieldset key={union.id}>
                 <legend>Unión {indice + 1}</legend>
-                <select value={union.codigo} onChange={(evento) => {
+                <select aria-label={`Código unión ${indice + 1}`} value={union.codigo} onChange={(evento) => {
                   const catalogo = UNIONES_VISUALES.find((item) => item.codigo === evento.target.value)!
                   setConfiguracion((actual) => ({
                     ...actual,

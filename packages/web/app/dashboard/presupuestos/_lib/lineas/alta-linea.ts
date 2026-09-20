@@ -72,6 +72,7 @@ export async function altaLinea(db: ReturnType<typeof crearDb>, d: EntradaAltaLi
       : Math.round(precioUnitario * d.cantidad * 100) / 100
 
     const valores: ValoresLinea = {
+      id: d.solicitudId,
       presupuestoId: d.presupuestoId,
       articuloCodigo: d.tipo === 'ARTICULO' ? d.codigo : null,
       descripcion,

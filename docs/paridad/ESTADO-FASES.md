@@ -3,7 +3,9 @@
 Fecha: 20/09/2026. Alcance: código, pruebas, documentación e inventario local;
 sin observación visual de Productor ni consultas o escrituras en Supabase.
 Plan contrastado: [PROMPT-MAESTRO-FASES-0-A-8.md](../../PROMPT-MAESTRO-FASES-0-A-8.md).
-Esta auditoría no inicia automáticamente las siguientes fases de construcción.
+La auditoría inicial no autorizaba implementación. El usuario la ha autorizado después;
+la continuación y sus pruebas están en [fase 1](fase-1/00-resumen.md) y
+[aceptación local de fase 2](fase-2/03-aceptacion-local.md).
 
 ## Identidad de la copia y fiabilidad documental
 
@@ -27,8 +29,8 @@ nunca se realizara en otra copia.
 | Fase | Estado comprobable en esta copia | Trabajo realizable sin controlar visualmente Productor | Puerta de aceptación pendiente |
 |---|---|---|---|
 | 0. Evidencia y referencia | Parcial; faltan entregables y entradas completas del caso original | Inventariar evidencias, extraer manual CHM, consultar copias de datos y construir matriz de trazabilidad | Recorrido de 17 pasos, evidencias E01–E16 y prueba de herencia A1/A2/B1/A3; recuperar o realizar observación donde manual y datos no basten |
-| 1. Guardado y reintento | Base transaccional implementada y probada; cierre incompleto | Corregir conservación del formulario, normalización y protección frente a reenvíos; pruebas de integración y navegador de Aluminior | Receta completa de seis módulos, error/reintento con U1 conservada, una sola línea GRUPO, reapertura y PDF |
-| 2. Geometría y modularización | Implementación geométrica avanzada, compartida por pantalla/PDF y probada | Completar contratos geométricos, pruebas de selección, viewport y exportación | Aceptación visual y de interacción final; no confundir existencia de código con aceptación |
+| 1. Guardado y reintento | Aceptación técnica local completada: error/reintento, UUID de alta, receta seis módulos, reapertura y PDF | Contratos y pruebas en fase-1/00-resumen.md y 05-verificacion-local.md | No certifica precio comercial ni recuperación tras cerrar pestaña |
+| 2. Geometría y modularización | Aceptación local de pantalla/PDF y teclado completada; sin overflow de página a tres tamaños | Geometría y pruebas vigentes; aceptación en fase-2/03-aceptacion-local.md | Contraste directo de tarea con Productor y aceptación del operador pendientes |
 | 3. Presupuesto, catálogo e inserción | Búsqueda de clientes existente; diseñador secuencial básico | Implementar composición, inserción, selección estable, catálogo y pruebas según contratos verificados | Orden y comportamiento del flujo de Productor donde todavía falte evidencia |
 | 4. Configuración por elemento | Modelo actual sin materiales ni excepciones por elemento | Modelo versionado de herencia/excepciones, operaciones colectivas y persistencia con pruebas | Semántica de aplicar, heredar y volver a Genérico conforme a evidencia |
 | 5. Vidrio y huecos | Base de estructuras y FI; falta editor interno dinámico | Buscador desde catálogo real, geometría de huecos, identidades y excepciones; implementar reglas ya documentadas | Verificar escuadra, ámbitos contextuales, cotas y efecto de junquillos; no inferir fabricación de controles gráficos |
@@ -36,7 +38,11 @@ nunca se realizara en otra copia.
 | 7. GRUPO y valoración | Pipeline, snapshot económico, cantidades, mano de obra y copia existentes | Contrastes reproducibles con iguales entradas, cálculo puro y pruebas de persistencia | Paridad económica y de fabricación del caso real; FI explícito conserva resultado no valorado |
 | 8. PDF y aceptación integral | PDF, geometría común y bases de teclado/responsive existentes | Pruebas de PDF, navegador, accesibilidad y recorrido automatizado de Aluminior | Comparación integral con Productor y revisión de renderizado, paginación y uso real |
 
-## Hallazgos concretos que impiden dar 0–2 por cerradas
+## Hallazgos históricos de la auditoría inicial
+
+Los puntos 1–2 quedan atendidos por la continuación de fase 1; conservar
+`defaultValue` ya no implica reset porque se retiró `form action` en esos formularios.
+La evidencia visual nueva está en fase 2. Los límites de Productor siguen vigentes.
 
 1. En `packages/web/app/dashboard/presupuestos/[id]/_components/editar-cerramiento.tsx`
    siguen existiendo `useActionState`, formulario con `action` y campos de materiales,

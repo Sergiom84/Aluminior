@@ -1,6 +1,7 @@
 'use client'
 
-import { useActionState, useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import { useEnvioFormulario } from './use-envio-formulario.ts'
 import {
   crearConfiguracionCerramiento, plantillaDiseno, type ConfiguracionCerramiento,
   type PlantillaDiseno,
@@ -27,7 +28,7 @@ export function AnyadirLinea({
 }) {
   const [tipo, setTipo] = useState<TipoLinea>('ESTRUCTURA')
   const [plantilla, setPlantilla] = useState<PlantillaDiseno | null>(null)
-  const [estado, accion, enviando] = useActionState<Estado, FormData>(anyadirLinea, null)
+  const { estado, enviar, enviando } = useEnvioFormulario<Estado>(anyadirLinea, true)
   const [serie, setSerie] = useState('')
   const [vidrio, setVidrio] = useState('')
   const [acabado, setAcabado] = useState(() => acabadoPorDefecto(acabados))
@@ -74,7 +75,7 @@ export function AnyadirLinea({
   const codigoLinea = tipo === 'CERRAMIENTO' ? 'GRUPO' : plantilla?.codigo ?? ''
 
   return (
-    <form action={accion} id="configurador"
+    <form onSubmit={enviar} id="configurador"
       className={`${styles.formCard} rounded-lg border`}
       style={{ background: 'var(--al-surface)', borderColor: 'var(--al-border)' }}>
       <input type="hidden" name="presupuestoId" value={presupuestoId} />

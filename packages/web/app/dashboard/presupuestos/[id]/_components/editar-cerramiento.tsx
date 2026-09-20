@@ -1,6 +1,7 @@
 'use client'
 
-import { useActionState, useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import { useEnvioFormulario } from './use-envio-formulario.ts'
 import { medidasCerramiento, type ConfiguracionCerramiento } from '@aluminior/core/estructuras'
 import { editarCerramiento, type EstadoEdicionCerramiento } from '../../_lib/editar-cerramiento-action.ts'
 import { MAXIMO_HORAS } from '../../_lib/lineas/esquema-linea.ts'
@@ -32,9 +33,7 @@ export function EditarCerramiento({
   acabados: { codigo: string; descripcion: string }[]
   onCancelar: () => void
 }) {
-  const [estado, accion, guardando] = useActionState<EstadoEdicionCerramiento, FormData>(
-    editarCerramiento, null,
-  )
+  const { estado, enviar, enviando: guardando } = useEnvioFormulario<EstadoEdicionCerramiento>(editarCerramiento)
   const [configuracion, setConfiguracion] = useState(datos.configuracion)
   const [configuracionValida, setConfiguracionValida] = useState(true)
   const medidasIniciales = medidasCerramiento(datos.configuracion)
@@ -60,7 +59,7 @@ export function EditarCerramiento({
   ) : null
 
   return (
-    <form action={accion} className={`${styles.editorForm} rounded-md border p-4`}
+    <form onSubmit={enviar} className={`${styles.editorForm} rounded-md border p-4`}
       style={{ background: 'var(--al-surface)', borderColor: 'var(--al-accent)' }}>
       <input type="hidden" name="presupuestoId" value={presupuestoId} />
       <input type="hidden" name="lineaId" value={lineaId} />
