@@ -136,3 +136,7 @@ La auditoría posterior modifica documentación; no altera las reglas de negocio
 El guardián modular revisa 563 archivos, con cero infracciones y nueve scripts
 históricos de investigación exceptuados y congelados. Esto no certifica paridad
 completa, datos remotos ni ausencia universal de defectos.
+
+## Cierre del 20/09/2026
+
+[Observación directa y relevo](../CIERRE-JORNADA-2026-09-20.md): Productor 0017 permitió crear tres ventanas y un fijo; global observado 4860 × 1200 y fijo X3660/Y0. Ensayo interrumpido durante edición del ancho, sin aplicación final. Fase 2 mantiene contraste parcial, no cierre integral. Jornada finalizada a petición del usuario.

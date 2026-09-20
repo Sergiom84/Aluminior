@@ -1,6 +1,6 @@
 # Fase 2 — resumen
 
-Fecha: 20/09/2026. Estado: **implementación geométrica completada y aceptación local de navegador/PDF realizada; contraste directo con Productor pendiente**.
+Fecha: 20/09/2026. Estado: **implementación geométrica completada y aceptación local de navegador/PDF realizada; contraste directo con Productor iniciado y parcial**.
 
 ## Resultado
 
@@ -8,7 +8,7 @@ Fecha: 20/09/2026. Estado: **implementación geométrica completada y aceptació
 - `geometriaCerramiento` coloca módulos y uniones sin conocer viewport, React ni PDF.
 - `proyectarCerramiento` aplica un único factor uniforme, traslación y márgenes.
 - Pantalla y PDF consumen la misma geometría pura desde `@aluminior/core/estructuras`.
-- El fijo de 300 mm conserva 1:4 frente a 1200 mm; PSU001 de 100 mm conserva 5:3 frente a GMU038 de 60 mm.
+- La fixture sintética histórica conserva 1:4 para el fijo 300/1200 y 5:3 para grosores 100/60. No son grosores nativos confirmados: desde c756aea seleccionar PSU001 carga 2 mm, según E08 del operador.
 - Las uniones más largas amplían el límite visible sin alterar el alto contractual.
 - La selección ahora incluye `moduloId`, evitando colisiones entre huecos con IDs repetidos, y módulos/uniones son operables con Enter/Espacio y foco visible.
 
@@ -33,3 +33,7 @@ resultados, correcciones y límites. No equivale a cierre de paridad directa con
 Productor ni de toda la ergonomía móvil. La descripción histórica del bloqueo
 de petición se conserva en los informes anteriores, sin atribuirle una causa
 no reproducida en esta copia.
+
+## Fin de jornada
+
+Ver [cierre del 20/09/2026](../../CIERRE-JORNADA-2026-09-20.md): observación directa parcial de cuatro módulos y estado de edición pendiente. No se declara cierre de fase 2.

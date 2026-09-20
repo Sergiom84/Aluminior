@@ -4,17 +4,19 @@ Revisión local: 20/09/2026. Este es el punto de entrada para el estado del cód
 Las observaciones anteriores conservan su fecha y sus límites; no certifican el
 estado de producción ni autorizan ejecutar sus antiguos encargos.
 
-## Encargo vigente
+## Cierre de jornada
 
-El usuario ha autorizado continuar cerrando las fases. Esta continuación parte
-de `a2d62ce` y aborda guardado/reintento (fase 1) y aceptación local de geometría
-(fase 2), sin repetir el saneamiento. Commit e integración local en main están
-autorizados; no se hace push.
+Trabajo finalizado por indicación del usuario el 20/09/2026. Commit, integración
+en main y push autorizados para este cierre. Consultar el
+[relevo de fin de jornada](CIERRE-JORNADA-2026-09-20.md) antes de continuar.
 
-Resultado: [fase 1](paridad/fase-1/00-resumen.md) aceptada técnicamente en QA;
-[fase 2](paridad/fase-2/03-aceptacion-local.md) verificada en navegador y PDF.
-El contraste directo con Productor y las reglas de fases posteriores conservan
-sus puertas de evidencia. Workspace: `C:/Users/laral/Documents/Aluminior`.
+Fase 1 aceptada técnicamente en QA; fase 2 con geometría y navegador/PDF
+verificados localmente y contraste directo con Productor iniciado, aún parcial.
+Último código: `c756aea`; la observación posterior no cambió código.
+En Productor 0017 quedaron tres ventanas y un fijo en el configurador. El ancho
+del fijo estaba en edición (último valor visible 30; un envío posterior para
+completar 300 fue interrumpido), sin Actualizar ni aceptación final comprobada.
+No reanudar acciones a partir de coordenadas o valores de esta sesión.
 
 ## Nueva evidencia del operador
 
@@ -64,7 +66,7 @@ El mapa y las excepciones están en [SANEAMIENTO-MODULAR.md](SANEAMIENTO-MODULAR
    `74e0c95` sigue ausente: los arreglos de esta continuación son nuevos y no
    se atribuyen al informe histórico de otra copia.
 4. La disponibilidad de capturas y registros de otras sesiones no se deduce de
-   que un Markdown los mencione. No se ha repetido aquí la observación de Productor.
+   que un Markdown los mencione. La observación directa posterior es parcial y está en el relevo de cierre.
 5. El estado de migraciones remotas y de datos comerciales no se ha verificado
    en este encargo. Los resultados de pruebas locales no lo certifican.
 

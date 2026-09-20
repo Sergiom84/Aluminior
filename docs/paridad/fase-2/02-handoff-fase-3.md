@@ -22,3 +22,5 @@ El punto 4 sigue abierto. No reiniciar servidores por el relato histórico.
 4. Contrastar alineación e inserción con Productor cuando 0017/260494 sean visibles.
 
 No se implementaron drag and drop, nuevas posiciones de inserción, herencia, travesaños interactivos ni catálogo adicional fuera de los equivalentes QA necesarios para la receta.
+
+Cierre posterior: [relevo del 20/09/2026](../../CIERRE-JORNADA-2026-09-20.md). Se observó directamente un presupuesto nuevo en 0017, sin confirmar su número. No atribuirlo a 260494/260496. Contraste de geometría aún parcial.

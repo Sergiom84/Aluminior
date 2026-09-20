@@ -89,3 +89,7 @@ El plan de julio, los lotes J00–J10 y las fases 0–8 son secuencias diferente
 Los encabezados de revisión preceden a los antiguos «ahora», «siguiente» o
 «pendiente» para evitar ejecutar trabajo ya hecho. Implementación, prueba local,
 observación de Productor y aceptación final siguen siendo estados distintos.
+
+## Último cierre de jornada
+
+[20/09/2026: cierre, observación directa y punto de reanudación](CIERRE-JORNADA-2026-09-20.md). Registro vigente de continuidad; fases no verificadas conservan sus pendientes.

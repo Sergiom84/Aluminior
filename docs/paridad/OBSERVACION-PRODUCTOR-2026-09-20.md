@@ -168,3 +168,5 @@ Las observaciones posteriores deben añadirse fechadas, conservando las diferenc
 entre evidencia visible, explicación del operador y reglas aún no verificadas.
 
 Continuación del 20/09/2026: [Actualización explícita de medidas y corrección de PSU001](IMPLEMENTACION-ACTUALIZAR-2026-09-20.md). Implementación y verificaciones locales; contraste integral pendiente.
+
+Observación directa posterior, distinta de estas doce capturas: [cierre de jornada](../CIERRE-JORNADA-2026-09-20.md). No se completó ni guardó de forma comprobada el nuevo caso; leer el punto de interrupción antes de continuar.
