@@ -4,6 +4,14 @@
 El contraste de la misma tarea con Productor continúa pendiente; no se declara
 paridad global de interfaz, catálogo, inserción ni precio comercial.
 
+## Evidencia posterior de Productor
+
+El [registro del operador del 20/09/2026](../OBSERVACION-PRODUCTOR-2026-09-20.md)
+muestra PSU001 con Grosor 2 mm y descripción 100mm, y un GRUPO final 6300 × 1200.
+Las uniones 100/60 mm descritas abajo pertenecen a la fixture sintética local;
+no son medidas verificadas en Productor por esa descripción comercial.
+Esta nueva evidencia requiere un contraste con iguales entradas antes del cierre.
+
 ## Resultado observado
 
 El navegador muestra seis módulos y cinco uniones con ancho total 6640 y alto
@@ -42,3 +50,5 @@ Antes de alterar inserción, arrastre o clic del catálogo, recuperar evidencia
 del manual/capturas o decisión explícita. La implementación actual sustituye
 el módulo activo al elegir miniatura y añade únicamente al extremo derecho;
 este informe no convierte ese comportamiento en paridad confirmada.
+
+Continuación del 20/09/2026: [Actualización explícita de medidas y corrección de PSU001](../IMPLEMENTACION-ACTUALIZAR-2026-09-20.md). Implementación y verificaciones locales; contraste integral pendiente.

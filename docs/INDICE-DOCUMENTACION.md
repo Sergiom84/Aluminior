@@ -9,6 +9,9 @@ Entrada vigente: [ESTADO-ACTUAL.md](ESTADO-ACTUAL.md). Resultado técnico: [SANE
 Auditoría posterior del plan maestro: [estado de fases 0–8](paridad/ESTADO-FASES.md),
 con discrepancias de copia, pendientes y alcance realizable sin escritorio.
 
+Registro posterior: [observación de Productor del operador, 20/09/2026](paridad/OBSERVACION-PRODUCTOR-2026-09-20.md).
+Incluye doce capturas privadas, recorrido confirmado y pendientes por fase.
+
 ## Inventario
 
 | Documento | Clasificación | Resolución de la revisión |

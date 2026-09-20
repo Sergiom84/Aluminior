@@ -3,15 +3,17 @@
 import React from 'react'
 import { useEffect, useMemo, useState } from 'react'
 import {
-  actualizarFiModuloCerramiento, actualizarModuloCerramiento, anadirModuloCerramiento, buscarHueco,
+  anadirModuloCerramiento, buscarHueco,
   cambiarEstructuraModuloCerramiento, crearConfiguracionCerramiento,
   eliminarModuloCerramiento, esConfiguracionCerramiento, medidasCerramiento,
-  plantillaDiseno, PLANTILLAS_DISENO, primerHueco, UNIONES_VISUALES,
-  resolverGeometriaFi1Ofi,
+  plantillaDiseno, PLANTILLAS_DISENO, primerHueco,
   type ConfiguracionCerramiento, type PlantillaDiseno,
 } from '@aluminior/core/estructuras'
 import { DibujoEstructura } from './dibujo-estructura.tsx'
 import { LienzoCerramiento, type ParteSeleccionada } from './lienzo-cerramiento.tsx'
+import { useBorradoresCerramiento } from './use-borradores-cerramiento.ts'
+import { MedidasElemento } from './medidas-elemento.tsx'
+import { EditorUnion } from './editor-union.tsx'
 import styles from '../presupuesto-movil.module.css'
 
 export function DisenadorEstructura({
@@ -34,6 +36,7 @@ export function DisenadorEstructura({
       modulos: [{ ...base.modulos[0], anchoMm, altoMm }],
     }
   })
+  const edicion = useBorradoresCerramiento(configuracion, setConfiguracion)
   const [moduloActivoId, setModuloActivoId] = useState(configuracion.modulos[0].id)
   const moduloActivo = configuracion.modulos.find((modulo) => modulo.id === moduloActivoId)
     ?? configuracion.modulos[0]
@@ -44,6 +47,7 @@ export function DisenadorEstructura({
   })
 
   const elegir = (siguiente: PlantillaDiseno) => {
+    edicion.descartar('modulos', moduloActivo.id)
     setConfiguracion((actual) => cambiarEstructuraModuloCerramiento(
       actual, moduloActivo.id, siguiente,
     ))
@@ -51,9 +55,6 @@ export function DisenadorEstructura({
       elemento: primerHueco(siguiente.composicion).id, parte: 'vidrio' })
   }
 
-  const actualizarModulo = (cambios: Partial<{ anchoMm: number; altoMm: number }>) => {
-    setConfiguracion((actual) => actualizarModuloCerramiento(actual, moduloActivo.id, cambios))
-  }
 
   const anadirModulo = () => {
     setConfiguracion((actual) => {
@@ -64,6 +65,10 @@ export function DisenadorEstructura({
   }
 
   const eliminarModulo = () => {
+    edicion.descartar('modulos', moduloActivo.id)
+    const indiceActual = configuracion.modulos.findIndex(item => item.id === moduloActivo.id)
+    const unionEliminada = configuracion.uniones[indiceActual === configuracion.modulos.length - 1 ? indiceActual - 1 : indiceActual]
+    if (unionEliminada) edicion.descartar('uniones', unionEliminada.id)
     setConfiguracion((actual) => {
       const indice = actual.modulos.findIndex((modulo) => modulo.id === moduloActivo.id)
       const siguiente = eliminarModuloCerramiento(actual, moduloActivo.id)
@@ -77,13 +82,10 @@ export function DisenadorEstructura({
     const medidas = medidasCerramiento(configuracion)
     onConfiguracionChange(configuracion)
     onDimensionesChange(medidas.anchoMm, medidas.altoMm)
-    onValidezChange?.(esConfiguracionCerramiento(configuracion))
-  }, [configuracion, onConfiguracionChange, onDimensionesChange, onValidezChange])
+    onValidezChange?.(esConfiguracionCerramiento(configuracion) && !edicion.pendientes)
+  }, [configuracion, edicion.pendientes, onConfiguracionChange, onDimensionesChange, onValidezChange])
 
   const huecoSeleccionado = buscarHueco(plantilla.composicion, seleccion.elemento)
-  const geometriaFi = plantilla.codigo === '1OFI' && Object.hasOwn(moduloActivo, 'fiMm')
-    ? resolverGeometriaFi1Ofi(moduloActivo.anchoMm, moduloActivo.altoMm, moduloActivo.fiMm)
-    : null
 
   const familias = useMemo(
     () => [...new Set(PLANTILLAS_DISENO.map((item) => item.familia))],
@@ -99,7 +101,7 @@ export function DisenadorEstructura({
             <div className="al-designer-family-name">{familia}</div>
             <div className="al-designer-thumbs">
               {PLANTILLAS_DISENO.filter((item) => item.familia === familia).map((item) => (
-                <button key={item.codigo} type="button" onClick={() => elegir(item)}
+                <button key={item.codigo} type="button" disabled={edicion.pendientes} onClick={() => elegir(item)}
                   className="al-designer-thumb" data-selected={item.codigo === plantilla.codigo}
                   title={item.descripcion} aria-label={`${item.codigo}: ${item.descripcion}`}>
                   <DibujoEstructura plantilla={item} compacto />
@@ -124,6 +126,8 @@ export function DisenadorEstructura({
               if (configuracion.modulos.some(m => m.id === parte.moduloId)) setModuloActivoId(parte.moduloId)
             }} />
         </div>
+        {edicion.pendientes && <p role="status">Hay cambios pendientes de actualizar.</p>}
+        {edicion.error && <p role="alert">{edicion.error}</p>}
         <div className="al-designer-properties">
           <div>
             <span className="al-designer-properties-label">Elemento seleccionado</span>
@@ -137,34 +141,11 @@ export function DisenadorEstructura({
             <span className="al-designer-properties-label">Estructura</span>
             <strong className="cifra">{plantilla.codigo}</strong>
           </div>
-          <label className="al-designer-measure">
-            <span className="al-designer-properties-label">Ancho elemento</span>
-            <input type="number" min={100} step={10} value={moduloActivo.anchoMm}
-              onChange={(evento) => actualizarModulo({ anchoMm: Number(evento.target.value) })} />
-          </label>
-          <label className="al-designer-measure">
-            <span className="al-designer-properties-label">Alto elemento</span>
-            <input type="number" min={100} step={10} value={moduloActivo.altoMm}
-              onChange={(evento) => actualizarModulo({ altoMm: Number(evento.target.value) })} />
-          </label>
-          {plantilla.codigo === '1OFI' && (
-            <label className="al-designer-measure">
-              <span className="al-designer-properties-label">FIJO INFERIOR</span>
-              <input type="number" step="any" value={moduloActivo.fiMm ?? ''}
-                aria-invalid={geometriaFi?.valido === false || undefined}
-                aria-describedby={geometriaFi?.valido === false ? `fi-error-${moduloActivo.id}` : undefined}
-                onChange={(evento) => setConfiguracion((actual) => actualizarFiModuloCerramiento(
-                  actual, moduloActivo.id,
-                  evento.target.value === '' ? Number.NaN : Number(evento.target.value),
-                ))} />
-              <span>mm</span>
-              {geometriaFi?.valido === false && (
-                <small id={`fi-error-${moduloActivo.id}`} style={{ color: 'var(--al-error)' }}>
-                  FI debe ser un número mayor que 0 y menor que el alto del elemento.
-                </small>
-              )}
-            </label>
-          )}
+          <MedidasElemento modulo={{ ...moduloActivo, ...edicion.borradores.modulos[moduloActivo.id] }}
+            pendiente={Boolean(edicion.borradores.modulos[moduloActivo.id])}
+            onChange={cambios => edicion.editarModulo(moduloActivo.id, cambios)}
+            onActualizar={() => edicion.aplicar('modulos', moduloActivo.id)}
+            onDescartar={() => edicion.descartar('modulos', moduloActivo.id)} />
           <div className="al-designer-part-picker" aria-label="Seleccionar elemento">
             {(['marco', 'hoja', 'vidrio'] as const).map((parte) => (
               <button key={parte} type="button"
@@ -177,50 +158,20 @@ export function DisenadorEstructura({
                 {nombreParte(parte)}
               </button>
             ))}
-            <button type="button" onClick={anadirModulo}>Añadir a la derecha</button>
+            <button type="button" disabled={edicion.pendientes} onClick={anadirModulo}>Añadir a la derecha</button>
             <button type="button" onClick={eliminarModulo}
-              disabled={configuracion.modulos.length === 1}>Eliminar elemento</button>
+              disabled={edicion.pendientes || configuracion.modulos.length === 1}>Eliminar elemento</button>
           </div>
         </div>
         {configuracion.uniones.length > 0 && (
           <div className="al-designer-union-editor" aria-label="Uniones entre elementos">
             {configuracion.uniones.map((union, indice) => (
-              <fieldset key={union.id}>
-                <legend>Unión {indice + 1}</legend>
-                <select aria-label={`Código unión ${indice + 1}`} value={union.codigo} onChange={(evento) => {
-                  const catalogo = UNIONES_VISUALES.find((item) => item.codigo === evento.target.value)!
-                  setConfiguracion((actual) => ({
-                    ...actual,
-                    uniones: actual.uniones.map((item) => item.id === union.id
-                      ? { ...item, codigo: catalogo.codigo, grosorMm: catalogo.grosorMm }
-                      : item),
-                  }))
-                }}>
-                  {UNIONES_VISUALES.map((item) => (
-                    <option key={item.codigo} value={item.codigo}>{item.codigo} · {item.descripcion}</option>
-                  ))}
-                </select>
-                <label>Longitud
-                  <input type="number" min={100} step={10} value={union.longitudMm}
-                    onChange={(evento) => setConfiguracion((actual) => ({
-                      ...actual,
-                      uniones: actual.uniones.map((item) => item.id === union.id
-                        ? { ...item, longitudMm: Number(evento.target.value) }
-                        : item),
-                    }))} />
-                  <span>mm</span>
-                </label>
-                <label>Grosor
-                  <input type="number" min={1} step={1} value={union.grosorMm}
-                    onChange={(evento) => setConfiguracion((actual) => ({
-                      ...actual,
-                      uniones: actual.uniones.map((item) => item.id === union.id
-                        ? { ...item, grosorMm: Number(evento.target.value) }
-                        : item),
-                    }))} />
-                  <span>mm</span>
-                </label>
-              </fieldset>
+              <EditorUnion key={union.id} indice={indice}
+                union={{ ...union, ...edicion.borradores.uniones[union.id] }}
+                pendiente={Boolean(edicion.borradores.uniones[union.id])}
+                onChange={cambios => edicion.editarUnion(union.id, cambios)}
+                onActualizar={() => edicion.aplicar('uniones', union.id)}
+                onDescartar={() => edicion.descartar('uniones', union.id)} />
             ))}
           </div>
         )}

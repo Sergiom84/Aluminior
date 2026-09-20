@@ -7,6 +7,16 @@ La auditoría inicial no autorizaba implementación. El usuario la ha autorizado
 la continuación y sus pruebas están en [fase 1](fase-1/00-resumen.md) y
 [aceptación local de fase 2](fase-2/03-aceptacion-local.md).
 
+## Evidencia posterior aportada por el operador
+
+Se incorporan [doce capturas y el recorrido del 20/09/2026](OBSERVACION-PRODUCTOR-2026-09-20.md).
+Aportan evidencia para las fases 3–6 y el recorrido de presupuesto/pago.
+La fase 2 conserva pendiente el contraste equivalente: PSU001 muestra grosor
+2 mm, y el documento final 6300 × 1200 difiere de la fixture local 6640 × 1020.
+La descripción comercial 100mm no acredita una separación de 100 mm.
+Los estados de aceptación técnica local se mantienen; el registro no certifica
+implementación de los nuevos requisitos ni cierre integral.
+
 ## Identidad de la copia y fiabilidad documental
 
 El archivo solicitado en `C:/Users/laral/OneDrive/Documentos/Aluminior/` no existe

@@ -127,7 +127,8 @@ export const PLANTILLAS_DISENO: readonly PlantillaDiseno[] = [
 /** Uniones vistas en el presupuesto filmado y presentes en la familia 103. */
 export const UNIONES_VISUALES: readonly UnionVisual[] = [
   { codigo: 'GMU038', descripcion: '(GM) TUBO 60x60', grosorMm: 60 },
-  { codigo: 'PSU001', descripcion: '(PS) H UNION PARA COMPACTOS 100mm', grosorMm: 100 },
+  // Captura E08, 20/09/2026: 100mm es descripción; el campo Grosor muestra 2 mm.
+  { codigo: 'PSU001', descripcion: '(PS) H UNION PARA COMPACTOS 100mm', grosorMm: 2 },
 ] as const
 
 export function plantillaDiseno(codigo: string): PlantillaDiseno | null {

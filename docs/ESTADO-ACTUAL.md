@@ -16,6 +16,15 @@ Resultado: [fase 1](paridad/fase-1/00-resumen.md) aceptada técnicamente en QA;
 El contraste directo con Productor y las reglas de fases posteriores conservan
 sus puertas de evidencia. Workspace: `C:/Users/laral/Documents/Aluminior`.
 
+## Nueva evidencia del operador
+
+El 20/09/2026 el usuario aporta doce capturas y el recorrido de creación del
+presupuesto. Ver [registro de Productor](paridad/OBSERVACION-PRODUCTOR-2026-09-20.md):
+arrastre, Actualizar, catálogos, uniones, doble acristalamiento y formas de pago.
+PSU001 muestra grosor 2 mm aunque su descripción diga 100mm. El caso final
+es 6300 × 1200; queda pendiente contrastarlo con iguales entradas en Aluminior.
+Es evidencia nueva, no un cierre adicional de fase ni implementación funcional.
+
 ## Arquitectura comprobada
 
 - `packages/core`: dominio puro, cálculo y geometría independientes de UI y BD.
@@ -70,3 +79,5 @@ El mapa y las excepciones están en [SANEAMIENTO-MODULAR.md](SANEAMIENTO-MODULAR
 `npm run check:architecture`, `npm run typecheck` y `npm test` son las
 comprobaciones del saneamiento. Las pruebas de integración usan exclusivamente
 el [PostgreSQL local de pruebas](../packages/db/README.md).
+
+Continuación del 20/09/2026: [Actualización explícita de medidas y corrección de PSU001](paridad/IMPLEMENTACION-ACTUALIZAR-2026-09-20.md). Implementación y verificaciones locales; contraste integral pendiente.
