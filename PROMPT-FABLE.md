@@ -1,5 +1,8 @@
 # Prompt para continuar Aluminior
 
+> Revisión documental 20/09/2026: **Encargo histórico inactivo**. Pendiente de extraer persistencia ya superado; usar entrada actual.
+> Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
+
 > Continúa el proyecto desde `HANDOFF-CHATGPT.md`. Lee después `AGENTS.md`,
 > `ARQUITECTURA.md` y `PARIDAD-PRODUCTOR.md` antes de cambiar código.
 >

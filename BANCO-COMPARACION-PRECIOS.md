@@ -1,5 +1,8 @@
 # Banco local de comparación: cobertura y límites
 
+> Revisión documental 20/09/2026: **Contrato y evidencia**. Banco y adaptador implementados; cobertura observada no certifica precios generales.
+> Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
+
 19/09/2026. Herramienta preparada y **banco real generado tras autorización explícita**.
 No modifica tarifas, documentos, catálogos operativos ni Supabase. No activa estructuras.
 

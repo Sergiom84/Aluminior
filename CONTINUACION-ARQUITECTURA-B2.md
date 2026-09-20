@@ -1,5 +1,8 @@
 # Continuación de arquitectura B2 y encargo preparatorio a Sol
 
+> Revisión documental 20/09/2026: **Relevo histórico**. Preparación B2 y cierre acotado 1OFI; no reactiva delegaciones antiguas.
+> Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
+
 ## Estado y contrato
 Repositorio real C:/Users/laral/Documents/Aluminior, rama feat/cerramientos-editor-linea.
 La copia OneDrive/Documentos y el proyecto guardado de Codex NO son esta rama.

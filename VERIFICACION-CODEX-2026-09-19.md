@@ -1,5 +1,8 @@
 # Continuación del editor y escaparate — 19/09/2026
 
+> Revisión documental 20/09/2026: **Evidencia histórica**. Verificación de carga autorizada en aquella sesión; no prueba estado remoto hoy.
+> Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
+
 ## Copia de trabajo
 
 El relevo de Claude está en `C:\Users\laral\Documents\Aluminior`, rama

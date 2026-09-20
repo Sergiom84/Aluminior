@@ -34,7 +34,7 @@ Con el contenedor levantado:
 # Solo el ETL
 npm run -w @aluminior/etl test
 
-# Suite completa (core + etl)
+# Suite completa de workspaces (core, db, etl y web)
 npm test
 ```
 

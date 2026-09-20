@@ -1,5 +1,8 @@
 # Continuidad funcional de Productor en Aluminior
 
+> Revisión documental 20/09/2026: **Plan histórico**. Dirección de producto útil; orden inmediato sustituido por el encargo actual.
+> Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
+
 ## Decisión de trabajo
 
 El usuario delega el orden técnico para que su tío pueda trabajar igual o

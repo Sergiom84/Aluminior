@@ -1,5 +1,8 @@
 # Evidencia: vídeo oficial de Gaia sobre presupuestos en Productor Aluminio
 
+> Revisión documental 20/09/2026: **Evidencia fechada**. Timestamps y conceptos de Productor; no inventario del código actual.
+> Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
+
 Fuente: "Programa para Carpinterias de Aluminio PRODUCTOR aluminio", canal Gaia
 Software, 20/05/2020, 30:13. `https://www.youtube.com/watch?v=DYma4OA9Bug`
 

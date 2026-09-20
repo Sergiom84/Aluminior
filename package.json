@@ -15,10 +15,11 @@
     "db:migrate": "npm run -w @aluminior/db migrate",
     "etl": "npm run -w @aluminior/etl import",
     "etl:tarifa": "tsx packages/etl/src/cargar-tarifa.ts",
-    "dev:api": "npm run -w @aluminior/api dev",
+    "dev": "npm run dev:web",
     "dev:web": "npm run -w @aluminior/web dev",
     "test": "npm run -ws --if-present test",
-    "typecheck": "npm run -ws --if-present typecheck"
+    "typecheck": "npm run -ws --if-present typecheck",
+    "check:architecture": "node scripts/auditar-modularidad.mjs"
   },
   "devDependencies": {
     "@types/node": "^22.10.1",

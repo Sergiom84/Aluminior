@@ -8,17 +8,22 @@ configurador de estructuras, despiece y documentos comerciales.
 
 ## Estado
 
-En construcción. Cuatro módulos operativos y valoración parcial, explícitamente
-marcada cuando faltan datos.
+En construcción. Código para clientes, artículos, estructuras, presupuestos,
+compras y producción; valoración parcial, explícitamente marcada cuando faltan
+datos. Esto no certifica paridad completa ni aptitud general para fabricación.
+
+Estado revisado, pendientes y orden de lectura:
+[docs/ESTADO-ACTUAL.md](docs/ESTADO-ACTUAL.md). El saneamiento precede a las
+siguientes fases, que se retomarán cuando lo indique el usuario.
 
 | Componente | Estado |
 |---|---|
-| Análisis del sistema origen | Completado — ver [PLAN.md](PLAN.md) |
+| Análisis del sistema origen | Investigación histórica extensa; paridad con pendientes — ver [PLAN.md](PLAN.md) |
 | Decisiones de arquitectura | Completado — ver [ARQUITECTURA.md](ARQUITECTURA.md) |
-| Esquema de base de datos | Migraciones Drizzle versionadas; persistencia específica de cerramientos aplicada |
-| ETL desde el sistema original | Completado: 178.804 filas aplicables |
-| Interfaz web | Clientes, Artículos, Estructuras y Presupuestos; diseñador inicial de cerramientos operativo |
-| Motor de despiece | Operativo: 417/417 fórmulas; 99,6% de componentes |
+| Esquema de base de datos | Migraciones versionadas y pruebas locales; estado remoto no revisado en este saneamiento |
+| ETL desde el sistema original | Importador modular; las cifras de carga anteriores son históricas |
+| Interfaz web | Next.js: módulos comerciales, diseñador, PDF y producción con alcance parcial |
+| Motor de despiece | Pruebas de cálculo; evaluar fórmulas no implica acertar todos los cortes |
 | Valoración | Perfiles y vidrio de hoja/fijo puro; incompletos se muestran sin valorar |
 
 ## Dirección de producto
@@ -77,9 +82,11 @@ diseñador, dibujo, catálogo, búsqueda, validación, persistencia o cálculo.
 - Los refactors se hacen por responsabilidad y con pruebas, nunca troceando un
   archivo de forma mecánica.
 
-La deuda principal actual es el archivo de acciones de presupuestos, que reúne
-demasiados casos de uso. Debe descomponerse incrementalmente antes de añadirle
-nuevas áreas del configurador.
+Las acciones delegan en servicios por caso de uso. ETL, diseño, producción,
+precios, esquema y estilos tienen fronteras revisadas. Ejecutar
+`npm run check:architecture` para detectar crecimiento y dependencias indebidas.
+Las excepciones de investigación histórica están justificadas en
+[docs/SANEAMIENTO-MODULAR.md](docs/SANEAMIENTO-MODULAR.md).
 
 ## Contexto
 
@@ -122,8 +129,9 @@ Para instalar o actualizar dependencias se utiliza npm 10.9.8 mediante `npx`,
 sin cambiar npm global. npm 11 presenta un [defecto con overrides en workspaces](https://github.com/npm/cli/issues/9514)
 que puede restablecer versiones vulnerables. `packageManager` documenta la
 versión; no la impone. Los comandos `npm run` habituales siguen siendo válidos.
-La reproducción local con datos sintéticos está en
-`output/ejecucion-javi/J02/REPRODUCIR-EJECUTOR.md`.
+El entorno de pruebas con datos sintéticos se describe en
+[packages/db/README.md](packages/db/README.md). Los artefactos de sesiones bajo
+`output/` son locales e ignorados; no se presupone su disponibilidad en otra copia.
 
 ## Estructura
 
@@ -132,13 +140,13 @@ packages/
   db/     Esquema Drizzle y migraciones
   etl/    Importación desde los CSV del sistema original
   core/   Dominio: estructuras, despiece, precios (sin dependencias de E/S)
-  api/    Scaffold histórico; la aplicación activa usa servidor Next.js
   web/    Next.js: interfaz y orquestación server-side
 esquema/  Análisis del sistema original: DDL, perfilado, mapa de informes
 ```
 
 Para retomar el proyecto en otra conversación, empezar por
-[`HANDOFF-CHATGPT.md`](HANDOFF-CHATGPT.md).
+[`docs/ESTADO-ACTUAL.md`](docs/ESTADO-ACTUAL.md). Los relevos anteriores se
+clasifican en [el índice documental](docs/INDICE-DOCUMENTACION.md).
 
 ## Datos
 

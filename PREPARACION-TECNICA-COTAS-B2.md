@@ -1,5 +1,8 @@
 # Preparación técnica B2: cotas de diseño
 
+> Revisión documental 20/09/2026: **Propuesta histórica**. Preparación anterior a la implementación acotada 1OFI. No aplicar como lista nueva.
+> Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
+
 ## 1. Base, alcance y criterio de evidencia
 
 - Worktree revisado: `C:/Users/laral/Documents/Aluminior-worktrees/preparacion-cotas-b2`.

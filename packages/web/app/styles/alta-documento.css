@@ -1,0 +1,136 @@
+.al-new-document {
+  width: min(840px, 100%);
+  overflow: hidden;
+  border: 1px solid var(--al-border-strong);
+  border-radius: var(--al-radius);
+  background: var(--al-surface);
+  box-shadow: var(--al-shadow);
+}
+
+.al-form-alert {
+  margin: 10px;
+  border: 1px solid;
+  border-radius: var(--al-radius-sm);
+  padding: 8px 10px;
+  font-size: 12px;
+}
+
+.al-new-document fieldset {
+  min-width: 0;
+  margin: 10px;
+  border: 1px solid var(--al-border);
+  border-radius: var(--al-radius-sm);
+  padding: 14px;
+}
+
+.al-new-document legend {
+  padding: 0 6px;
+  color: var(--al-text-muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.al-new-document-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px 12px;
+}
+
+.al-new-document-grid .al-span-2 {
+  grid-column: span 2;
+}
+
+.al-new-document-grid label {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--al-text-muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.al-new-document-grid input[readonly] {
+  background: var(--al-surface-muted);
+  color: var(--al-text-muted);
+}
+
+.al-client-picker {
+  position: relative;
+  min-width: 0;
+}
+
+.al-client-results {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 4px);
+  left: 0;
+  width: min(430px, calc(100vw - 40px));
+  overflow: hidden;
+  border: 1px solid var(--al-border-strong);
+  border-radius: var(--al-radius-sm);
+  background: var(--al-surface);
+  box-shadow: var(--al-shadow-lg);
+}
+
+.al-client-results button {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 64px minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 8px;
+  border-bottom: 1px solid var(--al-border);
+  padding: 7px 9px;
+  color: var(--al-text);
+  text-align: left;
+}
+
+.al-client-results button:last-child {
+  border-bottom: 0;
+}
+
+.al-client-results button:hover,
+.al-client-results button[data-active='true'] {
+  background: var(--al-row-hover);
+}
+
+.al-client-results strong {
+  color: var(--al-accent-strong);
+  font-family: var(--al-font-num);
+  font-size: 11px;
+}
+
+.al-client-results span {
+  overflow: hidden;
+  font-size: 12px;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.al-client-results small {
+  color: var(--al-text-muted);
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.al-client-results > p {
+  padding: 9px;
+  color: var(--al-text-muted);
+  font-size: 11px;
+}
+
+.al-new-document-notes textarea {
+  width: 100%;
+  min-height: 104px;
+  resize: vertical;
+  border: 1px solid var(--al-border-strong);
+  border-radius: var(--al-radius-sm);
+  background: var(--al-surface);
+  padding: 8px 10px;
+  font-size: 12px;
+}
+
+.al-new-document-actions {
+  display: flex;
+  gap: 8px;
+  padding: 0 10px 10px;
+}

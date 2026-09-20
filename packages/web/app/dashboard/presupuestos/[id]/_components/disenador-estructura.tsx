@@ -10,7 +10,8 @@ import {
   resolverGeometriaFi1Ofi,
   type ConfiguracionCerramiento, type PlantillaDiseno,
 } from '@aluminior/core/estructuras'
-import { DibujoEstructura, type ParteSeleccionada } from './dibujo-estructura.tsx'
+import { DibujoEstructura } from './dibujo-estructura.tsx'
+import { LienzoCerramiento, type ParteSeleccionada } from './lienzo-cerramiento.tsx'
 import styles from '../presupuesto-movil.module.css'
 
 export function DisenadorEstructura({
@@ -39,14 +40,15 @@ export function DisenadorEstructura({
   const plantilla = plantillaDiseno(moduloActivo.estructuraCodigo) ?? PLANTILLAS_DISENO[0]
   const inicial = primerHueco(plantilla.composicion)
   const [seleccion, setSeleccion] = useState<ParteSeleccionada>({
-    elemento: inicial.id, parte: 'vidrio',
+    moduloId: moduloActivo.id, elemento: inicial.id, parte: 'vidrio',
   })
 
   const elegir = (siguiente: PlantillaDiseno) => {
     setConfiguracion((actual) => cambiarEstructuraModuloCerramiento(
       actual, moduloActivo.id, siguiente,
     ))
-    setSeleccion({ elemento: primerHueco(siguiente.composicion).id, parte: 'vidrio' })
+    setSeleccion({ moduloId: moduloActivo.id,
+      elemento: primerHueco(siguiente.composicion).id, parte: 'vidrio' })
   }
 
   const actualizarModulo = (cambios: Partial<{ anchoMm: number; altoMm: number }>) => {
@@ -116,38 +118,8 @@ export function DisenadorEstructura({
           <span className="al-designer-scale">Escala automática</span>
         </header>
         <div className="al-designer-canvas" data-testid="designer-canvas">
-          <div className="al-chain-drawing" role="group" aria-label="Composición del cerramiento">
-            {configuracion.modulos.map((modulo, indice) => {
-              const dibujo = plantillaDiseno(modulo.estructuraCodigo) ?? PLANTILLAS_DISENO[0]
-              return (
-                <div key={modulo.id} className="al-chain-segment">
-                  <button type="button" className="al-chain-module"
-                    data-selected={modulo.id === moduloActivo.id}
-                    style={{ flexGrow: modulo.anchoMm }}
-                    aria-label={`Elemento ${indice + 1}: ${dibujo.descripcion}`}
-                    onClick={() => {
-                      setModuloActivoId(modulo.id)
-                      setSeleccion({ elemento: primerHueco(dibujo.composicion).id, parte: 'vidrio' })
-                    }}>
-                    <DibujoEstructura plantilla={dibujo} modulo={modulo} anchoMm={modulo.anchoMm}
-                      altoMm={modulo.altoMm}
-                      seleccion={modulo.id === moduloActivo.id ? seleccion : undefined}
-                      onSeleccion={modulo.id === moduloActivo.id ? setSeleccion : undefined} />
-                  </button>
-                  {configuracion.uniones[indice] && (
-                    <button type="button" className="al-chain-union"
-                      data-selected={seleccion.elemento === configuracion.uniones[indice].id}
-                      onClick={() => setSeleccion({
-                        elemento: configuracion.uniones[indice].id, parte: 'union',
-                      })}
-                      aria-label={`Unión ${indice + 1}: ${configuracion.uniones[indice].codigo}`}>
-                      <span>{configuracion.uniones[indice].codigo}</span>
-                    </button>
-                  )}
-                </div>
-              )
-            })}
-          </div>
+          <LienzoCerramiento configuracion={configuracion} moduloActivoId={moduloActivo.id}
+            seleccion={seleccion} onModuloActivo={setModuloActivoId} onSeleccion={setSeleccion} />
         </div>
         <div className="al-designer-properties">
           <div>
@@ -198,7 +170,7 @@ export function DisenadorEstructura({
                   (parte === 'vidrio' && !huecoSeleccionado)
                 }
                 data-selected={seleccion.parte === parte}
-                onClick={() => setSeleccion({ elemento: seleccion.elemento, parte })}>
+                onClick={() => setSeleccion({ ...seleccion, parte })}>
                 {nombreParte(parte)}
               </button>
             ))}

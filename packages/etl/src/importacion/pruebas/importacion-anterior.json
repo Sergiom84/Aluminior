@@ -1,0 +1,791 @@
+{
+  "operaciones": [
+    {
+      "consulta": "TRUNCATE TABLE ? RESTART IDENTITY CASCADE",
+      "valores": [
+        [
+          "lineas_despiece",
+          "lineas_acristalamiento",
+          "lineas_opciones_herraje",
+          "lineas_estructura",
+          "lineas",
+          "presupuestos",
+          "obras",
+          "clientes_potenciales",
+          "clientes",
+          "proveedores",
+          "estructura_componentes",
+          "estructura_cotas",
+          "estructura_diseno_nodos",
+          "vidrio_descuentos_alojamiento",
+          "vidrio_galce",
+          "vidrio_galce_fijo",
+          "junquillo_ajustes",
+          "junquillo_ajustes_fijo",
+          "tacris_filas",
+          "opciones_herraje",
+          "herraje_conjuntos",
+          "conjunto_resoluciones",
+          "conjunto_delegaciones",
+          "conjuntos",
+          "series",
+          "articulos_coste",
+          "articulos_pvp",
+          "articulos",
+          "estructuras",
+          "subfamilias",
+          "tonalidades",
+          "acabados",
+          "familias"
+        ]
+      ]
+    },
+    {
+      "consulta": "INSERT INTO ? ? ON CONFLICT DO NOTHING",
+      "valores": [
+        "familias",
+        [
+          {
+            "codigo": "F",
+            "descripcion": "Familia sintética",
+            "grupo": null
+          }
+        ]
+      ]
+    },
+    {
+      "consulta": "INSERT INTO ? ? ON CONFLICT DO NOTHING",
+      "valores": [
+        "acabados",
+        [
+          {
+            "codigo": "UNI",
+            "descripcion": "Único",
+            "admite_tonalidad": false
+          }
+        ]
+      ]
+    },
+    {
+      "consulta": "INSERT INTO ? ? ON CONFLICT DO NOTHING",
+      "valores": [
+        "articulos",
+        [
+          {
+            "codigo": "P",
+            "descripcion": "Perfil sintético",
+            "familia_codigo": null,
+            "subfamilia_codigo": null,
+            "tipo_metraje": "ML",
+            "metraje_minimo": null,
+            "metraje_multiplo_largo": null,
+            "metraje_multiplo_ancho": null,
+            "peso_ml": null,
+            "grosor_peso_vidrio": null,
+            "tam_junquillo_goma": null,
+            "da_grosor": null,
+            "da_vidrio_1": null,
+            "da_vidrio_2": null,
+            "da_camara_1": null,
+            "da_articulo_base": null,
+            "aparece_en_hoja_despiece": true,
+            "aparece_en_hoja_corte": true,
+            "controla_stock": false,
+            "proveedor_habitual": null
+          },
+          {
+            "codigo": "V",
+            "descripcion": "Vidrio sintético",
+            "familia_codigo": "050",
+            "subfamilia_codigo": null,
+            "tipo_metraje": "M2",
+            "metraje_minimo": null,
+            "metraje_multiplo_largo": null,
+            "metraje_multiplo_ancho": null,
+            "peso_ml": null,
+            "grosor_peso_vidrio": null,
+            "tam_junquillo_goma": "24",
+            "da_grosor": null,
+            "da_vidrio_1": null,
+            "da_vidrio_2": null,
+            "da_camara_1": null,
+            "da_articulo_base": null,
+            "aparece_en_hoja_despiece": true,
+            "aparece_en_hoja_corte": true,
+            "controla_stock": false,
+            "proveedor_habitual": null
+          },
+          {
+            "codigo": "J",
+            "descripcion": "Junquillo sintético",
+            "familia_codigo": null,
+            "subfamilia_codigo": null,
+            "tipo_metraje": "ML",
+            "metraje_minimo": null,
+            "metraje_multiplo_largo": null,
+            "metraje_multiplo_ancho": null,
+            "peso_ml": null,
+            "grosor_peso_vidrio": null,
+            "tam_junquillo_goma": null,
+            "da_grosor": null,
+            "da_vidrio_1": null,
+            "da_vidrio_2": null,
+            "da_camara_1": null,
+            "da_articulo_base": null,
+            "aparece_en_hoja_despiece": true,
+            "aparece_en_hoja_corte": true,
+            "controla_stock": false,
+            "proveedor_habitual": null
+          }
+        ]
+      ]
+    },
+    {
+      "consulta": "INSERT INTO ? ? ON CONFLICT DO NOTHING",
+      "valores": [
+        "clientes",
+        [
+          {
+            "codigo": "TEST",
+            "nombre": "Cliente sintético",
+            "nombre_comercial": null,
+            "nif": null,
+            "direccion": null,
+            "cp": null,
+            "poblacion": null,
+            "provincia": null,
+            "pais": "ES",
+            "persona_contacto": null,
+            "telefono": null,
+            "telefono_movil": null,
+            "email": null,
+            "tarifa": 1,
+            "tipo_iva": null,
+            "descuento": null,
+            "descuento_factura": null,
+            "persona_fisica_juridica": null,
+            "sii_tipo_id_fiscal": null,
+            "fecha_alta": "2026-01-01"
+          }
+        ]
+      ]
+    },
+    {
+      "consulta": "INSERT INTO ? ? ON CONFLICT DO NOTHING",
+      "valores": [
+        "tonalidades",
+        [
+          {
+            "acabado_codigo": "UNI",
+            "codigo": "T",
+            "descripcion": "Tono"
+          }
+        ]
+      ]
+    },
+    {
+      "consulta": "INSERT INTO ? ? ON CONFLICT DO NOTHING",
+      "valores": [
+        "proveedores",
+        [
+          {
+            "codigo": "TEST",
+            "nombre": "Proveedor sintético",
+            "nif": null,
+            "contacto": null,
+            "direccion": null,
+            "cp": null,
+            "poblacion": null,
+            "provincia": null,
+            "telefono": null,
+            "email": null
+          }
+        ]
+      ]
+    },
+    {
+      "consulta": "INSERT INTO ? ? ON CONFLICT DO NOTHING",
+      "valores": [
+        "obras",
+        [
+          {
+            "cliente_codigo": "TEST",
+            "numero": 1,
+            "descripcion": "Obra sintética",
+            "observaciones": null
+          }
+        ]
+      ]
+    },
+    {
+      "consulta": "INSERT INTO ? ? ON CONFLICT DO NOTHING",
+      "valores": [
+        "estructuras",
+        [
+          {
+            "codigo": "EST",
+            "descripcion": "Estructura sintética",
+            "familia": null,
+            "observaciones": null,
+            "es_accesorio": false,
+            "fabrica_stock": false
+          }
+        ]
+      ]
+    },
+    {
+      "consulta": "INSERT INTO ? ? ON CONFLICT DO NOTHING",
+      "valores": [
+        "estructura_cotas",
+        [
+          {
+            "estructura_codigo": "EST",
+            "simbolo": "A",
+            "valor_por_defecto": "1000",
+            "nombre": null,
+            "orientacion": null,
+            "orden_travesano": null
+          }
+        ]
+      ]
+    },
+    {
+      "consulta": "INSERT INTO ? ? ON CONFLICT DO NOTHING",
+      "valores": [
+        "estructura_diseno_nodos",
+        [
+          {
+            "estructura_codigo": "EST",
+            "id_item": 1,
+            "tipo": 1,
+            "contenido_en": null,
+            "id_travesano": null,
+            "posicion_hueco": null,
+            "tipo_travesano": null,
+            "invisible": false
+          },
+          {
+            "estructura_codigo": "EST",
+            "id_item": 2,
+            "tipo": 2,
+            "contenido_en": null,
+            "id_travesano": null,
+            "posicion_hueco": null,
+            "tipo_travesano": null,
+            "invisible": false
+          }
+        ]
+      ]
+    },
+    {
+      "consulta": "INSERT INTO ? ? ON CONFLICT DO NOTHING",
+      "valores": [
+        "estructura_componentes",
+        [
+          {
+            "estructura_codigo": "EST",
+            "linea_origen": null,
+            "articulo_codigo": "P",
+            "cantidad": "2",
+            "cantidad_corte": null,
+            "formula_largo": "A",
+            "formula_largo_corte": null,
+            "formula_ref_largo": null,
+            "formula_ancho": null,
+            "formula_ancho_corte": null,
+            "tipo_corte": null,
+            "angulo_izquierdo": null,
+            "angulo_derecho": null,
+            "posicion_trabajo": null,
+            "funcion": null,
+            "medida_minima": null,
+            "medida_maxima": null,
+            "grupo_disenyo": null,
+            "componente_disenyo": null,
+            "id_item_disenyo": null,
+            "tipo_hoja_disenyo": null,
+            "id_hoja_disenyo": null
+          }
+        ]
+      ]
+    },
+    {
+      "consulta": "INSERT INTO ? ? ON CONFLICT DO NOTHING",
+      "valores": [
+        "series",
+        [
+          {
+            "codigo": "S",
+            "es_pvc": false
+          }
+        ]
+      ]
+    },
+    {
+      "consulta": "INSERT INTO ? ? ON CONFLICT DO NOTHING",
+      "valores": [
+        "conjuntos",
+        [
+          {
+            "codigo": "S",
+            "serie_codigo": "S",
+            "tabla_hojas": "TA",
+            "tabla_fijos": "TF"
+          }
+        ]
+      ]
+    },
+    {
+      "consulta": "INSERT INTO ? ? ON CONFLICT DO NOTHING",
+      "valores": [
+        "tacris_filas",
+        [
+          {
+            "tabla": "TA",
+            "posicion": "*",
+            "grosor": "24",
+            "junquillo": "J",
+            "junta_exterior": null,
+            "junta_interior": null
+          },
+          {
+            "tabla": "TF",
+            "posicion": "*",
+            "grosor": "24",
+            "junquillo": "J",
+            "junta_exterior": null,
+            "junta_interior": null
+          }
+        ]
+      ]
+    },
+    {
+      "consulta": "INSERT INTO conjunto_delegaciones ? ON CONFLICT DO NOTHING",
+      "valores": [
+        [
+          {
+            "conjunto_codigo": "S",
+            "delegado_codigo": "TA",
+            "campo": "TablaHojas"
+          },
+          {
+            "conjunto_codigo": "S",
+            "delegado_codigo": "TF",
+            "campo": "TablaFijos"
+          },
+          {
+            "conjunto_codigo": "S",
+            "delegado_codigo": "H",
+            "campo": "herr1HA"
+          }
+        ]
+      ]
+    },
+    {
+      "consulta": "INSERT INTO ? ? ON CONFLICT DO NOTHING",
+      "valores": [
+        "conjunto_resoluciones",
+        [
+          {
+            "conjunto_codigo": "S",
+            "componente": "MV",
+            "familia": "",
+            "articulo_codigo": "P"
+          }
+        ]
+      ]
+    },
+    {
+      "consulta": "INSERT INTO ? ? ON CONFLICT DO NOTHING",
+      "valores": [
+        "opciones_herraje",
+        [
+          {
+            "conjunto_codigo": "S",
+            "opcion_codigo": "1",
+            "descripcion": "Opción",
+            "por_defecto": false,
+            "oculta": true,
+            "categoria": null
+          }
+        ]
+      ]
+    },
+    {
+      "consulta": "SELECT codigo FROM articulos",
+      "valores": []
+    },
+    {
+      "consulta": "INSERT INTO ? ? ON CONFLICT DO NOTHING",
+      "valores": [
+        "articulos_coste",
+        [
+          {
+            "articulo_codigo": "P",
+            "proveedor_codigo": "",
+            "acabado_codigo": "",
+            "coste": "1.50",
+            "actualizado_en": null
+          }
+        ]
+      ]
+    },
+    {
+      "consulta": "INSERT INTO vidrio_galce ? ON CONFLICT DO NOTHING",
+      "valores": [
+        [
+          {
+            "serie_codigo": "S",
+            "perfil_codigo": "P",
+            "delta_mm": 20,
+            "muestras": 3
+          }
+        ]
+      ]
+    },
+    {
+      "consulta": "INSERT INTO junquillo_ajustes ? ON CONFLICT DO NOTHING",
+      "valores": [
+        [
+          {
+            "serie_codigo": "S",
+            "ajuste_largo_mm": -28,
+            "ajuste_ancho_mm": 12,
+            "muestras": 6
+          }
+        ]
+      ]
+    },
+    {
+      "consulta": "INSERT INTO vidrio_galce_fijo ? ON CONFLICT DO NOTHING",
+      "valores": [
+        [
+          {
+            "serie_codigo": "S",
+            "perfil_codigo": "P",
+            "delta_mm": 20,
+            "muestras": 3
+          }
+        ]
+      ]
+    },
+    {
+      "consulta": "INSERT INTO junquillo_ajustes_fijo ? ON CONFLICT DO NOTHING",
+      "valores": [
+        [
+          {
+            "serie_codigo": "S",
+            "ajuste_largo_mm": -28,
+            "ajuste_ancho_mm": 12,
+            "muestras": 3
+          }
+        ]
+      ]
+    },
+    {
+      "consulta": "INSERT INTO ? ? ON CONFLICT DO NOTHING",
+      "valores": [
+        "articulos_pvp",
+        [
+          {
+            "articulo_codigo": "P",
+            "acabado_codigo": "UNI",
+            "tarifa": 1,
+            "precio": "2.50"
+          }
+        ]
+      ]
+    }
+  ],
+  "resultados": [
+    {
+      "tabla": "familias",
+      "leidas": 2,
+      "insertadas": 1,
+      "descartadas": 0,
+      "excluidas": 0,
+      "motivos": []
+    },
+    {
+      "tabla": "acabados",
+      "leidas": 1,
+      "insertadas": 1,
+      "descartadas": 0,
+      "excluidas": 0,
+      "motivos": []
+    },
+    {
+      "tabla": "articulos",
+      "leidas": 4,
+      "insertadas": 3,
+      "descartadas": 1,
+      "excluidas": 0,
+      "motivos": [
+        [
+          "descartada: sin código",
+          1
+        ]
+      ]
+    },
+    {
+      "tabla": "clientes",
+      "leidas": 1,
+      "insertadas": 1,
+      "descartadas": 0,
+      "excluidas": 0,
+      "motivos": []
+    },
+    {
+      "tabla": "tonalidades",
+      "leidas": 2,
+      "insertadas": 1,
+      "descartadas": 1,
+      "excluidas": 0,
+      "motivos": [
+        [
+          "descartada: clave incompleta",
+          1
+        ]
+      ]
+    },
+    {
+      "tabla": "proveedores",
+      "leidas": 1,
+      "insertadas": 1,
+      "descartadas": 0,
+      "excluidas": 0,
+      "motivos": []
+    },
+    {
+      "tabla": "obras",
+      "leidas": 2,
+      "insertadas": 1,
+      "descartadas": 1,
+      "excluidas": 0,
+      "motivos": [
+        [
+          "descartada: obra sin nombre",
+          1
+        ]
+      ]
+    },
+    {
+      "tabla": "estructuras",
+      "leidas": 1,
+      "insertadas": 1,
+      "descartadas": 0,
+      "excluidas": 0,
+      "motivos": []
+    },
+    {
+      "tabla": "estructura_cotas",
+      "leidas": 3,
+      "insertadas": 1,
+      "descartadas": 0,
+      "excluidas": 2,
+      "motivos": [
+        [
+          "excluida: fila de diseño sin símbolo",
+          1
+        ],
+        [
+          "excluida: instancia de documento, no plantilla",
+          1
+        ]
+      ]
+    },
+    {
+      "tabla": "estructura_diseno_nodos",
+      "leidas": 3,
+      "insertadas": 2,
+      "descartadas": 0,
+      "excluidas": 1,
+      "motivos": [
+        [
+          "excluida: instancia de documento, no plantilla",
+          1
+        ]
+      ]
+    },
+    {
+      "tabla": "estructura_componentes",
+      "leidas": 3,
+      "insertadas": 1,
+      "descartadas": 1,
+      "excluidas": 1,
+      "motivos": [
+        [
+          "excluida: instancia de documento, no plantilla",
+          1
+        ],
+        [
+          "descartada: sin artículo",
+          1
+        ]
+      ]
+    },
+    {
+      "tabla": "series",
+      "leidas": 3,
+      "insertadas": 1,
+      "descartadas": 1,
+      "excluidas": 1,
+      "motivos": [
+        [
+          "excluida: configuración por defecto, no es una serie",
+          1
+        ],
+        [
+          "descartada: sin código",
+          1
+        ]
+      ]
+    },
+    {
+      "tabla": "conjuntos",
+      "leidas": 1,
+      "insertadas": 1,
+      "descartadas": 0,
+      "excluidas": 0,
+      "motivos": []
+    },
+    {
+      "tabla": "tacris_filas",
+      "leidas": 2,
+      "insertadas": 2,
+      "descartadas": 0,
+      "excluidas": 0,
+      "motivos": []
+    },
+    {
+      "tabla": "conjunto_delegaciones",
+      "leidas": 1,
+      "insertadas": 3,
+      "descartadas": 0,
+      "excluidas": 0,
+      "motivos": []
+    },
+    {
+      "tabla": "conjunto_resoluciones",
+      "leidas": 2,
+      "insertadas": 1,
+      "descartadas": 0,
+      "excluidas": 1,
+      "motivos": [
+        [
+          "excluida: componente sin artículo asignado",
+          1
+        ]
+      ]
+    },
+    {
+      "tabla": "opciones_herraje",
+      "leidas": 1,
+      "insertadas": 1,
+      "descartadas": 0,
+      "excluidas": 0,
+      "motivos": []
+    },
+    {
+      "tabla": "herraje_conjuntos",
+      "leidas": 0,
+      "insertadas": 0,
+      "descartadas": 0,
+      "excluidas": 0,
+      "motivos": [
+        [
+          "medición: 0/0 combinaciones estables sobre 0 líneas históricas",
+          1
+        ]
+      ]
+    },
+    {
+      "tabla": "vidrio_descuentos_alojamiento",
+      "leidas": 0,
+      "insertadas": 0,
+      "descartadas": 0,
+      "excluidas": 0,
+      "motivos": [
+        [
+          "mediciÃ³n: 0/0 dimensiones; 0/0 casos mixtos completos",
+          1
+        ]
+      ]
+    },
+    {
+      "tabla": "hoja_rebajes",
+      "leidas": 0,
+      "insertadas": 0,
+      "descartadas": 0,
+      "excluidas": 0,
+      "motivos": [
+        [
+          "medición (umbral 99%): 0/0 piezas de hoja cubiertas; 0 reglas exactas y 0 con aviso; 0 grupos válidos al 90% pero no al 99% (revisables a mano)",
+          1
+        ]
+      ]
+    },
+    {
+      "tabla": "articulos_coste",
+      "leidas": 3,
+      "insertadas": 1,
+      "descartadas": 1,
+      "excluidas": 1,
+      "motivos": [
+        [
+          "excluida: artículo fuera del catálogo de la empresa",
+          1
+        ],
+        [
+          "descartada: sin coste",
+          1
+        ]
+      ]
+    },
+    {
+      "tabla": "junquillo_ajustes",
+      "leidas": 1,
+      "insertadas": 1,
+      "descartadas": 0,
+      "excluidas": 0,
+      "motivos": []
+    },
+    {
+      "tabla": "vidrio_galce_fijo",
+      "leidas": 3,
+      "insertadas": 1,
+      "descartadas": 0,
+      "excluidas": 0,
+      "motivos": []
+    },
+    {
+      "tabla": "junquillo_ajustes_fijo",
+      "leidas": 1,
+      "insertadas": 1,
+      "descartadas": 0,
+      "excluidas": 0,
+      "motivos": []
+    },
+    {
+      "tabla": "vidrio_galce",
+      "leidas": 3,
+      "insertadas": 1,
+      "descartadas": 0,
+      "excluidas": 0,
+      "motivos": []
+    },
+    {
+      "tabla": "articulos_pvp",
+      "leidas": 2,
+      "insertadas": 1,
+      "descartadas": 1,
+      "excluidas": 0,
+      "motivos": [
+        [
+          "descartada: sin precio",
+          1
+        ]
+      ]
+    }
+  ]
+}

@@ -1,5 +1,8 @@
 # Asignación de conjuntos de herraje: investigación de catálogo
 
+> Revisión documental 20/09/2026: **Evidencia fechada**. Distingue catálogo, heurística histórica y asignación; no ampliar reglas inferidas.
+> Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
+
 19/09/2026. Rama `feat/cerramientos-editor-linea`. Investigación de solo
 lectura de exportación histórica autorizada; no se abrió ninguna MDB ni se
 consultó/modificó Supabase. No cambia el comportamiento del configurador.

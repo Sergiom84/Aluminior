@@ -1,0 +1,61 @@
+.al-document-tabs {
+  display: flex;
+  min-height: 32px;
+  border-top: 1px solid var(--al-border);
+  background: #ecece6;
+}
+
+.al-document-tabs a,
+.al-document-tabs span {
+  display: inline-flex;
+  min-height: 32px;
+  align-items: center;
+  padding: 4px 16px;
+  border-right: 1px solid var(--al-border);
+  color: var(--al-text);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.al-document-tabs a[aria-current='page'] {
+  background: var(--al-surface);
+  box-shadow: inset 0 2px 0 var(--al-accent);
+}
+
+.al-document-tabs span[aria-disabled='true'] {
+  color: var(--al-text-faint);
+}
+
+.al-data-table tbody tr[data-selected='true'] {
+  background: var(--al-row-selected);
+}
+
+.al-ficha-meta {
+  gap: 14px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--al-border);
+  color: var(--al-text-muted);
+  font-size: 12px;
+}
+
+.al-ficha-edit {
+  padding: 0 12px 8px;
+}
+
+.al-ficha-lines {
+  border-top: 1px solid var(--al-border);
+}
+
+.al-ficha-totals {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px;
+}
+
+.al-line-thumb {
+  width: 72px;
+}
+
+.al-line-thumb .al-window-drawing {
+  height: 48px;
+}

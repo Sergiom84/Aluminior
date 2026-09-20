@@ -1,5 +1,8 @@
 # Especificación: mano de obra del cerramiento
 
+> Revisión documental 20/09/2026: **Contrato implementado con límites**. Conversión/snapshot adicional existen; fabricación base conserva su límite explícito.
+> Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
+
 Fecha: 3 de agosto de 2026. Estado: **propuesta corregida, pendiente de aprobación**.
 Evidencia: `PLAN.md` anexos T.32, T.67.1 y T.67.2, más la medición del §13.
 

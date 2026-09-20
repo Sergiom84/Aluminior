@@ -1,5 +1,8 @@
 # Aluminior: ejecución y revisión para el uso de Javi
 
+> Revisión documental 20/09/2026: **Plan histórico**. Lotes J00–J10 no equivalen a las fases 0–8; implementación no certifica piloto.
+> Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
+
 Plan del 8 de septiembre de 2026. No es una certificación de producto terminado.
 
 ## 1. Resultado y contrato

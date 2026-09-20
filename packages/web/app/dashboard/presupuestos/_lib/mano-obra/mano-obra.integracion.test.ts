@@ -143,6 +143,10 @@ describe('mano de obra de una línea, contra PostgreSQL', () => {
   })
 
   it('congela el snapshot completo y lo devuelve intacto', async () => {
+    // MO es compartido por las recetas QA. El snapshot debe conservar el texto
+    // realmente leído, no el que este beforeAll intentó insertar sin sobrescribir.
+    const [articulo] = await db.select({ descripcion: schema.articulos.descripcion })
+      .from(schema.articulos).where(eq(schema.articulos.codigo, 'MO'))
     const { lineaId, veredicto } = await altaConHoras({ fabricacion: '2.37', colocacion: '0' })
     const [fila] = await filasDe(lineaId)
     expect(fila).toMatchObject({
@@ -152,7 +156,7 @@ describe('mano de obra de una línea, contra PostgreSQL', () => {
       // Sin redondear a entero: es la medición de los 11 casos históricos.
       minutos: '142.20',
       articuloCodigo: 'MO',
-      articuloDescripcion: 'MANO DE OBRA DE TALLER (MINUTOS)',
+      articuloDescripcion: articulo.descripcion,
       unidad: 'MINUTO',
       acabadoCodigo: 'UNI',
       tarifa: TARIFA,

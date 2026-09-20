@@ -1,5 +1,8 @@
 # Tramo 1OFI: resolver puro de FI
 
+> Revisión documental 20/09/2026: **Cierre técnico acotado**. Geometría pura implementada; no equivale a despiece económico.
+> Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
+
 ## Objetivo
 
 Añadir a `@aluminior/core/estructuras` un resolver puro y exclusivo de `1OFI`.

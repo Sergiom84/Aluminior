@@ -52,4 +52,36 @@ export async function sembrarCatalogoJ04(db: ClienteEscritura) {
   await db.insert(schema.conjuntos).values({ codigo: J04.serie, serieCodigo: J04.serie, tablaFijos: 'QA-J04-TAC' })
   await db.insert(schema.tacrisFilas).values({ tabla: 'QA-J04-TAC', posicion: '*', grosor: '4', junquillo: 'QA-J04-J', juntaExterior: 'QA-J04-E', juntaInterior: 'QA-J04-I' })
   await db.insert(schema.junquilloAjustesFijo).values({ serieCodigo: J04.serie, ajusteLargoMm: '0', ajusteAnchoMm: '0', muestras: 3 })
+  await ampliarCatalogoReferenciaJ04(db)
+}
+
+/** Equivalentes sintéticos para la receta de aceptación; nunca son precios comerciales. */
+export async function ampliarCatalogoReferenciaJ04(db: ClienteEscritura) {
+  const nuevas = [
+    { codigo: '2O', descripcion: 'Dos hojas sintético J04', familia: '003', esAccesorio: false },
+    { codigo: 'PSU001', descripcion: 'Unión 100 mm sintética J04', familia: '103', esAccesorio: true },
+  ] as const
+  for (const estructura of nuevas) {
+    const existe = (await db.select({ codigo: schema.estructuras.codigo }).from(schema.estructuras)
+      .where(eq(schema.estructuras.codigo, estructura.codigo)).limit(1)).length > 0
+    if (!existe) await db.insert(schema.estructuras).values(estructura)
+  }
+  for (const [estructuraCodigo, componentes] of [
+    ['2O', [
+      { articuloCodigo: 'QA-J04-P', cantidad: '2', formulaLargo: 'L', funcion: 'MV' },
+      { articuloCodigo: 'QA-J04-P', cantidad: '2', formulaLargo: 'A', funcion: 'MH' },
+      { articuloCodigo: 'QA-J04-SLOT', cantidad: '1', formulaLargo: 'L', formulaAncho: 'A', componenteDisenyo: '1', tipoHojaDisenyo: -1, idItemDisenyo: 1 },
+    ]],
+    ['PSU001', [
+      { articuloCodigo: 'QA-J04-U', cantidad: '1', formulaLargo: 'L', funcion: 'UNION' },
+      { articuloCodigo: 'QA-J04-T', cantidad: '4', funcion: 'TORNILLO' },
+    ]],
+  ] as const) {
+    const existe = (await db.select({ id: schema.estructuraComponentes.id })
+      .from(schema.estructuraComponentes)
+      .where(eq(schema.estructuraComponentes.estructuraCodigo, estructuraCodigo)).limit(1)).length > 0
+    if (!existe) await db.insert(schema.estructuraComponentes).values(
+      componentes.map((componente) => ({ estructuraCodigo, ...componente })),
+    )
+  }
 }

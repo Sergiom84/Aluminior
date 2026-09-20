@@ -1,5 +1,8 @@
 # Plan — Reconstrucción de Aluminior
 
+> Revisión documental 20/09/2026: **Investigación histórica**. Diario de anexos con hipótesis corregidas posteriormente; no ejecutar todos sus pendientes.
+> Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
+
 Fecha: 18 de julio de 2026
 Situación: cliente/empresa usuaria de Productor Aluminio (GAIA Servicios Informáticos SL).
 Objetivo: software propio, con los datos reales, usable en producción.

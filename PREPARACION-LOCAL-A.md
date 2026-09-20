@@ -1,5 +1,8 @@
 # Preparación local A: diseños efectivos y contrato de diagnóstico
 
+> Revisión documental 20/09/2026: **Cierre documentado**. Contiene implementación y verificación cerradas; conservar límites del diagnóstico.
+> Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
+
 19/09/2026. Copia vigente C:/Users/laral/Documents/Aluminior.
 Base de investigación edfc346; especificación delegada en bebce2c.
 Lecturas locales solamente. No se regeneró el banco ni se consultó Supabase.

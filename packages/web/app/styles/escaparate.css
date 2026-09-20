@@ -1,0 +1,107 @@
+.al-escaparate {
+  display: grid;
+  grid-template-columns: minmax(180px, 240px) minmax(0, 1fr);
+  min-height: 420px;
+  overflow: hidden;
+  border: 1px solid var(--al-border);
+  border-radius: var(--al-radius);
+}
+
+.al-escaparate-cats {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  border-right: 1px solid var(--al-border);
+  background: var(--al-surface-muted);
+}
+
+.al-escaparate-cats button {
+  min-height: 32px;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--al-border);
+  color: var(--al-text);
+  font-size: 11px;
+  font-weight: 650;
+  text-align: left;
+}
+
+.al-escaparate-cats button:hover {
+  background: var(--al-row-hover);
+}
+
+.al-escaparate-cats button[aria-current='true'] {
+  background: var(--al-accent-soft);
+  color: var(--al-accent-strong);
+  box-shadow: inset 3px 0 0 var(--al-accent);
+}
+
+.al-escaparate-cats button[data-empty='true'] {
+  color: var(--al-text-faint);
+  font-weight: 500;
+}
+
+.al-escaparate-main {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.al-escaparate-grid {
+  display: grid;
+  flex: 1;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  padding: 10px;
+}
+
+.al-escaparate-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px;
+  border: 1px solid var(--al-border);
+  border-radius: var(--al-radius);
+  background: white;
+  text-align: left;
+}
+
+.al-escaparate-card:hover,
+.al-escaparate-card:focus-visible {
+  border-color: var(--al-accent);
+}
+
+.al-escaparate-card .al-window-drawing {
+  height: 92px;
+}
+
+.al-escaparate-name {
+  color: var(--al-text);
+  font-size: 10px;
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+.al-escaparate-code {
+  color: var(--al-accent-strong);
+  font-family: var(--al-font-num);
+  font-size: 11px;
+}
+
+.al-escaparate-empty {
+  margin: auto;
+  padding: 24px;
+  color: var(--al-text-muted);
+  font-size: 13px;
+}
+
+.al-escaparate-pager {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 8px 10px;
+  border-top: 1px solid var(--al-border);
+  color: var(--al-text-muted);
+  font-size: 12px;
+}

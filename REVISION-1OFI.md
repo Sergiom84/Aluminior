@@ -1,5 +1,8 @@
 # Revisión de integración 1OFI
 
+> Revisión documental 20/09/2026: **Auditoría histórica**. Resultados del tramo concreto, no aceptación de todas las estructuras.
+> Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
+
 Fecha: 2026-09-19
 Rama revisada: `codex/1ofi-geometria`
 Último commit funcional revisado: `b3f969b1676fd1a46422bd7e0edcf3314ffc18f7`

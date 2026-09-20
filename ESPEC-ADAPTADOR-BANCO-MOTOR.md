@@ -1,5 +1,8 @@
 # A: contrato local del adaptador de diagnóstico del motor
 
+> Revisión documental 20/09/2026: **Especificación implementada**. Código en scripts/banco-motor.ts y lib; ver PREPARACION-LOCAL-A. No nueva autorización de agentes.
+> Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
+
 ## Contexto y base comprobada
 19/09/2026. Repositorio vigente: C:/Users/laral/Documents/Aluminior.
 Rama feat/cerramientos-editor-linea, base edfc346bace77a7b14fa1b0ed0c5b3b1f76650db,

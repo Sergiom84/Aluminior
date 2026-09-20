@@ -1,5 +1,8 @@
 # Reconocimiento: cerramientos en Productor Aluminio
 
+> Revisión documental 20/09/2026: **Observación fechada**. Flujo y propuestas anteriores; conservar diferencia entre observado e hipótesis.
+> Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
+
 Fecha: 2026-09-19. Empresa **0017 PRUEBAS ALUMINIOR** (copia de la 0016).
 Observación en vivo con control de escritorio y ayuda de Sergio para los
 arrastres. Sin datos de clientes. Presupuesto de prueba: **260492**

@@ -2,6 +2,11 @@
 
 Fecha de decisión: 2 de agosto de 2026.
 
+Revisión de continuidad: 20/09/2026. Este documento conserva criterios y
+observaciones fechadas; el estado de implementación y aceptación se consulta en
+[docs/ESTADO-ACTUAL.md](docs/ESTADO-ACTUAL.md). La separación modular no declara
+cerradas las fases de paridad ni sus comprobaciones visuales pendientes.
+
 ## Objetivo
 
 Aluminior debe permitir que una persona habituada a Productor complete las

@@ -1,5 +1,8 @@
 # Verificación B1: manos y manillas
 
+> Revisión documental 20/09/2026: **Evidencia de cierre acotado**. B1 comprobado en su fecha; no cierra cotas ni valoración.
+> Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
+
 19/09/2026. Implementación Sol63b9bea, revisada e integrada como9727fe2 en
 feat/cerramientos-editor-linea. Base de Sol dca402f, correcta y descendiente de
 edfc346/f4ca3a6/3bbe321. Worktree aislado manos-manillas-0017, dependencias propias

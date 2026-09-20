@@ -1,5 +1,8 @@
 # Reconocimiento: Artículos
 
+> Revisión documental 20/09/2026: **Observación fechada**. Pantallas y comparación de artículos; pendientes pertenecen a esa fotografía.
+> Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
+
 Observación autorizada de Productor Aluminio en ejecución, 18 de septiembre de
 2026, en la empresa de pruebas `0017 PRUEBAS ALUMINIOR` (copia exacta de la
 0016). Nunca en la 0016. Los datos de proveedores y precios se omiten salvo

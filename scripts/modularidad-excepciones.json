@@ -1,0 +1,38 @@
+{
+  "scripts/medir-escuadra-lineal-serie.mjs": {
+    "maximo": 870,
+    "motivo": "Experimento T.41 de búsqueda y contraste del modelo lineal por serie. Referencia histórica congelada: no importar desde packages ni ampliar; extraer el caso antes de reutilizarlo. Se conserva para no alterar evidencia sin repetir el experimento con los datos autorizados."
+  },
+  "scripts/medir-topo-sustituido.mjs": {
+    "maximo": 696,
+    "motivo": "Experimento T.48 de sustitución topológica y contraste held-out. Referencia histórica congelada: no importar desde packages ni ampliar; extraer el caso antes de reutilizarlo. Se conserva para no alterar evidencia sin repetir el experimento con los datos autorizados."
+  },
+  "scripts/medir-configurador.mjs": {
+    "maximo": 599,
+    "motivo": "Reconstrucción experimental T.65; generador y validación histórica, fuera del runtime. Referencia histórica congelada: no importar desde packages ni ampliar; extraer el caso antes de reutilizarlo. Se conserva para no alterar evidencia sin repetir el experimento con los datos autorizados."
+  },
+  "scripts/medir-cobertura-plan-a.mjs": {
+    "maximo": 593,
+    "motivo": "Medición T.54 de cobertura y denominadores del histórico. Referencia histórica congelada: no importar desde packages ni ampliar; extraer el caso antes de reutilizarlo. Se conserva para no alterar evidencia sin repetir el experimento con los datos autorizados."
+  },
+  "scripts/medir-umbral-asociados.mjs": {
+    "maximo": 583,
+    "motivo": "Comparación experimental de políticas y umbrales de asociados. Referencia histórica congelada: no importar desde packages ni ampliar; extraer el caso antes de reutilizarlo. Se conserva para no alterar evidencia sin repetir el experimento con los datos autorizados."
+  },
+  "scripts/medir-tramo-tiebreak.mjs": {
+    "maximo": 581,
+    "motivo": "Experimento sobre desempate de tramos; conserva el protocolo histórico. Referencia histórica congelada: no importar desde packages ni ampliar; extraer el caso antes de reutilizarlo. Se conserva para no alterar evidencia sin repetir el experimento con los datos autorizados."
+  },
+  "scripts/analizar-mixtas.mjs": {
+    "maximo": 543,
+    "motivo": "Investigación geométrica de huecos mixtos sobre el export original. Referencia histórica congelada: no importar desde packages ni ampliar; extraer el caso antes de reutilizarlo. Se conserva para no alterar evidencia sin repetir el experimento con los datos autorizados."
+  },
+  "scripts/medir-conjunto-oscilobatiente.mjs": {
+    "maximo": 518,
+    "motivo": "Investigación de resolución del conjunto oscilobatiente. Referencia histórica congelada: no importar desde packages ni ampliar; extraer el caso antes de reutilizarlo. Se conserva para no alterar evidencia sin repetir el experimento con los datos autorizados."
+  },
+  "scripts/medir-recuento-escuadras.mjs": {
+    "maximo": 457,
+    "motivo": "Medición histórica de recuento de escuadras. Referencia histórica congelada: no importar desde packages ni ampliar; extraer el caso antes de reutilizarlo. Se conserva para no alterar evidencia sin repetir el experimento con los datos autorizados."
+  }
+}

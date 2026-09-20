@@ -3,7 +3,9 @@ import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 
 const leer = (ruta: URL) => readFileSync(fileURLToPath(ruta), 'utf8')
-const css = leer(new URL('../../globals.css', import.meta.url))
+const css = ['marco', 'adaptacion'].map((nombre) =>
+  leer(new URL(`../../styles/${nombre}.css`, import.meta.url)),
+).join('\n')
 const shell = leer(new URL('./shell.tsx', import.meta.url))
 
 describe('contrato móvil del shell operativo', () => {

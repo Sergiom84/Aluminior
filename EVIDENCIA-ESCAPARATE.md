@@ -1,5 +1,8 @@
 # Escaparate: clasificación y generación conservadora
 
+> Revisión documental 20/09/2026: **Evidencia fechada**. Catálogo visual no acredita estructura operativa o fabricable.
+> Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
+
 19/09/2026. Fase 2 de `PLAN-SIGUIENTE.md`, **parcial; no habilita estructuras nuevas**.
 
 ## Fuentes y alcance

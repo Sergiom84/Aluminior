@@ -1,5 +1,8 @@
 # Mensaje para iniciar la conversación ejecutora
 
+> Revisión documental 20/09/2026: **Encargo histórico inactivo**. Rutas y skills de otro equipo; no ejecutar ni asumir permisos de aquel mensaje.
+> Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
+
 Copia el siguiente texto en una conversación nueva situada en `C:\Users\sergi\Desktop\Aplicaciones\Aluminior`:
 
 ---

@@ -1,5 +1,8 @@
 # B2: cotas observadas y experimento pendiente (19/09/2026)
 
+> Revisión documental 20/09/2026: **Evidencia fechada**. Leer conclusiones finales que matizan experimentos anteriores.
+> Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
+
 Productor 0017, consulta sin guardar. Capturas ignoradas en
 output/evidencia-manos-20260919/. B1 resuelve únicamente manos y manillas;
 este documento separa medidas/cotas de esa corrección.

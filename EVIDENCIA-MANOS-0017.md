@@ -1,5 +1,8 @@
 # Evidencia B1: manos y manillas (19/09/2026)
 
+> Revisión documental 20/09/2026: **Evidencia fechada**. Sustenta B1; vistas/aperturas no observadas siguen abiertas.
+> Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
+
 ## Fuente y condiciones
 Observación directa del responsable en Productor abierto, empresa visible
 PRUEBAS ALUMINIOR - 2026 [0017], sesión continuada por el usuario.

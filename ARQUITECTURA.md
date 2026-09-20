@@ -1,6 +1,9 @@
 # Decisiones de arquitectura
 
 Fecha: 18 de julio de 2026.
+Revisión modular: 20 de septiembre de 2026. Estado del código y límites de
+aceptación en [docs/ESTADO-ACTUAL.md](docs/ESTADO-ACTUAL.md). Las decisiones
+revertidas se conservan con su contexto histórico.
 Propuesta del usuario: Electron + Supabase o Appwrite + Render.
 Respuesta: de acuerdo en dos de tres, con matices. Abajo el razonamiento.
 
@@ -168,7 +171,6 @@ aluminior/
 │  ├─ db/          Esquema Drizzle, migraciones, seeds
 │  ├─ etl/         Importación CSV -> PostgreSQL, validación
 │  ├─ core/        Dominio: estructuras, despiece, precios (sin E/S)
-│  ├─ api/         Scaffold histórico; no es el runtime activo
 │  └─ web/         Next.js: UI, server actions y autenticación SSR
 ├─ *.md            Decisiones, estado, paridad y registro histórico
 └─ scripts/        Utilidades de desarrollo
@@ -208,7 +210,24 @@ configuración se escribían por separado. Una línea sin configuración no es u
 documento incompleto sino uno corrupto —no se puede dibujar, describir ni
 valorar—, así que no basta con avisar: o se guardan las dos, o ninguna.
 
-Deuda identificada: `packages/web/app/dashboard/presupuestos/_lib/acciones.ts`
-concentra creación de cabecera, búsqueda, alta de líneas, valoración y persistencia.
-La siguiente evolución debe extraer estos casos de uso uno a uno, empezando por la
-persistencia del cerramiento, sin reescribir el flujo completo.
+La deuda descrita originalmente en `acciones.ts` se ha reducido mediante
+servicios de cabecera, líneas, estructuras, cerramientos, copia y numeración.
+La búsqueda de clientes también tiene conexión inyectada y módulo propio.
+Las acciones conservan validación, contexto de usuario y revalidación del transporte.
+
+### 6.3 Fronteras verificadas — 20/09/2026
+
+- ETL: el CLI posee entorno y conexión; `importacion/index.ts` conserva el orden
+  y llama a cargadores por responsabilidad. Ningún módulo importado dispara la carga.
+- Diseño: tipos y catálogo separados de la composición geométrica; la entrada
+  pública `diseno.ts` conserva compatibilidad con sus consumidores.
+- Producción: documento, parámetros de sierra, extremos y orientación separados.
+- Precios: valoración individual separada del recálculo masivo de tarifas.
+- Esquema: series se compone de catálogo, acristalamiento, herraje y rebajes;
+  las definiciones y restricciones SQL no cambian por moverlas de archivo.
+- Estilos: `globals.css` compone hojas con responsabilidades visibles y conserva
+  el orden de cascada. Los tokens siguen siendo compartidos.
+
+`npm run check:architecture` comprueba límites estáticos y excepciones de tamaño.
+El detalle y los límites de esta revisión están en
+[docs/SANEAMIENTO-MODULAR.md](docs/SANEAMIENTO-MODULAR.md).

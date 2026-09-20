@@ -1,8 +1,23 @@
 # Roadmap de paridad documental
 
-Cuatro capacidades que Productor tiene, Aluminior no, y el vídeo oficial de Gaia
+> Revisión documental 20/09/2026: **Plan parcialmente implementado**. Despunte, hojas, margen y copia ya tienen código; sustituciones/paridad requieren su propia aceptación.
+> Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
+
+Cuatro capacidades descritas inicialmente como pendientes, que el vídeo oficial de Gaia
 presenta como el valor operativo real del programa. Evidencia y timestamps en
 [`EVIDENCIA-VIDEO-PRESUPUESTO.md`](EVIDENCIA-VIDEO-PRESUPUESTO.md).
+
+## Estado contrastado con código, 20/09/2026
+
+| Capacidad | Existe | Sigue separado de su aceptación final |
+|---|---|---|
+| G1 Despunte | Core y componente de producción | Costes reales y paridad de las opciones completas |
+| G2 Hojas | Hojas de corte/producción, parámetros y vistas | Exactitud de fabricación para cada familia |
+| G3 Copia | Servicios de revisión/nuevo número y sustituciones | Recorrido completo y opciones verificadas de Productor |
+| G4 Tarifas | Modelo de venta, margen y recálculo puro | Configuración real y herramientas masivas completas |
+
+Las secciones siguientes conservan los requisitos originales y su punto de
+partida histórico. «Falta» y «Ahora» en ellas no son el estado de este checkout.
 
 ## Segunda fuente: documentación oficial de Gaia
 

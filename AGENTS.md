@@ -4,10 +4,10 @@
 
 - **Purpose:** sistema de gestión para carpintería de aluminio y PVC.
 - **Product reference:** Productor Aluminio es el patrón funcional y de interacción; buscar paridad máxima basada en evidencia, no una reinterpretación genérica.
-- **Stack:** monorepo TypeScript/Node.js 20+, Drizzle, PostgreSQL/Supabase, Fastify y React.
-- **Structure:** `packages/db`, `packages/etl`, `packages/core`, `packages/api`, `packages/web`.
-- **Canonical commands:** `npm install`, `npm run test`, `npm run typecheck`, `npm run dev:api`, `npm run dev:web`.
-- **Project documentation:** `README.md`, `ARQUITECTURA.md`, `PLAN.md`, `ENTREGA.md` y `PARIDAD-PRODUCTOR.md`.
+- **Stack:** monorepo TypeScript/Node.js 20.9+, Drizzle, PostgreSQL/Supabase, Next.js App Router y React. `packages/api` es histórico.
+- **Structure:** `packages/db`, `packages/etl`, `packages/core`, `packages/web`.
+- **Canonical commands:** `npm install`, `npm run test`, `npm run typecheck`, `npm run check:architecture`, `npm run dev:web`.
+- **Project documentation:** `docs/ESTADO-ACTUAL.md`, `README.md`, `ARQUITECTURA.md` y `PARIDAD-PRODUCTOR.md`; `docs/INDICE-DOCUMENTACION.md` clasifica planes y entregas históricos.
 
 ## Working contract
 
@@ -39,9 +39,11 @@ verified Productor behavior contradicts it.
   preserve behavior and be covered by the relevant tests before feature work resumes.
 - Keep tests beside the module they protect. Prefer pure functions in `packages/core`
   and dependency-injected application services over logic embedded in UI components.
-- Current known debt: `packages/web/app/dashboard/presupuestos/_lib/acciones.ts`
-  mixes several budget use cases and must be decomposed incrementally; do not turn
-  the enclosure designer into another monolith while doing so.
+- Budget actions already delegate to feature-local services. Keep that boundary:
+  do not move SQL, valuation or numbering back into actions or the enclosure designer.
+- Run `npm run check:architecture` when changing module boundaries. Historical
+  research exceptions are frozen in `scripts/modularidad-excepciones.json`;
+  review and extract the relevant use case before extending or reusing them.
 
 ## Before changing anything
 

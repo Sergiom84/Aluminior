@@ -1,5 +1,8 @@
 # Aluminior — Documento de entrega
 
+> Revisión documental 20/09/2026: **Entrega histórica**. Mediciones y rutas de julio; no es inventario actual ni confirmación remota.
+> Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
+
 **Fecha:** 18 de julio de 2026
 **Titular:** ALUMINIOS LARA SLU (CIF omitido — regla 4)
 **Repositorio:** https://github.com/Sergiom84/Aluminior (privado)

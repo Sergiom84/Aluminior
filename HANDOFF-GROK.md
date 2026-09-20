@@ -1,5 +1,8 @@
 # Handoff Grok — 19 de septiembre de 2026
 
+> Revisión documental 20/09/2026: **Relevo histórico**. Fotografía del 19/09, anterior al trabajo de fases 1 y 2 del 20/09.
+> Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
+
 Punto de entrada de esta sesión. Léelo antes de tocar presupuestos o artículos.
 Después: `AGENTS.md`, `PARIDAD-PRODUCTOR.md`, `RECON-DETALLE-PRESUPUESTO.md`
 y `RECON-ARTICULOS.md`.

@@ -1,5 +1,8 @@
 # B1: corrección conjunta de manos y manillas
 
+> Revisión documental 20/09/2026: **Especificación implementada**. Geometría de apertura en core y VERIFICACION-MANOS-B1; no generalizar vista exterior.
+> Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
+
 ## Base y contexto
 Repositorio vigente C:/Users/laral/Documents/Aluminior, rama
 feat/cerramientos-editor-linea. Base de implementación dca402fb986b93533c54f12b9cba3d4c7dff080c,

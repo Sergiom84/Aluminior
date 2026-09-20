@@ -1,5 +1,8 @@
 # Tramo 1OFI: conexión de FI
 
+> Revisión documental 20/09/2026: **Cierre técnico acotado**. Conexión editor/dibujo/PDF documentada; conservar preguntas no demostradas.
+> Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
+
 ## Alcance y archivos
 
 - `packages/core/src/estructuras`: configuración v1/v2, validación de FI por

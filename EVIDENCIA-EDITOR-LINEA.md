@@ -1,5 +1,8 @@
 # Evidencia: pestañas del editor de línea
 
+> Revisión documental 20/09/2026: **Evidencia fechada**. CHM, captura y vídeo con límites; implementación posterior no cambia la observación.
+> Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
+
 Fecha: 19 de septiembre de 2026. Fase 1 de `HANDOFF-GROK.md` §7.2. Sin
 observación en vivo (la hace otro agente en la empresa 0017 y la volcará en
 `RECON-CERRAMIENTOS.md`). Sin escritura en Supabase ni migraciones.

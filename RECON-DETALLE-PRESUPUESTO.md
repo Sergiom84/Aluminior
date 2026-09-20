@@ -1,5 +1,8 @@
 # Reconocimiento: detalle de presupuesto y edición de línea
 
+> Revisión documental 20/09/2026: **Observación fechada**. Campos y navegación de referencia; no sustituye aceptación actual.
+> Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
+
 Observación autorizada de Productor Aluminio en ejecución, 18 de septiembre de
 2026, empresa 0016 (ejercicio 2026), usuario Administrador. Solo consulta: no se
 grabó ningún documento. Los datos de cliente se omiten a propósito.

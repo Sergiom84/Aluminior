@@ -1,5 +1,8 @@
 # Especificacion minima de implementacion 1OFI
 
+> Revisión documental 20/09/2026: **Especificación implementada parcialmente**. Geometría 1OFI y conexión existen; límites de fabricación siguen fuera.
+> Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
+
 ## Alcance minimo
 
 Incorporar para la estructura `1OFI` una unica cota geometrica editable,

@@ -1,5 +1,8 @@
 # Plan siguiente: catálogo del editor de línea y escaparate completo
 
+> Revisión documental 20/09/2026: **Plan histórico parcialmente realizado**. Carga de catálogo y escaparate ya figuran realizados en su adenda.
+> Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
+
 Preparado el 19/09/2026 al cerrar la sesión de reconocimiento de cerramientos.
 Rama de trabajo: `feat/cerramientos-editor-linea` (commits `4066dc6` y
 `bc2758a` sobre `ba1bc9c`). No está unida a `main`.

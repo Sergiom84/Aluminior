@@ -1,5 +1,8 @@
 # RECON — Fuente de despiece POR UNIDAD FÍSICA (camino b)
 
+> Revisión documental 20/09/2026: **Investigación histórica cerrada**. Resultado histórico NO-GO; no fabricar una fuente inexistente.
+> Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
+
 > Investigación histórica cerrada. No usar como punto de continuación. El
 > estado operativo vigente se mantiene en `HANDOFF-CHATGPT.md`.
 

@@ -161,7 +161,12 @@ describe('J05 línea valorada: servicio productivo y PostgreSQL', () => {
       opciones: { ...OPCIONES_COPIA_IDENTICA, mapa: MAPA_VACIO }, creadoPor: 'qa-j05@local.test' })
     expect(copia.ok).toBe(true); if (!copia.ok) throw new Error('Copia falló')
     const d = await documento(tx, copia.presupuestoId)
-    expect(await documento(tx, id)).toEqual({ ...antes, revisionesUsadas: [0, 1] })
+    const despues = await documento(tx, id)
+    // El lector devuelve las revisiones ocupadas sin prometer orden SQL.
+    // Se comparan todas las revisiones y el documento completo, sin depender
+    // del orden físico de las filas de PostgreSQL.
+    expect({ ...despues, revisionesUsadas: [...despues.revisionesUsadas].sort((a, b) => a - b) })
+      .toEqual({ ...antes, revisionesUsadas: [0, 1] })
     const l = d.lineas[0], o = antes.lineas[0]
     expect(l.linea.id).not.toBe(o.linea.id)
     expect(l.linea.total).toBe('311.66'); expect(l.resultadoCerramiento).toEqual(o.resultadoCerramiento)

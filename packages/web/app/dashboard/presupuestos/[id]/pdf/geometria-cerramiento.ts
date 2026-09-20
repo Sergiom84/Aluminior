@@ -1,6 +1,6 @@
 import {
-  distribuirModuloCerramiento, esConfiguracionCerramiento, geometriaAperturaVisual,
-  medidasCerramiento,
+  esConfiguracionCerramiento, geometriaAperturaVisual, geometriaCerramiento,
+  medidasCerramiento, proyectarCerramiento,
   type AperturaVisual, type ConfiguracionCerramiento, type RectVisual,
 } from '@aluminior/core/estructuras'
 
@@ -11,35 +11,29 @@ export function geometriaCerramientoPdf(configuracion: ConfiguracionCerramiento,
     throw new Error('El dibujo PDF requiere al menos 100 × 80 puntos')
   }
   const medidas = medidasCerramiento(configuracion)
-  // Las uniones pueden superar la altura de los módulos: no se cortan ni alteran las cotas.
-  const altoVisible = Math.max(medidas.altoMm, ...configuracion.uniones.map((u) => u.longitudMm))
-  const escala = Math.min((ancho - 16) / medidas.anchoMm, (alto - 28) / altoVisible)
-  if (![medidas.anchoMm, medidas.altoMm, altoVisible, escala].every((valor) => Number.isFinite(valor) && valor > 0)) {
-    throw new Error('Las medidas del cerramiento no son representables en PDF')
+  const geometria = geometriaCerramiento(configuracion)
+  const proyeccionBase = (() => {
+    try {
+      return proyectarCerramiento(geometria, { ancho: ancho - 16, alto: alto - 28 })
+    } catch {
+      throw new Error('Las medidas del cerramiento no son representables en PDF')
+    }
+  })()
+  const transformar = (rect: RectVisual): RectVisual => {
+    const proyectado = proyeccionBase.transformar(rect)
+    return { ...proyectado, x: proyectado.x + 8, y: proyectado.y + 8 }
   }
-  const origenX = (ancho - medidas.anchoMm * escala) / 2
-  const origenY = 8 + (alto - 28 - altoVisible * escala) / 2
-  const puntos = (valor: number) => Math.round(valor * 1e10) / 1e10
-  const transformar = (rect: RectVisual): RectVisual => ({
-    x: puntos(origenX + rect.x * escala), y: puntos(origenY + rect.y * escala),
-    ancho: puntos(rect.ancho * escala), alto: puntos(rect.alto * escala),
-  })
-  let cursor = 0
-  const modulos = configuracion.modulos.map((modulo, indice) => {
-    const rectMm = { x: cursor, y: 0, ancho: modulo.anchoMm, alto: modulo.altoMm }
-    const elementos = distribuirModuloCerramiento(modulo, rectMm)
-      .map((elemento) => ({ ...elemento, ...transformar(elemento) }))
-    cursor += modulo.anchoMm + (configuracion.uniones[indice]?.grosorMm ?? 0)
-    return { id: modulo.id, rect: transformar(rectMm), elementos }
-  })
-  cursor = 0
-  const uniones = configuracion.uniones.map((union, indice) => {
-    cursor += configuracion.modulos[indice].anchoMm
-    const rect = transformar({ x: cursor, y: 0, ancho: union.grosorMm, alto: union.longitudMm })
-    cursor += union.grosorMm
-    return { id: union.id, rect }
-  })
-  return { ancho, alto, escala, medidas, modulos, uniones }
+  const modulos = geometria.modulos.map((modulo) => ({
+    id: modulo.id,
+    rect: transformar(modulo.rect),
+    elementos: modulo.elementos.map((elemento) => ({
+      ...elemento, ...transformar(elemento),
+    })),
+  }))
+  const uniones = geometria.uniones.map((union) => ({
+    id: union.id, rect: transformar(union.rect),
+  }))
+  return { ancho, alto, escala: proyeccionBase.escala, medidas, modulos, uniones }
 }
 
 /** Mismo sentido de los triángulos del diseñador; sólo cambia la primitiva SVG. */

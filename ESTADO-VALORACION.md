@@ -1,5 +1,8 @@
 # Aluminior — Estado de la valoración (resumen ejecutivo)
 
+> Revisión documental 20/09/2026: **Resumen histórico**. Porcentajes T.52–T.59 no describen la cobertura presente del configurador.
+> Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
+
 > Documento histórico del cierre T.52–T.59. Para el estado operativo actual y
 > el diseñador de cerramientos, consultar `HANDOFF-CHATGPT.md`. Sus mediciones
 > siguen siendo evidencia válida, pero no describen por sí solas el flujo actual.

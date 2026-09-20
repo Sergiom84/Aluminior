@@ -12,8 +12,9 @@ place to accumulate domain rules, SQL, validation and UI state. Before adding to
 a broad file, extract the affected business responsibility behind a small public
 interface, preserve behavior with tests, and then implement the change. Split by
 cohesion rather than by arbitrary line ranges. Do not create a second monolith in
-the enclosure designer. The current budget `acciones.ts` is known debt and should
-be decomposed incrementally instead of extended indefinitely.
+the enclosure designer. Budget actions now delegate to feature-local services;
+preserve those boundaries. Read `docs/ESTADO-ACTUAL.md` for current status and
+run `npm run check:architecture` to check module boundaries and size exceptions.
 
 For UI work, follow the shared rules: no emojis or explanatory microcopy, one
 coherent pair of typefaces per project, compact semantic hierarchy,
