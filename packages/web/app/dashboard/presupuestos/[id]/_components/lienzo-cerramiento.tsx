@@ -1,32 +1,41 @@
 'use client'
 
+import { useRef } from 'react'
 import {
   geometriaAperturaVisual, geometriaCerramiento, plantillaDiseno,
-  type ConfiguracionCerramiento, type ElementoColocado, type RectVisual,
+  type AnclajeLibre, type ConfiguracionCerramiento, type ElementoColocado, type RectVisual,
 } from '@aluminior/core/estructuras'
+import { AnclajesLienzo, useSoltarEnLienzo } from './disenador/anclajes-lienzo.tsx'
 
 export type ParteVisual = 'marco' | 'hoja' | 'vidrio' | 'travesano' | 'union'
 export type ParteSeleccionada = { moduloId: string; elemento: string; parte: ParteVisual }
 
-export function LienzoCerramiento({ configuracion, moduloActivoId, seleccion, onModuloActivo, onSeleccion }: {
+export function LienzoCerramiento({ configuracion, moduloActivoId, seleccion, onModuloActivo, onSeleccion,
+  insercion }: {
   configuracion: ConfiguracionCerramiento
   moduloActivoId: string
   seleccion: ParteSeleccionada
   onModuloActivo: (id: string) => void
   onSeleccion: (seleccion: ParteSeleccionada) => void
+  /** Miniatura preparada o en arrastre: muestra los anclajes libres. */
+  insercion?: { activa: boolean; onInsertar: (anclaje: AnclajeLibre) => void }
 }) {
   const geometria = geometriaCerramiento(configuracion)
-  const margen = Math.max(40, geometria.altoVisibleMm * .08)
+  const tamano = Math.max(geometria.anchoVisibleMm, geometria.altoVisibleMm)
+  const margen = Math.max(40, tamano * .06)
+  const svg = useRef<SVGSVGElement>(null)
+  const soltar = useSoltarEnLienzo({ svg, configuracion, activa: Boolean(insercion?.activa),
+    tamanoMm: tamano, onInsertar: insercion?.onInsertar ?? (() => undefined) })
   return (
-    <svg className="al-chain-drawing"
-      viewBox={`${-margen} ${-margen} ${geometria.anchoMm + margen * 2} ${geometria.altoVisibleMm + margen * 2}`}
+    <svg ref={svg} className="al-chain-drawing" {...soltar.manejadores}
+      viewBox={`${-margen} ${-margen} ${geometria.anchoVisibleMm + margen * 2} ${geometria.altoVisibleMm + margen * 2}`}
       preserveAspectRatio="xMidYMid meet" role="group" aria-label="Composición del cerramiento">
       {geometria.modulos.map((modulo, indice) => {
         const plantilla = plantillaDiseno(configuracion.modulos[indice].estructuraCodigo)!
         const activa = modulo.id === moduloActivoId
         return (
           <g key={modulo.id} role="button" tabIndex={0}
-            aria-label={`Elemento ${indice + 1}: ${plantilla.descripcion}`}
+            aria-label={`Elemento ${indice}: ${plantilla.descripcion}`}
             data-selected={activa} className="al-chain-module"
             onClick={() => {
               onModuloActivo(modulo.id)
@@ -47,7 +56,7 @@ export function LienzoCerramiento({ configuracion, moduloActivoId, seleccion, on
       })}
       {geometria.uniones.map((union, indice) => (
         <g key={union.id} role="button" tabIndex={0} className="al-chain-union"
-          aria-label={`Unión ${indice + 1}: ${union.codigo}`}
+          aria-label={`Unión ${indice + 1}: ${union.codigo || 'sin configurar'}`}
           data-selected={seleccion.parte === 'union' && seleccion.elemento === union.id}
           onClick={() => onSeleccion({ moduloId: union.id, elemento: union.id, parte: 'union' })}
           onKeyDown={(evento) => {
@@ -56,10 +65,12 @@ export function LienzoCerramiento({ configuracion, moduloActivoId, seleccion, on
               onSeleccion({ moduloId: union.id, elemento: union.id, parte: 'union' })
             }
           }}>
-          <rect {...svgRect(union.rect)} className="al-union" />
-          <title>{union.codigo}</title>
+          <rect {...svgRect(union.rect)} className="al-union" data-sin-configurar={!union.codigo || undefined} />
+          <title>{union.codigo || 'Unión sin configurar'}</title>
         </g>
       ))}
+      {insercion?.activa && <AnclajesLienzo configuracion={configuracion} radioMm={tamano * .014}
+        resaltado={soltar.resaltado} onInsertar={insercion.onInsertar} />}
     </svg>
   )
 }

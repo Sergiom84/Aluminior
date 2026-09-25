@@ -1,6 +1,22 @@
 # Estado actual de Aluminior
 
-Revisión local: 20/09/2026. Este es el punto de entrada para el estado del código.
+Revisión local: 25/09/2026. Este es el punto de entrada para el estado del código.
+
+## 25/09/2026 — fase 3: composición bidimensional
+
+Observado en Productor 0017 (260497, cerrado sin Aceptar): el configurador
+compone en dos dimensiones con anclajes a la derecha y debajo, puntos verdes y
+uniones nuevas sin configurar de 20 mm. Implementado en Aluminior como
+configuración v3 compatible con v1/v2, configurador con la disposición de
+Productor y arrastre con alternativa de teclado. Corregidos dos defectos que
+impedían guardar cerramientos con el catálogo real. Ver
+[resumen de fase 3](paridad/fase-3/00-resumen.md) y
+[evidencia](paridad/fase-3/01-evidencia-composicion.md).
+
+Entorno local: `aluminior_real_test` en el Postgres de pruebas (55433) contiene
+el catálogo importado de `export_datos/EMP0016` con el ETL existente; es
+efímero (tmpfs). Configuración de lanzamiento `web-local-real` (puerto 3002,
+opt-in QA local). Nada se escribe en Supabase.
 Las observaciones anteriores conservan su fecha y sus límites; no certifican el
 estado de producción ni autorizan ejecutar sus antiguos encargos.
 

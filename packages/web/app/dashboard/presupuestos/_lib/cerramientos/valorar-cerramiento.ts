@@ -1,4 +1,4 @@
-import { esConfiguracionCerramiento, esResultadoCerramiento, etapasVentaCerramiento,
+import { esConfiguracionCerramiento, esResultadoCerramiento, etapasVentaCerramiento, unionConfigurada,
   type ConfiguracionCerramiento, type ResultadoCerramientoV1,
   type ResultadoOrigenCerramiento } from '@aluminior/core/estructuras'
 import { sumarDecimal } from '@aluminior/core/precios'
@@ -50,7 +50,9 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
       vidrioCodigo: origen.vidrioCodigo, opcionesHerraje: entrada.opcionesHerraje ?? [] }
     let ventaMotor: number | null = null
     let piezas: Parameters<typeof completarCostesOrigen>[1] = []
-    if (g.tipo === 'UNION') {
+    if (g.tipo === 'UNION' && !unionConfigurada(g)) {
+      bloquear(`Unión ${g.id} sin configurar`)
+    } else if (g.tipo === 'UNION') {
       const material = await resolverMaterialesEstructura(cliente, parametros)
       if (!material.ok) bloquear(JSON.stringify(material.errores))
       else if (!material.estructura.esAccesorio || !material.plantillaResuelta.length ||

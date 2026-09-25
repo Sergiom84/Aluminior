@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useEnvioFormulario } from './use-envio-formulario.ts'
 import {
-  crearConfiguracionCerramiento, plantillaDiseno, type ConfiguracionCerramiento,
+  type ConfiguracionCerramiento,
   type PlantillaDiseno,
 } from '@aluminior/core/estructuras'
 import { anyadirLinea, borrarLinea, type Estado } from '../../_lib/acciones.ts'
@@ -35,9 +35,7 @@ export function AnyadirLinea({
   const [variante, setVariante] = useState<'1' | '2'>('2')
   const [anchoMm, setAnchoMm] = useState(1200)
   const [altoMm, setAltoMm] = useState(1200)
-  const [configuracion, setConfiguracion] = useState<ConfiguracionCerramiento>(() =>
-    crearConfiguracionCerramiento(plantillaDiseno('2O')!),
-  )
+  const [configuracion, setConfiguracion] = useState<ConfiguracionCerramiento | null>(null)
   const [edicion, setEdicion] = useState(0)
   const [configuracionValida, setConfiguracionValida] = useState(true)
   const actualizarDimensiones = useCallback((ancho: number, alto: number) => {
@@ -49,7 +47,7 @@ export function AnyadirLinea({
     setPlantilla(null)
     setAnchoMm(1200)
     setAltoMm(1200)
-    setConfiguracion(crearConfiguracionCerramiento(plantillaDiseno('2O')!))
+    setConfiguracion(null)
     setEdicion((actual) => actual + 1)
   }, [])
 
@@ -60,18 +58,18 @@ export function AnyadirLinea({
   const elegirTipo = (siguiente: TipoLinea) => {
     setTipo(siguiente)
     setPlantilla(null)
+    if (siguiente === 'CERRAMIENTO') resetTrasAlta()
   }
 
   const elegirPlantilla = (siguiente: PlantillaDiseno) => {
     setPlantilla(siguiente)
     setAnchoMm(siguiente.anchoMm)
     setAltoMm(siguiente.altoMm)
-    setConfiguracion(crearConfiguracionCerramiento(siguiente))
     setEdicion((actual) => actual + 1)
   }
 
   const err = estado && !estado.ok ? estado.errores : {}
-  const enEscaparate = (tipo === 'ESTRUCTURA' || tipo === 'CERRAMIENTO') && !plantilla
+  const enEscaparate = tipo === 'ESTRUCTURA' && !plantilla
   const codigoLinea = tipo === 'CERRAMIENTO' ? 'GRUPO' : plantilla?.codigo ?? ''
 
   return (
@@ -80,10 +78,10 @@ export function AnyadirLinea({
       style={{ background: 'var(--al-surface)', borderColor: 'var(--al-border)' }}>
       <input type="hidden" name="presupuestoId" value={presupuestoId} />
       <input type="hidden" name="tipo" value={tipo} />
-      {tipo === 'CERRAMIENTO' && plantilla && (
+      {tipo === 'CERRAMIENTO' && configuracion && (
         <input type="hidden" name="configuracionCerramiento" value={JSON.stringify(configuracion)} />
       )}
-      {tipo === 'CERRAMIENTO' && plantilla && (
+      {tipo === 'CERRAMIENTO' && configuracion && (
         <input type="hidden" name="codigo" value={codigoLinea} />
       )}
 
@@ -131,10 +129,9 @@ export function AnyadirLinea({
           err={err} onCambiarEstructura={() => setPlantilla(null)} />
       )}
 
-      {tipo === 'CERRAMIENTO' && plantilla && (
+      {tipo === 'CERRAMIENTO' && (
         <>
-          <DisenadorEstructura key={edicion} codigo={plantilla.codigo} anchoMm={anchoMm} altoMm={altoMm}
-            configuracionInicial={configuracion}
+          <DisenadorEstructura key={edicion} codigo="2O" anchoMm={anchoMm} altoMm={altoMm} vacio
             onConfiguracionChange={setConfiguracion}
             onDimensionesChange={actualizarDimensiones}
             onValidezChange={setConfiguracionValida} />
@@ -152,7 +149,7 @@ export function AnyadirLinea({
             {enviando ? 'Añadiendo…' : 'Aceptar'}
           </button>
           {(tipo === 'ESTRUCTURA' || tipo === 'CERRAMIENTO') && (
-            <button type="button" className="al-command" onClick={() => setPlantilla(null)}>
+            <button type="button" className="al-command" onClick={() => tipo === 'CERRAMIENTO' ? elegirTipo('ESTRUCTURA') : setPlantilla(null)}>
               Cerrar
             </button>
           )}

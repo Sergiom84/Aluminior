@@ -57,7 +57,7 @@ describe('alta de cerramiento', () => {
     expect(resultado.ok).toBe(true)
     if (!resultado.ok) return
     expect(resultado.alta.descripcion).toBe('CERRAMIENTO SEGÚN DIBUJO · 2O + 2O')
-    expect(resultado.alta.anchoMm).toBe(2500)
+    expect(resultado.alta.anchoMm).toBe(2402) // 1200 + PSU001 (2 mm, E08) + 1200
     expect(resultado.alta.altoMm).toBe(1200)
     expect(resultado.alta.precioUnitario).toBeNull()
     expect(resultado.alta.aviso).toBe(AVISO_VALORACION_PENDIENTE)

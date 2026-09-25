@@ -130,28 +130,21 @@
     white-space: normal;
   }
 
-  .designer :global(.al-designer-catalog),
+  .designer :global(.al-catalogo-miniaturas),
+  .designer :global(.al-catalogo-familias),
   .designer :global(.al-designer-union-editor) {
     max-width: 100%;
     overscroll-behavior-inline: contain;
   }
 
-  .designer :global(.al-designer-properties) {
+  .designer :global(.al-panel-fila) {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: .625rem;
-    overflow: visible;
   }
 
-  .designer :global(.al-designer-properties > div),
   .designer :global(.al-designer-measure) {
     min-width: 0;
-  }
-
-  .designer :global(.al-designer-properties .al-designer-part-picker) {
-    grid-column: 1 / -1;
-    margin-left: 0;
-    flex-wrap: wrap;
   }
 
   .designer :global(.al-designer-measure input) {

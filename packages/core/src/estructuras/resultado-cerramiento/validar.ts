@@ -19,9 +19,14 @@ function igualSuma(importe: string | null, partes: readonly (string | null)[], e
     compararDecimal(importe, normalizarDecimal(
       partes.reduce((suma, parte) => sumarDecimal(suma, parte, 10), '0'), escala)) === 0
 }
+/** Unión aún sin código: se conserva en el snapshot, pero nunca como valorada. */
+function unionSinConfigurar(v: Record<string, unknown>): boolean {
+  return objeto(v.origen) && v.origen.tipo === 'UNION' && v.codigo === '' &&
+    objeto(v.venta) && v.venta.completo === false && objeto(v.coste) && v.coste.completo === false
+}
 function esResultadoOrigen(v: unknown): v is ResultadoOrigenCerramiento {
   if (!objeto(v) || !objeto(v.origen) || (v.origen.tipo !== 'MODULO' && v.origen.tipo !== 'UNION') ||
-    !texto(v.origen.id) || !texto(v.codigo) || !textoNullable(v.serieCodigo) ||
+    !texto(v.origen.id) || !(texto(v.codigo) || unionSinConfigurar(v)) || !textoNullable(v.serieCodigo) ||
     !textoNullable(v.acabadoCodigo) || !textoNullable(v.vidrioCodigo) ||
     !variante(v.varianteAcristalamiento) || !textoNullable(v.reglaMaterial) ||
     !esImporte(v.venta, 2) || !esImporte(v.coste) ||

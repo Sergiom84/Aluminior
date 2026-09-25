@@ -3,9 +3,19 @@
   "configurations": [
     {
       "name": "web",
-      "runtimeExecutable": "C:\\Program Files\\nodejs\\node.exe",
+      "runtimeExecutable": "C:/Program Files/nodejs/node.exe",
       "runtimeArgs": ["node_modules/next/dist/bin/next", "dev", "packages/web", "-p", "3000"],
       "port": 3000
+    },
+    {
+      "name": "web-local-real",
+      "runtimeExecutable": "C:/Program Files/nodejs/node.exe",
+      "runtimeArgs": ["node_modules/next/dist/bin/next", "dev", "packages/web", "-p", "3002", "-H", "127.0.0.1"],
+      "env": {
+        "DATABASE_URL": "postgres://aluminior:aluminior@localhost:55433/aluminior_real_test",
+        "ALUMINIOR_QA_AUTH_BYPASS": "1"
+      },
+      "port": 3002
     },
     {
       "name": "web-3001-existente",
@@ -14,7 +24,7 @@
     },
     {
       "name": "web-3001",
-      "runtimeExecutable": "C:\\Program Files\\nodejs\\node.exe",
+      "runtimeExecutable": "C:/Program Files/nodejs/node.exe",
       "runtimeArgs": ["node_modules/next/dist/bin/next", "dev", "packages/web", "-p", "3001"],
       "port": 3001
     }

@@ -114,7 +114,7 @@ describe('persistencia del alta de línea', () => {
 
     const [guardada] = await db.select().from(schema.lineas).where(eq(schema.lineas.id, lineaId))
     expect(guardada.descripcion).toBe('CERRAMIENTO SEGÚN DIBUJO · 2O + 2O')
-    expect(guardada.anchoMm).toBe(2500)
+    expect(guardada.anchoMm).toBe(2402) // 1200 + PSU001 (2 mm, E08) + 1200
     expect(guardada.altoMm).toBe(1200)
     // Regla del dinero: sin valoración agregada no hay precio, ni un cero.
     expect(guardada.precioUnitario).toBeNull()

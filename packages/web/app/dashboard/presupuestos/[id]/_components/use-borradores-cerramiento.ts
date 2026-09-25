@@ -28,12 +28,12 @@ export function aplicarBorrador(configuracion: ConfiguracionCerramiento, borrado
   return esConfiguracionCerramiento(siguiente) ? siguiente : null
 }
 
-export function useBorradoresCerramiento(configuracion: ConfiguracionCerramiento,
+export function useBorradoresCerramiento(configuracion: ConfiguracionCerramiento | null,
   onAplicar: (configuracion: ConfiguracionCerramiento) => void) {
   const [borradores, setBorradores] = useState<Borradores>({ modulos: {}, uniones: {} })
   const [error, setError] = useState<string | null>(null)
-  const pendientes = configuracion.modulos.some(item => Boolean(borradores.modulos[item.id])) ||
-    configuracion.uniones.some(item => Boolean(borradores.uniones[item.id]))
+  const pendientes = Boolean(configuracion) && (configuracion!.modulos.some(item => Boolean(borradores.modulos[item.id])) ||
+    configuracion!.uniones.some(item => Boolean(borradores.uniones[item.id])))
   const editarModulo = (id: string, cambios: Medidas) => {
     setError(null)
     setBorradores(actual => ({ ...actual, modulos: {
@@ -55,7 +55,7 @@ export function useBorradoresCerramiento(configuracion: ConfiguracionCerramiento
     })
   }
   const aplicar = (tipo: 'modulos' | 'uniones', id: string) => {
-    const siguiente = aplicarBorrador(configuracion, borradores, tipo, id)
+    const siguiente = configuracion && aplicarBorrador(configuracion, borradores, tipo, id)
     if (!siguiente) {
       setError('Revisa las medidas antes de actualizar.')
       return

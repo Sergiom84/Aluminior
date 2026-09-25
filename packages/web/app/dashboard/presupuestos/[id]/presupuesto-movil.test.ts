@@ -23,7 +23,7 @@ describe('contrato móvil del editor de presupuestos', () => {
   it('mantiene catálogo y tablas dentro de desplazadores locales accesibles', () => {
     expect(css).toMatch(/\.tableScroll,[\s\S]*?overflow-x:\s*auto/)
     expect(css).toMatch(/\.budgetTable\s*{[\s\S]*?min-width:\s*980px/)
-    expect(css).toMatch(/\.designer\s+:global\(\.al-designer-catalog\)/)
+    expect(css).toMatch(/\.designer\s+:global\(\.al-catalogo-miniaturas\)/)
     expect(detalle).toContain('styles.tableScroll')
     expect(detalle).toContain('tabIndex={0}')
     expect(detalle).toContain('aria-label="Líneas del presupuesto, tabla desplazable"')

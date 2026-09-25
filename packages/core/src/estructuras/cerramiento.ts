@@ -1,18 +1,25 @@
 /**
- * Modelo del cerramiento configurado: la cadena de módulos y uniones que el
- * diseñador produce y que el presupuesto recibe como una sola línea `GRUPO`.
+ * Modelo del cerramiento configurado: la composición de módulos y uniones que
+ * el diseñador produce y que el presupuesto recibe como una sola línea `GRUPO`.
  *
  * Se separa de `diseno.ts` —vocabulario visual y reparto geométrico— porque es
  * otra responsabilidad: aquí vive lo que se persiste, se valida al volver del
- * navegador y se describe en el documento.
+ * navegador y se describe en el documento. La disposición bidimensional está
+ * en `composicion-cerramiento.ts`.
  */
 import {
   plantillaDiseno, PLANTILLAS_DISENO, UNIONES_VISUALES,
   type PlantillaDiseno, type UnionVisual,
 } from './diseno.ts'
-import { resolverGeometriaFi1Ofi } from './geometria-1ofi.ts'
+import {
+  anclajesCerramiento, eliminarModuloConDependientes, posicionesCerramiento,
+  type AnclajeModulo,
+} from './composicion-cerramiento.ts'
+import {
+  VERSION_COMPOSICION_CERRAMIENTO, VERSION_CONFIGURACION_CERRAMIENTO,
+} from './versiones-cerramiento.ts'
 
-export const VERSION_CONFIGURACION_CERRAMIENTO = 2 as const
+export { VERSION_CONFIGURACION_CERRAMIENTO }
 export const FI_1OFI_NUEVA_ALTA_MM = 300 as const
 
 export interface ModuloCerramiento {
@@ -21,10 +28,13 @@ export interface ModuloCerramiento {
   anchoMm: number
   altoMm: number
   fiMm?: number
+  /** Solo en v3: elemento del que cuelga, lado y unión que los separa. */
+  anclaje?: AnclajeModulo
 }
 
 export interface UnionCerramiento {
   id: string
+  /** Vacío mientras la unión está sin configurar, como la crea Productor. */
   codigo: string
   longitudMm: number
   grosorMm: number
@@ -43,11 +53,27 @@ export interface ConfiguracionCerramientoV2 extends ConfiguracionCerramientoBase
   version: typeof VERSION_CONFIGURACION_CERRAMIENTO
 }
 
-export type ConfiguracionCerramiento = ConfiguracionCerramientoV1 | ConfiguracionCerramientoV2
+/** Composición bidimensional con anclajes explícitos; admite FI como v2. */
+export interface ConfiguracionCerramientoV3 extends ConfiguracionCerramientoBase {
+  version: typeof VERSION_COMPOSICION_CERRAMIENTO
+}
 
-function moduloDesdePlantilla(plantilla: PlantillaDiseno, id: string, altoMm = plantilla.altoMm) {
+export type ConfiguracionCerramiento =
+  | ConfiguracionCerramientoV1 | ConfiguracionCerramientoV2 | ConfiguracionCerramientoV3
+
+/** v3 nunca retrocede; en cadena, v2 solo mientras haya FI explícito. */
+function versionSegun(
+  configuracion: ConfiguracionCerramiento,
+  modulos: readonly ModuloCerramiento[],
+): ConfiguracionCerramiento['version'] {
+  if (configuracion.version === VERSION_COMPOSICION_CERRAMIENTO) return VERSION_COMPOSICION_CERRAMIENTO
+  return modulos.some((modulo) => Object.hasOwn(modulo, 'fiMm')) ? VERSION_CONFIGURACION_CERRAMIENTO : 1
+}
+
+/** Módulo con la medida propia de la plantilla, sin identidad ni posición. */
+export function moduloDesdePlantilla(plantilla: PlantillaDiseno, altoMm = plantilla.altoMm) {
   return {
-    id, estructuraCodigo: plantilla.codigo,
+    estructuraCodigo: plantilla.codigo,
     anchoMm: plantilla.anchoMm, altoMm,
     ...(plantilla.codigo === '1OFI' ? { fiMm: FI_1OFI_NUEVA_ALTA_MM } : {}),
   }
@@ -58,11 +84,12 @@ export function crearConfiguracionCerramiento(
 ): ConfiguracionCerramiento {
   return {
     version: plantilla.codigo === '1OFI' ? VERSION_CONFIGURACION_CERRAMIENTO : 1,
-    modulos: [moduloDesdePlantilla(plantilla, 'modulo-1')],
+    modulos: [{ id: 'modulo-1', ...moduloDesdePlantilla(plantilla) }],
     uniones: [],
   }
 }
 
+/** Añadido histórico al extremo derecho de una cadena, con la altura vecina. */
 export function anadirModuloCerramiento(
   configuracion: ConfiguracionCerramiento,
   plantilla: PlantillaDiseno,
@@ -75,10 +102,11 @@ export function anadirModuloCerramiento(
   const altoReferencia = configuracion.modulos.at(-1)?.altoMm ?? plantilla.altoMm
   return {
     ...configuracion,
-    version: plantilla.codigo === '1OFI' ? VERSION_CONFIGURACION_CERRAMIENTO : configuracion.version,
-    modulos: [...configuracion.modulos, moduloDesdePlantilla(
-      plantilla, `modulo-${numero}`, altoReferencia,
-    )],
+    version: plantilla.codigo === '1OFI' && configuracion.version === 1
+      ? VERSION_CONFIGURACION_CERRAMIENTO : configuracion.version,
+    modulos: [...configuracion.modulos, {
+      id: `modulo-${numero}`, ...moduloDesdePlantilla(plantilla, altoReferencia),
+    }],
     uniones: [...configuracion.uniones, {
       id: `union-${numeroUnion}`,
       codigo: union.codigo,
@@ -89,10 +117,10 @@ export function anadirModuloCerramiento(
 }
 
 /**
- * Actualiza un módulo y mantiene coherentes únicamente las uniones cuya altura
- * queda determinada sin ambigüedad por dos módulos adyacentes iguales.
- * Cuando las alturas difieren, la longitud de unión puede ser una decisión
- * manual del operador y se conserva.
+ * Actualiza un módulo y mantiene coherentes únicamente las uniones cuya
+ * longitud queda determinada sin ambigüedad: el lado compartido mide lo mismo
+ * en los dos elementos. Si difiere, la longitud puede ser una decisión manual
+ * del operador y se conserva.
  */
 export function actualizarModuloCerramiento(
   configuracion: ConfiguracionCerramiento,
@@ -105,15 +133,19 @@ export function actualizarModuloCerramiento(
   const modulos = configuracion.modulos.map((modulo, actual) => actual === indice
     ? { ...modulo, ...cambios }
     : modulo)
-  if (cambios.altoMm === undefined) return { ...configuracion, modulos }
-
-  const uniones = configuracion.uniones.map((union, actual) => {
-    const izquierdo = modulos[actual]
-    const derecho = modulos[actual + 1]
-    return izquierdo.altoMm === derecho.altoMm
-      ? { ...union, longitudMm: izquierdo.altoMm }
-      : union
-  })
+  const porId = new Map(modulos.map((modulo) => [modulo.id, modulo]))
+  const longitudes = new Map<string, number>()
+  for (const [hijoId, anclaje] of anclajesCerramiento(configuracion)) {
+    const padre = porId.get(anclaje.moduloId)!
+    const hijo = porId.get(hijoId)!
+    const [compartido, cambiado] = anclaje.lado === 'derecha'
+      ? [padre.altoMm === hijo.altoMm ? padre.altoMm : null, cambios.altoMm !== undefined]
+      : [padre.anchoMm === hijo.anchoMm ? padre.anchoMm : null, cambios.anchoMm !== undefined]
+    if (compartido !== null && cambiado) longitudes.set(anclaje.unionId, compartido)
+  }
+  const uniones = configuracion.uniones.map((union) => longitudes.has(union.id)
+    ? { ...union, longitudMm: longitudes.get(union.id)! }
+    : union)
 
   return { ...configuracion, modulos, uniones }
 }
@@ -128,7 +160,8 @@ export function actualizarFiModuloCerramiento(
   if (!modulo || plantillaDiseno(modulo.estructuraCodigo)?.codigo !== '1OFI') return configuracion
   return {
     ...configuracion,
-    version: VERSION_CONFIGURACION_CERRAMIENTO,
+    version: configuracion.version === VERSION_COMPOSICION_CERRAMIENTO
+      ? VERSION_COMPOSICION_CERRAMIENTO : VERSION_CONFIGURACION_CERRAMIENTO,
     modulos: configuracion.modulos.map((actual) => actual.id === id
       ? { ...actual, fiMm }
       : actual),
@@ -151,12 +184,7 @@ export function cambiarEstructuraModuloCerramiento(
       ...(plantilla.codigo === '1OFI' ? { fiMm: FI_1OFI_NUEVA_ALTA_MM } : {}),
     }
   })
-  return {
-    ...configuracion,
-    version: modulos.some((modulo) => Object.hasOwn(modulo, 'fiMm'))
-      ? VERSION_CONFIGURACION_CERRAMIENTO : 1,
-    modulos,
-  }
+  return { ...configuracion, version: versionSegun(configuracion, modulos), modulos }
 }
 
 export function configuracionTieneFiExplicito(configuracion: ConfiguracionCerramiento): boolean {
@@ -164,26 +192,31 @@ export function configuracionTieneFiExplicito(configuracion: ConfiguracionCerram
     Object.hasOwn(modulo, 'fiMm'))
 }
 
+/**
+ * En cadena (v1/v2) conserva el comportamiento histórico: quita el módulo y la
+ * unión adyacente. En v3 elimina también los elementos que dependen de él.
+ */
 export function eliminarModuloCerramiento(
   configuracion: ConfiguracionCerramiento,
   id: string,
 ): ConfiguracionCerramiento {
+  if (configuracion.version === VERSION_COMPOSICION_CERRAMIENTO) {
+    return eliminarModuloConDependientes(configuracion, id)
+  }
   const indice = configuracion.modulos.findIndex((modulo) => modulo.id === id)
   if (indice < 0 || configuracion.modulos.length === 1) return configuracion
   const modulos = configuracion.modulos.filter((modulo) => modulo.id !== id)
   const indiceUnion = indice === configuracion.modulos.length - 1 ? indice - 1 : indice
   const uniones = configuracion.uniones.filter((_, actual) => actual !== indiceUnion)
-  return { ...configuracion,
-    version: modulos.some((modulo) => Object.hasOwn(modulo, 'fiMm'))
-      ? VERSION_CONFIGURACION_CERRAMIENTO : 1,
-    modulos, uniones }
+  return { ...configuracion, version: versionSegun(configuracion, modulos), modulos, uniones }
 }
 
+/** Caja envolvente de los elementos; en cadena equivale a sumar anchos y uniones. */
 export function medidasCerramiento(configuracion: ConfiguracionCerramiento) {
+  const rects = [...posicionesCerramiento(configuracion).modulos.values()]
   return {
-    anchoMm: configuracion.modulos.reduce((total, modulo) => total + modulo.anchoMm, 0) +
-      configuracion.uniones.reduce((total, union) => total + union.grosorMm, 0),
-    altoMm: Math.max(0, ...configuracion.modulos.map((modulo) => modulo.altoMm)),
+    anchoMm: Math.max(0, ...rects.map((rect) => rect.x + rect.ancho)),
+    altoMm: Math.max(0, ...rects.map((rect) => rect.y + rect.alto)),
   }
 }
 
@@ -199,33 +232,4 @@ export function descripcionCerramiento(configuracion: ConfiguracionCerramiento):
   return `CERRAMIENTO SEGÚN DIBUJO · ${codigos.join(' + ')}`
 }
 
-export function esConfiguracionCerramiento(valor: unknown): valor is ConfiguracionCerramiento {
-  if (!valor || typeof valor !== 'object') return false
-  const candidato = valor as Partial<ConfiguracionCerramiento>
-  if ((candidato.version !== 1 && candidato.version !== VERSION_CONFIGURACION_CERRAMIENTO) ||
-      !Array.isArray(candidato.modulos) || !Array.isArray(candidato.uniones) ||
-      candidato.modulos.length === 0 ||
-      candidato.uniones.length !== candidato.modulos.length - 1) return false
-  const modulosValidos = candidato.modulos.every((modulo) => {
-    if (!modulo || typeof modulo.id !== 'string' || typeof modulo.estructuraCodigo !== 'string' ||
-      !Number.isInteger(modulo.anchoMm) || modulo.anchoMm <= 0 ||
-      !Number.isInteger(modulo.altoMm) || modulo.altoMm <= 0) return false
-    const plantilla = plantillaDiseno(modulo.estructuraCodigo)
-    if (!plantilla) return false
-    const tieneFi = Object.hasOwn(modulo, 'fiMm')
-    if (candidato.version === 1) return !tieneFi
-    if (plantilla.codigo !== '1OFI') return !tieneFi
-    if (!tieneFi) return true
-    return resolverGeometriaFi1Ofi(modulo.anchoMm, modulo.altoMm, modulo.fiMm).valido
-  })
-  const unionesValidas = candidato.uniones.every((union) =>
-    union && typeof union.id === 'string' &&
-    UNIONES_VISUALES.some((catalogo) => catalogo.codigo === union.codigo) &&
-    Number.isFinite(union.longitudMm) && union.longitudMm > 0 &&
-    Number.isFinite(union.grosorMm) && union.grosorMm > 0)
-  const ids = [...candidato.modulos.map((modulo) => modulo.id),
-    ...candidato.uniones.map((union) => union.id)]
-  const versionCoherente = candidato.version === 1 || candidato.modulos.some((modulo) =>
-    Object.hasOwn(modulo, 'fiMm'))
-  return modulosValidos && unionesValidas && versionCoherente && new Set(ids).size === ids.length
-}
+export { esConfiguracionCerramiento } from './validar-configuracion-cerramiento.ts'
