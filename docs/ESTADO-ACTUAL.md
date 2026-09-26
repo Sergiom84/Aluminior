@@ -2,6 +2,14 @@
 
 Revisión local: 25/09/2026. Este es el punto de entrada para el estado del código.
 
+## 25/09/2026 — fase 4: materiales por elemento
+
+Perfiles y vidrio por elemento como excepción sobre el general de la línea,
+respaldado por los datos reales (64 y 55 de 175 cerramientos los mezclan), y
+aplicación a modelos iguales con confirmación. Productor quedó bloqueado por
+un aviso de licencia y no se observó «Actualizar todos los elementos».
+Ver [resumen de fase 4](paridad/fase-4/00-resumen.md).
+
 ## 25/09/2026 — fase 3: composición bidimensional
 
 Observado en Productor 0017 (260497, cerrado sin Aceptar): el configurador

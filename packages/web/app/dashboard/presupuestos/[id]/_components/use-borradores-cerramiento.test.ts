@@ -55,3 +55,31 @@ describe('aplicación explícita del cerramiento', () => {
     expect(aplicarBorrador(original, vacios(), 'modulos', 'ausente')).toBeNull()
   })
 })
+
+describe('aplicación a modelos iguales (mejora autorizada de fase 4)', () => {
+  const tres = () => anadirModuloCerramiento(crear(), plantillaDiseno('0')!)
+
+  it('aplica medidas y materiales exactamente a los destinatarios indicados', () => {
+    const borradores = vacios()
+    borradores.modulos['modulo-1'] = { altoMm: 1400, serieCodigo: 'GMA350' }
+    const r = aplicarBorrador(tres(), borradores, 'modulos', 'modulo-1', ['modulo-1', 'modulo-2'])!
+    expect(r.modulos.map(m => m.altoMm)).toEqual([1400, 1400, 1200])
+    expect(r.modulos.map(m => m.materiales?.serieCodigo)).toEqual(['GMA350', 'GMA350', undefined])
+    expect(esConfiguracionCerramiento(r)).toBe(true)
+  })
+
+  it('no aplica nada si la medida no vale para todos', () => {
+    const borradores = vacios()
+    borradores.modulos['modulo-1'] = { anchoMm: 0 }
+    expect(aplicarBorrador(tres(), borradores, 'modulos', 'modulo-1', ['modulo-1', 'modulo-2'])).toBeNull()
+  })
+
+  it('vacío devuelve el elemento a la herencia del general', () => {
+    const borradores = vacios()
+    borradores.modulos['modulo-1'] = { vidrioCodigo: 'PAN16' }
+    const conExcepcion = aplicarBorrador(tres(), borradores, 'modulos', 'modulo-1')!
+    borradores.modulos['modulo-1'] = { vidrioCodigo: null }
+    const general = aplicarBorrador(conExcepcion, borradores, 'modulos', 'modulo-1')!
+    expect(general.modulos[0]).not.toHaveProperty('materiales')
+  })
+})

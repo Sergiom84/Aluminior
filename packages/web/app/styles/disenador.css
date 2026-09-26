@@ -308,3 +308,6 @@
 @media (prefers-reduced-motion: reduce) {
   .al-designer * { transition: none !important; }
 }
+
+/* Material propio del elemento (excepción sobre el general de la línea). */
+.al-designer-measure [data-excepcion] { border-color: var(--al-accent); background: var(--al-accent-soft); color: var(--al-accent-strong); }

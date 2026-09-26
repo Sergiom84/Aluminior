@@ -18,6 +18,7 @@ import {
 import {
   VERSION_COMPOSICION_CERRAMIENTO, VERSION_CONFIGURACION_CERRAMIENTO,
 } from './versiones-cerramiento.ts'
+import type { MaterialesModulo } from './materiales-cerramiento.ts'
 
 export { VERSION_CONFIGURACION_CERRAMIENTO }
 export const FI_1OFI_NUEVA_ALTA_MM = 300 as const
@@ -30,6 +31,8 @@ export interface ModuloCerramiento {
   fiMm?: number
   /** Solo en v3: elemento del que cuelga, lado y unión que los separa. */
   anclaje?: AnclajeModulo
+  /** Solo en v3: excepciones de material; lo ausente hereda el general. */
+  materiales?: MaterialesModulo
 }
 
 export interface UnionCerramiento {

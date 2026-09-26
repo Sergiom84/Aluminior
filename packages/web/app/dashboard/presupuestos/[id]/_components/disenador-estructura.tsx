@@ -6,7 +6,8 @@ import {
   cambiarEstructuraModuloCerramiento, crearConfiguracionCerramiento, dependientesModulo,
   eliminarModuloConDependientes, esConfiguracionCerramiento, esModuloRaiz, insertarModuloEnAnclaje,
   medidasCerramiento, moduloDesdePlantilla, plantillaDiseno, PLANTILLAS_DISENO, posicionesCerramiento,
-  primerHueco, type AnclajeLibre, type ConfiguracionCerramiento, type PlantillaDiseno,
+  modelosIguales, primerHueco, type AnclajeLibre, type ConfiguracionCerramiento, type MaterialesGenerales,
+  type PlantillaDiseno,
 } from '@aluminior/core/estructuras'
 import { LienzoCerramiento, type ParteSeleccionada } from './lienzo-cerramiento.tsx'
 import { useBorradoresCerramiento } from './use-borradores-cerramiento.ts'
@@ -30,7 +31,8 @@ function seleccionModulo(configuracion: ConfiguracionCerramiento, id: string): P
  * `vacio` abre sin elementos, como el configurador original.
  */
 export function DisenadorEstructura({
-  codigo, anchoMm, altoMm, configuracionInicial, vacio = false, onConfiguracionChange,
+  codigo, anchoMm, altoMm, configuracionInicial, vacio = false, series = [],
+  generales = { serieCodigo: null, vidrioCodigo: null }, onConfiguracionChange,
   onDimensionesChange, onValidezChange,
 }: {
   codigo: string
@@ -41,6 +43,9 @@ export function DisenadorEstructura({
   onConfiguracionChange: (configuracion: ConfiguracionCerramiento) => void
   onDimensionesChange: (anchoMm: number, altoMm: number) => void
   onValidezChange?: (valida: boolean) => void
+  series?: readonly string[]
+  /** Materiales generales de la línea, para mostrar lo que heredan los elementos. */
+  generales?: MaterialesGenerales
 }) {
   const [configuracion, setConfiguracion] = useState<ConfiguracionCerramiento | null>(() => {
     if (configuracionInicial) return configuracionInicial
@@ -95,6 +100,17 @@ export function DisenadorEstructura({
     ? configuracion.uniones.find((actual) => actual.id === seleccion.elemento) ?? null : null
   const medidas = configuracion ? medidasCerramiento(configuracion) : { anchoMm: 0, altoMm: 0 }
 
+  /** Mejora autorizada (fase 4): aplicar el borrador a los modelos iguales, anunciando cuántos. */
+  const aplicarAModelos = (id: string) => {
+    if (!configuracion) return
+    const ids = modelosIguales(configuracion, id)
+    const indices = entradasCerramiento(configuracion).filter((e) => ids.includes(e.id)).map((e) => e.indice)
+    const codigo = configuracion.modulos.find((m) => m.id === id)?.estructuraCodigo
+    if (window.confirm(`¿Aplicar los cambios a los ${ids.length} elementos ${codigo} (${indices.join(', ')})?`)) {
+      edicion.aplicar('modulos', id, ids)
+    }
+  }
+
   const eliminar = () => {
     if (!configuracion || !modulo) return
     const dependientes = dependientesModulo(configuracion, modulo.id).length
@@ -148,7 +164,10 @@ export function DisenadorEstructura({
         {vista === 'catalogo' || !configuracion
           ? <CatalogoInferior preparada={preparada} onPreparar={setPreparada} onArrastre={setArrastrada} />
           : modulo
-            ? <PanelElemento modulo={{ ...modulo, ...edicion.borradores.modulos[modulo.id] }}
+            ? <PanelElemento modulo={modulo} borrador={edicion.borradores.modulos[modulo.id] ?? {}}
+                generales={generales} series={series}
+                modelos={modelosIguales(configuracion, modulo.id).length}
+                onActualizarModelos={() => aplicarAModelos(modulo.id)}
                 indice={entradasCerramiento(configuracion).find((e) => e.id === modulo.id)!.indice}
                 rect={posicionesCerramiento(configuracion).modulos.get(modulo.id)!}
                 pendiente={Boolean(edicion.borradores.modulos[modulo.id])} bloqueado={edicion.pendientes}

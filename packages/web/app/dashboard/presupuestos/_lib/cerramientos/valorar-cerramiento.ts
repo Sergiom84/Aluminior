@@ -1,4 +1,5 @@
-import { esConfiguracionCerramiento, esResultadoCerramiento, etapasVentaCerramiento, unionConfigurada,
+import { esConfiguracionCerramiento, esResultadoCerramiento, etapasVentaCerramiento, materialesEfectivos,
+  unionConfigurada,
   type ConfiguracionCerramiento, type ResultadoCerramientoV1,
   type ResultadoOrigenCerramiento } from '@aluminior/core/estructuras'
 import { sumarDecimal } from '@aluminior/core/precios'
@@ -26,16 +27,16 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
     entrada.tarifa < 1 || entrada.tarifa > 32767) throw new Error('Configuración de valoración no válida')
   const origenes: ResultadoOrigenCerramiento[] = []
   const geometria = [
-    ...entrada.configuracion.modulos.map(m => ({ tipo: 'MODULO' as const, id: m.id,
+    ...entrada.configuracion.modulos.map(m => ({ tipo: 'MODULO' as const, id: m.id, materiales: materialesEfectivos(m, entrada),
       codigo: m.estructuraCodigo, anchoMm: m.anchoMm, altoMm: m.altoMm })),
     ...entrada.configuracion.uniones.map(u => ({ tipo: 'UNION' as const, id: u.id,
-      codigo: u.codigo, anchoMm: u.grosorMm, altoMm: u.longitudMm })),
+      codigo: u.codigo, anchoMm: u.grosorMm, altoMm: u.longitudMm, materiales: null })),
   ]
   for (const g of geometria) {
     const origen: ResultadoOrigenCerramiento = {
       origen: { tipo: g.tipo, id: g.id }, codigo: g.codigo,
-      serieCodigo: entrada.serieCodigo, acabadoCodigo: entrada.acabadoCodigo,
-      vidrioCodigo: g.tipo === 'MODULO' ? entrada.vidrioCodigo || null : null,
+      serieCodigo: g.materiales?.serieCodigo.valor ?? entrada.serieCodigo, acabadoCodigo: entrada.acabadoCodigo,
+      vidrioCodigo: g.materiales?.vidrioCodigo.valor ?? null,
       varianteAcristalamiento: entrada.varianteAcristalamiento,
       reglaMaterial: null, venta: { completo: false, importe: null },
       coste: { completo: false, importe: null }, piezas: [], partidasValoracion: [],
@@ -47,6 +48,7 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
         ...(materialIncompleto ? [{ codigo: 'COBERTURA_INCOMPLETA', ambito: 'FABRICACION' as const, bloqueante: true, detalle }] : [])]
     }
     const parametros = { ...entrada, trazabilidad: true, codigo: g.codigo, anchoMm: g.anchoMm, altoMm: g.altoMm,
+      serieCodigo: origen.serieCodigo,
       vidrioCodigo: origen.vidrioCodigo, opcionesHerraje: entrada.opcionesHerraje ?? [] }
     let ventaMotor: number | null = null
     let piezas: Parameters<typeof completarCostesOrigen>[1] = []

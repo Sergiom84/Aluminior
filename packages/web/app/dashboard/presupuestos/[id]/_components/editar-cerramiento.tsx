@@ -70,7 +70,8 @@ export function EditarCerramiento({
       <DisenadorEstructura codigo={configuracion.modulos[0].estructuraCodigo}
         anchoMm={anchoMm} altoMm={altoMm} configuracionInicial={datos.configuracion}
         onConfiguracionChange={setConfiguracion} onDimensionesChange={actualizarDimensiones}
-        onValidezChange={setConfiguracionValida} />
+        onValidezChange={setConfiguracionValida} series={series}
+        generales={{ serieCodigo: datos.serieCodigo, vidrioCodigo: datos.vidrioCodigo }} />
 
       {estado?.mensaje && (
         <div className="mb-3 mt-4 rounded-md border p-3 text-sm"

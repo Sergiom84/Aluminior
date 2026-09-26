@@ -12,13 +12,15 @@ export function acabadoPorDefecto(acabados: { codigo: string }[]): string {
 }
 
 export function CamposCerramiento({
-  err, series, acabados, serie, setSerie,
+  err, series, acabados, serie, setSerie, vidrio, setVidrio,
 }: {
   err: Record<string, string[] | undefined>
   series: string[]
   acabados: { codigo: string; descripcion: string }[]
   serie: string
   setSerie: (valor: string) => void
+  vidrio?: string
+  setVidrio?: (valor: string) => void
 }) {
   return (
     <div className={styles.fields}>
@@ -43,7 +45,8 @@ export function CamposCerramiento({
         <label htmlFor="vidrioCodigo">Vidrio</label>
         <input {...atributosCampo('vidrioCodigo', err)} className={entrada}
           style={{ ...estilo, borderColor: bordeCampo('vidrioCodigo', err, estilo.borderColor) }}
-          placeholder="V420AGS4" />
+          placeholder="V420AGS4"
+          {...(setVidrio ? { value: vidrio ?? '', onChange: (evento) => setVidrio(evento.target.value.toUpperCase()) } : {})} />
         <MensajeError campo="vidrioCodigo" errores={err} />
       </div>
       <div className="col-span-2">

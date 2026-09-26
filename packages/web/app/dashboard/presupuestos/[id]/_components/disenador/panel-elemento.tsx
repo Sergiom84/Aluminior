@@ -2,31 +2,39 @@
 
 import React from 'react'
 import {
-  plantillaDiseno, type ModuloCerramiento, type PlantillaDiseno, type RectVisual,
+  plantillaDiseno, type CambiosMaterial, type MaterialesGenerales, type ModuloCerramiento,
+  type PlantillaDiseno, type RectVisual,
 } from '@aluminior/core/estructuras'
 import { MedidasElemento } from '../medidas-elemento.tsx'
-
-type Medidas = Partial<Pick<ModuloCerramiento, 'anchoMm' | 'altoMm' | 'fiMm'>>
+import type { BorradorModulo } from '../use-borradores-cerramiento.ts'
+import { MaterialesElemento } from './materiales-elemento.tsx'
 
 /** Pestaña Elemento seleccionado: la posición se calcula, no se edita. */
 export function PanelElemento({
-  modulo, indice, rect, pendiente, bloqueado, preparada, eliminable, onChange, onActualizar, onDescartar,
-  onSustituir, onEliminar,
+  modulo, borrador, indice, rect, pendiente, bloqueado, preparada, eliminable, generales, series, modelos,
+  onChange, onActualizar, onActualizarModelos, onDescartar, onSustituir, onEliminar,
 }: {
   modulo: ModuloCerramiento
+  borrador: BorradorModulo
   indice: number
   rect: RectVisual
   pendiente: boolean
   bloqueado: boolean
   preparada: PlantillaDiseno | null
   eliminable: boolean
-  onChange: (cambios: Medidas) => void
+  generales: MaterialesGenerales
+  series: readonly string[]
+  /** Elementos con la misma estructura, incluido este. */
+  modelos: number
+  onChange: (cambios: BorradorModulo) => void
   onActualizar: () => void
+  onActualizarModelos: () => void
   onDescartar: () => void
   onSustituir: () => void
   onEliminar: () => void
 }) {
   const plantilla = plantillaDiseno(modulo.estructuraCodigo)
+  const { serieCodigo: _s, vidrioCodigo: _v, ...medidas } = borrador
   return (
     <div className="al-panel-elemento" aria-label={`Elemento ${indice}`}>
       <div className="al-panel-fila">
@@ -43,8 +51,16 @@ export function PanelElemento({
             <input readOnly tabIndex={-1} value={valor} className="cifra" />
           </label>
         ))}
-        <MedidasElemento modulo={modulo} pendiente={pendiente}
+        <MedidasElemento modulo={{ ...modulo, ...medidas }} pendiente={pendiente}
           onChange={onChange} onActualizar={onActualizar} onDescartar={onDescartar} />
+      </div>
+      <div className="al-panel-fila">
+        <MaterialesElemento modulo={modulo} borrador={borrador as CambiosMaterial}
+          generales={generales} series={series} onChange={onChange} />
+        <button type="button" className="al-command" disabled={!pendiente || modelos < 2}
+          onClick={onActualizarModelos}>
+          Aplicar a modelos iguales ({modelos})
+        </button>
       </div>
       <div className="al-panel-fila">
         {preparada && preparada.codigo !== modulo.estructuraCodigo && (

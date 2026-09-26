@@ -134,9 +134,10 @@ export function AnyadirLinea({
           <DisenadorEstructura key={edicion} codigo="2O" anchoMm={anchoMm} altoMm={altoMm} vacio
             onConfiguracionChange={setConfiguracion}
             onDimensionesChange={actualizarDimensiones}
-            onValidezChange={setConfiguracionValida} />
+            onValidezChange={setConfiguracionValida} series={series}
+            generales={{ serieCodigo: serie || null, vidrioCodigo: vidrio || null }} />
           <CamposCerramiento err={err} series={series} acabados={acabados}
-            serie={serie} setSerie={setSerie} />
+            serie={serie} setSerie={setSerie} vidrio={vidrio} setVidrio={setVidrio} />
         </>
       )}
 
