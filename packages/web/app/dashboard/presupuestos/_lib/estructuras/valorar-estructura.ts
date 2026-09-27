@@ -10,6 +10,7 @@ import type {
 import { resolverAcristalamientoEstructura } from './acristalamiento-estructura.ts'
 import { resolverOpcionesHerraje, ErrorSeleccionHerraje } from './herraje.ts'
 import { valorarConCatalogo } from './catalogo-despiece/valorar-con-catalogo.ts'
+import { validarCotasEntrada } from './cotas-entrada.ts'
 import {
   articulosAmbiguos, avisoAmbiguos,
 } from './pvp-articulos.ts'
@@ -24,8 +25,11 @@ export interface EntradaValoracionEstructura {
   varianteAcristalamiento: '1' | '2'
   acabadoCodigo: string | null
   tarifa: number
-  opcionesHerraje: readonly string[]
+  /** Ausente: catálogo por defecto. Vacío explícito: opciones visibles desmarcadas. */
+  opcionesHerraje?: readonly string[]
   trazabilidad?: boolean
+  /** Entradas de instancia verificadas; no se infieren del despiece ni de valores estándar. */
+  cotas?: Readonly<Record<string, number>>
 }
 
 export type ResultadoValoracionEstructura =
@@ -55,14 +59,19 @@ export async function valorarEstructura(
   cliente: ClienteEscritura,
   entrada: EntradaValoracionEstructura,
 ): Promise<ResultadoValoracionEstructura> {
+  const cotasEntrada = validarCotasEntrada(entrada.cotas)
+  if (!cotasEntrada.ok) return { ok: false, errores: { cotas: [cotasEntrada.error] } }
   const numero = entrada.opcionAcristalamiento ?? 1
   if (!Number.isInteger(numero) || numero < 1 || numero > 5) return { ok: false, errores: { opcionAcristalamiento: ['Opción de acristalamiento inválida'] } }
   if (numero !== 1) {
     const opciones = await opcionesAcristalamientoDeSerie(cliente, entrada.serieCodigo ?? '')
     if (!opciones.some(o => o.numero === numero)) return { ok: false, errores: { opcionAcristalamiento: ['Opción no disponible para la serie'] } }
   }
-  const catalogo = await valorarConCatalogo(cliente, entrada)
+  const catalogo = await valorarConCatalogo(cliente, { ...entrada, cotas: cotasEntrada.cotas })
   if (catalogo) return catalogo
+  if (Object.keys(cotasEntrada.cotas).length) {
+    return { ok: false, errores: { cotas: ['Las cotas de instancia requieren el catálogo completo'] } }
+  }
   const material = await resolverMaterialesEstructura(cliente, entrada)
   if (!material.ok) return { ok: false, errores: material.errores }
   if (entrada.anchoMm === null || entrada.altoMm === null || !entrada.serieCodigo) throw new Error('Material válido sin medidas')
@@ -138,7 +147,7 @@ export async function valorarEstructura(
   let opcionesHerraje: OpcionHerrajeElegida[]
   try {
     opcionesHerraje = await resolverOpcionesHerraje(cliente, {
-      serieCodigo: entrada.serieCodigo, estructuraCodigo: entrada.codigo, elegidas: entrada.opcionesHerraje,
+      serieCodigo: entrada.serieCodigo, estructuraCodigo: entrada.codigo, elegidas: entrada.opcionesHerraje ?? [],
     })
   } catch (error) {
     if (error instanceof ErrorSeleccionHerraje) return { ok: false, errores: { opcionHerraje: [error.message] } }

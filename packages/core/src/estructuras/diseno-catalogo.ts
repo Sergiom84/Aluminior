@@ -1,4 +1,5 @@
 import type { AperturaVisual, NodoVisual, PlantillaDiseno } from './diseno.ts'
+import { esCorrederaDosHojas } from './diseno-catalogo-corredera.ts'
 
 /** Entrada de catálogo normalizada; nunca contiene instancias de documentos. */
 export interface NodoCatalogo {
@@ -32,6 +33,8 @@ export type ResultadoPlantilla =
   | { estado: 'pendiente'; motivos: readonly string[] }
 
 function apertura(nodo: NodoCatalogo): AperturaVisual | null {
+  if (nodo.hoja === 10 && nodo.numeroHoja === 1) return 'corredera-derecha'
+  if (nodo.hoja === 10 && nodo.numeroHoja === 2) return 'corredera-izquierda'
   if (nodo.hoja === 5) return 'oscilobatiente-derecha'
   if (nodo.hoja === 6) return 'oscilobatiente-izquierda'
   // Pares experimentales: etiquetas físicas con bisagras exteriores. La
@@ -48,7 +51,8 @@ function apertura(nodo: NodoCatalogo): AperturaVisual | null {
 export function generarPlantillaCatalogo(entrada: EstructuraCatalogo): ResultadoPlantilla {
   const motivos = new Set<string>()
   const { nodos } = entrada
-  if (!['003', '005', '020'].includes(entrada.familiaCodigo)) motivos.add('familia sin verificar')
+  const correderaVerificada = esCorrederaDosHojas(entrada)
+  if (!['003', '005', '020'].includes(entrada.familiaCodigo) && !correderaVerificada) motivos.add('familia sin verificar')
   if (![entrada.anchoMm, entrada.altoMm].every(n => Number.isFinite(n) && n > 0)) {
     motivos.add('medidas no válidas')
   }
@@ -59,7 +63,9 @@ export function generarPlantillaCatalogo(entrada: EstructuraCatalogo): Resultado
       nodo.numeroHoja, nodo.tipoCota, nodo.equidistantes].every(Number.isInteger) ||
       !Number.isFinite(nodo.cota)) motivos.add('nodo con campos numéricos inválidos')
     if (![1, 2, 3, 5, 6].includes(nodo.tipo)) motivos.add(`tipo de nodo ${nodo.tipo}`)
-    if (nodo.tipo === 3 && !apertura(nodo)) motivos.add(`tipo de hoja ${nodo.hoja}/${nodo.numeroHoja}`)
+    if (nodo.tipo === 3 && (!apertura(nodo) || (nodo.hoja === 10 && !correderaVerificada))) {
+      motivos.add(`tipo de hoja ${nodo.hoja}/${nodo.numeroHoja}`)
+    }
     for (const variante of nodo.variantes) motivos.add(`variante ${variante}`)
     if (nodo.tipo === 1 && nodo.marco !== 'NOR') motivos.add(`marco ${nodo.marco || 'vacío'}`)
     if (nodo.tipo === 6 && !['HA', 'HB', 'VI', 'VD'].includes(nodo.travesano)) {
@@ -83,7 +89,8 @@ export function generarPlantillaCatalogo(entrada: EstructuraCatalogo): Resultado
     if (nodo.tipo === 3) {
       if (hijos.length !== 1 || hijos[0].tipo !== 5) return fallar('hoja con superficie no simple')
       visitar(hijos[0], ancho, alto, profundidad + 1)
-      return { tipo: 'hueco', id: `nodo-${nodo.id}`, apertura: apertura(nodo)! }
+      return { tipo: 'hueco', id: `nodo-${nodo.id}`, apertura: apertura(nodo)!,
+        ...(nodo.hoja === 10 ? { manilla: false } : {}) }
     }
     const divisiones = hijos.filter(n => n.tipo === 6)
     if (!divisiones.length) {
@@ -122,7 +129,7 @@ export function generarPlantillaCatalogo(entrada: EstructuraCatalogo): Resultado
     return {
       estado: 'dibujable', familiaCodigo: entrada.familiaCodigo,
       plantilla: { codigo: entrada.codigo, descripcion: entrada.descripcion, familiaCodigo: entrada.familiaCodigo,
-        familia: entrada.familiaCodigo === '005' ? 'FIJOS' :
+        familia: entrada.familiaCodigo === '001' ? 'VENTANAS CORREDERAS' : entrada.familiaCodigo === '005' ? 'FIJOS' :
           entrada.familiaCodigo === '020' ? 'OSCILOBATIENTES' : 'VENTANAS ABATIBLES',
         anchoMm: entrada.anchoMm, altoMm: entrada.altoMm, composicion },
     }

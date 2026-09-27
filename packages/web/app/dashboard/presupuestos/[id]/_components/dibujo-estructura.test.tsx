@@ -25,6 +25,14 @@ const ejeTravesano = (altoMm: number, fiMm: number) => {
 }
 
 describe('SVG real de manos y manillas', () => {
+  it.each([false, true])('C2 representa dos correderas sin bisagras (compacto=%s)', compacto => {
+    const html = render('C2', compacto)
+    expect(contar(html, 'class="al-glass"')).toBe(2)
+    expect(contar(html, 'class="al-opening-line"')).toBe(2)
+    expect(html).not.toContain('al-hinge')
+    expect(html).not.toContain('al-opening-tilt')
+    expect(html).toContain('VENTANA CORREDERA DE DOS HOJAS')
+  })
   it.each([
     ['1OD', ['derecha'], 1, 1],
     ['1OI', ['izquierda'], 1, 1],

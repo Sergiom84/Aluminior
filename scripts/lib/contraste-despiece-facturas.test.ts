@@ -38,6 +38,24 @@ describe('contraste de despiece con facturas', () => {
     expect(diferenciasPiezas([a, a], [hija({ largoMm: 1200, anchoMm: 500 }),
       hija({ largoMm: 1200, anchoMm: 600 })], () => false)).toHaveLength(2)
   })
+  it('compara igual el límite decimal y su residuo de una operación Double', () => {
+    expect(diferenciasPiezas([motor({ largoMm: 349.04999999999995 })],
+      [hija({ largoMm: 349.05 })], () => true)).toEqual([])
+    expect(diferenciasPiezas([motor({ largoMm: 1200, anchoMm: 349.04999999999995 })],
+      [hija({ largoMm: 1200, anchoMm: 349.05 })], () => false)).toEqual([])
+  })
+  it('mantiene distintas décimas y no oculta residuos Single del oráculo', () => {
+    for (const largoMm of [349.049999, 349.04, 349.15]) {
+      expect(diferenciasPiezas([motor({ largoMm })],
+        [hija({ largoMm: 349.05 })], () => true)).toHaveLength(2)
+    }
+    expect(diferenciasPiezas([motor({ largoMm: 433.35 })],
+      [hija({ largoMm: 433.34998 })], () => true)).toHaveLength(2)
+  })
+  it('revalora la misma pieza situada en el límite Double sin cambiar su precio', () => {
+    expect(importeConPreciosFactura([motor({ largoMm: 349.04999999999995, metraje: 0.35 })],
+      [hija({ largoMm: 349.05, precio: 3 })], () => true)).toBe(1.05)
+  })
   it('asigna precios por pieza sin sobrescribir el mismo artículo de otra medida', () => {
     expect(importeConPreciosFactura([
       motor({ largoMm: 1000, metraje: 1 }), motor({ largoMm: 2000, metraje: 2 }),

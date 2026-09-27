@@ -10,6 +10,8 @@ export type AperturaVisual =
   | 'abatible-derecha'
   | 'oscilobatiente-izquierda'
   | 'oscilobatiente-derecha'
+  | 'corredera-izquierda'
+  | 'corredera-derecha'
 
 export type EjeDivision = 'horizontal' | 'vertical'
 
@@ -43,6 +45,7 @@ export type FamiliaVisual =
   | 'OSCILOBATIENTES'
   | 'VENTANAS ABATIBLES'
   | 'COMBINACIONES'
+  | 'VENTANAS CORREDERAS'
 
 export interface PlantillaDiseno {
   codigo: string

@@ -46,8 +46,9 @@ export function conjuntosDeLinea(catalogo: CatalogoLinea, estructura: string, se
  * formulario (lo no marcado queda desmarcado) y las ocultas toman su valor por
  * defecto; los conjuntos sin opciones visibles usan el catálogo (`SelecDefSN`).
  */
-export function seleccionGuardada(conjuntos: readonly string[], elegidas: readonly string[],
+export function seleccionGuardada(conjuntos: readonly string[], elegidas: readonly string[] | undefined,
   opciones: readonly OpcionVisible[]): SeleccionGuardada[] {
+  if (elegidas === undefined) return []
   const marcadas = new Set(elegidas.map(k => { const [c, o] = k.split('|'); return `${c}|${String(Number(o))}` }))
   return conjuntos.flatMap(conjunto => {
     const propias = opciones.filter(o => o.conjunto === conjunto)
@@ -80,6 +81,7 @@ export async function valorarConCatalogo(
   const resultado = despiezarLineaCatalogo(catalogo, {
     estructura: entrada.codigo, serie: entrada.serieCodigo, anchoMm: entrada.anchoMm, altoMm: entrada.altoMm,
     vidrio: entrada.vidrioCodigo, acabado, acabadoAccesorios: 'UNI', opcionesGuardadas: guardadas,
+    cotas: entrada.cotas,
   })
 
   const codigos = [...new Set(resultado.filas.map(f => f.articulo))]

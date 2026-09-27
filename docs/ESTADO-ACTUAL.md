@@ -7,26 +7,28 @@ con precio automático completo y uso moderno. Implementación parcial;
 no hay aceptación integral de fabricación o precio. La instalación todavía
 no está agotada como fuente de datos y reglas.
 
-Rama de trabajo `feat/motor-catalogo-completo`, recibida en `0ecdc9c` y
-continuada en el equipo de Sergio. Motor de catálogo, importación 0023 y
-valoración web disponibles localmente. La [continuación local](paridad/fase-7/09-continuacion-local.md)
-rectifica GM60 (19 filas ya disponibles; selección 127/127), completa cinco
-ventanas 3HO con mano de obra y corrige las opciones de acristalamiento.
+Rama de trabajo `feat/motor-catalogo-completo`. Último lote desde `60d050b`:
+[cotas, discrepancias y C2](paridad/fase-7/13-cierre-cotas-c2.md). Recuperadas
+seis entradas directas de cotas, habilitada C2 en el catálogo visual y
+corregidos los defaults de herraje y conservación de avisos en GRUPO.
+La [continuación anterior](paridad/fase-7/09-continuacion-local.md) contiene
+GM60, las cinco ventanas 3HO y las opciones de acristalamiento.
 
-Sobre 348 líneas no específicas: **179 exactas**, **117** con diferencia
+Sobre 348 líneas no específicas: **179 exactas**, **118** con diferencia
 atribuible al precio unitario, **25** con diferencia económica pendiente,
-**18 bloqueadas** y **9 despieces distintos**. Las 73 con diseño específico
+**18 bloqueadas** y **8 despieces distintos**. Las 73 con diseño específico
 quedan fuera. No equivale a paridad de todos los conceptos de factura ni
 aptitud para fabricación. Por PostgreSQL coinciden 310 importes, 16 bloqueos
 y queda un rechazo de entrada sin importe; 21 con ajuste manual fuera.
 
-Suite completa ejecutada localmente: core 567, DB 55, ETL 27 y web 661
-pruebas correctas. También 47 pruebas de scripts. Comandos, pruebas causales,
-typecheck, compilación y revisión independiente constan en fase 7/09.
+Suite completa ejecutada localmente: core 577, DB 55, ETL 27 y web 684:
+**1343 pruebas correctas**, más **101 de scripts**. Typecheck, arquitectura
+y compilación aprobados. Evidencia y revisión independiente en fase 7/13.
 
-Siguiente: cotas FI/TD/F (seis de ocho recuperables de entradas explícitas),
-25 diferencias económicas, 9 despieces distintos, catálogo visual C2 y
-recorrido en navegador. No se fusionó `main` ni se escribió en Supabase.
+Siguiente: reglas de mano de obra y B que aún bloquean las cotas recuperadas;
+acreditar las dos cotas sin entrada directa y las reglas de las 25 diferencias
+económicas y ocho geométricas ya investigadas. C2 probada en navegador local;
+no acredita paridad integral de taller. No se fusionó `main` ni se escribió en Supabase.
 Las secciones siguientes conservan observaciones anteriores; los resultados
 vigentes son los de este encabezado y del [relevo](paridad/INICIO-SIGUIENTE-CONVERSACION.md).
 

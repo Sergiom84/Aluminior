@@ -38,7 +38,13 @@ export function clasificarHija(h: HijaFactura, tipoMetraje: string | null): Clas
   return 'material'
 }
 
-const medida = (mm: number | null) => mm === null ? '-' : Math.round(mm * 10) / 10
+// Compensa únicamente el error de representación Double en un límite de
+// redondeo. No absorbe residuos Single del CSV ni amplía la décima del contrato.
+const medida = (mm: number | null) => {
+  if (mm === null) return '-'
+  const decimas = mm * 10
+  return Math.round(decimas + Number.EPSILON * Math.abs(decimas)) / 10
+}
 const clave = (articulo: string, cantidad: number, largo: number | null, ancho: number | null) =>
   `${articulo}|${cantidad}|${medida(largo)}${ancho === null ? '' : `|${medida(ancho)}`}`
 

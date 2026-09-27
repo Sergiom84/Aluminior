@@ -122,6 +122,15 @@ export const PLANTILLAS_DISENO: readonly PlantillaDiseno[] = [
       hijo(hueco('fijo-inferior', 'fijo'), 1),
     ]),
   },
+  {
+    // EMP0016: marco NOR, división VI invisible equidistante y dos hojas 10.
+    codigo: 'C2', descripcion: 'VENTANA CORREDERA DE DOS HOJAS',
+    familia: 'VENTANAS CORREDERAS', familiaCodigo: '001', anchoMm: 1200, altoMm: 1200,
+    composicion: division('separacion-correderas', 'vertical', 'division-invisible', [
+      hijo(hueco('hoja-1', 'corredera-derecha', false)),
+      hijo(hueco('hoja-2', 'corredera-izquierda', false)),
+    ]),
+  },
 ] as const
 
 /** Catálogo contrastado con Estructuras y la búsqueda de Productor (26–27/09/2026). */

@@ -15,6 +15,7 @@ Inventario completo y límites: [REVISION-DOCUMENTAL-2026-09-27.md](REVISION-DOC
 
 Entrada para la siguiente conversación: [extracción integral de Productor](paridad/INICIO-SIGUIENTE-CONVERSACION.md).
 Informes recientes: [fuentes](paridad/fase-7/02-investigacion-fuentes-2026-09-27.md),
+[cierre de cotas, discrepancias y C2](paridad/fase-7/13-cierre-cotas-c2.md),
 [implementación](paridad/fase-7/03-implementacion-cortes-referenciados.md),
 [cobertura integral](paridad/fase-7/04-cobertura-integral-y-facturas-2026.md) y
 [facturas](paridad/fase-7/05-primer-barrido-facturas-2026.md).

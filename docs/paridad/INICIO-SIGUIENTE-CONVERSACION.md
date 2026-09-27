@@ -6,8 +6,8 @@ de fases, en [ESTADO-FASES](ESTADO-FASES.md). Los prompts antiguos son históric
 
 ## Último lote: continuación en el equipo de Sergio
 
-Leer primero [fase 7/09](fase-7/09-continuacion-local.md). Rama
-`feat/motor-catalogo-completo`, recibida en `0ecdc9c`; no se fusionó `main`
+Leer primero [fase 7/13](fase-7/13-cierre-cotas-c2.md) y las unidades 10–12.
+Rama `feat/motor-catalogo-completo`, último lote desde `60d050b`; no se fusionó `main`
 ni se escribió en Supabase. Copias de Productor en
 `C:\Users\sergi\Desktop\MIX\Productor\Aluminio`, con años en
 `Base datos Anuales`; EMP0016 es 2026. `export_datos/` y `output/` están aquí.
@@ -16,17 +16,26 @@ ni se escribió en Supabase. Copias de Productor en
   guardas de integridad; no hace falta inventar generación automática.
 - Cerrados cortes TMG/MV+B y mano de obra TMG: cinco 3HO ya valorables.
 - Corregida la opción de acristalamiento ignorada por el adaptador nuevo.
-- Contraste riguroso: 179 exactas, 117 atribuibles al precio unitario,
-  25 con diferencia económica pendiente, 18 bloqueadas, 9 despieces distintos.
+- Cotas: seis entradas directas incorporadas con procedencia y sin defaults.
+  Dos cadenas de presupuesto son candidatas no aplicadas. Los seis importes
+  siguen bloqueados por mano de obra; uno también por regla B.
+- Contraste riguroso: 179 exactas, 118 atribuibles al precio unitario,
+  25 con diferencia económica pendiente, 18 bloqueadas, 8 despieces distintos.
   La cifra antigua «138 solo tarifa» no era correcta.
+- Un despiece era ruido Double del comparador. Las 25 diferencias económicas
+  están investigadas, sin cambiar la política de cálculo para forzar igualdad.
+- C2 dibujable, seleccionable y persistente. Misma entrada produce 292,59 €
+  y 33 piezas como estructura simple y GRUPO en QA. Conserva avisos y costes
+  incompletos; defaults de opciones corregidos. Ver límites en fase 7/12–13.
 - PostgreSQL: 310 importes coinciden, 16 bloqueos coinciden y una entrada
   sin plantilla es rechazada; 21 con ajuste manual fuera de ese ensayo.
-- Siguiente: cotas FI/TD/F con procedencia (seis de ocho localizadas),
-  discrepancias económicas, catálogo visual C2 y recorrido en navegador.
+- Siguiente: acreditar reglas MO/B, dos cotas sin entrada directa, incrementos
+  y redondeos antes de corregir las 25 diferencias económicas; cerrar las ocho
+  geométricas. Después, diseños específicos y otras tipologías/operaciones.
 
 Los apartados históricos siguientes conservan el recorrido del otro equipo.
 Las afirmaciones de «sin implementar» y los conteos anteriores quedan
-sustituidos por 06–09 y la verificación de 09.
+sustituidos por 06–13 y la verificación de 13.
 
 ## Encargo y resultado esperado
 

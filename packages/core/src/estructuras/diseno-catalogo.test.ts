@@ -17,8 +17,36 @@ const dividido = () => entrada([
   nodo(3, 2, 0, { division: 1, posicion: 2 }),
   nodo(4, 3, 2, { hoja: 6 }), nodo(5, 5, 4), nodo(6, 5, 3),
 ])
+const corredera = (): EstructuraCatalogo => ({ ...entrada([
+  nodo(20, 1, -1),
+  nodo(30, 6, 20, { division: 7, travesano: 'VI', invisible: true, equidistantes: 2 }),
+  nodo(40, 2, 20, { division: 7, posicion: 1 }), nodo(50, 2, 20, { division: 7, posicion: 2 }),
+  nodo(60, 3, 40, { hoja: 10, numeroHoja: 1 }), nodo(70, 3, 50, { hoja: 10, numeroHoja: 2 }),
+  nodo(80, 5, 60), nodo(90, 5, 70),
+]), familiaCodigo: '001' })
 
 describe('generador conservador de candidatas visuales', () => {
+  it('genera la forma acreditada de dos correderas sin depender de códigos ni IDs', () => {
+    expect(generarPlantillaCatalogo(corredera())).toMatchObject({ estado: 'dibujable', plantilla: {
+      familia: 'VENTANAS CORREDERAS', composicion: {
+        eje: 'vertical', separador: 'division-invisible', hijos: [
+          { proporcion: 600, nodo: { apertura: 'corredera-derecha', manilla: false } },
+          { proporcion: 600, nodo: { apertura: 'corredera-izquierda', manilla: false } },
+        ],
+      },
+    } })
+  })
+  it.each(['familia', 'mano', 'division', 'travesano', 'variante', 'vidrio'] as const)(
+    'no amplía correderas a una forma no acreditada: %s', cambio => {
+      const e = corredera()
+      if (cambio === 'familia') e.familiaCodigo = '003'
+      if (cambio === 'mano') e.nodos[5].numeroHoja = 1
+      if (cambio === 'division') e.nodos[1].invisible = false
+      if (cambio === 'travesano') e.nodos[1].travesano = 'HB'
+      if (cambio === 'variante') e.nodos[0].variantes = ['bPerInf']
+      if (cambio === 'vidrio') e.nodos[7].tipo = 2
+      expect(generarPlantillaCatalogo(e).estado).toBe('pendiente')
+    })
   it('no interpreta el código opaco y dibuja un fijo simple', () => {
     const resultado = generarPlantillaCatalogo(entrada([nodo(0, 1, -1), nodo(1, 5, 0)]))
     expect(resultado).toMatchObject({ estado: 'dibujable', familiaCodigo: '005',
