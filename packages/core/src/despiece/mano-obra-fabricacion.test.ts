@@ -45,4 +45,42 @@ describe('minutosFabricacion', () => {
       'concepto de mano de obra NO-EXISTE ausente',
     ])
   })
+  it('añade el tiempo de catálogo por cada elemento TMG y su cantidad', () => {
+    const r = minutosFabricacion({
+      elementos: [elemento({ grupo: 'TMG', cantidad: 2 }), elemento({ grupo: 'TMG', cantidad: 1 }), elemento({ grupo: 'TMP' })],
+      conceptos: [concepto({ codigo: 'TRAV-MARCO', minutos: 7, grupoAsociado: 'TMG' })], conceptosApertura: [],
+    })
+    expect(r).toEqual({ lineas: [
+      { articulo: 'MO', minutos: 14, concepto: 'TRAV-MARCO' },
+      { articulo: 'MO', minutos: 7, concepto: 'TRAV-MARCO' },
+    ], incidencias: [] })
+  })
+  it('coexiste con los módulos sin duplicar el adicional ni emitir por cantidad cero', () => {
+    const r = minutosFabricacion({
+      elementos: [elemento({ modulo: '8' }), elemento({ grupo: 'TMG' }), elemento({ grupo: 'TMG', cantidad: 0 })],
+      conceptos: [...conceptos, concepto({ codigo: 'TRAV-MARCO', minutos: 7, grupoAsociado: 'TMG', componenteAsociado: '!' })],
+      conceptosApertura: [],
+    })
+    expect(r).toEqual({ lineas: [
+      { articulo: 'MO', minutos: 12, concepto: 'M8' },
+      { articulo: 'MO', minutos: 7, concepto: 'TRAV-MARCO' },
+    ], incidencias: [] })
+  })
+  it('conserva el bloqueo de incrementos en el concepto por TMG', () => {
+    const r = minutosFabricacion({ elementos: [elemento({ grupo: 'TMG' })],
+      conceptos: [concepto({ codigo: 'TRAV-MARCO', minutos: 7, grupoAsociado: 'TMG', conIncrementos: true })], conceptosApertura: [],
+    })
+    expect(r).toEqual({ lineas: [], incidencias: ['mano de obra TRAV-MARCO: incrementos por medida sin contrastar'] })
+  })
+  it.each([
+    { grupoAsociado: 'TMP' },
+    { grupoAsociado: 'TMG', modulo: '8' },
+    { grupoAsociado: 'TMG', articuloAsociado: 'OTRO' },
+    { grupoAsociado: 'TMG', componenteAsociado: '17M' },
+  ])('mantiene bloqueadas otras asociaciones o selectores combinados %o', cambios => {
+    const r = minutosFabricacion({ elementos: [elemento({ grupo: cambios.grupoAsociado })],
+      conceptos: [concepto({ codigo: 'NO-CONTRASTADO', minutos: 7, ...cambios })], conceptosApertura: [],
+    })
+    expect(r).toEqual({ lineas: [], incidencias: ['mano de obra NO-CONTRASTADO: asociación por grupo sin contrastar'] })
+  })
 })

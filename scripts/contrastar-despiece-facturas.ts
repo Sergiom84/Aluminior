@@ -63,7 +63,7 @@ for (const p of lineas.filter(l => l.EstructuraSN === 'True')) {
     vidrio: c!.Conjunto2?.trim() || null, acabado: p.Acabado!.trim(), acabadoAccesorios: 'UNI',
     opcionesGuardadas: opciones.filter(o => o.nDoc === p.nDoc && o.nLinEstr === p.nLinea)
       .map(o => ({ conjunto: o.Conjunto!.trim(), opcion: String(numero(o.nOpcion)), marcada: o.SelecSN === 'True' })),
-    minutosFabricacionAdicionales: Math.round(numero(c!.HorasAdFabr) * 60),
+    minutosFabricacionAdicionales: numero(c!.HorasAdFabr) * 60,
   })
   const filasMaterial = resultado.filas.filter(f => f.importe !== 0 || f.metraje === null)
   const dif = diferenciasPiezas(filasMaterial, material, porMetro)
@@ -74,10 +74,10 @@ for (const p of lineas.filter(l => l.EstructuraSN === 'True')) {
       const causa = i.replace(/\d+(\.\d+)?/g, 'n')
       r.causas.set(causa, (r.causas.get(causa) ?? 0) + 1)
     }
-  } else if (!dif.length && Math.abs(resultado.importe - oraculo) < 0.015) estado = 'exacta'
+  } else if (!dif.length && Math.round(resultado.importe * 100) === Math.round(oraculo * 100)) estado = 'exacta'
   else if (!dif.length) {
-    const conFactura = importeConPreciosFactura(filasMaterial, material)
-    estado = conFactura !== null && Math.abs(conFactura - oraculo) < 0.015 ? 'piezas-exactas-tarifa' : 'piezas-exactas-importe'
+    const conFactura = importeConPreciosFactura(filasMaterial, material, porMetro)
+    estado = conFactura !== null && Math.round(conFactura * 100) === Math.round(oraculo * 100) ? 'piezas-exactas-tarifa' : 'piezas-exactas-importe'
   } else {
     estado = 'diferente'
     for (const d of dif.slice(0, 6)) {

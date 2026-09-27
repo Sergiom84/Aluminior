@@ -38,8 +38,17 @@ export function clasificarHija(h: HijaFactura, tipoMetraje: string | null): Clas
   return 'material'
 }
 
-const clave = (articulo: string, cantidad: number, largo: number | null) =>
-  `${articulo}|${cantidad}|${largo === null ? '-' : Math.round(largo * 10) / 10}`
+const medida = (mm: number | null) => mm === null ? '-' : Math.round(mm * 10) / 10
+const clave = (articulo: string, cantidad: number, largo: number | null, ancho: number | null) =>
+  `${articulo}|${cantidad}|${medida(largo)}${ancho === null ? '' : `|${medida(ancho)}`}`
+
+function clavePieza(
+  pieza: { articulo: string; cantidad: number; largoMm: number | null; anchoMm: number | null },
+  porMetro: (articulo: string) => boolean,
+): string {
+  const ancho = pieza.anchoMm !== null && pieza.anchoMm > 0 ? pieza.anchoMm : null
+  return clave(pieza.articulo, pieza.cantidad, porMetro(pieza.articulo) || ancho !== null ? pieza.largoMm : null, ancho)
+}
 
 function multiconjunto(claves: string[]) {
   const m = new Map<string, number>()
@@ -54,8 +63,8 @@ export function diferenciasPiezas(
   porMetro: (articulo: string) => boolean,
 ): string[] {
   const a = multiconjunto(motor.filter(f => f.importe !== 0 || f.origen !== 'plantilla')
-    .map(f => clave(f.articulo, f.cantidad, porMetro(f.articulo) || f.anchoMm !== null ? f.largoMm : null)))
-  const b = multiconjunto(factura.map(h => clave(h.articulo, h.cantidad, porMetro(h.articulo) || h.anchoMm > 0 ? h.largoMm : null)))
+    .map(f => clavePieza(f, porMetro)))
+  const b = multiconjunto(factura.map(h => clavePieza(h, porMetro)))
   const dif: string[] = []
   for (const k of new Set([...a.keys(), ...b.keys()])) {
     const d = (a.get(k) ?? 0) - (b.get(k) ?? 0)
@@ -65,14 +74,26 @@ export function diferenciasPiezas(
 }
 
 /** Importe del motor valorando cada fila al precio unitario de la factura cuando existe. */
-export function importeConPreciosFactura(motor: readonly FilaDespieceCatalogo[], factura: readonly HijaFactura[]): number | null {
-  const precios = new Map(factura.map(h => [h.articulo, h.precio]))
+export function importeConPreciosFactura(
+  motor: readonly FilaDespieceCatalogo[], factura: readonly HijaFactura[], porMetro: (articulo: string) => boolean,
+): number | null {
+  const precios = new Map<string, { precio: number; disponibles: number }>()
+  for (const h of factura) {
+    if (!Number.isFinite(h.precio)) return null
+    const k = clavePieza(h, porMetro)
+    const anterior = precios.get(k)
+    // Sin identidad adicional no se puede asignar precios distintos a piezas idénticas.
+    if (anterior && anterior.precio !== h.precio) return null
+    precios.set(k, { precio: h.precio, disponibles: (anterior?.disponibles ?? 0) + 1 })
+  }
   let total = 0
   for (const f of motor) {
-    if (f.metraje === null) return null
-    const precio = precios.get(f.articulo)
-    if (precio === undefined) { if (f.importe === null) return null; total += f.importe; continue }
-    total += Math.round(precio * f.metraje * 100 + 1e-9) / 100
+    if (f.metraje === null || !Number.isFinite(f.metraje)) return null
+    const p = precios.get(clavePieza(f, porMetro))
+    if (!p?.disponibles) return null
+    p.disponibles--
+    total += Math.round(p.precio * f.metraje * 100 + 1e-9) / 100
   }
+  if ([...precios.values()].some(p => p.disponibles !== 0)) return null
   return Math.round(total * 100) / 100
 }

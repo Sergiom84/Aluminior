@@ -15,10 +15,11 @@ avances de las fases 3–7. Las numeraciones de PLAN y lotes J son distintas.
 | 4. Materiales | Excepciones de serie/vidrio por elemento, herencia y aplicación a modelos iguales | Otras familias y semántica completa de actualización colectiva |
 | 5. Vidrio | Buscador real, código canónico, integración y guardas de hojas incompletas | E11, D.A. económico completo, huecos/travesaños de Diseño V3 |
 | 6. Uniones | 14 códigos, grosor de catálogo, esquineros a cero y longitud valorada | Compatibilidades, variantes y contraste de todas las uniones/series |
-| 7. Valoración | Cortes C2/C3 GMC400, carga suplementaria 0022 local, diagnóstico y banco de facturas | Motor completo; vidrio/herrajes/Dif; reproducción independiente: 0 facturas acreditadas |
+| 7. Valoración | Motor de catálogo 0023 local; selección GM60 127/127; cinco 3HO completas; contraste 179 exactas y 117 con diferencia de precio unitario | 25 diferencias económicas, 18 bloqueadas, 9 despieces distintos; cotas, diseños específicos, Dif y accesorios; ver fase 7/09 |
 | 8. Aceptación | Evidencias locales de PDF, teclado y móvil de cambios concretos | Recorrido integral, precio, fabricación y aceptación del taller |
 
 Fuentes: resúmenes de fases 1–7 y [relevo vigente](INICIO-SIGUIENTE-CONVERSACION.md).
+Último lote y límites del denominador: [fase 7/09](fase-7/09-continuacion-local.md).
 Ni un inventario ni las pruebas técnicas convierten una fase parcial en cerrada.
 
 

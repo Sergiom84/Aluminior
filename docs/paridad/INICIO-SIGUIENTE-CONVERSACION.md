@@ -4,11 +4,35 @@ Actualizado el 27/09/2026. Este es el relevo operativo vigente. El estado de
 implementación está en [ESTADO-ACTUAL](../ESTADO-ACTUAL.md); el mapa actualizado
 de fases, en [ESTADO-FASES](ESTADO-FASES.md). Los prompts antiguos son históricos.
 
+## Último lote: continuación en el equipo de Sergio
+
+Leer primero [fase 7/09](fase-7/09-continuacion-local.md). Rama
+`feat/motor-catalogo-completo`, recibida en `0ecdc9c`; no se fusionó `main`
+ni se escribió en Supabase. Copias de Productor en
+`C:\Users\sergi\Desktop\MIX\Productor\Aluminio`, con años en
+`Base datos Anuales`; EMP0016 es 2026. `export_datos/` y `output/` están aquí.
+
+- GM60 ya estaba resuelto por sus 19 filas: selección 127/127. Se añadieron
+  guardas de integridad; no hace falta inventar generación automática.
+- Cerrados cortes TMG/MV+B y mano de obra TMG: cinco 3HO ya valorables.
+- Corregida la opción de acristalamiento ignorada por el adaptador nuevo.
+- Contraste riguroso: 179 exactas, 117 atribuibles al precio unitario,
+  25 con diferencia económica pendiente, 18 bloqueadas, 9 despieces distintos.
+  La cifra antigua «138 solo tarifa» no era correcta.
+- PostgreSQL: 310 importes coinciden, 16 bloqueos coinciden y una entrada
+  sin plantilla es rechazada; 21 con ajuste manual fuera de ese ensayo.
+- Siguiente: cotas FI/TD/F con procedencia (seis de ocho localizadas),
+  discrepancias económicas, catálogo visual C2 y recorrido en navegador.
+
+Los apartados históricos siguientes conservan el recorrido del otro equipo.
+Las afirmaciones de «sin implementar» y los conteos anteriores quedan
+sustituidos por 06–09 y la verificación de 09.
+
 ## Encargo y resultado esperado
 
-Continuar en `C:\Users\laral\Documents\Aluminior`, rama `main`, preservando
-todos los cambios sin commit. Obtener el máximo de información útil y
-verificable de `C:\Productor\Aluminio` para reproducir todas las tipologías,
+Continuar en `C:\Users\sergi\Desktop\Aplicaciones\Aluminior`, rama
+`feat/motor-catalogo-completo`, preservando los cambios existentes. Obtener
+el máximo de información útil y verificable de las copias locales para reproducir todas las tipologías,
 series, uniones, opciones y operaciones del taller en Aluminior. No limitar
 el producto a C2/C3 ni a las estructuras vendidas durante 2026.
 
@@ -31,8 +55,8 @@ usuario solo ante un bloqueo concreto que las fuentes disponibles no resuelvan.
 3. Consultar resúmenes de fases 1–6 y sus evidencias al abordar ese flujo.
    PLAN anexos S y T contiene investigación extensa con hipótesis rectificadas;
    leer conclusiones posteriores antes de reutilizar sus scripts.
-4. Inspeccionar `git status --short`, diff y procesos locales. HEAD observado:
-   `a708af3`; no implica que los cambios posteriores estén comprometidos.
+4. Inspeccionar `git status --short`, diff y procesos locales. Base recibida
+   de GitHub: `0ecdc9c`; comprobar los commits locales posteriores.
 5. Comprobar existencia de copias y artefactos locales. Las rutas ignoradas
    no viajan con Git. July no estaba disponible; consultar si vuelve a estarlo.
 
@@ -198,9 +222,12 @@ restricciones. No declares paridad por un inventario o un total coincidente.»
 Ver [fase-7/06](fase-7/06-reglas-catalogo-despiece-completo.md). Asociados,
 cortes con división de huecos, vidrio 2D, junquillos, MO por módulos e importe
 por fila derivados del catálogo. Contraste versionado
-(`scripts/contrastar-despiece-facturas.ts`): 348 líneas no específicas →
-178 exactas al céntimo, 138 con piezas idénticas (diferencia solo de tarifa),
-23 bloqueadas, 9 distintas. Vía web (PostgreSQL) = CSV en 327/327.
+(`scripts/contrastar-despiece-facturas.ts`): el primer relevo comunicó 178
+exactas y agrupó otras 138 como tarifa. Al reproducirlo se separaron 115
+atribuibles al precio unitario y 23 diferencias económicas pendientes.
+La cifra vigente tras endurecer el contraste y resolver 3HO está en 09.
+La antigua igualdad web/CSV 327/327 incluía importes nulos: no eran 327
+líneas valoradas.
 
 Código: `core/despiece/{asociaciones,linea-catalogo}`, `medidas-plantilla`,
 `acristalamiento-catalogo`, `mano-obra-fabricacion`, `precios/importe-fila`;
@@ -208,7 +235,8 @@ migración aditiva 0023 + `npm run etl:catalogo-despiece:local`; web
 `_lib/estructuras/catalogo-despiece/` conectado en `valorarEstructura` y
 cerramientos (snapshot `FILA_CENTIMOS`). 0023 NO aplicada en Supabase.
 
-Pendiente: tabla de acristalamiento automática (ELEGANTPVC GM60), cotas de
-instancia (FI/TD/F), divisiones B3/TMG (3HO), diseños específicos (73),
+Pendiente actualizado: cotas de instancia (FI/TD/F), divisiones B3 no
+contrastadas, diseños específicos (73),
 compactos/mosquiteras/tapajuntas, marco −53 en 6 C2, catálogo visual del
-configurador (C2 no dibujable), verificación en navegador y suite completa.
+configurador (C2 no dibujable) y verificación en navegador. GM60, TMG/3HO
+y la suite completa se revisaron en [fase 7/09](fase-7/09-continuacion-local.md).

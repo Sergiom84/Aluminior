@@ -8,8 +8,10 @@
  * aportación: C2 GMC400 = módulo 8 (20) + módulo 15 × 2 (40); fijo GMA350 =
  * 25 + 10 + 20 (fase-7/06).
  *
+ * Grupo TMG: una aportación por elemento y cantidad de plantilla, contrastada
+ * en tres hojas y puertas con fijo superior (fase-7/08).
  * Sin contrastar en este catálogo: tiempos por dimensión, preparación,
- * conceptos por componente o grupo y conceptos del tipo de apertura con
+ * conceptos por componente u otros grupos y conceptos del tipo de apertura con
  * tiempo. Si alguno aportaría minutos, se informa y no se inventa.
  */
 
@@ -65,6 +67,11 @@ export function minutosFabricacion(entrada: {
       if (c.articuloAsociado && c.articuloAsociado === e.articuloPlantilla) emitir(c, e.cantidad)
       const porComponente = c.componenteAsociado && c.componenteAsociado !== '!' && c.componenteAsociado === e.componente
       const porGrupo = c.grupoAsociado && c.grupoAsociado !== '!' && c.grupoAsociado === e.grupo
+      const soloGrupo = !c.modulo && !c.articuloAsociado && (!c.componenteAsociado || c.componenteAsociado === '!')
+      if (porGrupo && c.grupoAsociado === 'TMG' && soloGrupo) {
+        emitir(c, e.cantidad)
+        continue
+      }
       if ((porComponente || porGrupo) && c.minutos > 0) {
         incidencias.push(`mano de obra ${c.codigo}: asociación por ${porComponente ? 'componente' : 'grupo'} sin contrastar`)
       }

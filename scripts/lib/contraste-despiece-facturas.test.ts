@@ -26,7 +26,29 @@ describe('contraste de despiece con facturas', () => {
       .toEqual(['+1 P|1|900', '-1 P|1|1000'])
   })
   it('revalora con el precio unitario de la factura para aislar diferencias de tarifa', () => {
-    expect(importeConPreciosFactura([motor({ articulo: 'P', metraje: 1.26, importe: 99 })], [hija({ articulo: 'P', precio: 1.81 })])).toBe(2.28)
-    expect(importeConPreciosFactura([motor({ metraje: null })], [])).toBeNull()
+    expect(importeConPreciosFactura([motor({ articulo: 'P', metraje: 1.26, importe: 99 })], [hija({ articulo: 'P', precio: 1.81 })], () => false)).toBe(2.28)
+    expect(importeConPreciosFactura([motor({ metraje: null })], [], () => false)).toBeNull()
+  })
+  it('detecta un ancho de vidrio distinto aunque coincidan largo y cantidad', () => {
+    expect(diferenciasPiezas([motor({ largoMm: 1200, anchoMm: 500 })],
+      [hija({ largoMm: 1200, anchoMm: 600 })], () => false)).toHaveLength(2)
+  })
+  it('conserva la multiplicidad de vidrios de ambas medidas', () => {
+    const a = motor({ largoMm: 1200, anchoMm: 500 })
+    expect(diferenciasPiezas([a, a], [hija({ largoMm: 1200, anchoMm: 500 }),
+      hija({ largoMm: 1200, anchoMm: 600 })], () => false)).toHaveLength(2)
+  })
+  it('asigna precios por pieza sin sobrescribir el mismo artículo de otra medida', () => {
+    expect(importeConPreciosFactura([
+      motor({ largoMm: 1000, metraje: 1 }), motor({ largoMm: 2000, metraje: 2 }),
+    ], [hija({ largoMm: 2000, precio: 7 }), hija({ largoMm: 1000, precio: 3 })], () => true)).toBe(17)
+  })
+  it('no atribuye a tarifa un precio ausente ni una pieza reutilizada', () => {
+    expect(importeConPreciosFactura([motor({})], [], () => false)).toBeNull()
+    expect(importeConPreciosFactura([motor({}), motor({})], [hija({})], () => false)).toBeNull()
+  })
+  it('deja sin acreditar un emparejamiento con precios ambiguos', () => {
+    expect(importeConPreciosFactura([motor({}), motor({})],
+      [hija({ precio: 3 }), hija({ precio: 7 })], () => false)).toBeNull()
   })
 })

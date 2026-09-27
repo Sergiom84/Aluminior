@@ -1,10 +1,14 @@
 # Fase 7 — diagnóstico económico y salida comercial (parcial)
 
-Actualización consolidada: [barrido de facturas 2026](05-primer-barrido-facturas-2026.md),
-180 documentos y 28.480 líneas. Ningún caso de ese banco está acreditado aún
-como calculable/contrastado. Alcance: todas las tipologías, series y uniones.
-Los apartados diagnósticos siguientes son anteriores a la importación 0022:
-referencias y descuentos base ya se conservan; Dif y reglas completas no.
+Actualización consolidada: [continuación local](09-continuacion-local.md).
+Motor de catálogo y suplementos 0022/0023 disponibles en local; GM60 verificado,
+cinco 3HO desbloqueadas y opción de acristalamiento corregida. En 348 líneas
+no específicas: 179 exactas al céntimo, 117 con diferencia de precio unitario,
+25 con diferencia económica pendiente, 18 bloqueadas y 9 despieces distintos.
+No incluye diseños específicos ni certifica todos los extras o fabricación.
+
+Los apartados diagnósticos siguientes son anteriores al motor completo de
+[06](06-reglas-catalogo-despiece-completo.md); conservan su valor histórico.
 
 
 > Continuidad revisada el 27/09/2026: [punto de partida vigente](../INICIO-SIGUIENTE-CONVERSACION.md). Las comprobaciones fechadas conservan sus límites; consultar el relevo para el trabajo siguiente.

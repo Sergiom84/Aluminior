@@ -25,6 +25,7 @@ export interface EntradaCatalogoLinea {
   serie: string
   vidrio: string | null
   tarifa: number
+  opcionAcristalamiento?: number
 }
 
 export async function leerCatalogoLinea(cliente: ClienteEscritura, e: EntradaCatalogoLinea): Promise<CatalogoLinea | null> {
@@ -71,7 +72,13 @@ export async function leerCatalogoLinea(cliente: ClienteEscritura, e: EntradaCat
     ...resolucionesFilas.map(r => ({ conjuntoCodigo: r.conjuntoCodigo, componente: r.componente, articuloCodigo: r.articuloCodigo })),
     ...vaciasFilas.map(r => ({ conjuntoCodigo: r.conjuntoCodigo, componente: r.componente, articuloCodigo: '0' })),
   ])
-  const tablaHojas = conjuntoFila[0]?.tablaHojas ?? null, tablaFijos = conjuntoFila[0]?.tablaFijos ?? null
+  const opcion = e.opcionAcristalamiento ?? 1
+  const [alternativa] = await cliente.select().from(schema.conjuntoAcristalamientos).where(and(
+    eq(schema.conjuntoAcristalamientos.conjuntoCodigo, e.serie), eq(schema.conjuntoAcristalamientos.opcion, opcion)))
+  // La opción 1 conserva el catálogo previo si aún no se cargó 0021. Una
+  // alternativa incompleta nunca puede sustituirse silenciosamente por ella.
+  const tablas = alternativa ?? (opcion === 1 ? conjuntoFila[0] : undefined)
+  const tablaHojas = tablas?.tablaHojas ?? null, tablaFijos = tablas?.tablaFijos ?? null
   const tacris = await cliente.select().from(schema.tacrisFilas)
     .where(inArray(schema.tacrisFilas.tabla, [tablaHojas, tablaFijos].filter((t): t is string => !!t).concat('')))
 

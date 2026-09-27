@@ -65,6 +65,7 @@ export async function valorarConCatalogo(
     !(entrada.altoMm > 0) || !(entrada.anchoMm >= 0)) return null
   const catalogo = await leerCatalogoLinea(cliente, {
     estructura: entrada.codigo, serie: entrada.serieCodigo, vidrio: entrada.vidrioCodigo, tarifa: entrada.tarifa,
+    opcionAcristalamiento: entrada.opcionAcristalamiento,
   })
   if (!catalogo) return null
   const [estructura] = await cliente.select({ descripcion: schema.estructuras.descripcion })

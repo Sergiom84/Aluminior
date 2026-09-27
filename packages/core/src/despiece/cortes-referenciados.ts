@@ -40,6 +40,8 @@ export interface CorteCatalogo {
  * las facturas de 2026 (fase-7/06):
  * - verticales de corredera `HVL`/`HVC`: se restan también sus descuentos;
  * - batiente central `B` con extremos iguales: `F(REF) − dto(extremo) − dto(B)/2`.
+ * - módulo `HP`/`2HA1O` entre `TMG` y `MV`, con batiente `B` (3HO):
+ *   `F(REF) − (dto(TMG) + dto(MV) + dto(B))/2` (fase-7/08).
  * Cualquier otra combinación bloquea la pieza.
  */
 export function resolverCortesReferenciados(
@@ -71,6 +73,12 @@ export function resolverCortesReferenciados(
     }
     if (adicionales.length === 1 && adicionales[0] === 'B' && nodo.grupoInicio === nodo.grupoFin) {
       return descuento(nodo, nodo.grupoInicio) + descuento(nodo, 'B') / 2
+    }
+    const entreMarcoYTravesano = nodo.grupoInicio === 'TMG' && nodo.grupoFin === 'MV' ||
+      nodo.grupoInicio === 'MV' && nodo.grupoFin === 'TMG'
+    if (adicionales.length === 1 && adicionales[0] === 'B' && entreMarcoYTravesano &&
+      nodo.grupo === 'HP' && nodo.tipoHoja === '2HA1O') {
+      return (descuento(nodo, nodo.grupoInicio) + descuento(nodo, nodo.grupoFin) + descuento(nodo, 'B')) / 2
     }
     throw new Error(`división de hueco con grupos ${adicionales.join('/')} sin contrastar`)
   }

@@ -78,6 +78,7 @@ describe('división del hueco por grupos adicionales', () => {
   const tabla: DescuentoCorte[] = [
     { grupoPrincipal: 'E', grupo: 'MH', tipoHoja: 'G', mm: 0 },
     { grupoPrincipal: 'MV', grupo: 'HP', tipoHoja: 'G', mm: 30 },
+    { grupoPrincipal: 'TMG', grupo: 'HP', tipoHoja: 'G', mm: 18 },
     { grupoPrincipal: 'B', grupo: 'HP', tipoHoja: 'G', mm: 6 },
     { grupoPrincipal: 'HVL', grupo: 'HP', tipoHoja: 'G', mm: -10 },
     { grupoPrincipal: 'HVC', grupo: 'HP', tipoHoja: 'G', mm: -12 },
@@ -89,8 +90,27 @@ describe('división del hueco por grupos adicionales', () => {
     expect(resolverCortesReferenciados([marco, hojaHorizontal(['HVL', 'HVC'])], tabla, { A: 1500 }).get(9)?.largoMm).toBe(712)
   })
   it.each([
+    ['TMG', 'MV'], ['MV', 'TMG'],
+  ])('reparte extremos %s/%s y batiente entre las dos hojas del módulo', (grupoInicio, grupoFin) => {
+    const hoja = hojaHorizontal(['B'], { grupoInicio, grupoFin, formulaReferencia: '(REF-FD)/2' })
+    const r = resolverCortesReferenciados([hoja, marco], tabla, { A: 1700, FD: 460 })
+    expect(r.get(9)).toEqual({ largoMm: 593, incidencia: null })
+  })
+  it('usa descuentos específicos del módulo mixto sin sustituir el extremo distinto', () => {
+    const hoja = hojaHorizontal(['B'], { grupoInicio: 'TMG', formulaReferencia: '(REF-420)/2' })
+    const especificos = [
+      { grupoPrincipal: 'TMG', grupo: 'HP', tipoHoja: '2HA1O', mm: 20 },
+      { grupoPrincipal: 'B', grupo: 'HP', tipoHoja: '2HA1O', mm: 8 },
+    ]
+    expect(resolverCortesReferenciados([marco, hoja], [...tabla, ...especificos], { A: 1500 }).get(9)?.largoMm).toBe(511)
+  })
+  it.each([
     ['otros grupos', hojaHorizontal(['B', 'B3'])],
-    ['batiente con extremos distintos', hojaHorizontal(['B'], { grupoFin: 'TMG' })],
+    ['batiente con otro extremo distinto', hojaHorizontal(['B'], { grupoFin: 'TMP' })],
+    ['otro grupo destino mixto', hojaHorizontal(['B'], { grupoFin: 'TMG', grupo: 'HG' })],
+    ['otro tipo de hoja mixto', hojaHorizontal(['B'], { grupoFin: 'TMG', tipoHoja: '3HA' })],
+    ['descuento de travesaño ausente', hojaHorizontal(['B'], { grupoFin: 'TMG' }), tabla.filter(d => d.grupoPrincipal !== 'TMG')],
+    ['descuento de travesaño ambiguo', hojaHorizontal(['B'], { grupoFin: 'TMG' }), [...tabla, tabla[2]!]],
     ['descuento adicional ausente', hojaHorizontal(['HVL'], { tipoHoja: 'X' }), [tabla[0]!, tabla[1]!]],
   ])('bloquea %s', (_, hoja, filas = tabla) => {
     const r = resolverCortesReferenciados([marco, hoja as NodoCorteReferenciado], filas as DescuentoCorte[], { A: 1500 }).get(9)

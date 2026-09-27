@@ -39,7 +39,7 @@ describe('acristalarVidrio', () => {
   })
   it('bloquea vidrio sin fila, tabla vacía, por posiciones o sin descuento de junquillo', () => {
     expect(acristalarVidrio({ ...vidrio, grosorMm: 20 }, tabla, descuentos, existe).incidencias).toEqual(['sin junquillo para vidrio de 20 mm'])
-    expect(acristalarVidrio(vidrio, [], descuentos, existe).incidencias[0]).toMatch(/automática/)
+    expect(acristalarVidrio(vidrio, [], descuentos, existe).incidencias).toEqual(['tabla de acristalamiento sin filas persistidas'])
     expect(acristalarVidrio(vidrio, [{ ...tabla[0]!, posicion: 'Sup' }], descuentos, existe).incidencias[0]).toMatch(/posiciones/)
     expect(acristalarVidrio(vidrio, tabla, descuentos.slice(0, 1), existe).incidencias[0]).toMatch(/descuento de junquillo/)
   })

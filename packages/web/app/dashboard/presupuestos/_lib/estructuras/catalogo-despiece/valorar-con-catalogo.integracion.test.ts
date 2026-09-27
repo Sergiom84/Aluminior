@@ -31,7 +31,7 @@ async function caso(verificar: (tx: Tx) => Promise<void>) {
     await db.transaction(async tx => {
       await tx.insert(schema.estructuras).values({ codigo: 'QA-CORR', descripcion: 'Corredera sintética' })
       const articulos = [['QA-MARCO', 'ML'], ['QA-HOJA', 'ML'], ['QA-ROD', 'ML'], ['QA-FELPUDO', 'ML'], ['QA-CIERRE', 'UD'],
-        ['MO', 'UD'], ['QA-VIDRIO', 'M2'], ['QA-G', 'ML'], ['QA-G-HH', 'ML'], ['QA-G-HV', 'ML'], ['QA-G-INF', 'ML'],
+        ['QA-MO', 'UD'], ['QA-VIDRIO', 'M2'], ['QA-G', 'ML'], ['QA-G-HH', 'ML'], ['QA-G-HV', 'ML'], ['QA-G-INF', 'ML'],
         ['QA-G-MO', 'UD'], ['QA-G-CRISTAL', 'M2']]
       await tx.insert(schema.articulos).values(articulos.map(([codigo, tipoMetraje]) => ({ codigo: codigo!, descripcion: codigo!, tipoMetraje: tipoMetraje!,
         ...(codigo === 'QA-VIDRIO' ? { metrajeMultiploLargo: '6', metrajeMultiploAncho: '6', metrajeMinimo: '0.5' } : {}) })))
@@ -40,7 +40,7 @@ async function caso(verificar: (tx: Tx) => Promise<void>) {
         generico: codigo!.startsWith('QA-G'),
         dobleAcristalamiento: codigo === 'QA-VIDRIO', grosorAcristalar: codigo === 'QA-VIDRIO' ? '16' : '0', incrementosPrecio: false })))
       await tx.insert(schema.articulosPvp).values([['QA-MARCO', 'L', '10'], ['QA-HOJA', 'L', '8'], ['QA-ROD', 'L', '6'],
-        ['QA-FELPUDO', 'UNI', '1'], ['QA-CIERRE', 'UNI', '4'], ['MO', 'UNI', '0.5'], ['QA-VIDRIO', 'UNI', '50']]
+        ['QA-FELPUDO', 'UNI', '1'], ['QA-CIERRE', 'UNI', '4'], ['QA-MO', 'UNI', '0.5'], ['QA-VIDRIO', 'UNI', '50']]
         .map(([articuloCodigo, acabadoCodigo, precio]) => ({ articuloCodigo: articuloCodigo!, acabadoCodigo: acabadoCodigo!, tarifa: 1, precio: precio! })))
       await tx.insert(schema.estructuraPlantillaCatalogo).values([
         fila(1, { articulo: 'QA-G', componente: '12', funcion: 'MV', grupo: 'MV', grupoIzquierdo: 'E', grupoDerecho: 'E', posicionTrabajo: 'L' }),
@@ -67,7 +67,7 @@ async function caso(verificar: (tx: Tx) => Promise<void>) {
         { ...asociacion, id: 'QA-2', conjuntoCodigo: 'QA-HERR', articulo: 'QA-CIERRE', componente: 'EHC', opcion: '1' },
       ])
       await tx.insert(schema.opcionesHerraje).values({ conjuntoCodigo: 'QA-HERR', opcionCodigo: '1', descripcion: 'Cierre', porDefecto: true })
-      await tx.insert(schema.manoObraConceptos).values({ codigo: 'QA-M8', minutos: '20', articulo: 'MO', modulo: '8', conIncrementos: false })
+      await tx.insert(schema.manoObraConceptos).values({ codigo: 'QA-M8', minutos: '20', articulo: 'QA-MO', modulo: '8', conIncrementos: false })
       await verificar(tx)
       throw rollback
     })
@@ -79,13 +79,43 @@ const entrada: EntradaValoracionEstructura = {
   varianteAcristalamiento: '2', acabadoCodigo: 'L', tarifa: 1, opcionesHerraje: ['QA-HERR|1'],
 }
 
+async function alternativaAcristalamiento(tx: Tx) {
+  await tx.insert(schema.articulos).values({ codigo: 'QA-J2', descripcion: 'Junquillo alternativo', tipoMetraje: 'ML' })
+  await tx.insert(schema.articulosPvp).values({ articuloCodigo: 'QA-J2', acabadoCodigo: 'L', tarifa: 1, precio: '2' })
+  await tx.insert(schema.tacrisFilas).values({ tabla: 'QA-T2', posicion: '*', grosor: '99', junquillo: 'QA-J2' })
+  await tx.insert(schema.conjuntoAcristalamientos).values([
+    { conjuntoCodigo: 'QA-SERIE', opcion: 1, tablaHojas: 'QA-T', tablaFijos: 'QA-T' },
+    { conjuntoCodigo: 'QA-SERIE', opcion: 2, tablaHojas: 'QA-T2', tablaFijos: 'QA-T2' },
+  ])
+  await tx.insert(schema.conjuntoDescuentosCorte).values([['HVL', 'JH'], ['HH', 'JV']].map(([grupoPrincipal, grupo]) => ({
+    conjuntoCodigo: 'QA-SERIE', familia: '001', grupoPrincipal: grupoPrincipal!, grupo: grupo!, tipoHoja: 'G', descuentoMm: '0',
+  })))
+}
+
 describe('valoración con el catálogo de despiece completo', () => {
+  it('usa el junquillo y precio de la opción de acristalamiento elegida', () => caso(async tx => {
+    await alternativaAcristalamiento(tx)
+    const base = await valorarEstructura(tx, entrada)
+    const alternativa = await valorarEstructura(tx, { ...entrada, opcionAcristalamiento: 2 })
+    expect(base).toMatchObject({ ok: true, motor: 'catalogo', precioUnitario: 139.56 })
+    expect(alternativa).toMatchObject({ ok: true, motor: 'catalogo', precioUnitario: 154.2, materialCompleto: true })
+    if (!alternativa.ok) throw new Error('rechazada')
+    expect(alternativa.piezas.filter(p => p.articuloCodigo === 'QA-J2')).toHaveLength(4)
+  }))
+  it('una tabla alternativa sin filas bloquea el precio y no usa la opción principal', () => caso(async tx => {
+    await alternativaAcristalamiento(tx)
+    await tx.delete(schema.tacrisFilas).where(eq(schema.tacrisFilas.tabla, 'QA-T2'))
+    const r = await valorarEstructura(tx, { ...entrada, opcionAcristalamiento: 2 })
+    expect(r).toMatchObject({ ok: true, motor: 'catalogo', precioUnitario: null, materialCompleto: false })
+    if (!r.ok) throw new Error('rechazada')
+    expect(r.aviso).toContain('sin filas persistidas')
+  }))
   it('valora perfiles, asociados, vidrio y mano de obra desde PostgreSQL', () => caso(async tx => {
     const r = await valorarEstructura(tx, entrada)
     expect(r).toMatchObject({ ok: true, motor: 'catalogo', precioUnitario: 139.56, aviso: null, materialCompleto: true })
     if (!r.ok) throw new Error('rechazada')
     expect(r.piezas.map(p => p.articuloCodigo)).toEqual(['QA-MARCO', 'QA-MARCO', 'QA-ROD', 'QA-HOJA', 'QA-ROD', 'QA-HOJA',
-      'QA-FELPUDO', 'QA-FELPUDO', 'QA-CIERRE', 'QA-CIERRE', 'QA-VIDRIO', 'QA-VIDRIO', 'MO'])
+      'QA-FELPUDO', 'QA-FELPUDO', 'QA-CIERRE', 'QA-CIERRE', 'QA-VIDRIO', 'QA-VIDRIO', 'QA-MO'])
     expect(r.opcionesHerraje).toEqual([{ categoria: 'QA-HERR', opcionCodigo: '1', descripcion: 'Cierre' }])
     expect(r.acristalamiento).toHaveLength(2)
   }))

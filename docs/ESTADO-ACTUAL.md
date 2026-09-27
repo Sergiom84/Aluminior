@@ -7,24 +7,28 @@ con precio automático completo y uso moderno. Implementación parcial;
 no hay aceptación integral de fabricación o precio. La instalación todavía
 no está agotada como fuente de datos y reglas.
 
-El [barrido de facturas](paridad/fase-7/05-primer-barrido-facturas-2026.md)
-aporta 180 facturas / 28.480 líneas; 854 enlaces exactos a albarán y 715
-hasta línea de presupuesto, con 14 y 139 pendientes respectivamente.
-Revisar discriminadores de tipo de origen antes de certificar trazabilidad.
-541 estructuras de catálogo, 495 sin estructura facturada en el periodo;
-cero casos acreditados como calculables o contrastados en ese banco.
+Rama de trabajo `feat/motor-catalogo-completo`, recibida en `0ecdc9c` y
+continuada en el equipo de Sergio. Motor de catálogo, importación 0023 y
+valoración web disponibles localmente. La [continuación local](paridad/fase-7/09-continuacion-local.md)
+rectifica GM60 (19 filas ya disponibles; selección 127/127), completa cinco
+ventanas 3HO con mano de obra y corrige las opciones de acristalamiento.
 
-La nueva implementación de cortes cubre solo perfiles ordinarios C2/C3 GMC400.
-Referencias y descuentos base ya se cargan; Dif, variantes, vidrio y herrajes
-completos siguen pendientes. El [relevo operativo](paridad/INICIO-SIGUIENTE-CONVERSACION.md)
-reúne fuentes, módulos, pruebas y plan de extracción. Main, HEAD observado
-a708af3, cambios posteriores sin commit y sin push. Entornos descritos abajo
-son observaciones fechadas: verificar disponibilidad antes de usarlos.
+Sobre 348 líneas no específicas: **179 exactas**, **117** con diferencia
+atribuible al precio unitario, **25** con diferencia económica pendiente,
+**18 bloqueadas** y **9 despieces distintos**. Las 73 con diseño específico
+quedan fuera. No equivale a paridad de todos los conceptos de factura ni
+aptitud para fabricación. Por PostgreSQL coinciden 310 importes, 16 bloqueos
+y queda un rechazo de entrada sin importe; 21 con ajuste manual fuera.
 
-Última entrega externa comunicada: 506 pruebas core, pruebas nuevas de
-cobertura, typecheck y arquitectura pasan; npm test completo no finalizó
-porque db/web no pudieron cargar configuración por acceso denegado.
-No se ha repetido esa suite durante esta revisión documental.
+Suite completa ejecutada localmente: core 567, DB 55, ETL 27 y web 661
+pruebas correctas. También 47 pruebas de scripts. Comandos, pruebas causales,
+typecheck, compilación y revisión independiente constan en fase 7/09.
+
+Siguiente: cotas FI/TD/F (seis de ocho recuperables de entradas explícitas),
+25 diferencias económicas, 9 despieces distintos, catálogo visual C2 y
+recorrido en navegador. No se fusionó `main` ni se escribió en Supabase.
+Las secciones siguientes conservan observaciones anteriores; los resultados
+vigentes son los de este encabezado y del [relevo](paridad/INICIO-SIGUIENTE-CONVERSACION.md).
 
 
 > Continuidad revisada el 27/09/2026: [punto de partida vigente](paridad/INICIO-SIGUIENTE-CONVERSACION.md). Las comprobaciones fechadas conservan sus límites; consultar el relevo para el trabajo siguiente.
