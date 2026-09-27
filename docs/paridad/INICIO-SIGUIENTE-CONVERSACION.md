@@ -6,16 +6,24 @@ de fases, en [ESTADO-FASES](ESTADO-FASES.md). Los prompts antiguos son históric
 
 ## Último lote: continuación en el equipo de Sergio
 
-Leer primero [11, TMP/16 y relevo](fase-8/11-tmp-03v-y-relevo.md),
+Leer primero [13, cotas económicas y relevo](fase-8/13-cotas-economicas-y-relevo.md)
+y su [contrato 12](fase-8/12-contrato-cotas-economicas.md). Continuación desde
+`f321935`: dos entradas FI originales unívocas elevan la coincidencia a
+38/41 piezas por caso C2FI/GMC400, sin activar precio ni cambiar producto.
+Tres perfiles con `DisIdPerAd` y la MO mantienen importe nulo. Siguiente
+unidad: acreditar esa regla con sus entradas antes de modificar cortes.
+La ausencia de C2FS/C2FSFI de esta extracción solo abarca presupuestos.
+
+Cierre productivo anterior: [11, TMP/16 y relevo](fase-8/11-tmp-03v-y-relevo.md),
 [10, contraste 03V de 2025](fase-8/10-contraste-03v-2025.md) y su
-[contrato 09](fase-8/09-contrato-03v-tmp.md). Parte de `b5dc16a` y cierra la
+[contrato 09](fase-8/09-contrato-03v-tmp.md). Commit `f321935`, desde `b5dc16a`, cierra la
 regla de núcleo/CSV, limitada a 03V estándar GMA350/GMA65OPT. Tres despieces
 y minutos coincidentes; dos importes exactos y una diferencia histórica de
 precio de vidrio. La web aún carece de metadatos y sigue bloqueada.
 EMP0015 es 2025 y EMP0016 es 2026; preservar fechas documentales, tarifas y
 fuentes distintas. No contar Anterior como muestra nueva ni trasladar la
 evidencia posterior de facturas C2P a estas bases anuales.
-Siguiente unidad de 08: entradas FI/FS y perfiles adicionales; no convertir
+La secuencia de 08 sigue en los perfiles adicionales; no convertir
 los 300 mm del dibujo en entrada económica. La integración web de 03V es
 otra unidad, con metadatos, pruebas de carga/adaptador y recorrido local.
 

@@ -1,6 +1,8 @@
 # Índice y revisión documental
 
-Último lote local: [TMP/16, 03V y relevo](paridad/fase-8/11-tmp-03v-y-relevo.md).
+Último lote local: [cotas económicas C2FI y relevo](paridad/fase-8/13-cotas-economicas-y-relevo.md),
+con [contrato 12](paridad/fase-8/12-contrato-cotas-economicas.md).
+Cierre productivo previo: [TMP/16 y 03V](paridad/fase-8/11-tmp-03v-y-relevo.md).
 Evidencia y contrato: [03V de 2025](paridad/fase-8/10-contraste-03v-2025.md),
 [unidad 09](paridad/fase-8/09-contrato-03v-tmp.md).
 Antecedentes: [cotas absolutas](paridad/fase-8/08-cotas-absolutas-y-relevo.md)

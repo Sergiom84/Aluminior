@@ -2,7 +2,14 @@
 
 ## Estado consolidado al 27/09/2026
 
-Última continuación desde `b5dc16a`: [TMP/16, 03V y relevo](paridad/fase-8/11-tmp-03v-y-relevo.md).
+Última continuación desde `f321935`: [cotas económicas C2FI y relevo](paridad/fase-8/13-cotas-economicas-y-relevo.md).
+Dos entradas FI originales enlazadas sin defaults: 21/41 → 38/41 piezas
+coincidentes por caso. Tres perfiles y la MO siguen bloqueados; importe nulo.
+Investigación local, sin cambio de producto. Siguiente: semántica de
+`DisIdPerAd` antes de resolver esas tres piezas. 61 pruebas focales,
+typecheck y arquitectura aprobados; fuentes originales intactas.
+
+Unidad productiva cerrada en `f321935`: [TMP/16 y 03V](paridad/fase-8/11-tmp-03v-y-relevo.md).
 Regla de mano de obra implementada en el núcleo, con metadatos explícitos y
 activación limitada a 03V estándar GMA350/GMA65OPT en el contraste CSV.
 Tres despieces completos coinciden; dos importes coinciden con las tarifas
@@ -13,8 +20,8 @@ las copias Anterior comparten documentos y no amplían la muestra independiente.
 La web sigue bloqueada hasta conservar/cargar los metadatos requeridos.
 No se habilitan otras series, específicos, 03H/06 ni CFT/TFF; fabricación pendiente.
 25 plantillas y 14 uniones sin cambios. Gates: 1514 pruebas de paquetes y
-191 de scripts; typecheck y arquitectura aprobados. Siguiente: FI/FS y
-perfiles adicionales con entradas originales, más la unidad de integración
+191 de scripts; typecheck y arquitectura aprobados. Pendientes: perfiles
+adicionales con entradas originales, más la unidad de integración
 web de 03V. No se modificaron originales, tarifas, migraciones ni remoto.
 
 ### Cierre anterior de cotas (antecedente)

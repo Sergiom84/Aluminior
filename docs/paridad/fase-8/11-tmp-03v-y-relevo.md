@@ -5,6 +5,9 @@
 [10](10-contraste-03v-2025.md). Cierre local del núcleo y su contraste CSV;
 **no activa el precio en la web** ni acredita fabricación.
 
+Commit de este cierre: `f321935`. Continuación FI/FS investigada y relevo
+vigente en [13](13-cotas-economicas-y-relevo.md), bajo el [contrato 12](12-contrato-cotas-economicas.md).
+
 ## Terminado
 
 - Regla pura TMP/16: selección por categoría explícita, cantidades agregadas

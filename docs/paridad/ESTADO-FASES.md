@@ -19,7 +19,8 @@ avances de las fases 3–7. Las numeraciones de PLAN y lotes J son distintas.
 | 8. Aceptación | Evidencias locales de PDF, teclado y móvil de cambios concretos | Recorrido integral, precio, fabricación y aceptación del taller |
 
 Fuentes: resúmenes de fases 1–7 y [relevo vigente](INICIO-SIGUIENTE-CONVERSACION.md).
-Último lote y límites del denominador: [fase 8/08](fase-8/08-cotas-absolutas-y-relevo.md).
+Último lote: [fase 8/13](fase-8/13-cotas-economicas-y-relevo.md).
+Inventario y límites de su denominador: [fase 8/08](fase-8/08-cotas-absolutas-y-relevo.md).
 Ni un inventario ni las pruebas técnicas convierten una fase parcial en cerrada.
 
 Ampliación económica desde `b5dc16a`: [03V de la fuente anual 2025](fase-8/10-contraste-03v-2025.md).
@@ -29,6 +30,11 @@ de precio histórico de vidrio. No amplía diseños específicos ni otras series
 La regla de dominio requiere metadatos que el consumidor web aún no conserva;
 su activación web, precio comercial completo y fabricación siguen pendientes.
 Los recuentos de facturas de fase 7 no se recalculan sumando estos presupuestos.
+
+Continuación desde `f321935`: recuperadas dos entradas FI de presupuestos
+C2FI/GMC400 de EMP0016 anual. 38/41 piezas coinciden por caso; tres perfiles
+adicionales y MO mantienen el importe nulo. Es investigación sin activación
+productiva ni extrapolación a C2FS/C2FSFI; ver fase 8/13.
 
 
 > Continuidad revisada el 27/09/2026: [punto de partida vigente](INICIO-SIGUIENTE-CONVERSACION.md). Las comprobaciones fechadas conservan sus límites; consultar el relevo para el trabajo siguiente.
