@@ -1,5 +1,7 @@
 # Continuación del editor y escaparate — 19/09/2026
 
+> Continuidad revisada el 27/09/2026: [punto de partida vigente](docs/paridad/INICIO-SIGUIENTE-CONVERSACION.md). Este documento conserva su alcance histórico; sus encargos no se reactivan.
+
 > Revisión documental 20/09/2026: **Evidencia histórica**. Verificación de carga autorizada en aquella sesión; no prueba estado remoto hoy.
 > Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
 

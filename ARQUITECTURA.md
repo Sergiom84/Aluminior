@@ -1,5 +1,14 @@
 # Decisiones de arquitectura
 
+Adenda de implementación 27/09/2026: core incorpora resolución pura de
+cortes por referencias y descuentos; web decide cobertura y carga catálogo;
+ETL conserva referencias/descuentos en dos tablas de la migración aditiva
+0022, aplicada solo a QA local. Las acciones siguen delgadas. Alcance económico
+todavía parcial; ver fase-7/03 y el relevo vigente.
+
+
+> Continuidad revisada el 27/09/2026: [punto de partida vigente](docs/paridad/INICIO-SIGUIENTE-CONVERSACION.md). Las comprobaciones fechadas conservan sus límites; consultar el relevo para el trabajo siguiente.
+
 Fecha: 18 de julio de 2026.
 Revisión modular: 20 de septiembre de 2026. Estado del código y límites de
 aceptación en [docs/ESTADO-ACTUAL.md](docs/ESTADO-ACTUAL.md). Las decisiones

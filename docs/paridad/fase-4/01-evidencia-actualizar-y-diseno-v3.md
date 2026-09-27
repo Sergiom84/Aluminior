@@ -1,5 +1,7 @@
 # Fase 4 — evidencia: actualizaciones colectivas, uniones y Diseño V3
 
+> Continuidad revisada el 27/09/2026: [punto de partida vigente](../INICIO-SIGUIENTE-CONVERSACION.md). Las comprobaciones fechadas conservan sus límites; consultar el relevo para el trabajo siguiente.
+
 Fecha: 26–27/09/2026. Observación en **PRUEBAS ALUMINIOR [0017]**, realizada a
 mano por el usuario con capturas; el 260497 daba fallo y se usaron el 260498 y
 el 260499 (cliente 00535). No se tocó la 0016. Acceso a la edición de línea:

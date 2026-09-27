@@ -1,5 +1,28 @@
 # Índice y revisión documental
 
+## Revisión integral de continuidad — 27/09/2026
+
+Inventariados los 76 Markdown propios presentes antes de crear el
+registro de esta revisión. Se revisaron títulos, clasificación, referencias de
+continuidad y afirmaciones de estado; lectura detallada de entradas activas,
+resúmenes y entregas recientes. No se ha revalidado cada hipótesis de los
+diarios extensos ni repetido ensayos históricos.
+
+Todos los documentos de referencia reciben enlace al relevo vigente; los
+contratos AGENTS/CLAUDE se conservan. Se corrigen estados obsoletos en entradas,
+fases, importación y trazabilidad. Evidencias fechadas permanecen como tales.
+Inventario completo y límites: [REVISION-DOCUMENTAL-2026-09-27.md](REVISION-DOCUMENTAL-2026-09-27.md).
+
+Entrada para la siguiente conversación: [extracción integral de Productor](paridad/INICIO-SIGUIENTE-CONVERSACION.md).
+Informes recientes: [fuentes](paridad/fase-7/02-investigacion-fuentes-2026-09-27.md),
+[implementación](paridad/fase-7/03-implementacion-cortes-referenciados.md),
+[cobertura integral](paridad/fase-7/04-cobertura-integral-y-facturas-2026.md) y
+[facturas](paridad/fase-7/05-primer-barrido-facturas-2026.md).
+La tabla del 20/09 que sigue es el inventario histórico de aquella revisión.
+
+
+> Continuidad revisada el 27/09/2026: [punto de partida vigente](paridad/INICIO-SIGUIENTE-CONVERSACION.md). Las comprobaciones fechadas conservan sus límites; consultar el relevo para el trabajo siguiente.
+
 Revisión del 20/09/2026: **53 Markdown del proyecto anteriores a este saneamiento**.
 Se revisan finalidad, referencias y afirmaciones de estado frente a código y cierres posteriores.
 Se conservan evidencias y diarios; los encargos antiguos se marcan inactivos.
@@ -80,7 +103,7 @@ propia y quedan fuera del saneamiento.
 
 ## Referencias ausentes y límites
 
-En este workspace faltan los entregables de fase 0 y los resúmenes 00–03 de fase 1
+En la revisión del 20/09 faltaban los entregables de fase 0 y los resúmenes 00–03 de fase 1
 que citan los prompts y auditorías. También hay referencias históricas a output y
 a otras rutas locales que no viajan con el repositorio. Se registra la ausencia;
 no se inventan entregables ni se borran las referencias que explican una auditoría.
@@ -92,4 +115,4 @@ observación de Productor y aceptación final siguen siendo estados distintos.
 
 ## Último cierre de jornada
 
-[20/09/2026: cierre, observación directa y punto de reanudación](CIERRE-JORNADA-2026-09-20.md). Registro vigente de continuidad; fases no verificadas conservan sus pendientes.
+[20/09/2026: cierre, observación directa y punto de reanudación](CIERRE-JORNADA-2026-09-20.md). Registro histórico; la continuidad vigente se encuentra en el relevo del 27/09.

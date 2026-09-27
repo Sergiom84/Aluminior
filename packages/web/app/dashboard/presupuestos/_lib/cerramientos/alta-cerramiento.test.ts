@@ -41,6 +41,24 @@ function clienteEspia(fallar = false) {
 }
 
 describe('alta de cerramiento', () => {
+  it.each(['PSU006', 'PSU007', 'PSU008', 'PSU009'])('guarda %s con grosor cero y ancho sin separación', codigo => {
+    const entrada = { ...configuracion, uniones: [{ ...configuracion.uniones[0], codigo, grosorMm: 0 }] }
+    const resultado = prepararAltaCerramiento({ ...datos, configuracionSerializada: JSON.stringify(entrada) })
+    expect(resultado.ok).toBe(true)
+    if (!resultado.ok) return
+    expect(resultado.alta.anchoMm).toBe(2400)
+    expect(resultado.alta.configuracion.uniones[0].grosorMm).toBe(0)
+    expect(resultado.alta.precioUnitario).toBeNull()
+  })
+
+  it('recalcula las medidas con el catálogo aunque el navegador envíe otro grosor', () => {
+    const entrada = { ...configuracion, uniones: [{ ...configuracion.uniones[0], grosorMm: 100 }] }
+    const resultado = prepararAltaCerramiento({ ...datos, configuracionSerializada: JSON.stringify(entrada) })
+    expect(resultado.ok).toBe(true)
+    if (resultado.ok) expect(resultado.alta.anchoMm).toBe(2402)
+    expect(entrada.uniones[0].grosorMm).toBe(100)
+  })
+
   it('recupera FI y versión exactamente desde el JSON existente', () => {
     const unoFi = crearConfiguracionCerramiento(plantillaDiseno('1OFI')!)
     unoFi.modulos[0].fiMm = 400

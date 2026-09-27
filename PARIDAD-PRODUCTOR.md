@@ -1,5 +1,13 @@
 # Paridad con Productor Aluminio
 
+Alcance ratificado el 27/09/2026: todas las tipologías, series, uniones y
+opciones del taller. Las facturas 2026 de EMP0016 son resultados de contraste,
+no entradas del cálculo. Las combinaciones ausentes requieren evidencia de
+catálogo y casos controlados. No limitar aceptación a C2/C3 o al total final.
+
+
+> Continuidad revisada el 27/09/2026: [punto de partida vigente](docs/paridad/INICIO-SIGUIENTE-CONVERSACION.md). Las comprobaciones fechadas conservan sus límites; consultar el relevo para el trabajo siguiente.
+
 Fecha de decisión: 2 de agosto de 2026.
 
 Revisión de continuidad: 20/09/2026. Este documento conserva criterios y

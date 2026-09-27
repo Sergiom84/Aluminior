@@ -1,5 +1,7 @@
 # Aluminior: ejecución y revisión para el uso de Javi
 
+> Continuidad revisada el 27/09/2026: [punto de partida vigente](docs/paridad/INICIO-SIGUIENTE-CONVERSACION.md). Este documento conserva su alcance histórico; sus encargos no se reactivan.
+
 > Revisión documental 20/09/2026: **Plan histórico**. Lotes J00–J10 no equivalen a las fases 0–8; implementación no certifica piloto.
 > Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
 

@@ -9,6 +9,7 @@ import type {
 } from '../lineas/guardar-linea.ts'
 import { resolverAcristalamientoEstructura } from './acristalamiento-estructura.ts'
 import { resolverOpcionesHerraje, ErrorSeleccionHerraje } from './herraje.ts'
+import { valorarConCatalogo } from './catalogo-despiece/valorar-con-catalogo.ts'
 import {
   articulosAmbiguos, avisoAmbiguos,
 } from './pvp-articulos.ts'
@@ -39,6 +40,8 @@ export type ResultadoValoracionEstructura =
       opcionesHerraje: OpcionHerrajeElegida[]
       partidas?: PartidaValoracionCerramiento[]
       materialCompleto?: boolean
+      /** `catalogo`: despiece completo de Productor (fase-7/06); si falta, la vía anterior. */
+      motor?: 'catalogo' | 'anterior'
     }
 
 /**
@@ -58,9 +61,11 @@ export async function valorarEstructura(
     const opciones = await opcionesAcristalamientoDeSerie(cliente, entrada.serieCodigo ?? '')
     if (!opciones.some(o => o.numero === numero)) return { ok: false, errores: { opcionAcristalamiento: ['Opción no disponible para la serie'] } }
   }
+  const catalogo = await valorarConCatalogo(cliente, entrada)
+  if (catalogo) return catalogo
   const material = await resolverMaterialesEstructura(cliente, entrada)
   if (!material.ok) return { ok: false, errores: material.errores }
-  if (!entrada.anchoMm || !entrada.altoMm || !entrada.serieCodigo) throw new Error('Material válido sin medidas')
+  if (entrada.anchoMm === null || entrada.altoMm === null || !entrada.serieCodigo) throw new Error('Material válido sin medidas')
   const { estructura, plantillaResuelta, genericos, sinResolver, sinResolverAsoc,
     variantesAplicadas, cotas, despiece, valoracion, piezas, pvp } = material
   let precioUnitario: number | null = material.precioUnitario
@@ -141,6 +146,7 @@ export async function valorarEstructura(
   }
   return {
     ok: true,
+    motor: 'anterior',
     descripcion: estructura.descripcion,
     precioUnitario,
     aviso,

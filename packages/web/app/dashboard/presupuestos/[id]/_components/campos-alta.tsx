@@ -3,6 +3,7 @@
 import { atributosCampo, bordeCampo } from '../../_lib/campos.ts'
 import { MensajeError } from './mensaje-error.tsx'
 import styles from '../presupuesto-movil.module.css'
+import { CampoVidrio } from './vidrios/campo-vidrio.tsx'
 
 const entrada = 'w-full rounded-md border px-3 py-2 text-sm'
 const estilo = { background: 'var(--al-surface)', borderColor: 'var(--al-border-strong)' }
@@ -19,8 +20,8 @@ export function CamposCerramiento({
   acabados: { codigo: string; descripcion: string }[]
   serie: string
   setSerie: (valor: string) => void
-  vidrio?: string
-  setVidrio?: (valor: string) => void
+  vidrio: string
+  setVidrio: (valor: string) => void
 }) {
   return (
     <div className={styles.fields}>
@@ -43,10 +44,10 @@ export function CamposCerramiento({
       </div>
       <div className="col-span-2">
         <label htmlFor="vidrioCodigo">Vidrio</label>
-        <input {...atributosCampo('vidrioCodigo', err)} className={entrada}
+        <CampoVidrio {...atributosCampo('vidrioCodigo', err)} className={entrada}
           style={{ ...estilo, borderColor: bordeCampo('vidrioCodigo', err, estilo.borderColor) }}
           placeholder="V420AGS4"
-          {...(setVidrio ? { value: vidrio ?? '', onChange: (evento) => setVidrio(evento.target.value.toUpperCase()) } : {})} />
+          value={vidrio} onChange={setVidrio} />
         <MensajeError campo="vidrioCodigo" errores={err} />
       </div>
       <div className="col-span-2">

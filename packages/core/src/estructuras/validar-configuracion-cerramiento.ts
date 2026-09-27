@@ -35,7 +35,8 @@ export function esConfiguracionCerramiento(valor: unknown): valor is Configuraci
     union && typeof union.id === 'string' && typeof union.codigo === 'string' &&
     (!unionConfigurada(union) || UNIONES_VISUALES.some((catalogo) => catalogo.codigo === union.codigo)) &&
     Number.isFinite(union.longitudMm) && union.longitudMm > 0 &&
-    Number.isFinite(union.grosorMm) && union.grosorMm > 0)
+    Number.isFinite(union.grosorMm) && (union.grosorMm > 0 ||
+      (union.grosorMm === 0 && UNIONES_VISUALES.some(c => c.codigo === union.codigo && c.unionTipo === 4))))
   const ids = [...candidato.modulos.map((modulo) => modulo.id),
     ...candidato.uniones.map((union) => union.id)]
   const versionCoherente = candidato.version === VERSION_COMPOSICION_CERRAMIENTO

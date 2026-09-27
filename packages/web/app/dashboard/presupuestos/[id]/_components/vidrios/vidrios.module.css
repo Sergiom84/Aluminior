@@ -1,0 +1,23 @@
+.campo { display: flex; gap: 4px; min-width: 0; }
+.campo input { min-width: 0; flex: 1; }
+.dialogo { width: min(850px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); margin: auto; padding: 16px; border: 1px solid var(--al-border-strong); border-radius: 6px; background: var(--al-surface); color: var(--al-text); font-size: 13px; }
+.dialogo::backdrop { background: rgb(0 0 0 / 35%); }
+.dialogo h2 { font-size: 16px; font-weight: 600; margin-bottom: 12px; }
+.busqueda { display: flex; flex-wrap: wrap; align-items: end; gap: 8px; margin-bottom: 8px; }
+.busqueda label { flex: 1; min-width: 180px; }
+.busqueda input { display: block; width: 100%; padding: 6px; border: 1px solid var(--al-border-strong); }
+.resultados { max-height: 55dvh; overflow: auto; margin: 8px 0; }
+.resultados table { width: 100%; border-collapse: collapse; }
+.resultados th, .resultados td { padding: 6px; border-bottom: 1px solid var(--al-border-strong); text-align: left; }
+.resultados th { position: sticky; top: 0; background: var(--al-surface); }
+.dialogo :focus-visible { outline: 2px solid var(--al-accent); outline-offset: 2px; }
+@media (max-width: 600px) {
+  .dialogo { padding: 10px; }
+  .resultados table { table-layout: fixed; }
+  .resultados th, .resultados td { padding: 4px 2px; overflow-wrap: anywhere; }
+  .resultados th:nth-child(1) { width: 26%; }
+  .resultados th:nth-child(2) { width: 43%; }
+  .resultados th:nth-child(3) { width: 12%; }
+  .resultados th:nth-child(4) { width: 19%; }
+  .resultados button { padding: 4px; min-width: 0; }
+}

@@ -31,7 +31,7 @@ describe('receta de seis módulos e identidad de alta', () => {
       expect((await altaCerramientoValorado(tx, entrada)).ok).toBe(true)
       const antes = await leerDocumentoOrigen(tx, p.id)
       expect(antes!.lineas).toHaveLength(1)
-      expect(antes!.lineas[0].linea).toMatchObject({ id: entrada.solicitudId, anchoMm: 6640,
+      expect(antes!.lineas[0].linea).toMatchObject({ id: entrada.solicitudId, anchoMm: 6542,
         altoMm: 1020, cantidad: '1.00', valoracionCompleta: true })
       expect(antes!.lineas[0].cerramiento?.configuracion).toEqual(recetaSeisModulos())
       expect(antes!.lineas[0].resultadoCerramiento).not.toBeNull()

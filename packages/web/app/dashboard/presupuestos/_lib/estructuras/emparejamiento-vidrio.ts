@@ -72,8 +72,14 @@ export function emparejarVidrio(
   piezas: readonly PiezaCortada[],
   nCristales: number,
 ): EmparejamientoVidrio {
-  const hvs = piezas.filter((pz) => pz.funcion === 'HV' && pz.largoMm !== null)
-  const hayHojas = hvs.length > 0
+  const hojas = piezas.filter((pz) => pz.funcion === 'HV' || pz.funcion === 'HH')
+  // Una hoja sin corte sigue siendo una hoja: no puede pasar a la rama FIJO
+  // ni desaparecer del recuento. El vidrio depende de todos sus cortes.
+  if (hojas.some((pz) => pz.largoMm === null)) {
+    return { ok: false, aviso: 'vidrio sin calcular: faltan medidas de corte de hoja' }
+  }
+  const hvs = hojas.filter((pz) => pz.funcion === 'HV')
+  const hayHojas = hojas.length > 0
   const contexto: ContextoVidrio = hayHojas ? 'HOJA' : 'FIJO'
 
   const verticales = hayHojas

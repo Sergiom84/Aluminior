@@ -1,6 +1,6 @@
 import { esConfiguracionCerramiento, esResultadoCerramiento, etapasVentaCerramiento, materialesEfectivos,
   unionConfigurada,
-  type ConfiguracionCerramiento, type ResultadoCerramientoV1,
+  type ConfiguracionCerramiento, type RedondeoVentaCerramiento, type ResultadoCerramientoV1,
   type ResultadoOrigenCerramiento } from '@aluminior/core/estructuras'
 import { sumarDecimal } from '@aluminior/core/precios'
 import type { ClienteEscritura } from '../cliente-db.ts'
@@ -8,6 +8,8 @@ import { valorarEstructura } from '../estructuras/valorar-estructura.ts'
 import { resolverMaterialesEstructura } from '../estructuras/materiales-estructura.ts'
 import { partidasValoracion } from '../estructuras/partidas-valoracion.ts'
 import { completarCostesOrigen } from './origen-valorado.ts'
+import { catalogoDespieceCargado } from '../estructuras/catalogo-despiece/cargado.ts'
+import { valorarConCatalogo } from '../estructuras/catalogo-despiece/valorar-con-catalogo.ts'
 
 export interface EntradaValoracionCerramiento {
   configuracion: ConfiguracionCerramiento
@@ -26,6 +28,9 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
   if (!esConfiguracionCerramiento(entrada.configuracion) || !Number.isInteger(entrada.tarifa) ||
     entrada.tarifa < 1 || entrada.tarifa > 32767) throw new Error('Configuración de valoración no válida')
   const origenes: ResultadoOrigenCerramiento[] = []
+  // Con el catálogo de despiece completo cargado, cada origen se valora por filas
+  // como Productor (FILA_CENTIMOS); sin él, la vía anterior y su protocolo.
+  const redondeo: RedondeoVentaCerramiento = await catalogoDespieceCargado(cliente) ? 'FILA_CENTIMOS' : 'ESTRUCTURA_NUMBER_V1'
   const geometria = [
     ...entrada.configuracion.modulos.map(m => ({ tipo: 'MODULO' as const, id: m.id, materiales: materialesEfectivos(m, entrada),
       codigo: m.estructuraCodigo, anchoMm: m.anchoMm, altoMm: m.altoMm })),
@@ -54,6 +59,16 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
     let piezas: Parameters<typeof completarCostesOrigen>[1] = []
     if (g.tipo === 'UNION' && !unionConfigurada(g)) {
       bloquear(`Unión ${g.id} sin configurar`)
+    } else if (g.tipo === 'UNION' && redondeo === 'FILA_CENTIMOS') {
+      const valor = await valorarConCatalogo(cliente, parametros)
+      if (!valor || !valor.ok) bloquear(`Unión ${g.id} sin catálogo de despiece`)
+      else {
+        piezas = valor.piezas
+        ventaMotor = valor.precioUnitario
+        origen.reglaMaterial = piezas.length ? `estructura:${g.codigo}` : null
+        origen.partidasValoracion = valor.partidas ?? []
+        if (valor.precioUnitario === null) bloquear(valor.aviso ?? `Unión ${g.id} incompleta`, valor.materialCompleto !== true)
+      }
     } else if (g.tipo === 'UNION') {
       const material = await resolverMaterialesEstructura(cliente, parametros)
       if (!material.ok) bloquear(JSON.stringify(material.errores))
@@ -75,7 +90,18 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
       }
     } else {
       const valor = await valorarEstructura(cliente, parametros)
-      if (!valor.ok) bloquear(JSON.stringify(valor.errores))
+      if (!valor.ok) {
+        const detalle = Object.entries(valor.errores).flatMap(([campo, mensajes]) =>
+          mensajes.map(mensaje => campo === 'vidrioCodigo'
+            ? `Vidrio «${origen.vidrioCodigo ?? ''}»: ${mensaje}` : mensaje)).join('; ')
+        bloquear(detalle)
+        origen.diagnosticos = [...origen.diagnosticos, {
+          codigo: 'COSTE_INCOMPLETO', ambito: 'COSTE', bloqueante: true, detalle }]
+        // La validación impidió calcular: no hay evidencia de una receta vacía
+        // ni de costes ausentes. Conservamos el bloqueo con su causa original.
+        origenes.push(origen)
+        continue
+      }
       else {
         piezas = valor.piezas
         ventaMotor = valor.precioUnitario
@@ -86,12 +112,15 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
         origen.opcionesHerraje = valor.opcionesHerraje.map(o => ({ categoria: o.categoria,
           opcionCodigo: o.opcionCodigo, descripcion: o.descripcion ?? null }))
         if (valor.precioUnitario === null) bloquear(valor.aviso ?? 'Estructura incompleta', valor.materialCompleto !== true)
-        if (origen.opcionesHerraje.length || parametros.opcionesHerraje.length) bloquear('Herrajes seleccionados sin resolución material demostrada')
+        if (valor.motor !== 'catalogo' && (origen.opcionesHerraje.length || parametros.opcionesHerraje.length)) {
+          bloquear('Herrajes seleccionados sin resolución material demostrada')
+        }
+        if (redondeo === 'FILA_CENTIMOS' && valor.motor !== 'catalogo') bloquear(`Módulo ${g.codigo} sin catálogo de despiece completo`)
       }
     }
-    const etapas = etapasVentaCerramiento(origen.partidasValoracion)
+    const etapas = etapasVentaCerramiento(origen.partidasValoracion, redondeo)
     if (etapas && ventaMotor !== null && Number(etapas.total) !== ventaMotor)
-      bloquear('El metraje no se puede representar en snapshot v1 sin cambiar el importe del motor', false)
+      bloquear('El metraje no se puede representar en el snapshot sin cambiar el importe del motor', false)
     if (!piezas.length || !origen.partidasValoracion.length) bloquear('Receta material vacía')
     if (etapas && !origen.diagnosticos.some(d => d.ambito === 'VENTA' && d.bloqueante))
       origen.venta = { completo: true, importe: etapas.total }
@@ -104,8 +133,8 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
       ? origenes.reduce((s, o) => sumarDecimal(s, o[campo].importe!, escala), '0') : null }
   }
   const resultado: ResultadoCerramientoV1 = {
-    version: 1, redondeoVenta: 'ESTRUCTURA_NUMBER_V1', configuracion: entrada.configuracion,
-    motor: { codigo: 'CATALOGO_CERRAMIENTO', version: '1' }, tarifa: entrada.tarifa,
+    version: 1, redondeoVenta: redondeo, configuracion: entrada.configuracion,
+    motor: { codigo: 'CATALOGO_CERRAMIENTO', version: redondeo === 'FILA_CENTIMOS' ? '2' : '1' }, tarifa: entrada.tarifa,
     unidadMateriales: 'COMPOSICION', ambitoManoObraManual: 'LINEA', origenes,
     ventaMateriales: total('venta', 2), costeMateriales: total('coste', 4),
   }

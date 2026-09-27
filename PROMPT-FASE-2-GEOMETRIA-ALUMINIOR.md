@@ -1,5 +1,7 @@
 # Aluminior — cierre de aceptación de fase 1 y ejecución de fase 2
 
+> Continuidad revisada el 27/09/2026: [punto de partida vigente](docs/paridad/INICIO-SIGUIENTE-CONVERSACION.md). Este documento conserva su alcance histórico; sus encargos no se reactivan.
+
 > Revisión documental 20/09/2026: **Encargo histórico inactivo**. Geometría ya implementada; no reiniciarla. Aceptación final pendiente.
 > Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
 

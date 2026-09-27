@@ -3,9 +3,11 @@ import { schema } from '@aluminior/db'
 import { calcularDespiece, type ComponentePlantilla } from '@aluminior/core/despiece'
 import { valorarDespiece, type DatosArticuloPrecio } from '@aluminior/core/precios'
 import type { ClienteEscritura } from '../cliente-db.ts'
+import { UNIONES_VISUALES } from '@aluminior/core/estructuras'
 import type { EntradaValoracionEstructura } from './valorar-estructura.ts'
 import { resolverCosteDespiece } from './coste-despiece.ts'
 import { resolverPerfiles } from './resolucion-perfiles.ts'
+import { prepararCortesCatalogo } from './cortes-catalogo.ts'
 import {
   leerPvpArticulos, precioDe, pvpPorArticuloDe,
 } from './pvp-articulos.ts'
@@ -19,7 +21,11 @@ export async function resolverMaterialesEstructura(cliente: ClienteEscritura, en
     .from(schema.estructuras).where(eq(schema.estructuras.codigo, entrada.codigo)).limit(1)
   if (!estructura) return error({ codigo: ['Estructura no encontrada'] })
 
-  if (!entrada.anchoMm || !entrada.altoMm) {
+  const esEsquinero = estructura.esAccesorio &&
+    UNIONES_VISUALES.some(u => u.codigo === entrada.codigo && u.unionTipo === 4)
+  if (entrada.anchoMm === null || !Number.isFinite(entrada.anchoMm) ||
+      entrada.anchoMm < 0 || (entrada.anchoMm === 0 && !esEsquinero) ||
+      entrada.altoMm === null || !Number.isFinite(entrada.altoMm) || entrada.altoMm <= 0) {
     return error({ anchoMm: ['Indica ancho y alto del hueco'] })
   }
   if (!entrada.serieCodigo) {
@@ -30,6 +36,7 @@ export async function resolverMaterialesEstructura(cliente: ClienteEscritura, en
   if (!serie) return error({ serieCodigo: ['Serie no encontrada'] })
 
   const plantilla = await cliente.select({
+    lineaOrigen: schema.estructuraComponentes.lineaOrigen,
     articuloCodigo: schema.estructuraComponentes.articuloCodigo,
     cantidad: schema.estructuraComponentes.cantidad,
     formulaLargo: schema.estructuraComponentes.formulaLargo,
@@ -75,6 +82,10 @@ export async function resolverMaterialesEstructura(cliente: ClienteEscritura, en
     cotas,
     {
       serie: entrada.serieCodigo,
+      corteDeCatalogo: await prepararCortesCatalogo(cliente, {
+        codigo: entrada.codigo, serieCodigo: entrada.serieCodigo,
+        anchoMm: entrada.anchoMm, altoMm: entrada.altoMm,
+      }, cotas),
       rebajeDeHoja: (c) => rebajes.get(`${c.articuloCodigo}|${c.funcion}|${c.formula}`) ?? null,
     },
   )

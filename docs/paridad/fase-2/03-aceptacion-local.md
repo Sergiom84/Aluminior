@@ -1,5 +1,7 @@
 # Fase 2 — aceptación local de geometría e interacción
 
+> Continuidad revisada el 27/09/2026: [punto de partida vigente](../INICIO-SIGUIENTE-CONVERSACION.md). Las comprobaciones fechadas conservan sus límites; consultar el relevo para el trabajo siguiente.
+
 20/09/2026. Aceptación técnica en Aluminior completada junto con fase 1.
 El contraste de la misma tarea con Productor continúa pendiente; no se declara
 paridad global de interfaz, catálogo, inserción ni precio comercial.

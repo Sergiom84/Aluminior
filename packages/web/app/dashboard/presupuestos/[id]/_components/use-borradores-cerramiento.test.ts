@@ -34,13 +34,13 @@ describe('aplicación explícita del cerramiento', () => {
     const resultado = aplicarBorrador(original, borradores, 'modulos', 'modulo-1')!
     expect(resultado.modulos[0]).toMatchObject({ altoMm: 900, fiMm: 250 })
   })
-  it('usa el grosor observado al elegir PSU001 y conserva las configuraciones históricas', () => {
+  it('usa el grosor del catálogo al actualizar sin mutar el snapshot histórico', () => {
     const original = crear()
     original.uniones = [{ ...original.uniones[0], codigo: 'PSU001', grosorMm: 100 }]
     const borradores = vacios()
     borradores.uniones['union-1'] = { longitudMm: 1350 }
     const historico = aplicarBorrador(original, borradores, 'uniones', 'union-1')!
-    expect(historico.uniones[0]).toMatchObject({ grosorMm: 100, longitudMm: 1350 })
+    expect(historico.uniones[0]).toMatchObject({ grosorMm: 2, longitudMm: 1350 })
     expect(esConfiguracionCerramiento(historico)).toBe(true)
     const ps = UNIONES_VISUALES.find(item => item.codigo === 'PSU001')!
     borradores.uniones['union-1'] = { codigo: ps.codigo, grosorMm: ps.grosorMm }

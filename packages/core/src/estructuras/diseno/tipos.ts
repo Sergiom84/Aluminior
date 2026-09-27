@@ -59,6 +59,7 @@ export interface UnionVisual {
   codigo: string
   descripcion: string
   grosorMm: number
+  unionTipo?: 0 | 4
 }
 
 export interface RectVisual { x: number; y: number; ancho: number; alto: number }

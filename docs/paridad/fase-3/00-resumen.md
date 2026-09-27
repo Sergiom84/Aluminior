@@ -1,5 +1,7 @@
 # Fase 3 — composición, catálogo e inserción
 
+> Continuidad revisada el 27/09/2026: [punto de partida vigente](../INICIO-SIGUIENTE-CONVERSACION.md). Las comprobaciones fechadas conservan sus límites; consultar el relevo para el trabajo siguiente.
+
 Fecha: 25/09/2026. Evidencia en [01-evidencia-composicion.md](01-evidencia-composicion.md).
 
 ## Implementado
@@ -70,4 +72,5 @@ una cadena v1. Dos causas en `origen-valorado.ts`:
   de diseño (`diseno-catalogo.ts`, 46 de 541 dibujables).
 - Pestañas Módulo y Propiedades del Cerramiento: semántica de «módulo» sin resolver.
 - Radio de captura del arrastre y regla exacta de eliminación de Productor.
-- Materiales por elemento, vidrio y catálogo completo de uniones: fases 4–6.
+- Materiales por elemento, buscador de vidrio y 14 uniones avanzaron después
+  en fases 4–6; consultar sus resúmenes. Su paridad completa sigue pendiente.

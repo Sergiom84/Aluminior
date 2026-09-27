@@ -1,6 +1,65 @@
 # Estado actual de Aluminior
 
-Revisión local: 25/09/2026. Este es el punto de entrada para el estado del código.
+## Estado consolidado al 27/09/2026
+
+Objetivo ratificado: todas las tipologías, series y uniones de Productor,
+con precio automático completo y uso moderno. Implementación parcial;
+no hay aceptación integral de fabricación o precio. La instalación todavía
+no está agotada como fuente de datos y reglas.
+
+El [barrido de facturas](paridad/fase-7/05-primer-barrido-facturas-2026.md)
+aporta 180 facturas / 28.480 líneas; 854 enlaces exactos a albarán y 715
+hasta línea de presupuesto, con 14 y 139 pendientes respectivamente.
+Revisar discriminadores de tipo de origen antes de certificar trazabilidad.
+541 estructuras de catálogo, 495 sin estructura facturada en el periodo;
+cero casos acreditados como calculables o contrastados en ese banco.
+
+La nueva implementación de cortes cubre solo perfiles ordinarios C2/C3 GMC400.
+Referencias y descuentos base ya se cargan; Dif, variantes, vidrio y herrajes
+completos siguen pendientes. El [relevo operativo](paridad/INICIO-SIGUIENTE-CONVERSACION.md)
+reúne fuentes, módulos, pruebas y plan de extracción. Main, HEAD observado
+a708af3, cambios posteriores sin commit y sin push. Entornos descritos abajo
+son observaciones fechadas: verificar disponibilidad antes de usarlos.
+
+Última entrega externa comunicada: 506 pruebas core, pruebas nuevas de
+cobertura, typecheck y arquitectura pasan; npm test completo no finalizó
+porque db/web no pudieron cargar configuración por acceso denegado.
+No se ha repetido esa suite durante esta revisión documental.
+
+
+> Continuidad revisada el 27/09/2026: [punto de partida vigente](paridad/INICIO-SIGUIENTE-CONVERSACION.md). Las comprobaciones fechadas conservan sus límites; consultar el relevo para el trabajo siguiente.
+
+Revisión local: 27/09/2026. Este es el punto de entrada para el estado del código.
+
+## 27/09/2026 — uniones, búsqueda de vidrio y PDF
+
+Implementado después: [corte por catálogo C2/C3 GMC400](paridad/fase-7/03-implementacion-cortes-referenciados.md),
+sin rebaje histórico duplicado, con bloqueo ante datos incompletos. Migración
+0022 y carga suplementaria verificadas en QA local; presupuesto conservado.
+No equivale a precio completo: asociados y vidrio siguen pendientes.
+
+Continuación: [investigación ampliada de fuentes](paridad/fase-7/02-investigacion-fuentes-2026-09-27.md).
+Inspeccionadas ocho MDB mediante copias verificadas, tarifa TXT y manual CHM.
+Nuevo comprobador de relaciones de corte, con 498/498 coincidencias retrospectivas
+C2/C3 y cuatro pruebas sintéticas. No predice aún el precio completo. Supabase
+sigue rechazando la conexión y falta una copia estable de 0017 para el 260499.
+
+- [Fase 6](paridad/fase-6/00-resumen.md): 14 uniones, esquineros a cero,
+  grosor de catálogo en edición/guardado y valoración de su longitud.
+- [Fase 5 parcial](paridad/fase-5/00-resumen.md): búsqueda de vidrio real por
+  código/descripción en línea y elemento; E11 y Diseño V3 siguen pendientes.
+- [Fase 7 parcial](paridad/fase-7/00-resumen.md): diagnóstico del bloqueo de
+  precio real y avisos breves en PDF, conservando los importes sin valorar.
+- Base local aluminior_real_test recreada e importada; web de QA en :3002.
+  Main con cambios locales, sin push; env.example permanece sin seguimiento.
+
+Guardado, reapertura y PDF del caso de esquinero verificados. Esto todavía no
+acredita una versión comercial lista para el taller: catálogo dibujable,
+resolución completa de perfiles/asociados y aceptación integral siguen abiertos.
+Sergio exige precio automático completo; no acepta una salida provisional con
+importe manual. El contraste C2/C3 + GMC400 y las causas pendientes están en
+fase 7. Corregido que las hojas sin medida se confundieran con un fijo al
+calcular vidrio; pendiente el desglose verificable del 260499 de Productor 0017.
 
 ## 25/09/2026 — fase 4: materiales por elemento
 
@@ -28,7 +87,7 @@ opt-in QA local). Nada se escribe en Supabase.
 Las observaciones anteriores conservan su fecha y sus límites; no certifican el
 estado de producción ni autorizan ejecutar sus antiguos encargos.
 
-## Cierre de jornada
+## Cierre histórico de jornada del 20/09/2026
 
 Trabajo finalizado por indicación del usuario el 20/09/2026. Commit, integración
 en main y push autorizados para este cierre. Consultar el
@@ -36,7 +95,7 @@ en main y push autorizados para este cierre. Consultar el
 
 Fase 1 aceptada técnicamente en QA; fase 2 con geometría y navegador/PDF
 verificados localmente y contraste directo con Productor iniciado, aún parcial.
-Último código: `c756aea`; la observación posterior no cambió código.
+Código de aquel cierre: `c756aea`; la observación posterior no cambió código.
 En Productor 0017 quedaron tres ventanas y un fijo en el configurador. El ancho
 del fijo estaba en edición (último valor visible 30; un envío posterior para
 completar 300 fue interrumpido), sin Actualizar ni aceptación final comprobada.
@@ -74,7 +133,7 @@ El mapa y las excepciones están en [SANEAMIENTO-MODULAR.md](SANEAMIENTO-MODULAR
 | Manos y 1OFI | Geometría y pruebas específicas en core; B1 y tramo 1OFI documentados | No generalizar cotas ni familias sin evidencia |
 | Producción | Optimizador, despunte, hojas y componentes de producción | No acredita que todos los cortes sean fabricables |
 | Tarifas | Modelo de venta, margen y recálculo puro | No confirma tarifas del taller ni paridad de todas las herramientas masivas |
-| ETL | Importador modular y pruebas sintéticas de equivalencia | No se ha ejecutado una importación real en este saneamiento |
+| ETL | Importador modular y pruebas sintéticas de equivalencia | Carga real posterior en QA local; no certifica cobertura de todo el catálogo |
 
 ## Pendientes conservados
 
