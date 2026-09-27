@@ -48,7 +48,10 @@ longitud manual; códigos PSU001, U, PSU006, GMU038, GMU040, GMU039 y PSU008.
 
 ## Sin implementar por falta de evidencia
 
-- «Actualizar todos los elementos» de Productor: qué propiedades copia y a quién.
+- «Actualizar todos los elementos» de Productor: copia las medidas a todos los
+  elementos, también de otro modelo (ver `01-evidencia-actualizar-y-diseno-v3.md`);
+  si copia materiales sigue siendo hipótesis. No se replica: se mantiene
+  «Aplicar a modelos iguales».
 - Guías de persiana por elemento (familia 051) y demás familias.
 - Vuelta a «Genérico» observada en Productor: aquí se representa con el campo vacío.
 

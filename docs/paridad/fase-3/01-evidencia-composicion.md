@@ -74,3 +74,24 @@ truncado por orden de inserción o defecto; no se reproduce.
 
 Aluminior elimina el elemento y los que dependen de él, y enseña el número
 antes de confirmar. Es una desviación deliberada y queda documentada.
+
+## Uso real y manejo del arrastre (26/09/2026)
+
+Indicación del usuario, operador habitual: en la práctica los elementos de un
+cerramiento se componen **a los lados**; un elemento debajo de otro es muy
+improbable. El anclaje inferior existe, pero la composición por defecto que
+conviene facilitar es la lateral.
+
+Para que el elemento quede alineado a la derecha y no se coloque debajo, hay
+que soltarlo acercándose al punto verde **por el margen superior**: Productor
+elige el anclaje más próximo y, si el cursor llega desde abajo, gana el
+inferior. En un ensayo del 26/09 un C3 soltado cerca de la esquina superior
+derecha se colocó debajo del elemento 1.
+
+Otros hechos del ensayo:
+- Eliminar un elemento sin dependientes (el C3 de debajo) borró solo ese
+  elemento y devolvió el global de 3020 × 2420 a 2420 × 1200.
+- La vista se reencuadra al empezar el arrastre, así que el punto verde cambia
+  de sitio respecto a la vista previa.
+- Tras varias inserciones el diseñador dejó de aceptar arrastres (la lectura de
+  mm del cursor se quedó fija). Cerrar con la X (descarta) y reabrir lo resuelve.
