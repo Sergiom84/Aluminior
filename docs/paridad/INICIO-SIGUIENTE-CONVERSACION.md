@@ -6,6 +6,21 @@ de fases, en [ESTADO-FASES](ESTADO-FASES.md). Los prompts antiguos son históric
 
 ## Último lote: continuación en el equipo de Sergio
 
+Leer primero [11, TMP/16 y relevo](fase-8/11-tmp-03v-y-relevo.md),
+[10, contraste 03V de 2025](fase-8/10-contraste-03v-2025.md) y su
+[contrato 09](fase-8/09-contrato-03v-tmp.md). Parte de `b5dc16a` y cierra la
+regla de núcleo/CSV, limitada a 03V estándar GMA350/GMA65OPT. Tres despieces
+y minutos coincidentes; dos importes exactos y una diferencia histórica de
+precio de vidrio. La web aún carece de metadatos y sigue bloqueada.
+EMP0015 es 2025 y EMP0016 es 2026; preservar fechas documentales, tarifas y
+fuentes distintas. No contar Anterior como muestra nueva ni trasladar la
+evidencia posterior de facturas C2P a estas bases anuales.
+Siguiente unidad de 08: entradas FI/FS y perfiles adicionales; no convertir
+los 300 mm del dibujo en entrada económica. La integración web de 03V es
+otra unidad, con metadatos, pruebas de carga/adaptador y recorrido local.
+
+### Lote previo: cotas absolutas
+
 La continuación vigente parte de `e50b06a`: leer primero
 [fase 8/08, cotas absolutas y relevo](fase-8/08-cotas-absolutas-y-relevo.md) y
 [fase 8/07, mano de obra](fase-8/07-mano-obra-fijos.md). 25 plantillas habilitadas;

@@ -14,6 +14,7 @@
  * conceptos por componente u otros grupos y conceptos del tipo de apertura con
  * tiempo. Si alguno aportaría minutos, se informa y no se inventa.
  */
+import { minutosTravesanosTmp, type ContextoManoObraTmp } from './mano-obra-tmp.ts'
 
 export interface ConceptoManoObraCatalogo {
   codigo: string
@@ -26,6 +27,11 @@ export interface ConceptoManoObraCatalogo {
   grupoAsociado: string | null
   /** Tiempo de preparación o incrementos por ancho/alto distintos de cero. */
   conIncrementos: boolean
+  /** Metadatos originales necesarios para TMP/16; ausencia conserva el bloqueo. */
+  categoria?: string | null
+  familiaAsociada?: string | null
+  serieAsociada?: string | null
+  asociado?: boolean | null
 }
 
 export interface ElementoManoObra {
@@ -49,10 +55,15 @@ export function minutosFabricacion(entrada: {
   conceptos: readonly ConceptoManoObraCatalogo[]
   /** Conceptos del tipo de apertura (`Conjuntos.mo*`) de cada grupo de hojas. */
   conceptosApertura: readonly string[]
+  /** Solo lo aporta un consumidor con cobertura documental explícita. */
+  contextoTmp?: ContextoManoObraTmp
 }): { lineas: MinutosFabricacion[]; incidencias: string[] } {
   const lineas: MinutosFabricacion[] = []
   const incidencias: string[] = []
   const porCodigo = new Map(entrada.conceptos.map(c => [c.codigo, c]))
+  const tmp = entrada.contextoTmp ? minutosTravesanosTmp({ ...entrada, contexto: entrada.contextoTmp }) : null
+  const tratadosTmp = new Set(tmp?.conceptosTratados ?? [])
+  if (tmp) { lineas.push(...tmp.lineas); incidencias.push(...tmp.incidencias) }
   const emitir = (c: ConceptoManoObraCatalogo, cantidad: number) => {
     if (c.conIncrementos) { incidencias.push(`mano de obra ${c.codigo}: incrementos por medida sin contrastar`); return }
     if (c.minutos > 0 && cantidad > 0) lineas.push({ articulo: c.articulo, minutos: c.minutos * cantidad, concepto: c.codigo })
@@ -64,6 +75,7 @@ export function minutosFabricacion(entrada: {
       if (c) emitir(c, e.cantidad)
     }
     for (const c of entrada.conceptos) {
+      if (tratadosTmp.has(c.codigo)) continue
       if (c.articuloAsociado && c.articuloAsociado === e.articuloPlantilla) emitir(c, e.cantidad)
       const porComponente = c.componenteAsociado && c.componenteAsociado !== '!' && c.componenteAsociado === e.componente
       const porGrupo = c.grupoAsociado && c.grupoAsociado !== '!' && c.grupoAsociado === e.grupo

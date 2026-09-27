@@ -9,6 +9,7 @@ import {
   type ElementoPlantilla,
 } from '../asociaciones/index.ts'
 import { minutosFabricacion } from '../mano-obra-fabricacion.ts'
+import { permiteTmpEnLinea } from '../mano-obra-tmp.ts'
 import type { VarianteAcristalamiento } from '../../series/resolver.ts'
 import { fila, parcialVacio, type DespieceParcial } from './parcial.ts'
 import { despiezarVidrios } from './vidrios.ts'
@@ -114,6 +115,8 @@ export function despiezarDiseno(
 
   // Mano de obra de fabricación
   const mo = minutosFabricacion({
+    contextoTmp: permiteTmpEnLinea({ ...entrada, disenoEspecifico: entrada.disenoEspecifico })
+      ? { tipoPerfiles: serie.tipoPerfiles, familia: serie.familia, serie: serie.codigo } : undefined,
     elementos: plantilla.map(f => ({ modulo: f.funcion === 'infMOmof' ? f.disVidrio : null, articuloPlantilla: f.articulo,
       componente: f.componente, grupo: f.grupo, cantidad: f.cantidad })),
     conceptos: catalogo.conceptosManoObra(),

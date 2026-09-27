@@ -1,7 +1,10 @@
 # Índice y revisión documental
 
-Último lote local: [cotas absolutas y relevo de fase 8](paridad/fase-8/08-cotas-absolutas-y-relevo.md).
-Investigación complementaria: [mano de obra de los fijos](paridad/fase-8/07-mano-obra-fijos.md).
+Último lote local: [TMP/16, 03V y relevo](paridad/fase-8/11-tmp-03v-y-relevo.md).
+Evidencia y contrato: [03V de 2025](paridad/fase-8/10-contraste-03v-2025.md),
+[unidad 09](paridad/fase-8/09-contrato-03v-tmp.md).
+Antecedentes: [cotas absolutas](paridad/fase-8/08-cotas-absolutas-y-relevo.md)
+y [mano de obra de los fijos](paridad/fase-8/07-mano-obra-fijos.md).
 
 ## Revisión integral de continuidad — 27/09/2026
 

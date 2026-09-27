@@ -1,5 +1,13 @@
 # Cotas absolutas y relevo del catálogo
 
+Continuación desde el cierre `b5dc16a`: [contrato 03V/TMP](09-contrato-03v-tmp.md).
+La nueva evidencia de EMP0015 (ejercicio 2025) aporta tres líneas estándar
+03V, limitadas a GMA350 y GMA65OPT. Actualización de procedencia y controles
+en [07](07-mano-obra-fijos.md). Ya no procede buscar de nuevo esos tres
+originales; sí contrastar su despiece y valoración con sus propias tarifas.
+EMP0016 anual es 2026. Ni las versiones Anterior ni la copia posterior de
+facturas C2P deben mezclarse como observaciones independientes.
+
 27/09/2026. Lote 3 desde `e50b06a`, conforme al
 [contrato 06](06-contrato-cotas-absolutas.md). Cierre técnico local, no aceptación
 integral del catálogo, de precio ni de fabricación.

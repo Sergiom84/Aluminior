@@ -2,6 +2,23 @@
 
 ## Estado consolidado al 27/09/2026
 
+Última continuación desde `b5dc16a`: [TMP/16, 03V y relevo](paridad/fase-8/11-tmp-03v-y-relevo.md).
+Regla de mano de obra implementada en el núcleo, con metadatos explícitos y
+activación limitada a 03V estándar GMA350/GMA65OPT en el contraste CSV.
+Tres despieces completos coinciden; dos importes coinciden con las tarifas
+de EMP0015 (2025), y el tercero conserva una diferencia histórica de PVP de
+vidrio. No se sustituyen tarifas ni se cambia la fecha de su documento de 2024.
+Controles del motor: 79/79 en EMP0016 (2026), 90/90 en EMP0015 y 3/3 03V;
+las copias Anterior comparten documentos y no amplían la muestra independiente.
+La web sigue bloqueada hasta conservar/cargar los metadatos requeridos.
+No se habilitan otras series, específicos, 03H/06 ni CFT/TFF; fabricación pendiente.
+25 plantillas y 14 uniones sin cambios. Gates: 1514 pruebas de paquetes y
+191 de scripts; typecheck y arquitectura aprobados. Siguiente: FI/FS y
+perfiles adicionales con entradas originales, más la unidad de integración
+web de 03V. No se modificaron originales, tarifas, migraciones ni remoto.
+
+### Cierre anterior de cotas (antecedente)
+
 Última continuación desde `e50b06a`: [fase 8, cotas y relevo](paridad/fase-8/08-cotas-absolutas-y-relevo.md).
 Inventario reproducible de los 541 modelos de EMP0016 (393 árboles, 148 sin
 árbol), con estados y bloqueos por modelo. 54 candidatas visuales, 25 plantillas

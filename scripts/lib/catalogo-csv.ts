@@ -10,6 +10,7 @@ import {
   construirResoluciones, expandirCadena, type VarianteAcristalamiento,
 } from '../../packages/core/src/series/resolver.ts'
 import { resolverPvpCatalogo } from '../../packages/core/src/precios/pvp-catalogo.ts'
+import { medidaCota } from './cotas-instancia.ts'
 import type {
   ArticuloCatalogo, CatalogoLinea, FilaPlantillaCatalogo, SerieCatalogo,
 } from '../../packages/core/src/despiece/linea-catalogo/tipos.ts'
@@ -25,6 +26,19 @@ export const numero = (v: string | undefined) => {
   return Number.isFinite(n) ? n : 0
 }
 const texto = (v: string | undefined) => v?.trim() || null
+/** El resolvedor elige acabado antes de validar sus precios; no se omiten filas inválidas. */
+function precioPvp(filas: Fila[], acabado: string): number | null {
+  try {
+    const r = resolverPvpCatalogo(filas.map(p => ({ acabadoCodigo: p.Acabado?.trim() ?? '',
+      precio: p.PVP?.trim().replace(',', '.') ?? '' })), acabado)
+    if (r.estado !== 'RESUELTO') return null
+    const precio = Number(r.precio)
+    return Number.isFinite(precio) ? precio : null
+  } catch {
+    // Un decimal inválido en las filas seleccionadas conserva el estado sin valorar.
+    return null
+  }
+}
 const agrupar = <T>(filas: T[], clave: (f: T) => string) => {
   const m = new Map<string, T[]>()
   for (const f of filas) { const k = clave(f); const l = m.get(k); if (l) l.push(f); else m.set(k, [f]) }
@@ -51,12 +65,21 @@ export function catalogoDesdeCsv(carpeta: string, tarifa = '1'): CatalogoLinea {
   const tablasAcris = agrupar(leer('TAcristalamientoLin'), r => r.TAcris!.trim())
   const pvp = agrupar(leer('ArticulosPVP').filter(p => p.Tarifa?.trim() === tarifa), p => p.Articulo!.trim())
   const incrementos = agrupar(leer('ArticulosIncrPrecio'), r => r.Articulo!.trim())
-  const conceptosMO = leer('MOConceptos').map((c): ConceptoManoObraCatalogo => ({
-    codigo: c.Codigo!.trim(), minutos: numero(c.TiempoFabr), articulo: texto(c.CodArticulo) ?? 'MO',
-    modulo: numero(c.ModuloAsoc) > 0 ? String(numero(c.ModuloAsoc)) : null,
-    articuloAsociado: texto(c.ArticuloAsoc), componenteAsociado: texto(c.ComponenteAsoc), grupoAsociado: texto(c.GrupoAsoc),
-    conIncrementos: [c.TiempoPreparacion, c.AnchoTiempo, c.AltoTiempo, c.AnchoMayorMM, c.AltoMayorMM].some(v => numero(v) !== 0),
-  }))
+  const conceptosMO = leer('MOConceptos').map((c): ConceptoManoObraCatalogo => {
+    const tmp = texto(c.ComponenteAsoc) === '16' || texto(c.GrupoAsoc) === 'TMP'
+    const moduloTmp = medidaCota(c.ModuloAsoc)
+    return {
+      codigo: c.Codigo!.trim(), minutos: tmp ? medidaCota(c.TiempoFabr) ?? Number.NaN : numero(c.TiempoFabr),
+      articulo: tmp ? texto(c.CodArticulo) ?? '' : texto(c.CodArticulo) ?? 'MO',
+      modulo: tmp ? (moduloTmp === 0 ? null : moduloTmp === null ? 'no-acreditado' : String(moduloTmp))
+        : numero(c.ModuloAsoc) > 0 ? String(numero(c.ModuloAsoc)) : null,
+      articuloAsociado: texto(c.ArticuloAsoc), componenteAsociado: texto(c.ComponenteAsoc), grupoAsociado: texto(c.GrupoAsoc),
+      conIncrementos: [c.TiempoPreparacion, c.AnchoTiempo, c.AltoTiempo, c.AnchoMayorMM, c.AltoMayorMM]
+        .some(v => tmp ? medidaCota(v) !== 0 : numero(v) !== 0),
+      categoria: texto(c.Categoria), familiaAsociada: texto(c.FamiliaAsoc), serieAsociada: texto(c.CodSerie),
+      asociado: c.AsociadoSN === 'True' ? true : c.AsociadoSN === 'False' ? false : null,
+    }
+  })
 
   const delegaciones = new Map<string, string[]>()
   for (const [codigo, c] of conjuntos) {
@@ -89,7 +112,8 @@ export function catalogoDesdeCsv(carpeta: string, tarifa = '1'): CatalogoLinea {
   return {
     plantilla: (estructura) => (plantillas.get(estructura) ?? []).map((r): FilaPlantillaCatalogo => ({
       id: numero(r.id), articulo: r.Articulo!.trim(), componente: texto(r.DisComponente), funcion: texto(r.Funcion),
-      cantidad: numero(r.Cantidad), posicionTrabajo: texto(r.PosicionTrabajo), tipoHoja: texto(r.DisTipoHoja),
+      cantidad: texto(r.DisComponente) === '16' || texto(r.DisGrupo) === 'TMP' ? medidaCota(r.Cantidad) ?? Number.NaN : numero(r.Cantidad),
+      posicionTrabajo: texto(r.PosicionTrabajo), tipoHoja: texto(r.DisTipoHoja),
       mano: texto(r.DisManoID), hoja: numero(r.DisNHoja), disVidrio: texto(r.DisVidrio),
       referenciaLargo: numero(r.DisIdRefLargo) || null, referenciaAncho: numero(r.DisIdRefAncho) || null,
       formulaLargo: texto(r.FormulaLargoCorte) ?? texto(r.FormulaLargo), formulaAncho: texto(r.FormulaAnchoCorte) ?? texto(r.FormulaAncho),
@@ -107,6 +131,7 @@ export function catalogoDesdeCsv(carpeta: string, tarifa = '1'): CatalogoLinea {
       const sufijos = (prefijo: RegExp) => Object.fromEntries(Object.entries(c)
         .filter(([k, v]) => prefijo.test(k) && v?.trim()).map(([k, v]) => [k.replace(prefijo, ''), v!.trim()]))
       return {
+        tipoPerfiles: texto(c.TipoPerf), familia: texto(c.Familia),
         codigo, herrajes: sufijos(/^herr/), manoObra: sufijos(/^mo(?=[0-9M])/), tablaHojas: texto(c.TablaHojas), tablaFijos: texto(c.TablaFijos),
         grosorMaximoSimple: numero(c.CorrGrosorVid), grosorMaximoDoble: numero(c.CorrGrosorVidDA),
       }
@@ -150,12 +175,12 @@ export function catalogoDesdeCsv(carpeta: string, tarifa = '1'): CatalogoLinea {
     tarifa: (codigo, acabado): ArticuloTarifado | null => {
       const a = articulos.get(codigo)
       if (!a) return null
-      const r = resolverPvpCatalogo((pvp.get(codigo) ?? []).map(p => ({ acabadoCodigo: p.Acabado!.trim(), precio: String(numero(p.PVP)) })), acabado)
+      const precio = precioPvp(pvp.get(codigo) ?? [], acabado)
       const incr: IncrementoPrecio[] = a.IncrementosPrecioSN === 'True' ? (incrementos.get(codigo) ?? []).map(i => ({
         tipo: i.TipoMetMed!.trim() as 'MET' | 'MED', desde: numero(i.MetrajeDesde), hasta: numero(i.MetrajeHasta), porcentaje: numero(i.IncrementoPorc),
       })) : []
       return {
-        tipoMetraje: a.TipoMetraje?.trim() ?? '', pvp: r.estado === 'RESUELTO' ? Math.round(Number(r.precio) * 10000) / 10000 : null,
+        tipoMetraje: a.TipoMetraje?.trim() ?? '', pvp: precio,
         multiploLargoCm: numero(a.MetrajeMultiploLargo), multiploAnchoCm: numero(a.MetrajeMultiploAncho),
         minimo: numero(a.MetrajeMinimo), incrementos: incr,
       }

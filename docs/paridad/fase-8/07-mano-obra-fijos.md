@@ -1,5 +1,29 @@
 # Investigación de mano de obra de los seis fijos
 
+## Ampliación de fuentes: ejercicios 2025 y 2026
+
+La auditoría posterior de las cuatro bases anuales amplía, sin invalidar, el
+corpus de este informe. EMP0015 es **2025** y EMP0016 es **2026**, confirmado
+por Sergio; las fechas documentales fuera del año nominal conservan su origen.
+Las tarifas distintas entre ejercicios son esperables y no se sustituyen.
+
+EMP0015 aporta tres líneas de presupuesto **03V no específicas**, dos GMA350
+y una GMA65OPT: concepto 00114=20 y minutos positivos completos 20,20,25,30.
+Las otras ocho apariciones 03V son diseños específicos. Se retira únicamente
+la falta de original estándar para esas dos series; no se acredita todavía
+su despiece completo, precio, otras series o fabricación.
+
+Controles de la hipótesis TMP/16: 79/79 en EMP0016 principal y 90/90 en
+EMP0015 principal. Las copias Anterior comparten documentos y no añaden
+observaciones independientes. 03H, 06, CFT y FC siguen sin originales en las
+tres tablas documentales revisadas; CFT/TFF sigue sin evidencia positiva.
+
+Fuentes privadas y manifest: `output/auditoria-anuales/INFORME.md` y
+`manifest.json`. La copia posterior usada para facturas C2P no es ninguna de
+esas cuatro bases. Contrato de continuación: [09](09-contrato-03v-tmp.md).
+
+## Investigación anterior, conservada con su corpus
+
 27/09/2026. Unidad de lectura del [contrato 06](06-contrato-cotas-absolutas.md).
 No cambia el motor, la política económica, la base de datos ni las plantillas.
 
