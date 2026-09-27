@@ -2,6 +2,16 @@
 
 ## Estado consolidado al 27/09/2026
 
+Continuación desde `b454919`: [fase 8, fijos operativos](paridad/fase-8/03-fijos-operativos.md).
+Inventario reproducible de los 541 modelos de EMP0016 (393 árboles, 148 sin
+árbol), con estados y bloqueos por modelo. 53 candidatas visuales, 21 plantillas
+habilitadas y 14 uniones. Añadidos 03H/03V/06 y CF/CFT/FC: selección, edición,
+persistencia, teclado, móvil y PDF probados en QA local. Sus 18 casos de cálculo
+siguen bloqueados; falta contraste original independiente. No son fabricables.
+Corregidos guardado de cortes no representables, ranuras de vidrio y paginación.
+Las pruebas vigentes de esta unidad son 1377 de paquetes y 144 de scripts;
+los recuentos del bloque anterior de fase 7 se conservan debajo como antecedente.
+
 Objetivo ratificado: todas las tipologías, series y uniones de Productor,
 con precio automático completo y uso moderno. Implementación parcial;
 no hay aceptación integral de fabricación o precio. La instalación todavía

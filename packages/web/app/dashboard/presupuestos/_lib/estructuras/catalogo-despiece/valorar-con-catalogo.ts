@@ -22,6 +22,7 @@ import { costePorArticuloDe, leerCostesArticulos } from '../coste-articulos.ts'
 import { prepararPiezasDespiece } from '../coste-despiece.ts'
 import type { EntradaValoracionEstructura, ResultadoValoracionEstructura } from '../valorar-estructura.ts'
 import { leerCatalogoLinea } from './leer-catalogo.ts'
+import { configuracionVidrioCatalogo } from './configuracion-vidrio.ts'
 
 const GRUPO: Record<FilaDespieceCatalogo['origen'], PartidaValoracionCerramiento['grupoValoracion']> = {
   plantilla: 'MATERIALES', asociado: 'MATERIALES', 'mano-obra': 'MATERIALES', vidrio: 'VIDRIO', acristalamiento: 'ACRISTALAMIENTO',
@@ -97,10 +98,8 @@ export async function valorarConCatalogo(
   }).map((p, i) => ({ ...p, acabadoCodigo: resultado.filas[i]!.acabado,
     anchoCorteMm: resultado.filas[i]!.anchoMm === null ? null : String(resultado.filas[i]!.anchoMm) }))
 
-  const acristalamiento: RanuraAcristalamiento[] = catalogo.plantilla(entrada.codigo).filter(f => f.componente === '1')
-    .map((f, i) => ({ slot: i + 1, variante: entrada.varianteAcristalamiento,
-      vidrioHojas: esTipoHojaMarco(f.tipoHoja) ? null : entrada.vidrioCodigo,
-      vidrioFijos: esTipoHojaMarco(f.tipoHoja) ? entrada.vidrioCodigo : null }))
+  const acristalamiento: RanuraAcristalamiento[] = configuracionVidrioCatalogo(
+    catalogo.plantilla(entrada.codigo), entrada.vidrioCodigo, entrada.varianteAcristalamiento)
   const marcadas = opcionesMarcadas(conjuntos, opciones, guardadas)
   const opcionesHerraje: OpcionHerrajeElegida[] = opciones.filter(o => marcadas.get(o.conjunto)?.has(o.opcion))
     .map(o => ({ categoria: o.conjunto, opcionCodigo: o.opcion, descripcion: o.descripcion }))

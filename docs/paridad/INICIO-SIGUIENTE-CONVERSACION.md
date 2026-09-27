@@ -6,6 +6,16 @@ de fases, en [ESTADO-FASES](ESTADO-FASES.md). Los prompts antiguos son históric
 
 ## Último lote: continuación en el equipo de Sergio
 
+La continuación vigente parte de `b454919`: leer primero
+[fase 8/03](fase-8/03-fijos-operativos.md), [inventario](fase-8/01-inventario.md)
+y [traductor](fase-8/02-traductor.md). 541 registros íntegramente contabilizados;
+47→53 candidatas, 15→21 plantillas habilitadas, 14 uniones. Seis fijos nuevos
+probados en navegador y PDF, con valoración aún bloqueada. La matriz local
+`output/catalogo-completo/matriz.json` conserva estados por fuente y por modelo;
+no debe publicarse. Contrato y protecciones en fase 8/00.
+
+El bloque siguiente conserva el cierre anterior de fase 7.
+
 Leer primero [fase 7/13](fase-7/13-cierre-cotas-c2.md) y las unidades 10–12.
 Rama `feat/motor-catalogo-completo`, último lote desde `60d050b`; no se fusionó `main`
 ni se escribió en Supabase. Copias de Productor en

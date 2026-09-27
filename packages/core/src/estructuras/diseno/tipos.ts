@@ -36,6 +36,8 @@ export interface DivisionVisual {
   eje: EjeDivision
   separador: ClaseSeparador
   hijos: readonly HijoVisual[]
+  /** Distancia física al eje del travesaño; solo divisiones de dos huecos. */
+  cotaFija?: { desde: 'inicio' | 'fin'; mm: number }
 }
 
 export type NodoVisual = HuecoVisual | DivisionVisual

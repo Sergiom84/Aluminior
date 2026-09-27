@@ -13,6 +13,25 @@ const pieza = (articuloCodigo: string, cantidad: string, largoCorteMm: string | 
 })
 
 describe('piezas del snapshot desde el catálogo real', () => {
+  it.each(['1e-7', '1.01000000000000001', '99999999.990000001'])('conserva %s como diagnóstico sin excepción ni redondeo silencioso', valor => {
+    const r = completarCostesOrigen(origen(), [pieza('PRECISION', '1', valor)] as never)
+    expect(r.piezas[0].largoCorteMm).toBeNull()
+    expect(r.coste).toEqual({ completo: false, importe: null })
+    expect(r.diagnosticos).toContainEqual(expect.objectContaining({
+      ambito: 'FABRICACION', bloqueante: true, detalle: expect.stringContaining(valor),
+    }))
+  })
+  it('conserva la precisión exacta compatible y bloquea el corte periódico sin redondearlo', () => {
+    const r = completarCostesOrigen(origen(), [
+      pieza('EXACTA', '1', '1200.25'), pieza('TERCIO', '1', '363.3333333333333'),
+    ] as never)
+    expect(r.piezas.map(p => p.largoCorteMm)).toEqual(['1200.25', null])
+    expect(r.coste).toEqual({ completo: false, importe: null })
+    expect(r.diagnosticos).toContainEqual(expect.objectContaining({
+      ambito: 'FABRICACION', bloqueante: true,
+      detalle: expect.stringContaining('363.3333333333333'),
+    }))
+  })
   it('omite una pieza de cantidad 0 sin alterar el coste', () => {
     const r = completarCostesOrigen(origen(), [pieza('A', '2', '1200'), pieza('MO', '0', null)] as never)
     expect(r.piezas.map((p) => p.articuloCodigo)).toEqual(['A'])

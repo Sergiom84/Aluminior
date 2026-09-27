@@ -180,7 +180,9 @@ describe('valoración con el catálogo de despiece completo', () => {
     expect(r.piezas.map(p => p.articuloCodigo)).toEqual(['QA-MARCO', 'QA-MARCO', 'QA-ROD', 'QA-HOJA', 'QA-ROD', 'QA-HOJA',
       'QA-FELPUDO', 'QA-FELPUDO', 'QA-CIERRE', 'QA-CIERRE', 'QA-VIDRIO', 'QA-VIDRIO', 'QA-MO'])
     expect(r.opcionesHerraje).toEqual([{ categoria: 'QA-HERR', opcionCodigo: '1', descripcion: 'Cierre' }])
-    expect(r.acristalamiento).toHaveLength(2)
+    // Dos paños materiales, una configuración común de vidrio para hojas (PLAN C.4).
+    expect(r.piezas.filter(p => p.articuloCodigo === 'QA-VIDRIO')).toHaveLength(2)
+    expect(r.acristalamiento).toEqual([{ slot: 1, variante: '2', vidrioHojas: 'QA-VIDRIO', vidrioFijos: null }])
   }))
   it('una opción visible desmarcada en el formulario no vuelve por defecto', () => caso(async tx => {
     const r = await valorarEstructura(tx, { ...entrada, opcionesHerraje: [] })

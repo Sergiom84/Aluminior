@@ -1,4 +1,4 @@
-import { sumarDecimal } from '@aluminior/core/precios'
+import { compararDecimal, normalizarDecimal, sumarDecimal } from '@aluminior/core/precios'
 import type { ResultadoOrigenCerramiento } from '@aluminior/core/estructuras'
 import type { PiezaDespiece } from '../lineas/guardar-linea.ts'
 
@@ -17,13 +17,19 @@ export function completarCostesOrigen(
   const valido = (v: string | null | undefined) => v !== null && v !== undefined &&
     Number.isFinite(Number(v)) && Number(v) >= 0 ? v : null
   // Un corte de 0 mm es una medida que el catálogo no pudo calcular, no una pieza nula.
-  const medida = (v: string | null | undefined) => v !== null && v !== undefined &&
-    Number.isFinite(Number(v)) && Number(v) > 0 ? v : null
+  const medida = (v: string | null | undefined) => {
+    if (v == null || !/^\d+(?:\.\d+)?$/.test(v) ||
+      compararDecimal(v, '0') <= 0 || compararDecimal(v, '100000000') >= 0) return null
+    const exacta = normalizarDecimal(v, 2)
+    // numeric(10,2): no redondear silenciosamente una medida de fabricación.
+    return compararDecimal(exacta, v) === 0 ? ((v.split('.')[1]?.length ?? 0) <= 2 ? v : exacta) : null
+  }
   const sinMedida = piezas.filter(p => [p.largoCorteMm, p.anchoCorteMm]
     .some(v => v !== null && v !== undefined && medida(v) === null))
   if (sinMedida.length) origen.diagnosticos = [...origen.diagnosticos, {
     codigo: 'COBERTURA_INCOMPLETA', ambito: 'FABRICACION', bloqueante: true,
-    detalle: `Corte sin medida calculable: ${[...new Set(sinMedida.map(p => p.articuloCodigo))].join(', ')}`,
+    detalle: `Corte sin medida representable a 0,01 mm: ${[...new Set(sinMedida.map(p =>
+      `${p.articuloCodigo} (${p.largoCorteMm ?? '—'} × ${p.anchoCorteMm ?? '—'})`))].join(', ')}`,
   }]
   origen.piezas = piezas.map((p, ordinal) => ({
     ordinal, articuloCodigo: p.articuloCodigo, acabadoCodigo: origen.acabadoCodigo,

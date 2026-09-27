@@ -6,7 +6,7 @@ import { eur } from './formato'
 import type { LineaPdf } from './tipos'
 import { TextoPdf } from './texto'
 
-/** La descripción puede cruzar página; únicamente el dibujo es indivisible. */
+/** La descripción puede cruzar página; etiqueta, dibujo y cotas viajan juntos. */
 export function FilaPdf({ l }: { l: LineaPdf }) {
   return <View>
     <View style={styles.row} minPresenceAhead={24}>
@@ -37,8 +37,10 @@ export function FilaPdf({ l }: { l: LineaPdf }) {
       </Text>
     </View>
     {l.cerramiento && <View style={{ paddingVertical: 6 }}>
-      <Text style={{ fontSize: 7, marginBottom: 3 }} minPresenceAhead={150}>Línea {l.orden}</Text>
-      <DibujoCerramientoPdf configuracion={l.cerramiento.configuracion} />
+      <View wrap={false}>
+        <Text style={{ fontSize: 7, marginBottom: 3 }}>Línea {l.orden}</Text>
+        <DibujoCerramientoPdf configuracion={l.cerramiento.configuracion} />
+      </View>
       {l.cerramiento.manoObra.map(m => <Text key={m.concepto} style={{ fontSize: 8, marginTop: 3 }}>
         {m.concepto === 'COLOCACION' ? 'Colocación' : 'Fabricación'} {m.horas === null ? '—' : Number(m.horas)} h
         {l.cerramiento?.estadoSnapshot === 'con-snapshot' ? ' total línea: ' : ': '}

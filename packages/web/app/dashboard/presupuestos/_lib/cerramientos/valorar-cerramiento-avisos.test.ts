@@ -10,6 +10,25 @@ vi.mock('../estructuras/valorar-estructura.ts', () => ({ valorarEstructura: vi.f
 vi.mock('../estructuras/catalogo-despiece/cargado.ts', () => ({ catalogoDespieceCargado: async () => false }))
 afterEach(() => vi.clearAllMocks())
 
+it('guarda un cálculo con corte periódico como pendiente sin inventar medida redondeada', async () => {
+  vi.mocked(valorarEstructura).mockResolvedValue({ ok: true, descripcion: 'Fijo sintético',
+    precioUnitario: null, aviso: 'Mano de obra pendiente', partidas: [],
+    piezas: [{ articuloCodigo: 'P', cantidad: '1', largoCorteMm: '363.3333333333333',
+      costeUnitario: '2', costeTotal: '0.7267' }], acristalamiento: [], opcionesHerraje: [],
+  })
+  const resultado = await valorarCerramiento({} as ClienteEscritura, {
+    configuracion: { version: 1, modulos: [{ id: 'm1', estructuraCodigo: '03V', anchoMm: 1210, altoMm: 1200 }], uniones: [] },
+    serieCodigo: 'S', acabadoCodigo: 'L', vidrioCodigo: null, varianteAcristalamiento: '1', tarifa: 9,
+  })
+  expect(esResultadoCerramiento(resultado)).toBe(true)
+  expect(resultado.origenes[0].piezas[0].largoCorteMm).toBeNull()
+  expect(resultado.ventaMateriales).toEqual({ completo: false, importe: null })
+  expect(resultado.costeMateriales).toEqual({ completo: false, importe: null })
+  expect(resultado.origenes[0].diagnosticos).toContainEqual(expect.objectContaining({
+    ambito: 'FABRICACION', bloqueante: true, detalle: expect.stringContaining('363.3333333333333'),
+  }))
+})
+
 it.each([null, 'Aviso sintético del motor'])('conserva el bloqueo de metraje no representable con aviso %s', async aviso => {
   const valor = valorarDespiece([{ articuloCodigo: 'P', cantidad: 1.001, largoMm: 1000.01,
     formula: '1000.01', funcion: 'MV', tipoCorte: null, anguloIzquierdo: null,

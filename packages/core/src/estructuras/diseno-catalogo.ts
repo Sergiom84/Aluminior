@@ -45,14 +45,17 @@ function apertura(nodo: NodoCatalogo): AperturaVisual | null {
   return null
 }
 
-/** Candidata a medida inicial, NO validada para redimensionar ni valorar.
- * TipoCota=1 se proyecta a proporción: falta mantener cotas absolutas al editar.
+/** Candidata visual, NO acreditación de valoración ni fabricación.
+ * TipoCota=1 conserva la distancia física y las proporciones iniciales.
  */
 export function generarPlantillaCatalogo(entrada: EstructuraCatalogo): ResultadoPlantilla {
   const motivos = new Set<string>()
   const { nodos } = entrada
   const correderaVerificada = esCorrederaDosHojas(entrada)
-  if (!['003', '005', '020'].includes(entrada.familiaCodigo) && !correderaVerificada) motivos.add('familia sin verificar')
+  const fijoCorredera = entrada.familiaCodigo === '009' &&
+    nodos.every(n => [1, 2, 5, 6].includes(n.tipo))
+  if (!['003', '005', '020'].includes(entrada.familiaCodigo) &&
+      !correderaVerificada && !fijoCorredera) motivos.add('familia sin verificar')
   if (![entrada.anchoMm, entrada.altoMm].every(n => Number.isFinite(n) && n > 0)) {
     motivos.add('medidas no válidas')
   }
@@ -119,6 +122,10 @@ export function generarPlantillaCatalogo(entrada: EstructuraCatalogo): Resultado
     return {
       tipo: 'division', id: `division-${trav.id}`, eje,
       separador: trav.invisible ? 'division-invisible' : 'travesano',
+      ...(trav.tipoCota === 1 ? { cotaFija: {
+        desde: ['HB', 'VD'].includes(trav.travesano) ? 'fin' as const : 'inicio' as const,
+        mm: trav.cota,
+      } } : {}),
       hijos: huecos.map((h, i) => ({ proporcion: medidas[i], nodo: visitar(h,
         eje === 'vertical' ? medidas[i] : ancho, eje === 'horizontal' ? medidas[i] : alto, profundidad + 1) })),
     }
@@ -129,7 +136,7 @@ export function generarPlantillaCatalogo(entrada: EstructuraCatalogo): Resultado
     return {
       estado: 'dibujable', familiaCodigo: entrada.familiaCodigo,
       plantilla: { codigo: entrada.codigo, descripcion: entrada.descripcion, familiaCodigo: entrada.familiaCodigo,
-        familia: entrada.familiaCodigo === '001' ? 'VENTANAS CORREDERAS' : entrada.familiaCodigo === '005' ? 'FIJOS' :
+        familia: entrada.familiaCodigo === '001' ? 'VENTANAS CORREDERAS' : ['005', '009'].includes(entrada.familiaCodigo) ? 'FIJOS' :
           entrada.familiaCodigo === '020' ? 'OSCILOBATIENTES' : 'VENTANAS ABATIBLES',
         anchoMm: entrada.anchoMm, altoMm: entrada.altoMm, composicion },
     }

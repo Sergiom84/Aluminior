@@ -1,5 +1,6 @@
 import { division, hijo, hueco } from './constructores.ts'
 import type { PlantillaDiseno, UnionVisual } from './tipos.ts'
+import { FIJOS_CATALOGO } from './catalogo-fijos.ts'
 
 /**
  * Composiciones respaldadas por EMP0016. Las proporciones distintas de 1
@@ -131,6 +132,7 @@ export const PLANTILLAS_DISENO: readonly PlantillaDiseno[] = [
       hijo(hueco('hoja-2', 'corredera-izquierda', false)),
     ]),
   },
+  ...FIJOS_CATALOGO,
 ] as const
 
 /** Catálogo contrastado con Estructuras y la búsqueda de Productor (26–27/09/2026). */

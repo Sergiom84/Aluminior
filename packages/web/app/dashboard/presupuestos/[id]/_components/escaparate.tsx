@@ -37,8 +37,7 @@ export function Escaparate({
       <div className="al-escaparate-main">
         {vista.totalItems === 0 ? (
           <p className="al-escaparate-empty">
-            Sin catálogo en esta categoría. Las estructuras verificadas están en
-            Ventanas abatibles y Fijos.
+            Sin modelos habilitados en esta categoría.
           </p>
         ) : (
           <div className="al-escaparate-grid">
