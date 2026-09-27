@@ -42,7 +42,7 @@ function leerPruebas(pruebas, raiz, obligatorias, nombre) {
   })
 }
 
-/** Esquema deliberadamente limitado: no certifica precio independiente ni fabricación. */
+/** Acredita casos de venta/despiece con referencias; nunca certifica fabricación. */
 export function cargarEvidencias(ruta, lecturas, raiz = process.cwd()) {
   if (!ruta) return { porFuente: new Map(), documento: null }
   const documento = JSON.parse(readFileSync(ruta, 'utf8').replace(/^\uFEFF/, ''))
@@ -76,13 +76,17 @@ export function cargarEvidencias(ruta, lecturas, raiz = process.cwd()) {
     }
     const valoracion = modelo.valoracion
     campos(valoracion, ['estado', 'contraste', 'pruebas', 'bloqueos'], 'valoracion')
-    if (!['sin-verificar', 'bloqueada', 'incompleta'].includes(valoracion.estado) ||
-        !['ninguno', 'mismo-motor'].includes(valoracion.contraste)) {
-      fallar('valoración independiente o apta no acreditable con este esquema')
+    if (!['sin-verificar', 'bloqueada', 'incompleta', 'verificada-en-casos'].includes(valoracion.estado) ||
+        !['ninguno', 'mismo-motor', 'independiente-en-casos'].includes(valoracion.contraste)) {
+      fallar('estado o contraste de valoración no admitido')
+    }
+    if ((valoracion.estado === 'verificada-en-casos') !==
+        (valoracion.contraste === 'independiente-en-casos')) {
+      fallar('valoración verificada e independiente deben declararse conjuntamente y solo para los casos')
     }
     if (!Array.isArray(valoracion.bloqueos)) fallar('valoracion.bloqueos debe ser lista')
     valoracion.bloqueos.forEach(b => texto(b, 'bloqueo de valoración'))
-    if (valoracion.estado !== 'sin-verificar' && !valoracion.bloqueos.length) {
+    if (['bloqueada', 'incompleta'].includes(valoracion.estado) && !valoracion.bloqueos.length) {
       fallar('valoración bloqueada/incompleta requiere motivos concretos')
     }
     pruebas.valoracion = leerPruebas(valoracion.pruebas, raiz,

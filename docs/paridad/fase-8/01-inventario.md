@@ -1,5 +1,9 @@
 # Inventario reproducible del catálogo completo
 
+La evidencia de este documento corresponde al lote 1. La ampliación del esquema
+para acreditar casos económicos independientes y los recuentos finales están
+en [05, cierre y relevo](05-puerta-corredera-y-relevo.md).
+
 Fecha: 27/09/2026. Unidad de fase 8; no habilita modelos por sí misma.
 
 ## Contrato antes de implementación

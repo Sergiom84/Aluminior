@@ -1,6 +1,7 @@
 import { division, hijo, hueco } from './constructores.ts'
 import type { PlantillaDiseno, UnionVisual } from './tipos.ts'
 import { FIJOS_CATALOGO } from './catalogo-fijos.ts'
+import { composicionCorrederaDosHojas } from './corredera-dos-hojas.ts'
 
 /**
  * Composiciones respaldadas por EMP0016. Las proporciones distintas de 1
@@ -127,12 +128,15 @@ export const PLANTILLAS_DISENO: readonly PlantillaDiseno[] = [
     // EMP0016: marco NOR, división VI invisible equidistante y dos hojas 10.
     codigo: 'C2', descripcion: 'VENTANA CORREDERA DE DOS HOJAS',
     familia: 'VENTANAS CORREDERAS', familiaCodigo: '001', anchoMm: 1200, altoMm: 1200,
-    composicion: division('separacion-correderas', 'vertical', 'division-invisible', [
-      hijo(hueco('hoja-1', 'corredera-derecha', false)),
-      hijo(hueco('hoja-2', 'corredera-izquierda', false)),
-    ]),
+    composicion: composicionCorrederaDosHojas(),
   },
   ...FIJOS_CATALOGO,
+  {
+    // EMP0016: mismo par NOR, tipo 16 de puerta; sin fijos ni cotas adicionales.
+    codigo: 'C2P', descripcion: 'PUERTA CORREDERA DE DOS HOJAS',
+    familia: 'PUERTAS CORREDERAS', familiaCodigo: '002', anchoMm: 1500, altoMm: 2000,
+    composicion: composicionCorrederaDosHojas(),
+  },
 ] as const
 
 /** Catálogo contrastado con Estructuras y la búsqueda de Productor (26–27/09/2026). */

@@ -105,7 +105,7 @@ describe('vocabulario visual de estructuras', () => {
         ['abatible-izquierda', false], ['oscilobatiente-derecha', true],
       ])
     expect(JSON.stringify(configuracion)).toBe(jsonV1)
-    expect(PLANTILLAS_DISENO).toHaveLength(21)
+    expect(PLANTILLAS_DISENO).toHaveLength(22)
   })
 
   it.each([

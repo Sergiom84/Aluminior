@@ -2,14 +2,16 @@
 
 ## Estado consolidado al 27/09/2026
 
-Continuación desde `b454919`: [fase 8, fijos operativos](paridad/fase-8/03-fijos-operativos.md).
+Continuación desde `b454919`: [fase 8, cierre y relevo](paridad/fase-8/05-puerta-corredera-y-relevo.md).
 Inventario reproducible de los 541 modelos de EMP0016 (393 árboles, 148 sin
-árbol), con estados y bloqueos por modelo. 53 candidatas visuales, 21 plantillas
-habilitadas y 14 uniones. Añadidos 03H/03V/06 y CF/CFT/FC: selección, edición,
-persistencia, teclado, móvil y PDF probados en QA local. Sus 18 casos de cálculo
-siguen bloqueados; falta contraste original independiente. No son fabricables.
+árbol), con estados y bloqueos por modelo. 54 candidatas visuales, 22 plantillas
+habilitadas y 14 uniones. Añadidos 03H/03V/06, CF/CFT/FC y C2P: selección, edición,
+persistencia, teclado, móvil y PDF probados en QA local. Los 18 casos de fijos
+siguen bloqueados; falta contraste original independiente. C2P coincide en
+cuatro casos originales de precio/material; conserva costes incompletos y avisos.
+Ninguna de estas incorporaciones acredita fabricación.
 Corregidos guardado de cortes no representables, ranuras de vidrio y paginación.
-Las pruebas vigentes de esta unidad son 1377 de paquetes y 144 de scripts;
+Las pruebas vigentes son 1398 de paquetes y 150 de scripts;
 los recuentos del bloque anterior de fase 7 se conservan debajo como antecedente.
 
 Objetivo ratificado: todas las tipologías, series y uniones de Productor,

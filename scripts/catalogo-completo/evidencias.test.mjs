@@ -73,16 +73,95 @@ test('rechaza código desconocido, repetido y ambiguo sin aplicarlo a otra ficha
   assert.throws(cargar, /código desconocido o ambiguo/)
 })
 
-test('rechaza fabricación apta y valoración independiente no acreditadas', t => {
+test('rechaza fabricación apta y estados universales de valoración', t => {
   const { modelo, cargar } = preparar(t)
   modelo.fabricacion = true
   assert.throws(cargar, /fabricación debe permanecer false/)
   modelo.fabricacion = false
   modelo.valoracion.estado = 'verificada-independientemente'
-  assert.throws(cargar, /valoración independiente o apta no acreditable/)
+  assert.throws(cargar, /estado o contraste de valoración no admitido/)
   modelo.valoracion.estado = 'bloqueada'
   modelo.valoracion.contraste = 'independiente'
-  assert.throws(cargar, /valoración independiente o apta no acreditable/)
+  assert.throws(cargar, /estado o contraste de valoración no admitido/)
+})
+
+test('registra venta y despiece contrastados sin convertir costes pendientes en fabricación apta', t => {
+  const { modelo, cargar, lectura, raiz } = preparar(t)
+  writeFileSync(join(raiz, 'qa-sintetica.log'), 'Casos sintéticos: venta/despiece coinciden con origen independiente.\n')
+  modelo.valoracion.estado = 'verificada-en-casos'
+  modelo.valoracion.contraste = 'independiente-en-casos'
+  modelo.valoracion.bloqueos = ['Coste de vidrio pendiente; fabricación no acreditada']
+  const cargada = cargar()
+  const matriz = construirMatriz(lectura, { evidencias: cargada.porFuente.get(lectura.fuente.id) })
+  assert.equal(matriz.modelos[0].valoracion.independiente, true)
+  assert.equal(matriz.modelos[0].valoracion.evidencia, 'verificada-en-casos')
+  assert.equal(matriz.modelos[0].valoracion.alcance, modelo.alcance)
+  assert.equal(matriz.modelos[0].fabricacion, 'no-acreditada')
+  assert.ok(matriz.modelos[0].bloqueos.some(b => b.includes('Coste de vidrio pendiente')))
+  assert.match(matriz.modelos[0].pruebas.valoracion[0].sha256, /^[0-9a-f]{64}$/)
+  assert.equal(matriz.modelos[1].valoracion.independiente, false)
+  assert.equal(matriz.resumen.valoracionVerificadaEnCasos, 1)
+  modelo.valoracion.bloqueos = []
+  assert.doesNotThrow(cargar, 'El contraste positivo no inventa bloqueos si no están declarados')
+})
+
+test('rechaza contradicciones entre verificación de venta/despiece e independencia del contraste', t => {
+  const { modelo, cargar } = preparar(t)
+  for (const estado of ['sin-verificar', 'bloqueada', 'incompleta', 'verificada-en-casos']) {
+    for (const contraste of ['ninguno', 'mismo-motor', 'independiente-en-casos']) {
+      if ((estado === 'verificada-en-casos') === (contraste === 'independiente-en-casos')) continue
+      modelo.valoracion.estado = estado
+      modelo.valoracion.contraste = contraste
+      assert.throws(cargar, /deben declararse conjuntamente/, `${estado} + ${contraste}`)
+    }
+  }
+})
+
+test('el contraste independiente exige archivos de prueba y alcance concreto', t => {
+  const { modelo, cargar } = preparar(t)
+  modelo.valoracion.estado = 'verificada-en-casos'
+  modelo.valoracion.contraste = 'independiente-en-casos'
+  modelo.valoracion.pruebas = []
+  assert.throws(cargar, /requiere referencias/)
+  modelo.valoracion.pruebas = ['ausente.log']
+  assert.throws(cargar, /ENOENT/)
+  modelo.valoracion.pruebas = ['qa-sintetica.log']
+  modelo.alcance = ''
+  assert.throws(cargar, /alcance debe ser texto no vacío/)
+})
+
+test('un modelo contrastado no modifica los seis modelos con precio bloqueado ni otros de la familia', t => {
+  const { modelo, documento, cargar, lectura } = preparar(t)
+  const bloqueado = structuredClone(modelo)
+  modelo.valoracion.estado = 'verificada-en-casos'
+  modelo.valoracion.contraste = 'independiente-en-casos'
+  modelo.valoracion.bloqueos = []
+  for (let i = 0; i < 6; i += 1) {
+    const codigo = `FIJO-SINTETICO-${i}`
+    lectura.estructuras.push({ ...lectura.estructuras[0], codigo })
+    documento.modelos.push({ ...structuredClone(bloqueado), codigo })
+  }
+  const cargada = cargar()
+  const matriz = construirMatriz(lectura, { evidencias: cargada.porFuente.get(lectura.fuente.id) })
+  assert.equal(matriz.resumen.valoracionVerificadaEnCasos, 1)
+  assert.equal(matriz.resumen.valoracionBloqueadaEnCasos, 6)
+  const fijos = matriz.modelos.filter(m => m.codigo.startsWith('FIJO-SINTETICO-'))
+  assert.equal(fijos.length, 6)
+  assert.ok(fijos.every(m => !m.valoracion.independiente && m.valoracion.evidencia === 'bloqueada'))
+  assert.ok(matriz.modelos.every(m => m.fabricacion === 'no-acreditada'))
+})
+
+test('la matriz no marca independencia con una declaración directa contradictoria o sin pruebas', () => {
+  const lectura = lecturaSintetica()
+  for (const [valoracion, contrasteValoracion, pruebas] of [
+    ['bloqueada', 'independiente-en-casos', { valoracion: [{ sha256: 'sintetica' }] }],
+    ['verificada-en-casos', 'mismo-motor', { valoracion: [{ sha256: 'sintetica' }] }],
+    ['verificada-en-casos', 'independiente-en-casos', { valoracion: [] }],
+  ]) {
+    const evidencia = { fuenteId: lectura.fuente.id, valoracion, contrasteValoracion, pruebas }
+    const matriz = construirMatriz(lectura, { evidencias: { 'MODELO-SINTETICO': evidencia } })
+    assert.equal(matriz.modelos[0].valoracion.independiente, false)
+  }
 })
 
 test('una capacidad verificada exige pruebas existentes, locales y no vacías', t => {

@@ -78,8 +78,8 @@ function comprobarDibujos(juego: Awaited<ReturnType<typeof maquetar>>, esperadas
 }
 
 describe('paginación real de las líneas del presupuesto', () => {
-  it('mantiene cada etiqueta, dibujo y cota juntos y fuera del pie con siete cerramientos', async () => {
-    const lineas = ['C2', '03H', '03V', '06', 'CF', 'CFT', 'FC'].map((c, i) => linea(c, i + 1))
+  it('mantiene cada etiqueta, dibujo y cota juntos y fuera del pie con ocho cerramientos', async () => {
+    const lineas = ['C2', '03H', '03V', '06', 'CF', 'CFT', 'FC', 'C2P'].map((c, i) => linea(c, i + 1))
     const juego = await maquetar(lineas)
     expect(juego.paginas.length).toBeGreaterThan(1)
     comprobarDibujos(juego, lineas)

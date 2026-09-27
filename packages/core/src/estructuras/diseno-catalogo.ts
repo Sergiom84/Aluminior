@@ -33,8 +33,8 @@ export type ResultadoPlantilla =
   | { estado: 'pendiente'; motivos: readonly string[] }
 
 function apertura(nodo: NodoCatalogo): AperturaVisual | null {
-  if (nodo.hoja === 10 && nodo.numeroHoja === 1) return 'corredera-derecha'
-  if (nodo.hoja === 10 && nodo.numeroHoja === 2) return 'corredera-izquierda'
+  if ([10, 16].includes(nodo.hoja) && nodo.numeroHoja === 1) return 'corredera-derecha'
+  if ([10, 16].includes(nodo.hoja) && nodo.numeroHoja === 2) return 'corredera-izquierda'
   if (nodo.hoja === 5) return 'oscilobatiente-derecha'
   if (nodo.hoja === 6) return 'oscilobatiente-izquierda'
   // Pares experimentales: etiquetas físicas con bisagras exteriores. La
@@ -66,7 +66,7 @@ export function generarPlantillaCatalogo(entrada: EstructuraCatalogo): Resultado
       nodo.numeroHoja, nodo.tipoCota, nodo.equidistantes].every(Number.isInteger) ||
       !Number.isFinite(nodo.cota)) motivos.add('nodo con campos numéricos inválidos')
     if (![1, 2, 3, 5, 6].includes(nodo.tipo)) motivos.add(`tipo de nodo ${nodo.tipo}`)
-    if (nodo.tipo === 3 && (!apertura(nodo) || (nodo.hoja === 10 && !correderaVerificada))) {
+    if (nodo.tipo === 3 && (!apertura(nodo) || ([10, 16].includes(nodo.hoja) && !correderaVerificada))) {
       motivos.add(`tipo de hoja ${nodo.hoja}/${nodo.numeroHoja}`)
     }
     for (const variante of nodo.variantes) motivos.add(`variante ${variante}`)
@@ -93,7 +93,7 @@ export function generarPlantillaCatalogo(entrada: EstructuraCatalogo): Resultado
       if (hijos.length !== 1 || hijos[0].tipo !== 5) return fallar('hoja con superficie no simple')
       visitar(hijos[0], ancho, alto, profundidad + 1)
       return { tipo: 'hueco', id: `nodo-${nodo.id}`, apertura: apertura(nodo)!,
-        ...(nodo.hoja === 10 ? { manilla: false } : {}) }
+        ...([10, 16].includes(nodo.hoja) ? { manilla: false } : {}) }
     }
     const divisiones = hijos.filter(n => n.tipo === 6)
     if (!divisiones.length) {
@@ -136,7 +136,8 @@ export function generarPlantillaCatalogo(entrada: EstructuraCatalogo): Resultado
     return {
       estado: 'dibujable', familiaCodigo: entrada.familiaCodigo,
       plantilla: { codigo: entrada.codigo, descripcion: entrada.descripcion, familiaCodigo: entrada.familiaCodigo,
-        familia: entrada.familiaCodigo === '001' ? 'VENTANAS CORREDERAS' : ['005', '009'].includes(entrada.familiaCodigo) ? 'FIJOS' :
+        familia: entrada.familiaCodigo === '001' ? 'VENTANAS CORREDERAS' :
+          entrada.familiaCodigo === '002' ? 'PUERTAS CORREDERAS' : ['005', '009'].includes(entrada.familiaCodigo) ? 'FIJOS' :
           entrada.familiaCodigo === '020' ? 'OSCILOBATIENTES' : 'VENTANAS ABATIBLES',
         anchoMm: entrada.anchoMm, altoMm: entrada.altoMm, composicion },
     }

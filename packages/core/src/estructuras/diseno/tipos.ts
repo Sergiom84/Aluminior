@@ -48,6 +48,7 @@ export type FamiliaVisual =
   | 'VENTANAS ABATIBLES'
   | 'COMBINACIONES'
   | 'VENTANAS CORREDERAS'
+  | 'PUERTAS CORREDERAS'
 
 export interface PlantillaDiseno {
   codigo: string

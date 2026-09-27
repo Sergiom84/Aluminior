@@ -7,12 +7,16 @@ de fases, en [ESTADO-FASES](ESTADO-FASES.md). Los prompts antiguos son históric
 ## Último lote: continuación en el equipo de Sergio
 
 La continuación vigente parte de `b454919`: leer primero
-[fase 8/03](fase-8/03-fijos-operativos.md), [inventario](fase-8/01-inventario.md)
+[fase 8/05](fase-8/05-puerta-corredera-y-relevo.md), [inventario](fase-8/01-inventario.md)
 y [traductor](fase-8/02-traductor.md). 541 registros íntegramente contabilizados;
-47→53 candidatas, 15→21 plantillas habilitadas, 14 uniones. Seis fijos nuevos
-probados en navegador y PDF, con valoración aún bloqueada. La matriz local
+47→54 candidatas, 15→22 plantillas habilitadas, 14 uniones. Seis fijos nuevos
+probados en navegador y PDF, con valoración aún bloqueada; C2P añade una puerta
+con cuatro casos independientes de precio/material coincidentes y coste incompleto. La matriz local
 `output/catalogo-completo/matriz.json` conserva estados por fuente y por modelo;
-no debe publicarse. Contrato y protecciones en fase 8/00.
+no debe publicarse. Contratos y protecciones en fase 8/00 y 04. Primer commit
+local `b5b79f4`; segundo lote identificable por `feat(catalogo): habilitar puerta corredera C2P`.
+Siguiente: cotas absolutas para C2 con fijos, mano de obra de los seis fijos y
+reglas de componentes pendientes; detalles y reproducción en fase 8/05.
 
 El bloque siguiente conserva el cierre anterior de fase 7.
 

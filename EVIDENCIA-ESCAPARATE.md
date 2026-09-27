@@ -1,11 +1,13 @@
 # Escaparate: clasificación y generación conservadora
 
 > Ejecución nueva 27/09/2026: EMP0016 conserva 541 registros, 393 con árbol y
-> 5597 nodos de catálogo. El traductor pasa de 47 a **53 candidatas** y el
-> catálogo operativo de 15 a **21 plantillas**, más 14 uniones. Se incorporan
+> 5597 nodos de catálogo. El traductor pasa de 47 a **54 candidatas** y el
+> catálogo operativo de 15 a **22 plantillas**, más 14 uniones. Se incorporan
 > 03H/03V/06 y CF/CFT/FC con recorrido real; el precio de sus 18 casos sigue
 > bloqueado. [Inventario íntegro](docs/paridad/fase-8/01-inventario.md) y
 > [evidencia operativa y límites](docs/paridad/fase-8/03-fijos-operativos.md).
+> C2P añade una puerta con cuatro casos de precio/material contrastados contra
+> el original; coste y fabricación siguen incompletos. [Cierre y relevo](docs/paridad/fase-8/05-puerta-corredera-y-relevo.md).
 > Las cifras y restricciones de las secciones siguientes son históricas.
 
 > Continuidad revisada el 27/09/2026: [punto de partida vigente](docs/paridad/INICIO-SIGUIENTE-CONVERSACION.md). Este documento conserva su alcance histórico; sus encargos no se reactivan.

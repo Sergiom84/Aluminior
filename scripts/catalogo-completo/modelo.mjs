@@ -57,7 +57,10 @@ export function construirMatriz(lectura, { plantillas = [], uniones = [], eviden
       edicion: { disponibleEnInterfaz: habilitada || union, evidencia: edicion },
       persistencia: { disponibleEnInterfaz: habilitada || union, evidencia: persistencia },
       valoracion: { evidencia: valoracion, alcance: evidencia?.alcance ?? null,
-        contraste: evidencia?.contrasteValoracion ?? 'ninguno', independiente: false },
+        contraste: evidencia?.contrasteValoracion ?? 'ninguno',
+        independiente: valoracion === 'verificada-en-casos' &&
+          evidencia?.contrasteValoracion === 'independiente-en-casos' &&
+          (evidencia?.pruebas?.valoracion?.length ?? 0) > 0 },
       fabricacion: 'no-acreditada', evidencia: evidencia?.fuente ?? null,
       alcanceEvidencia: evidencia?.alcance ?? null, pruebas: evidencia?.pruebas ?? null,
       tablasRelacionadas: e.relacionadas,
@@ -80,6 +83,7 @@ export function construirMatriz(lectura, { plantillas = [], uniones = [], eviden
     edicionVerificadaEnCasos: lista.filter(m => m.edicion.evidencia === 'verificado-en-casos').length,
     persistenciaVerificadaEnCasos: lista.filter(m => m.persistencia.evidencia === 'verificado-en-casos').length,
     valoracionBloqueadaEnCasos: lista.filter(m => m.valoracion.evidencia === 'bloqueada').length,
+    valoracionVerificadaEnCasos: lista.filter(m => m.valoracion.independiente).length,
   })
   return { fuente: lectura.fuente, disenos: lectura.disenos, familiasDeclaradas: lectura.familias.length,
     resumen: contarGrupo(modelos), familias: familias.map(f => ({ ...f,
