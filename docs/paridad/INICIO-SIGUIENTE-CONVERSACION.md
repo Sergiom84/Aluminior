@@ -6,7 +6,17 @@ de fases, en [ESTADO-FASES](ESTADO-FASES.md). Los prompts antiguos son históric
 
 ## Último lote: continuación en el equipo de Sergio
 
-La continuación vigente parte de `b454919`: leer primero
+La continuación vigente parte de `e50b06a`: leer primero
+[fase 8/08, cotas absolutas y relevo](fase-8/08-cotas-absolutas-y-relevo.md) y
+[fase 8/07, mano de obra](fase-8/07-mano-obra-fijos.md). 25 plantillas habilitadas;
+C2FI/C2FS/C2FSFI conservan fijos de 300 mm al redimensionar y rechazan medidas
+imposibles. Recorrido local/PDF comprobados; nueve casos económicos bloqueados.
+La investigación MO encuentra dos originales CF y 79 controles TMP/16 para
+categoría y agregación, sin cambio económico. Siguiente unidad en serie: reglas
+TMP/16, cotas económicas FI/FS y perfiles adicionales. Matriz reproducible con
+`output/fase-8/evidencias-lote3.json`; respetar las bases y documentos de QA.
+
+El lote anterior desde `b454919` se conserva en
 [fase 8/05](fase-8/05-puerta-corredera-y-relevo.md), [inventario](fase-8/01-inventario.md)
 y [traductor](fase-8/02-traductor.md). 541 registros íntegramente contabilizados;
 47→54 candidatas, 15→22 plantillas habilitadas, 14 uniones. Seis fijos nuevos

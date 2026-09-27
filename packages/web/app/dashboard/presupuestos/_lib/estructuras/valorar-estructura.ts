@@ -11,6 +11,7 @@ import { resolverAcristalamientoEstructura } from './acristalamiento-estructura.
 import { resolverOpcionesHerraje, ErrorSeleccionHerraje } from './herraje.ts'
 import { valorarConCatalogo } from './catalogo-despiece/valorar-con-catalogo.ts'
 import { validarCotasEntrada } from './cotas-entrada.ts'
+import { erroresMedidasCatalogo } from './medidas-catalogo.ts'
 import {
   articulosAmbiguos, avisoAmbiguos,
 } from './pvp-articulos.ts'
@@ -61,6 +62,8 @@ export async function valorarEstructura(
 ): Promise<ResultadoValoracionEstructura> {
   const cotasEntrada = validarCotasEntrada(entrada.cotas)
   if (!cotasEntrada.ok) return { ok: false, errores: { cotas: [cotasEntrada.error] } }
+  const erroresMedidas = erroresMedidasCatalogo(entrada)
+  if (erroresMedidas) return { ok: false, errores: erroresMedidas }
   const numero = entrada.opcionAcristalamiento ?? 1
   if (!Number.isInteger(numero) || numero < 1 || numero > 5) return { ok: false, errores: { opcionAcristalamiento: ['Opción de acristalamiento inválida'] } }
   if (numero !== 1) {

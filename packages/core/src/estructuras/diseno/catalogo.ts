@@ -2,6 +2,7 @@ import { division, hijo, hueco } from './constructores.ts'
 import type { PlantillaDiseno, UnionVisual } from './tipos.ts'
 import { FIJOS_CATALOGO } from './catalogo-fijos.ts'
 import { composicionCorrederaDosHojas } from './corredera-dos-hojas.ts'
+import { CORREDERAS_ACOTADAS } from './catalogo-correderas-acotadas.ts'
 
 /**
  * Composiciones respaldadas por EMP0016. Las proporciones distintas de 1
@@ -137,6 +138,7 @@ export const PLANTILLAS_DISENO: readonly PlantillaDiseno[] = [
     familia: 'PUERTAS CORREDERAS', familiaCodigo: '002', anchoMm: 1500, altoMm: 2000,
     composicion: composicionCorrederaDosHojas(),
   },
+  ...CORREDERAS_ACOTADAS,
 ] as const
 
 /** Catálogo contrastado con Estructuras y la búsqueda de Productor (26–27/09/2026). */

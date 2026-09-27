@@ -25,6 +25,27 @@ const ejeTravesano = (altoMm: number, fiMm: number) => {
 }
 
 describe('SVG real de manos y manillas', () => {
+  it.each(['C2FI', 'C2FS', 'C2FSFI'])(
+    '%s proyecta cotas de catálogo en miniatura y al cambiar la altura', codigo => {
+      const plantilla = plantillaDiseno(codigo)!
+      for (const compacto of [true, false]) {
+        for (const altoMm of [1200, 1800]) {
+          const html = renderToStaticMarkup(<DibujoEstructura plantilla={plantilla}
+            compacto={compacto} anchoMm={1200} altoMm={altoMm} />)
+          const margen = compacto ? 24 : 38
+          const altoRect = compacto ? 372 : 424
+          const altoFisico = compacto ? plantilla.altoMm : altoMm
+          const ejes = [...html.matchAll(/<rect x="[\d.]+" y="([\d.]+)" width="[\d.]+" height="([\d.]+)" class="al-traverse"/g)]
+            .map(m => (Number(m[1]) + Number(m[2]) / 2 - margen) * altoFisico / altoRect).sort((a, b) => a - b)
+          const esperados = codigo === 'C2FSFI' ? [300, altoFisico - 300]
+            : [codigo === 'C2FS' ? 300 : altoFisico - 300]
+          expect(ejes).toHaveLength(esperados.length)
+          ejes.forEach((eje, i) => expect(eje).toBeCloseTo(esperados[i]))
+          expect(contar(html, 'class="al-glass"')).toBe(codigo === 'C2FSFI' ? 4 : 3)
+          expect(contar(html, 'class="al-opening-line"')).toBe(2)
+        }
+      }
+    })
   it.each([['C2', false], ['C2', true], ['C2P', false], ['C2P', true]] as const)(
     '%s representa dos correderas sin bisagras (compacto=%s)', (codigo, compacto) => {
     const html = render(codigo, compacto)

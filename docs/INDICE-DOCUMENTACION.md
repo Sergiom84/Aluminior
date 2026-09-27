@@ -1,5 +1,8 @@
 # Índice y revisión documental
 
+Último lote local: [cotas absolutas y relevo de fase 8](paridad/fase-8/08-cotas-absolutas-y-relevo.md).
+Investigación complementaria: [mano de obra de los fijos](paridad/fase-8/07-mano-obra-fijos.md).
+
 ## Revisión integral de continuidad — 27/09/2026
 
 Inventariados los 76 Markdown propios presentes antes de crear el

@@ -2,7 +2,7 @@
 
 import React from 'react'
 import {
-  distribuirComposicion, distribuirModuloCerramiento, geometriaAperturaVisual,
+  distribuirComposicionAcotada, distribuirModuloCerramiento, geometriaAperturaVisual,
   type AperturaVisual, type ClaseSeparador, type ModuloCerramiento, type PlantillaDiseno,
 } from '@aluminior/core/estructuras'
 
@@ -34,7 +34,9 @@ export function DibujoEstructura({
   }
   const elementos = modulo
     ? distribuirModuloCerramiento(modulo, rect, compacto ? 12 : 18)
-    : distribuirComposicion(plantilla.composicion, rect, compacto ? 12 : 18)
+    : distribuirComposicionAcotada(plantilla.composicion,
+      compacto ? { anchoMm: plantilla.anchoMm, altoMm: plantilla.altoMm } : { anchoMm, altoMm },
+      rect, compacto ? 12 : 18)
   const marco = compacto ? 13 : 20
 
   return (

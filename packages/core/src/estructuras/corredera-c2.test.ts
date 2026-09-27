@@ -7,7 +7,8 @@ import { geometriaAperturaVisual } from './geometria-apertura.ts'
 describe('C2 en el catálogo del configurador', () => {
   it('ofrece C2 en su familia, conserva las dos hojas y permite reabrir el JSON', () => {
     const plantilla = plantillaDiseno('C2')!
-    expect(itemsEscaparate('correderas-no-perimetrales').map(p => p.codigo)).toEqual(['C2'])
+    expect(itemsEscaparate('correderas-no-perimetrales').map(p => p.codigo))
+      .toEqual(['C2', 'C2FI', 'C2FS', 'C2FSFI'])
     expect(plantilla).toMatchObject({ anchoMm: 1200, altoMm: 1200, familiaCodigo: '001' })
     const configuracion = crearConfiguracionCerramiento(plantilla)
     expect(esConfiguracionCerramiento(JSON.parse(JSON.stringify(configuracion)))).toBe(true)

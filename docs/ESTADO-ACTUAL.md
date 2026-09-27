@@ -2,16 +2,20 @@
 
 ## Estado consolidado al 27/09/2026
 
-Continuación desde `b454919`: [fase 8, cierre y relevo](paridad/fase-8/05-puerta-corredera-y-relevo.md).
+Última continuación desde `e50b06a`: [fase 8, cotas y relevo](paridad/fase-8/08-cotas-absolutas-y-relevo.md).
 Inventario reproducible de los 541 modelos de EMP0016 (393 árboles, 148 sin
-árbol), con estados y bloqueos por modelo. 54 candidatas visuales, 22 plantillas
+árbol), con estados y bloqueos por modelo. 54 candidatas visuales, 25 plantillas
 habilitadas y 14 uniones. Añadidos 03H/03V/06, CF/CFT/FC y C2P: selección, edición,
 persistencia, teclado, móvil y PDF probados en QA local. Los 18 casos de fijos
-siguen bloqueados; falta contraste original independiente. C2P coincide en
+siguen bloqueados; se localizaron dos originales CF con minutos coincidentes,
+sin cierre material/económico general. C2P coincide en
 cuatro casos originales de precio/material; conserva costes incompletos y avisos.
-Ninguna de estas incorporaciones acredita fabricación.
+Añadidas C2FI/C2FS/C2FSFI: cotas absolutas de 300 mm, rechazo de medidas
+imposibles, edición/persistencia/PDF verificados; nueve casos sin valorar.
+La hipótesis de mano de obra TMP/16 coincide en 79 registros de control;
+no está implementada ni cubre TFF. Ninguna incorporación acredita fabricación.
 Corregidos guardado de cortes no representables, ranuras de vidrio y paginación.
-Las pruebas vigentes son 1398 de paquetes y 150 de scripts;
+Las pruebas de cierre son 1458 de paquetes y 153 de scripts;
 los recuentos del bloque anterior de fase 7 se conservan debajo como antecedente.
 
 Objetivo ratificado: todas las tipologías, series y uniones de Productor,

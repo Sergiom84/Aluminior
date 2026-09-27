@@ -11,7 +11,7 @@ avances de las fases 3–7. Las numeraciones de PLAN y lotes J son distintas.
 | 0. Evidencia | Observaciones, CHM extraído, ocho MDB inspeccionadas, inventario y primer barrido de facturas | Agotar fuentes, variantes, reglas y combinaciones; aceptación original completa |
 | 1. Guardado | Reintento, idempotencia acotada, GRUPO, reapertura y PDF en QA | No acredita precio ni recuperación al cerrar pestaña |
 | 2. Geometría | Dominio compartido pantalla/PDF, teclado y tamaños locales | Comparación integral equivalente con Productor |
-| 3. Composición | v3 bidimensional, anclajes, arrastre/teclado, conservación v1/v2; 15 plantillas manuales incluida C2 | Catálogo completo: el barrido anterior documentó 46/541 candidatas; módulos y reglas de interacción por acreditar |
+| 3. Composición | v3 bidimensional, anclajes, arrastre/teclado, conservación v1/v2; 25 plantillas y cotas físicas de C2 con fijos | Catálogo completo: 54/541 candidatas; módulos y reglas de interacción por acreditar |
 | 4. Materiales | Excepciones de serie/vidrio por elemento, herencia y aplicación a modelos iguales | Otras familias y semántica completa de actualización colectiva |
 | 5. Vidrio | Buscador real, código canónico, integración y guardas de hojas incompletas | E11, D.A. económico completo, huecos/travesaños de Diseño V3 |
 | 6. Uniones | 14 códigos, grosor de catálogo, esquineros a cero y longitud valorada | Compatibilidades, variantes y contraste de todas las uniones/series |
@@ -19,7 +19,7 @@ avances de las fases 3–7. Las numeraciones de PLAN y lotes J son distintas.
 | 8. Aceptación | Evidencias locales de PDF, teclado y móvil de cambios concretos | Recorrido integral, precio, fabricación y aceptación del taller |
 
 Fuentes: resúmenes de fases 1–7 y [relevo vigente](INICIO-SIGUIENTE-CONVERSACION.md).
-Último lote y límites del denominador: [fase 7/13](fase-7/13-cierre-cotas-c2.md).
+Último lote y límites del denominador: [fase 8/08](fase-8/08-cotas-absolutas-y-relevo.md).
 Ni un inventario ni las pruebas técnicas convierten una fase parcial en cerrada.
 
 

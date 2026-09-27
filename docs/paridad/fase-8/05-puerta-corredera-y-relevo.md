@@ -1,5 +1,8 @@
 # C2P y relevo del catálogo completo
 
+Continuación posterior: [lote 3, cotas absolutas y relevo](08-cotas-absolutas-y-relevo.md).
+Este documento conserva la evidencia del lote 2.
+
 Segundo lote desde `b5b79f4`, 27/09/2026. Contrato [04](04-contrato-puerta-corredera.md).
 El catálogo completo **sigue pendiente**. Esta entrega habilita siete modelos
 nuevos en dos unidades verificadas; no declara completas sus familias.

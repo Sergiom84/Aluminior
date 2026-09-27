@@ -1,5 +1,6 @@
 import { plantillaDiseno, UNIONES_VISUALES } from './diseno.ts'
 import { resolverGeometriaFi1Ofi } from './geometria-1ofi.ts'
+import { resolverGeometriaComposicion } from './geometria-composicion.ts'
 import { materialesModuloValidos } from './materiales-cerramiento.ts'
 import {
   anclajesV3Validos, unionConfigurada, VERSION_COMPOSICION_CERRAMIENTO,
@@ -25,6 +26,7 @@ export function esConfiguracionCerramiento(valor: unknown): valor is Configuraci
     if (!materialesModuloValidos(modulo.materiales)) return false
     const plantilla = plantillaDiseno(modulo.estructuraCodigo)
     if (!plantilla) return false
+    if (!resolverGeometriaComposicion(plantilla.composicion, modulo.anchoMm, modulo.altoMm).valido) return false
     const tieneFi = Object.hasOwn(modulo, 'fiMm')
     if (candidato.version === 1) return !tieneFi
     if (plantilla.codigo !== '1OFI') return !tieneFi
