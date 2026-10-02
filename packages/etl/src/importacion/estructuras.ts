@@ -1,4 +1,5 @@
 import { bool, ent, num, txt } from '../csv.ts'
+import { camposDisenoEstructura, camposDisenoNodo } from './campos-diseno.ts'
 import type { Cargar } from './cargar.ts'
 import { descartar, excluir, type Resultado } from './resultado.ts'
 
@@ -14,8 +15,7 @@ export async function cargarEstructuras(cargar: Cargar): Promise<Resultado[]> {
       observaciones: txt(f.Observaciones),
       es_accesorio: bool(f.AccesorioSN),
       fabrica_stock: bool(f.StFabricacionSN),
-      dis_ancho_mm: ent(f.DisAncho),
-      dis_alto_mm: ent(f.DisAlto),
+      ...camposDisenoEstructura(f),
     }
   }))
 
@@ -58,13 +58,7 @@ export async function cargarEstructuras(cargar: Cargar): Promise<Resultado[]> {
       posicion_hueco: ent(f.posHueco),
       tipo_travesano: txt(f.TipoTrav),
       invisible: bool(f.bInvisible),
-      tipo_hoja: ent(f.TipoHoja),
-      numero_hoja: ent(f.nHoja),
-      tipo_cota: ent(f.TipoCota),
-      cota: num(f.Cota),
-      equidistantes: ent(f.OperacionEqui),
-      tipo_marco: txt(f.TipoMarco),
-      tipo_curva: ent(f.TipoCurva),
+      ...camposDisenoNodo(f),
     }
   }))
 

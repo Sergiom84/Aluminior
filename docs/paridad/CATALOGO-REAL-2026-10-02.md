@@ -74,8 +74,57 @@ zócalos (nodo 4), curvas, oscilantes/proyectantes (21, 22, 49), 3HO y PCM1D/I
 
 - Valoración: una C2 con serie GMC400 genera despiece (30 piezas) pero 22 sin
   coste, así que queda «sin valorar». Es el siguiente frente, no del catálogo.
-- Producción: hace falta aplicar `0022` en Supabase y **rellenar solo las
-  columnas nuevas**. No usar el importador completo: `vaciarDestino` trunca
-  presupuestos y clientes.
+- Producción: ver «Paso a Supabase». No usar el importador completo:
+  `vaciarDestino` trunca presupuestos y clientes.
 - Manos 58/43/44, sentido de las correderas y orden del escaparate: contrastar
   con Productor (vídeo o observación).
+
+## Paso a Supabase (preparado, sin ejecutar)
+
+Desplegado `d5c87ce` en Render: abre en Cerramiento y, sin la migración en
+Supabase, sigue con las 14 verificadas sin errores (comprobado 02/10/2026).
+
+`packages/etl/src/rellenar-diseno.ts` rellena solo los nueve campos de dibujo
+en filas existentes: no vacía ni inserta, salta nodos cuya identidad (tipo y
+padre) no coincida, va en una transacción y **simula por defecto**. Ensayo en
+local con los campos vaciados: 541 estructuras y 5596 nodos, cero ausentes o
+con identidad distinta; repetirlo no cambia nada; el escaparate vuelve a 160.
+
+Con el `.env` de la empresa en la raíz y el origen `export_datos/EMP0016`:
+
+1. `node packages/db/pruebas/preflight-remoto.mjs`: revisar las migraciones
+   aplicadas.
+2. `node packages/db/pruebas/aplicar-remoto.mjs`: aplica `0022` (aditiva).
+3. `npx tsx packages/etl/src/rellenar-diseno.ts --origen export_datos/EMP0016`:
+   simulación. Esperado: sin filas ausentes ni identidades distintas; si las
+   hay, el catálogo de Supabase procede de otra exportación y hay que decidir
+   el origen antes de seguir.
+4. Repetir con `--apply`. Reversible poniendo a NULL esas columnas.
+
+La web recoge el catálogo en un máximo de 5 minutos (caché por proceso).
+
+**Rama `feat/motor-catalogo-completo`** (27/09, sin fusionar): sus migraciones
+se llaman 0022 y 0023, con fecha anterior a esta 0022. Drizzle solo aplica
+migraciones posteriores a la última registrada, así que al fusionarla hay que
+regenerarlas (nuevo número y fecha) o no se aplicarán en Supabase.
+
+## Contraste con el seminario de GAIA (2020)
+
+Material del usuario en `Desktop/Aluminior/Presentación programa` (fuera del
+repositorio). Confirma:
+
+- Escaparate con familias a la izquierda, rejilla 4 × 3, «Página X de Y» y
+  etiqueta `DESCRIPCIÓN [CÓDIGO]`, como el de Aluminior.
+- Convención de dibujo: líneas desde las esquinas del lado de bisagras (marcas
+  en el marco) hasta el vértice del lado de manilla; la oscilobatiente añade el
+  triángulo con vértice arriba. Coincide con el dibujo de Aluminior y con el
+  mapeo de los tipos 7 (2 hojas) y 8 (2 hojas, una oscilo).
+- En la base de demostración el orden del escaparate no es por código
+  ([1], [2], [3], [4], [10], [20], [30], [99], [1+1]…): parece `OrdenEscap`
+  mantenido a mano. En EMP0016 vale 0, así que se mantiene el orden por código.
+- Varias ventanas se presentan como líneas de estructura consecutivas; al
+  aceptar, Intro reutiliza las características de la anterior. Aluminior ya
+  conserva serie, vidrio y acabado entre altas; queda por medir foco y teclado.
+- No muestra correderas, GRUPO ni uniones: sentido de las hojas correderas y
+  mano de 58/43/44 siguen siendo hipótesis.
+
