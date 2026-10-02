@@ -17,6 +17,7 @@
     "etl:tarifa": "tsx packages/etl/src/cargar-tarifa.ts",
     "etl:cortes:local": "tsx packages/etl/src/cargar-cortes-local.ts",
     "etl:catalogo-despiece:local": "tsx packages/etl/src/cargar-catalogo-despiece-local.ts",
+    "etl:motor-catalogo": "tsx packages/etl/src/cargar-motor-catalogo.ts",
     "dev": "npm run dev:web",
     "dev:web": "npm run -w @aluminior/web dev",
     "test": "npm run -ws --if-present test",

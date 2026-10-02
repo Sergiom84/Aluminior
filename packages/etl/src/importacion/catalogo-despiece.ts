@@ -6,7 +6,8 @@
  */
 import type { Sql } from 'postgres'
 import { bool, ent, leerLotes, num, rutaTabla, txt, type Fila } from '../csv.ts'
-import { crearCargador, type Cargar } from './cargar.ts'
+import type { Cargar } from './cargar.ts'
+import { crearCargadorEstricto } from './cargar-estricto.ts'
 import { descartar, excluir, type Resultado } from './resultado.ts'
 
 const cero = (v: string | undefined) => num(v) ?? '0'
@@ -141,7 +142,10 @@ async function cargarParametrosSerie(sql: Sql, origen: string): Promise<Resultad
     for (const f of lote) {
       const p = parametrosSerie(f)
       if (!p) { descartar(r, 'conjunto sin código'); continue }
-      await sql`INSERT INTO conjunto_parametros_despiece ${sql({ ...p, herrajes: sql.json(p.herrajes), mano_obra: sql.json(p.mano_obra) })}`
+      await sql`INSERT INTO conjunto_parametros_despiece
+        (conjunto_codigo, herrajes, mano_obra, grosor_maximo_simple, grosor_maximo_doble)
+        VALUES (${p.conjunto_codigo}, ${JSON.stringify(p.herrajes)}::jsonb, ${JSON.stringify(p.mano_obra)}::jsonb,
+          ${p.grosor_maximo_simple}, ${p.grosor_maximo_doble})`
       r.insertadas++
     }
   }
@@ -154,22 +158,29 @@ const TABLAS = ['estructura_plantilla_catalogo', 'conjunto_asociaciones', 'grupo
 const ORIGENES = ['EstructurasArticulos', 'ConjuntosAsoc', 'FamiliasGruposAsoc', 'SeriesAsocV2TiposHoja', 'MOConceptos',
   'ArticulosIncrPrecio', 'Articulos', 'ConjuntosLin', 'Conjuntos']
 
+export function comprobarOrigenDespiece(origen: string) {
+  for (const tabla of ORIGENES) if (!rutaTabla(origen, tabla)) throw new Error(`Falta ${tabla}; se conserva el catálogo de despiece`)
+}
+
+/** Sustituye las tablas del despiece completo dentro de la transacción del llamante. */
+export async function reemplazarCatalogoDespiece(tx: Sql, origen: string) {
+  for (const tabla of TABLAS) await tx`DELETE FROM ${tx(tabla)}`
+  const estructuras = new Set((await tx`SELECT codigo FROM estructuras`).map(f => String(f.codigo)))
+  const resultados = [
+    ...await cargarCatalogoDespiece(crearCargadorEstricto(tx, origen), estructuras),
+    await cargarParametrosSerie(tx, origen),
+  ]
+  const fallidas = resultados.filter(r => r.descartadas > 0 || r.insertadas === 0)
+  if (fallidas.length) {
+    const detalle = fallidas.map(r => `${r.tabla}: ${r.insertadas} insertadas, ${r.descartadas} descartadas ` +
+      `(${[...r.motivos].map(([m, n]) => `${n}× ${m}`).join('; ')})`).join(' | ')
+    throw new Error(`Catálogo de despiece incompleto; actualización revertida. ${detalle}`)
+  }
+  return resultados
+}
+
 /** Actualización suplementaria atómica: no vacía presupuestos ni el catálogo anterior. */
 export async function importarCatalogoDespiece(sql: Sql, origen: string) {
-  for (const tabla of ORIGENES) if (!rutaTabla(origen, tabla)) throw new Error(`Falta ${tabla}; se conserva el catálogo de despiece`)
-  return sql.begin(async tx => {
-    for (const tabla of TABLAS) await tx`DELETE FROM ${tx(tabla)}`
-    const estructuras = new Set((await tx`SELECT codigo FROM estructuras`).map(f => String(f.codigo)))
-    const resultados = [
-      ...await cargarCatalogoDespiece(crearCargador(tx as unknown as Sql, origen), estructuras),
-      await cargarParametrosSerie(tx as unknown as Sql, origen),
-    ]
-    const fallidas = resultados.filter(r => r.descartadas > 0 || r.insertadas === 0)
-    if (fallidas.length) {
-      const detalle = fallidas.map(r => `${r.tabla}: ${r.insertadas} insertadas, ${r.descartadas} descartadas ` +
-        `(${[...r.motivos].map(([m, n]) => `${n}× ${m}`).join('; ')})`).join(' | ')
-      throw new Error(`Catálogo de despiece incompleto; actualización revertida. ${detalle}`)
-    }
-    return resultados
-  })
+  comprobarOrigenDespiece(origen)
+  return sql.begin(tx => reemplazarCatalogoDespiece(tx as unknown as Sql, origen))
 }

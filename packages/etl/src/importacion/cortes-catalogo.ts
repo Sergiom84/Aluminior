@@ -1,6 +1,7 @@
 import type { Sql } from 'postgres'
 import { ent, num, rutaTabla, txt } from '../csv.ts'
-import { crearCargador, type Cargar } from './cargar.ts'
+import type { Cargar } from './cargar.ts'
+import { crearCargadorEstricto } from './cargar-estricto.ts'
 import { descartar, excluir, type Resultado } from './resultado.ts'
 
 export async function cargarCortesCatalogo(cargar: Cargar): Promise<Resultado[]> {
@@ -42,18 +43,27 @@ export async function cargarCortesCatalogo(cargar: Cargar): Promise<Resultado[]>
   return [referencias, descuentos]
 }
 
-/** Actualización suplementaria atómica: no vacía presupuestos ni el catálogo previo. */
-export async function importarCortesCatalogo(sql: Sql, origen: string) {
-  for (const tabla of ['EstructurasArticulos', 'ConjuntosDescuentos']) {
+export const ORIGENES_CORTES = ['EstructurasArticulos', 'ConjuntosDescuentos']
+
+export function comprobarOrigenCortes(origen: string) {
+  for (const tabla of ORIGENES_CORTES) {
     if (!rutaTabla(origen, tabla)) throw new Error(`Falta ${tabla}; se conserva el catálogo de cortes`)
   }
-  return sql.begin(async tx => {
-    await tx`DELETE FROM estructura_referencias_corte`
-    await tx`DELETE FROM conjunto_descuentos_corte`
-    const resultados = await cargarCortesCatalogo(crearCargador(tx as unknown as Sql, origen))
-    if (resultados.some(r => r.descartadas > 0 || r.insertadas === 0)) {
-      throw new Error('Catálogo de cortes incompleto; actualización revertida')
-    }
-    return resultados
-  })
+}
+
+/** Sustituye las dos tablas de cortes dentro de la transacción del llamante. */
+export async function reemplazarCortesCatalogo(tx: Sql, origen: string) {
+  await tx`DELETE FROM estructura_referencias_corte`
+  await tx`DELETE FROM conjunto_descuentos_corte`
+  const resultados = await cargarCortesCatalogo(crearCargadorEstricto(tx, origen))
+  if (resultados.some(r => r.descartadas > 0 || r.insertadas === 0)) {
+    throw new Error('Catálogo de cortes incompleto; actualización revertida')
+  }
+  return resultados
+}
+
+/** Actualización suplementaria atómica: no vacía presupuestos ni el catálogo previo. */
+export async function importarCortesCatalogo(sql: Sql, origen: string) {
+  comprobarOrigenCortes(origen)
+  return sql.begin(tx => reemplazarCortesCatalogo(tx as unknown as Sql, origen))
 }
