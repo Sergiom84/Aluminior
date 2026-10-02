@@ -103,6 +103,17 @@ Con el `.env` de la empresa en la raíz y el origen `export_datos/EMP0016`:
 
 La web recoge el catálogo en un máximo de 5 minutos (caché por proceso).
 
+**Ejecución en Supabase (02/10/2026, autorizada por el usuario):** antes, 22
+migraciones (hasta `0021_editor_linea`), 541 estructuras, 5596 nodos, 5
+presupuestos y 1 línea. Aplicada `0022_catalogo_diseno` (registro 23, hash
+`05b992b5814d`, igual al fichero). Simulación del relleno: 541 estructuras y
+5596 nodos a actualizar; 0 ausentes, 0 sin origen, 0 con identidad distinta.
+Comprobado después: ninguna fila escrita y la web publicada sigue con las 14.
+Relleno aplicado con `--apply` tras confirmación: 541 estructuras y 5596
+nodos en una transacción; una segunda pasada no encuentra cambios; siguen 5
+presupuestos y 1 línea. La web publicada ofrece 160 estructuras (mismo reparto
+por familia que en local) y compone C2 + C3 (3020 × 1200).
+
 **Rama `feat/motor-catalogo-completo`** (27/09, sin fusionar): sus migraciones
 se llaman 0022 y 0023, con fecha anterior a esta 0022. Drizzle solo aplica
 migraciones posteriores a la última registrada, así que al fusionarla hay que
