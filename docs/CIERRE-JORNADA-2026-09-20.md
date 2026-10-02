@@ -1,5 +1,7 @@
 # Cierre de jornada — 20/09/2026
 
+> Continuidad revisada el 27/09/2026: [punto de partida vigente](paridad/INICIO-SIGUIENTE-CONVERSACION.md). Las comprobaciones fechadas conservan sus límites; consultar el relevo para el trabajo siguiente.
+
 El usuario da por finalizado el trabajo por hoy y solicita actualizar la
 documentación, commit, integración en main y push. No reanudar automáticamente
 la operación de Productor ni el desarrollo al leer este relevo.

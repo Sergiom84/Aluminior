@@ -1,5 +1,7 @@
 # Relevo: resolver evidencia antes de ampliar el catálogo
 
+> Continuidad revisada el 27/09/2026: [punto de partida vigente](docs/paridad/INICIO-SIGUIENTE-CONVERSACION.md). Este documento conserva su alcance histórico; sus encargos no se reactivan.
+
 > Revisión documental 20/09/2026: **Relevo histórico**. A y B1 tienen cierres posteriores; comprobar cotas y fase 2 antes de repetir.
 > Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
 

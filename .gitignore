@@ -74,3 +74,6 @@ Plan_15_08.txt
 
 # Capturas de reconocimiento de Productor (locales)
 recon-cerramientos/
+
+# Ajustes personales de Claude Code (sandbox local)
+.claude/settings.local.json

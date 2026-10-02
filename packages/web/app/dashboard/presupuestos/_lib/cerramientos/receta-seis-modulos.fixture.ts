@@ -10,7 +10,7 @@ export function recetaSeisModulos(): ConfiguracionCerramiento {
     })),
     uniones: Array.from({ length: 5 }, (_, i) => ({
       id: `u${i + 1}`, codigo: i === 0 ? 'PSU001' : 'GMU038',
-      grosorMm: i === 0 ? 100 : 60, longitudMm: 1020,
+      grosorMm: i === 0 ? 2 : 60, longitudMm: 1020,
     })),
   }
 }

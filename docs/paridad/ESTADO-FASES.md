@@ -1,5 +1,29 @@
 # Auditoría de fases 0–8 y trabajo sin escritorio
 
+## Estado consolidado posterior — 27/09/2026
+
+Esta tabla sustituye el dictamen del 20/09 como estado actual. Los apartados
+posteriores conservan evidencia histórica y no deben usarse para deshacer
+avances de las fases 3–7. Las numeraciones de PLAN y lotes J son distintas.
+
+| Fase | Avance comprobado/documentado | Sigue pendiente |
+|---|---|---|
+| 0. Evidencia | Observaciones, CHM extraído, ocho MDB inspeccionadas, inventario y primer barrido de facturas | Agotar fuentes, variantes, reglas y combinaciones; aceptación original completa |
+| 1. Guardado | Reintento, idempotencia acotada, GRUPO, reapertura y PDF en QA | No acredita precio ni recuperación al cerrar pestaña |
+| 2. Geometría | Dominio compartido pantalla/PDF, teclado y tamaños locales | Comparación integral equivalente con Productor |
+| 3. Composición | v3 bidimensional, anclajes, arrastre/teclado, conservación v1/v2 | Catálogo completo: 14 plantillas manuales y 46/541 dibujables documentadas; módulos y reglas de interacción |
+| 4. Materiales | Excepciones de serie/vidrio por elemento, herencia y aplicación a modelos iguales | Otras familias y semántica completa de actualización colectiva |
+| 5. Vidrio | Buscador real, código canónico, integración y guardas de hojas incompletas | E11, D.A. económico completo, huecos/travesaños de Diseño V3 |
+| 6. Uniones | 14 códigos, grosor de catálogo, esquineros a cero y longitud valorada | Compatibilidades, variantes y contraste de todas las uniones/series |
+| 7. Valoración | Cortes C2/C3 GMC400, carga suplementaria 0022 local, diagnóstico y banco de facturas | Motor completo; vidrio/herrajes/Dif; reproducción independiente: 0 facturas acreditadas |
+| 8. Aceptación | Evidencias locales de PDF, teclado y móvil de cambios concretos | Recorrido integral, precio, fabricación y aceptación del taller |
+
+Fuentes: resúmenes de fases 1–7 y [relevo vigente](INICIO-SIGUIENTE-CONVERSACION.md).
+Ni un inventario ni las pruebas técnicas convierten una fase parcial en cerrada.
+
+
+> Continuidad revisada el 27/09/2026: [punto de partida vigente](INICIO-SIGUIENTE-CONVERSACION.md). Las comprobaciones fechadas conservan sus límites; consultar el relevo para el trabajo siguiente.
+
 Fecha: 20/09/2026. Alcance: código, pruebas, documentación e inventario local;
 sin observación visual de Productor ni consultas o escrituras en Supabase.
 Plan contrastado: [PROMPT-MAESTRO-FASES-0-A-8.md](../../PROMPT-MAESTRO-FASES-0-A-8.md).
@@ -29,12 +53,13 @@ con los cambios locales de geometría y saneamiento descritos en
 el plan no se encuentra en este repositorio, incluso después de `git fetch origin`.
 No basta con sus informes para considerar sus correcciones incorporadas.
 
-Faltan los entregables de `docs/paridad/fase-0/` y los documentos 00–03 de fase 1.
+En la auditoría inicial faltaban los entregables de `docs/paridad/fase-0/` y 00–03 de fase 1.
+Ahora existen fase-1/00-resumen y 05-verificacion-local; no reconstruir los restantes.
 Solo está la [auditoría parcial de fase 1](fase-1/04-auditoria-74e0c95.md).
 Esto impide certificar el cierre documental, pero no demuestra que el trabajo
 nunca se realizara en otra copia.
 
-## Dictamen por fase
+## Dictamen histórico por fase — 20/09
 
 | Fase | Estado comprobable en esta copia | Trabajo realizable sin controlar visualmente Productor | Puerta de aceptación pendiente |
 |---|---|---|---|
@@ -71,7 +96,7 @@ La evidencia visual nueva está en fase 2. Los límites de Productor siguen vige
    despiece industrial contrastado. No usar un resultado verde de esa fixture
    como certificado de precio o fabricación de Productor.
 
-## Límites estructurales para las fases siguientes
+## Límites estructurales observados el 20/09 (varios superados después)
 
 - `anyadir-linea.tsx` inicia el tipo en `ESTRUCTURA`; la incorporación al
   cerramiento en `core/estructuras/cerramiento.ts` añade al extremo derecho.

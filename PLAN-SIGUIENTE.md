@@ -1,5 +1,7 @@
 # Plan siguiente: catálogo del editor de línea y escaparate completo
 
+> Continuidad revisada el 27/09/2026: [punto de partida vigente](docs/paridad/INICIO-SIGUIENTE-CONVERSACION.md). Este documento conserva su alcance histórico; sus encargos no se reactivan.
+
 > Revisión documental 20/09/2026: **Plan histórico parcialmente realizado**. Carga de catálogo y escaparate ya figuran realizados en su adenda.
 > Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
 

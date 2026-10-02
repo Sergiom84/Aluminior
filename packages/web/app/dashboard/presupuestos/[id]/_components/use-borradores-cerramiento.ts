@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import {
   actualizarModuloCerramiento, actualizarFiModuloCerramiento, asignarMaterialesModulos,
-  CAMPOS_MATERIAL, esConfiguracionCerramiento,
+  CAMPOS_MATERIAL, esConfiguracionCerramiento, unionConGrosorCatalogo,
   type CambiosMaterial, type ConfiguracionCerramiento, type ModuloCerramiento, type UnionCerramiento,
 } from '@aluminior/core/estructuras'
 
@@ -34,7 +34,7 @@ export function aplicarBorrador(configuracion: ConfiguracionCerramiento, borrado
   } else {
     if (!configuracion.uniones.some(item => item.id === id)) return null
     siguiente = { ...configuracion, uniones: configuracion.uniones.map(item =>
-      item.id === id ? { ...item, ...borradores.uniones[id] } : item) }
+      item.id === id ? unionConGrosorCatalogo({ ...item, ...borradores.uniones[id] }) : item) }
   }
   return esConfiguracionCerramiento(siguiente) ? siguiente : null
 }

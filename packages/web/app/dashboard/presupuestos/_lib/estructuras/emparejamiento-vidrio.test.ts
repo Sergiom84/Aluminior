@@ -99,15 +99,24 @@ describe('estructura con hojas', () => {
     expect(r.corteHorizontalMm).toBe(600)
   })
 
-  it('ignora las piezas sin medida de corte', () => {
+  it('no calcula el vidrio descartando hojas sin medida de corte', () => {
     const conNulo = [
       pieza('HV', 'P100', 1200, 2), pieza('HV', 'P100', null),
       pieza('HH', 'P100', 600, 2),
     ]
-    const r = emparejarVidrio(conNulo, 1)
-    expect(r.ok).toBe(true)
-    if (!r.ok) return
-    expect(r.corteVerticalMm).toBe(1200)
+    expect(emparejarVidrio(conNulo, 1)).toEqual({
+      ok: false, aviso: 'vidrio sin calcular: faltan medidas de corte de hoja',
+    })
+  })
+
+  it.each(['HV', 'HH'])('un corte %s desconocido no convierte la hoja en fijo', (eje) => {
+    const piezas = [
+      pieza('MV', 'MARCO', 1200, 2), pieza('MH', 'MARCO', 600, 2),
+      pieza(eje, 'HOJA', null, 2),
+    ]
+    expect(emparejarVidrio(piezas, 1)).toEqual({
+      ok: false, aviso: 'vidrio sin calcular: faltan medidas de corte de hoja',
+    })
   })
 })
 

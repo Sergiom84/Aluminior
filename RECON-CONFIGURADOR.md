@@ -1,10 +1,12 @@
 # RECON — El CONFIGURADOR paramétrico (¿puede Aluminior generar el despiece?)
 
+> Continuidad revisada el 27/09/2026: [punto de partida vigente](docs/paridad/INICIO-SIGUIENTE-CONVERSACION.md). Este documento conserva su alcance histórico; sus encargos no se reactivan.
+
 > Revisión documental 20/09/2026: **Investigación histórica cerrada**. No reejecutar el encargo; reglas medidas no equivalen a exactitud universal de corte.
 > Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
 
 > Investigación histórica ya ejecutada. No usar como lista activa de tareas.
-> El resultado vigente y el siguiente paso están en `HANDOFF-CHATGPT.md`.
+> El siguiente paso vigente está en `docs/paridad/INICIO-SIGUIENTE-CONVERSACION.md`.
 
 > **Para:** Fable, en local (Windows, con acceso a las MDB originales).
 > **De:** sesión Claude Code actuando de arquitecto. Fecha: 2026-07-31.

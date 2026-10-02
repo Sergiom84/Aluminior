@@ -3,7 +3,7 @@ import { configuracionTieneFiExplicito, esConfiguracionCerramiento } from '../ce
 import { decimal, objeto, tarifa, texto, textoNullable, unicos, variante } from './campos.ts'
 import { esHerraje, esPartida, esPieza, esRanura } from './validar-piezas.ts'
 import { etapasVentaCerramiento } from './etapas-venta.ts'
-import type { DiagnosticoCerramiento, ImporteSnapshot, ResultadoCerramientoV1,
+import type { DiagnosticoCerramiento, ImporteSnapshot, RedondeoVentaCerramiento, ResultadoCerramientoV1,
   ResultadoOrigenCerramiento } from './tipos.ts'
 
 function esImporte(v: unknown, escala = 4): v is ImporteSnapshot {
@@ -24,7 +24,7 @@ function unionSinConfigurar(v: Record<string, unknown>): boolean {
   return objeto(v.origen) && v.origen.tipo === 'UNION' && v.codigo === '' &&
     objeto(v.venta) && v.venta.completo === false && objeto(v.coste) && v.coste.completo === false
 }
-function esResultadoOrigen(v: unknown): v is ResultadoOrigenCerramiento {
+function esResultadoOrigen(v: unknown, redondeo: RedondeoVentaCerramiento): v is ResultadoOrigenCerramiento {
   if (!objeto(v) || !objeto(v.origen) || (v.origen.tipo !== 'MODULO' && v.origen.tipo !== 'UNION') ||
     !texto(v.origen.id) || !(texto(v.codigo) || unionSinConfigurar(v)) || !textoNullable(v.serieCodigo) ||
     !textoNullable(v.acabadoCodigo) || !textoNullable(v.vidrioCodigo) ||
@@ -42,7 +42,7 @@ function esResultadoOrigen(v: unknown): v is ResultadoOrigenCerramiento {
   const bloquea = (ambito: string) => diagnosticos.some(d => d.bloqueante && d.ambito === ambito)
   if (v.venta.completo) {
     if (!v.reglaMaterial || !v.piezas.length || !v.partidasValoracion.length || bloquea('VENTA') ||
-      etapasVentaCerramiento(v.partidasValoracion)?.total !==
+      etapasVentaCerramiento(v.partidasValoracion, redondeo)?.total !==
         normalizarDecimal(v.venta.importe!, 2)) return false
   } else if (!bloquea('VENTA')) return false
   if (v.coste.completo) {
@@ -57,11 +57,12 @@ export function esResultadoCerramiento(v: unknown): v is ResultadoCerramientoV1 
   if (!objeto(v) || !objeto(v.configuracion) ||
     !Array.isArray(v.configuracion.modulos) || !v.configuracion.modulos.every(objeto) ||
     !Array.isArray(v.configuracion.uniones) || !v.configuracion.uniones.every(objeto)) return false
-  if (v.version !== 1 || v.redondeoVenta !== 'ESTRUCTURA_NUMBER_V1' || !esConfiguracionCerramiento(v.configuracion) ||
+  if (v.version !== 1 || (v.redondeoVenta !== 'ESTRUCTURA_NUMBER_V1' && v.redondeoVenta !== 'FILA_CENTIMOS') ||
+    !esConfiguracionCerramiento(v.configuracion) ||
     configuracionTieneFiExplicito(v.configuracion) ||
     !objeto(v.motor) || !texto(v.motor.codigo) || !texto(v.motor.version) || !tarifa(v.tarifa) ||
     v.unidadMateriales !== 'COMPOSICION' || v.ambitoManoObraManual !== 'LINEA' ||
-    !Array.isArray(v.origenes) || !v.origenes.every(esResultadoOrigen) ||
+    !Array.isArray(v.origenes) || !v.origenes.every(o => esResultadoOrigen(o, v.redondeoVenta as RedondeoVentaCerramiento)) ||
     !esImporte(v.ventaMateriales, 2) || !esImporte(v.costeMateriales)) return false
   const geometria = [
     ...v.configuracion.modulos.map(m => ({ tipo: 'MODULO', id: m.id, codigo: m.estructuraCodigo })),

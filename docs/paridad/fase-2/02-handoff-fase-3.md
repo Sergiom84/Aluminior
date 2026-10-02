@@ -1,5 +1,7 @@
 # Handoff a fase 3
 
+> Continuidad revisada el 27/09/2026: [punto de partida vigente](../INICIO-SIGUIENTE-CONVERSACION.md). Las comprobaciones fechadas conservan sus límites; consultar el relevo para el trabajo siguiente.
+
 ## Interfaces estables
 
 - `geometriaCerramiento(configuracion)` es la fuente de posiciones físicas.

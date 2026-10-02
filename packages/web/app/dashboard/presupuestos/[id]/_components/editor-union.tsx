@@ -2,13 +2,8 @@
 
 import React from 'react'
 import {
-  UNION_SIN_CONFIGURAR, UNIONES_VISUALES, unionConfigurada, type UnionCerramiento,
+  UNION_SIN_CONFIGURAR, UNIONES_VISUALES, type UnionCerramiento,
 } from '@aluminior/core/estructuras'
-
-/** Grosor de solo lectura: sin configurar (20, E07) y PSU001 (2, E08). */
-function grosorFijo(union: UnionCerramiento) {
-  return !unionConfigurada(union) || union.codigo === 'PSU001'
-}
 
 export function EditorUnion({ union, indice, pendiente, onChange, onActualizar, onDescartar }: {
   union: UnionCerramiento; indice: number; pendiente: boolean
@@ -41,10 +36,8 @@ export function EditorUnion({ union, indice, pendiente, onChange, onActualizar, 
       <span>mm</span>
     </label>
     <label>Grosor
-      <input aria-label={`Grosor unión ${indice}`} type="number" min={1} step="any"
-        readOnly={grosorFijo(union)}
-        value={Number.isFinite(union.grosorMm) ? union.grosorMm : ''}
-        onChange={evento => onChange({ grosorMm: evento.target.valueAsNumber })} />
+      <input aria-label={`Grosor unión ${indice}`} type="number" min={0} step="any"
+        readOnly value={Number.isFinite(union.grosorMm) ? union.grosorMm : ''} />
       <span>mm</span>
     </label>
     <button type="button" disabled={!pendiente} onClick={onActualizar}

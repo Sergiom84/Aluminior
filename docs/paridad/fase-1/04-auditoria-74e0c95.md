@@ -1,5 +1,7 @@
 # Auditoría del commit 74e0c95
 
+> Continuidad revisada el 27/09/2026: [punto de partida vigente](../INICIO-SIGUIENTE-CONVERSACION.md). Las comprobaciones fechadas conservan sus límites; consultar el relevo para el trabajo siguiente.
+
 > Adenda de saneamiento, 20/09/2026: la aserción de revisiones se ha corregido
 > para comparar el conjunto completo, sin asumir orden SQL. El fichero de
 > integración pasó 11/11; se mantienen todas las comprobaciones del documento.

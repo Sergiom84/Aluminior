@@ -1,5 +1,7 @@
 # Saneamiento modular — 20/09/2026
 
+> Continuidad revisada el 27/09/2026: [punto de partida vigente](paridad/INICIO-SIGUIENTE-CONVERSACION.md). Las comprobaciones fechadas conservan sus límites; consultar el relevo para el trabajo siguiente.
+
 ## Alcance y resultado
 
 Revisión de código de los paquetes y scripts del repositorio, tamaños,

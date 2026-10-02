@@ -1,5 +1,7 @@
 # Verificación local de fases 1 y 2
 
+> Continuidad revisada el 27/09/2026: [punto de partida vigente](../INICIO-SIGUIENTE-CONVERSACION.md). Las comprobaciones fechadas conservan sus límites; consultar el relevo para el trabajo siguiente.
+
 Fecha: 20/09/2026. Base del código: a2d62ce; rama codex/cierre-fases-1-2.
 Esta evidencia es nueva; no se presenta como recuperación de la sesión ausente.
 

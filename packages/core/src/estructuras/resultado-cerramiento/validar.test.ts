@@ -58,6 +58,23 @@ describe('snapshot de materiales por origen, versión 1', () => {
     s.ventaMateriales.importe = '43.01'
     expect(esResultadoCerramiento(s)).toBe(false)
   })
+  it('FILA_CENTIMOS redondea cada partida antes de sumar, como las filas de Productor', () => {
+    const s = snapshotSintetico()
+    const partida = s.origenes[0].partidasValoracion[0]
+    Object.assign(s, { redondeoVenta: 'FILA_CENTIMOS' })
+    Object.assign(s.origenes[0], { partidasValoracion:
+      ['MATERIALES', 'VIDRIO', 'ACRISTALAMIENTO'].map((grupoValoracion, ordinal) => ({
+        ...partida, ordinal, grupoValoracion, cantidadFacturable: '1',
+        precioUnitario: '1.005', importeExacto: '1.005',
+      })), venta: { completo: true, importe: '3.03' } })
+    s.ventaMateriales.importe = '43.03'
+    expect(esResultadoCerramiento(s)).toBe(true)
+    s.origenes[0].venta.importe = '3.02'
+    s.ventaMateriales.importe = '43.02'
+    expect(esResultadoCerramiento(s)).toBe(false)
+    Object.assign(s, { redondeoVenta: 'OTRO' })
+    expect(esResultadoCerramiento(s)).toBe(false)
+  })
   it('preserva el borde Number de 1.005: venta1.00 y evidencia exacta1.005', () => {
     const s = snapshotSintetico()
     Object.assign(s.origenes[0].partidasValoracion[0], { cantidadFacturable: '1',

@@ -1,5 +1,7 @@
 # Auditoría de la entrega de fase 0 y devolución a Terra
 
+> Continuidad revisada el 27/09/2026: [punto de partida vigente](docs/paridad/INICIO-SIGUIENTE-CONVERSACION.md). Este documento conserva su alcance histórico; sus encargos no se reactivan.
+
 > Revisión documental 20/09/2026: **Auditoría histórica**. Dictamen parcial; varios entregables que menciona no están en este checkout.
 > Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
 

@@ -1,5 +1,7 @@
 # A: contrato local del adaptador de diagnóstico del motor
 
+> Continuidad revisada el 27/09/2026: [punto de partida vigente](docs/paridad/INICIO-SIGUIENTE-CONVERSACION.md). Este documento conserva su alcance histórico; sus encargos no se reactivan.
+
 > Revisión documental 20/09/2026: **Especificación implementada**. Código en scripts/banco-motor.ts y lib; ver PREPARACION-LOCAL-A. No nueva autorización de agentes.
 > Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
 

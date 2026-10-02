@@ -162,6 +162,13 @@
       "when": 1790951000407,
       "tag": "0022_catalogo_diseno",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1790955411853,
+      "tag": "0023_motor_catalogo",
+      "breakpoints": true
     }
   ]
 }

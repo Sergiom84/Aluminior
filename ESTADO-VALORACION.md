@@ -1,5 +1,7 @@
 # Aluminior — Estado de la valoración (resumen ejecutivo)
 
+> Continuidad revisada el 27/09/2026: [punto de partida vigente](docs/paridad/INICIO-SIGUIENTE-CONVERSACION.md). Este documento conserva su alcance histórico; sus encargos no se reactivan.
+
 > Revisión documental 20/09/2026: **Resumen histórico**. Porcentajes T.52–T.59 no describen la cobertura presente del configurador.
 > Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
 

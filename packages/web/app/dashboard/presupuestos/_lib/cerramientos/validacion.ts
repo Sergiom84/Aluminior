@@ -1,5 +1,5 @@
 import {
-  esConfiguracionCerramiento, type ConfiguracionCerramiento,
+  esConfiguracionCerramiento, normalizarUnionesCerramiento, type ConfiguracionCerramiento,
 } from '@aluminior/core/estructuras'
 
 export type ResultadoConfiguracionCerramiento =
@@ -16,7 +16,7 @@ export function validarConfiguracionCerramiento(
   try {
     const valor = JSON.parse(configuracionSerializada ?? '') as unknown
     if (!esConfiguracionCerramiento(valor)) throw new Error('configuración no válida')
-    return { ok: true, configuracion: valor }
+    return { ok: true, configuracion: normalizarUnionesCerramiento(valor) }
   } catch {
     return { ok: false, mensaje: 'La composición del cerramiento no es válida' }
   }

@@ -7,6 +7,7 @@ import { editarCerramiento, type EstadoEdicionCerramiento } from '../../_lib/edi
 import { MAXIMO_HORAS } from '../../_lib/lineas/esquema-linea.ts'
 import { DisenadorEstructura } from './disenador-estructura.tsx'
 import styles from '../presupuesto-movil.module.css'
+import { CampoVidrio } from './vidrios/campo-vidrio.tsx'
 
 export interface DatosEdicionCerramiento {
   configuracion: ConfiguracionCerramiento
@@ -35,6 +36,8 @@ export function EditarCerramiento({
 }) {
   const { estado, enviar, enviando: guardando } = useEnvioFormulario<EstadoEdicionCerramiento>(editarCerramiento)
   const [configuracion, setConfiguracion] = useState(datos.configuracion)
+  const [serie, setSerie] = useState(datos.serieCodigo ?? '')
+  const [vidrio, setVidrio] = useState(datos.vidrioCodigo ?? '')
   const [configuracionValida, setConfiguracionValida] = useState(true)
   const medidasIniciales = medidasCerramiento(datos.configuracion)
   const [anchoMm, setAnchoMm] = useState(medidasIniciales.anchoMm)
@@ -71,7 +74,7 @@ export function EditarCerramiento({
         anchoMm={anchoMm} altoMm={altoMm} configuracionInicial={datos.configuracion}
         onConfiguracionChange={setConfiguracion} onDimensionesChange={actualizarDimensiones}
         onValidezChange={setConfiguracionValida} series={series}
-        generales={{ serieCodigo: datos.serieCodigo, vidrioCodigo: datos.vidrioCodigo }} />
+        generales={{ serieCodigo: serie || null, vidrioCodigo: vidrio || null }} />
 
       {estado?.mensaje && (
         <div className="mb-3 mt-4 rounded-md border p-3 text-sm"
@@ -88,7 +91,7 @@ export function EditarCerramiento({
         </div>
         <div className="col-span-2">
           <label htmlFor={identificador('serieCodigo')} className="mb-1 block text-sm">Serie</label>
-          <select {...campo('serieCodigo')} defaultValue={datos.serieCodigo ?? ''} className={entrada} style={estilo}>
+          <select {...campo('serieCodigo')} value={serie} onChange={e => setSerie(e.target.value)} className={entrada} style={estilo}>
             <option value="">— sin serie —</option>
             {series.map((serie) => <option key={serie} value={serie}>{serie}</option>)}
           </select>
@@ -96,7 +99,7 @@ export function EditarCerramiento({
         </div>
         <div className="col-span-2">
           <label htmlFor={identificador('vidrioCodigo')} className="mb-1 block text-sm">Vidrio</label>
-          <input {...campo('vidrioCodigo')} defaultValue={datos.vidrioCodigo ?? ''} className={entrada} style={estilo} />
+          <CampoVidrio {...campo('vidrioCodigo')} value={vidrio} onChange={setVidrio} className={entrada} style={estilo} />
           <ErrorCampo nombre="vidrioCodigo" />
         </div>
         <div className="col-span-2">

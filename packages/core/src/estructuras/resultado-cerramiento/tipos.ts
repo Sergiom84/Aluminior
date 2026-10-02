@@ -67,10 +67,12 @@ export interface ResultadoOrigenCerramiento {
   opcionesHerraje: readonly HerrajeSnapshotCerramiento[]
   diagnosticos: readonly DiagnosticoCerramiento[]
 }
+/** Cómo se suman las partidas de venta; ver `etapasVentaCerramiento`. */
+export type RedondeoVentaCerramiento = 'ESTRUCTURA_NUMBER_V1' | 'FILA_CENTIMOS'
 /** Materiales de UNA composición; la mano de obra manual vive en su propio snapshot. */
 export interface ResultadoCerramientoV1 {
   version: 1
-  redondeoVenta: 'ESTRUCTURA_NUMBER_V1'
+  redondeoVenta: RedondeoVentaCerramiento
   configuracion: ConfiguracionCerramiento
   motor: { codigo: string; version: string }
   tarifa: number

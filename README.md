@@ -1,5 +1,7 @@
 # Aluminior
 
+> Continuidad revisada el 27/09/2026: [punto de partida vigente](docs/paridad/INICIO-SIGUIENTE-CONVERSACION.md). Las comprobaciones fechadas conservan sus límites; consultar el relevo para el trabajo siguiente.
+
 Sistema de gestión para carpintería de aluminio y PVC.
 
 Reconstrucción del flujo de trabajo de ALUMINIOS LARA SLU sobre una base
@@ -13,8 +15,8 @@ compras y producción; valoración parcial, explícitamente marcada cuando falta
 datos. Esto no certifica paridad completa ni aptitud general para fabricación.
 
 Estado revisado, pendientes y orden de lectura:
-[docs/ESTADO-ACTUAL.md](docs/ESTADO-ACTUAL.md). El saneamiento precede a las
-siguientes fases, que se retomarán cuando lo indique el usuario.
+[docs/ESTADO-ACTUAL.md](docs/ESTADO-ACTUAL.md). El alcance vigente comprende todas las tipologías, series y uniones;
+la investigación y el contraste económico siguen abiertos.
 
 | Componente | Estado |
 |---|---|

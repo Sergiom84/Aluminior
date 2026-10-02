@@ -1,5 +1,7 @@
 # Fase 3 — evidencia de composición e inserción
 
+> Continuidad revisada el 27/09/2026: [punto de partida vigente](../INICIO-SIGUIENTE-CONVERSACION.md). Las comprobaciones fechadas conservan sus límites; consultar el relevo para el trabajo siguiente.
+
 Fecha: 25/09/2026. Observación directa autorizada por el usuario en Productor,
 empresa **PRUEBAS ALUMINIOR [0017]**, presupuesto 260497 (vacío al empezar).
 El configurador se cerró sin Aceptar en todos los ensayos: el documento sigue

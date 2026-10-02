@@ -1,5 +1,7 @@
 # Asignación de conjuntos de herraje: investigación de catálogo
 
+> Continuidad revisada el 27/09/2026: [punto de partida vigente](docs/paridad/INICIO-SIGUIENTE-CONVERSACION.md). Este documento conserva su alcance histórico; sus encargos no se reactivan.
+
 > Revisión documental 20/09/2026: **Evidencia fechada**. Distingue catálogo, heurística histórica y asignación; no ampliar reglas inferidas.
 > Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
 

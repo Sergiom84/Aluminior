@@ -1,5 +1,7 @@
 # Geometría y evidencias
 
+> Continuidad revisada el 27/09/2026: [punto de partida vigente](../INICIO-SIGUIENTE-CONVERSACION.md). Las comprobaciones fechadas conservan sus límites; consultar el relevo para el trabajo siguiente.
+
 ## Contrato de coordenadas
 
 El dominio produce rectángulos en milímetros con origen superior izquierdo. Los módulos se alinean arriba, que es el comportamiento previo de Aluminior/PDF pendiente de contraste nativo. El ancho contractual suma módulos y grosores de unión; el alto contractual es el máximo de módulos. `altoVisibleMm` añade únicamente la longitud máxima de unión para evitar recortes.

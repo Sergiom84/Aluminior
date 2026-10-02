@@ -1,5 +1,7 @@
 # Fase 1 — guardado y reintento
 
+> Continuidad revisada el 27/09/2026: [punto de partida vigente](../INICIO-SIGUIENTE-CONVERSACION.md). Las comprobaciones fechadas conservan sus límites; consultar el relevo para el trabajo siguiente.
+
 20/09/2026. Aceptación técnica local completada en esta continuación de `a2d62ce`.
 No reconstruye los entregables perdidos ni atribuye cambios al commit `74e0c95`,
 que continúa ausente. La autorización vigente es continuar cerrando las fases.

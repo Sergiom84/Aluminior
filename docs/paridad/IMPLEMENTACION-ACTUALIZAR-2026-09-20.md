@@ -1,5 +1,7 @@
 # Aplicación explícita de medidas y unión PSU001
 
+> Continuidad revisada el 27/09/2026: [punto de partida vigente](INICIO-SIGUIENTE-CONVERSACION.md). Las comprobaciones fechadas conservan sus límites; consultar el relevo para el trabajo siguiente.
+
 Fecha: 20/09/2026. Continuación autorizada después del
 [registro del operador](OBSERVACION-PRODUCTOR-2026-09-20.md).
 

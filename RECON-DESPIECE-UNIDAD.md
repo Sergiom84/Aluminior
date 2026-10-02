@@ -1,10 +1,12 @@
 # RECON — Fuente de despiece POR UNIDAD FÍSICA (camino b)
 
+> Continuidad revisada el 27/09/2026: [punto de partida vigente](docs/paridad/INICIO-SIGUIENTE-CONVERSACION.md). Este documento conserva su alcance histórico; sus encargos no se reactivan.
+
 > Revisión documental 20/09/2026: **Investigación histórica cerrada**. Resultado histórico NO-GO; no fabricar una fuente inexistente.
 > Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
 
 > Investigación histórica cerrada. No usar como punto de continuación. El
-> estado operativo vigente se mantiene en `HANDOFF-CHATGPT.md`.
+> estado operativo vigente se mantiene en `docs/ESTADO-ACTUAL.md`.
 
 > **Para:** Claude Code en local (Windows, con acceso a las MDB del sistema original).
 > **De:** sesión Cowork (nube) actuando de arquitecto. Fecha: 2026-07-22.

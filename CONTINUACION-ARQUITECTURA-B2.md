@@ -1,5 +1,7 @@
 # Continuación de arquitectura B2 y encargo preparatorio a Sol
 
+> Continuidad revisada el 27/09/2026: [punto de partida vigente](docs/paridad/INICIO-SIGUIENTE-CONVERSACION.md). Este documento conserva su alcance histórico; sus encargos no se reactivan.
+
 > Revisión documental 20/09/2026: **Relevo histórico**. Preparación B2 y cierre acotado 1OFI; no reactiva delegaciones antiguas.
 > Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
 

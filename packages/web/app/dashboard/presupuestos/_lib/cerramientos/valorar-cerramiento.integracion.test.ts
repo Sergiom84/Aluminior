@@ -7,6 +7,7 @@ import { totalLineaCerramiento } from '@aluminior/core/precios'
 import { valorarCerramiento } from './valorar-cerramiento.ts'
 import { J04, configuracionJ04, sembrarCatalogoJ04 } from './catalogo-j04.fixture.ts'
 import { resolverMaterialesEstructura } from '../estructuras/materiales-estructura.ts'
+import { valorarEstructura } from '../estructuras/valorar-estructura.ts'
 import { partidasValoracion } from '../estructuras/partidas-valoracion.ts'
 import { completarCostesOrigen } from './origen-valorado.ts'
 
@@ -24,6 +25,49 @@ async function caso(fn: (tx: Tx) => Promise<void>) {
 afterAll(() => db.$client.end())
 
 describe('J04 agregado auténtico, catálogo sintético y PostgreSQL', () => {
+  it.each(['inexistente', 'unidad incompatible'])('vidrio %s muestra la causa sin errores derivados', problema => caso(async tx => {
+    const e = entrada()
+    if (problema === 'inexistente') e.vidrioCodigo = 'QA-VIDRIO-AUSENTE'
+    else await tx.update(schema.articulos).set({ tipoMetraje: 'UD' })
+      .where(eq(schema.articulos.codigo, e.vidrioCodigo))
+    const r = await valorarCerramiento(tx, e)
+    expect(esResultadoCerramiento(r)).toBe(true)
+    expect(r.ventaMateriales).toEqual({ completo: false, importe: null })
+    for (const o of r.origenes.filter(o => o.origen.tipo === 'MODULO')) {
+      expect(o.coste).toEqual({ completo: false, importe: null })
+      expect(o.piezas).toEqual([])
+      expect(o.diagnosticos).toHaveLength(3)
+      expect(new Set(o.diagnosticos.map(d => d.detalle))).toEqual(new Set([
+        `Vidrio «${e.vidrioCodigo}»: Vidrio no válido (debe ser familia 050, facturable por m²)`,
+      ]))
+      expect(o.diagnosticos.every(d => d.bloqueante)).toBe(true)
+    }
+  }))
+
+  it('valora la longitud del esquinero de grosor cero sin convertirla en cero material', () => caso(async tx => {
+    await tx.insert(schema.estructuras).values({ codigo: 'PSU006', descripcion: 'Esquinero sintético',
+      familia: '103', esAccesorio: true })
+    await tx.insert(schema.estructuraComponentes).values({ estructuraCodigo: 'PSU006',
+      articuloCodigo: 'QA-J04-U', cantidad: '1', formulaLargo: 'L', funcion: 'UNION' })
+    const e = entrada()
+    e.configuracion.uniones = [{ id: 'u1', codigo: 'PSU006', longitudMm: 800, grosorMm: 0 }]
+    const r = await valorarCerramiento(tx, e)
+    expect(esResultadoCerramiento(r)).toBe(true)
+    expect(r.origenes[2].venta).toEqual({ completo: true, importe: '9.60' })
+    expect(r.origenes[2].piezas[0].largoCorteMm).toBe('800')
+    expect(r.ventaMateriales.completo).toBe(true)
+    const directo = await valorarEstructura(tx, { ...e, codigo: 'PSU006',
+      anchoMm: 0, altoMm: 800, vidrioCodigo: null, opcionesHerraje: [] })
+    expect(directo.ok).toBe(true)
+    if (directo.ok) expect(directo.piezas[0].largoCorteMm).toBe('800')
+  }))
+
+  it('no admite ancho cero en un hueco normal', () => caso(async tx => {
+    const r = await resolverMaterialesEstructura(tx, { ...entrada(), codigo: '0',
+      anchoMm: 0, altoMm: 800, opcionesHerraje: [] })
+    expect(r.ok).toBe(false)
+  }))
+
   it('fijo no cuadrado integra vidrio sin comprar la ranura geométrica', () => caso(async tx => {
     const e = entrada(); e.configuracion.modulos = e.configuracion.modulos.slice(0, 1); e.configuracion.uniones = []
     const r = await valorarCerramiento(tx, e)

@@ -1,5 +1,7 @@
 # Aluminior — encargo maestro para continuar las fases 0–8
 
+> Continuidad revisada el 27/09/2026: [punto de partida vigente](docs/paridad/INICIO-SIGUIENTE-CONVERSACION.md). Este documento conserva su alcance histórico; sus encargos no se reactivan.
+
 > Revisión documental 20/09/2026: **Encargo histórico inactivo**. Fases futuras conservadas como alcance propuesto, esperando indicación del usuario.
 > Para continuar: [estado actual](docs/ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
 

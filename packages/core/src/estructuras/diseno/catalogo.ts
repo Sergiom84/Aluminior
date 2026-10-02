@@ -124,9 +124,20 @@ export const PLANTILLAS_DISENO: readonly PlantillaDiseno[] = [
   },
 ] as const
 
-/** Uniones vistas en el presupuesto filmado y presentes en la familia 103. */
+/** Catálogo contrastado con Estructuras y la búsqueda de Productor (26–27/09/2026). */
 export const UNIONES_VISUALES: readonly UnionVisual[] = [
-  { codigo: 'GMU038', descripcion: '(GM) TUBO 60x60', grosorMm: 60 },
-  // Captura E08, 20/09/2026: 100mm es descripción; el campo Grosor muestra 2 mm.
-  { codigo: 'PSU001', descripcion: '(PS) H UNION PARA COMPACTOS 100mm', grosorMm: 2 },
+  { codigo: 'GMU038', descripcion: '(GM) TUBO 60x60', grosorMm: 60, unionTipo: 0 },
+  { codigo: 'GMU039', descripcion: '(GM) TUBO 40x40', grosorMm: 40, unionTipo: 0 },
+  { codigo: 'GMU040', descripcion: '(GM) TUBO 40x60 (Dto: 40)', grosorMm: 40, unionTipo: 0 },
+  { codigo: 'GMU041', descripcion: '(GM) TUBO 40x60 (Dto: 60)', grosorMm: 60, unionTipo: 0 },
+  { codigo: 'PSU001', descripcion: '(PS) H UNION PARA COMPACTOS 100mm', grosorMm: 2, unionTipo: 0 },
+  { codigo: 'PSU002', descripcion: '(PS) H UNION PARA COMPACTOS 120mm', grosorMm: 2, unionTipo: 0 },
+  { codigo: 'PSU003', descripcion: '(PS) H UNION PARA COMPACTOS 90mm RPT', grosorMm: 2, unionTipo: 0 },
+  { codigo: 'PSU004', descripcion: '(PS) H UNION PARA COMPACTOS 100mm RPT', grosorMm: 2, unionTipo: 0 },
+  { codigo: 'PSU005', descripcion: '(PS) H UNION PARA COMPACTOS 120mm RPT', grosorMm: 2, unionTipo: 0 },
+  { codigo: 'PSU006', descripcion: '(PS) ESQUINERO PARA COMPACTO', grosorMm: 0, unionTipo: 4 },
+  { codigo: 'PSU007', descripcion: '(PS) ESQUINERO PARA COMPACTO RPT', grosorMm: 0, unionTipo: 4 },
+  { codigo: 'PSU008', descripcion: '(PS) ESQUINERO PARA COMPACTO CON SUPLEMENTO', grosorMm: 0, unionTipo: 4 },
+  { codigo: 'PSU009', descripcion: '(PS) ESQUINERO PARA COMPACTO RPT CON SUPLEMENTO', grosorMm: 0, unionTipo: 4 },
+  { codigo: 'U', descripcion: 'SIN UNION', grosorMm: 1, unionTipo: 0 },
 ] as const

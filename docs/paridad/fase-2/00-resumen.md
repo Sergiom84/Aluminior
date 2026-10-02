@@ -1,5 +1,7 @@
 # Fase 2 — resumen
 
+> Continuidad revisada el 27/09/2026: [punto de partida vigente](../INICIO-SIGUIENTE-CONVERSACION.md). Las comprobaciones fechadas conservan sus límites; consultar el relevo para el trabajo siguiente.
+
 Fecha: 20/09/2026. Estado: **implementación geométrica completada y aceptación local de navegador/PDF realizada; contraste directo con Productor iniciado y parcial**.
 
 ## Resultado

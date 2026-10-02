@@ -1,5 +1,7 @@
 # @aluminior/db
 
+> Continuidad revisada el 27/09/2026: [punto de partida vigente](../../docs/paridad/INICIO-SIGUIENTE-CONVERSACION.md). Las comprobaciones fechadas conservan sus límites; consultar el relevo para el trabajo siguiente.
+
 Esquema Drizzle y migraciones del ERP. Aquí vive también el **Postgres efímero**
 para desarrollo y tests locales.
 
