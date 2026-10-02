@@ -41,7 +41,7 @@ export const estructuraPlantillaCatalogo = pgTable('estructura_plantilla_catalog
   /** `DisGrupoAdicional`, `DisGrupoAd2`, `DisGrupoAd3`, `DisGrupoAdIndep`. */
   gruposAdicionales: text('grupos_adicionales').array().notNull(),
   perfilAdicional: integer('perfil_adicional'),
-}, t => ({ pk: primaryKey({ columns: [t.estructuraCodigo, t.lineaOrigen] }) }))
+}, t => ({ pk: primaryKey({ columns: [t.estructuraCodigo, t.lineaOrigen] }) })).enableRLS()
 
 /** `ConjuntosAsoc`: asociaciones generadas por serie y por código de herraje. */
 export const conjuntoAsociaciones = pgTable('conjunto_asociaciones', {
@@ -73,7 +73,7 @@ export const conjuntoAsociaciones = pgTable('conjunto_asociaciones', {
   asociadoA: text('asociado_a').notNull(),
   /** Rasgos sin contrastar presentes en la fila: bloquean si la regla aplica. */
   noContrastado: text('no_contrastado').array().notNull(),
-}, t => ({ conjuntoIdx: index('conjunto_asociaciones_conjunto_idx').on(t.conjuntoCodigo) }))
+}, t => ({ conjuntoIdx: index('conjunto_asociaciones_conjunto_idx').on(t.conjuntoCodigo) })).enableRLS()
 
 /** `FamiliasGruposAsoc`: componentes de cada grupo de asociación. */
 export const gruposAsociacion = pgTable('grupos_asociacion', {
@@ -81,14 +81,14 @@ export const gruposAsociacion = pgTable('grupos_asociacion', {
   codigo: text('codigo').notNull(),
   componentes: text('componentes').array().notNull(),
   descripcion: text('descripcion').notNull().default(''),
-}, t => ({ pk: primaryKey({ columns: [t.familia, t.codigo] }) }))
+}, t => ({ pk: primaryKey({ columns: [t.familia, t.codigo] }) })).enableRLS()
 
 /** `SeriesAsocV2TiposHoja`: id de `DisTipoHoja` y su nombre (t2HC…). */
 export const tiposHojaCatalogo = pgTable('tipos_hoja_catalogo', {
   id: text('id').primaryKey(),
   tipo: text('tipo').notNull(),
   descripcion: text('descripcion').notNull().default(''),
-})
+}).enableRLS()
 
 /** `MOConceptos`: tiempos de fabricación por módulo, artículo o apertura. */
 export const manoObraConceptos = pgTable('mano_obra_conceptos', {
@@ -101,7 +101,7 @@ export const manoObraConceptos = pgTable('mano_obra_conceptos', {
   componenteAsociado: text('componente_asociado'),
   grupoAsociado: text('grupo_asociado'),
   conIncrementos: boolean('con_incrementos').notNull(),
-})
+}).enableRLS()
 
 /** `ArticulosIncrPrecio`: porcentaje por metraje (MET) o lado mayor (MED). */
 export const articulosIncrementosPrecio = pgTable('articulos_incrementos_precio', {
@@ -111,7 +111,7 @@ export const articulosIncrementosPrecio = pgTable('articulos_incrementos_precio'
   desde: numeric('desde', { precision: 14, scale: 4 }).notNull(),
   hasta: numeric('hasta', { precision: 14, scale: 4 }).notNull(),
   porcentaje: numeric('porcentaje', { precision: 10, scale: 4 }).notNull(),
-}, t => ({ articuloIdx: index('articulos_incrementos_precio_articulo_idx').on(t.articuloCodigo) }))
+}, t => ({ articuloIdx: index('articulos_incrementos_precio_articulo_idx').on(t.articuloCodigo) })).enableRLS()
 
 /** Datos de artículo que usa el despiece y que `articulos` no conserva. */
 export const articulosDespiece = pgTable('articulos_despiece', {
@@ -121,7 +121,7 @@ export const articulosDespiece = pgTable('articulos_despiece', {
   dobleAcristalamiento: boolean('doble_acristalamiento').notNull(),
   grosorAcristalar: numeric('grosor_acristalar', { precision: 10, scale: 3 }).notNull(),
   incrementosPrecio: boolean('incrementos_precio').notNull(),
-})
+}).enableRLS()
 
 /** Parámetros de serie de `Conjuntos`: códigos de herraje y de mano de obra y rangos de grosor. */
 export const conjuntoParametrosDespiece = pgTable('conjunto_parametros_despiece', {
@@ -130,7 +130,7 @@ export const conjuntoParametrosDespiece = pgTable('conjunto_parametros_despiece'
   manoObra: jsonb('mano_obra').$type<Record<string, string>>().notNull(),
   grosorMaximoSimple: numeric('grosor_maximo_simple', { precision: 10, scale: 3 }).notNull(),
   grosorMaximoDoble: numeric('grosor_maximo_doble', { precision: 10, scale: 3 }).notNull(),
-})
+}).enableRLS()
 
 /**
  * Filas de `ConjuntosLin` con artículo `0`: la serie declara la ranura vacía.
@@ -140,4 +140,4 @@ export const conjuntoParametrosDespiece = pgTable('conjunto_parametros_despiece'
 export const conjuntoRanurasVacias = pgTable('conjunto_ranuras_vacias', {
   conjuntoCodigo: text('conjunto_codigo').notNull(),
   componente: text('componente').notNull(),
-}, t => ({ pk: primaryKey({ columns: [t.conjuntoCodigo, t.componente] }) }))
+}, t => ({ pk: primaryKey({ columns: [t.conjuntoCodigo, t.componente] }) })).enableRLS()

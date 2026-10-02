@@ -2,15 +2,18 @@
 
 Revisión local: 02/10/2026. Este es el punto de entrada para el estado del código.
 
-## 02/10/2026 — integración del motor preparada, sin desplegar
+## 02/10/2026 — integración del motor publicada y migraciones aplicadas
 
 La rama `integracion/motor-catalogo` conserva la 0022 de main y añade la 0023
 regenerada con fecha posterior. Cargador dirigido con simulación por defecto,
-transacción única y nueve pruebas de integración. Suite completa: core 557,
-db 55, etl 39 (+1 omitida), web 666; typecheck y arquitectura pasan. Ensayo
+transacción única y diez pruebas de integración. Suite completa: core 557,
+db 55, etl 40 (+1 omitida), web 666; typecheck y arquitectura pasan. Ensayo
 local de 260.760 filas sin alterar documentos; sin 0023, alta/recarga/PDF
 degradan a sin valorar. C2 y PC2 tienen precio con avisos; 0, 2O y 1OFI siguen
-incompletos con GMC400. Main y Supabase pendientes de permiso. Ver el
+incompletos con GMC400. Integración en main y Render; Supabase con 25 migraciones
+hasta 0024, once tablas nuevas protegidas por RLS y las 45 anteriores sin cambios.
+Respaldo privado verificado. La carga de datos del motor sigue pendiente de
+autorización; sus once tablas están vacías. Ver el
 [informe de integración](paridad/INTEGRACION-MOTOR-CATALOGO-2026-10-02.md).
 
 ## 02/10/2026 — catálogo real y entrada directa al configurador

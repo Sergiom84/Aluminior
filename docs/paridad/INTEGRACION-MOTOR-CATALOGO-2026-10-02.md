@@ -1,8 +1,9 @@
 # Integración del motor de catálogo — 02/10/2026
 
 Preparada en `integracion/motor-catalogo`, desde `main` (`da6a537`) y el motor
-`0ecdc9c`. Verificación local terminada. No se ha actualizado `main` ni escrito
-en Supabase. Esta entrega acredita la integración y su degradación segura;
+`0ecdc9c`. Integración publicada en `main` (`a74dabc`) y desplegada en Render.
+Migraciones 0023 y 0024 aplicadas en Supabase con respaldo previo y datos
+existentes conservados. La carga del catálogo del motor sigue pendiente;
 el motor todavía no cubre todas las combinaciones de Productor.
 
 ## Fusión y migración
@@ -82,19 +83,22 @@ No se ejecutó Productor en el Mac ni se inventaron entradas pendientes.
 
 ## Pruebas y simulación de producción
 
-`npm run test`: **core 557, db 55, etl 39 + 1 omitida, web 666**; sin fallos.
+`npm run test`: **core 557, db 55, etl 40 + 1 omitida, web 666**; sin fallos.
 `npm run typecheck` y `npm run check:architecture`: pasan, cero infracciones.
-ETL tiene nueve pruebas nuevas sobre una base efímera propia, con migraciones
-reales y filas sintéticas. Su preparación acredita el avance de 23 a 24
+ETL tiene diez pruebas nuevas sobre una base efímera propia, con migraciones
+reales y filas sintéticas. Su preparación acredita el avance de 23 a 25
 migraciones desde la 0022 ya aplicada; cubren simulación vacía/existente, aplicación repetida,
 rollback temprano/tardío, duplicados, CSV ausente/vacío, alteración de contenido
-protegido y ausencia del esquema del motor. Ninguna usa Supabase.
+protegido, ausencia del esquema del motor y denegación de lectura/escritura a un rol
+de navegador con RLS, manteniendo el acceso del servidor. Ninguna usa Supabase.
 
 Ejecutar la suite general con su configuración habitual, sin forzar un único
 `TEST_DATABASE_URL` para todos los paquetes: los ensayos ETL de tarifa y relleno
-emplean bases separadas para sus tablas de prueba.
+emplean bases separadas para sus tablas de prueba. La prueba web de degradación
+sin tablas también usa una base efímera propia: eliminar tablas en la base
+compartida provocaba interferencias de bloqueo con otras suites concurrentes.
 
-`aluminior_prodsim_test` sigue migrada solo hasta 0022, con máximo
+En el ensayo local, `aluminior_prodsim_test` estaba migrada solo hasta 0022, con máximo
 `created_at=1790951000407` y sin `conjunto_parametros_despiece`. En :3004 se
 verificaron página, alta nueva de C2, recarga y PDF: **sin errores, precio nulo,
 30 piezas / 22 sin coste**, catálogo de 160 y total sin valorar. La prueba web
@@ -105,26 +109,47 @@ medición, resultados JSONL, capturas y ambos PDF. Los CSV originales y cualquie
 salida empresarial permanecen fuera de versionado. `.claude/launch.json` conserva
 el cambio local previo de Claude y queda fuera de esta entrega.
 
-## Paso a producción — pendiente de autorización
+## Producción — integración y migraciones aplicadas
 
-1. Tras permiso para integrar: fusionar esta rama en `main` y hacer push.
-   Render despliega el código; sin 0023 debe seguir funcionando por degradación.
-2. Con permiso separado para Supabase: obtener respaldo de esquema/datos y
-   confirmar destino Aluminior en el `.env` existente, sin mostrar credenciales.
-   Ejecutar `node packages/db/pruebas/preflight-remoto.mjs`. Esperado según la
-   última observación aportada: 23 migraciones hasta 0022, 5 presupuestos y
-   1 línea; los recuentos actuales pueden haber cambiado legítimamente.
-   Antes de cargar datos, comprobar permisos/RLS de las once tablas nuevas si
-   el esquema public está expuesto mediante Data API.
-3. `node packages/db/pruebas/aplicar-remoto.mjs`: esperado una sola migración
-   nueva (registro 24), hash `5e588e93974e`. Conservar la 0022 anterior intacta.
-4. `npm run etl:motor-catalogo -- --origen export_datos/EMP0016`: simulación.
-   Esperado 260.760 insertadas, cero descartes y protegidas sin cambios; las
-   once tablas del motor siguen como antes por rollback. Si origen/destino no
+El usuario autorizó commit, push y migraciones en Supabase el 02/10/2026.
+La rama de integración y `main` se publicaron en `a74dabc`; Render confirmó
+el despliegue `dep-davtqn2vcj2c738n7p7g` como `live` para ese commit.
+
+Destino verificado: proyecto Aluminior `cwtyrpqwdbfylqdlydez`. Respaldo privado
+`output/integracion-motor/respaldo/antes-0023.dump`: 1.570.593 bytes, formato
+custom de PostgreSQL 17, 303 entradas y 46 tablas con datos, incluido el journal
+Drizzle. Validado con `pg_restore --list`; no se ha ensayado una restauración
+completa. Contiene datos de empresa y permanece ignorado por Git, con permiso 600.
+
+`aplicar-remoto.mjs` aplicó 0023 (registro 24, hash `5e588e93974e`) y después
+0024 (registro 25, hash `b813287afd82`). Las 45 tablas existentes mantienen
+recuentos y firmas de contenido; se conservan los 5 presupuestos y la línea
+preexistente. Las once tablas nuevas están vacías: no se ejecutó ningún ETL
+contra Supabase.
+
+La comprobación de permisos detectó grants automáticos de Supabase a `anon`
+y `authenticated` y ausencia de RLS en las once tablas de 0023. La migración
+aditiva `0024_motor_catalogo_rls`, generada con Drizzle sin modificar 0023,
+activa RLS y revoca los permisos de `PUBLIC`, `anon` y `authenticated` solo
+sobre esas tablas. No incorpora políticas públicas: el acceso real es mediante
+Postgres desde el servidor y el ETL. El esquema Drizzle refleja RLS; la prueba
+local acredita selección vacía, inserción/truncado denegados y actualización/
+borrado sin efecto para un rol sin bypass, incluso si recibe grants de filas.
+Referencia: [RLS y grants de Supabase](https://supabase.com/docs/guides/database/postgres/row-level-security).
+
+## Pendiente — carga del catálogo del motor
+
+Requiere autorización de carga de datos, distinta del permiso recibido para
+migraciones. Mantener estas tablas vacías conserva la valoración anterior.
+
+1. `npm run etl:motor-catalogo -- --origen export_datos/EMP0016`: simulación
+   contra el destino verificado. Esperado 260.760 insertadas, cero descartes,
+   protegidas sin cambios y rollback de las once tablas. Si origen/destino no
    coinciden, detenerse y decidir la fuente, sin importar el catálogo base.
-5. Tras revisar ese resultado, repetir con `--apply`. Confirmar las once tablas,
-   la conservación de documentos, las 160 estructuras y una valoración/recarga/PDF
-   con los mismos inputs. No ejecutar `importar.ts` contra Supabase.
+2. Tras revisar el resultado y obtener autorización, repetir con `--apply`.
+   Confirmar las once tablas, conservación de documentos, 160 estructuras y
+   valoración/recarga/PDF con los mismos inputs. Nunca ejecutar `importar.ts`
+   contra Supabase.
 
 Reversibilidad: cualquier error o simulación revierte la carga entera. Para
 deshacer una primera carga confirmada, vaciar únicamente las once tablas nuevas

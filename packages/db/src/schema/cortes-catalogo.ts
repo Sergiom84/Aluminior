@@ -15,7 +15,7 @@ export const estructuraReferenciasCorte = pgTable('estructura_referencias_corte'
   tipoHoja: integer('tipo_hoja'),
   perfilAdicional: integer('perfil_adicional'),
   grupoAdicional: text('grupo_adicional'),
-}, t => ({ pk: primaryKey({ columns: [t.estructuraCodigo, t.lineaOrigen] }) }))
+}, t => ({ pk: primaryKey({ columns: [t.estructuraCodigo, t.lineaOrigen] }) })).enableRLS()
 
 /** Milímetros por extremo. El cero explícito es distinto de una fila ausente. */
 export const conjuntoDescuentosCorte = pgTable('conjunto_descuentos_corte', {
@@ -25,4 +25,4 @@ export const conjuntoDescuentosCorte = pgTable('conjunto_descuentos_corte', {
   grupo: text('grupo').notNull(),
   tipoHoja: text('tipo_hoja').notNull(),
   descuentoMm: numeric('descuento_mm', { precision: 16, scale: 8 }).notNull(),
-}, t => ({ pk: primaryKey({ columns: [t.conjuntoCodigo, t.familia, t.grupoPrincipal, t.grupo, t.tipoHoja] }) }))
+}, t => ({ pk: primaryKey({ columns: [t.conjuntoCodigo, t.familia, t.grupoPrincipal, t.grupo, t.tipoHoja] }) })).enableRLS()

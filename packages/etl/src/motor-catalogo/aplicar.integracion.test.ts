@@ -57,8 +57,8 @@ beforeAll(async () => {
   expect((await sql`SELECT to_regclass('public.conjunto_parametros_despiece') AS tabla`)[0]!.tabla).toBeNull()
   expect((await sql`SELECT max(created_at)::text AS ultima FROM drizzle.__drizzle_migrations`)[0]!.ultima).toBe('1790951000407')
   await migrate(drizzle(sql), { migrationsFolder: migraciones })
-  expect((await sql`SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations`)[0]!.n).toBe(24)
-  expect((await sql`SELECT max(created_at)::text AS ultima FROM drizzle.__drizzle_migrations`)[0]!.ultima).toBe('1790955411853')
+  expect((await sql`SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations`)[0]!.n).toBe(25)
+  expect((await sql`SELECT max(created_at)::text AS ultima FROM drizzle.__drizzle_migrations`)[0]!.ultima).toBe('1790959074396')
   await sql`INSERT INTO estructuras (codigo, descripcion) VALUES ('QA-MOTOR', 'Estructura sintética')`
   await sql`INSERT INTO presupuestos (numero, revision, serie, fecha, nombre_libre, tarifa, estado)
     VALUES (999001, 0, 'A', '2026-10-02', 'QA motor', 1, 'PENDIENTE')`
@@ -104,6 +104,41 @@ describe('carga dirigida del catálogo del motor', () => {
     expect(await sql`SELECT herrajes, mano_obra FROM conjunto_parametros_despiece`).toEqual([
       { herrajes: { '2HC': 'QA-H' }, mano_obra: { '2HC': 'QA-MO' } },
     ])
+  }, 30000)
+
+  it('RLS impide leer o modificar el catálogo a un rol de navegador, conservando el acceso del servidor', async () => {
+    const rol = `qa_motor_${randomUUID().replaceAll('-', '')}`
+    await cargarMotorCatalogo(sql, origen, { aplicar: true })
+    const antes = await contenido(TABLAS_MOTOR)
+    const rls = await sql`SELECT relname FROM pg_class WHERE relnamespace = 'public'::regnamespace
+      AND relrowsecurity AND relname = ANY(${[...TABLAS_MOTOR]})`
+    expect(rls).toHaveLength(TABLAS_MOTOR.length)
+    await admin.unsafe(`CREATE ROLE ${rol} NOLOGIN NOBYPASSRLS`)
+    try {
+      // Incluso con permisos de filas, no hay políticas para clientes directos.
+      await sql.unsafe(`GRANT USAGE ON SCHEMA public TO ${rol}`)
+      for (const tabla of TABLAS_MOTOR) await sql.unsafe(`GRANT SELECT, INSERT, UPDATE, DELETE ON ${tabla} TO ${rol}`)
+      await sql.begin(async tx => {
+        await tx.unsafe(`SET LOCAL ROLE ${rol}`)
+        for (const tabla of TABLAS_MOTOR) {
+          expect((await tx`SELECT count(*)::int AS n FROM ${tx(tabla)}`)[0]!.n).toBe(0)
+        }
+        expect((await tx`UPDATE tipos_hoja_catalogo SET descripcion = 'alterado'`).count).toBe(0)
+        expect((await tx`DELETE FROM tipos_hoja_catalogo`).count).toBe(0)
+      })
+      await expect(sql.begin(async tx => {
+        await tx.unsafe(`SET LOCAL ROLE ${rol}`)
+        await tx`INSERT INTO tipos_hoja_catalogo (id, tipo) VALUES ('QA-PUBLICO', 'prohibido')`
+      })).rejects.toMatchObject({ code: '42501' })
+      await expect(sql.begin(async tx => {
+        await tx.unsafe(`SET LOCAL ROLE ${rol}`)
+        await tx`TRUNCATE tipos_hoja_catalogo`
+      })).rejects.toMatchObject({ code: '42501' })
+      expect(await contenido(TABLAS_MOTOR)).toEqual(antes)
+    } finally {
+      await sql.unsafe(`DROP OWNED BY ${rol}`)
+      await admin.unsafe(`DROP ROLE ${rol}`)
+    }
   }, 30000)
 
   it('simular sobre catálogo existente revierte sus valores, no solo el recuento', async () => {

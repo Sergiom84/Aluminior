@@ -1,4 +1,8 @@
-import { afterAll, describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import postgres from 'postgres'
+import { randomUUID } from 'node:crypto'
+import { fileURLToPath } from 'node:url'
+import { migrate } from 'drizzle-orm/postgres-js/migrator'
 import { sql } from 'drizzle-orm'
 import { crearDb, schema } from '@aluminior/db'
 import { urlDePruebasValidada } from '@aluminior/db/pruebas'
@@ -7,9 +11,28 @@ import { leerCatalogoLinea } from './leer-catalogo.ts'
 import { prepararCortesCatalogo } from '../cortes-catalogo.ts'
 import { TABLAS_MOTOR_CATALOGO } from './disponible.ts'
 
-const db = crearDb(urlDePruebasValidada(process.env.TEST_DATABASE_URL))
+const base = urlDePruebasValidada(process.env.TEST_DATABASE_URL)
+const nombre = `aluminior_sin_motor_${randomUUID().replaceAll('-', '')}_test`
+const admin = postgres(base, { max: 1, onnotice: () => {} })
+let db: ReturnType<typeof crearDb>
+
+// Este ensayo elimina tablas: una transacción no evita conflictos de bloqueo
+// con las demás suites que leen el catálogo. Usa su propia base desechable.
+beforeAll(async () => {
+  await admin.unsafe(`CREATE DATABASE ${nombre}`)
+  db = crearDb(urlDePruebasValidada(base.replace(/\/[^/]+$/, `/${nombre}`)))
+  await db.execute(sql`CREATE SCHEMA auth`)
+  await db.execute(sql`CREATE TABLE auth.users (id uuid PRIMARY KEY)`)
+  await migrate(db, {
+    migrationsFolder: fileURLToPath(new URL('../../../../../../../db/migrations', import.meta.url)),
+  })
+}, 60000)
 const rollback = new Error('rollback del ensayo sin la migración del motor')
-afterAll(() => db.$client.end({ timeout: 5 }))
+afterAll(async () => {
+  await db?.$client.end({ timeout: 5 })
+  await admin.unsafe(`DROP DATABASE IF EXISTS ${nombre} WITH (FORCE)`)
+  await admin.end({ timeout: 5 })
+})
 
 // Una base migrada solo hasta 0022_catalogo_diseno, como Supabase antes de la 0023.
 describe('motor de catálogo sin su migración', () => {
