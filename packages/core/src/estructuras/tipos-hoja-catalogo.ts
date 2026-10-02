@@ -13,11 +13,14 @@ const POR_TIPO: Readonly<Record<number, AperturaVisual>> = {
   2: 'abatible-izquierda', // 1I: MANO IZQUIERDA
   5: 'oscilobatiente-derecha', // 1OD
   6: 'oscilobatiente-izquierda', // 1OI
-  // Hipótesis: puertas balconeras de una hoja sin mano en la descripción;
-  // se dibujan con la mano de la abatible (1) y la oscilobatiente (1O) por defecto.
-  58: 'abatible-derecha', // 1PE, 1PFS
-  43: 'oscilobatiente-derecha', // 1OP
-  44: 'oscilobatiente-derecha', // 1OP+VS, 1OP2FLFS
+  // Puertas balconeras oscilobatientes: 1OPD usa el 43 y 1OPI el 44, la misma
+  // pareja que 1OD/1OI (5/6). `SeriesAsocV2TiposHoja` las nombra t1HOIP/t1HODP,
+  // con la inversión de nombre que ya tienen 1/2 (t1HAI/t1HAD) y 5/6.
+  43: 'oscilobatiente-derecha', // 1OPD, 1OP
+  44: 'oscilobatiente-izquierda', // 1OPI, 1OP+VS, 1OP2FLFS
+  // Hipótesis: ninguna estructura del 58 declara mano (1P, 1PE, 1PFS). Su nombre
+  // t1HAPD seguiría a t1HAD (2, izquierda); se mantiene la derecha hasta contrastarlo.
+  58: 'abatible-derecha',
 }
 
 /** Parejas de dos hojas: índice 1 izquierda, 2 derecha. */

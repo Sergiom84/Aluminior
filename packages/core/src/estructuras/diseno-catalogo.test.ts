@@ -143,6 +143,14 @@ describe('generador conservador de candidatas visuales', () => {
       plantilla: { composicion: { apertura: 'abatible-izquierda' } } })
   })
 
+  it('dibuja la puerta oscilobatiente 1OPD (43) a la derecha y 1OPI (44) a la izquierda', () => {
+    const una = (hoja: number) => entrada([nodo(0, 1, -1), nodo(1, 3, 0, { hoja }), nodo(2, 5, 1)])
+    expect(generarPlantillaCatalogo(una(43))).toMatchObject({
+      plantilla: { composicion: { apertura: 'oscilobatiente-derecha' } } })
+    expect(generarPlantillaCatalogo(una(44))).toMatchObject({
+      plantilla: { composicion: { apertura: 'oscilobatiente-izquierda' } } })
+  })
+
   it('no dibuja como recta una estructura con arco o inclinación', () => {
     const e = pareja(7)
     e.nodos[0].curva = 1
