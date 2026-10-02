@@ -16,6 +16,7 @@ import {
 import { construirResoluciones, expandirCadena } from '@aluminior/core/series'
 import { resolverPvpCatalogo } from '@aluminior/core/precios'
 import type { ClienteEscritura } from '../../cliente-db.ts'
+import { tablasMotorCatalogo } from './disponible.ts'
 
 const n = (v: string | null | undefined) => v === null || v === undefined ? 0 : Number(v)
 const vacioANull = (v: string | null) => v && v.trim() ? v : null
@@ -28,6 +29,7 @@ export interface EntradaCatalogoLinea {
 }
 
 export async function leerCatalogoLinea(cliente: ClienteEscritura, e: EntradaCatalogoLinea): Promise<CatalogoLinea | null> {
+  if (!await tablasMotorCatalogo(cliente)) return null
   const [plantillaFilas, [parametros], [estructura]] = await Promise.all([
     cliente.select().from(schema.estructuraPlantillaCatalogo).where(eq(schema.estructuraPlantillaCatalogo.estructuraCodigo, e.estructura)),
     cliente.select().from(schema.conjuntoParametrosDespiece).where(eq(schema.conjuntoParametrosDespiece.conjuntoCodigo, e.serie)).limit(1),

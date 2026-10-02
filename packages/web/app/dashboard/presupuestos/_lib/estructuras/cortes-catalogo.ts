@@ -2,6 +2,7 @@ import { and, eq } from 'drizzle-orm'
 import { schema } from '@aluminior/db'
 import { resolverCortesReferenciados, type ComponentePlantilla, type CorteCatalogo } from '@aluminior/core/despiece'
 import type { ClienteEscritura } from '../cliente-db.ts'
+import { tablasMotorCatalogo } from './catalogo-despiece/disponible.ts'
 
 // Alcance contrastado: perfiles ordinarios de C2/C3 GMC400. Los herrajes siguen
 // su propia resolución; sus códigos 222–229 nunca se convierten en perfiles.
@@ -14,6 +15,7 @@ export async function prepararCortesCatalogo(
   cotas: Record<string, number>,
 ) {
   if (entrada.serieCodigo !== 'GMC400' || !['C2', 'C3'].includes(entrada.codigo)) return undefined
+  if (!await tablasMotorCatalogo(cliente)) return undefined
   const [referencias, descuentos] = await Promise.all([
     cliente.select().from(schema.estructuraReferenciasCorte)
       .where(eq(schema.estructuraReferenciasCorte.estructuraCodigo, entrada.codigo)),
