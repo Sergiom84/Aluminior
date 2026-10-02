@@ -13,12 +13,14 @@ const POR_PAGINA = 6
 /**
  * Barra inferior del configurador: familias y miniaturas paginadas. En
  * Productor la miniatura solo actúa al arrastrarla; aquí el clic la deja
- * preparada para colocarla con teclado o pulsación en un anclaje.
+ * preparada para colocarla con teclado o pulsación en un anclaje, y el doble
+ * clic la coloca directamente a la derecha.
  */
-export function CatalogoInferior({ preparada, onPreparar, onArrastre }: {
+export function CatalogoInferior({ preparada, onPreparar, onArrastre, onColocar }: {
   preparada: PlantillaDiseno | null
   onPreparar: (plantilla: PlantillaDiseno | null) => void
   onArrastre: (plantilla: PlantillaDiseno | null) => void
+  onColocar: (plantilla: PlantillaDiseno) => void
 }) {
   const [categoriaId, setCategoriaId] = useState(() => categoriaInicialEscaparate().id)
   const [pagina, setPagina] = useState(1)
@@ -43,7 +45,10 @@ export function CatalogoInferior({ preparada, onPreparar, onArrastre }: {
             className="al-designer-thumb" aria-pressed={preparada?.codigo === plantilla.codigo}
             title={`${plantilla.descripcion} [${plantilla.codigo}]`}
             aria-label={`${plantilla.descripcion} [${plantilla.codigo}]`}
-            onClick={() => onPreparar(preparada?.codigo === plantilla.codigo ? null : plantilla)}
+            onClick={(evento) => {
+              if (evento.detail < 2) onPreparar(preparada?.codigo === plantilla.codigo ? null : plantilla)
+            }}
+            onDoubleClick={() => onColocar(plantilla)}
             onDragStart={(evento) => {
               evento.dataTransfer.setData(TIPO_ARRASTRE_ESTRUCTURA, plantilla.codigo)
               evento.dataTransfer.effectAllowed = 'copy'

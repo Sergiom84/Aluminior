@@ -13,6 +13,8 @@ import { LineaPresupuesto } from './_components/linea-presupuesto.tsx'
 import type { DatosEdicionCerramiento } from './_components/editar-cerramiento.tsx'
 import { PestanasDocumento, PestanasFicha } from '../_components/pestanas-documento.tsx'
 import { referenciaPresupuesto } from '../_lib/identidad-documento.ts'
+import { asegurarCatalogoDiseno } from '../_lib/catalogo-diseno/index.ts'
+import { CatalogoDiseno } from './_components/catalogo-diseno.tsx'
 import styles from './presupuesto-movil.module.css'
 
 export const dynamic = 'force-dynamic'
@@ -24,6 +26,7 @@ export default async function DetallePresupuesto({ params }: { params: Promise<{
   const [presupuesto] = await db.select().from(schema.presupuestos)
     .where(eq(schema.presupuestos.id, id)).limit(1)
   if (!presupuesto) notFound()
+  const plantillas = await asegurarCatalogoDiseno(db)
   const [cliente] = presupuesto.clienteCodigo
     ? await db.select({ nombre: schema.clientes.nombre }).from(schema.clientes)
         .where(eq(schema.clientes.codigo, presupuesto.clienteCodigo)).limit(1)
@@ -112,6 +115,7 @@ export default async function DetallePresupuesto({ params }: { params: Promise<{
             obraTexto: p.obraTexto, formaPago: p.formaPago, observaciones: p.observaciones }} />
         </div>}
 
+        <CatalogoDiseno plantillas={plantillas}>
         {p.estado === 'PENDIENTE' && (
           <AnyadirLinea presupuestoId={id} series={series.map((serie) => serie.codigo)} acabados={acabados} />
         )}
@@ -140,6 +144,7 @@ export default async function DetallePresupuesto({ params }: { params: Promise<{
             ))}</tbody>
           </table>
         </div>
+        </CatalogoDiseno>
 
         <div className="al-ficha-totals">
           <dl className={`${styles.totals} w-72 text-sm`}>

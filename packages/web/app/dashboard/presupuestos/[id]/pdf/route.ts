@@ -15,6 +15,7 @@ import { cargarPresupuestoPdf } from './datos.ts'
 import { documentoPresupuesto } from './documento.tsx'
 import { DatosPdfIncoherentes } from './cerramiento-pdf'
 import { nombreArchivoPresupuestoPdf } from './identidad'
+import { asegurarCatalogoDiseno } from '../../_lib/catalogo-diseno/index.ts'
 
 // @react-pdf/renderer no es compatible con el runtime Edge.
 export const runtime = 'nodejs'
@@ -26,6 +27,7 @@ export async function GET(
 ) {
   const { id } = await params
   const db = crearDb()
+  await asegurarCatalogoDiseno(db)
 
   let datos
   try {

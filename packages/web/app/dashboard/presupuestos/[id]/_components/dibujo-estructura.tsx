@@ -156,7 +156,7 @@ function Bisagras({ apertura, x, y, w, h }: {
   apertura: AperturaVisual; x: number; y: number; w: number; h: number
 }) {
   const geometria = geometriaAperturaVisual(apertura, { x, y, ancho: w, alto: h })
-  if (!geometria) return null
+  if (!geometria?.bisagras) return null
   const bx = geometria.xBisagras - 3
   return (
     <g className="al-hinge" pointerEvents="none">

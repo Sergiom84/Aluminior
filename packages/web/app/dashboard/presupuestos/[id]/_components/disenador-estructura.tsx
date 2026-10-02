@@ -6,8 +6,8 @@ import {
   cambiarEstructuraModuloCerramiento, crearConfiguracionCerramiento, dependientesModulo,
   eliminarModuloConDependientes, esConfiguracionCerramiento, esModuloRaiz, insertarModuloEnAnclaje,
   medidasCerramiento, moduloDesdePlantilla, plantillaDiseno, PLANTILLAS_DISENO, posicionesCerramiento,
-  modelosIguales, primerHueco, type AnclajeLibre, type ConfiguracionCerramiento, type MaterialesGenerales,
-  type PlantillaDiseno,
+  anclajeLateral, modelosIguales, primerHueco, type AnclajeLibre, type ConfiguracionCerramiento,
+  type MaterialesGenerales, type PlantillaDiseno,
 } from '@aluminior/core/estructuras'
 import { LienzoCerramiento, type ParteSeleccionada } from './lienzo-cerramiento.tsx'
 import { useBorradoresCerramiento } from './use-borradores-cerramiento.ts'
@@ -15,9 +15,8 @@ import { EditorUnion } from './editor-union.tsx'
 import { CatalogoInferior, TIPO_ARRASTRE_ESTRUCTURA } from './disenador/catalogo-inferior.tsx'
 import { ListaElementos, entradasCerramiento, type Entrada } from './disenador/lista-elementos.tsx'
 import { PanelElemento } from './disenador/panel-elemento.tsx'
+import { BarraDisenador, type VistaDisenador } from './disenador/barra-disenador.tsx'
 import styles from '../presupuesto-movil.module.css'
-
-type Vista = 'catalogo' | 'propiedades'
 
 function seleccionModulo(configuracion: ConfiguracionCerramiento, id: string): ParteSeleccionada {
   const modulo = configuracion.modulos.find((actual) => actual.id === id)!
@@ -56,7 +55,7 @@ export function DisenadorEstructura({
   const edicion = useBorradoresCerramiento(configuracion, setConfiguracion)
   const [seleccion, setSeleccion] = useState<ParteSeleccionada | null>(() =>
     configuracion ? seleccionModulo(configuracion, configuracion.modulos[0].id) : null)
-  const [vista, setVista] = useState<Vista>(configuracion ? 'propiedades' : 'catalogo')
+  const [vista, setVista] = useState<VistaDisenador>(configuracion ? 'propiedades' : 'catalogo')
   const [preparada, setPreparada] = useState<PlantillaDiseno | null>(null)
   const [arrastrada, setArrastrada] = useState<PlantillaDiseno | null>(null)
   const [aviso, setAviso] = useState<string | null>(null)
@@ -87,6 +86,15 @@ export function DisenadorEstructura({
     setConfiguracion(siguiente)
     setSeleccion(seleccionModulo(siguiente, siguiente.modulos.at(-1)!.id))
     terminarInsercion()
+  }
+  /** Lienzo vacío: primer elemento; si no, a la derecha de la fila superior. */
+  const colocarLateral = (plantilla: PlantillaDiseno) => {
+    const anclaje = configuracion ? anclajeLateral(configuracion) : null
+    if (configuracion && !anclaje) {
+      setAviso(`${plantilla.codigo} no cabe a la derecha sin solapar otro elemento.`)
+      return
+    }
+    colocar(plantilla, anclaje)
   }
 
   const seleccionar = (parte: ParteSeleccionada) => { setSeleccion(parte); setVista('propiedades') }
@@ -129,17 +137,10 @@ export function DisenadorEstructura({
   return (
     <section className={`${styles.designer} al-designer`} aria-label="Diseñador de cerramientos"
       onKeyDown={(evento) => { if (evento.key === 'Escape' && insertando) terminarInsercion() }}>
-      <header className="al-designer-toolbar">
-        <strong>CERRAMIENTO · {configuracion?.modulos.length ?? 0} {configuracion?.modulos.length === 1 ? 'ELEMENTO' : 'ELEMENTOS'}</strong>
-        <div className="al-designer-vistas" role="group" aria-label="Barra inferior">
-          <button type="button" aria-pressed={vista === 'catalogo'} onClick={() => setVista('catalogo')}>Catálogo</button>
-          <button type="button" aria-pressed={vista === 'propiedades'} disabled={!configuracion}
-            onClick={() => setVista('propiedades')}>Propiedades</button>
-        </div>
-        <span className="al-designer-global">
-          Ancho <b className="cifra">{medidas.anchoMm}</b> mm × Alto <b className="cifra">{medidas.altoMm}</b> mm
-        </span>
-      </header>
+      <BarraDisenador elementos={configuracion?.modulos.length ?? 0} vista={vista} onVista={setVista}
+        medidas={medidas} preparada={preparada}
+        onColocarDerecha={configuracion && preparada && !edicion.pendientes
+          ? () => colocarLateral(preparada) : null} />
 
       <div className="al-designer-canvas" data-testid="designer-canvas" data-insertando={Boolean(insertando) || undefined}>
         {configuracion
@@ -162,7 +163,8 @@ export function DisenadorEstructura({
         {edicion.error && <p role="alert">{edicion.error}</p>}
         {aviso && <p role="alert">{aviso}</p>}
         {vista === 'catalogo' || !configuracion
-          ? <CatalogoInferior preparada={preparada} onPreparar={setPreparada} onArrastre={setArrastrada} />
+          ? <CatalogoInferior preparada={preparada} onPreparar={setPreparada} onArrastre={setArrastrada}
+              onColocar={colocarLateral} />
           : modulo
             ? <PanelElemento modulo={modulo} borrador={edicion.borradores.modulos[modulo.id] ?? {}}
                 generales={generales} series={series}

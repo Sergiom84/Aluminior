@@ -143,6 +143,9 @@ export const estructuras = pgTable('estructuras', {
   /** true si es un accesorio de unión, no un hueco completo. */
   esAccesorio: boolean('es_accesorio').notNull().default(false),
   fabricaStock: boolean('fabrica_stock').notNull().default(false),
+  /** Medida inicial del dibujo de catálogo (DisAncho/DisAlto). */
+  disAnchoMm: integer('dis_ancho_mm'),
+  disAltoMm: integer('dis_alto_mm'),
 }, (t) => ({
   familiaIdx: index('estructuras_familia_idx').on(t.familia),
   descripcionIdx: index('estructuras_descripcion_idx').on(t.descripcion),

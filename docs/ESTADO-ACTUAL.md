@@ -1,6 +1,16 @@
 # Estado actual de Aluminior
 
-Revisión local: 25/09/2026. Este es el punto de entrada para el estado del código.
+Revisión local: 02/10/2026. Este es el punto de entrada para el estado del código.
+
+## 02/10/2026 — catálogo real y entrada directa al configurador
+
+El alta de línea abre en el configurador de cerramientos, con «Colocar X a la
+derecha» y doble clic en la miniatura. El escaparate pasa de 14 plantillas a
+160 generadas del catálogo importado (correderas incluidas), que cubren 728 de
+737 elementos reales. Migración aditiva `0022` aplicada solo en local; producción
+sigue con las 14 hasta rellenar las columnas nuevas en Supabase (nunca con el
+importador completo, que trunca presupuestos). El trabajo ya se hace en un Mac
+con Docker. Ver [catálogo real](paridad/CATALOGO-REAL-2026-10-02.md).
 
 ## 25/09/2026 — fase 4: materiales por elemento
 

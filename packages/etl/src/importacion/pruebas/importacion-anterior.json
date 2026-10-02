@@ -228,7 +228,9 @@
             "familia": null,
             "observaciones": null,
             "es_accesorio": false,
-            "fabrica_stock": false
+            "fabrica_stock": false,
+            "dis_ancho_mm": null,
+            "dis_alto_mm": null
           }
         ]
       ]
@@ -262,7 +264,14 @@
             "id_travesano": null,
             "posicion_hueco": null,
             "tipo_travesano": null,
-            "invisible": false
+            "invisible": false,
+            "tipo_hoja": null,
+            "numero_hoja": null,
+            "tipo_cota": null,
+            "cota": "1000",
+            "equidistantes": null,
+            "tipo_marco": null,
+            "tipo_curva": null
           },
           {
             "estructura_codigo": "EST",
@@ -272,7 +281,14 @@
             "id_travesano": null,
             "posicion_hueco": null,
             "tipo_travesano": null,
-            "invisible": false
+            "invisible": false,
+            "tipo_hoja": null,
+            "numero_hoja": null,
+            "tipo_cota": null,
+            "cota": null,
+            "equidistantes": null,
+            "tipo_marco": null,
+            "tipo_curva": null
           }
         ]
       ]

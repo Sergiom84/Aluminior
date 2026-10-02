@@ -155,6 +155,13 @@
       "when": 1789808930815,
       "tag": "0021_editor_linea",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1790951000407,
+      "tag": "0022_catalogo_diseno",
+      "breakpoints": true
     }
   ]
 }

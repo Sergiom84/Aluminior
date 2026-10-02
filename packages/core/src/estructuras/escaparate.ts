@@ -1,9 +1,13 @@
 /**
  * Escaparate de estructuras. Categorías y paginación del diálogo de Productor
- * (galería 4×3). Las categorías sin plantilla verificada se listan vacías:
- * aparecen para reconocer la pantalla, no simulan catálogo.
+ * (galería 4×3). Cada categoría muestra las plantillas disponibles de su
+ * familia: verificadas y generadas del catálogo importado, por código porque
+ * `OrdenEscap` es 0 en todo el catálogo. Las que no tienen ninguna dibujable
+ * se listan vacías para reconocer la pantalla, sin simular catálogo.
  */
-import { PLANTILLAS_DISENO, type PlantillaDiseno } from './diseno.ts'
+import { plantillasDisponibles, type PlantillaDiseno } from './diseno.ts'
+
+const porCodigo = new Intl.Collator('es', { numeric: true })
 
 export const ITEMS_POR_PAGINA_ESCAPARATE = 12
 
@@ -48,11 +52,16 @@ export function categoriaInicialEscaparate(): CategoriaEscaparate {
     ?? CATEGORIAS_ESCAPARATE[0]
 }
 
-export function itemsEscaparate(categoriaId: string): readonly PlantillaDiseno[] {
+export function itemsEscaparate(
+  categoriaId: string,
+  plantillas: readonly PlantillaDiseno[] = plantillasDisponibles(),
+): readonly PlantillaDiseno[] {
   const categoria = categoriaEscaparate(categoriaId)
   if (!categoria || categoria.familias.length === 0) return []
-  return PLANTILLAS_DISENO.filter((plantilla) =>
-    plantilla.familiaCodigo !== undefined && categoria.familias.includes(plantilla.familiaCodigo))
+  return plantillas
+    .filter((plantilla) =>
+      plantilla.familiaCodigo !== undefined && categoria.familias.includes(plantilla.familiaCodigo))
+    .sort((a, b) => porCodigo.compare(a.codigo, b.codigo))
 }
 
 export interface PaginaEscaparate {

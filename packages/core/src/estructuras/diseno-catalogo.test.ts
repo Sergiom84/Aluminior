@@ -94,11 +94,62 @@ describe('generador conservador de candidatas visuales', () => {
     expect(generarPlantillaCatalogo(e)).toEqual({ estado: 'pendiente', motivos: ['hoja con superficie no simple'] })
   })
 
-  it('rechaza familia y variantes sin evidencia aunque su árbol parezca simple', () => {
+  it('rechaza variantes sin evidencia en cualquier familia', () => {
     const e = dividido()
     e.familiaCodigo = '001'
     e.nodos[0].variantes = ['bPerInf']
-    expect(generarPlantillaCatalogo(e)).toEqual({ estado: 'pendiente',
-      motivos: ['familia sin verificar', 'variante bPerInf'] })
+    expect(generarPlantillaCatalogo(e)).toEqual({ estado: 'pendiente', motivos: ['variante bPerInf'] })
+  })
+
+  const pareja = (tipoHoja: number, marco = 'NOR') => entrada([
+    nodo(0, 1, -1, { marco }),
+    nodo(1, 6, 0, { division: 1, travesano: 'VI', invisible: true, equidistantes: 2 }),
+    nodo(2, 2, 0, { division: 1, posicion: 1 }),
+    nodo(3, 2, 0, { division: 1, posicion: 2 }),
+    nodo(4, 3, 2, { hoja: tipoHoja, numeroHoja: 1 }), nodo(5, 5, 4),
+    nodo(6, 3, 3, { hoja: tipoHoja, numeroHoja: 2 }), nodo(7, 5, 6),
+  ])
+  const huecos = (resultado: ReturnType<typeof generarPlantillaCatalogo>) => {
+    if (resultado.estado !== 'dibujable' || resultado.plantilla.composicion.tipo !== 'division') {
+      throw new Error('Se esperaba una división dibujable')
+    }
+    return resultado.plantilla.composicion.hijos.map((hijo) => {
+      if (hijo.nodo.tipo !== 'hueco') throw new Error('Se esperaba hueco')
+      return [hijo.nodo.apertura, hijo.nodo.manilla]
+    })
+  }
+
+  it('dibuja la corredera de dos hojas (tipo 10) sin manilla ni sentido', () => {
+    const resultado = generarPlantillaCatalogo({ ...pareja(10), familiaCodigo: '001' })
+    expect(resultado).toMatchObject({ estado: 'dibujable', familiaCodigo: '001',
+      plantilla: { familia: 'CATALOGO' } })
+    expect(huecos(resultado)).toEqual([['corredera', false], ['corredera', false]])
+  })
+
+  it.each([13, 14, 16, 70])('reconoce la hoja corredera tipo %i', (tipoHoja) => {
+    expect(huecos(generarPlantillaCatalogo(pareja(tipoHoja)))).toEqual([['corredera', false], ['corredera', false]])
+  })
+
+  it('reconoce la puerta balconera de dos hojas (15) como la ventana de dos hojas', () => {
+    expect(huecos(generarPlantillaCatalogo(pareja(15, 'PTA'))))
+      .toEqual([['abatible-izquierda', undefined], ['abatible-derecha', undefined]])
+  })
+
+  it('asigna la mano declarada en la descripción a las abatibles de una hoja', () => {
+    const una = (hoja: number) => entrada([nodo(0, 1, -1), nodo(1, 3, 0, { hoja }), nodo(2, 5, 1)])
+    expect(generarPlantillaCatalogo(una(1))).toMatchObject({ estado: 'dibujable',
+      plantilla: { composicion: { apertura: 'abatible-derecha' } } })
+    expect(generarPlantillaCatalogo(una(2))).toMatchObject({ estado: 'dibujable',
+      plantilla: { composicion: { apertura: 'abatible-izquierda' } } })
+  })
+
+  it('no dibuja como recta una estructura con arco o inclinación', () => {
+    const e = pareja(7)
+    e.nodos[0].curva = 1
+    expect(generarPlantillaCatalogo(e)).toEqual({ estado: 'pendiente', motivos: ['curva sin representar'] })
+  })
+
+  it('rechaza un marco desconocido', () => {
+    expect(generarPlantillaCatalogo(pareja(10, 'XYZ'))).toEqual({ estado: 'pendiente', motivos: ['marco XYZ'] })
   })
 })

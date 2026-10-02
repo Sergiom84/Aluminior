@@ -25,6 +25,7 @@ import { copiarPresupuesto, type ResultadoCopia } from './copiar-presupuesto.ts'
 import type { EstrategiaDestino } from './destino-documento.ts'
 import { MAPA_VACIO } from './mapa-sustitucion.ts'
 import { OPCIONES_COPIA_IDENTICA } from './plan-copia.ts'
+import { asegurarCatalogoDiseno } from '../catalogo-diseno/index.ts'
 
 export type ResultadoCopiaIdentica =
   | { readonly ok: true; readonly presupuestoId: string }
@@ -53,6 +54,7 @@ export async function copiarIdentica(
   let resultado: ResultadoCopia
   try {
     const db = crearDb()
+    await asegurarCatalogoDiseno(db)
     resultado = await copiarPresupuesto(db, {
       presupuestoId,
       destino: { estrategia },

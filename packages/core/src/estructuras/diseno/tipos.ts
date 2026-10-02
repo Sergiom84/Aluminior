@@ -10,6 +10,8 @@ export type AperturaVisual =
   | 'abatible-derecha'
   | 'oscilobatiente-izquierda'
   | 'oscilobatiente-derecha'
+  /** Hoja deslizante. El catálogo no dice hacia dónde corre cada hoja. */
+  | 'corredera'
 
 export type EjeDivision = 'horizontal' | 'vertical'
 
@@ -43,6 +45,8 @@ export type FamiliaVisual =
   | 'OSCILOBATIENTES'
   | 'VENTANAS ABATIBLES'
   | 'COMBINACIONES'
+  /** Generada desde el árbol de diseño del catálogo importado. */
+  | 'CATALOGO'
 
 export interface PlantillaDiseno {
   codigo: string

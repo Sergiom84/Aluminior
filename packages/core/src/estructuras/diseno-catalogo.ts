@@ -1,4 +1,5 @@
-import type { AperturaVisual, NodoVisual, PlantillaDiseno } from './diseno.ts'
+import type { NodoVisual, PlantillaDiseno } from './diseno.ts'
+import { aperturaTipoHoja, MARCOS_DIBUJABLES } from './tipos-hoja-catalogo.ts'
 
 /** Entrada de catálogo normalizada; nunca contiene instancias de documentos. */
 export interface NodoCatalogo {
@@ -16,6 +17,8 @@ export interface NodoCatalogo {
   equidistantes: number
   marco: string
   variantes: readonly string[]
+  /** TipoCurva: 0 recto; cualquier otro valor es arco o inclinación. */
+  curva?: number
 }
 
 export interface EstructuraCatalogo {
@@ -31,16 +34,7 @@ export type ResultadoPlantilla =
   | { estado: 'dibujable'; plantilla: PlantillaDiseno; familiaCodigo: string }
   | { estado: 'pendiente'; motivos: readonly string[] }
 
-function apertura(nodo: NodoCatalogo): AperturaVisual | null {
-  if (nodo.hoja === 5) return 'oscilobatiente-derecha'
-  if (nodo.hoja === 6) return 'oscilobatiente-izquierda'
-  // Pares experimentales: etiquetas físicas con bisagras exteriores. La
-  // presencia de manilla no se infiere aquí porque aún no está observada.
-  if ([7, 8].includes(nodo.hoja) && nodo.numeroHoja === 1) return 'abatible-izquierda'
-  if (nodo.hoja === 7 && nodo.numeroHoja === 2) return 'abatible-derecha'
-  if (nodo.hoja === 8 && nodo.numeroHoja === 2) return 'oscilobatiente-derecha'
-  return null
-}
+const apertura = (nodo: NodoCatalogo) => aperturaTipoHoja(nodo.hoja, nodo.numeroHoja)
 
 /** Candidata a medida inicial, NO validada para redimensionar ni valorar.
  * TipoCota=1 se proyecta a proporción: falta mantener cotas absolutas al editar.
@@ -48,7 +42,6 @@ function apertura(nodo: NodoCatalogo): AperturaVisual | null {
 export function generarPlantillaCatalogo(entrada: EstructuraCatalogo): ResultadoPlantilla {
   const motivos = new Set<string>()
   const { nodos } = entrada
-  if (!['003', '005', '020'].includes(entrada.familiaCodigo)) motivos.add('familia sin verificar')
   if (![entrada.anchoMm, entrada.altoMm].every(n => Number.isFinite(n) && n > 0)) {
     motivos.add('medidas no válidas')
   }
@@ -61,7 +54,8 @@ export function generarPlantillaCatalogo(entrada: EstructuraCatalogo): Resultado
     if (![1, 2, 3, 5, 6].includes(nodo.tipo)) motivos.add(`tipo de nodo ${nodo.tipo}`)
     if (nodo.tipo === 3 && !apertura(nodo)) motivos.add(`tipo de hoja ${nodo.hoja}/${nodo.numeroHoja}`)
     for (const variante of nodo.variantes) motivos.add(`variante ${variante}`)
-    if (nodo.tipo === 1 && nodo.marco !== 'NOR') motivos.add(`marco ${nodo.marco || 'vacío'}`)
+    if (nodo.curva) motivos.add('curva sin representar')
+    if (nodo.tipo === 1 && !MARCOS_DIBUJABLES.has(nodo.marco)) motivos.add(`marco ${nodo.marco || 'vacío'}`)
     if (nodo.tipo === 6 && !['HA', 'HB', 'VI', 'VD'].includes(nodo.travesano)) {
       motivos.add(`travesaño ${nodo.travesano || 'vacío'}`)
     }
@@ -83,7 +77,9 @@ export function generarPlantillaCatalogo(entrada: EstructuraCatalogo): Resultado
     if (nodo.tipo === 3) {
       if (hijos.length !== 1 || hijos[0].tipo !== 5) return fallar('hoja con superficie no simple')
       visitar(hijos[0], ancho, alto, profundidad + 1)
-      return { tipo: 'hueco', id: `nodo-${nodo.id}`, apertura: apertura(nodo)! }
+      const tipo = apertura(nodo)!
+      return { tipo: 'hueco', id: `nodo-${nodo.id}`, apertura: tipo,
+        ...(tipo === 'corredera' ? { manilla: false } : {}) }
     }
     const divisiones = hijos.filter(n => n.tipo === 6)
     if (!divisiones.length) {
@@ -122,9 +118,7 @@ export function generarPlantillaCatalogo(entrada: EstructuraCatalogo): Resultado
     return {
       estado: 'dibujable', familiaCodigo: entrada.familiaCodigo,
       plantilla: { codigo: entrada.codigo, descripcion: entrada.descripcion, familiaCodigo: entrada.familiaCodigo,
-        familia: entrada.familiaCodigo === '005' ? 'FIJOS' :
-          entrada.familiaCodigo === '020' ? 'OSCILOBATIENTES' : 'VENTANAS ABATIBLES',
-        anchoMm: entrada.anchoMm, altoMm: entrada.altoMm, composicion },
+        familia: 'CATALOGO', anchoMm: entrada.anchoMm, altoMm: entrada.altoMm, composicion },
     }
   } catch (error) {
     return { estado: 'pendiente', motivos: [error instanceof Error ? error.message : 'árbol inválido'] }

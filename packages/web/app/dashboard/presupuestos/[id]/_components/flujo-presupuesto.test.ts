@@ -5,9 +5,9 @@ const leer = (relativo: string) =>
   readFileSync(new URL(relativo, import.meta.url), 'utf8')
 
 describe('flujo de alta de presupuesto', () => {
-  it('parte del escaparate: radios Estructuras/Artículos y botón Cerramiento', () => {
+  it('abre en el configurador de cerramientos, con Estructuras y Artículos a un clic', () => {
     const alta = leer('./anyadir-linea.tsx')
-    expect(alta).toContain("useState<TipoLinea>('ESTRUCTURA')")
+    expect(alta).toContain("useState<TipoLinea>('CERRAMIENTO')")
     expect(alta).toContain("['ESTRUCTURA', 'Estructuras']")
     expect(alta).toContain("['ARTICULO', 'Artículos']")
     expect(alta).not.toContain("['CERRAMIENTO', 'Cerramiento']")

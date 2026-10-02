@@ -16,8 +16,9 @@ import styles from '../presupuesto-movil.module.css'
 type TipoLinea = 'ESTRUCTURA' | 'ARTICULO' | 'CERRAMIENTO'
 
 /**
- * Alta de línea. Flujo de Productor: tipo → escaparate → edición.
- * Tras Aceptar, el diálogo se reabre para seguir añadiendo.
+ * Alta de línea. Abre en el configurador de cerramientos, que es el recorrido
+ * del operador (cabecera mínima y configurador inmediato); Estructuras y
+ * Artículos siguen a un clic. Tras Aceptar, el diálogo se reabre para seguir añadiendo.
  */
 export function AnyadirLinea({
   presupuestoId, series, acabados,
@@ -26,7 +27,7 @@ export function AnyadirLinea({
   series: string[]
   acabados: { codigo: string; descripcion: string }[]
 }) {
-  const [tipo, setTipo] = useState<TipoLinea>('ESTRUCTURA')
+  const [tipo, setTipo] = useState<TipoLinea>('CERRAMIENTO')
   const [plantilla, setPlantilla] = useState<PlantillaDiseno | null>(null)
   const { estado, enviar, enviando } = useEnvioFormulario<Estado>(anyadirLinea, true)
   const [serie, setSerie] = useState('')

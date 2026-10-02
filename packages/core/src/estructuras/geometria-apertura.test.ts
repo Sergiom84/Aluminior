@@ -68,4 +68,12 @@ describe('geometría física de apertura', () => {
     )
     expect(fijo).toMatchObject({ tipo: 'hueco', apertura: 'fijo', manilla: false })
   })
+
+  it('dibuja la corredera como flecha doble centrada y sin bisagras', () => {
+    const geometria = geometriaAperturaVisual('corredera', rect)!
+    expect(geometria.bisagras).toBe(false)
+    expect(geometria.trazos[0]).toEqual([{ x: 30, y: 120 }, { x: 90, y: 120 }])
+    expect(geometria.trazos).toHaveLength(3)
+    expect(geometriaAperturaVisual('abatible-izquierda', rect)?.bisagras).toBe(true)
+  })
 })

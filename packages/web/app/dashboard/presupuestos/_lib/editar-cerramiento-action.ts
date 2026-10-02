@@ -7,6 +7,7 @@ import { usuarioActual } from './usuario-actual.ts'
 import { registrarFallo } from './errores.ts'
 import { esquemaLinea } from './lineas/esquema-linea.ts'
 import { actualizarCerramiento } from './cerramientos/index.ts'
+import { asegurarCatalogoDiseno } from './catalogo-diseno/index.ts'
 
 export type EstadoEdicionCerramiento =
   | { ok: true; mensaje: string }
@@ -27,7 +28,9 @@ export async function editarCerramiento(
 
   try {
     if (!await usuarioActual()) return { ok: false, errores: {}, mensaje: 'Sesión no válida' }
-    const resultado = await actualizarCerramiento(crearDb(), {
+    const db = crearDb()
+    await asegurarCatalogoDiseno(db)
+    const resultado = await actualizarCerramiento(db, {
       presupuestoId: p.data.presupuestoId,
       lineaId,
       configuracionSerializada: p.data.configuracionCerramiento,

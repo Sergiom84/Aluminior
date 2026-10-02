@@ -22,6 +22,7 @@ import { prepararAltaCerramiento } from './cerramientos/index.ts'
 import { altaLinea } from './lineas/alta-linea.ts'
 import { borrarLineaDePresupuesto } from './lineas/borrar-linea.ts'
 import { opcionesHerrajeDe as opcionesDeHerrajeOfrecidas, type GrupoOpcionesHerraje } from './estructuras/index.ts'
+import { asegurarCatalogoDiseno, necesitaCatalogoDiseno } from './catalogo-diseno/index.ts'
 
 export type Estado =
   | { ok: true; id: string; mensaje?: string }
@@ -93,6 +94,7 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
   if (!p.success) return { ok: false, errores: p.error.flatten().fieldErrors }
 
   if (p.data.tipo === 'CERRAMIENTO') {
+    if (necesitaCatalogoDiseno(p.data.configuracionCerramiento)) await asegurarCatalogoDiseno(crearDb())
     const alta = prepararAltaCerramiento({ ...p.data, configuracionSerializada: p.data.configuracionCerramiento })
     if (!alta.ok) return alta
   }

@@ -78,6 +78,15 @@ export const estructuraDisenoNodos = pgTable('estructura_diseno_nodos', {
   posicionHueco: integer('posicion_hueco'),
   tipoTravesano: text('tipo_travesano'),
   invisible: boolean('invisible').notNull().default(false),
+  /** Campos del dibujo: hoja (TipoHoja/nHoja), cota de travesaño, reparto y marco. */
+  tipoHoja: integer('tipo_hoja'),
+  numeroHoja: integer('numero_hoja'),
+  tipoCota: integer('tipo_cota'),
+  cota: numeric('cota', { precision: 12, scale: 3 }),
+  equidistantes: integer('equidistantes'),
+  tipoMarco: text('tipo_marco'),
+  /** TipoCurva distinto de 0: arco o inclinación, aún sin representar. */
+  tipoCurva: integer('tipo_curva'),
 }, (t) => ({
   pk: primaryKey({ columns: [t.estructuraCodigo, t.idItem] }),
   estructuraIdx: index('nodos_diseno_estructura_idx').on(t.estructuraCodigo),

@@ -51,7 +51,7 @@ export function geometriaHerrajesPdf(
   rect: RectVisual,
 ): { bisagras: readonly [RectVisual, RectVisual]; manilla: RectVisual | null } | null {
   const geometria = geometriaAperturaVisual(apertura, rect)
-  if (!geometria) return null
+  if (!geometria?.bisagras) return null
   const margenMarco = Math.min(3, rect.ancho / 6, rect.alto / 6)
   const anchoHerraje = Math.min(1.8, margenMarco)
   const altoBisagra = Math.min(8, rect.alto / 8)
