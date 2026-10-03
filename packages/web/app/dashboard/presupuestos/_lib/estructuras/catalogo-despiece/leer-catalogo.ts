@@ -87,6 +87,8 @@ export async function leerCatalogoLinea(cliente: ClienteEscritura, e: EntradaCat
     ...asociacionesFilas.map(a => a.articulo), ...conceptos.map(c => c.articulo)])
   for (const t of tacris) for (const c of [t.junquillo, t.juntaExterior, t.juntaInterior]) if (c) codigos.add(c)
   if (e.vidrio) codigos.add(e.vidrio)
+  // Horas manuales por unidad: fabricación y colocación.
+  for (const c of ['MO', 'MOCOL']) codigos.add(c)
   const lista = [...codigos].filter(c => c && c !== '0')
   const [articulos, despiece, pvp, incrementos] = lista.length ? await Promise.all([
     cliente.select().from(schema.articulos).where(inArray(schema.articulos.codigo, lista)),

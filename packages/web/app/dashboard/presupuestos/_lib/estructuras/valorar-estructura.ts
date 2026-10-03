@@ -28,6 +28,9 @@ export interface EntradaValoracionEstructura {
   acabadoAccesoriosCodigo?: string | null
   /** Compacto de persiana de la línea; solo lo valora el catálogo de despiece completo. */
   compacto?: CompactoLineaCatalogo | null
+  /** Horas manuales por unidad (`HorasAdFabr`, `HorasColoc`), texto decimal; solo catálogo completo. */
+  horasFabricacion?: string | null
+  horasColocacion?: string | null
   tarifa: number
   opcionesHerraje: readonly string[]
   trazabilidad?: boolean
@@ -69,6 +72,9 @@ export async function valorarEstructura(
   const catalogo = await valorarConCatalogo(cliente, entrada)
   if (catalogo) return catalogo
   if (entrada.compacto) return { ok: false, errores: { compacto: ['El compacto necesita el catálogo de despiece completo'] } }
+  if (Number(entrada.horasFabricacion ?? 0) || Number(entrada.horasColocacion ?? 0)) {
+    return { ok: false, errores: { horasColocacion: ['Las horas por unidad necesitan el catálogo de despiece completo'] } }
+  }
   const material = await resolverMaterialesEstructura(cliente, entrada)
   if (!material.ok) return { ok: false, errores: material.errores }
   if (entrada.anchoMm === null || entrada.altoMm === null || !entrada.serieCodigo) throw new Error('Material válido sin medidas')

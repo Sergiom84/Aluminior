@@ -18,6 +18,7 @@ import { fila } from './parcial.ts'
 import type { CatalogoLinea, EntradaLineaCatalogo, ResultadoLineaCatalogo } from './tipos.ts'
 
 const ARTICULO_MANO_OBRA = 'MO'
+const ARTICULO_COLOCACION = 'MOCOL'
 
 export function despiezarLineaCatalogo(catalogo: CatalogoLinea, entrada: EntradaLineaCatalogo): ResultadoLineaCatalogo {
   const serie = catalogo.serie(entrada.serie)
@@ -38,6 +39,10 @@ export function despiezarLineaCatalogo(catalogo: CatalogoLinea, entrada: Entrada
   if (entrada.minutosFabricacionAdicionales && entrada.minutosFabricacionAdicionales > 0) {
     filas.push(fila({ origen: 'mano-obra', articulo: ARTICULO_MANO_OBRA, acabado: entrada.acabadoAccesorios,
       cantidad: entrada.minutosFabricacionAdicionales, largoMm: null, funcion: 'MO' }))
+  }
+  if (entrada.minutosColocacion && entrada.minutosColocacion > 0) {
+    filas.push(fila({ origen: 'mano-obra', articulo: ARTICULO_COLOCACION, acabado: entrada.acabadoAccesorios,
+      cantidad: entrada.minutosColocacion, largoMm: null, funcion: 'MOCOL' }))
   }
 
   let total = 0

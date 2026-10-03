@@ -117,6 +117,12 @@ export interface EntradaLineaCatalogo {
   cotas?: Readonly<Record<string, number>>
   /** Ajuste manual de fabricación de la línea (`HorasAdFabr`) en minutos. */
   minutosFabricacionAdicionales?: number
+  /**
+   * Colocación de la línea (`HorasColoc`) en minutos, fila `MOCOL` por unidad:
+   * en EMP0016, 117/117 estructuras con `Cdad` > 1 y horas la llevan en el
+   * despiece unitario y `ImporteTotal = Cdad × Precio`.
+   */
+  minutosColocacion?: number
   compacto?: CompactoLineaCatalogo | null
 }
 

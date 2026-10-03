@@ -93,6 +93,19 @@ describe('valoración con el catálogo de despiece completo', () => {
     expect(r.opcionesHerraje).toEqual([{ categoria: 'QA-HERR', opcionCodigo: '1', descripcion: 'Cierre' }])
     expect(r.acristalamiento).toHaveLength(2)
   }))
+  it('cobra las horas manuales por unidad como filas MO y MOCOL del despiece', () => caso(async tx => {
+    await tx.insert(schema.articulos).values({ codigo: 'MOCOL', descripcion: 'MOCOL', tipoMetraje: 'UD' }).onConflictDoNothing()
+    await tx.insert(schema.articulosPvp).values({ articuloCodigo: 'MOCOL', acabadoCodigo: 'UNI', tarifa: 1, precio: '0.5' })
+      .onConflictDoUpdate({ target: [schema.articulosPvp.articuloCodigo, schema.articulosPvp.acabadoCodigo, schema.articulosPvp.tarifa],
+        set: { precio: sql`excluded.precio` } })
+    const r = await valorarEstructura(tx, { ...entrada, horasFabricacion: '1', horasColocacion: '6.07', trazabilidad: true })
+    if (!r.ok) throw new Error('rechazada')
+    // 139,56 de material + 60 min y 364,2 min a 0,5 por minuto, dentro del precio unitario.
+    expect(r.precioUnitario).toBe(351.66)
+    expect(r.partidas!.slice(-2).map(p => [p.articuloCodigo, p.cantidadFacturable])).toEqual([['MO', '60.000000'], ['MOCOL', '364.200000']])
+    const sinCatalogo = await valorarEstructura(tx, { ...entrada, serieCodigo: 'QA-SIN-SERIE', horasColocacion: '2' })
+    expect(sinCatalogo.ok).toBe(false)
+  }))
   it('añade el compacto con sus filas seleccionadas a ventana + cajón y bloquea sin catálogo', () => caso(async tx => {
     await tx.insert(schema.estructuras).values({ codigo: 'QA-COMP', descripcion: 'Compacto sintético', esAccesorio: true })
     await tx.insert(schema.articulos).values([

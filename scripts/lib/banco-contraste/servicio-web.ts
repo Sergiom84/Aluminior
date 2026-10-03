@@ -2,7 +2,7 @@
 import { eq } from 'drizzle-orm'
 import { schema } from '@aluminior/db'
 import { plantillaDiseno, UNIONES_VISUALES } from '@aluminior/core/estructuras'
-import { sumarDecimal, multiplicarDecimal, normalizarDecimal } from '@aluminior/core/precios'
+import { multiplicarDecimal, normalizarDecimal } from '@aluminior/core/precios'
 import { valorarEstructura, prepararManoObra, valorarCerramiento, importesLineaCerramiento, esConfiguracionCerramiento,
   type ClienteEscritura } from '@aluminior/web/banco-contraste'
 import { opcionAcristalamientoOrigen } from './acristalamiento.ts'
@@ -46,16 +46,16 @@ export async function ejecutarServicio(cliente: ClienteEscritura, c: Caso): Prom
   const general = { serieCodigo: c.serie, vidrioCodigo: c.vidrio, acabadoCodigo: acabado,
     acabadoAccesoriosCodigo: texto(c.padre.Acabado2) || null,
     varianteAcristalamiento, opcionAcristalamiento: opcionAcristalamientoOrigen(c.configuracion?.nTAcris)!, tarifa: c.tarifa!, opcionesHerraje: opciones(c) }
-  const manoObra = await prepararManoObra(cliente, { tarifa: c.tarifa!, horas: {
-    // Access REAL conserva 6,07000017: formato de formulario a dos decimales.
-    fabricacion: numero(c.configuracion?.HorasAdFabr)!.toFixed(2), colocacion: numero(c.configuracion?.HorasColoc)!.toFixed(2) } })
-  const manual = manoObra.estado === 'PREPARADA' ? manoObra.filas.map(f => ({ articulo: f.articuloCodigo,
-    funcion: f.articuloCodigo, acabado: f.acabadoCodigo ?? '', cantidad: Number(f.minutos), largo: 0, ancho: 0,
-    coste: f.costeMinuto == null ? null : Number(f.costeMinuto), costeTotal: f.costeTotal == null ? null : Number(f.costeTotal),
-    precio: f.precioMinuto == null ? null : Number(f.precioMinuto), importe: f.importe == null ? null : Number(f.importe),
-    metraje: Number(f.minutos), unidad: 'UD' })) : []
-  const moValida = manoObra.estado === 'SIN_HORAS' || (manoObra.estado === 'PREPARADA' && manoObra.valorable)
+  // Access REAL conserva 6,07000017: formato de formulario a dos decimales.
+  const horas = { fabricacion: numero(c.configuracion?.HorasAdFabr)!.toFixed(2), colocacion: numero(c.configuracion?.HorasColoc)!.toFixed(2) }
   if (c.tipo === 'GRUPO') {
+    // El cerramiento web cobra los ajustes manuales una vez por línea, sin reparto.
+    const manoObra = await prepararManoObra(cliente, { tarifa: c.tarifa!, horas })
+    const manual = manoObra.estado === 'PREPARADA' ? manoObra.filas.map(f => ({ articulo: f.articuloCodigo,
+      funcion: f.articuloCodigo, acabado: f.acabadoCodigo ?? '', cantidad: Number(f.minutos), largo: 0, ancho: 0,
+      coste: f.costeMinuto == null ? null : Number(f.costeMinuto), costeTotal: f.costeTotal == null ? null : Number(f.costeTotal),
+      precio: f.precioMinuto == null ? null : Number(f.precioMinuto), importe: f.importe == null ? null : Number(f.importe),
+      metraje: Number(f.minutos), unidad: 'UD' })) : []
     if ((c.elementos ?? []).some(e => !(c.geometria ?? []).some(g => texto(g.nLinEstr) === texto(e.padre.nLinea)))) return vacia(['elementos-adicionales-sin-geometria'])
     const g = configuracionGrupo(c)
     if (!g.configuracion) return vacia(g.motivos)
@@ -108,15 +108,14 @@ export async function ejecutarServicio(cliente: ClienteEscritura, c: Caso): Prom
       total: importes.total == null ? null : Number(importes.total), piezas: [...piezas, ...manual],
       avisos: r.origenes.flatMap(o => o.diagnosticos.map(d => d.detalle)), motivos }
   }
+  // Horas por unidad dentro del despiece, como Productor (MOCOL en el precio unitario).
   const r = await valorarEstructura(cliente, { ...general, codigo: c.modelo, compacto: compactoDeCaso(c).compacto,
+    horasFabricacion: horas.fabricacion, horasColocacion: horas.colocacion,
     anchoMm: c.dimensiones.ancho, altoMm: c.dimensiones.alto, trazabilidad: true })
   if (!r.ok) return vacia(['validacion-del-servicio'], Object.values(r.errores).flat())
   const piezas = r.piezas.map((p, i) => proyectar(p, r.partidas?.[i]))
-  // La estructura histórica incluye ajustes en Precio; la web los cobra por línea.
-  // Conservamos esa diferencia y usamos el total real de la web por cantidad.
-  const totalMaterial = r.precioUnitario === null ? null : multiplicarDecimal(String(r.precioUnitario), String(c.cantidad), 2)
-  const total = totalMaterial === null || !moValida ? null : manual.reduce((s, f) => sumarDecimal(s, String(f.importe!), 2), totalMaterial)
+  const total = r.precioUnitario === null ? null : multiplicarDecimal(String(r.precioUnitario), String(c.cantidad), 2)
   return { precio: total === null ? null : Number(total) / c.cantidad!, total: total === null ? null : Number(total),
-    piezas: [...piezas, ...manual], avisos: r.aviso ? [r.aviso] : [],
+    piezas, avisos: r.aviso ? [r.aviso] : [],
     motivos: [...motivos, ...(r.motor === 'anterior' ? ['via-anterior-sin-mediciones-historicas'] : [])] }
 }

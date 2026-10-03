@@ -139,6 +139,10 @@ describe('despiezarLineaCatalogo', () => {
   it('añade el ajuste manual de fabricación y no da total si falta un precio', () => {
     const r = despiezarLineaCatalogo(catalogo(), { ...entrada, minutosFabricacionAdicionales: 60 })
     expect(r.filas.at(-1)).toMatchObject({ articulo: 'MO', cantidad: 60, importe: 30 })
+    const conColocacion = despiezarLineaCatalogo(catalogo({ articulo: c => c === 'MOCOL' ? catalogo().articulo('MO') : catalogo().articulo(c),
+      tarifa: (c, a) => catalogo().tarifa(c === 'MOCOL' ? 'MO' : c, a) }), { ...entrada, minutosFabricacionAdicionales: 60, minutosColocacion: 364.2 })
+    expect(conColocacion.filas.slice(-2).map(f => [f.articulo, f.cantidad, f.importe])).toEqual([['MO', 60, 30], ['MOCOL', 364.2, 182.1]])
+    expect(conColocacion.importe).toBe(351.66)
     const sinPrecio = despiezarLineaCatalogo(catalogo({ tarifa: c => c === 'FELPUDO' ? { tipoMetraje: 'ML', pvp: null, multiploLargoCm: 0, multiploAnchoCm: 0, minimo: 0, incrementos: [] } : catalogo().tarifa(c, '') }), entrada)
     expect(sinPrecio.importe).toBeNull()
     expect(sinPrecio.incidencias).toContain('FELPUDO: sin PVP en la tarifa')
