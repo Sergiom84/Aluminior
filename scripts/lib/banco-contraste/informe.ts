@@ -97,8 +97,9 @@ y se conserva el banco v1. [Contrato anterior](BANCO-COMPARACION-PRECIOS.md),
 | Diseño específico | Bandera DisEspecificoSN y detalle enlazado por (VPRES,nVDoc,nVLinEstr) | Se conserva detalle técnico; no se inventa la instancia |
 | Horas | HorasAdFabr/HorasColoc conservadas; la frontera usa el servicio web de MO | REAL de Access se normaliza a dos decimales de formulario; [evidencia de horas/minutos](SPEC-MANO-DE-OBRA.md) |
 
-Hipótesis pendiente: la semántica de alternativas \`nTAcris != 0\`; ${numeroCausa('acristalamiento-alternativo-sin-mapeo')}
-líneas se bloquean y nunca se declaran iguales. Para \`nTAcris=0\` se ejecuta la selección base del servicio.
+Selección de acristalamiento: \`nTAcris=0/1\` reproduce la primera opción, según la
+evidencia de la iteración 3. Las selecciones superiores siguen sin mapeo demostrado:
+${numeroCausa('acristalamiento-alternativo-sin-mapeo')} líneas bloqueadas en esta medición.
 Los códigos de guías, segundos acabados y accesorios se conservan como evidencia; no se infieren reglas nuevas de sus precios.
 Acabado2 se transmite al núcleo como acabado de accesorios; se respetan los selectores
 explícitos de las asociaciones (ver evidencia de la iteración). Quedan bloqueadas las entradas
@@ -189,7 +190,7 @@ Las cifras son **líneas candidatas a revisar como máximo**, solapadas; no gara
 | 1 | Acabados por artículo → hasta ${numeroCausa('acabado-de-articulo')} discrepancias | Acabado2 resuelto en esta iteración; investigar las discrepancias restantes por origen y acabado efectivo, sin generalizar por familia |
 | 2 | Compactos/accesorios ausentes → hasta ${numeroCausa('compactos-y-accesorios-adicionales')} medidas; además 206 elementos adicionales en 82 GRUPO | Contrato de configuración y core \`despiece/linea-catalogo/\`; investigar COM*, MOCOMP y accesorios desde sus entradas, no aprender sus importes |
 | 3 | PVP/tarifa → hasta ${numeroCausa('pvp-o-tarifa')} | \`estructuras/pvp-articulos.ts\`, \`catalogo-despiece/leer-catalogo.ts\`, importación PVP; separar cambio de acabado de precio antiguo; no cambiar tarifa del catálogo para cuadrar |
-| 4 | Alternativa de acristalamiento → ${numeroCausa('acristalamiento-alternativo-sin-mapeo')} bloqueadas | Primero demostrar nTAcris con CHM/configuración/ensayo; después contrato de entrada y \`acristalamiento-serie.ts\` |
+| 4 | Alternativa de acristalamiento → ${numeroCausa('acristalamiento-alternativo-sin-mapeo')} bloqueadas | nTAcris 0/1 resuelto; valores superiores requieren CHM/configuración/ensayo y \`acristalamiento-serie.ts\` |
 | 5 | GRUPO no representable → ${numeroCausa('configuracion-no-admitida-por-web')} elegibles bloqueados; numerosos excluidos por accesorios incompletos | \`core/estructuras/validar-configuracion-cerramiento.ts\`, catálogo visual, configuración por origen y \`cerramientos/valorar-cerramiento.ts\`; medidas fraccionarias/modelos/uniones se reportan en detalle privado |
 | 6 | Metraje facturable → hasta ${numeroCausa('metraje-facturable')} | \`core/precios/importe-fila.ts\`; cotejar mínimos/múltiplos y redondeo por pieza/fila con iguales tarifas |
 | 7 | Herrajes, MO y vidrio bloqueantes → hasta ${numeroCausa('resolucion-de-componentes-y-herrajes')}, ${numeroCausa('reglas-de-mano-de-obra')} y ${numeroCausa('vidrio-y-acristalamiento')} | \`core/despiece/asociaciones/\`, \`mano-obra-fabricacion.ts\`, \`acristalamiento-catalogo.ts\` y resolución de serie |

@@ -5,6 +5,7 @@ import { plantillaDiseno, UNIONES_VISUALES } from '@aluminior/core/estructuras'
 import { sumarDecimal, multiplicarDecimal, normalizarDecimal } from '@aluminior/core/precios'
 import { valorarEstructura, prepararManoObra, valorarCerramiento, importesLineaCerramiento, esConfiguracionCerramiento,
   type ClienteEscritura } from '@aluminior/web/banco-contraste'
+import { opcionAcristalamientoOrigen } from './acristalamiento.ts'
 import { configuracionGrupo } from './geometria.ts'
 import { numero, si, texto, type Caso, type Pieza } from './datos.ts'
 
@@ -13,7 +14,7 @@ const vacia = (motivos: string[], avisos: string[] = []): SalidaServicio => ({ p
 function restricciones(c: Caso) {
   const motivos: string[] = []
   // No traducimos una alternativa de acristalamiento sin semántica demostrada.
-  if (numero(c.configuracion?.nTAcris) !== 0) motivos.push('acristalamiento-alternativo-sin-mapeo')
+  if (opcionAcristalamientoOrigen(c.configuracion?.nTAcris) === null) motivos.push('acristalamiento-alternativo-sin-mapeo')
   if (texto(c.configuracion?.Vidrio2)) motivos.push('segundo-vidrio-no-representable')
   if (c.familias.some(f => f.familia !== '001' && f.familia !== '050' && f.conjunto)) motivos.push('familia-adicional-no-representable')
   if (c.opciones.some(o => numero(o.nOpcion) === null)) motivos.push('opcion-invalida')
@@ -41,7 +42,7 @@ export async function ejecutarServicio(cliente: ClienteEscritura, c: Caso): Prom
   const varianteAcristalamiento = vidrio?.dobleAcristalamiento ? '2' as const : '1' as const
   const general = { serieCodigo: c.serie, vidrioCodigo: c.vidrio, acabadoCodigo: acabado,
     acabadoAccesoriosCodigo: texto(c.padre.Acabado2) || null,
-    varianteAcristalamiento, tarifa: c.tarifa!, opcionesHerraje: opciones(c) }
+    varianteAcristalamiento, opcionAcristalamiento: opcionAcristalamientoOrigen(c.configuracion?.nTAcris)!, tarifa: c.tarifa!, opcionesHerraje: opciones(c) }
   const manoObra = await prepararManoObra(cliente, { tarifa: c.tarifa!, horas: {
     // Access REAL conserva 6,07000017: formato de formulario a dos decimales.
     fabricacion: numero(c.configuracion?.HorasAdFabr)!.toFixed(2), colocacion: numero(c.configuracion?.HorasColoc)!.toFixed(2) } })
