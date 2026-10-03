@@ -176,8 +176,8 @@ Se preservan multiconjuntos, cantidades y cortes; las filas informativas 0 y avi
 El margen no se deduce de costes nulos/cero. \`total-padre-no-reconciliado\` exige investigar precio guardado,
 redondeo o reglas de cabecera; no demuestra un margen concreto.
 
-Errores de GRUPO fuera del top diez: ${numeroCausa('error-del-servicio')} líneas devuelven
-«El motor produjo un snapshot incompatible». No se les asigna precio mientras incumplan el contrato.
+Errores de servicio actuales: ${numeroCausa('error-del-servicio')}. La iteración de snapshot
+y sus campos concretos quedan documentados en el Historial.
 El catálogo visual y su validación se preparan con la misma función que usa la web.
 
 ## Causas pendientes tras la última medición

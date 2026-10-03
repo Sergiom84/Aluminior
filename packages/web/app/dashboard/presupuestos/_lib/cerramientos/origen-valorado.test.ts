@@ -19,6 +19,20 @@ describe('piezas del snapshot desde el catálogo real', () => {
     expect(r.coste).toEqual({ completo: true, importe: '1.0000' })
   })
 
+  it('serializa cortes calculados a centésimas sin recalcular venta ni coste', () => {
+    const o = origen()
+    const r = completarCostesOrigen(o, [{ ...pieza('PERFIL-SINTETICO', '1', '812.34999847'), anchoCorteMm: '423.125' }] as never)
+    expect(r.piezas[0]).toMatchObject({ largoCorteMm: '812.35', anchoCorteMm: '423.13', costeTotal: '1' })
+    expect(r.venta).toEqual({ completo: true, importe: '10.00' })
+    expect(r.coste).toEqual({ completo: true, importe: '1.0000' })
+  })
+
+  it('una medida que redondea a cero sigue siendo desconocida y bloquea fabricación', () => {
+    const r = completarCostesOrigen(origen(), [pieza('MINIMO-SINTETICO', '1', '0.004')] as never)
+    expect(r.piezas[0].largoCorteMm).toBeNull()
+    expect(r.diagnosticos.some(d => d.ambito === 'FABRICACION' && d.bloqueante)).toBe(true)
+  })
+
   it('guarda un corte de 0 mm como medida desconocida y bloquea fabricación', () => {
     const r = completarCostesOrigen(origen(), [pieza('62', '1', '0')] as never)
     expect(r.piezas[0].largoCorteMm).toBeNull()
