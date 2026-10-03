@@ -1,7 +1,7 @@
 # Banco de contraste de presupuestos — 03/10/2026
 
-**71,32 % de las líneas elegibles salen al mismo precio efectivo que Productor: 373/523.**
-En 2026: **75,20 % (373/496)**.
+**72,08 % de las líneas elegibles salen al mismo precio efectivo que Productor: 377/523.**
+En 2026: **76,01 % (377/496)**.
 Se mide coincidencia numérica de la copia y del código actual, no aceptación comercial ni certificación de fabricación.
 
 ## Historial
@@ -22,6 +22,7 @@ publicadas en `main`; cada una conserva todas las igualdades anteriores.
 | 03/10/2026 | `c862f2e` | Mosquitera y tapajuntas de línea | 352 | 87 | 13 | 71 | 0 |
 | 03/10/2026 | `1de6ba1` | Batiente central con extremos distintos | 362 | 91 | 13 | 57 | 0 |
 | 03/10/2026 | `2a53fc9` | Incremento por medida aplicado al precio | 373 | 80 | 13 | 57 | 0 |
+| 03/10/2026 | `e2468fa` | Vidrio y panel con el acabado principal | 377 | 80 | 9 | 57 | 0 |
 
 ## Iteraciones y evidencia
 
@@ -321,6 +322,17 @@ acierta 77 400 de 77 484 filas frente a 77 363 sin él; emular el `REAL` añadir
 Resultado: 362→373 iguales (+11), ninguna perdida. Suite verde; typecheck y
 arquitectura sin infracciones.
 
+Iteración 11 — acabado del vidrio. El panel PAN16, elegido como vidrio de la línea,
+se cobraba con el acabado de accesorios (UNI, 144 €/m2) y Productor usa el principal
+(L, 63 €/m2). En las filas de vidrio de la copia con Acabado2 distinto: cuando el
+artículo tiene precio en el acabado principal, Productor lo usa (PAN16 118/118);
+cuando no, cae al genérico (vidrios solo UNI). Ninguna fila contradice «principal
+con genérico de reserva» y las 118 refutan «acabado de accesorios», la suposición
+de la iteración 1 para el vidrio; se corrigen `vidrios.ts` y sus dos pruebas.
+
+Resultado: 373→377 iguales (+4), ninguna perdida; distintas 13→9. Suite verde;
+typecheck y arquitectura sin infracciones.
+
 Pendientes tras la iteración 3 (diagnósticos solapados, no promesas de mejora): compactos y
 accesorios 283; piezas ausentes 325; PVP/tarifa 101; metraje 59; componentes y
 herrajes 45; reglas de MO 44; vidrio/acristalamiento 42; configuraciones GRUPO 31.
@@ -335,9 +347,9 @@ Intervalos excluyentes, sobre las distintas; error relativo absoluto en céntimo
 | Error | Líneas |
 |---|---:|
 | ≤1 % | 0 |
-| >1–5 % | 1 |
+| >1–5 % | 0 |
 | >5–10 % | 3 |
-| >10 % | 9 |
+| >10 % | 6 |
 | base cero | 0 |
 
 Una causa principal por línea: primer impedimento de representación, después primer aviso bloqueante.
@@ -357,8 +369,8 @@ La asignación por identidad queda en `resultados.json → diagnostico.bloqueos`
 ## Alcance, fuente y preparación
 
 Copia autorizada `EMP0016/Anterior.mdb`, solo lectura con `mdb-reader` y proyección de campos técnicos.
-SHA-256: `e8518386687cb459ebfa7906c010700f6838e64d36e1bec72ecdc038123721a0`. Ejecución: `2026-10-03T11:59:36.236Z`.
-Revisión Git anterior al cambio de trabajo medido: `b246e27e799afff0aebd74e56f1e28aa2fe4845b`; el Historial identifica cada corrección posterior.
+SHA-256: `e8518386687cb459ebfa7906c010700f6838e64d36e1bec72ecdc038123721a0`. Ejecución: `2026-10-03T12:02:35.480Z`.
+Revisión Git anterior al cambio de trabajo medido: `bbccf59e8ed08f92694e4c43b5b2e673b303282b`; el Historial identifica cada corrección posterior.
 Confirmados 403 presupuestos (22 de 2025, 381 de 2026) y 105011 filas:
 790 estructuras independientes, 167 GRUPO y 1169 elementos internos
 (1068 con Precio > 0). Los 1169 elementos no se suman de nuevo al denominador del GRUPO.
@@ -430,8 +442,8 @@ La proximidad nunca cuenta como igualdad. Una igualdad de precio puede tener dif
 | 1O | 140 | 33 | 107 | 89 | 14 | 2 | 2 | 0 | 83,18 |
 | GRUPO | 167 | 122 | 45 | 0 | 1 | 7 | 37 | 0 | 0,00 |
 | PC2 | 33 | 2 | 31 | 22 | 8 | 0 | 1 | 0 | 70,97 |
-| C2 | 28 | 0 | 28 | 21 | 3 | 2 | 2 | 0 | 75,00 |
-| 0 | 31 | 10 | 21 | 16 | 3 | 2 | 0 | 0 | 76,19 |
+| C2 | 28 | 0 | 28 | 23 | 3 | 0 | 2 | 0 | 82,14 |
+| 0 | 31 | 10 | 21 | 18 | 3 | 0 | 0 | 0 | 85,71 |
 | 1P | 23 | 5 | 18 | 9 | 8 | 0 | 1 | 0 | 50,00 |
 | 3HO | 21 | 8 | 13 | 9 | 4 | 0 | 0 | 0 | 69,23 |
 | 2OFI | 16 | 7 | 9 | 9 | 0 | 0 | 0 | 0 | 100,00 |
@@ -473,7 +485,7 @@ La proximidad nunca cuenta como igualdad. Una igualdad de precio puede tener dif
 | PSM001 | 135 | 135 | 0 | 0 | 0 | 0 | 0 | 0 | — |
 | PSM002 | 11 | 11 | 0 | 0 | 0 | 0 | 0 | 0 | — |
 | PSM004 | 14 | 14 | 0 | 0 | 0 | 0 | 0 | 0 | — |
-| **TOTAL** | **957** | **434** | **523** | **373** | **80** | **13** | **57** | **0** | **71,32** |
+| **TOTAL** | **957** | **434** | **523** | **377** | **80** | **9** | **57** | **0** | **72,08** |
 
 ## Exclusiones
 
@@ -499,14 +511,14 @@ Actualización anterior no acredita por sí sola toda la historia de precios.
 
 | Año | Líneas | Igual | Cercano | Distinto | Sin valorar | Error | Igual % |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| 2026 | 496 | 373 | 54 | 12 | 57 | 0 | 75,20 |
-| 2025 | 27 | 0 | 26 | 1 | 0 | 0 | 0,00 |
+| 2026 | 496 | 377 | 55 | 7 | 57 | 0 | 76,01 |
+| 2025 | 27 | 0 | 25 | 2 | 0 | 0 | 0,00 |
 
 | Fecha de PVP respecto al presupuesto | Líneas | Igual | Cercano | Distinto | Sin valorar | Error |
 |---|---:|---:|---:|---:|---:|---:|
 | anterior-o-igual | 199 | 186 | 11 | 0 | 2 | 0 |
-| posterior | 70 | 4 | 59 | 4 | 3 | 0 |
-| desconocida | 254 | 183 | 10 | 9 | 52 | 0 |
+| posterior | 70 | 4 | 58 | 5 | 3 | 0 |
+| desconocida | 254 | 187 | 11 | 4 | 52 | 0 |
 
 Desconocida incluye cálculos no ejecutables y cualquier selección con fecha incompleta;
 no equivale a tarifa errónea. Los casos con PVP posterior permanecen separados y no demuestran
@@ -524,13 +536,13 @@ Estos diagnósticos localizan discrepancias; no atribuyen causalidad completa a 
 | configuracion-no-admitida-por-web | 31 | 65.664,08 | 0,00 | 31 |
 | medidas-fraccionarias-no-admitidas | 31 | 65.664,08 | 0,00 | 31 |
 | modelo-sin-plantilla-visual | 27 | 60.471,59 | 0,00 | 27 |
-| total-padre-no-reconciliado | 23 | 23.041,80 | 843,37 | 19 |
-| coste-de-articulo | 20 | 17.737,01 | 2215,24 | 7 |
-| acabado-de-articulo | 17 | 14.037,55 | 2025,58 | 6 |
-| pvp-o-tarifa | 17 | 12.404,04 | 1857,26 | 6 |
-| importe-de-fila | 17 | 12.404,04 | 1857,26 | 6 |
-| pieza-ausente | 11 | 12.599,09 | 1799,91 | 2 |
+| total-padre-no-reconciliado | 24 | 23.504,92 | 914,02 | 19 |
+| coste-de-articulo | 16 | 16.013,18 | 1447,38 | 7 |
+| acabado-de-articulo | 16 | 16.013,18 | 1447,38 | 7 |
+| pvp-o-tarifa | 12 | 10.181,72 | 985,63 | 6 |
+| importe-de-fila | 12 | 10.181,72 | 985,63 | 6 |
 | despunte-de-documento-sin-regla | 10 | 9947,37 | 0,00 | 10 |
+| pieza-ausente | 9 | 11.775,60 | 1284,77 | 2 |
 
 Coste-de-artículo es una discrepancia de coste, **no causa del PVP**: el histórico conserva muchos ceros
 y el catálogo actual aporta costes. Acabados diferentes se comparan como el mismo artículo con acabado distinto,
@@ -549,15 +561,15 @@ Las cifras son **líneas candidatas a revisar como máximo**, solapadas; no gara
 
 | Prioridad | Causa → líneas candidatas | Dónde investigar/tocar después de verificar |
 |---|---|---|
-| 1 | Acabados por artículo → hasta 17 discrepancias | Acabado2 resuelto en esta iteración; investigar las discrepancias restantes por origen y acabado efectivo, sin generalizar por familia |
+| 1 | Acabados por artículo → hasta 16 discrepancias | Acabado2 resuelto en esta iteración; investigar las discrepancias restantes por origen y acabado efectivo, sin generalizar por familia |
 | 2 | Compactos/accesorios ausentes → hasta 0 medidas; además 206 elementos adicionales en 82 GRUPO | Contrato de configuración y core `despiece/linea-catalogo/`; investigar COM*, MOCOMP y accesorios desde sus entradas, no aprender sus importes |
-| 3 | PVP/tarifa → hasta 17 | `estructuras/pvp-articulos.ts`, `catalogo-despiece/leer-catalogo.ts`, importación PVP; separar cambio de acabado de precio antiguo; no cambiar tarifa del catálogo para cuadrar |
+| 3 | PVP/tarifa → hasta 12 | `estructuras/pvp-articulos.ts`, `catalogo-despiece/leer-catalogo.ts`, importación PVP; separar cambio de acabado de precio antiguo; no cambiar tarifa del catálogo para cuadrar |
 | 4 | Alternativa de acristalamiento → 0 bloqueadas | nTAcris 0/1 resuelto; valores superiores requieren CHM/configuración/ensayo y `acristalamiento-serie.ts` |
 | 5 | GRUPO no representable → 31 elegibles bloqueados; numerosos excluidos por accesorios incompletos | `core/estructuras/validar-configuracion-cerramiento.ts`, catálogo visual, configuración por origen y `cerramientos/valorar-cerramiento.ts`; medidas fraccionarias/modelos/uniones se reportan en detalle privado |
 | 6 | Metraje facturable → hasta 3 | `core/precios/importe-fila.ts`; cotejar mínimos/múltiplos y redondeo por pieza/fila con iguales tarifas |
 | 7 | Herrajes, MO y vidrio bloqueantes → hasta 1, 0 y 5 | `core/despiece/asociaciones/`, `mano-obra-fabricacion.ts`, `acristalamiento-catalogo.ts` y resolución de serie |
 | 8 | Cortes/cotas → hasta 3 | `core/despiece/linea-catalogo/diseno.ts` y referencias de corte; FI/FD y divisiones necesitan instancia verificable |
-| 9 | Costes → hasta 20 discrepancias diagnósticas | `estructuras/coste-articulos.ts` y ETL costes; aclarar ceros históricos antes de calcular márgenes. No usar este arreglo para prometer PVP correcto |
+| 9 | Costes → hasta 16 discrepancias diagnósticas | `estructuras/coste-articulos.ts` y ETL costes; aclarar ceros históricos antes de calcular márgenes. No usar este arreglo para prometer PVP correcto |
 | 10 | Snapshot de GRUPO → 0 errores | `cerramientos/valorar-cerramiento.ts`, `origen-valorado.ts` y `core/estructuras/resultado-cerramiento/validar.ts`; localizar el campo que incumple el contrato con una fixture sintética antes de modificarlo |
 
 ## Repetición y artefactos
