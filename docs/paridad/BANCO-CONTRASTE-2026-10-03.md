@@ -1,7 +1,7 @@
 # Banco de contraste de presupuestos — 03/10/2026
 
-**72,66 % de las líneas elegibles salen al mismo precio efectivo que Productor: 380/523.**
-En 2026: **76,61 % (380/496)**.
+**76,48 % de las líneas elegibles salen al mismo precio efectivo que Productor: 400/523.**
+En 2026: **80,65 % (400/496)**.
 Se mide coincidencia numérica de la copia y del código actual, no aceptación comercial ni certificación de fabricación.
 
 ## Historial
@@ -24,6 +24,8 @@ publicadas en `main`; cada una conserva todas las igualdades anteriores.
 | 03/10/2026 | `2a53fc9` | Incremento por medida aplicado al precio | 373 | 80 | 13 | 57 | 0 |
 | 03/10/2026 | `e2468fa` | Vidrio y panel con el acabado principal | 377 | 80 | 9 | 57 | 0 |
 | 03/10/2026 | `9792c6d` | Opciones por defecto sin selección guardada | 380 | 81 | 5 | 57 | 0 |
+| 03/10/2026 | `e2b0232` | GRUPO: medidas fraccionarias, catálogo ESM y U SIN UNION | 400 | 81 | 5 | 37 | 0 |
+
 
 ## Iteraciones y evidencia
 
@@ -385,6 +387,74 @@ Los 342 diagnósticos de acabado incluyen acabado solicitado frente al genérico
 resuelto; no equivalen automáticamente a 342 errores de precio. Los 369 de coste
 no se usan para corregir PVP. El denominador y los criterios de igualdad no cambian.
 
+
+### Iteración 13: GRUPO fraccionarios y catálogo compartido (Windows)
+
+Antes del cambio se reconstruyó la base local desde los CSV de la misma copia y
+se reprodujo exactamente la base de 380 iguales, 81 cercanas, 5 distintas,
+57 sin valorar y cero errores. La firma del Mac se apartó en
+`base-verificada-mac-previa-20261003.json`: las fechas de alta y los identificadores
+generados cambian al recrear la base. No se utilizó la MDB activa del equipo.
+
+Evidencia previa sobre los 31 GRUPO: 117 módulos, 95 con alguna dimensión
+fraccionaria; todos los grupos incluyen fracciones. Las medidas coinciden con
+`VPresupuestosLin.Ancho/Largo` en los 117 módulos, sin discrepancias. Además de
+medios milímetros, hay valores REAL de Access próximos a 0,3 y 0,7 mm: se conservan
+exactamente, sin redondearlos para ajustar un precio. Artefacto privado:
+`evidencia-grupos-windows.json`.
+
+La carga devuelve los 160 diseños, pero Node/tsx cargaba dos registros de core:
+ESM desde el banco y CommonJS desde web. Por eso 27 grupos no veían plantillas
+ya generadas. Declarar web como ESM reúne ambos consumidores en el mismo registro;
+una prueba sintética que registra un modelo desde core y lo valida desde web
+falla antes y pasa después. Los códigos desconocidos siguen rechazados.
+La guarda de configuración admite ahora números finitos positivos sin exigir
+milímetros enteros; fixtures de versiones 1, 2 y 3 fallaron antes y pasan después.
+
+Tras resolver esos dos impedimentos aparecía el siguiente: U («SIN UNION»).
+`Estructuras` acredita familia 103, accesorio, grosor 1 y `AsocASeriesSN=false`;
+su plantilla tiene tres filas de cantidad cero (MO y dos filas informativas 0,
+con fórmulas A/L). En toda la copia hay 100 elementos U con precio cero y sin
+material no nulo; en los 31 GRUPO hay 44, todos con la misma evidencia.
+La serie guardada de U no identifica ningún perfil, por lo que no bloquea el
+grupo cuando difiere de la serie del módulo. Las otras uniones conservan el bloqueo.
+
+El servicio solo genera `SIN_UNION_U` con catálogo completo, precio cero y filas
+explícitas de cantidad cero. El snapshot exige origen UNION, código U, venta y
+coste cero, sin piezas, partidas, vidrio, herrajes ni diagnósticos. Recetas ausentes,
+importes contradictorios y otras uniones con receta vacía conservan importe nulo
+y bloqueo. Fixtures sintéticas del contrato fueron rojas antes de la corrección;
+la integración PostgreSQL comprueba también el servicio, la lectura JSON y la
+degradación sin receta. No se cambian pantallas, tarifas, márgenes ni fórmulas.
+
+Resultado: **380→400 iguales (+20), ninguna identidad anterior perdida**.
+Los 31 GRUPO pasan la validación: 20 iguales y 11 sin valorar. Fuera de estos
+31 no cambió ninguna clasificación. Denominador 523 y exclusiones 434 conservados;
+81 cercanas, 5 distintas, 37 sin valorar y cero errores. Prueba por identidad en
+`no-regresion-grupos-windows.json`, contra `resultados-iteracion-12.json`.
+
+| Causa principal restante dentro de los 31 | Líneas | Límite conservado |
+|---|---:|---|
+| Unión material de serie distinta | 8 | Se necesita representación económica por unión; no aplicar la excepción de U a perfiles |
+| Variantes de vidrio por elemento | 1 | No unificar alternativas sin evidencia |
+| PVP ausente o ambiguo | 1 | No completar con un precio histórico |
+| Vidrio/acristalamiento | 1 | Investigar la receta y sus entradas antes de corregir |
+
+Estado vigente al cierre de la iteración 13: **400/523 (76,48 %)**; en 2026,
+**400/496 (80,65 %)**. Los pendientes de la iteración 12 permanecen arriba como
+histórico; el bloqueo de configuración de sus 31 GRUPO está resuelto. No se
+han observado ni implementado las hipótesis de despunte, comisión o tapajuntas.
+
+Verificación: core 592, db 55, ETL 41 + 1 omitida, web 701 (1.389 pasadas);
+banco/adaptadores 41; typecheck del monorepo y banco; arquitectura con cero
+infracciones. Suite completa con `npm run -ws --if-present test -- --maxWorkers=2
+--testTimeout=20000`, sin forzar una única base para ETL y web. En Windows,
+la concurrencia predeterminada agotó el límite de 5 segundos de algunas pruebas
+de integración; el pase con dos workers evita esa saturación. Los primeros
+ensayos compartiendo base encontraron tablas de otras suites: se repitieron
+con los destinos separados documentados. Los parámetros de ejecución quedan
+en los logs privados; la configuración de pruebas versionada permanece intacta.
+
 ## Diagnóstico de distribución y bloqueos
 
 Intervalos excluyentes, sobre las distintas; error relativo absoluto en céntimos.
@@ -414,8 +484,8 @@ La asignación por identidad queda en `resultados.json → diagnostico.bloqueos`
 ## Alcance, fuente y preparación
 
 Copia autorizada `EMP0016/Anterior.mdb`, solo lectura con `mdb-reader` y proyección de campos técnicos.
-SHA-256: `e8518386687cb459ebfa7906c010700f6838e64d36e1bec72ecdc038123721a0`. Ejecución: `2026-10-03T15:36:32.321Z`.
-Revisión Git anterior al cambio de trabajo medido: `90cacadd98a02d64858995c288c5cc4bbc73fdd5`; el Historial identifica cada corrección posterior.
+SHA-256: `e8518386687cb459ebfa7906c010700f6838e64d36e1bec72ecdc038123721a0`. Ejecución: `2026-10-03T18:11:36.166Z`.
+Revisión Git anterior al cambio de trabajo medido: `bec252349269ccb2fb67189f8b9648cf1d932bc2`; el Historial identifica cada corrección posterior.
 Confirmados 403 presupuestos (22 de 2025, 381 de 2026) y 105011 filas:
 790 estructuras independientes, 167 GRUPO y 1169 elementos internos
 (1068 con Precio > 0). Los 1169 elementos no se suman de nuevo al denominador del GRUPO.
@@ -425,7 +495,7 @@ Universo de 957 líneas comerciales de estructura/GRUPO; 434 excluidas y 523 ele
 El porcentaje incluye sin valorar y errores en el denominador. Los excluidos no se dan por acertados ni fallidos.
 No extrapolar esta cifra a las 105.011 filas, a todos los modelos ni a los trabajos posteriores de la base activa.
 
-Postgres local `127.0.0.1:55433/aluminior_real_test`: 27 migraciones existentes, 541 estructuras,
+Postgres local `127.0.0.1:55433/aluminior_real_test`: 29 migraciones existentes, 541 estructuras,
 17.547 artículos, 83.367 PVP y 260.760 filas del motor. Simulación y carga dirigida:
 cero descartes, tablas protegidas conservadas. Clientes, proveedores, obras y documentos no importados.
 No se cargaron reglas calibradas del histórico para la vía antigua; los resultados de esa vía no pueden ser aciertos.
@@ -485,7 +555,7 @@ La proximidad nunca cuenta como igualdad. Una igualdad de precio puede tener dif
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | 2O | 231 | 31 | 200 | 166 | 30 | 0 | 4 | 0 | 83,00 |
 | 1O | 140 | 33 | 107 | 89 | 14 | 2 | 2 | 0 | 83,18 |
-| GRUPO | 167 | 122 | 45 | 3 | 2 | 3 | 37 | 0 | 6,67 |
+| GRUPO | 167 | 122 | 45 | 23 | 2 | 3 | 17 | 0 | 51,11 |
 | PC2 | 33 | 2 | 31 | 22 | 8 | 0 | 1 | 0 | 70,97 |
 | C2 | 28 | 0 | 28 | 23 | 3 | 0 | 2 | 0 | 82,14 |
 | 0 | 31 | 10 | 21 | 18 | 3 | 0 | 0 | 0 | 85,71 |
@@ -530,7 +600,7 @@ La proximidad nunca cuenta como igualdad. Una igualdad de precio puede tener dif
 | PSM001 | 135 | 135 | 0 | 0 | 0 | 0 | 0 | 0 | — |
 | PSM002 | 11 | 11 | 0 | 0 | 0 | 0 | 0 | 0 | — |
 | PSM004 | 14 | 14 | 0 | 0 | 0 | 0 | 0 | 0 | — |
-| **TOTAL** | **957** | **434** | **523** | **380** | **81** | **5** | **57** | **0** | **72,66** |
+| **TOTAL** | **957** | **434** | **523** | **400** | **81** | **5** | **37** | **0** | **76,48** |
 
 ## Exclusiones
 
@@ -556,14 +626,14 @@ Actualización anterior no acredita por sí sola toda la historia de precios.
 
 | Año | Líneas | Igual | Cercano | Distinto | Sin valorar | Error | Igual % |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| 2026 | 496 | 380 | 55 | 4 | 57 | 0 | 76,61 |
+| 2026 | 496 | 400 | 55 | 4 | 37 | 0 | 80,65 |
 | 2025 | 27 | 0 | 26 | 1 | 0 | 0 | 0,00 |
 
 | Fecha de PVP respecto al presupuesto | Líneas | Igual | Cercano | Distinto | Sin valorar | Error |
 |---|---:|---:|---:|---:|---:|---:|
 | anterior-o-igual | 199 | 186 | 11 | 0 | 2 | 0 |
-| posterior | 70 | 4 | 60 | 3 | 3 | 0 |
-| desconocida | 254 | 190 | 10 | 2 | 52 | 0 |
+| posterior | 71 | 5 | 60 | 3 | 3 | 0 |
+| desconocida | 253 | 209 | 10 | 2 | 32 | 0 |
 
 Desconocida incluye cálculos no ejecutables y cualquier selección con fecha incompleta;
 no equivale a tarifa errónea. Los casos con PVP posterior permanecen separados y no demuestran
@@ -578,15 +648,15 @@ Estos diagnósticos localizan discrepancias; no atribuyen causalidad completa a 
 
 | Diagnóstico | Líneas | Precio esperado agregado € | Desviación absoluta medible € | Sin importe calculado |
 |---|---:|---:|---:|---:|
-| configuracion-no-admitida-por-web | 31 | 65.664,08 | 0,00 | 31 |
-| medidas-fraccionarias-no-admitidas | 31 | 65.664,08 | 0,00 | 31 |
-| modelo-sin-plantilla-visual | 27 | 60.471,59 | 0,00 | 27 |
-| total-padre-no-reconciliado | 23 | 23.041,80 | 670,54 | 19 |
-| coste-de-articulo | 12 | 12.807,33 | 1006,10 | 7 |
-| acabado-de-articulo | 12 | 12.807,33 | 1006,10 | 7 |
+| total-padre-no-reconciliado | 18 | 17.609,06 | 670,54 | 14 |
+| coste-de-articulo | 14 | 21.748,15 | 1006,10 | 9 |
+| acabado-de-articulo | 14 | 21.748,15 | 1006,10 | 9 |
+| serie-de-union-no-representable | 11 | 20.214,40 | 0,00 | 11 |
+| pvp-o-tarifa | 11 | 12.182,22 | 670,54 | 7 |
+| importe-de-fila | 11 | 12.182,22 | 670,54 | 7 |
 | despunte-de-documento-sin-regla | 10 | 9947,37 | 0,00 | 10 |
-| pvp-o-tarifa | 10 | 8337,71 | 670,54 | 6 |
-| importe-de-fila | 10 | 8337,71 | 670,54 | 6 |
+| vidrio-y-acristalamiento | 6 | 8815,35 | 0,00 | 6 |
+| pieza-ausente | 5 | 14.802,44 | 335,56 | 4 |
 | mano-de-obra | 5 | 3735,70 | 162,61 | 3 |
 
 Coste-de-artículo es una discrepancia de coste, **no causa del PVP**: el histórico conserva muchos ceros
@@ -606,15 +676,15 @@ Las cifras son **líneas candidatas a revisar como máximo**, solapadas; no gara
 
 | Prioridad | Causa → líneas candidatas | Dónde investigar/tocar después de verificar |
 |---|---|---|
-| 1 | Acabados por artículo → hasta 12 discrepancias | Acabado2 resuelto en esta iteración; investigar las discrepancias restantes por origen y acabado efectivo, sin generalizar por familia |
+| 1 | Acabados por artículo → hasta 14 discrepancias | Acabado2 resuelto en esta iteración; investigar las discrepancias restantes por origen y acabado efectivo, sin generalizar por familia |
 | 2 | Compactos/accesorios ausentes → hasta 0 medidas; además 206 elementos adicionales en 82 GRUPO | Contrato de configuración y core `despiece/linea-catalogo/`; investigar COM*, MOCOMP y accesorios desde sus entradas, no aprender sus importes |
-| 3 | PVP/tarifa → hasta 10 | `estructuras/pvp-articulos.ts`, `catalogo-despiece/leer-catalogo.ts`, importación PVP; separar cambio de acabado de precio antiguo; no cambiar tarifa del catálogo para cuadrar |
+| 3 | PVP/tarifa → hasta 11 | `estructuras/pvp-articulos.ts`, `catalogo-despiece/leer-catalogo.ts`, importación PVP; separar cambio de acabado de precio antiguo; no cambiar tarifa del catálogo para cuadrar |
 | 4 | Alternativa de acristalamiento → 0 bloqueadas | nTAcris 0/1 resuelto; valores superiores requieren CHM/configuración/ensayo y `acristalamiento-serie.ts` |
-| 5 | GRUPO no representable → 31 elegibles bloqueados; numerosos excluidos por accesorios incompletos | `core/estructuras/validar-configuracion-cerramiento.ts`, catálogo visual, configuración por origen y `cerramientos/valorar-cerramiento.ts`; medidas fraccionarias/modelos/uniones se reportan en detalle privado |
+| 5 | GRUPO no representable → 0 elegibles bloqueados; numerosos excluidos por accesorios incompletos | `core/estructuras/validar-configuracion-cerramiento.ts`, catálogo visual, configuración por origen y `cerramientos/valorar-cerramiento.ts`; medidas fraccionarias/modelos/uniones se reportan en detalle privado |
 | 6 | Metraje facturable → hasta 3 | `core/precios/importe-fila.ts`; cotejar mínimos/múltiplos y redondeo por pieza/fila con iguales tarifas |
-| 7 | Herrajes, MO y vidrio bloqueantes → hasta 1, 0 y 5 | `core/despiece/asociaciones/`, `mano-obra-fabricacion.ts`, `acristalamiento-catalogo.ts` y resolución de serie |
+| 7 | Herrajes, MO y vidrio bloqueantes → hasta 1, 0 y 6 | `core/despiece/asociaciones/`, `mano-obra-fabricacion.ts`, `acristalamiento-catalogo.ts` y resolución de serie |
 | 8 | Cortes/cotas → hasta 3 | `core/despiece/linea-catalogo/diseno.ts` y referencias de corte; FI/FD y divisiones necesitan instancia verificable |
-| 9 | Costes → hasta 12 discrepancias diagnósticas | `estructuras/coste-articulos.ts` y ETL costes; aclarar ceros históricos antes de calcular márgenes. No usar este arreglo para prometer PVP correcto |
+| 9 | Costes → hasta 14 discrepancias diagnósticas | `estructuras/coste-articulos.ts` y ETL costes; aclarar ceros históricos antes de calcular márgenes. No usar este arreglo para prometer PVP correcto |
 | 10 | Snapshot de GRUPO → 0 errores | `cerramientos/valorar-cerramiento.ts`, `origen-valorado.ts` y `core/estructuras/resultado-cerramiento/validar.ts`; localizar el campo que incumple el contrato con una fixture sintética antes de modificarlo |
 
 ## Repetición y artefactos
@@ -640,7 +710,7 @@ aluminior_real_test, no carga entorno ni admite parámetros de conexión alterna
 La exportación guarda huellas de cada CSV y la carga comprueba que banco y catálogo proceden de la misma copia.
 No usar el importador completo ni modificar el catálogo para elevar el porcentaje.
 
-Verificación de cierre: 35 pruebas del banco/adaptadores; typecheck específico y del
-monorepo, auditoría de arquitectura y suite general (1.322 pruebas pasadas, 1 omitida).
+Verificación de cierre: 41 pruebas del banco/adaptadores; typecheck específico y del
+monorepo, auditoría de arquitectura y suite general (1.389 pruebas pasadas, 1 omitida).
 Cada iteración detalla su evidencia y sus logs privados.
 Migraciones sin cambios. La base local es efímera y se pierde si se recrea/parada Docker.

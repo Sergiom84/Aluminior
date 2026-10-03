@@ -1,6 +1,7 @@
 # Arquitectura de Aluminior
 
-Revisión: 02/10/2026, contrastada con el código de `main` en `9bc879e`.
+Revisión inicial: 02/10/2026, contrastada con `main` en `9bc879e`.
+Contrato de GRUPO y registro ESM actualizado el 03/10/2026 en `e2b0232`.
 El estado de datos, despliegue y aceptación está en
 [ESTADO-ACTUAL.md](docs/ESTADO-ACTUAL.md); este documento define responsabilidades.
 
@@ -48,6 +49,8 @@ La línea agregada, su configuración y sus satélites se guardan de forma coher
 
 La configuración v3 permite composición bidimensional. Las v1/v2 se interpretan
 compatiblemente, sin reescribir las medidas del documento al abrirlo.
+Las medidas económicas de módulo admiten números finitos positivos, incluidas
+fracciones de milímetro; su validación no las redondea.
 La geometría compartida alimenta UI y PDF; no constituye por sí sola una regla
 de fabricación. Las horas manuales de fabricación y colocación tienen valoración
 decimal y snapshot propios.
@@ -69,6 +72,16 @@ decimal y snapshot propios.
   Si falta el esquema o el catálogo, conserva la vía anterior.
 - Los snapshots `FILA_CENTIMOS` requieren el lector compatible integrado.
   Revertir el catálogo no autoriza volver a un lector antiguo incompatible.
+
+Todos los paquetes declaran ESM. El banco Node/tsx y los servicios web comparten
+así una sola instancia del registro de diseños de core; no se duplica el catálogo
+entre cargas ESM y CommonJS. Los códigos desconocidos siguen siendo inválidos.
+
+`resultado-cerramiento/sin-union.ts` representa U («SIN UNION») como origen sin
+material y con venta/coste cero explícitos. El servicio solo lo emite tras resolver
+un catálogo completo con precio cero y filas de cantidad cero. La marca
+`SIN_UNION_U` permite leer ese snapshot sin consultar el catálogo; una receta
+ausente o una unión material vacía siguen incompletas.
 
 Un importe ausente permanece nulo. El código distingue venta, coste y avisos;
 una suma parcial o un despiece sin costes pendientes no prueba receta completa.

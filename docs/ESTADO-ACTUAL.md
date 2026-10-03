@@ -1,7 +1,7 @@
 # Estado actual de Aluminior
 
-Revisión documental: 03/10/2026. Consolidación documental: `ee0dc16`, sobre el código
-`main` de `9bc879e`.
+Revisión documental: 03/10/2026, sobre el código `main` de `e2b0232`.
+Consolidación documental inicial: `ee0dc16`, sobre `9bc879e`.
 Este es el único punto de entrada de estado y siguiente trabajo.
 
 ## Qué funciona
@@ -18,15 +18,18 @@ Este es el único punto de entrada de estado y siguiente trabajo.
 - Motor de catálogo integrado en main: tablas de `0023_motor_catalogo`,
   protección `0024_motor_catalogo_rls`, cargador dirigido y lector compatible.
 - Banco local medido el 03/10 con la copia `Anterior.mdb` y los servicios web:
-  **380/523 líneas elegibles al mismo precio (72,66 %)**, frente a 5/523 de base.
+  **400/523 líneas elegibles al mismo precio (76,48 %)**, frente a 5/523 de base.
   434 exclusiones conservadas; 81 cercanas (58 por PVP actualizado después del
-  presupuesto, no reproducible), 5 distintas, 57 sin valorar y 0 errores.
-  Doce iteraciones con evidencia y ninguna igualdad perdida: Acabado2, cortes del
+  presupuesto, no reproducible), 5 distintas, 37 sin valorar y 0 errores.
+  Trece iteraciones con evidencia y ninguna igualdad perdida: Acabado2, cortes del
   snapshot, nTAcris, compacto, horas por unidad, comisión de cabecera, cotas y MO
   por categoría, mosquitera/tapajuntas, batiente, incremento sobre precio, acabado
-  del vidrio y opciones por defecto.
+  del vidrio, opciones por defecto y configuración GRUPO con medidas fraccionarias,
+  catálogo de diseño compartido y representación explícita de U («SIN UNION»).
   [Historial, evidencia y pendientes](paridad/BANCO-CONTRASTE-2026-10-03.md).
-  Catálogo cargado solo en `aluminior_real_test` (28 migraciones); precios y márgenes sin modificar.
+  Catálogo reconstruido en Windows solo en `aluminior_real_test` (29 migraciones);
+  precios y márgenes sin modificar. Los 31 GRUPO antes rechazados ya pasan la
+  validación: 20 iguales y 11 aún sin valorar por causas distintas de configuración.
 - Comisión de cabecera (pestaña `Gastos`: `Comisión` % y `Sumar Comisión`) en la ficha
   del presupuesto. Migración `0027_presupuesto_gastos_comision` (tabla aparte, RLS) aplicada en
   `aluminior_real_test` y en Supabase (03/10). Sin
@@ -67,8 +70,10 @@ Este es el único punto de entrada de estado y siguiente trabajo.
 
 ## Siguiente paso
 
-Pendientes del [banco local](paridad/BANCO-CONTRASTE-2026-10-03.md): 31 GRUPO que
-el configurador no admite, despunte de cabecera (10) y las observaciones en Windows
+Pendientes del [banco local](paridad/BANCO-CONTRASTE-2026-10-03.md): de los 31 GRUPO
+de la iteración 13 quedan 8 con unión material de serie distinta, 1 con variantes
+de vidrio por elemento, 1 con PVP ausente/ambiguo y 1 con bloqueo de acristalamiento.
+También quedan despunte de cabecera (10) y las observaciones en Windows
 listadas en su cierre. Verificar cada regla antes de corregir el motor y repetir la
 medición local. Horas por unidad, comisión de cabecera y accesorios de línea ya
 existen en la valoración, pero aún no en la UI. Producción necesita `0025` y `0026`
