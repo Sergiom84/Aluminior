@@ -7,6 +7,7 @@ import { valorarEstructura, prepararManoObra, valorarCerramiento, importesLineaC
   type ClienteEscritura } from '@aluminior/web/banco-contraste'
 import { opcionAcristalamientoOrigen } from './acristalamiento.ts'
 import { configuracionGrupo } from './geometria.ts'
+import { compactoDeCaso } from './compacto.ts'
 import { numero, si, texto, type Caso, type Pieza } from './datos.ts'
 
 export interface SalidaServicio { precio: number | null; total: number | null; piezas: Pieza[]; avisos: string[]; motivos: string[] }
@@ -15,6 +16,8 @@ function restricciones(c: Caso) {
   const motivos: string[] = []
   // No traducimos una alternativa de acristalamiento sin semántica demostrada.
   if (opcionAcristalamientoOrigen(c.configuracion?.nTAcris) === null) motivos.push('acristalamiento-alternativo-sin-mapeo')
+  if (c.tipo === 'GRUPO' && c.accesorios?.length) motivos.push('accesorios-de-grupo-no-representables')
+  else motivos.push(...compactoDeCaso(c).motivos)
   if (texto(c.configuracion?.Vidrio2)) motivos.push('segundo-vidrio-no-representable')
   if (c.familias.some(f => f.familia !== '001' && f.familia !== '050' && f.conjunto)) motivos.push('familia-adicional-no-representable')
   if (c.opciones.some(o => numero(o.nOpcion) === null)) motivos.push('opcion-invalida')
@@ -105,7 +108,7 @@ export async function ejecutarServicio(cliente: ClienteEscritura, c: Caso): Prom
       total: importes.total == null ? null : Number(importes.total), piezas: [...piezas, ...manual],
       avisos: r.origenes.flatMap(o => o.diagnosticos.map(d => d.detalle)), motivos }
   }
-  const r = await valorarEstructura(cliente, { ...general, codigo: c.modelo,
+  const r = await valorarEstructura(cliente, { ...general, codigo: c.modelo, compacto: compactoDeCaso(c).compacto,
     anchoMm: c.dimensiones.ancho, altoMm: c.dimensiones.alto, trazabilidad: true })
   if (!r.ok) return vacia(['validacion-del-servicio'], Object.values(r.errores).flat())
   const piezas = r.piezas.map((p, i) => proyectar(p, r.partidas?.[i]))

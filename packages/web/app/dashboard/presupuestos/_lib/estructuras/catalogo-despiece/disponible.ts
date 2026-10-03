@@ -2,7 +2,7 @@ import { getTableName, sql } from 'drizzle-orm'
 import { schema } from '@aluminior/db'
 import type { ClienteEscritura } from '../../cliente-db.ts'
 
-/** Tablas de la migración `0023_motor_catalogo`. */
+/** Tablas de la migración `0023_motor_catalogo` (columna de selección: `0025`). */
 export const TABLAS_MOTOR_CATALOGO = [
   schema.estructuraReferenciasCorte, schema.conjuntoDescuentosCorte, schema.estructuraPlantillaCatalogo,
   schema.conjuntoAsociaciones, schema.gruposAsociacion, schema.tiposHojaCatalogo, schema.manoObraConceptos,
@@ -17,6 +17,9 @@ export const TABLAS_MOTOR_CATALOGO = [
  */
 export async function tablasMotorCatalogo(cliente: ClienteEscritura): Promise<boolean> {
   const presentes = sql.join(TABLAS_MOTOR_CATALOGO.map(t => sql`to_regclass(${`public.${t}`}) is not null`), sql` and `)
-  const [fila] = await cliente.execute<{ ok: boolean }>(sql`select ${presentes} as ok`)
+  // 0025 añade la selección de filas de compacto; sin ella, la lectura de la plantilla fallaría.
+  const columna = sql`exists (select 1 from information_schema.columns where table_schema = 'public'
+    and table_name = 'estructura_plantilla_catalogo' and column_name = 'formula_seleccion')`
+  const [fila] = await cliente.execute<{ ok: boolean }>(sql`select ${presentes} and ${columna} as ok`)
   return fila?.ok === true
 }

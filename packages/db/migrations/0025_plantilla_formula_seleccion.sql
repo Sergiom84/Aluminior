@@ -1,0 +1,1 @@
+ALTER TABLE "estructura_plantilla_catalogo" ADD COLUMN "formula_seleccion" text;

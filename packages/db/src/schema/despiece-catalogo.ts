@@ -41,6 +41,8 @@ export const estructuraPlantillaCatalogo = pgTable('estructura_plantilla_catalog
   /** `DisGrupoAdicional`, `DisGrupoAd2`, `DisGrupoAd3`, `DisGrupoAdIndep`. */
   gruposAdicionales: text('grupos_adicionales').array().notNull(),
   perfilAdicional: integer('perfil_adicional'),
+  /** `OPCformulaSelec`: términos `G{grupo}O{opcion}` de la estructura (compactos); null = siempre. */
+  formulaSeleccion: text('formula_seleccion'),
 }, t => ({ pk: primaryKey({ columns: [t.estructuraCodigo, t.lineaOrigen] }) })).enableRLS()
 
 /** `ConjuntosAsoc`: asociaciones generadas por serie y por código de herraje. */

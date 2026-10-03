@@ -115,6 +115,16 @@ describe('despiezarLineaCatalogo', () => {
     const estandar = despiezarLineaCatalogo(conAcabados, { ...entrada, estructura: 'UNION', acabado: 'PER', acabadoAccesorios: 'ACC' })
     expect(estandar.filas.map(f => f.acabado)).toEqual(['PER', 'ACC'])
   })
+  it('suma el compacto de la línea al importe y bloquea si su plantilla falta', () => {
+    const conCompacto = catalogo({ plantilla: e => e === 'COMP'
+      ? [{ ...plantillas.UNION![0]!, articulo: 'TUBO', formulaLargo: 'L', formulaSeleccion: 'G1O0' }] : plantillas[e] ?? [] })
+    const compacto = { estructura: 'COMP', acabado: 'L', altoCajonMm: 100, vueloIzquierdoMm: 0, vueloDerechoMm: 0,
+      posicionGuiaCentralMm: 0, descuentoVerticalMm: 0, opciones: ['G1O0'] }
+    const r = despiezarLineaCatalogo(conCompacto, { ...entrada, compacto })
+    expect(r.filas.at(-1)).toMatchObject({ origen: 'compacto', articulo: 'TUBO', largoMm: 1400, importe: 4.2 })
+    expect(r.importe).toBe(143.76)
+    expect(despiezarLineaCatalogo(catalogo(), { ...entrada, compacto }).importe).toBeNull()
+  })
   it('elige el perfil de vidrio simple por el rango de grosor de la serie', () => {
     const simple = catalogo({ articulo: c => c === 'VIDRIO' ? { codigo: c, tipoMetraje: 'M2', componente: null, grosorAcristalar: 6, dobleAcristalamiento: false, generico: false } : catalogo().articulo(c) })
     const r = despiezarLineaCatalogo(simple, entrada)

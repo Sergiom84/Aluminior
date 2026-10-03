@@ -54,10 +54,12 @@ anterior no se presupone disponible en este entorno efímero.
 
 ## Migraciones
 
-El journal versionado llega a `0024_motor_catalogo_rls` (25 entradas).
+El journal versionado llega a `0025_plantilla_formula_seleccion` (26 entradas).
 `0022_catalogo_diseno` corresponde al catálogo visual;
 `0023_motor_catalogo`, a las once tablas del motor económico;
-`0024`, a sus permisos y RLS. El estado de producción se consulta por separado.
+`0024`, a sus permisos y RLS; `0025`, a `formula_seleccion` (`OPCformulaSelec`) de la
+plantilla, que exige el compacto: sin esa columna la web sigue por la vía anterior.
+El estado de producción se consulta por separado.
 
 `npm run db:generate` genera SQL; `npm run db:migrate` aplica migraciones
 utilizando `DATABASE_URL`. Revisa el destino antes de ejecutar.

@@ -9,6 +9,8 @@ export function construirContraste(t: Tablas) {
   const opt = agrupar(t.VOpcionesHerraje!.filter(f => texto(f.TipoDoc) === 'VPRES'), f => clave(f.nDoc, f.nLinEstr))
   const hijas = agrupar(ls.filter(f => tiene(f.nEstr)), f => clave(f.nDoc, f.nEstr))
   const instancias = agrupar(t.VDatosLinDetDis!.filter(f => texto(f.TipoDoc) === 'VPRES'), f => clave(f.nVDoc, f.nVLinEstr))
+  const accesorios = agrupar((t.VAccesorios ?? []).filter(f => texto(f.TipoDoc) === 'VPRES'), f => clave(f.nDoc, f.nLinEstr))
+  const opcionesAccesorio = agrupar((t.VOpciones ?? []).filter(f => texto(f.TipoDoc) === 'VPRES'), f => clave(f.nDoc, f.nLinEstr))
   const estructuras = ls.filter(f => si(f.EstructuraSN))
   let ordinal = 0
   function crear(p: Fila, tipo: Caso['tipo']): Caso {
@@ -33,6 +35,7 @@ export function construirContraste(t: Tablas) {
       serie: perfiles.length === 1 ? perfiles[0]!.conjunto : null,
       vidrio: vidrios.length === 1 ? vidrios[0]!.conjunto : null, familias,
       esperado, totalEsperado: numero(p.ImporteTotal), exclusiones: [...new Set(exclusiones)],
+      accesorios: accesorios.get(k) ?? [], opcionesAccesorio: opcionesAccesorio.get(k) ?? [],
       // El detalle permanece en tablas.json para demostrar el enlace nVLinEstr; no reconstruimos diseños.
     }
   }

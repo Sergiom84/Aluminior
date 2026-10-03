@@ -67,7 +67,7 @@ Universo de ${s.universo} líneas comerciales de estructura/GRUPO; ${s.excluidas
 El porcentaje incluye sin valorar y errores en el denominador. Los excluidos no se dan por acertados ni fallidos.
 No extrapolar esta cifra a las 105.011 filas, a todos los modelos ni a los trabajos posteriores de la base activa.
 
-Postgres local \`127.0.0.1:55433/aluminior_real_test\`: 25 migraciones existentes, 541 estructuras,
+Postgres local \`127.0.0.1:55433/aluminior_real_test\`: 26 migraciones existentes, 541 estructuras,
 17.547 artículos, 83.367 PVP y 260.760 filas del motor. Simulación y carga dirigida:
 cero descartes, tablas protegidas conservadas. Clientes, proveedores, obras y documentos no importados.
 No se cargaron reglas calibradas del histórico para la vía antigua; los resultados de esa vía no pueden ser aciertos.

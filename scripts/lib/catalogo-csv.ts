@@ -98,6 +98,7 @@ export function catalogoDesdeCsv(carpeta: string, tarifa = '1'): CatalogoLinea {
       grupoSuperior: texto(r.DisGrupoSup), grupoInferior: texto(r.DisGrupoInf),
       gruposAdicionales: [texto(r.DisGrupoAdicional), texto(r.DisGrupoAd2), texto(r.DisGrupoAd3), texto(r.DisGrupoAdIndep)],
       perfilAdicional: [0, -1].includes(numero(r.DisIdPerAd)) ? null : numero(r.DisIdPerAd),
+      formulaSeleccion: texto(r.OPCformulaSelec),
     })),
     esAccesorio: (e) => estructuras.get(e)?.AccesorioSN === 'True',
     articulo,

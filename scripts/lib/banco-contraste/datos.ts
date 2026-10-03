@@ -31,6 +31,8 @@ export interface Caso {
   serie: string | null; vidrio: string | null; familias: { familia: string; conjunto: string }[]
   esperado: number | null; totalEsperado: number | null; exclusiones: string[]
   elementos?: Caso[]; cerramiento?: Fila; geometria?: Fila[]
+  /** `VAccesorios` y `VOpciones` (VPRES) de la línea: compacto y otros accesorios. */
+  accesorios?: Fila[]; opcionesAccesorio?: Fila[]
 }
 export type Estado = 'igual' | 'cercano' | 'distinto' | 'sin valorar' | 'error'
 export interface Medicion {

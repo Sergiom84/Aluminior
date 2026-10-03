@@ -37,6 +37,8 @@ export interface FilaPlantillaCatalogo {
   grupoInferior: string | null
   gruposAdicionales: readonly (string | null)[]
   perfilAdicional: number | null
+  /** `OPCformulaSelec`: términos `G{grupo}O{opcion}` que deben estar marcados; vacío = siempre. */
+  formulaSeleccion?: string | null
 }
 
 export interface ArticuloCatalogo {
@@ -86,6 +88,21 @@ export interface CatalogoLinea {
   tarifa(articulo: string, acabado: string): ArticuloTarifado | null
 }
 
+/** Compacto de persiana de la línea (`VAccesorios` + `VOpciones`). */
+export interface CompactoLineaCatalogo {
+  /** Estructura del compacto (`Accesorio`, p. ej. COM009). */
+  estructura: string
+  acabado: string
+  altoCajonMm: number
+  vueloIzquierdoMm: number
+  vueloDerechoMm: number
+  posicionGuiaCentralMm: number
+  /** `DtoHuecoV`; solo 0 está contrastado. */
+  descuentoVerticalMm: number
+  /** Opciones marcadas del compacto, `G{grupo}O{opcion}`. */
+  opciones: readonly string[]
+}
+
 export interface EntradaLineaCatalogo {
   estructura: string
   serie: string
@@ -100,9 +117,10 @@ export interface EntradaLineaCatalogo {
   cotas?: Readonly<Record<string, number>>
   /** Ajuste manual de fabricación de la línea (`HorasAdFabr`) en minutos. */
   minutosFabricacionAdicionales?: number
+  compacto?: CompactoLineaCatalogo | null
 }
 
-export type OrigenFila = 'plantilla' | 'vidrio' | 'asociado' | 'acristalamiento' | 'mano-obra'
+export type OrigenFila = 'plantilla' | 'vidrio' | 'asociado' | 'acristalamiento' | 'mano-obra' | 'compacto'
 
 export interface FilaDespieceCatalogo {
   origen: OrigenFila

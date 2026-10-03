@@ -1,6 +1,7 @@
 import { opcionesAcristalamientoDeSerie } from './acristalamiento-serie.ts'
 import { partidasValoracion } from './partidas-valoracion.ts'
 import type { PartidaValoracionCerramiento } from '@aluminior/core/estructuras'
+import type { CompactoLineaCatalogo } from '@aluminior/core/despiece'
 import { resolverMaterialesEstructura } from './materiales-estructura.ts'
 import { lineaValorable } from '@aluminior/core/precios'
 import type { ClienteEscritura } from '../cliente-db.ts'
@@ -25,6 +26,8 @@ export interface EntradaValoracionEstructura {
   acabadoCodigo: string | null
   /** Acabado de accesorios (Acabado2); omitido conserva UNI. */
   acabadoAccesoriosCodigo?: string | null
+  /** Compacto de persiana de la línea; solo lo valora el catálogo de despiece completo. */
+  compacto?: CompactoLineaCatalogo | null
   tarifa: number
   opcionesHerraje: readonly string[]
   trazabilidad?: boolean
@@ -65,6 +68,7 @@ export async function valorarEstructura(
   }
   const catalogo = await valorarConCatalogo(cliente, entrada)
   if (catalogo) return catalogo
+  if (entrada.compacto) return { ok: false, errores: { compacto: ['El compacto necesita el catálogo de despiece completo'] } }
   const material = await resolverMaterialesEstructura(cliente, entrada)
   if (!material.ok) return { ok: false, errores: material.errores }
   if (entrada.anchoMm === null || entrada.altoMm === null || !entrada.serieCodigo) throw new Error('Material válido sin medidas')

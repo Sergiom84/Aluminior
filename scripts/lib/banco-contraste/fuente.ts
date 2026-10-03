@@ -14,6 +14,8 @@ const CAMPOS: Record<string, string> = {
   VCerramientosLin: 'nLinea nCerr nLinEstr Orden nModulo CodEstr x y Ancho Alto EsUnionSN UnionVH UOrdenElem1 UOrdenElem2 UGrosor ULongitud ULongitUsr DisEspecificoSN',
   ArticulosPVP: 'Articulo Acabado Tarifa PVP UltimaAct FechaHoraAct',
   Articulos: 'Codigo Familia TipoMetraje DAfabrSN DAVid1 DAVid2',
+  VAccesorios: 'TipoDoc nDoc nLinEstr nModulo nLinEstrGrupo FamiliaAcc Accesorio Acabado AltoCajon CerrCodGuiaI CerrCodGuiaD DtoHuecoH DtoHuecoV VueloI VueloD GuiaCentralSN PosGuiaCentral compDtoHuecoSN compDtoTapH compDtoTapV CompAccAcaLamas CompAccAcaGuias CompAccAcaAcc CerrAltoManual',
+  VOpciones: 'TipoDoc nDoc CodEstr nLinEstr OPCgrupo OPCnOpcion nModulo SubestructuraSN GrupoDesactivadoSN',
 }
 interface TablaMdb { getColumnNames(): string[]; getData(o: { columns: readonly string[] }): Fila[] }
 interface LectorMdb { getTable(n: string): TablaMdb }

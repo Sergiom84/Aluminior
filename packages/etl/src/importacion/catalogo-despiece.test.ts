@@ -22,12 +22,13 @@ describe('catálogo suplementario de despiece', () => {
     const fila = { Estructura: 'QA', nLin: '10', id: '4', Articulo: 'G1', DisComponente: '21', Funcion: 'HV',
       Cantidad: '1', DisTipoHoja: '10', DisNHoja: '1', DisIdRefLargo: '1', DisIdRefAncho: '0', FormulaLargo: '1000',
       FormulaLargoCorte: 'L', DisFRefLargo: 'REF', DisGrupo: 'HVL', DisGrupoI: 'MH', DisGrupoD: 'MH',
-      DisGrupoAdicional: 'B', DisIdPerAd: '-1', DisVidrio: '15' }
+      DisGrupoAdicional: 'B', DisIdPerAd: '-1', DisVidrio: '15', OPCformulaSelec: 'G10O2*G1O1' }
     const r = await mapear({ EstructurasArticulos: [fila, { ...fila, nLin: '11', TipoDoc: 'VPRES' },
       { ...fila, nLin: '12', Estructura: 'OTRA' }, { ...fila }] }, new Set(['QA']))
     expect(r.salida.get('estructura_plantilla_catalogo')).toEqual([expect.objectContaining({
       estructura_codigo: 'QA', linea_origen: 10, id_pieza: 4, formula_largo: 'L', referencia_ancho: null,
       grupos_adicionales: ['B', '', '', ''], perfil_adicional: null, dis_vidrio: '15', hoja: 1,
+      formula_seleccion: 'G10O2*G1O1',
     })])
     expect(r.resultados.get('estructura_plantilla_catalogo')).toMatchObject({ insertadas: 1, excluidas: 2, descartadas: 1 })
   })

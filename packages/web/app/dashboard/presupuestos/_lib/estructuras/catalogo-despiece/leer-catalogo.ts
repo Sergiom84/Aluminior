@@ -26,25 +26,31 @@ export interface EntradaCatalogoLinea {
   serie: string
   vidrio: string | null
   tarifa: number
+  /** Estructuras accesorias de la línea (compacto) cuya plantilla también se precarga. */
+  adicionales?: readonly string[]
 }
 
 export async function leerCatalogoLinea(cliente: ClienteEscritura, e: EntradaCatalogoLinea): Promise<CatalogoLinea | null> {
   if (!await tablasMotorCatalogo(cliente)) return null
   const [plantillaFilas, [parametros], [estructura]] = await Promise.all([
-    cliente.select().from(schema.estructuraPlantillaCatalogo).where(eq(schema.estructuraPlantillaCatalogo.estructuraCodigo, e.estructura)),
+    cliente.select().from(schema.estructuraPlantillaCatalogo).where(inArray(schema.estructuraPlantillaCatalogo.estructuraCodigo,
+      [e.estructura, ...e.adicionales ?? []])),
     cliente.select().from(schema.conjuntoParametrosDespiece).where(eq(schema.conjuntoParametrosDespiece.conjuntoCodigo, e.serie)).limit(1),
     cliente.select({ esAccesorio: schema.estructuras.esAccesorio }).from(schema.estructuras).where(eq(schema.estructuras.codigo, e.estructura)).limit(1),
   ])
-  if (!plantillaFilas.length || !parametros || !estructura) return null
+  if (!plantillaFilas.some(f => f.estructuraCodigo === e.estructura) || !parametros || !estructura) return null
 
-  const plantilla: FilaPlantillaCatalogo[] = plantillaFilas.sort((a, b) => a.lineaOrigen - b.lineaOrigen).map(f => ({
+  const plantillas = new Map<string, FilaPlantillaCatalogo[]>()
+  for (const f of plantillaFilas.sort((a, b) => a.lineaOrigen - b.lineaOrigen)) plantillas.set(f.estructuraCodigo, [...plantillas.get(f.estructuraCodigo) ?? [], {
     id: f.idPieza, articulo: f.articulo, componente: f.componente, funcion: f.funcion, cantidad: n(f.cantidad),
     posicionTrabajo: f.posicionTrabajo, tipoHoja: f.tipoHoja, mano: f.mano, hoja: f.hoja, disVidrio: f.disVidrio,
     referenciaLargo: f.referenciaLargo, referenciaAncho: f.referenciaAncho, formulaLargo: f.formulaLargo,
     formulaAncho: f.formulaAncho, formulaReferenciaLargo: f.formulaReferenciaLargo, formulaReferenciaAncho: f.formulaReferenciaAncho,
     grupo: f.grupo, grupoIzquierdo: f.grupoIzquierdo, grupoDerecho: f.grupoDerecho, grupoSuperior: f.grupoSuperior,
     grupoInferior: f.grupoInferior, gruposAdicionales: f.gruposAdicionales.map(vacioANull), perfilAdicional: f.perfilAdicional,
-  }))
+    formulaSeleccion: f.formulaSeleccion,
+  }])
+  const plantilla = plantillas.get(e.estructura)!
 
   const tiposHoja = new Map((await cliente.select().from(schema.tiposHojaCatalogo)).map(t => [t.id, t.tipo]))
   const herrajes = parametros.herrajes as Record<string, string>
@@ -77,7 +83,7 @@ export async function leerCatalogoLinea(cliente: ClienteEscritura, e: EntradaCat
   const tacris = await cliente.select().from(schema.tacrisFilas)
     .where(inArray(schema.tacrisFilas.tabla, [tablaHojas, tablaFijos].filter((t): t is string => !!t).concat('')))
 
-  const codigos = new Set<string>([...plantilla.map(f => f.articulo), ...resoluciones.values(),
+  const codigos = new Set<string>([...plantillaFilas.map(f => f.articulo), ...resoluciones.values(),
     ...asociacionesFilas.map(a => a.articulo), ...conceptos.map(c => c.articulo)])
   for (const t of tacris) for (const c of [t.junquillo, t.juntaExterior, t.juntaInterior]) if (c) codigos.add(c)
   if (e.vidrio) codigos.add(e.vidrio)
@@ -98,7 +104,7 @@ export async function leerCatalogoLinea(cliente: ClienteEscritura, e: EntradaCat
   const grupos = new Map(gruposFilas.map(g => [g.codigo, new Set(g.componentes)]))
 
   return {
-    plantilla: codigo => codigo === e.estructura ? plantilla : [],
+    plantilla: codigo => plantillas.get(codigo) ?? [],
     esAccesorio: codigo => codigo === e.estructura && estructura.esAccesorio,
     articulo: codigo => {
       const a = articuloPor.get(codigo), d = despiecePor.get(codigo)

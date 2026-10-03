@@ -50,6 +50,17 @@ describe('motor de catálogo sin su migración', () => {
     })).rejects.toBe(rollback)
   })
 
+  it('con las tablas de 0023 pero sin la columna de 0025 sigue por la vía anterior', async () => {
+    await expect(db.transaction(async tx => {
+      await tx.insert(schema.conjuntoParametrosDespiece).values({ conjuntoCodigo: 'QA-SERIE', herrajes: {}, manoObra: {}, grosorMaximoSimple: '0', grosorMaximoDoble: '0' })
+      await tx.execute(sql`alter table estructura_plantilla_catalogo drop column formula_seleccion`)
+      expect(await catalogoDespieceCargado(tx)).toBe(false)
+      expect(await leerCatalogoLinea(tx, { estructura: 'C2', serie: 'QA-SERIE', vidrio: null, tarifa: 1 })).toBeNull()
+      await tx.select().from(schema.estructuras).limit(1)
+      throw rollback
+    })).rejects.toBe(rollback)
+  })
+
   it('reconoce la base migrada', async () => {
     expect(await catalogoDespieceCargado(db)).toBe(false)
     await expect(db.transaction(async tx => {

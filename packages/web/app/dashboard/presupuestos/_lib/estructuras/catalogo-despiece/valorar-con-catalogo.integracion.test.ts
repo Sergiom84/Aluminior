@@ -93,6 +93,31 @@ describe('valoración con el catálogo de despiece completo', () => {
     expect(r.opcionesHerraje).toEqual([{ categoria: 'QA-HERR', opcionCodigo: '1', descripcion: 'Cierre' }])
     expect(r.acristalamiento).toHaveLength(2)
   }))
+  it('añade el compacto con sus filas seleccionadas a ventana + cajón y bloquea sin catálogo', () => caso(async tx => {
+    await tx.insert(schema.estructuras).values({ codigo: 'QA-COMP', descripcion: 'Compacto sintético', esAccesorio: true })
+    await tx.insert(schema.articulos).values([
+      { codigo: 'QA-LAMA', descripcion: 'QA-LAMA', tipoMetraje: 'M2', metrajeMultiploLargo: '5', metrajeMultiploAncho: '5', metrajeMinimo: '1.5' },
+      { codigo: 'QA-MOCOMP', descripcion: 'QA-MOCOMP', tipoMetraje: 'UD' }])
+    await tx.insert(schema.articulosPvp).values([{ articuloCodigo: 'QA-LAMA', acabadoCodigo: 'L', tarifa: 1, precio: '80' },
+      { articuloCodigo: 'QA-MOCOMP', acabadoCodigo: 'UNI', tarifa: 1, precio: '0.5' }])
+    const compactoFila = (lineaOrigen: number, f: Partial<typeof schema.estructuraPlantillaCatalogo.$inferInsert>) =>
+      fila(lineaOrigen, { estructuraCodigo: 'QA-COMP', idPieza: 0, ...f })
+    await tx.insert(schema.estructuraPlantillaCatalogo).values([
+      compactoFila(1, { articulo: 'QA-LAMA', funcion: 'COMPVAL', formulaAncho: 'A+CVI+CVD', formulaSeleccion: 'G1O0' }),
+      compactoFila(2, { articulo: 'QA-LAMA', funcion: 'COMPVAL', formulaAncho: 'CGC+CVD', formulaSeleccion: 'G1O1' }),
+      compactoFila(3, { articulo: 'QA-MOCOMP', funcion: 'MO', cantidad: '15', formulaLargo: null }),
+    ])
+    const compacto = { estructura: 'QA-COMP', acabado: 'L', altoCajonMm: 155, vueloIzquierdoMm: 0, vueloDerechoMm: 0,
+      posicionGuiaCentralMm: 0, descuentoVerticalMm: 0, opciones: ['G1O0', 'G10O0'] }
+    const r = await valorarEstructura(tx, { ...entrada, compacto, trazabilidad: true })
+    if (!r.ok) throw new Error('rechazada')
+    // 1200 × 1455 -> 1,20 × 1,50 m2 a 80 + 15 min a 0,5, sobre los 139,56 de la ventana.
+    expect(r.precioUnitario).toBe(291.06)
+    expect(r.partidas!.slice(-2).map(p => [p.articuloCodigo, p.cantidadFacturable, p.acabadoCodigo]))
+      .toEqual([['QA-LAMA', '1.800000', 'L'], ['QA-MOCOMP', '15.000000', 'L']])
+    const sinCatalogo = await valorarEstructura(tx, { ...entrada, serieCodigo: 'QA-SIN-SERIE', compacto })
+    expect(sinCatalogo.ok).toBe(false)
+  }))
   it('usa Acabado2 para accesorios, vidrio y MO, manteniendo el acabado de perfiles', () => caso(async tx => {
     await tx.insert(schema.articulosPvp).values(['QA-FELPUDO', 'QA-CIERRE', 'QA-VIDRIO', 'MO'].map(articuloCodigo => ({
       articuloCodigo, acabadoCodigo: 'ACC', tarifa: 1, precio: '2',

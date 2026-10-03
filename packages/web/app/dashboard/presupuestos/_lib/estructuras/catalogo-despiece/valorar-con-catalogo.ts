@@ -24,7 +24,8 @@ import type { EntradaValoracionEstructura, ResultadoValoracionEstructura } from 
 import { leerCatalogoLinea } from './leer-catalogo.ts'
 
 const GRUPO: Record<FilaDespieceCatalogo['origen'], PartidaValoracionCerramiento['grupoValoracion']> = {
-  plantilla: 'MATERIALES', asociado: 'MATERIALES', 'mano-obra': 'MATERIALES', vidrio: 'VIDRIO', acristalamiento: 'ACRISTALAMIENTO',
+  plantilla: 'MATERIALES', asociado: 'MATERIALES', 'mano-obra': 'MATERIALES', compacto: 'MATERIALES', vidrio: 'VIDRIO',
+  acristalamiento: 'ACRISTALAMIENTO',
 }
 const decimal = (v: number | null | undefined, escala: number) =>
   v === null || v === undefined || !Number.isFinite(v) ? null : normalizarDecimal(v.toFixed(escala), escala)
@@ -65,6 +66,7 @@ export async function valorarConCatalogo(
     !(entrada.altoMm > 0) || !(entrada.anchoMm >= 0)) return null
   const catalogo = await leerCatalogoLinea(cliente, {
     estructura: entrada.codigo, serie: entrada.serieCodigo, vidrio: entrada.vidrioCodigo, tarifa: entrada.tarifa,
+    adicionales: entrada.compacto ? [entrada.compacto.estructura] : [],
   })
   if (!catalogo) return null
   const [estructura] = await cliente.select({ descripcion: schema.estructuras.descripcion })
@@ -79,6 +81,7 @@ export async function valorarConCatalogo(
   const resultado = despiezarLineaCatalogo(catalogo, {
     estructura: entrada.codigo, serie: entrada.serieCodigo, anchoMm: entrada.anchoMm, altoMm: entrada.altoMm,
     vidrio: entrada.vidrioCodigo, acabado, acabadoAccesorios: entrada.acabadoAccesoriosCodigo || 'UNI', opcionesGuardadas: guardadas,
+    compacto: entrada.compacto ?? null,
   })
 
   const codigos = [...new Set(resultado.filas.map(f => f.articulo))]

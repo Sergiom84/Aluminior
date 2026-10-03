@@ -33,6 +33,7 @@ export function filaPlantilla(f: Fila, r: Resultado, estructuras: ReadonlySet<st
     grupos_adicionales: [txt(f.DisGrupoAdicional), txt(f.DisGrupoAd2), txt(f.DisGrupoAd3), txt(f.DisGrupoAdIndep)]
       .map(g => g ?? ''),
     perfil_adicional: perfilAdicional === null || perfilAdicional === 0 || perfilAdicional === -1 ? null : perfilAdicional,
+    formula_seleccion: txt(f.OPCformulaSelec),
   }
 }
 
