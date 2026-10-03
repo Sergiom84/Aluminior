@@ -12,6 +12,7 @@ import { descripcionCerramiento } from '@aluminior/core/estructuras'
 import type { ClienteEscritura } from '../cliente-db.ts'
 import { validarConfiguracionCerramiento } from '../cerramientos/validacion.ts'
 import { actualizarTotales } from '../totales.ts'
+import { copiarGastos } from '../gastos/index.ts'
 import type { NumeracionDocumento } from './destino-documento.ts'
 import type { LineaConSatelites } from './leer-origen.ts'
 import type { CambioLinea, PlanCopia } from './plan-copia.ts'
@@ -123,6 +124,7 @@ export async function escribirCopia(
   const [cabecera] = await cliente.insert(schema.presupuestos)
     .values(valoresCabecera(entrada.origen, entrada.cabecera))
     .returning({ id: schema.presupuestos.id })
+  await copiarGastos(cliente, entrada.origen.id, cabecera.id)
 
   const cambios = new Map(entrada.plan.lineas.map((cambio) => [cambio.lineaId, cambio]))
   let copiadas = 0

@@ -7,6 +7,7 @@ import { valorarEstructura } from '../estructuras/index.ts'
 import { guardarLinea, type OpcionHerrajeElegida, type PiezaDespiece,
   type RanuraAcristalamiento, type ValoresLinea } from './guardar-linea.ts'
 import { altaCerramientoValorado } from '../cerramientos/alta-valorada.ts'
+import { comisionDeLineas } from '../gastos/index.ts'
 
 export type EntradaAltaLinea = z.infer<typeof esquemaLinea>
 export type ResultadoAltaLinea = { ok: true; id: string; mensaje?: string } |
@@ -32,6 +33,7 @@ export async function altaLinea(db: ReturnType<typeof crearDb>, d: EntradaAltaLi
     let piezasAPersistir: PiezaDespiece[] = []
     let acristalamientoAPersistir: RanuraAcristalamiento[] = []
     let opcionesHerraje: OpcionHerrajeElegida[] = []
+    let comisionPorc: string | null = null
     if (d.tipo === 'ARTICULO') {
       const valoracion = await valorarArticulo(db, {
         codigo: d.codigo,
@@ -47,6 +49,7 @@ export async function altaLinea(db: ReturnType<typeof crearDb>, d: EntradaAltaLi
         : Number(valoracion.precioUnitario)
       aviso = valoracion.aviso
     } else {
+      comisionPorc = await comisionDeLineas(db, d.presupuestoId)
       const resultado = await valorarEstructura(db, {
         codigo: d.codigo,
         serieCodigo: d.serieCodigo,
@@ -62,6 +65,7 @@ export async function altaLinea(db: ReturnType<typeof crearDb>, d: EntradaAltaLi
         horasColocacion: d.horasColocacion,
         tarifa: presupuesto.tarifa,
         opcionesHerraje: opcionesElegidas,
+        comisionPorc,
       })
       if (!resultado.ok) return { ok: false, errores: resultado.errores }
       descripcion = resultado.descripcion
@@ -94,6 +98,7 @@ export async function altaLinea(db: ReturnType<typeof crearDb>, d: EntradaAltaLi
         ? {
             tipo: 'ESTRUCTURA',
             valores,
+            comisionPorc,
             estructura: {
               serieCodigo: d.serieCodigo ?? '',
               estructuraCodigo: d.codigo,

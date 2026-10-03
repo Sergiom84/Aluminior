@@ -160,3 +160,19 @@ export const presupuestos = pgTable('presupuestos', {
   // si el lock se salta.
   identidad: unique('presupuestos_identidad_uq').on(t.serie, t.numero, t.revision),
 }))
+
+/**
+ * Pestaña `Gastos` de la cabecera (origen VPresupuestos: `ComisionPorc`,
+ * `SumarComisionSN`). Tabla aparte para que la web que lee `presupuestos`
+ * completa no dependa de esta migración; sin fila, comisión 0 y sin sumar.
+ */
+export const presupuestosGastos = pgTable('presupuestos_gastos', {
+  presupuestoId: uuid('presupuesto_id').primaryKey()
+    .references(() => presupuestos.id, { onDelete: 'cascade' }),
+  comisionPorc: numeric('comision_porc', { precision: 6, scale: 2 }).notNull().default('0'),
+  sumarComision: boolean('sumar_comision').notNull().default(false),
+}, (t) => ({
+  // `precioConComision` rechaza un factor negativo.
+  comisionValida: check('presupuestos_gastos_comision_check',
+    sql`${t.comisionPorc} > -100 AND ${t.comisionPorc} < 1000`),
+})).enableRLS()

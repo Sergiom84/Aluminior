@@ -5,13 +5,14 @@ import { prepararManoObra } from '../mano-obra/index.ts'
 import type { AltaCerramiento } from './alta-cerramiento.ts'
 import { valorarCerramiento } from './valorar-cerramiento.ts'
 import { importesLineaCerramiento } from './importes-linea.ts'
+import { comisionDeLineas } from '../gastos/index.ts'
 import { configuracionTieneFiExplicito } from '@aluminior/core/estructuras'
 
 export const AVISO_FI_SIN_VALORAR =
   'Configuración guardada sin valorar: la cota FI de 1OFI aún no dispone de despiece ni cálculo económico verificados.'
 
 export async function prepararLineaValorada(tx: ClienteEscritura, alta: AltaCerramiento,
-  entrada: { tarifa: number; cantidad: number; horasFabricacion: string; horasColocacion: string },
+  entrada: { presupuestoId: string; tarifa: number; cantidad: number; horasFabricacion: string; horasColocacion: string },
 ) {
   if (configuracionTieneFiExplicito(alta.configuracion)) {
     return {
@@ -33,6 +34,7 @@ export async function prepararLineaValorada(tx: ClienteEscritura, alta: AltaCerr
   if (manoObra.estado === 'PREPARADA') notas.push(...manoObra.notas)
   return { estado: 'VALORADA' as const, resultado,
     manoObra: manoObra.estado === 'PREPARADA' ? manoObra.filas : [],
-    importes: importesLineaCerramiento(resultado, String(entrada.cantidad), manoObra),
+    importes: importesLineaCerramiento(resultado, String(entrada.cantidad), manoObra,
+      await comisionDeLineas(tx, entrada.presupuestoId)),
     aviso: notas.length ? [...new Set(notas)].join('; ') : null }
 }

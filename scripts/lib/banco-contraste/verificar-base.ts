@@ -1,4 +1,5 @@
 /** Acredita el catálogo de precios y deja huellas para detectar deriva local. */
+import { readFileSync } from 'node:fs'
 import type { Sql } from 'postgres'
 import { TABLAS_MOTOR } from '@aluminior/etl/banco-contraste'
 import { texto, numero, type Tablas } from './datos.ts'
@@ -12,7 +13,8 @@ export async function verificarBase(sql: Sql, t: Tablas) {
   const actual = pvp.map(p => firma(String(p.articulo_codigo), String(p.acabado_codigo), Number(p.tarifa), Number(p.precio))).sort()
   if (JSON.stringify(esperado) !== JSON.stringify(actual)) throw new Error('Los PVP locales no corresponden a la copia del banco')
   const migraciones = (await sql`SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations`)[0]!.n
-  if (migraciones !== 27) throw new Error('Se esperan las 27 migraciones del motor medido')
+  const esperadas = JSON.parse(readFileSync('packages/db/migrations/meta/_journal.json', 'utf8')).entries.length
+  if (migraciones !== esperadas) throw new Error(`Se esperan las ${esperadas} migraciones del journal`)
   const firmas: Record<string, string> = {}
   for (const tabla of TABLAS) firmas[tabla] = String((await sql`SELECT md5(coalesce(string_agg(firma, '' ORDER BY firma), '')) AS firma
     FROM (SELECT md5(to_jsonb(fila)::text) AS firma FROM ${sql(tabla)} fila) contenido`)[0]!.firma)

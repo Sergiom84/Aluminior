@@ -25,13 +25,15 @@ export function PestanasDocumento({
   )
 }
 
-export function PestanasFicha({ activa = 'presupuesto' }: { activa?: 'presupuesto' }) {
+export type PaginaFicha = 'presupuesto' | 'gastos'
+
+export function PestanasFicha({ activa = 'presupuesto', fichaHref }: { activa?: PaginaFicha; fichaHref: string }) {
   return (
     <nav className="al-document-tabs al-ficha-tabs" aria-label="Páginas de la ficha">
-      <span aria-current={activa === 'presupuesto' ? 'page' : undefined}>Presupuesto</span>
+      <Link href={fichaHref} aria-current={activa === 'presupuesto' ? 'page' : undefined}>Presupuesto</Link>
       <span aria-disabled="true">Datos Adicionales</span>
       <span aria-disabled="true">Plazos</span>
-      <span aria-disabled="true">Gastos</span>
+      <Link href={`${fichaHref}?pagina=gastos`} aria-current={activa === 'gastos' ? 'page' : undefined}>Gastos</Link>
     </nav>
   )
 }

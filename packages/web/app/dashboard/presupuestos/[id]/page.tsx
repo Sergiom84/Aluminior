@@ -15,13 +15,18 @@ import { PestanasDocumento, PestanasFicha } from '../_components/pestanas-docume
 import { referenciaPresupuesto } from '../_lib/identidad-documento.ts'
 import { asegurarCatalogoDiseno } from '../_lib/catalogo-diseno/index.ts'
 import { CatalogoDiseno } from './_components/catalogo-diseno.tsx'
+import { leerGastos } from '../_lib/gastos/index.ts'
+import { PaginaGastos } from './_components/pagina-gastos.tsx'
 import styles from './presupuesto-movil.module.css'
 
 export const dynamic = 'force-dynamic'
 const eur = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' })
 
-export default async function DetallePresupuesto({ params }: { params: Promise<{ id: string }> }) {
+export default async function DetallePresupuesto({ params, searchParams }: {
+  params: Promise<{ id: string }>; searchParams: Promise<{ pagina?: string }>
+}) {
   const { id } = await params
+  const pagina = (await searchParams).pagina === 'gastos' ? 'gastos' : 'presupuesto'
   const db = crearDb()
   const [presupuesto] = await db.select().from(schema.presupuestos)
     .where(eq(schema.presupuestos.id, id)).limit(1)
@@ -77,6 +82,7 @@ export default async function DetallePresupuesto({ params }: { params: Promise<{
     })
   }
   const incompleto = presupuestoIncompleto(lineas)
+  const gastos = pagina === 'gastos' ? await leerGastos(db, id) : null
   const p = presupuesto
 
   const destinatario = resolverDestinatarioPresupuesto({
@@ -115,6 +121,8 @@ export default async function DetallePresupuesto({ params }: { params: Promise<{
             obraTexto: p.obraTexto, formaPago: p.formaPago, observaciones: p.observaciones }} />
         </div>}
 
+        {gastos ? <PaginaGastos datos={{ presupuestoId: id, ...gastos,
+          editable: p.estado === 'PENDIENTE' }} /> :
         <CatalogoDiseno plantillas={plantillas}>
         {p.estado === 'PENDIENTE' && (
           <AnyadirLinea presupuestoId={id} series={series.map((serie) => serie.codigo)} acabados={acabados} />
@@ -144,7 +152,7 @@ export default async function DetallePresupuesto({ params }: { params: Promise<{
             ))}</tbody>
           </table>
         </div>
-        </CatalogoDiseno>
+        </CatalogoDiseno>}
 
         <div className="al-ficha-totals">
           <dl className={`${styles.totals} w-72 text-sm`}>
@@ -162,7 +170,7 @@ export default async function DetallePresupuesto({ params }: { params: Promise<{
             </p>}
           </dl>
         </div>
-        <PestanasFicha />
+        <PestanasFicha activa={pagina} fichaHref={`/dashboard/presupuestos/${id}`} />
         <PestanasDocumento vista="ficha" fichaHref={`/dashboard/presupuestos/${id}`} />
       </section>
     </Shell>
