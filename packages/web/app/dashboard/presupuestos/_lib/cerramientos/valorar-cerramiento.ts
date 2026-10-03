@@ -55,7 +55,8 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
         ...(materialIncompleto ? [{ codigo: 'COBERTURA_INCOMPLETA', ambito: 'FABRICACION' as const, bloqueante: true, detalle }] : [])]
     }
     // Horas y comisión del cerramiento se aplican a la línea (importesLineaCerramiento), nunca por módulo.
-    const parametros = { ...entrada, horasFabricacion: null, horasColocacion: null, compacto: null, comisionPorc: null, cotas: null,
+    const parametros = { ...entrada, horasFabricacion: null, horasColocacion: null, compacto: null, accesorios: null,
+      comisionPorc: null, cotas: null,
       trazabilidad: true, codigo: g.codigo, anchoMm: g.anchoMm, altoMm: g.altoMm,
       serieCodigo: origen.serieCodigo,
       vidrioCodigo: origen.vidrioCodigo, opcionesHerraje: entrada.opcionesHerraje ?? [] }

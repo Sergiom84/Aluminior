@@ -4,14 +4,14 @@
  * Estructuras de diseño: ranuras por la serie, medidas de la plantilla,
  * asociaciones (serie y herraje por grupo de hojas), vidrio, junquillos,
  * juntas y mano de obra. Estructuras estándar (uniones): lista de artículos.
- * El compacto de persiana de la línea añade su propia plantilla condicionada.
+ * Compacto, mosquitera y tapajuntas de la línea añaden su plantilla condicionada.
  * Después, el ajuste manual de fabricación y el importe por fila. Cualquier
  * dato ausente o regla sin contrastar deja el importe en null: nunca un total
  * parcial. Contraste con facturas 2026: docs/paridad/fase-7/06.
  */
 
 import { importeFila, redondearCentimos } from '../../precios/importe-fila.ts'
-import { despiezarCompacto } from './compacto.ts'
+import { despiezarAccesoriosVentana, despiezarCompacto } from './compacto.ts'
 import { despiezarDiseno } from './diseno.ts'
 import { despiezarEstandar } from './estandar.ts'
 import { fila } from './parcial.ts'
@@ -31,10 +31,11 @@ export function despiezarLineaCatalogo(catalogo: CatalogoLinea, entrada: Entrada
     ? despiezarDiseno(catalogo, entrada, serie, conDiseno)
     : despiezarEstandar(catalogo, entrada, plantilla)
   const { filas, incidencias, avisos } = parcial
-  if (entrada.compacto) {
-    const compacto = despiezarCompacto(catalogo, entrada.compacto, { anchoMm: entrada.anchoMm, altoMm: entrada.altoMm })
-    filas.push(...compacto.filas); incidencias.push(...compacto.incidencias); avisos.push(...compacto.avisos)
-  }
+  const ventana = { anchoMm: entrada.anchoMm, altoMm: entrada.altoMm }
+  for (const accesorio of [
+    ...entrada.compacto ? [despiezarCompacto(catalogo, entrada.compacto, ventana)] : [],
+    ...entrada.accesorios?.length ? [despiezarAccesoriosVentana(catalogo, entrada.accesorios, ventana, entrada.compacto)] : [],
+  ]) { filas.push(...accesorio.filas); incidencias.push(...accesorio.incidencias); avisos.push(...accesorio.avisos) }
 
   if (entrada.minutosFabricacionAdicionales && entrada.minutosFabricacionAdicionales > 0) {
     filas.push(fila({ origen: 'mano-obra', articulo: ARTICULO_MANO_OBRA, acabado: entrada.acabadoAccesorios,

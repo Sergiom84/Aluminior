@@ -1,7 +1,7 @@
 import { opcionesAcristalamientoDeSerie } from './acristalamiento-serie.ts'
 import { partidasValoracion } from './partidas-valoracion.ts'
 import type { PartidaValoracionCerramiento } from '@aluminior/core/estructuras'
-import type { CompactoLineaCatalogo } from '@aluminior/core/despiece'
+import type { AccesorioLineaCatalogo, CompactoLineaCatalogo } from '@aluminior/core/despiece'
 import { resolverMaterialesEstructura } from './materiales-estructura.ts'
 import { lineaValorable, precioConComision } from '@aluminior/core/precios'
 import type { ClienteEscritura } from '../cliente-db.ts'
@@ -28,6 +28,8 @@ export interface EntradaValoracionEstructura {
   acabadoAccesoriosCodigo?: string | null
   /** Compacto de persiana de la línea; solo lo valora el catálogo de despiece completo. */
   compacto?: CompactoLineaCatalogo | null
+  /** Mosquitera y tapajuntas de la línea; solo catálogo completo. */
+  accesorios?: readonly AccesorioLineaCatalogo[] | null
   /** Horas manuales por unidad (`HorasAdFabr`, `HorasColoc`), texto decimal; solo catálogo completo. */
   horasFabricacion?: string | null
   horasColocacion?: string | null
@@ -85,7 +87,9 @@ async function valorarSinComision(
   }
   const catalogo = await valorarConCatalogo(cliente, entrada)
   if (catalogo) return catalogo
-  if (entrada.compacto) return { ok: false, errores: { compacto: ['El compacto necesita el catálogo de despiece completo'] } }
+  if (entrada.compacto || entrada.accesorios?.length) {
+    return { ok: false, errores: { compacto: ['Los accesorios de línea necesitan el catálogo de despiece completo'] } }
+  }
   if (Number(entrada.horasFabricacion ?? 0) || Number(entrada.horasColocacion ?? 0)) {
     return { ok: false, errores: { horasColocacion: ['Las horas por unidad necesitan el catálogo de despiece completo'] } }
   }

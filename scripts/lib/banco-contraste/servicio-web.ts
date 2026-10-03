@@ -7,7 +7,7 @@ import { valorarEstructura, prepararManoObra, valorarCerramiento, importesLineaC
   type ClienteEscritura } from '@aluminior/web/banco-contraste'
 import { opcionAcristalamientoOrigen } from './acristalamiento.ts'
 import { configuracionGrupo } from './geometria.ts'
-import { compactoDeCaso } from './compacto.ts'
+import { accesoriosDeCaso } from './accesorios.ts'
 import { cotasDeCaso } from './cotas.ts'
 import { numero, si, texto, type Caso, type Pieza } from './datos.ts'
 
@@ -20,7 +20,7 @@ function restricciones(c: Caso) {
   // El despunte de cabecera se reparte en las líneas sin regla demostrada.
   if (c.despunte! > 0) motivos.push('despunte-de-documento-sin-regla')
   if (c.tipo === 'GRUPO' && c.accesorios?.length) motivos.push('accesorios-de-grupo-no-representables')
-  else motivos.push(...compactoDeCaso(c).motivos, ...cotasDeCaso(c).motivos)
+  else motivos.push(...accesoriosDeCaso(c).motivos, ...cotasDeCaso(c).motivos)
   if (texto(c.configuracion?.Vidrio2)) motivos.push('segundo-vidrio-no-representable')
   if (c.familias.some(f => f.familia !== '001' && f.familia !== '050' && f.conjunto)) motivos.push('familia-adicional-no-representable')
   if (c.opciones.some(o => numero(o.nOpcion) === null)) motivos.push('opcion-invalida')
@@ -113,7 +113,8 @@ export async function ejecutarServicio(cliente: ClienteEscritura, c: Caso): Prom
       avisos: r.origenes.flatMap(o => o.diagnosticos.map(d => d.detalle)), motivos }
   }
   // Horas por unidad dentro del despiece, como Productor (MOCOL en el precio unitario).
-  const r = await valorarEstructura(cliente, { ...general, codigo: c.modelo, compacto: compactoDeCaso(c).compacto, cotas: cotasDeCaso(c).cotas,
+  const { compacto, accesorios } = accesoriosDeCaso(c)
+  const r = await valorarEstructura(cliente, { ...general, codigo: c.modelo, compacto, accesorios, cotas: cotasDeCaso(c).cotas,
     horasFabricacion: horas.fabricacion, horasColocacion: horas.colocacion,
     anchoMm: c.dimensiones.ancho, altoMm: c.dimensiones.alto, trazabilidad: true })
   if (!r.ok) return vacia(['validacion-del-servicio'], Object.values(r.errores).flat())

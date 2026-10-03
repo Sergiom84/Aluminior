@@ -90,19 +90,23 @@ export interface CatalogoLinea {
   tarifa(articulo: string, acabado: string): ArticuloTarifado | null
 }
 
-/** Compacto de persiana de la línea (`VAccesorios` + `VOpciones`). */
-export interface CompactoLineaCatalogo {
-  /** Estructura del compacto (`Accesorio`, p. ej. COM009). */
+/** Accesorio de línea (`VAccesorios` + `VOpciones`): estructura propia, acabado y opciones. */
+export interface AccesorioLineaCatalogo {
+  /** Estructura del accesorio (`Accesorio`: COM009, PSM001, GMT004…). */
   estructura: string
   acabado: string
+  /** Opciones marcadas del accesorio, `G{grupo}O{opcion}`. */
+  opciones: readonly string[]
+}
+
+/** Compacto de persiana de la línea. */
+export interface CompactoLineaCatalogo extends AccesorioLineaCatalogo {
   altoCajonMm: number
   vueloIzquierdoMm: number
   vueloDerechoMm: number
   posicionGuiaCentralMm: number
   /** `DtoHuecoV`; solo 0 está contrastado. */
   descuentoVerticalMm: number
-  /** Opciones marcadas del compacto, `G{grupo}O{opcion}`. */
-  opciones: readonly string[]
 }
 
 export interface EntradaLineaCatalogo {
@@ -126,6 +130,8 @@ export interface EntradaLineaCatalogo {
    */
   minutosColocacion?: number
   compacto?: CompactoLineaCatalogo | null
+  /** Mosquitera y tapajuntas de la línea. */
+  accesorios?: readonly AccesorioLineaCatalogo[]
 }
 
 export type OrigenFila = 'plantilla' | 'vidrio' | 'asociado' | 'acristalamiento' | 'mano-obra' | 'compacto'

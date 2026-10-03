@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { despiezarCompacto, terminosSeleccion } from './compacto.ts'
+import { despiezarAccesoriosVentana, despiezarCompacto, terminosSeleccion } from './compacto.ts'
 import type { CatalogoLinea, CompactoLineaCatalogo, FilaPlantillaCatalogo } from './tipos.ts'
 
 // Plantilla sintética con la forma de un compacto con guía central y motor opcionales; valores inventados.
@@ -41,10 +41,23 @@ describe('despiezarCompacto', () => {
     ])
   })
   it('bloquea sin una opción por grupo condicionante, con descuento vertical o sin plantilla', () => {
-    expect(resumen({ ...compacto, opciones: ['G10O0'] }).incidencias).toContain('compacto CX: grupo G1 sin una opción marcada')
-    expect(resumen({ ...compacto, opciones: ['G1O0', 'G1O1', 'G10O0'] }).incidencias).toContain('compacto CX: grupo G1 sin una opción marcada')
+    expect(resumen({ ...compacto, opciones: ['G10O0'] }).incidencias).toContain('accesorio CX: grupo G1 sin una opción marcada')
+    expect(resumen({ ...compacto, opciones: ['G1O0', 'G1O1', 'G10O0'] }).incidencias).toContain('accesorio CX: grupo G1 sin una opción marcada')
     expect(resumen({ ...compacto, descuentoVerticalMm: 10 }).incidencias).toHaveLength(1)
-    expect(resumen({ ...compacto, estructura: 'NADA' }).incidencias).toEqual(['compacto NADA sin plantilla'])
+    expect(resumen({ ...compacto, estructura: 'NADA' }).incidencias).toEqual(['accesorio NADA sin plantilla'])
+  })
+  it('mide mosquitera y tapajuntas con la ventana y el cajón del compacto de la línea', () => {
+    const tapajuntas = [
+      fila({ articulo: 'GUIA', funcion: 'TAP', formulaLargo: 'A+2*40,00', formulaSeleccion: 'G1O0' }),
+      fila({ articulo: 'GUIA', funcion: 'TAPDE', formulaLargo: 'L+CAJ+2*40,00', formulaSeleccion: 'G3O0' }),
+      fila({ articulo: 'MOX', funcion: 'MO', cantidad: 0 })]
+    const conTap = { ...catalogo, plantilla: (e: string) => e === 'TX' ? tapajuntas : e === 'MX' ? [fila({ articulo: 'LAMA', formulaLargo: 'L', formulaAncho: 'A' })] : [] } as CatalogoLinea
+    const accesorios = [{ estructura: 'TX', acabado: 'L', opciones: ['G1O0', 'G2O0', 'G3O0', 'G4O1'] }, { estructura: 'MX', acabado: 'B', opciones: [] }]
+    const r = despiezarAccesoriosVentana(conTap, accesorios, { anchoMm: 597, altoMm: 1147 }, compacto)
+    expect(r.incidencias).toEqual([])
+    expect(r.filas.map(f => [f.articulo, f.acabado, f.cantidad, f.largoMm, f.anchoMm])).toEqual([
+      ['GUIA', 'L', 1, 677, null], ['GUIA', 'L', 1, 1382, null], ['MOX', 'L', 0, null, null], ['LAMA', 'B', 1, 1147, 597]])
+    expect(despiezarAccesoriosVentana(conTap, accesorios, { anchoMm: 597, altoMm: 1147 }, null).filas[1]!.largoMm).toBe(1227)
   })
   it('lee la gramática observada de OPCformulaSelec y rechaza la desconocida', () => {
     expect(terminosSeleccion('G10O2*G1O1')).toEqual([{ grupo: 10, opcion: 2 }, { grupo: 1, opcion: 1 }])

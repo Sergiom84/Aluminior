@@ -74,7 +74,7 @@ export async function valorarConCatalogo(
     !(entrada.altoMm > 0) || !(entrada.anchoMm >= 0)) return null
   const catalogo = await leerCatalogoLinea(cliente, {
     estructura: entrada.codigo, serie: entrada.serieCodigo, vidrio: entrada.vidrioCodigo, tarifa: entrada.tarifa,
-    adicionales: entrada.compacto ? [entrada.compacto.estructura] : [],
+    adicionales: [entrada.compacto, ...entrada.accesorios ?? []].flatMap(a => a ? [a.estructura] : []),
   })
   if (!catalogo) return null
   const [estructura] = await cliente.select({ descripcion: schema.estructuras.descripcion })
@@ -89,7 +89,7 @@ export async function valorarConCatalogo(
   const resultado = despiezarLineaCatalogo(catalogo, {
     estructura: entrada.codigo, serie: entrada.serieCodigo, anchoMm: entrada.anchoMm, altoMm: entrada.altoMm,
     vidrio: entrada.vidrioCodigo, acabado, acabadoAccesorios: entrada.acabadoAccesoriosCodigo || 'UNI', opcionesGuardadas: guardadas,
-    compacto: entrada.compacto ?? null, cotas: entrada.cotas ?? undefined,
+    compacto: entrada.compacto ?? null, accesorios: entrada.accesorios ?? [], cotas: entrada.cotas ?? undefined,
     minutosFabricacionAdicionales: minutos(entrada.horasFabricacion), minutosColocacion: minutos(entrada.horasColocacion),
   })
 

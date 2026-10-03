@@ -1,4 +1,4 @@
 export * from './tipos.ts'
 export * from './despiezar.ts'
 export { varianteAcristalamiento } from './diseno.ts'
-export { despiezarCompacto, terminosSeleccion } from './compacto.ts'
+export { despiezarAccesoriosVentana, despiezarCompacto, terminosSeleccion } from './compacto.ts'
