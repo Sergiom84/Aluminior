@@ -30,6 +30,25 @@ describe('minutosFabricacion', () => {
       { articulo: 'MO', minutos: 9, concepto: 'FIJO' },
     ])
   })
+  it('aplica por componente o grupo solo la categoría del tipo de perfil o la común', () => {
+    const asociados = [concepto({ codigo: 'CORR', minutos: 20, componenteAsociado: '16', categoria: '00002' }),
+      concepto({ codigo: 'ABAT', minutos: 10, grupoAsociado: 'TMP', categoria: '00001' }),
+      concepto({ codigo: 'COMUN', minutos: 3, grupoAsociado: 'TMP', categoria: '00010' })]
+    const elementos = [elemento({ componente: '16', grupo: 'TMP', cantidad: 3 })]
+    const abatible = minutosFabricacion({ elementos, conceptos: asociados, conceptosApertura: [], tipoPerfil: 'A' })
+    expect(abatible).toEqual({ incidencias: [], lineas: [
+      { articulo: 'MO', minutos: 30, concepto: 'ABAT' }, { articulo: 'MO', minutos: 9, concepto: 'COMUN' }] })
+    const corredera = minutosFabricacion({ elementos, conceptos: asociados, conceptosApertura: [], tipoPerfil: 'C' })
+    expect(corredera.lineas.map(l => l.concepto)).toEqual(['CORR', 'COMUN'])
+    const mallorquina = minutosFabricacion({ elementos, conceptosApertura: [], tipoPerfil: 'A',
+      conceptos: [concepto({ codigo: 'LAMA', minutos: 10, componenteAsociado: '16', categoria: '00003' })] })
+    expect(mallorquina.incidencias).toEqual(['mano de obra LAMA: asociación por componente sin contrastar'])
+    for (const tipoPerfil of ['M', null]) {
+      const r = minutosFabricacion({ elementos, conceptos: asociados, conceptosApertura: [], tipoPerfil })
+      expect(r.incidencias).toEqual(['mano de obra CORR: asociación por componente sin contrastar',
+        'mano de obra ABAT: asociación por grupo sin contrastar'])
+    }
+  })
   it('informa de lo no contrastado en lugar de inventar minutos', () => {
     const r = minutosFabricacion({
       elementos: [elemento({ componente: '18' }), elemento({ modulo: '8' })],

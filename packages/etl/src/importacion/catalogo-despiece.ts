@@ -70,6 +70,7 @@ export function filaManoObra(f: Fila, r: Resultado) {
     componente_asociado: txt(f.ComponenteAsoc), grupo_asociado: txt(f.GrupoAsoc),
     con_incrementos: [f.TiempoPreparacion, f.AnchoTiempo, f.AltoTiempo, f.AnchoMayorMM, f.AltoMayorMM]
       .some(v => Number(num(v) ?? 0) !== 0),
+    categoria: txt(f.Categoria),
   }
 }
 
@@ -112,6 +113,12 @@ export async function cargarCatalogoDespiece(cargar: Cargar, estructuras: Readon
       return { id, tipo, descripcion: txt(f.descripcion) ?? '' }
     }),
     await cargar('MOConceptos', 'mano_obra_conceptos', filaManoObra),
+    await cargar('Estructuras', 'estructura_parametros_despiece', (f, r) => {
+      const codigo = txt(f.Codigo)
+      if (!codigo) { descartar(r, 'estructura sin código'); return null }
+      if (estructuras && !estructuras.has(codigo)) { excluir(r, 'estructura no importada'); return null }
+      return { estructura_codigo: codigo, tipo_perfil: txt(f.TipoPerf) }
+    }),
     await cargar('ArticulosIncrPrecio', 'articulos_incrementos_precio', (f, r) => {
       const id = ent(f.nLin), articulo = txt(f.Articulo), tipo = txt(f.TipoMetMed)
       if (id === null || !articulo || (tipo !== 'MET' && tipo !== 'MED')) { descartar(r, 'incremento sin clave o tipo'); return null }
@@ -155,9 +162,9 @@ async function cargarParametrosSerie(sql: Sql, origen: string): Promise<Resultad
 
 const TABLAS = ['estructura_plantilla_catalogo', 'conjunto_asociaciones', 'grupos_asociacion', 'tipos_hoja_catalogo',
   'mano_obra_conceptos', 'articulos_incrementos_precio', 'articulos_despiece', 'conjunto_ranuras_vacias',
-  'conjunto_parametros_despiece']
+  'conjunto_parametros_despiece', 'estructura_parametros_despiece']
 const ORIGENES = ['EstructurasArticulos', 'ConjuntosAsoc', 'FamiliasGruposAsoc', 'SeriesAsocV2TiposHoja', 'MOConceptos',
-  'ArticulosIncrPrecio', 'Articulos', 'ConjuntosLin', 'Conjuntos']
+  'ArticulosIncrPrecio', 'Articulos', 'ConjuntosLin', 'Conjuntos', 'Estructuras']
 
 export function comprobarOrigenDespiece(origen: string) {
   for (const tabla of ORIGENES) if (!rutaTabla(origen, tabla)) throw new Error(`Falta ${tabla}; se conserva el catálogo de despiece`)

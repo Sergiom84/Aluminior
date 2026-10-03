@@ -103,6 +103,14 @@ export const manoObraConceptos = pgTable('mano_obra_conceptos', {
   componenteAsociado: text('componente_asociado'),
   grupoAsociado: text('grupo_asociado'),
   conIncrementos: boolean('con_incrementos').notNull(),
+  /** `Categoria` (`MOCategorias`): 00001 abatibles, 00002 correderas, 00010 comunes… */
+  categoria: text('categoria'),
+}).enableRLS()
+
+/** Parámetros de despiece por estructura: `Estructuras.TipoPerf` (A abatible, C corredera…). */
+export const estructuraParametrosDespiece = pgTable('estructura_parametros_despiece', {
+  estructuraCodigo: text('estructura_codigo').primaryKey().references(() => estructuras.codigo, { onDelete: 'cascade' }),
+  tipoPerfil: text('tipo_perfil'),
 }).enableRLS()
 
 /** `ArticulosIncrPrecio`: porcentaje por metraje (MET) o lado mayor (MED). */

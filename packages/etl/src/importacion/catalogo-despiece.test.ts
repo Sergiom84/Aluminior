@@ -39,6 +39,13 @@ describe('catálogo suplementario de despiece', () => {
       id: '7', opcion: '14', componente: '58', descuento: '21.5', no_contrastado: ['plano de hojas', 'refuerzo'],
     })
   })
+  it('guarda la categoría de mano de obra y el tipo de perfil de las estructuras importadas', async () => {
+    const r = await mapear({ MOConceptos: [{ Codigo: '00114', TiempoFabr: '10', GrupoAsoc: 'TMP', Categoria: '00001' }],
+      Estructuras: [{ Codigo: 'QA', TipoPerf: 'A' }, { Codigo: 'OTRA', TipoPerf: 'C' }, { Codigo: 'QB', TipoPerf: '' }] }, new Set(['QA', 'QB']))
+    expect(r.salida.get('mano_obra_conceptos')![0]).toMatchObject({ codigo: '00114', grupo_asociado: 'TMP', categoria: '00001' })
+    expect(r.salida.get('estructura_parametros_despiece')).toEqual([
+      { estructura_codigo: 'QA', tipo_perfil: 'A' }, { estructura_codigo: 'QB', tipo_perfil: null }])
+  })
   it('guarda solo las ranuras vacías explícitas y los grupos como listas', async () => {
     const r = await mapear({
       ConjuntosLin: [{ Conjunto: 'S', Componente: '222', Articulo: '0' }, { Conjunto: 'S', Componente: '10', Articulo: 'P' },

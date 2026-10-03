@@ -54,11 +54,12 @@ anterior no se presupone disponible en este entorno efímero.
 
 ## Migraciones
 
-El journal versionado llega a `0025_plantilla_formula_seleccion` (26 entradas).
+El journal versionado llega a `0026_motor_tipo_perfil_categoria_mo` (27 entradas).
 `0022_catalogo_diseno` corresponde al catálogo visual;
 `0023_motor_catalogo`, a las once tablas del motor económico;
 `0024`, a sus permisos y RLS; `0025`, a `formula_seleccion` (`OPCformulaSelec`) de la
-plantilla, que exige el compacto: sin esa columna la web sigue por la vía anterior.
+plantilla, que exige el compacto; `0026`, a la categoría de MO y a la tabla de motor
+`estructura_parametros_despiece` (TipoPerf). Sin ellas la web sigue por la vía anterior.
 El estado de producción se consulta por separado.
 
 `npm run db:generate` genera SQL; `npm run db:migrate` aplica migraciones

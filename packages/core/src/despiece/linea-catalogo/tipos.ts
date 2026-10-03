@@ -84,6 +84,8 @@ export interface CatalogoLinea {
   gruposAsociacion(): ReadonlyMap<string, ReadonlySet<string>>
   tablaAcristalamiento(codigo: string): readonly FilaTablaAcristalamiento[]
   conceptosManoObra(): readonly ConceptoManoObraCatalogo[]
+  /** `Estructuras.TipoPerf` de la estructura; null o ausente si no está en el catálogo. */
+  tipoPerfil?(estructura: string): string | null
   /** PVP y reglas de metraje del artículo en ese acabado; null si no está en catálogo. */
   tarifa(articulo: string, acabado: string): ArticuloTarifado | null
 }

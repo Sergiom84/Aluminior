@@ -16,6 +16,7 @@ const CAMPOS: Record<string, string> = {
   Articulos: 'Codigo Familia TipoMetraje DAfabrSN DAVid1 DAVid2',
   VAccesorios: 'TipoDoc nDoc nLinEstr nModulo nLinEstrGrupo FamiliaAcc Accesorio Acabado AltoCajon CerrCodGuiaI CerrCodGuiaD DtoHuecoH DtoHuecoV VueloI VueloD GuiaCentralSN PosGuiaCentral compDtoHuecoSN compDtoTapH compDtoTapV CompAccAcaLamas CompAccAcaGuias CompAccAcaAcc CerrAltoManual',
   VOpciones: 'TipoDoc nDoc CodEstr nLinEstr OPCgrupo OPCnOpcion nModulo SubestructuraSN GrupoDesactivadoSN',
+  VEstructurasVariables: 'TipoDoc nDoc nLinEstr Estructura SimboloVariable Valor SubestructuraSN NumeroInstancia',
 }
 interface TablaMdb { getColumnNames(): string[]; getData(o: { columns: readonly string[] }): Fila[] }
 interface LectorMdb { getTable(n: string): TablaMdb }

@@ -1,7 +1,7 @@
 /**
  * Carga dirigida del catálogo del motor de despiece (migración 0023_motor_catalogo).
  *
- * Solo sustituye las once tablas de la 0023 con los cargadores suplementarios;
+ * Solo sustituye las tablas del motor (0023 y 0026) con los cargadores suplementarios;
  * no vacía presupuestos, clientes ni el catálogo base. Todo va en una
  * transacción y simula por defecto: sin `aplicar` se revierte al terminar.
  */
@@ -16,6 +16,7 @@ export const TABLAS_MOTOR = [
   'estructura_referencias_corte', 'conjunto_descuentos_corte', 'estructura_plantilla_catalogo',
   'conjunto_asociaciones', 'grupos_asociacion', 'tipos_hoja_catalogo', 'mano_obra_conceptos',
   'articulos_incrementos_precio', 'articulos_despiece', 'conjunto_ranuras_vacias', 'conjunto_parametros_despiece',
+  'estructura_parametros_despiece',
 ] as const
 
 /** Tablas que la carga nunca debe tocar; se verifica cantidad y contenido. */

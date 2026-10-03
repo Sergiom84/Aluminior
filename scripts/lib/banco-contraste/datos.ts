@@ -35,6 +35,8 @@ export interface Caso {
   elementos?: Caso[]; cerramiento?: Fila; geometria?: Fila[]
   /** `VAccesorios` y `VOpciones` (VPRES) de la línea: compacto y otros accesorios. */
   accesorios?: Fila[]; opcionesAccesorio?: Fila[]
+  /** `VEstructurasVariables` (VPRES) de la línea. */
+  variables?: Fila[]
 }
 export type Estado = 'igual' | 'cercano' | 'distinto' | 'sin valorar' | 'error'
 export interface Medicion {

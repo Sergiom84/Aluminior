@@ -93,6 +93,29 @@ describe('valoración con el catálogo de despiece completo', () => {
     expect(r.opcionesHerraje).toEqual([{ categoria: 'QA-HERR', opcionCodigo: '1', descripcion: 'Cierre' }])
     expect(r.acristalamiento).toHaveLength(2)
   }))
+  it('las cotas de la instancia llegan a las fórmulas de la plantilla', () => caso(async tx => {
+    // Travesaño sintético con descuento cero entre montantes: el largo depende solo de A y FI.
+    await tx.insert(schema.estructuraPlantillaCatalogo).values(fila(40, { articulo: 'QA-G', componente: '12', funcion: 'TM',
+      formulaLargo: 'A-FI', grupo: 'TM', grupoIzquierdo: 'MV', grupoDerecho: 'MV', posicionTrabajo: 'A' }))
+    await tx.insert(schema.conjuntoDescuentosCorte).values({ conjuntoCodigo: 'QA-SERIE', familia: '001',
+      grupoPrincipal: 'MV', grupo: 'TM', tipoHoja: 'G', descuentoMm: '0' })
+    const sin = await valorarEstructura(tx, entrada)
+    expect(sin).toMatchObject({ ok: true, precioUnitario: null })
+    const con = await valorarEstructura(tx, { ...entrada, cotas: { FI: 200 }, trazabilidad: true })
+    if (!con.ok) throw new Error('rechazada')
+    expect(con.piezas.filter(p => p.funcion === 'TM').map(p => Number(p.largoCorteMm))).toEqual([1000])
+    expect(con.precioUnitario).not.toBeNull()
+  }))
+  it('cobra MO por grupo solo si su categoría es la del tipo de perfil de la estructura', () => caso(async tx => {
+    await tx.insert(schema.manoObraConceptos).values({ codigo: 'QA-TRAV', minutos: '10', articulo: 'MO', grupoAsociado: 'MH',
+      componenteAsociado: '!', conIncrementos: false, categoria: '00001' })
+    const sinTipo = await valorarEstructura(tx, entrada)
+    expect(sinTipo).toMatchObject({ ok: true, precioUnitario: null })
+    await tx.insert(schema.estructuraParametrosDespiece).values({ estructuraCodigo: 'QA-CORR', tipoPerfil: 'A' })
+    expect(await valorarEstructura(tx, entrada)).toMatchObject({ ok: true, precioUnitario: 144.56 })
+    await tx.update(schema.estructuraParametrosDespiece).set({ tipoPerfil: 'C' })
+    expect(await valorarEstructura(tx, entrada)).toMatchObject({ ok: true, precioUnitario: 139.56 })
+  }))
   it('la comisión sumada cambia solo el precio de la línea, no el despiece', () => caso(async tx => {
     const r = await valorarEstructura(tx, { ...entrada, comisionPorc: '10', trazabilidad: true })
     if (!r.ok) throw new Error('rechazada')

@@ -33,6 +33,7 @@ const csv: Record<string, string> = {
   Articulos: 'Codigo,Componente,GenericoSN,DAcrisSN,TamJunqGoma,IncrementosPrecioSN\nQA-P,12,False,False,0,True\n',
   ConjuntosLin: 'Conjunto,Componente,Articulo\nQA-S,25,0\nQA-S,12,QA-P\n',
   Conjuntos: 'Codigo,herr2HC,mo2HC,CorrGrosorVid,CorrGrosorVidDA\nQA-S,QA-H,QA-MO,6,24\n',
+  Estructuras: 'Codigo,TipoPerf\nQA-MOTOR,A\nQA-AUSENTE,C\n',
 }
 
 const contar = async (tabla: string) => (await sql`SELECT count(*)::int AS n FROM ${sql(tabla)}`)[0]!.n as number
@@ -57,8 +58,8 @@ beforeAll(async () => {
   expect((await sql`SELECT to_regclass('public.conjunto_parametros_despiece') AS tabla`)[0]!.tabla).toBeNull()
   expect((await sql`SELECT max(created_at)::text AS ultima FROM drizzle.__drizzle_migrations`)[0]!.ultima).toBe('1790951000407')
   await migrate(drizzle(sql), { migrationsFolder: migraciones })
-  expect((await sql`SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations`)[0]!.n).toBe(26)
-  expect((await sql`SELECT max(created_at)::text AS ultima FROM drizzle.__drizzle_migrations`)[0]!.ultima).toBe('1791026252674')
+  expect((await sql`SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations`)[0]!.n).toBe(27)
+  expect((await sql`SELECT max(created_at)::text AS ultima FROM drizzle.__drizzle_migrations`)[0]!.ultima).toBe('1791027810356')
   await sql`INSERT INTO estructuras (codigo, descripcion) VALUES ('QA-MOTOR', 'Estructura sintética')`
   await sql`INSERT INTO presupuestos (numero, revision, serie, fecha, nombre_libre, tarifa, estado)
     VALUES (999001, 0, 'A', '2026-10-02', 'QA motor', 1, 'PENDIENTE')`

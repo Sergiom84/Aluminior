@@ -89,7 +89,7 @@ export async function valorarConCatalogo(
   const resultado = despiezarLineaCatalogo(catalogo, {
     estructura: entrada.codigo, serie: entrada.serieCodigo, anchoMm: entrada.anchoMm, altoMm: entrada.altoMm,
     vidrio: entrada.vidrioCodigo, acabado, acabadoAccesorios: entrada.acabadoAccesoriosCodigo || 'UNI', opcionesGuardadas: guardadas,
-    compacto: entrada.compacto ?? null,
+    compacto: entrada.compacto ?? null, cotas: entrada.cotas ?? undefined,
     minutosFabricacionAdicionales: minutos(entrada.horasFabricacion), minutosColocacion: minutos(entrada.horasColocacion),
   })
 

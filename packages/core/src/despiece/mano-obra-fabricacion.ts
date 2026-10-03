@@ -8,10 +8,20 @@
  * aportación: C2 GMC400 = módulo 8 (20) + módulo 15 × 2 (40); fijo GMA350 =
  * 25 + 10 + 20 (fase-7/06).
  *
+ * Conceptos por componente o grupo (`MOConceptos.Categoria`): se aplican si
+ * su categoría es la del tipo de perfil de la estructura (`Estructuras.TipoPerf`)
+ * o la común 00010. Contrastado en EMP0016: abatibles (A, 00001) cobran 10 min de
+ * 00114 por travesaño TMP y no los 20 de 00010; la corredera C2FI (C, 00002)
+ * cobra 00010 y no 00114 (30 líneas). Otras categorías siguen sin contrastar.
+ *
  * Sin contrastar en este catálogo: tiempos por dimensión, preparación,
- * conceptos por componente o grupo y conceptos del tipo de apertura con
- * tiempo. Si alguno aportaría minutos, se informa y no se inventa.
+ * conceptos del tipo de apertura con tiempo y categorías de mallorquina o
+ * plegable. Si alguno aportaría minutos, se informa y no se inventa.
  */
+
+/** Categoría `MOCategorias` de cada `TipoPerf` contrastado y la común a todos. */
+const CATEGORIA_POR_TIPO_PERFIL: Readonly<Record<string, string>> = { A: '00001', C: '00002' }
+const CATEGORIA_COMUN = '00010'
 
 export interface ConceptoManoObraCatalogo {
   codigo: string
@@ -24,6 +34,8 @@ export interface ConceptoManoObraCatalogo {
   grupoAsociado: string | null
   /** Tiempo de preparación o incrementos por ancho/alto distintos de cero. */
   conIncrementos: boolean
+  /** `MOConceptos.Categoria` (00001 abatibles, 00002 correderas, 00010 comunes…). */
+  categoria?: string | null
 }
 
 export interface ElementoManoObra {
@@ -47,7 +59,10 @@ export function minutosFabricacion(entrada: {
   conceptos: readonly ConceptoManoObraCatalogo[]
   /** Conceptos del tipo de apertura (`Conjuntos.mo*`) de cada grupo de hojas. */
   conceptosApertura: readonly string[]
+  /** `Estructuras.TipoPerf` (A abatible, C corredera…); null si se desconoce. */
+  tipoPerfil?: string | null
 }): { lineas: MinutosFabricacion[]; incidencias: string[] } {
+  const categoriaEstructura = entrada.tipoPerfil ? CATEGORIA_POR_TIPO_PERFIL[entrada.tipoPerfil] ?? null : null
   const lineas: MinutosFabricacion[] = []
   const incidencias: string[] = []
   const porCodigo = new Map(entrada.conceptos.map(c => [c.codigo, c]))
@@ -66,7 +81,11 @@ export function minutosFabricacion(entrada: {
       const porComponente = c.componenteAsociado && c.componenteAsociado !== '!' && c.componenteAsociado === e.componente
       const porGrupo = c.grupoAsociado && c.grupoAsociado !== '!' && c.grupoAsociado === e.grupo
       if ((porComponente || porGrupo) && c.minutos > 0) {
-        incidencias.push(`mano de obra ${c.codigo}: asociación por ${porComponente ? 'componente' : 'grupo'} sin contrastar`)
+        const contrastada = Object.values(CATEGORIA_POR_TIPO_PERFIL).includes(c.categoria ?? '')
+        if (c.categoria === CATEGORIA_COMUN || (categoriaEstructura && c.categoria === categoriaEstructura)) emitir(c, e.cantidad)
+        else if (!categoriaEstructura || !contrastada) {
+          incidencias.push(`mano de obra ${c.codigo}: asociación por ${porComponente ? 'componente' : 'grupo'} sin contrastar`)
+        }
       }
     }
   }

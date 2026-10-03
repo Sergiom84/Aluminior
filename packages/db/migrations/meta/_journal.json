@@ -183,6 +183,13 @@
       "when": 1791026252674,
       "tag": "0025_plantilla_formula_seleccion",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1791027810356,
+      "tag": "0026_motor_tipo_perfil_categoria_mo",
+      "breakpoints": true
     }
   ]
 }

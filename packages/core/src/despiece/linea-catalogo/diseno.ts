@@ -116,7 +116,7 @@ export function despiezarDiseno(
   const mo = minutosFabricacion({
     elementos: plantilla.map(f => ({ modulo: f.funcion === 'infMOmof' ? f.disVidrio : null, articuloPlantilla: f.articulo,
       componente: f.componente, grupo: f.grupo, cantidad: f.cantidad })),
-    conceptos: catalogo.conceptosManoObra(),
+    conceptos: catalogo.conceptosManoObra(), tipoPerfil: catalogo.tipoPerfil?.(entrada.estructura) ?? null,
     conceptosApertura: [...new Set(plantilla.map(f => claves(f.tipoHoja)?.manoObra).filter((x): x is string => !!x))]
       .map(k => serie.manoObra[k]).filter((x): x is string => !!x),
   })

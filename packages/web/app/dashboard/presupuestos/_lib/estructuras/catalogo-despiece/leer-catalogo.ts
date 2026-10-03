@@ -32,11 +32,12 @@ export interface EntradaCatalogoLinea {
 
 export async function leerCatalogoLinea(cliente: ClienteEscritura, e: EntradaCatalogoLinea): Promise<CatalogoLinea | null> {
   if (!await tablasMotorCatalogo(cliente)) return null
-  const [plantillaFilas, [parametros], [estructura]] = await Promise.all([
+  const [plantillaFilas, [parametros], [estructura], parametrosEstructura] = await Promise.all([
     cliente.select().from(schema.estructuraPlantillaCatalogo).where(inArray(schema.estructuraPlantillaCatalogo.estructuraCodigo,
       [e.estructura, ...e.adicionales ?? []])),
     cliente.select().from(schema.conjuntoParametrosDespiece).where(eq(schema.conjuntoParametrosDespiece.conjuntoCodigo, e.serie)).limit(1),
     cliente.select({ esAccesorio: schema.estructuras.esAccesorio }).from(schema.estructuras).where(eq(schema.estructuras.codigo, e.estructura)).limit(1),
+    cliente.select().from(schema.estructuraParametrosDespiece).where(eq(schema.estructuraParametrosDespiece.estructuraCodigo, e.estructura)),
   ])
   if (!plantillaFilas.some(f => f.estructuraCodigo === e.estructura) || !parametros || !estructura) return null
 
@@ -139,7 +140,9 @@ export async function leerCatalogoLinea(cliente: ClienteEscritura, e: EntradaCat
     conceptosManoObra: () => conceptos.map(c => ({
       codigo: c.codigo, minutos: n(c.minutos), articulo: c.articulo, modulo: c.modulo, articuloAsociado: c.articuloAsociado,
       componenteAsociado: c.componenteAsociado, grupoAsociado: c.grupoAsociado, conIncrementos: c.conIncrementos,
+      categoria: c.categoria,
     })),
+    tipoPerfil: codigo => parametrosEstructura.find(p => p.estructuraCodigo === codigo)?.tipoPerfil ?? null,
     tarifa: (codigo, acabado) => {
       const a = articuloPor.get(codigo)
       if (!a) return null

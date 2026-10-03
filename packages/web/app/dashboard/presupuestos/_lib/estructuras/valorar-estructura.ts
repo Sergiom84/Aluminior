@@ -31,6 +31,8 @@ export interface EntradaValoracionEstructura {
   /** Horas manuales por unidad (`HorasAdFabr`, `HorasColoc`), texto decimal; solo catálogo completo. */
   horasFabricacion?: string | null
   horasColocacion?: string | null
+  /** Cotas de la instancia (`VEstructurasVariables`: FI, FS, F…); solo catálogo completo. */
+  cotas?: Readonly<Record<string, number>> | null
   /** `Comisión` % de la cabecera con `Sumar Comisión`: multiplica el precio de la línea. */
   comisionPorc?: string | null
   tarifa: number
