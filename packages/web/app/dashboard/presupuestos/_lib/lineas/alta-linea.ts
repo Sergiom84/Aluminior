@@ -56,6 +56,10 @@ export async function altaLinea(db: ReturnType<typeof crearDb>, d: EntradaAltaLi
         varianteAcristalamiento: d.varianteAcristalamiento,
         opcionAcristalamiento: d.opcionAcristalamiento,
         acabadoCodigo: d.acabadoCodigo,
+        // Por unidad, como Productor: MO y MOCOL dentro del despiece y del
+        // precio unitario; el total es Cdad × Precio (banco, iteración 5).
+        horasFabricacion: d.horasFabricacion,
+        horasColocacion: d.horasColocacion,
         tarifa: presupuesto.tarifa,
         opcionesHerraje: opcionesElegidas,
       })

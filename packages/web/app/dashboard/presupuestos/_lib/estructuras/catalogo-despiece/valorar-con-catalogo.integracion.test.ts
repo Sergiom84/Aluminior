@@ -3,6 +3,7 @@ import { crearDb, schema } from '@aluminior/db'
 import { urlDePruebasValidada } from '@aluminior/db/pruebas'
 import { eq, sql } from 'drizzle-orm'
 import { valorarEstructura, type EntradaValoracionEstructura } from '../valorar-estructura.ts'
+import { altaLinea } from '../../lineas/alta-linea.ts'
 
 const db = crearDb(urlDePruebasValidada(process.env.TEST_DATABASE_URL))
 type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0]
@@ -132,8 +133,28 @@ describe('valoración con el catálogo de despiece completo', () => {
     // 139,56 de material + 60 min y 364,2 min a 0,5 por minuto, dentro del precio unitario.
     expect(r.precioUnitario).toBe(351.66)
     expect(r.partidas!.slice(-2).map(p => [p.articuloCodigo, p.cantidadFacturable])).toEqual([['MO', '60.000000'], ['MOCOL', '364.200000']])
-    const sinCatalogo = await valorarEstructura(tx, { ...entrada, serieCodigo: 'QA-SIN-SERIE', horasColocacion: '2' })
-    expect(sinCatalogo.ok).toBe(false)
+  }))
+  it('el alta de la línea cobra las horas tecleadas por unidad y guarda MO y MOCOL en el despiece', () => caso(async tx => {
+    await tx.insert(schema.articulos).values({ codigo: 'MOCOL', descripcion: 'MOCOL', tipoMetraje: 'UD' }).onConflictDoNothing()
+    await tx.insert(schema.articulosPvp).values({ articuloCodigo: 'MOCOL', acabadoCodigo: 'UNI', tarifa: 1, precio: '0.5' })
+      .onConflictDoUpdate({ target: [schema.articulosPvp.articuloCodigo, schema.articulosPvp.acabadoCodigo, schema.articulosPvp.tarifa],
+        set: { precio: sql`excluded.precio` } })
+    const [presupuesto] = await tx.insert(schema.presupuestos).values({ numero: 999998, revision: 0, serie: 'A',
+      fecha: '2026-10-03', nombreLibre: 'QA ALTA HORAS', obraTexto: 'QA', tarifa: 1, estado: 'PENDIENTE' })
+      .returning({ id: schema.presupuestos.id })
+    const alta = await altaLinea(tx as unknown as Parameters<typeof altaLinea>[0], {
+      presupuestoId: presupuesto!.id, tipo: 'ESTRUCTURA', codigo: 'QA-CORR', serieCodigo: 'QA-SERIE', referencia: null,
+      vidrioCodigo: 'QA-VIDRIO', opcionAcristalamiento: 1, varianteAcristalamiento: '2', cantidad: 2, anchoMm: 1200,
+      altoMm: 1300, acabadoCodigo: 'L', configuracionCerramiento: null, horasFabricacion: '1', horasColocacion: '6.07',
+    }, ['QA-HERR|1'])
+    expect(alta.ok).toBe(true)
+    const [linea] = await tx.select().from(schema.lineas).where(eq(schema.lineas.presupuestoId, presupuesto!.id))
+    // Precio unitario con MO y MOCOL dentro; ImporteTotal = Cdad × Precio, como Productor.
+    expect(linea).toMatchObject({ precioUnitario: '351.6600', total: '703.32', valoracionCompleta: true })
+    const despiece = await tx.select().from(schema.lineasDespiece).where(eq(schema.lineasDespiece.lineaId, linea!.id))
+    expect(despiece.filter(p => p.funcion === 'MO' || p.funcion === 'MOCOL').map(p => [p.articuloCodigo, Number(p.cantidad)]))
+      // 20 min del concepto de fabricación del catálogo; 60 y 364,2, las horas tecleadas.
+      .toEqual([['MO', 20], ['MO', 60], ['MOCOL', 364.2]])
   }))
   it('añade el compacto con sus filas seleccionadas a ventana + cajón y bloquea sin catálogo', () => caso(async tx => {
     await tx.insert(schema.estructuras).values({ codigo: 'QA-COMP', descripcion: 'Compacto sintético', esAccesorio: true })
