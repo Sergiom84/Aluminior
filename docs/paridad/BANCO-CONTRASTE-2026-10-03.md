@@ -352,6 +352,32 @@ Resultado: 377→380 iguales (+3, los primeros GRUPO), ninguna perdida; distinta
 Suite: core 568, db 55, ETL 41 + 1 omitida, web 677; banco 21; typecheck y
 arquitectura sin infracciones.
 
+### Estado al cierre de la sesión (iteración 12)
+
+380/523 iguales (72,66 %), frente a 5/523 de la base. Ninguna igualdad se perdió en
+ninguna iteración; elegibles (523) y exclusiones (434) no han cambiado. Las 143 líneas
+restantes, con una causa principal cada una:
+
+| Causa pendiente | Líneas | Siguiente paso |
+|---|---:|---|
+| PVP actualizado después del presupuesto (precio antiguo) | 58 cercanas | No reproducible: la copia solo guarda el PVP vigente. Sin estas líneas la cifra sería 380/465 (81,7 %); se informa aparte y no cambia el denominador |
+| GRUPO no admitido por el configurador web | 31 | Contrato del configurador: C2, PC2 y otros sin plantilla visual estática y medidas de módulo con 0,5 mm |
+| Despunte de cabecera | 10 | Hipótesis: «Calcular Despunte» suma el coste de sobrantes de barra al precio (doc. con C2: 403,79 + 348,61) |
+| Piezas o importes de fila | 16 | Tapajuntas de puerta sin lado inferior (3), superficie COM009 en mitades (4 filas), metraje V484, redondeo binario |
+| Residuo de comisión sumada | 6 | 1–4 céntimos con el signo de la comisión; orden de redondeo sin demostrar |
+| Otros bloqueos de entrada | 22 | Vidrio sin junquillo (4), tubos y accesorios repetidos (3), uniones de serie distinta (3), perfil adicional C2FI (2)… |
+
+Hipótesis que necesitan observar Productor en Windows (empresa de pruebas, sin guardar):
+
+| Pantalla | Dato concreto | Líneas |
+|---|---|---:|
+| Cabecera → Gastos: `Comisión`, `Sumar Comisión` | Con -10 % y una línea de suma de despiece conocida, anotar el `Precio` y si el redondeo es por línea o por fila | 6 |
+| Cabecera → Gastos: `Despunte`, `Calcular Despunte` | Ejecutar el cálculo en una línea C2 y anotar importe, base y cómo se reparte entre varias líneas | 10 |
+| Editar estructura → Accesorios → Tapajuntas en una puerta 1P | Desmarcar el lado inferior y anotar el largo de los laterales (¿`L+CAJ+ala` o `L+CAJ+2·ala`?) | 3 |
+| Editar estructura → Compacto COM009 a 2325 × 2140 | Anotar metraje de COMPVAL (¿4,93 o 4,94?) para fijar el redondeo de superficie del compacto | 1–4 |
+| Composición de GRUPO con C2 o PC2 | Comprobar si las medidas económicas con 0,5 mm se conservan o se redondean al valorar | 31 |
+| Editar estructura → Acristalamiento, opciones 2..5 | Elegir alternativas superiores y anotar nTAcris y tablas usadas | sin casos en esta copia |
+
 Pendientes tras la iteración 3 (diagnósticos solapados, no promesas de mejora): compactos y
 accesorios 283; piezas ausentes 325; PVP/tarifa 101; metraje 59; componentes y
 herrajes 45; reglas de MO 44; vidrio/acristalamiento 42; configuraciones GRUPO 31.

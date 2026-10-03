@@ -18,12 +18,15 @@ Este es el único punto de entrada de estado y siguiente trabajo.
 - Motor de catálogo integrado en main: tablas de `0023_motor_catalogo`,
   protección `0024_motor_catalogo_rls`, cargador dirigido y lector compatible.
 - Banco local medido el 03/10 con la copia `Anterior.mdb` y los servicios web:
-  **91/523 líneas elegibles al mismo precio (17,40 %)**, frente a 5/523 de base.
-  434 exclusiones conservadas; 26 cercanas, 321 distintas, 85 sin valorar y 0 errores.
-  Iteraciones `363e258`, `f235dfc`, `b21abe6`: Acabado2, escala de cortes del snapshot
-  y mapeo de nTAcris 0/1 a la primera opción. Ninguna igualdad anterior perdida.
-  [Resultados, mapeo y propuestas](paridad/BANCO-CONTRASTE-2026-10-03.md).
-  Catálogo cargado solo en `aluminior_real_test`; precios y márgenes sin modificar.
+  **380/523 líneas elegibles al mismo precio (72,66 %)**, frente a 5/523 de base.
+  434 exclusiones conservadas; 81 cercanas (58 por PVP actualizado después del
+  presupuesto, no reproducible), 5 distintas, 57 sin valorar y 0 errores.
+  Doce iteraciones con evidencia y ninguna igualdad perdida: Acabado2, cortes del
+  snapshot, nTAcris, compacto, horas por unidad, comisión de cabecera, cotas y MO
+  por categoría, mosquitera/tapajuntas, batiente, incremento sobre precio, acabado
+  del vidrio y opciones por defecto.
+  [Historial, evidencia y pendientes](paridad/BANCO-CONTRASTE-2026-10-03.md).
+  Catálogo cargado solo en `aluminior_real_test` (27 migraciones); precios y márgenes sin modificar.
 - Desarrollo en Mac con Docker. En la base local `aluminior_test` se comprobaron el 02/10
   25 migraciones y RLS en las once tablas del motor; catálogo y estructuras
   vacíos. La base con datos reales de ensayos anteriores no estaba disponible el 02/10.
@@ -56,9 +59,12 @@ Este es el único punto de entrada de estado y siguiente trabajo.
 
 ## Siguiente paso
 
-Revisar las [propuestas del banco local](paridad/BANCO-CONTRASTE-2026-10-03.md):
-acabados, compactos/accesorios, PVP y entradas históricas no representables.
-Verificar cada regla antes de corregir el motor y repetir la medición local.
+Pendientes del [banco local](paridad/BANCO-CONTRASTE-2026-10-03.md): 31 GRUPO que
+el configurador no admite, despunte de cabecera (10) y las observaciones en Windows
+listadas en su cierre. Verificar cada regla antes de corregir el motor y repetir la
+medición local. Horas por unidad, comisión de cabecera y accesorios de línea ya
+existen en la valoración, pero aún no en la UI. Producción necesita `0025` y `0026`
+antes de cargar el motor; sin ellas la web sigue por la vía anterior.
 La medición no depende de Supabase: la carga de producción queda después,
 con resultados conocidos, destino y respaldo verificados y alcance específico
 autorizado. Después, comprobar guardado, recarga y PDF en ese entorno.
