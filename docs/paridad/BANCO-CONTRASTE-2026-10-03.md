@@ -1,7 +1,7 @@
 # Banco de contraste de presupuestos — 03/10/2026
 
-**52,01 % de las líneas elegibles salen al mismo precio efectivo que Productor: 272/523.**
-En 2026: **54,84 % (272/496)**.
+**60,80 % de las líneas elegibles salen al mismo precio efectivo que Productor: 318/523.**
+En 2026: **64,11 % (318/496)**.
 Se mide coincidencia numérica de la copia y del código actual, no aceptación comercial ni certificación de fabricación.
 
 ## Historial
@@ -17,6 +17,7 @@ publicadas en `main`; cada una conserva todas las igualdades anteriores.
 | 03/10/2026 | `b21abe6` | nTAcris=1 identifica la primera opción | 91 | 26 | 321 | 85 | 0 |
 | 03/10/2026 | `80e5bcd` | Compacto de persiana (VAccesorios + VOpciones) | 207 | 50 | 151 | 115 | 0 |
 | 03/10/2026 | `928ecda` | Horas manuales por unidad en estructuras | 272 | 59 | 77 | 115 | 0 |
+| 03/10/2026 | `3af4198` | Comisión de cabecera sumada al precio de línea | 318 | 71 | 10 | 124 | 0 |
 
 ## Iteraciones y evidencia
 
@@ -216,6 +217,32 @@ hijas sin campo de descuento informado) se dejan como hipótesis; ver pendientes
 Suite: core 563, db 55, ETL 40 + 1 omitida, web 672; banco 18; typecheck y
 arquitectura sin infracciones.
 
+Iteración 6 — comisión de cabecera. Las líneas restantes con el mismo despiece que
+Productor tenían un factor constante por documento (0,85; 0,90; 1,05; 1,10; 1,20…).
+`VPresupuestos.ComisionPorc` con `SumarComisionSN` lo explica: es la pestaña `Gastos`
+(`Comisión`, `Sumar Comisión`) documentada en [RECON-DETALLE-PRESUPUESTO](RECON-DETALLE-PRESUPUESTO.md).
+
+| Evidencia (líneas con despiece valorado completo) | Resultado |
+|---|---:|
+| Estructuras sin comisión sumada: `Precio` = suma de hijas (±1 céntimo) | 613/618 |
+| Estructuras con comisión sumada: `Precio` = suma × (1 + `ComisionPorc`/100), ±1 céntimo | 96/105 |
+| GRUPO con comisión sumada que siguen el mismo factor | 20/23 |
+| Mismo factor aplicado también a MO y MOCOL de la línea | sí (sin él no cuadra) |
+
+Las hijas conservan los importes base. El residuo de 1 a 4 céntimos lleva el signo de
+la comisión y crece con el número de filas; ningún orden de redondeo ensayado (total,
+por fila, por PVP a 2 o 4 decimales, truncado) lo reproduce: queda como hipótesis.
+Cambio: `core/precios/comision.ts` (factor sobre el precio de línea, a céntimos);
+`valorarEstructura` y `importesLineaCerramiento` aceptan `comisionPorc` opcional y el
+cerramiento no lo propaga a sus módulos. La cabecera web no tiene aún comisión: el
+banco pasa la de la copia. Los documentos con `Despunte` > 0 (importe de cabecera
+repartido en las líneas, razones 1,49 y 1,86) quedan sin valorar hasta demostrar su regla.
+
+Resultado: 272→318 iguales (+46), ninguna perdida; distintas 77→10. Cambio de
+clasificación aparte: 9 líneas de documentos con despunte pasan de distintas o cercanas
+a sin valorar. Elegibles y exclusiones sin cambios. Suite: core 565, db 55,
+ETL 40 + 1 omitida, web 674; banco 19; typecheck y arquitectura sin infracciones.
+
 Pendientes tras la iteración 3 (diagnósticos solapados, no promesas de mejora): compactos y
 accesorios 283; piezas ausentes 325; PVP/tarifa 101; metraje 59; componentes y
 herrajes 45; reglas de MO 44; vidrio/acristalamiento 42; configuraciones GRUPO 31.
@@ -230,9 +257,9 @@ Intervalos excluyentes, sobre las distintas; error relativo absoluto en céntimo
 | Error | Líneas |
 |---|---:|
 | ≤1 % | 0 |
-| >1–5 % | 15 |
-| >5–10 % | 20 |
-| >10 % | 42 |
+| >1–5 % | 1 |
+| >5–10 % | 2 |
+| >10 % | 7 |
 | base cero | 0 |
 
 Una causa principal por línea: primer impedimento de representación, después primer aviso bloqueante.
@@ -241,12 +268,10 @@ La asignación por identidad queda en `resultados.json → diagnostico.bloqueos`
 
 | Modelo | Causa principal | Líneas |
 |---|---|---:|
-| 2O | sin bloqueo: valorado | 157 |
+| 2O | sin bloqueo: valorado | 187 |
 | 1O | accesorio-de-linea-no-representable | 6 |
 | 2O | vidrio-y-acristalamiento | 1 |
-| 2O | sin bloqueo: valorado distinto | 30 |
-| 1O | sin bloqueo: valorado distinto | 14 |
-| 1O | sin bloqueo: valorado | 86 |
+| 1O | sin bloqueo: valorado | 100 |
 | 1O | vidrio-y-acristalamiento | 1 |
 | 2O | accesorio-de-linea-no-representable | 11 |
 | 2O | familia-adicional-no-representable | 1 |
@@ -254,8 +279,8 @@ La asignación por identidad queda en `resultados.json → diagnostico.bloqueos`
 ## Alcance, fuente y preparación
 
 Copia autorizada `EMP0016/Anterior.mdb`, solo lectura con `mdb-reader` y proyección de campos técnicos.
-SHA-256: `e8518386687cb459ebfa7906c010700f6838e64d36e1bec72ecdc038123721a0`. Ejecución: `2026-10-03T11:29:41.197Z`.
-Revisión Git anterior al cambio de trabajo medido: `e6cea86f5349fca1b71a24bd201857a04d9fe124`; el Historial identifica cada corrección posterior.
+SHA-256: `e8518386687cb459ebfa7906c010700f6838e64d36e1bec72ecdc038123721a0`. Ejecución: `2026-10-03T11:36:25.224Z`.
+Revisión Git anterior al cambio de trabajo medido: `9c6658805dc7f0c105843b1e122f12c1c995ee69`; el Historial identifica cada corrección posterior.
 Confirmados 403 presupuestos (22 de 2025, 381 de 2026) y 105011 filas:
 790 estructuras independientes, 167 GRUPO y 1169 elementos internos
 (1068 con Precio > 0). Los 1169 elementos no se suman de nuevo al denominador del GRUPO.
@@ -323,20 +348,20 @@ La proximidad nunca cuenta como igualdad. Una igualdad de precio puede tener dif
 
 | Modelo | Universo | Excluidas | Líneas | Igual | Cercano | Distinto | Sin valorar | Error | Igual % |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| 2O | 231 | 31 | 200 | 134 | 23 | 30 | 13 | 0 | 67,00 |
-| 1O | 140 | 33 | 107 | 75 | 11 | 14 | 7 | 0 | 70,09 |
-| GRUPO | 167 | 122 | 45 | 0 | 0 | 9 | 36 | 0 | 0,00 |
-| PC2 | 33 | 2 | 31 | 14 | 10 | 6 | 1 | 0 | 45,16 |
-| C2 | 28 | 0 | 28 | 17 | 1 | 6 | 4 | 0 | 60,71 |
+| 2O | 231 | 31 | 200 | 158 | 29 | 0 | 13 | 0 | 79,00 |
+| 1O | 140 | 33 | 107 | 88 | 12 | 0 | 7 | 0 | 82,24 |
+| GRUPO | 167 | 122 | 45 | 0 | 1 | 6 | 38 | 0 | 0,00 |
+| PC2 | 33 | 2 | 31 | 18 | 11 | 0 | 2 | 0 | 58,06 |
+| C2 | 28 | 0 | 28 | 20 | 2 | 2 | 4 | 0 | 71,43 |
 | 0 | 31 | 10 | 21 | 14 | 4 | 2 | 1 | 0 | 66,67 |
-| 1P | 23 | 5 | 18 | 6 | 3 | 5 | 4 | 0 | 33,33 |
+| 1P | 23 | 5 | 18 | 8 | 5 | 0 | 5 | 0 | 44,44 |
 | 3HO | 21 | 8 | 13 | 0 | 0 | 0 | 13 | 0 | 0,00 |
 | 2OFI | 16 | 7 | 9 | 0 | 0 | 0 | 9 | 0 | 0,00 |
 | C2P | 8 | 0 | 8 | 7 | 0 | 0 | 1 | 0 | 87,50 |
 | 1OFI | 12 | 5 | 7 | 0 | 0 | 0 | 7 | 0 | 0,00 |
 | 1 | 9 | 3 | 6 | 3 | 0 | 0 | 3 | 0 | 50,00 |
 | 02V | 8 | 3 | 5 | 0 | 0 | 0 | 5 | 0 | 0,00 |
-| PC3C | 4 | 0 | 4 | 0 | 1 | 3 | 0 | 0 | 0,00 |
+| PC3C | 4 | 0 | 4 | 0 | 1 | 0 | 3 | 0 | 0,00 |
 | 1OPLD | 4 | 2 | 2 | 0 | 0 | 0 | 2 | 0 | 0,00 |
 | 1OPLI | 2 | 0 | 2 | 0 | 0 | 0 | 2 | 0 | 0,00 |
 | 2 | 2 | 0 | 2 | 1 | 1 | 0 | 0 | 0 | 50,00 |
@@ -348,11 +373,11 @@ La proximidad nunca cuenta como igualdad. Una igualdad de precio puede tener dif
 | 2P | 1 | 0 | 1 | 0 | 1 | 0 | 0 | 0 | 0,00 |
 | C2E1 | 2 | 1 | 1 | 0 | 1 | 0 | 0 | 0 | 0,00 |
 | C2G | 1 | 0 | 1 | 0 | 0 | 0 | 1 | 0 | 0,00 |
-| C3 | 1 | 0 | 1 | 0 | 0 | 1 | 0 | 0 | 0,00 |
+| C3 | 1 | 0 | 1 | 0 | 0 | 0 | 1 | 0 | 0,00 |
 | C4P | 1 | 0 | 1 | 1 | 0 | 0 | 0 | 0 | 100,00 |
 | PC2E2 | 1 | 0 | 1 | 0 | 1 | 0 | 0 | 0 | 0,00 |
 | PC2X | 1 | 0 | 1 | 0 | 1 | 0 | 0 | 0 | 0,00 |
-| PC6C | 1 | 0 | 1 | 0 | 0 | 1 | 0 | 0 | 0,00 |
+| PC6C | 1 | 0 | 1 | 0 | 0 | 0 | 1 | 0 | 0,00 |
 | T | 1 | 0 | 1 | 0 | 0 | 0 | 1 | 0 | 0,00 |
 | 1FL | 4 | 4 | 0 | 0 | 0 | 0 | 0 | 0 | — |
 | 1O+1F+1O | 3 | 3 | 0 | 0 | 0 | 0 | 0 | 0 | — |
@@ -370,7 +395,7 @@ La proximidad nunca cuenta como igualdad. Una igualdad de precio puede tener dif
 | PSM001 | 135 | 135 | 0 | 0 | 0 | 0 | 0 | 0 | — |
 | PSM002 | 11 | 11 | 0 | 0 | 0 | 0 | 0 | 0 | — |
 | PSM004 | 14 | 14 | 0 | 0 | 0 | 0 | 0 | 0 | — |
-| **TOTAL** | **957** | **434** | **523** | **272** | **59** | **77** | **115** | **0** | **52,01** |
+| **TOTAL** | **957** | **434** | **523** | **318** | **71** | **10** | **124** | **0** | **60,80** |
 
 ## Exclusiones
 
@@ -396,14 +421,14 @@ Actualización anterior no acredita por sí sola toda la historia de precios.
 
 | Año | Líneas | Igual | Cercano | Distinto | Sin valorar | Error | Igual % |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| 2026 | 496 | 272 | 39 | 75 | 110 | 0 | 54,84 |
-| 2025 | 27 | 0 | 20 | 2 | 5 | 0 | 0,00 |
+| 2026 | 496 | 318 | 50 | 9 | 119 | 0 | 64,11 |
+| 2025 | 27 | 0 | 21 | 1 | 5 | 0 | 0,00 |
 
 | Fecha de PVP respecto al presupuesto | Líneas | Igual | Cercano | Distinto | Sin valorar | Error |
 |---|---:|---:|---:|---:|---:|---:|
-| anterior-o-igual | 193 | 143 | 9 | 27 | 14 | 0 |
-| posterior | 63 | 4 | 42 | 9 | 8 | 0 |
-| desconocida | 267 | 125 | 8 | 41 | 93 | 0 |
+| anterior-o-igual | 192 | 165 | 13 | 0 | 14 | 0 |
+| posterior | 61 | 4 | 47 | 2 | 8 | 0 |
+| desconocida | 270 | 149 | 11 | 8 | 102 | 0 |
 
 Desconocida incluye cálculos no ejecutables y cualquier selección con fecha incompleta;
 no equivale a tarifa errónea. Los casos con PVP posterior permanecen separados y no demuestran
@@ -418,16 +443,16 @@ Estos diagnósticos localizan discrepancias; no atribuyen causalidad completa a 
 
 | Diagnóstico | Líneas | Precio esperado agregado € | Desviación absoluta medible € | Sin importe calculado |
 |---|---:|---:|---:|---:|
-| coste-de-articulo | 124 | 135.352,66 | 8927,45 | 47 |
-| acabado-de-articulo | 111 | 123.224,38 | 7153,89 | 46 |
-| total-padre-no-reconciliado | 88 | 74.900,59 | 7865,35 | 19 |
-| importe-de-fila | 62 | 84.847,54 | 2899,46 | 44 |
-| pvp-o-tarifa | 61 | 81.607,83 | 3053,76 | 43 |
-| pieza-ausente | 56 | 79.531,74 | 2389,87 | 45 |
-| metraje-facturable | 47 | 72.591,91 | 885,71 | 44 |
+| coste-de-articulo | 57 | 79.668,07 | 1742,86 | 47 |
+| acabado-de-articulo | 54 | 75.968,61 | 1553,20 | 46 |
+| importe-de-fila | 53 | 77.833,17 | 1694,65 | 44 |
+| pieza-ausente | 53 | 77.080,73 | 1490,14 | 45 |
+| pvp-o-tarifa | 52 | 74.013,77 | 1694,65 | 43 |
 | mano-de-obra | 46 | 71.402,28 | 0,00 | 46 |
+| metraje-facturable | 45 | 70.732,82 | 562,71 | 44 |
 | resolucion-de-componentes-y-herrajes | 45 | 70.343,26 | 0,00 | 45 |
 | reglas-de-mano-de-obra | 44 | 68.951,26 | 0,00 | 44 |
+| vidrio-y-acristalamiento | 41 | 53.784,82 | 0,00 | 41 |
 
 Coste-de-artículo es una discrepancia de coste, **no causa del PVP**: el histórico conserva muchos ceros
 y el catálogo actual aporta costes. Acabados diferentes se comparan como el mismo artículo con acabado distinto,
@@ -446,15 +471,15 @@ Las cifras son **líneas candidatas a revisar como máximo**, solapadas; no gara
 
 | Prioridad | Causa → líneas candidatas | Dónde investigar/tocar después de verificar |
 |---|---|---|
-| 1 | Acabados por artículo → hasta 111 discrepancias | Acabado2 resuelto en esta iteración; investigar las discrepancias restantes por origen y acabado efectivo, sin generalizar por familia |
+| 1 | Acabados por artículo → hasta 54 discrepancias | Acabado2 resuelto en esta iteración; investigar las discrepancias restantes por origen y acabado efectivo, sin generalizar por familia |
 | 2 | Compactos/accesorios ausentes → hasta 0 medidas; además 206 elementos adicionales en 82 GRUPO | Contrato de configuración y core `despiece/linea-catalogo/`; investigar COM*, MOCOMP y accesorios desde sus entradas, no aprender sus importes |
-| 3 | PVP/tarifa → hasta 61 | `estructuras/pvp-articulos.ts`, `catalogo-despiece/leer-catalogo.ts`, importación PVP; separar cambio de acabado de precio antiguo; no cambiar tarifa del catálogo para cuadrar |
+| 3 | PVP/tarifa → hasta 52 | `estructuras/pvp-articulos.ts`, `catalogo-despiece/leer-catalogo.ts`, importación PVP; separar cambio de acabado de precio antiguo; no cambiar tarifa del catálogo para cuadrar |
 | 4 | Alternativa de acristalamiento → 0 bloqueadas | nTAcris 0/1 resuelto; valores superiores requieren CHM/configuración/ensayo y `acristalamiento-serie.ts` |
 | 5 | GRUPO no representable → 31 elegibles bloqueados; numerosos excluidos por accesorios incompletos | `core/estructuras/validar-configuracion-cerramiento.ts`, catálogo visual, configuración por origen y `cerramientos/valorar-cerramiento.ts`; medidas fraccionarias/modelos/uniones se reportan en detalle privado |
-| 6 | Metraje facturable → hasta 47 | `core/precios/importe-fila.ts`; cotejar mínimos/múltiplos y redondeo por pieza/fila con iguales tarifas |
+| 6 | Metraje facturable → hasta 45 | `core/precios/importe-fila.ts`; cotejar mínimos/múltiplos y redondeo por pieza/fila con iguales tarifas |
 | 7 | Herrajes, MO y vidrio bloqueantes → hasta 45, 44 y 41 | `core/despiece/asociaciones/`, `mano-obra-fabricacion.ts`, `acristalamiento-catalogo.ts` y resolución de serie |
 | 8 | Cortes/cotas → hasta 38 | `core/despiece/linea-catalogo/diseno.ts` y referencias de corte; FI/FD y divisiones necesitan instancia verificable |
-| 9 | Costes → hasta 124 discrepancias diagnósticas | `estructuras/coste-articulos.ts` y ETL costes; aclarar ceros históricos antes de calcular márgenes. No usar este arreglo para prometer PVP correcto |
+| 9 | Costes → hasta 57 discrepancias diagnósticas | `estructuras/coste-articulos.ts` y ETL costes; aclarar ceros históricos antes de calcular márgenes. No usar este arreglo para prometer PVP correcto |
 | 10 | Snapshot de GRUPO → 0 errores | `cerramientos/valorar-cerramiento.ts`, `origen-valorado.ts` y `core/estructuras/resultado-cerramiento/validar.ts`; localizar el campo que incumple el contrato con una fixture sintética antes de modificarlo |
 
 ## Repetición y artefactos
