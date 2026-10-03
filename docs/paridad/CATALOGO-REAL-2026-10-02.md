@@ -2,7 +2,9 @@
 
 Fecha: 02/10/2026. Autorizado por el usuario: «empieza por los dos puntos»
 (entrar directamente al configurador de cerramientos y conectar el catálogo
-real al escaparate). Trabajo y pruebas en local, en el Mac; nada escrito en Supabase.
+real al escaparate). Trabajo inicial en local, en el Mac; la ejecución posterior de 0022 y el relleno
+en Supabase está registrada más abajo. Estado remoto informado por ese cierre,
+sin verificar directamente en esta auditoría.
 
 ## Problema observado
 
@@ -26,7 +28,8 @@ las estructuras que lo usan da su significado:
 | 7, 15 | 2, 2P (dos hojas) | abatible izquierda + derecha |
 | 8, 26 | 2O, 2OP (una oscilobatiente) | abatible izquierda + oscilobatiente derecha |
 | 10, 13, 14, 16–20, 70–72, 79, 80 | C2, PC2, C3, C4, C2P, C6, monocarriles | corredera |
-| 58, 43, 44 | 1PE, 1PFS, 1OP | **hipótesis**: mano por defecto (derecha), la descripción no la indica |
+| 43 / 44 | 1OPD / 1OPI | oscilobatiente derecha / izquierda por las descripciones del catálogo |
+| 58 | 1PE, 1PFS | **hipótesis**: mano derecha por defecto, pendiente de contraste |
 
 `TipoCurva` distinto de 0 marca arcos e inclinaciones (los 25 de la familia 010):
 no se dibujan como rectos. Marcos NOR, PTA, 3C, VEN y SOL se dibujan como
@@ -72,14 +75,19 @@ zócalos (nodo 4), curvas, oscilantes/proyectantes (21, 22, 49), 3HO y PCM1D/I
 
 ## Límites y siguientes pasos
 
-- Valoración: una C2 con serie GMC400 genera despiece (30 piezas) pero 22 sin
-  coste, así que queda «sin valorar». Es el siguiente frente, no del catálogo.
-- Producción: ver «Paso a Supabase». No usar el importador completo:
+- Ensayo de valoración anterior a la integración del motor: una C2 con serie GMC400 genera despiece (30 piezas) pero 22 sin
+  coste, así que queda «sin valorar». El [ensayo posterior](INTEGRACION-MOTOR-CATALOGO-2026-10-02.md) obtuvo PVP con
+  avisos para C2/PC2 con el motor cargado; no acredita paridad general.
+  La carga remota del motor sigue pendiente según el cierre del importador.
+- Producción: ver «Procedimiento y ejecución fechada de 0022». No usar el importador completo:
   `vaciarDestino` trunca presupuestos y clientes.
-- Manos 58/43/44, sentido de las correderas y orden del escaparate: contrastar
+- Mano 58, sentido de las correderas y orden del escaparate: contrastar
   con Productor (vídeo o observación).
 
-## Paso a Supabase (preparado, sin ejecutar)
+## Procedimiento y ejecución fechada de 0022
+
+La secuencia siguiente registra trabajo ya realizado según el cierre autorizado;
+no es una lista de operaciones pendientes ni autorización para repetirlas.
 
 Desplegado `d5c87ce` en Render: abre en Cerramiento y, sin la migración en
 Supabase, sigue con las 14 verificadas sin errores (comprobado 02/10/2026).
@@ -114,10 +122,10 @@ nodos en una transacción; una segunda pasada no encuentra cambios; siguen 5
 presupuestos y 1 línea. La web publicada ofrece 160 estructuras (mismo reparto
 por familia que en local) y compone C2 + C3 (3020 × 1200).
 
-**Rama `feat/motor-catalogo-completo`** (27/09, sin fusionar): sus migraciones
-se llaman 0022 y 0023, con fecha anterior a esta 0022. Drizzle solo aplica
-migraciones posteriores a la última registrada, así que al fusionarla hay que
-regenerarlas (nuevo número y fecha) o no se aplicarán en Supabase.
+**Integración resuelta:** la rama `feat/motor-catalogo-completo` ya es antecesora
+de main `9bc879e`. Se conserva `0022_catalogo_diseno` y el motor se regeneró
+como `0023_motor_catalogo`, seguido de `0024_motor_catalogo_rls`.
+No aplicar las migraciones antiguas como una segunda 0022.
 
 ## Contraste con el seminario de GAIA (2020)
 
@@ -137,5 +145,6 @@ repositorio). Confirma:
   aceptar, Intro reutiliza las características de la anterior. Aluminior ya
   conserva serie, vidrio y acabado entre altas; queda por medir foco y teclado.
 - No muestra correderas, GRUPO ni uniones: sentido de las hojas correderas y
-  mano de 58/43/44 siguen siendo hipótesis.
+  mano 58 siguen pendientes. Los tipos 43/44 se resuelven por las descripciones
+  de 1OPD/1OPI, no por este seminario.
 

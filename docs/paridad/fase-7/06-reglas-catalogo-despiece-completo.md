@@ -133,8 +133,9 @@ algunos perfiles VS (×0,973) usan otra tarifa o precio anterior.
 
 ## Límites y siguiente paso
 
-- Falta implementar estas reglas en el core, la importación de las tablas
-  nuevas y la valoración web; hasta entonces el precio sigue bloqueado.
+- Las reglas, importación dirigida y valoración web tienen código integrado
+  en main `9bc879e`. Falta carga remota autorizada y contraste de cobertura;
+  un resultado incompleto conserva precio nulo. Ver [ensayos posteriores](../INTEGRACION-MOTOR-CATALOGO-2026-10-02.md).
 - Diseños específicos, compactos (COM*), cotas de instancia y variantes de
   división no contrastadas quedan pendientes.
 - Recuentos locales obtenidos con scripts provisionales; se sustituirán por el

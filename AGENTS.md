@@ -7,7 +7,7 @@
 - **Stack:** monorepo TypeScript/Node.js 20.9+, Drizzle, PostgreSQL/Supabase, Next.js App Router y React. `packages/api` es histórico.
 - **Structure:** `packages/db`, `packages/etl`, `packages/core`, `packages/web`.
 - **Canonical commands:** `npm install`, `npm run test`, `npm run typecheck`, `npm run check:architecture`, `npm run dev:web`.
-- **Project documentation:** `docs/ESTADO-ACTUAL.md`, `README.md`, `ARQUITECTURA.md` y `PARIDAD-PRODUCTOR.md`; `docs/INDICE-DOCUMENTACION.md` clasifica planes y entregas históricos.
+- **Project documentation:** `docs/ESTADO-ACTUAL.md`, `README.md`, `ARQUITECTURA.md` y `docs/paridad/PARIDAD-PRODUCTOR.md`; `docs/INDICE-DOCUMENTACION.md` clasifica planes y entregas históricos.
 
 ## Working contract
 
@@ -48,7 +48,8 @@ verified Productor behavior contradicts it.
 ## Before changing anything
 
 1. Inspect the affected package, its tests, migrations, and current git status.
-2. Read the relevant section of `ARQUITECTURA.md`, `PLAN.md`, or `ENTREGA.md`.
+2. Read the relevant section of `ARQUITECTURA.md` and the relevant evidence in `docs/paridad/`; use
+   `docs/INDICE-DOCUMENTACION.md` to locate historical plans and deliveries.
 3. Check July for durable project decisions or access pointers when the task needs them.
 4. Read `.env` locally only when required; never expose or commit its values.
 5. Define the smallest change that proves the requested outcome and identify the

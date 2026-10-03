@@ -1,13 +1,13 @@
 # Investigación ampliada de fuentes y cortes
 
 Actualización posterior: la sección «Diferencia frente al ETL actual» describe
-el momento de esta investigación. [La implementación posterior](03-implementacion-cortes-referenciados.md)
+el momento de esta investigación. [La implementación posterior](../../historico/paridad/fase-7/03-implementacion-cortes-referenciados.md)
 ya conserva referencias y descuentos base; ConjuntosDescuentosDif continúa
 pendiente. [El barrido de facturas](05-primer-barrido-facturas-2026.md) amplía
 los datos disponibles sin acreditar todavía el cálculo independiente.
 
 
-> Continuidad revisada el 27/09/2026: [punto de partida vigente](../INICIO-SIGUIENTE-CONVERSACION.md). Las comprobaciones fechadas conservan sus límites; consultar el relevo para el trabajo siguiente.
+> Estado operativo: [ESTADO-ACTUAL.md](../../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites.
 
 27/09/2026. Continuación ejecutada en `main`, sin push. **Precio automático
 completo todavía pendiente.** No se ha modificado el motor de producción en

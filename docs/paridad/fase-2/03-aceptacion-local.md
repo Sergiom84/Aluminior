@@ -1,6 +1,6 @@
 # Fase 2 — aceptación local de geometría e interacción
 
-> Continuidad revisada el 27/09/2026: [punto de partida vigente](../INICIO-SIGUIENTE-CONVERSACION.md). Las comprobaciones fechadas conservan sus límites; consultar el relevo para el trabajo siguiente.
+> Estado operativo: [ESTADO-ACTUAL.md](../../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites.
 
 20/09/2026. Aceptación técnica en Aluminior completada junto con fase 1.
 El contraste de la misma tarea con Productor continúa pendiente; no se declara
@@ -53,6 +53,6 @@ del manual/capturas o decisión explícita. La implementación actual sustituye
 el módulo activo al elegir miniatura y añade únicamente al extremo derecho;
 este informe no convierte ese comportamiento en paridad confirmada.
 
-Continuación del 20/09/2026: [Actualización explícita de medidas y corrección de PSU001](../IMPLEMENTACION-ACTUALIZAR-2026-09-20.md). Implementación y verificaciones locales; contraste integral pendiente.
+Continuación del 20/09/2026: [Actualización explícita de medidas y corrección de PSU001](../../historico/paridad/IMPLEMENTACION-ACTUALIZAR-2026-09-20.md). Implementación y verificaciones locales; contraste integral pendiente.
 
-Observación directa posterior: [cierre de jornada](../../CIERRE-JORNADA-2026-09-20.md). Comprobados globales 1200, 2420, 3640 y 4860 con alto 1200; ensayo interrumpido al editar el fijo. Conserva pendiente el contraste equivalente completo.
+Observación directa posterior: [cierre de jornada](../CIERRE-JORNADA-2026-09-20.md). Comprobados globales 1200, 2420, 3640 y 4860 con alto 1200; ensayo interrumpido al editar el fijo. Conserva pendiente el contraste equivalente completo.

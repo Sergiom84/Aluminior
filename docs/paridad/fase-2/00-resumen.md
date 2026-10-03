@@ -1,6 +1,6 @@
 # Fase 2 — resumen
 
-> Continuidad revisada el 27/09/2026: [punto de partida vigente](../INICIO-SIGUIENTE-CONVERSACION.md). Las comprobaciones fechadas conservan sus límites; consultar el relevo para el trabajo siguiente.
+> Estado operativo: [ESTADO-ACTUAL.md](../../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites.
 
 Fecha: 20/09/2026. Estado: **implementación geométrica completada y aceptación local de navegador/PDF realizada; contraste directo con Productor iniciado y parcial**.
 
@@ -38,4 +38,4 @@ no reproducida en esta copia.
 
 ## Fin de jornada
 
-Ver [cierre del 20/09/2026](../../CIERRE-JORNADA-2026-09-20.md): observación directa parcial de cuatro módulos y estado de edición pendiente. No se declara cierre de fase 2.
+Ver [cierre del 20/09/2026](../CIERRE-JORNADA-2026-09-20.md): observación directa parcial de cuatro módulos y estado de edición pendiente. No se declara cierre de fase 2.

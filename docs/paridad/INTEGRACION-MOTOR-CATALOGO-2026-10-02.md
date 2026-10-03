@@ -1,5 +1,12 @@
 # Integración del motor de catálogo — 02/10/2026
 
+Revisión documental: código integrado comprobado en main `9bc879e`.
+Este informe conserva ensayos del cierre del importador del 02/10/2026.
+Despliegue, respaldo y estado remoto: **sin verificar directamente en esta auditoría**.
+En Docker local se comprobaron el 02/10 25 migraciones, RLS en las once tablas y catálogo
+vacío; la base de datos reales de aquellos ensayos no estaba presente.
+Siguiente paso: [ESTADO-ACTUAL.md](../ESTADO-ACTUAL.md).
+
 Preparada en `integracion/motor-catalogo`, desde `main` (`da6a537`) y el motor
 `0ecdc9c`. Integración publicada en `main` (`a74dabc`) y desplegada en Render.
 Migraciones 0023 y 0024 aplicadas en Supabase con respaldo previo y datos
@@ -77,7 +84,7 @@ total «Sin valorar» por las líneas incompletas. Escritorio 1440 × 1000 y mó
 375 × 812: sin desbordamiento horizontal del documento; tabla desplazable.
 
 No se certifica igualdad de estos precios con Productor: el banco documentado
-en `BANCO-COMPARACION-PRECIOS.md` exige tarifa, vidrio y contexto verificados;
+en [el banco de comparación](BANCO-COMPARACION-PRECIOS.md) exige tarifa, vidrio y contexto verificados;
 no hay casos generados y aceptados para esta prueba en la copia actual.
 No se ejecutó Productor en el Mac ni se inventaron entradas pendientes.
 
@@ -109,7 +116,7 @@ medición, resultados JSONL, capturas y ambos PDF. Los CSV originales y cualquie
 salida empresarial permanecen fuera de versionado. `.claude/launch.json` conserva
 el cambio local previo de Claude y queda fuera de esta entrega.
 
-## Producción — integración y migraciones aplicadas
+## Producción — aplicación informada por el cierre del importador
 
 El usuario autorizó commit, push y migraciones en Supabase el 02/10/2026.
 La rama de integración y `main` se publicaron en `a74dabc`; Render confirmó
@@ -137,7 +144,9 @@ local acredita selección vacía, inserción/truncado denegados y actualización
 borrado sin efecto para un rol sin bypass, incluso si recibe grants de filas.
 Referencia: [RLS y grants de Supabase](https://supabase.com/docs/guides/database/postgres/row-level-security).
 
-## Pendiente — carga del catálogo del motor
+## Procedimiento pendiente — carga del catálogo del motor
+
+La aprobación del saneamiento documental no autoriza ejecutar esta carga.
 
 Requiere autorización de carga de datos, distinta del permiso recibido para
 migraciones. Mantener estas tablas vacías conserva la valoración anterior.

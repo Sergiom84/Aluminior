@@ -1,6 +1,6 @@
 # Fase 3 — composición, catálogo e inserción
 
-> Continuidad revisada el 27/09/2026: [punto de partida vigente](../INICIO-SIGUIENTE-CONVERSACION.md). Las comprobaciones fechadas conservan sus límites; consultar el relevo para el trabajo siguiente.
+> Estado operativo: [ESTADO-ACTUAL.md](../../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites.
 
 Fecha: 25/09/2026. Evidencia en [01-evidencia-composicion.md](01-evidencia-composicion.md).
 
@@ -67,9 +67,9 @@ una cadena v1. Dos causas en `origen-valorado.ts`:
 
 ## Pendiente
 
-- Catálogo: las familias siguen alimentándose de las 14 plantillas verificadas;
-  mostrar las estructuras reales de cada familia exige ampliar el generador
-  de diseño (`diseno-catalogo.ts`, 46 de 541 dibujables).
+- Catálogo ampliado después: el código registra las verificadas y las generadas.
+  El cierre del 02/10 informa 160 disponibles; ver [catálogo real](../CATALOGO-REAL-2026-10-02.md).
+  Los ensayos anteriores conservan su fecha; producción no se verifica aquí.
 - Pestañas Módulo y Propiedades del Cerramiento: semántica de «módulo» sin resolver.
 - Radio de captura del arrastre y regla exacta de eliminación de Productor.
 - Materiales por elemento, buscador de vidrio y 14 uniones avanzaron después

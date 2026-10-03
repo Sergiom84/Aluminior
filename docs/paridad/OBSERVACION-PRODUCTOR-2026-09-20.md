@@ -1,6 +1,6 @@
 # Productor: recorrido aportado por el operador el 20/09/2026
 
-> Continuidad revisada el 27/09/2026: [punto de partida vigente](INICIO-SIGUIENTE-CONVERSACION.md). Las comprobaciones fechadas conservan sus límites; consultar el relevo para el trabajo siguiente.
+> Estado operativo: [ESTADO-ACTUAL.md](../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites.
 
 ## Alcance y fuentes
 
@@ -165,10 +165,10 @@ No hay reapertura final, PDF ni comparación con iguales entradas en Aluminior.
 | 8. Aceptación integral | Recorrido documentado y puntos de actualización explícitos | Teclado, reapertura, PDF y contraste integral con el operador. |
 
 Antes de continuar implementación, leer este registro junto a
-[estado de fases](ESTADO-FASES.md) y [aceptación local de fase 2](fase-2/03-aceptacion-local.md).
+[estado de fases](../historico/paridad/ESTADO-FASES.md) y [aceptación local de fase 2](fase-2/03-aceptacion-local.md).
 Las observaciones posteriores deben añadirse fechadas, conservando las diferencias
 entre evidencia visible, explicación del operador y reglas aún no verificadas.
 
-Continuación del 20/09/2026: [Actualización explícita de medidas y corrección de PSU001](IMPLEMENTACION-ACTUALIZAR-2026-09-20.md). Implementación y verificaciones locales; contraste integral pendiente.
+Continuación del 20/09/2026: [Actualización explícita de medidas y corrección de PSU001](../historico/paridad/IMPLEMENTACION-ACTUALIZAR-2026-09-20.md). Implementación y verificaciones locales; contraste integral pendiente.
 
-Observación directa posterior, distinta de estas doce capturas: [cierre de jornada](../CIERRE-JORNADA-2026-09-20.md). No se completó ni guardó de forma comprobada el nuevo caso; leer el punto de interrupción antes de continuar.
+Observación directa posterior, distinta de estas doce capturas: [cierre de jornada](CIERRE-JORNADA-2026-09-20.md). No se completó ni guardó de forma comprobada el nuevo caso; leer el punto de interrupción antes de continuar.

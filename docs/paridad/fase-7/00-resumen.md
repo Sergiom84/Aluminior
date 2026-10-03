@@ -1,17 +1,22 @@
 # Fase 7 — diagnóstico económico y salida comercial (parcial)
 
+Alcance del 27/09/2026, anterior al motor integrado en main `9bc879e`.
+El [motor posterior](../INTEGRACION-MOTOR-CATALOGO-2026-10-02.md) incorpora
+referencias, descuentos incluidos Dif, asociaciones y valoración por catálogo.
+La carga remota sigue pendiente según el cierre. Los diagnósticos siguientes
+son resultados fechados; no describen las capacidades actuales del código.
+
 Actualización consolidada: [barrido de facturas 2026](05-primer-barrido-facturas-2026.md),
 180 documentos y 28.480 líneas. Ningún caso de ese banco está acreditado aún
 como calculable/contrastado. Alcance: todas las tipologías, series y uniones.
-Los apartados diagnósticos siguientes son anteriores a la importación 0022:
-referencias y descuentos base ya se conservan; Dif y reglas completas no.
+Los apartados diagnósticos siguientes conservan el alcance del ensayo original.
 
 
-> Continuidad revisada el 27/09/2026: [punto de partida vigente](../INICIO-SIGUIENTE-CONVERSACION.md). Las comprobaciones fechadas conservan sus límites; consultar el relevo para el trabajo siguiente.
+> Estado operativo: [ESTADO-ACTUAL.md](../../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites.
 
 27/09/2026. No se declara valoración comercial completa.
 
-Implementación posterior solicitada: [cortes por referencias y descuentos](03-implementacion-cortes-referenciados.md).
+Implementación posterior solicitada: [cortes por referencias y descuentos](../../historico/paridad/fase-7/03-implementacion-cortes-referenciados.md).
 Habilitados los perfiles ordinarios C2/C3 GMC400, con importación suplementaria
 y migración aditiva solo aplicada en QA local. Cortes contrastados; precio
 completo aún bloqueado por asociados y vidrio. No se modificó Supabase.
@@ -20,7 +25,7 @@ Requisito confirmado por Sergio: **precio automático completo**. No acepta una
 entrega provisional basada en precio manual. Este requisito sigue pendiente;
 el guardado y el PDF operativos no son aceptación de la entrega.
 
-Continuidad de sesión: [instrucciones y estado](../CONTINUAR-2026-09-27.md).
+Estado operativo: [estado y siguiente paso](https://github.com/Sergiom84/Aluminior/blob/9bc879e1530b076c4e7c17dee8e0a076c76e7b4e/docs/paridad/CONTINUAR-2026-09-27.md).
 
 Investigación ampliada: [fuentes y cadena de cortes](02-investigacion-fuentes-2026-09-27.md).
 Ocho MDB inspeccionadas sobre copias; localizada tarifa TXT y releído el CHM.
@@ -73,8 +78,8 @@ esquineros; la valoración de unión se verifica por su receta específica.
 Lectura de los CSV exportados, sin modificar origen ni importar documentos:
 
 - `EstructurasArticulos` C2 conserva referencias a otras piezas (`DisIdRefLargo`,
-  `DisFRefLargo`) y grupos delimitadores. El ETL actual no conserva todos estos
-  enlaces ni importa `ConjuntosDescuentos`/`ConjuntosDescuentosDif`.
+  `DisFRefLargo`) y grupos delimitadores. En aquel ensayo el ETL no conservaba todos estos enlaces.
+  El motor posterior incorpora su importación, incluidos descuentos Dif.
 - PLAN T.26 confirma que 222–229 son ranuras de herraje, aunque su función sea
   HV/HH. No se deben cobrar como perfiles ni eliminarlas sin resolver asociados.
 - En 122 estructuras históricas C2/C3 con GMC400, las piezas GM449/GM450

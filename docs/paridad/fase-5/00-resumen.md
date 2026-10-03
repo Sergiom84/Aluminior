@@ -1,6 +1,6 @@
 # Fase 5 — búsqueda de vidrio (parcial)
 
-> Continuidad revisada el 27/09/2026: [punto de partida vigente](../INICIO-SIGUIENTE-CONVERSACION.md). Las comprobaciones fechadas conservan sus límites; consultar el relevo para el trabajo siguiente.
+> Estado operativo: [ESTADO-ACTUAL.md](../../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites.
 
 27/09/2026. Evidencia: [E10 y E11](../OBSERVACION-PRODUCTOR-2026-09-20.md).
 
