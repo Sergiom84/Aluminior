@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "exports": {
+    "./banco-contraste": "./src/banco-contraste.ts"
+  },
   "scripts": {
     "import": "tsx src/importar.ts",
     "test": "vitest run",

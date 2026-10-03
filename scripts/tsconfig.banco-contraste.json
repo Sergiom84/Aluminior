@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "target": "ES2022", "module": "ESNext", "moduleResolution": "bundler",
+    "strict": true, "noEmit": true, "allowImportingTsExtensions": true,
+    "allowJs": true, "skipLibCheck": true, "types": ["node"]
+  },
+  "include": ["banco-contraste.ts", "lib/banco-contraste/**/*.ts"]
+}

@@ -27,6 +27,7 @@ se conservan como fuentes inactivas, sin reactivar instrucciones ni permisos.
 |---|---|
 | [AUDITORIA-FASE-0-CORRECCIONES-TERRA.md](paridad/AUDITORIA-FASE-0-CORRECCIONES-TERRA.md) | Evidencia o verificación fechada; conservar sus límites |
 | [BANCO-COMPARACION-PRECIOS.md](paridad/BANCO-COMPARACION-PRECIOS.md) | Banco diagnóstico; contexto económico pendiente |
+| [BANCO-CONTRASTE-2026-10-03.md](paridad/BANCO-CONTRASTE-2026-10-03.md) | Medición local de presupuestos reales, exclusiones, causas y propuestas |
 | [CATALOGO-REAL-2026-10-02.md](paridad/CATALOGO-REAL-2026-10-02.md) | Catálogo visual y ejecución informada de 0022 |
 | [CIERRE-JORNADA-2026-09-20.md](paridad/CIERRE-JORNADA-2026-09-20.md) | Evidencia o verificación fechada; conservar sus límites |
 | [EVIDENCIA-ASIGNACION-HERRAJE.md](paridad/EVIDENCIA-ASIGNACION-HERRAJE.md) | Evidencia o verificación fechada; conservar sus límites |

@@ -1,5 +1,8 @@
 # Banco local de comparación: cobertura y límites
 
+Medición posterior del 03/10/2026: [banco de contraste de presupuestos](BANCO-CONTRASTE-2026-10-03.md).
+Usa cabeceras y GRUPO de `Anterior.mdb` y los servicios web; conserva este banco v1 y sus límites.
+
 Alcance revisado: las 46 candidatas y 888 casos son mediciones del 19/09/2026,
 no el límite del catálogo visual actual de 160. El adaptador diagnóstico existe;
 los casos históricos siguen pendientes de contexto y contraste económico.

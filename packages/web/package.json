@@ -2,6 +2,9 @@
   "name": "@aluminior/web",
   "version": "0.1.0",
   "private": true,
+  "exports": {
+    "./banco-contraste": "./banco-contraste.ts"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",

@@ -1,0 +1,117 @@
+/** Frontera de ensayo. Usa los casos de uso reales; no implementa valoración. */
+import { eq } from 'drizzle-orm'
+import { schema } from '@aluminior/db'
+import { plantillaDiseno, UNIONES_VISUALES } from '@aluminior/core/estructuras'
+import { sumarDecimal, multiplicarDecimal, normalizarDecimal } from '@aluminior/core/precios'
+import { valorarEstructura, prepararManoObra, valorarCerramiento, importesLineaCerramiento, esConfiguracionCerramiento,
+  type ClienteEscritura } from '@aluminior/web/banco-contraste'
+import { configuracionGrupo } from './geometria.ts'
+import { numero, si, texto, type Caso, type Pieza } from './datos.ts'
+
+export interface SalidaServicio { precio: number | null; total: number | null; piezas: Pieza[]; avisos: string[]; motivos: string[] }
+const vacia = (motivos: string[], avisos: string[] = []): SalidaServicio => ({ precio: null, total: null, piezas: [], avisos, motivos })
+function restricciones(c: Caso) {
+  const motivos: string[] = []
+  // No traducimos una alternativa de acristalamiento sin semántica demostrada.
+  if (numero(c.configuracion?.nTAcris) !== 0) motivos.push('acristalamiento-alternativo-sin-mapeo')
+  if (texto(c.configuracion?.Vidrio2)) motivos.push('segundo-vidrio-no-representable')
+  if (c.familias.some(f => f.familia !== '001' && f.familia !== '050' && f.conjunto)) motivos.push('familia-adicional-no-representable')
+  if (c.opciones.some(o => numero(o.nOpcion) === null)) motivos.push('opcion-invalida')
+  if ([c.configuracion?.HorasAdFabr, c.configuracion?.HorasColoc].some(h => numero(h) === null || numero(h)! < 0)) motivos.push('horas-no-representables')
+  if (texto(c.padre.Acabado2) && texto(c.padre.Acabado2) !== texto(c.padre.Acabado)) motivos.push('segundo-acabado-sin-mapeo')
+  return motivos
+}
+function opciones(c: Caso) { return c.opciones.filter(o => si(o.SelecSN)).map(o => `${texto(o.Conjunto)}|${numero(o.nOpcion)}`) }
+function proyectar(p: { articuloCodigo: string; funcion?: string | null; acabadoCodigo?: string | null;
+  cantidad?: string; largoCorteMm?: string | null; anchoCorteMm?: string | null;
+  costeUnitario?: string | null; costeTotal?: string | null }, partida?: {
+    cantidadFacturable: string | null; precioUnitario: string | null; importeExacto: string | null; unidad: string | null }) : Pieza {
+  return { articulo: p.articuloCodigo, funcion: p.funcion ?? '', acabado: p.acabadoCodigo ?? '',
+    cantidad: p.cantidad == null ? null : Number(p.cantidad), largo: p.largoCorteMm == null ? null : Number(p.largoCorteMm),
+    ancho: p.anchoCorteMm == null ? null : Number(p.anchoCorteMm),
+    coste: p.costeUnitario == null ? null : Number(p.costeUnitario), costeTotal: p.costeTotal == null ? null : Number(p.costeTotal),
+    precio: partida?.precioUnitario == null ? null : Number(partida.precioUnitario),
+    importe: partida?.importeExacto == null ? null : Number(normalizarDecimal(partida.importeExacto, 2)),
+    metraje: partida?.cantidadFacturable == null ? null : Number(partida.cantidadFacturable), unidad: partida?.unidad ?? '' }
+}
+export async function ejecutarServicio(cliente: ClienteEscritura, c: Caso): Promise<SalidaServicio> {
+  const motivos = restricciones(c)
+  // Acabado2 desconocido permite diagnóstico con el principal, jamás un acierto.
+  if (motivos.some(m => m !== 'segundo-acabado-sin-mapeo')) return vacia(motivos)
+  const acabado = texto(c.padre.Acabado) || null
+  const [vidrio] = c.vidrio ? await cliente.select().from(schema.articulosDespiece).where(eq(schema.articulosDespiece.articuloCodigo, c.vidrio)).limit(1) : []
+  const varianteAcristalamiento = vidrio?.dobleAcristalamiento ? '2' as const : '1' as const
+  const general = { serieCodigo: c.serie, vidrioCodigo: c.vidrio, acabadoCodigo: acabado,
+    varianteAcristalamiento, tarifa: c.tarifa!, opcionesHerraje: opciones(c) }
+  const manoObra = await prepararManoObra(cliente, { tarifa: c.tarifa!, horas: {
+    // Access REAL conserva 6,07000017: formato de formulario a dos decimales.
+    fabricacion: numero(c.configuracion?.HorasAdFabr)!.toFixed(2), colocacion: numero(c.configuracion?.HorasColoc)!.toFixed(2) } })
+  const manual = manoObra.estado === 'PREPARADA' ? manoObra.filas.map(f => ({ articulo: f.articuloCodigo,
+    funcion: f.articuloCodigo, acabado: f.acabadoCodigo ?? '', cantidad: Number(f.minutos), largo: 0, ancho: 0,
+    coste: f.costeMinuto == null ? null : Number(f.costeMinuto), costeTotal: f.costeTotal == null ? null : Number(f.costeTotal),
+    precio: f.precioMinuto == null ? null : Number(f.precioMinuto), importe: f.importe == null ? null : Number(f.importe),
+    metraje: Number(f.minutos), unidad: 'UD' })) : []
+  const moValida = manoObra.estado === 'SIN_HORAS' || (manoObra.estado === 'PREPARADA' && manoObra.valorable)
+  if (c.tipo === 'GRUPO') {
+    if ((c.elementos ?? []).some(e => !(c.geometria ?? []).some(g => texto(g.nLinEstr) === texto(e.padre.nLinea)))) return vacia(['elementos-adicionales-sin-geometria'])
+    const g = configuracionGrupo(c)
+    if (!g.configuracion) return vacia(g.motivos)
+    const admite = (v: unknown): boolean => esConfiguracionCerramiento(v)
+    if (!admite(g.configuracion)) {
+      const razones = ['configuracion-no-admitida-por-web']
+      if (g.configuracion.modulos.some(m => !Number.isInteger(m.anchoMm) || !Number.isInteger(m.altoMm))) razones.push('medidas-fraccionarias-no-admitidas')
+      if (g.configuracion.modulos.some(m => !plantillaDiseno(m.estructuraCodigo))) razones.push('modelo-sin-plantilla-visual')
+      if (g.configuracion.uniones.some(u => !UNIONES_VISUALES.some(v => v.codigo === u.codigo))) razones.push('union-fuera-del-configurador')
+      return vacia(razones)
+    }
+    const es = c.elementos ?? [], config = es.filter(e => !si(c.geometria?.find(g => texto(g.nLinEstr) === texto(e.padre.nLinea))?.EsUnionSN))
+    const incompatibles = config.flatMap(e => restricciones(e))
+    if (incompatibles.some(m => m !== 'segundo-acabado-sin-mapeo')) return vacia([...new Set(incompatibles)])
+    if (es.some(e => texto(e.padre.Acabado2) && texto(e.padre.Acabado2) !== texto(e.padre.Acabado))) motivos.push('segundo-acabado-sin-mapeo')
+    const selecciones = new Map<string, Set<boolean>>()
+    for (const e of es) for (const o of e.opciones) {
+      const k = `${texto(o.Conjunto)}|${numero(o.nOpcion)}`, s = selecciones.get(k) ?? new Set<boolean>()
+      s.add(si(o.SelecSN)); selecciones.set(k, s)
+    }
+    if ([...selecciones.values()].some(s => s.size > 1)) return vacia(['opciones-por-elemento-no-representables'])
+    if (config.some(e => numero(e.configuracion?.HorasAdFabr)! > 0 || numero(e.configuracion?.HorasColoc)! > 0)) return vacia(['horas-por-elemento-no-representables'])
+    const acabados = new Set(es.map(e => texto(e.padre.Acabado)).filter(Boolean))
+    if (acabados.size > 1) return vacia(['acabados-por-elemento-no-representables'])
+    const base = config[0]!
+    const uniones = es.filter(e => si(c.geometria?.find(g => texto(g.nLinEstr) === texto(e.padre.nLinea))?.EsUnionSN))
+    if (uniones.some(e => e.serie !== base.serie)) return vacia(['serie-de-union-no-representable'])
+    // GRUPO no tiene vidrio propio: la selección global pertenece a sus módulos.
+    const variantes = new Map<string, '1' | '2'>()
+    for (const codigo of new Set(config.map(e => e.vidrio).filter((v): v is string => !!v))) {
+      const [articulo] = await cliente.select().from(schema.articulosDespiece).where(eq(schema.articulosDespiece.articuloCodigo, codigo)).limit(1)
+      variantes.set(codigo, articulo?.dobleAcristalamiento ? '2' : '1')
+    }
+    if (new Set(variantes.values()).size > 1) return vacia(['variantes-de-vidrio-por-elemento-no-representables'])
+    const r = await valorarCerramiento(cliente, { ...general, serieCodigo: base.serie,
+      vidrioCodigo: base.vidrio, acabadoCodigo: [...acabados][0] ?? acabado,
+      varianteAcristalamiento: base.vidrio ? variantes.get(base.vidrio)! : '1',
+      opcionesHerraje: [...selecciones].filter(([, s]) => s.has(true)).map(([k]) => k), configuracion: g.configuracion })
+    const piezas = r.origenes.flatMap(o => {
+      const partidas = o.partidasValoracion.filter(p => p.cantidadFacturable === null || Number(p.cantidadFacturable) !== 0)
+      return o.piezas.map((p, i) => {
+        const partida = partidas[i]?.articuloCodigo === p.articuloCodigo ? partidas[i] : undefined
+        return proyectar({ ...p, acabadoCodigo: partida?.acabadoCodigo ?? p.acabadoCodigo }, partida)
+      })
+    })
+    const importes = importesLineaCerramiento(r, String(c.cantidad), manoObra)
+    return { precio: importes.total == null ? null : Number(importes.total) / c.cantidad!,
+      total: importes.total == null ? null : Number(importes.total), piezas: [...piezas, ...manual],
+      avisos: r.origenes.flatMap(o => o.diagnosticos.map(d => d.detalle)), motivos }
+  }
+  const r = await valorarEstructura(cliente, { ...general, codigo: c.modelo,
+    anchoMm: c.dimensiones.ancho, altoMm: c.dimensiones.alto, trazabilidad: true })
+  if (!r.ok) return vacia(['validacion-del-servicio'], Object.values(r.errores).flat())
+  const piezas = r.piezas.map((p, i) => proyectar(p, r.partidas?.[i]))
+  // La estructura histórica incluye ajustes en Precio; la web los cobra por línea.
+  // Conservamos esa diferencia y usamos el total real de la web por cantidad.
+  const totalMaterial = r.precioUnitario === null ? null : multiplicarDecimal(String(r.precioUnitario), String(c.cantidad), 2)
+  const total = totalMaterial === null || !moValida ? null : manual.reduce((s, f) => sumarDecimal(s, String(f.importe!), 2), totalMaterial)
+  return { precio: total === null ? null : Number(total) / c.cantidad!, total: total === null ? null : Number(total),
+    piezas: [...piezas, ...manual], avisos: r.aviso ? [r.aviso] : [],
+    motivos: [...motivos, ...(r.motor === 'anterior' ? ['via-anterior-sin-mediciones-historicas'] : [])] }
+}

@@ -17,6 +17,12 @@ Este es el único punto de entrada de estado y siguiente trabajo.
   La existencia del código no acredita paridad integral con Productor.
 - Motor de catálogo integrado en main: tablas de `0023_motor_catalogo`,
   protección `0024_motor_catalogo_rls`, cargador dirigido y lector compatible.
+- Banco local medido el 03/10 con la copia `Anterior.mdb` y los servicios web:
+  **5/523 líneas elegibles al mismo precio (0,96 %)**; en 2026, 5/496 (1,01 %).
+  434 exclusiones justificadas; 3 cercanas, 172 distintas, 335 sin valorar y 8 errores.
+  El segundo acabado sin mapeo demostrado impide contar coincidencias parciales como aciertos.
+  [Resultados, mapeo y propuestas](paridad/BANCO-CONTRASTE-2026-10-03.md).
+  Catálogo cargado solo en `aluminior_real_test`; motor y precios sin modificar.
 - Desarrollo en Mac con Docker. En la base local `aluminior_test` se comprobaron el 02/10
   25 migraciones y RLS en las once tablas del motor; catálogo y estructuras
   vacíos. La base con datos reales de ensayos anteriores no estaba disponible el 02/10.
@@ -49,15 +55,12 @@ Este es el único punto de entrada de estado y siguiente trabajo.
 
 ## Siguiente paso
 
-Verificar destino, respaldo y estado de las once tablas; simular la carga
-dirigida del motor con el origen autorizado. Revisar conservación de documentos
-y solicitar la autorización específica de aplicación antes de `--apply`.
-Preparar el [banco de contraste](paridad/BANCO-COMPARACION-PRECIOS.md): verificar
-el contexto de cada caso y comparar artículos, medidas, cantidades, herrajes,
-vidrio, mano de obra, tarifa y redondeo con iguales entradas en Productor y
-Aluminior. Registrar diferencias y casos incompletos antes de aceptar el motor.
-Después, comprobar guardado, recarga y PDF. La aprobación de documentación
-no autoriza esa carga remota.
+Revisar las [propuestas del banco local](paridad/BANCO-CONTRASTE-2026-10-03.md):
+acabados, compactos/accesorios, PVP y entradas históricas no representables.
+Verificar cada regla antes de corregir el motor y repetir la medición local.
+La medición no depende de Supabase: la carga de producción queda después,
+con resultados conocidos, destino y respaldo verificados y alcance específico
+autorizado. Después, comprobar guardado, recarga y PDF en ese entorno.
 
 ## Enlaces
 
