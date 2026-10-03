@@ -18,7 +18,7 @@ describe('valoración pendiente para FI explícito', () => {
     const resultado = await prepararLineaValorada(
       { execute } as unknown as ClienteEscritura,
       alta.alta,
-      { tarifa: 1, cantidad: 2, horasFabricacion: '1', horasColocacion: '1' },
+      { presupuestoId: '00000000-0000-4000-8000-000000000001', tarifa: 1, cantidad: 2, horasFabricacion: '1', horasColocacion: '1' },
     )
 
     expect(execute).not.toHaveBeenCalled()

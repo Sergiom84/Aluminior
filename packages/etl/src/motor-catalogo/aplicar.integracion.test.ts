@@ -58,8 +58,8 @@ beforeAll(async () => {
   expect((await sql`SELECT to_regclass('public.conjunto_parametros_despiece') AS tabla`)[0]!.tabla).toBeNull()
   expect((await sql`SELECT max(created_at)::text AS ultima FROM drizzle.__drizzle_migrations`)[0]!.ultima).toBe('1790951000407')
   await migrate(drizzle(sql), { migrationsFolder: migraciones })
-  expect((await sql`SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations`)[0]!.n).toBe(27)
-  expect((await sql`SELECT max(created_at)::text AS ultima FROM drizzle.__drizzle_migrations`)[0]!.ultima).toBe('1791027810356')
+  expect((await sql`SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations`)[0]!.n).toBe(28)
+  expect((await sql`SELECT max(created_at)::text AS ultima FROM drizzle.__drizzle_migrations`)[0]!.ultima).toBe('1791041958034')
   await sql`INSERT INTO estructuras (codigo, descripcion) VALUES ('QA-MOTOR', 'Estructura sintética')`
   await sql`INSERT INTO presupuestos (numero, revision, serie, fecha, nombre_libre, tarifa, estado)
     VALUES (999001, 0, 'A', '2026-10-02', 'QA motor', 1, 'PENDIENTE')`

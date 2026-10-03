@@ -108,6 +108,18 @@ radio `Ret. sin IVA` / `Ret. con IVA`; divisa `EUR`.
 - `Gastos` con subpestañas `Gastos` / `Otros Gastos`: `Comisión`, `Gastos
   Financ.`, `Portes`, `Generales` (% e importe), `Sumar Comisión`, `Deducir IVA
   antes`, `Otros Gastos`, `Despunte` (% sobre base) + `Calcular Despunte`.
+  Aluminior implementa por ahora `Comisión` (%) y `Sumar Comisión`; el efecto
+  sobre los precios está en [BANCO-CONTRASTE](BANCO-CONTRASTE-2026-10-03.md),
+  iteración 6. Líneas ya guardadas al cambiar la comisión: **hipótesis sin
+  observar**. En EMP0016, 50 de 403 documentos suman comisión (-50 % a 25 %) y
+  ninguno la tiene sin sumar. De sus 140 líneas de estructura y GRUPO con
+  despiece, 125 siguen el factor de su cabecera (±5 céntimos), ninguna queda en
+  base (factor 1) y las 15 restantes tienen precio manual o razones sin forma de
+  comisión (1,24 con 10 %). `LastModified` está vacío y no permite fechar
+  cambios. Eso es compatible tanto con un recálculo como con fijar la comisión
+  antes de añadir líneas. Aluminior rechaza
+  el cambio mientras haya líneas valoradas afectadas. Pendiente: en Windows,
+  cambiar la comisión de un presupuesto con líneas y anotar si `Precio` cambia.
 
 ## `Edición de Línea` (ENTER sobre una línea)
 

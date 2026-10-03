@@ -24,6 +24,14 @@ Este es el único punto de entrada de estado y siguiente trabajo.
   y mapeo de nTAcris 0/1 a la primera opción. Ninguna igualdad anterior perdida.
   [Resultados, mapeo y propuestas](paridad/BANCO-CONTRASTE-2026-10-03.md).
   Catálogo cargado solo en `aluminior_real_test`; precios y márgenes sin modificar.
+- Comisión de cabecera (pestaña `Gastos`: `Comisión` % y `Sumar Comisión`) en la ficha
+  del presupuesto. Migración `0027_presupuesto_gastos_comision` (tabla aparte, RLS) **sin
+  aplicar en Supabase ni en `aluminior_real_test`**: el banco exige 27 migraciones. Sin
+  ella la web lee comisión 0 y rechaza guardar otra. Con `Sumar Comisión`, el alta de
+  estructura y el alta o edición de GRUPO aplican el factor al precio; el despiece
+  queda en base y la copia arrastra los gastos. Artículos sin comisión (sin evidencia).
+  Cambiar la comisión sumada con líneas de estructura o GRUPO valoradas se rechaza:
+  no se revalora nada guardado hasta observar en Productor si recalcula.
 - Desarrollo en Mac con Docker. En la base local `aluminior_test` se comprobaron el 02/10
   25 migraciones y RLS en las once tablas del motor; catálogo y estructuras
   vacíos. La base con datos reales de ensayos anteriores no estaba disponible el 02/10.

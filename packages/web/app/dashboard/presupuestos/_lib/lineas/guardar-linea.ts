@@ -9,6 +9,8 @@ import { persistirManoObra, type SnapshotManoObra } from '../mano-obra/index.ts'
 import { bloquearPresupuesto } from './bloquear-presupuesto.ts'
 import { sql } from 'drizzle-orm'
 import { leerAltaRepetida } from './alta-repetida.ts'
+import { comisionDeLineas, mismaComision } from '../gastos/gastos-documento.ts'
+import { ErrorOperacionCerramiento } from '../cerramientos/error-operativo.ts'
 
 type Db = Pick<ReturnType<typeof crearDb>, 'transaction'>
 
@@ -50,7 +52,13 @@ export type EscrituraLinea =
       /** Cero, una o dos filas. Resueltas antes; aquí sólo se escriben. */
       manoObra: readonly SnapshotManoObra[]
     }
-  | { tipo: 'ESTRUCTURA'; valores: ValoresLinea; estructura: SatelitesEstructura }
+  | {
+      tipo: 'ESTRUCTURA'
+      valores: ValoresLinea
+      estructura: SatelitesEstructura
+      /** Comisión sumada incluida en el precio; se valora fuera del bloqueo y se comprueba dentro. */
+      comisionPorc?: string | null
+    }
 
 /** Punto de sincronización exclusivo de pruebas de concurrencia. */
 interface HooksGuardarLinea {
@@ -87,6 +95,9 @@ async function guardarLineaConGanchos(
 
     const repetida = await leerAltaRepetida(tx, entrada.valores.presupuestoId, entrada.valores.id)
     if (repetida) return repetida.id
+    if (entrada.tipo === 'ESTRUCTURA' && entrada.valores.precioUnitario != null &&
+      !mismaComision(entrada.comisionPorc ?? null, await comisionDeLineas(tx, entrada.valores.presupuestoId)))
+      throw new ErrorOperacionCerramiento('La comisión del presupuesto ha cambiado; vuelve a añadir la línea')
 
     return escribirLineaPreparada(tx, entrada)
   })
