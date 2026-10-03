@@ -145,6 +145,8 @@ export interface FilaDespieceCatalogo {
   anchoMm: number | null
   funcion: string | null
   metraje: number | null
+  /** Precio unitario efectivo de la fila (PVP con incremento por medida). */
+  precio?: number | null
   importe: number | null
 }
 

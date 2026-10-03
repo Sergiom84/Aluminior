@@ -50,6 +50,7 @@ export function despiezarLineaCatalogo(catalogo: CatalogoLinea, entrada: Entrada
   for (const f of filas) {
     const r = importeFila(f, catalogo.tarifa(f.articulo, f.acabado))
     f.metraje = r.metraje
+    f.precio = r.precio
     f.importe = r.importe
     if (r.incidencia) incidencias.push(`${f.articulo}: ${r.incidencia}`)
     else total += r.importe!

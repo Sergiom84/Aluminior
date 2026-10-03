@@ -116,7 +116,7 @@ export async function valorarConCatalogo(
 
   const partidas: PartidaValoracionCerramiento[] = resultado.filas.map((f, ordinal) => {
     const t = catalogo.tarifa(f.articulo, f.acabado)
-    const cantidad = decimal(f.metraje, 6), precio = decimal(t?.pvp, 4)
+    const cantidad = decimal(f.metraje, 6), precio = decimal(f.precio ?? t?.pvp, 4)
     const valorada = cantidad !== null && precio !== null && f.importe !== null
     return { ordinal, grupoValoracion: GRUPO[f.origen], articuloCodigo: f.articulo, unidad: t?.tipoMetraje ?? null,
       cantidadFacturable: cantidad, precioUnitario: valorada ? precio : null,
