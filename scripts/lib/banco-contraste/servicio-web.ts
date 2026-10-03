@@ -16,6 +16,8 @@ function restricciones(c: Caso) {
   const motivos: string[] = []
   // No traducimos una alternativa de acristalamiento sin semántica demostrada.
   if (opcionAcristalamientoOrigen(c.configuracion?.nTAcris) === null) motivos.push('acristalamiento-alternativo-sin-mapeo')
+  // El despunte de cabecera se reparte en las líneas sin regla demostrada.
+  if (c.despunte! > 0) motivos.push('despunte-de-documento-sin-regla')
   if (c.tipo === 'GRUPO' && c.accesorios?.length) motivos.push('accesorios-de-grupo-no-representables')
   else motivos.push(...compactoDeCaso(c).motivos)
   if (texto(c.configuracion?.Vidrio2)) motivos.push('segundo-vidrio-no-representable')
@@ -45,7 +47,8 @@ export async function ejecutarServicio(cliente: ClienteEscritura, c: Caso): Prom
   const varianteAcristalamiento = vidrio?.dobleAcristalamiento ? '2' as const : '1' as const
   const general = { serieCodigo: c.serie, vidrioCodigo: c.vidrio, acabadoCodigo: acabado,
     acabadoAccesoriosCodigo: texto(c.padre.Acabado2) || null,
-    varianteAcristalamiento, opcionAcristalamiento: opcionAcristalamientoOrigen(c.configuracion?.nTAcris)!, tarifa: c.tarifa!, opcionesHerraje: opciones(c) }
+    varianteAcristalamiento, opcionAcristalamiento: opcionAcristalamientoOrigen(c.configuracion?.nTAcris)!, tarifa: c.tarifa!, opcionesHerraje: opciones(c),
+    comisionPorc: c.comision ?? null }
   // Access REAL conserva 6,07000017: formato de formulario a dos decimales.
   const horas = { fabricacion: numero(c.configuracion?.HorasAdFabr)!.toFixed(2), colocacion: numero(c.configuracion?.HorasColoc)!.toFixed(2) }
   if (c.tipo === 'GRUPO') {
@@ -103,7 +106,7 @@ export async function ejecutarServicio(cliente: ClienteEscritura, c: Caso): Prom
         return proyectar({ ...p, acabadoCodigo: partida?.acabadoCodigo ?? p.acabadoCodigo }, partida)
       })
     })
-    const importes = importesLineaCerramiento(r, String(c.cantidad), manoObra)
+    const importes = importesLineaCerramiento(r, String(c.cantidad), manoObra, c.comision ?? null)
     return { precio: importes.total == null ? null : Number(importes.total) / c.cantidad!,
       total: importes.total == null ? null : Number(importes.total), piezas: [...piezas, ...manual],
       avisos: r.origenes.flatMap(o => o.diagnosticos.map(d => d.detalle)), motivos }

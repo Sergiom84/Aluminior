@@ -93,6 +93,12 @@ describe('valoración con el catálogo de despiece completo', () => {
     expect(r.opcionesHerraje).toEqual([{ categoria: 'QA-HERR', opcionCodigo: '1', descripcion: 'Cierre' }])
     expect(r.acristalamiento).toHaveLength(2)
   }))
+  it('la comisión sumada cambia solo el precio de la línea, no el despiece', () => caso(async tx => {
+    const r = await valorarEstructura(tx, { ...entrada, comisionPorc: '10', trazabilidad: true })
+    if (!r.ok) throw new Error('rechazada')
+    expect(r.precioUnitario).toBe(153.52)
+    expect(r.partidas!.reduce((s, p) => s + Number(p.importeExacto), 0)).toBeCloseTo(139.56, 2)
+  }))
   it('cobra las horas manuales por unidad como filas MO y MOCOL del despiece', () => caso(async tx => {
     await tx.insert(schema.articulos).values({ codigo: 'MOCOL', descripcion: 'MOCOL', tipoMetraje: 'UD' }).onConflictDoNothing()
     await tx.insert(schema.articulosPvp).values({ articuloCodigo: 'MOCOL', acabadoCodigo: 'UNI', tarifa: 1, precio: '0.5' })

@@ -3,7 +3,7 @@ import { partidasValoracion } from './partidas-valoracion.ts'
 import type { PartidaValoracionCerramiento } from '@aluminior/core/estructuras'
 import type { CompactoLineaCatalogo } from '@aluminior/core/despiece'
 import { resolverMaterialesEstructura } from './materiales-estructura.ts'
-import { lineaValorable } from '@aluminior/core/precios'
+import { lineaValorable, precioConComision } from '@aluminior/core/precios'
 import type { ClienteEscritura } from '../cliente-db.ts'
 import type {
   OpcionHerrajeElegida, PiezaDespiece, RanuraAcristalamiento,
@@ -31,6 +31,8 @@ export interface EntradaValoracionEstructura {
   /** Horas manuales por unidad (`HorasAdFabr`, `HorasColoc`), texto decimal; solo catálogo completo. */
   horasFabricacion?: string | null
   horasColocacion?: string | null
+  /** `Comisión` % de la cabecera con `Sumar Comisión`: multiplica el precio de la línea. */
+  comisionPorc?: string | null
   tarifa: number
   opcionesHerraje: readonly string[]
   trazabilidad?: boolean
@@ -60,6 +62,16 @@ export type ResultadoValoracionEstructura =
  * catálogo, calcula y devuelve todos los satélites listos para persistir.
  */
 export async function valorarEstructura(
+  cliente: ClienteEscritura,
+  entrada: EntradaValoracionEstructura,
+): Promise<ResultadoValoracionEstructura> {
+  const r = await valorarSinComision(cliente, entrada)
+  if (!r.ok || r.precioUnitario === null || !entrada.comisionPorc) return r
+  // El despiece conserva los importes base; la comisión solo cambia el precio de la línea.
+  return { ...r, precioUnitario: Number(precioConComision(String(r.precioUnitario), entrada.comisionPorc)) }
+}
+
+async function valorarSinComision(
   cliente: ClienteEscritura,
   entrada: EntradaValoracionEstructura,
 ): Promise<ResultadoValoracionEstructura> {

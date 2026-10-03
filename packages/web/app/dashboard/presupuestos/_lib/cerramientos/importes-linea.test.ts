@@ -8,6 +8,11 @@ describe('adaptación de estados MO a total de línea', () => {
     expect(importesLineaCerramiento(r(), '3', { estado: 'SIN_HORAS' })).toEqual({
       precioUnitario: '10.00', total: '30.00', valoracionCompleta: true })
   })
+  it('Sumar Comisión multiplica precio y total de la línea; sin comisión no cambia nada', () => {
+    expect(importesLineaCerramiento(r(), '3', { estado: 'SIN_HORAS' }, '-10')).toEqual({
+      precioUnitario: '9.00', total: '27.00', valoracionCompleta: true })
+    expect(importesLineaCerramiento(r(), '3', { estado: 'SIN_HORAS' }, null).total).toBe('30.00')
+  })
   it('PREPARADA vacía no se confunde con SIN_HORAS', () => {
     expect(importesLineaCerramiento(r(), '3', { estado: 'PREPARADA', filas: [], valorable: true, notas: [] }).total).toBeNull()
   })

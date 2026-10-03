@@ -31,6 +31,8 @@ export function construirContraste(t: Tablas) {
     if (tipo !== 'GRUPO' && hs.some(f => f.nDoc !== p.nDoc || indice.get(clave(f.nDoc, f.nEstr))?.[0] !== p)) throw new Error('Enlace no demostrado')
     return { id: `caso-${String(++ordinal).padStart(5, '0')}`, tipo, modelo: tipo === 'GRUPO' ? 'GRUPO' : texto(p.Articulo),
       fecha: texto(d?.Fecha), tarifa: numero(d?.Tarifa), padre: p, configuracion: c,
+      comision: si(d?.SumarComisionSN) && numero(d?.ComisionPorc) ? String(numero(d?.ComisionPorc)) : null,
+      despunte: numero(d?.Despunte),
       opciones: opt.get(k) ?? [], piezas: hs.map(pieza), dimensiones: medidas, cantidad,
       serie: perfiles.length === 1 ? perfiles[0]!.conjunto : null,
       vidrio: vidrios.length === 1 ? vidrios[0]!.conjunto : null, familias,

@@ -54,8 +54,8 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
         { codigo: 'MATERIAL_INCOMPLETO', ambito: 'VENTA', bloqueante: true, detalle },
         ...(materialIncompleto ? [{ codigo: 'COBERTURA_INCOMPLETA', ambito: 'FABRICACION' as const, bloqueante: true, detalle }] : [])]
     }
-    // Las horas manuales del cerramiento se cobran por línea (importesLineaCerramiento), nunca por módulo.
-    const parametros = { ...entrada, horasFabricacion: null, horasColocacion: null, compacto: null,
+    // Horas y comisión del cerramiento se aplican a la línea (importesLineaCerramiento), nunca por módulo.
+    const parametros = { ...entrada, horasFabricacion: null, horasColocacion: null, compacto: null, comisionPorc: null,
       trazabilidad: true, codigo: g.codigo, anchoMm: g.anchoMm, altoMm: g.altoMm,
       serieCodigo: origen.serieCodigo,
       vidrioCodigo: origen.vidrioCodigo, opcionesHerraje: entrada.opcionesHerraje ?? [] }

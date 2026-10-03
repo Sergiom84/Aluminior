@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto'
 import { basename, resolve } from 'node:path'
 import type { Tablas, Fila } from './datos.ts'
 const CAMPOS: Record<string, string> = {
-  VPresupuestos: 'Id Tarifa Fecha Estado Subtotal BaseImponible ImporteTotal DescuentoPorc DescuentoPPporc TarDinPrecioBase TarDinIncrementoBase',
+  VPresupuestos: 'Id Tarifa Fecha Estado Subtotal BaseImponible ImporteTotal DescuentoPorc DescuentoPPporc TarDinPrecioBase TarDinIncrementoBase ComisionPorc SumarComisionSN Despunte',
   VPresupuestosLin: 'nLinea nDoc nOrden nEstr nGrupo nLinAsoc EstructuraSN GrupoSN Articulo Acabado Acabado2 Cdad Ancho Largo Precio Subtotal ImporteTotal Coste CosteMetrajeTotal CosteDtoPorc RespetarPrecioSN PVPManualSN PrecioVentaOriginal Tarifa TarifaManualSN DescuentoPorc Descuento2Porc DescuentoManualSN MetrajeManualSN NoComputarVentaSN LargoCorte AnchoCorte CantidadCorte TipoCorte AnguloI AnguloD Funcion Metraje TipoMetraje',
   VDatosLinEstr: 'TipoDoc nVDoc nVLinea nLinId Familia1 Familia2 Familia3 Familia4 Conjunto1 Conjunto2 Conjunto3 Conjunto4 HorasAdFabr HorasColoc TipoColoc nTAcris DisEspecificoSN Vidrio2 DisHerraje',
   VOpcionesHerraje: 'TipoDoc nDoc nLinEstr Conjunto nOpcion SelecSN',

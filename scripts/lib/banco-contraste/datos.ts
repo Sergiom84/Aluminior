@@ -26,6 +26,8 @@ export function pieza(f: Fila): Pieza {
 }
 export interface Caso {
   id: string; tipo: 'ESTRUCTURA' | 'GRUPO' | 'ELEMENTO'; modelo: string; fecha: string; tarifa: number | null
+  /** `ComisionPorc` de la cabecera si `SumarComisionSN`; `Despunte` (importe) de la cabecera. */
+  comision?: string | null; despunte?: number | null
   padre: Fila; configuracion: Fila | null; opciones: Fila[]; piezas: Pieza[]
   dimensiones: { ancho: number | null; alto: number | null }; cantidad: number | null
   serie: string | null; vidrio: string | null; familias: { familia: string; conjunto: string }[]

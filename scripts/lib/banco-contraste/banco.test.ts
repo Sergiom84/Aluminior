@@ -32,6 +32,13 @@ test('enlaza por documento y línea; familia determina serie, no posición; no u
   assert.equal(b.evidencia.huerfanasEstr, 1); assert.equal(b.evidencia.hijasPrecioReconciliado, 1)
   assert.equal(c.cantidad, 2); assert.equal(c.esperado, 25); assert.equal(c.totalEsperado, 50)
 })
+test('la comisión de cabecera solo cuenta con Sumar Comisión; el despunte se conserva', () => {
+  const t = fixture(); Object.assign(t.VPresupuestos![0]!, { ComisionPorc: -10, SumarComisionSN: true, Despunte: 0 })
+  assert.equal(construirContraste(t).casos[0]!.comision, '-10')
+  Object.assign(t.VPresupuestos![0]!, { SumarComisionSN: false, Despunte: 12.5 })
+  const c = construirContraste(t).casos[0]!
+  assert.equal(c.comision, null); assert.equal(c.despunte, 12.5)
+})
 test('cuenta exclusiones solapadas sin doble contar y no convierte precio ausente en cero', () => {
   const t = fixture(); t.VPresupuestosLin![0]!.Precio = null
   t.VPresupuestosLin![0]!.RespetarPrecioSN = true; t.VPresupuestosLin![0]!.Ancho = -1
