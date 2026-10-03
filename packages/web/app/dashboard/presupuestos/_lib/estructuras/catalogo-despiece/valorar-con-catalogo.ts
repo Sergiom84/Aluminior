@@ -22,6 +22,7 @@ import { costePorArticuloDe, leerCostesArticulos } from '../coste-articulos.ts'
 import { prepararPiezasDespiece } from '../coste-despiece.ts'
 import type { EntradaValoracionEstructura, ResultadoValoracionEstructura } from '../valorar-estructura.ts'
 import { leerCatalogoLinea } from './leer-catalogo.ts'
+import { minutosDeHoras } from '../horas-por-unidad.ts'
 
 const GRUPO: Record<FilaDespieceCatalogo['origen'], PartidaValoracionCerramiento['grupoValoracion']> = {
   plantilla: 'MATERIALES', asociado: 'MATERIALES', 'mano-obra': 'MATERIALES', compacto: 'MATERIALES', vidrio: 'VIDRIO',
@@ -29,14 +30,6 @@ const GRUPO: Record<FilaDespieceCatalogo['origen'], PartidaValoracionCerramiento
 }
 const decimal = (v: number | null | undefined, escala: number) =>
   v === null || v === undefined || !Number.isFinite(v) ? null : normalizarDecimal(v.toFixed(escala), escala)
-
-/** Horas tecleadas a dos decimales -> minutos exactos (6,07 h = 364,2 min, SPEC-MANO-DE-OBRA §13). */
-const minutos = (horas: string | null | undefined) => {
-  if (!horas?.trim()) return 0
-  const valor = Number(multiplicarDecimal(normalizarDecimal(horas, 2), '60', 2))
-  if (!Number.isFinite(valor) || valor < 0) throw new Error('Horas manuales no válidas')
-  return valor
-}
 
 interface OpcionVisible { conjunto: string; opcion: string; oculta: boolean; porDefecto: boolean; descripcion: string }
 
@@ -90,7 +83,7 @@ export async function valorarConCatalogo(
     estructura: entrada.codigo, serie: entrada.serieCodigo, anchoMm: entrada.anchoMm, altoMm: entrada.altoMm,
     vidrio: entrada.vidrioCodigo, acabado, acabadoAccesorios: entrada.acabadoAccesoriosCodigo || 'UNI', opcionesGuardadas: guardadas,
     compacto: entrada.compacto ?? null, accesorios: entrada.accesorios ?? [], cotas: entrada.cotas ?? undefined,
-    minutosFabricacionAdicionales: minutos(entrada.horasFabricacion), minutosColocacion: minutos(entrada.horasColocacion),
+    minutosFabricacionAdicionales: minutosDeHoras(entrada.horasFabricacion), minutosColocacion: minutosDeHoras(entrada.horasColocacion),
   })
 
   const codigos = [...new Set(resultado.filas.map(f => f.articulo))]

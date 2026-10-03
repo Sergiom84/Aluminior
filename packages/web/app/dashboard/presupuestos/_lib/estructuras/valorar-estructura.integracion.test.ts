@@ -172,6 +172,34 @@ describe('valorarEstructura', () => {
       .toEqual([PERFIL, 'VIDRIO_CON_PROBLEMA'])
   })
 
+  describe('horas por unidad sin catálogo de despiece completo', () => {
+    const base = {
+      codigo: ESTRUCTURA, serieCodigo: SERIE, anchoMm: 1200, altoMm: 1000, vidrioCodigo: null,
+      varianteAcristalamiento: '2' as const, acabadoCodigo: 'L', tarifa: 1, opcionesHerraje: [],
+    }
+
+    it('no bloquean: guardan MO y MOCOL sin valorar y la línea queda incompleta', async () => {
+      const r = await valorarEstructura(db, { ...base, horasFabricacion: '1', horasColocacion: '6.07' })
+
+      // Sin ellas el material vale 24: ese total omitiría las horas, así que no se da.
+      expect(r).toMatchObject({
+        ok: true, motor: 'anterior', precioUnitario: null,
+        aviso: 'Importe incompleto: horas por unidad sin valorar: necesitan el catálogo de despiece completo.',
+      })
+      if (!r.ok) return
+      expect(r.piezas.map(p => [p.articuloCodigo, p.cantidad, p.funcion]))
+        .toEqual([[PERFIL, '2', 'MV'], ['MO', '60', 'MO'], ['MOCOL', '364.2', 'MOCOL']])
+      expect(r.piezas.slice(1).map(p => [p.costeUnitario, p.costeTotal])).toEqual([[null, null], [null, null]])
+    })
+
+    it('a cero, como las envía el formulario vacío, no cambian la valoración', async () => {
+      const r = await valorarEstructura(db, { ...base, horasFabricacion: '0', horasColocacion: '0.00' })
+
+      expect(r).toMatchObject({ ok: true, precioUnitario: 24, aviso: null })
+      expect(r.ok && r.piezas).toHaveLength(1)
+    })
+  })
+
   describe('desempate del PVP por acabado (T.73)', () => {
     const base = {
       codigo: ESTRUCTURA,

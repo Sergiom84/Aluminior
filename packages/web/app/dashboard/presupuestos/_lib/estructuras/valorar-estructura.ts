@@ -11,6 +11,7 @@ import type {
 import { resolverAcristalamientoEstructura } from './acristalamiento-estructura.ts'
 import { resolverOpcionesHerraje, ErrorSeleccionHerraje } from './herraje.ts'
 import { valorarConCatalogo } from './catalogo-despiece/valorar-con-catalogo.ts'
+import { MOTIVO_HORAS_SIN_CATALOGO, piezasHorasSinValorar } from './horas-por-unidad.ts'
 import {
   articulosAmbiguos, avisoAmbiguos,
 } from './pvp-articulos.ts'
@@ -30,7 +31,10 @@ export interface EntradaValoracionEstructura {
   compacto?: CompactoLineaCatalogo | null
   /** Mosquitera y tapajuntas de la línea; solo catálogo completo. */
   accesorios?: readonly AccesorioLineaCatalogo[] | null
-  /** Horas manuales por unidad (`HorasAdFabr`, `HorasColoc`), texto decimal; solo catálogo completo. */
+  /**
+   * Horas manuales por unidad (`HorasAdFabr`, `HorasColoc`), texto decimal. Solo
+   * el catálogo completo las valora; sin él dejan la línea incompleta.
+   */
   horasFabricacion?: string | null
   horasColocacion?: string | null
   /** Cotas de la instancia (`VEstructurasVariables`: FI, FS, F…); solo catálogo completo. */
@@ -96,9 +100,10 @@ async function valorarSinComision(
   if (entrada.compacto || entrada.accesorios?.length) {
     return { ok: false, errores: { compacto: ['Los accesorios de línea necesitan el catálogo de despiece completo'] } }
   }
-  if (Number(entrada.horasFabricacion ?? 0) || Number(entrada.horasColocacion ?? 0)) {
-    return { ok: false, errores: { horasColocacion: ['Las horas por unidad necesitan el catálogo de despiece completo'] } }
-  }
+  // Sin catálogo las horas no se valoran, pero tampoco se pierden: filas sin
+  // coste y línea incompleta. Bloquear el alta dejaba sin presupuesto a quien
+  // no tiene el catálogo cargado; omitirlas daba un total menor como completo.
+  const horasSinValorar = piezasHorasSinValorar(entrada)
   const material = await resolverMaterialesEstructura(cliente, entrada)
   if (!material.ok) return { ok: false, errores: material.errores }
   if (entrada.anchoMm === null || entrada.altoMm === null || !entrada.serieCodigo) throw new Error('Material válido sin medidas')
@@ -125,9 +130,10 @@ async function valorarSinComision(
   })
   if (!acristalamiento.ok) return acristalamiento
   precioUnitario = acristalamiento.precio
-  piezas.push(...acristalamiento.piezas)
+  piezas.push(...acristalamiento.piezas, ...horasSinValorar)
 
   const problemas = [...acristalamiento.problemas]
+  if (horasSinValorar.length) problemas.push(MOTIVO_HORAS_SIN_CATALOGO)
   // Faltar un precio y sobrar son incidencias distintas y se arreglan en sitios
   // distintos del catálogo, así que cada una tiene su aviso. Los ambiguos se
   // RESTAN de `sinPrecio` antes de contarlos: sin eso, el mismo artículo salía
