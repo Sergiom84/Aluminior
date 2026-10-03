@@ -18,8 +18,8 @@ export function esConfiguracionCerramiento(valor: unknown): valor is Configuraci
       candidato.uniones.length !== candidato.modulos.length - 1) return false
   const modulosValidos = candidato.modulos.every((modulo) => {
     if (!modulo || typeof modulo.id !== 'string' || typeof modulo.estructuraCodigo !== 'string' ||
-      !Number.isInteger(modulo.anchoMm) || modulo.anchoMm <= 0 ||
-      !Number.isInteger(modulo.altoMm) || modulo.altoMm <= 0) return false
+      !Number.isFinite(modulo.anchoMm) || modulo.anchoMm <= 0 ||
+      !Number.isFinite(modulo.altoMm) || modulo.altoMm <= 0) return false
     if (candidato.version !== VERSION_COMPOSICION_CERRAMIENTO &&
       (Object.hasOwn(modulo, 'anclaje') || Object.hasOwn(modulo, 'materiales'))) return false
     if (!materialesModuloValidos(modulo.materiales)) return false

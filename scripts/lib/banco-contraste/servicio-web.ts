@@ -66,7 +66,8 @@ export async function ejecutarServicio(cliente: ClienteEscritura, c: Caso): Prom
     const admite = (v: unknown): boolean => esConfiguracionCerramiento(v)
     if (!admite(g.configuracion)) {
       const razones = ['configuracion-no-admitida-por-web']
-      if (g.configuracion.modulos.some(m => !Number.isInteger(m.anchoMm) || !Number.isInteger(m.altoMm))) razones.push('medidas-fraccionarias-no-admitidas')
+      if (g.configuracion.modulos.some(m => !Number.isFinite(m.anchoMm) || m.anchoMm <= 0 ||
+        !Number.isFinite(m.altoMm) || m.altoMm <= 0)) razones.push('medidas-no-validas')
       if (g.configuracion.modulos.some(m => !plantillaDiseno(m.estructuraCodigo))) razones.push('modelo-sin-plantilla-visual')
       if (g.configuracion.uniones.some(u => !UNIONES_VISUALES.some(v => v.codigo === u.codigo))) razones.push('union-fuera-del-configurador')
       return vacia(razones)
@@ -87,7 +88,8 @@ export async function ejecutarServicio(cliente: ClienteEscritura, c: Caso): Prom
     if (acabados.size > 1) return vacia(['acabados-por-elemento-no-representables'])
     const base = config[0]!
     const uniones = es.filter(e => si(c.geometria?.find(g => texto(g.nLinEstr) === texto(e.padre.nLinea))?.EsUnionSN))
-    if (uniones.some(e => e.serie !== base.serie)) return vacia(['serie-de-union-no-representable'])
+    // U = SIN UNION, sin asociación a series ni piezas; el servicio exige su receta cero explícita.
+    if (uniones.some(e => e.modelo !== 'U' && e.serie !== base.serie)) return vacia(['serie-de-union-no-representable'])
     // GRUPO no tiene vidrio propio: la selección global pertenece a sus módulos.
     const variantes = new Map<string, '1' | '2'>()
     for (const codigo of new Set(config.map(e => e.vidrio).filter((v): v is string => !!v))) {

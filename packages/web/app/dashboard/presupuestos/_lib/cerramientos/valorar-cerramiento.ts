@@ -1,5 +1,5 @@
 import { esConfiguracionCerramiento, esResultadoCerramiento, etapasVentaCerramiento, materialesEfectivos,
-  unionConfigurada,
+  unionConfigurada, resolverOrigenSinUnion,
   type ConfiguracionCerramiento, type RedondeoVentaCerramiento, type ResultadoCerramientoV1,
   type ResultadoOrigenCerramiento } from '@aluminior/core/estructuras'
 import { sumarDecimal } from '@aluminior/core/precios'
@@ -70,6 +70,9 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
       const valor = await valorarConCatalogo(cliente, parametros)
       if (!valor || !valor.ok) bloquear(`Unión ${g.id} sin catálogo de despiece`)
       else {
+        const sinUnion = resolverOrigenSinUnion(origen, { completo: valor.materialCompleto === true,
+          precio: valor.precioUnitario, cantidades: valor.piezas.map(p => p.cantidad) })
+        if (sinUnion) { origenes.push(sinUnion); continue }
         piezas = valor.piezas
         ventaMotor = valor.precioUnitario
         origen.reglaMaterial = piezas.length ? `estructura:${g.codigo}` : null
@@ -128,7 +131,7 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
     const etapas = etapasVentaCerramiento(origen.partidasValoracion, redondeo)
     if (etapas && ventaMotor !== null && Number(etapas.total) !== ventaMotor)
       bloquear('El metraje no se puede representar en el snapshot sin cambiar el importe del motor', false)
-    if (!piezas.length || !origen.partidasValoracion.length) bloquear('Receta material vacía')
+    if (!piezas.some(p => Number(p.cantidad) > 0) || !origen.partidasValoracion.length) bloquear('Receta material vacía')
     if (etapas && !origen.diagnosticos.some(d => d.ambito === 'VENTA' && d.bloqueante))
       origen.venta = { completo: true, importe: etapas.total }
     else if (!origen.diagnosticos.length) bloquear('Partidas de venta incompletas')

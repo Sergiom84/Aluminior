@@ -1,6 +1,6 @@
 /** Banco de precios: solo copia MDB, Postgres local y salidas privadas ignoradas. */
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
-import { resolve, join, relative } from 'node:path'
+import { resolve, join, relative, sep } from 'node:path'
 import { execFileSync } from 'node:child_process'
 import { parseArgs } from 'node:util'
 import { leerFuente } from './lib/banco-contraste/fuente.ts'
@@ -16,7 +16,7 @@ const { positionals, values } = parseArgs({ allowPositionals: true, options: {
   informe: { type: 'string' },
 } })
 const accion = positionals[0], salida = resolve(values.salida!)
-const rel = relative(resolve('.'), salida)
+const rel = relative(resolve('.'), salida).split(sep).join('/')
 if (!rel.startsWith('export_datos/') || rel.includes('..')) throw new Error('La salida debe estar dentro de export_datos/ ignorado')
 execFileSync('git', ['check-ignore', '--quiet', salida])
 mkdirSync(salida, { recursive: true })

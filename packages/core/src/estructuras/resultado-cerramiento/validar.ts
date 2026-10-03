@@ -2,6 +2,7 @@ import { compararDecimal, normalizarDecimal, sumarDecimal } from '../../precios/
 import { configuracionTieneFiExplicito, esConfiguracionCerramiento } from '../cerramiento.ts'
 import { decimal, objeto, tarifa, texto, textoNullable, unicos, variante } from './campos.ts'
 import { esHerraje, esPartida, esPieza, esRanura } from './validar-piezas.ts'
+import { esOrigenSinUnion } from './sin-union.ts'
 import { etapasVentaCerramiento } from './etapas-venta.ts'
 import type { DiagnosticoCerramiento, ImporteSnapshot, RedondeoVentaCerramiento, ResultadoCerramientoV1,
   ResultadoOrigenCerramiento } from './tipos.ts'
@@ -40,6 +41,7 @@ function esResultadoOrigen(v: unknown, redondeo: RedondeoVentaCerramiento): v is
     !unicos(v.opcionesHerraje, p => [p.categoria, p.opcionCodigo])) return false
   const diagnosticos = v.diagnosticos
   const bloquea = (ambito: string) => diagnosticos.some(d => d.bloqueante && d.ambito === ambito)
+  if (v.reglaMaterial === 'SIN_UNION_U') return esOrigenSinUnion(v as unknown as ResultadoOrigenCerramiento)
   if (v.venta.completo) {
     if (!v.reglaMaterial || !v.piezas.length || !v.partidasValoracion.length || bloquea('VENTA') ||
       etapasVentaCerramiento(v.partidasValoracion, redondeo)?.total !==

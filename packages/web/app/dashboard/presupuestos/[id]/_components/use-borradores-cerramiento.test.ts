@@ -18,12 +18,19 @@ describe('aplicación explícita del cerramiento', () => {
     expect(original.modulos.map(m => m.anchoMm)).toEqual([1200, 1200])
     expect(borradores.modulos['modulo-2'].anchoMm).toBe(1800)
   })
-  it.each([NaN, 0, -10, 1.5])('rechaza ancho inválido %s sin alterar configuración', anchoMm => {
+  it.each([NaN, Infinity, 0, -10])('rechaza ancho inválido %s sin alterar configuración', anchoMm => {
     const original = crear()
     const borradores = vacios()
     borradores.modulos['modulo-1'] = { anchoMm }
     expect(aplicarBorrador(original, borradores, 'modulos', 'modulo-1')).toBeNull()
     expect(original.modulos[0].anchoMm).toBe(1200)
+  })
+  it('conserva una medida económica fraccionaria al aplicar otro campo', () => {
+    const original = crear()
+    original.modulos[0].anchoMm = 439.5
+    const borradores = vacios()
+    borradores.modulos['modulo-1'] = { altoMm: 1200 }
+    expect(aplicarBorrador(original, borradores, 'modulos', 'modulo-1')!.modulos[0].anchoMm).toBe(439.5)
   })
   it('aplica alto y FI juntos y rechaza un FI fuera del hueco', () => {
     const original = crearConfiguracionCerramiento(plantillaDiseno('1OFI')!)
