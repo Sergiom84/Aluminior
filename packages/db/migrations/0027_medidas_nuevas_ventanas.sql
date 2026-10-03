@@ -1,0 +1,1 @@
+ALTER TABLE "presupuestos" ADD COLUMN "medidas_nuevas_ventanas" text DEFAULT 'PREGUNTAR' NOT NULL;

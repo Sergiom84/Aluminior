@@ -1,21 +1,24 @@
 'use client'
 
 import React from 'react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   cambiarEstructuraModuloCerramiento, crearConfiguracionCerramiento, dependientesModulo,
   eliminarModuloConDependientes, esConfiguracionCerramiento, esModuloRaiz, insertarModuloEnAnclaje,
   medidasCerramiento, moduloDesdePlantilla, plantillaDiseno, PLANTILLAS_DISENO, posicionesCerramiento,
-  anclajeLateral, modelosIguales, primerHueco, type AnclajeLibre, type ConfiguracionCerramiento,
+  anclajeLateral, medidasPrimeraVentana, modelosIguales, primerHueco, type AnclajeLibre, type ConfiguracionCerramiento,
   type MaterialesGenerales, type PlantillaDiseno,
 } from '@aluminior/core/estructuras'
 import { LienzoCerramiento, type ParteSeleccionada } from './lienzo-cerramiento.tsx'
 import { useBorradoresCerramiento } from './use-borradores-cerramiento.ts'
 import { EditorUnion } from './editor-union.tsx'
-import { CatalogoInferior, TIPO_ARRASTRE_ESTRUCTURA } from './disenador/catalogo-inferior.tsx'
+import { CatalogoInferior } from './disenador/catalogo-inferior.tsx'
 import { ListaElementos, entradasCerramiento, type Entrada } from './disenador/lista-elementos.tsx'
 import { PanelElemento } from './disenador/panel-elemento.tsx'
 import { BarraDisenador, type VistaDisenador } from './disenador/barra-disenador.tsx'
+import { useInsercionVentanas } from './disenador/use-insercion-ventanas.ts'
+import { LienzoVacio, LienzoConExtremos } from './disenador/lienzo-insercion.tsx'
+import { SelectorVentana, PreguntaMedidas, OpcionesMedidas } from './disenador/dialogos-insercion.tsx'
 import styles from '../presupuesto-movil.module.css'
 
 function seleccionModulo(configuracion: ConfiguracionCerramiento, id: string): ParteSeleccionada {
@@ -52,6 +55,13 @@ export function DisenadorEstructura({
     const base = crearConfiguracionCerramiento(plantillaDiseno(codigo) ?? PLANTILLAS_DISENO[0])
     return { ...base, modulos: [{ ...base.modulos[0], anchoMm, altoMm }] }
   })
+  const region = useRef<HTMLElement>(null)
+  const enfocar = useRef<string | null>(null)
+  useEffect(() => {
+    if (!enfocar.current) return
+    region.current?.querySelector<SVGElement>(`[data-modulo-id="${enfocar.current}"]`)?.focus()
+    enfocar.current = null
+  }, [configuracion])
   const edicion = useBorradoresCerramiento(configuracion, setConfiguracion)
   const [seleccion, setSeleccion] = useState<ParteSeleccionada | null>(() =>
     configuracion ? seleccionModulo(configuracion, configuracion.modulos[0].id) : null)
@@ -73,20 +83,26 @@ export function DisenadorEstructura({
   }, [configuracion, edicion.pendientes, onConfiguracionChange, onDimensionesChange, onValidezChange])
 
   const terminarInsercion = () => { setPreparada(null); setArrastrada(null) }
-  const colocar = (plantilla: PlantillaDiseno, anclaje: AnclajeLibre | null) => {
+  const colocar = (plantilla: PlantillaDiseno, anclaje: AnclajeLibre | null, copiar = false) => {
     if (edicion.pendientes) return
-    const siguiente = !configuracion || !anclaje
+    if (configuracion && !anclaje) return
+    const referencia = copiar ? medidasPrimeraVentana(configuracion) : null
+    const nuevo = { ...moduloDesdePlantilla(plantilla), ...referencia }
+    const siguiente = !configuracion
       ? crearConfiguracionCerramiento(plantilla)
-      : insertarModuloEnAnclaje(configuracion, moduloDesdePlantilla(plantilla), anclaje)
+      : insertarModuloEnAnclaje(configuracion, nuevo, anclaje!)
     if (configuracion && siguiente === configuracion) {
       setAviso(`${plantilla.codigo} no cabe en esa posición sin solapar otro elemento.`)
       return
     }
     setAviso(null)
+    enfocar.current = siguiente.modulos.at(-1)!.id
     setConfiguracion(siguiente)
+    setVista('propiedades')
     setSeleccion(seleccionModulo(siguiente, siguiente.modulos.at(-1)!.id))
     terminarInsercion()
   }
+  const insercion = useInsercionVentanas(configuracion, colocar)
   /** Lienzo vacío: primer elemento; si no, a la derecha de la fila superior. */
   const colocarLateral = (plantilla: PlantillaDiseno) => {
     const anclaje = configuracion ? anclajeLateral(configuracion) : null
@@ -94,7 +110,7 @@ export function DisenadorEstructura({
       setAviso(`${plantilla.codigo} no cabe a la derecha sin solapar otro elemento.`)
       return
     }
-    colocar(plantilla, anclaje)
+    if (!edicion.pendientes) insercion.solicitar(plantilla, anclaje)
   }
 
   const seleccionar = (parte: ParteSeleccionada) => { setSeleccion(parte); setVista('propiedades') }
@@ -135,21 +151,25 @@ export function DisenadorEstructura({
   }
 
   return (
-    <section className={`${styles.designer} al-designer`} aria-label="Diseñador de cerramientos"
+    <section ref={region} className={`${styles.designer} al-designer`} aria-label="Diseñador de cerramientos"
       onKeyDown={(evento) => { if (evento.key === 'Escape' && insertando) terminarInsercion() }}>
       <BarraDisenador elementos={configuracion?.modulos.length ?? 0} vista={vista} onVista={setVista}
-        medidas={medidas} preparada={preparada}
+        medidas={medidas} preparada={preparada} onMedidas={insercion.abrirOpciones}
         onColocarDerecha={configuracion && preparada && !edicion.pendientes
           ? () => colocarLateral(preparada) : null} />
 
       <div className="al-designer-canvas" data-testid="designer-canvas" data-insertando={Boolean(insertando) || undefined}>
         {configuracion
-          ? <LienzoCerramiento configuracion={configuracion} moduloActivoId={modulo?.id ?? ''}
+          ? <LienzoConExtremos configuracion={configuracion} bloqueado={edicion.pendientes || insercion.preferencia.guardando}
+              onAbrir={insercion.abrirSelector}>
+            <LienzoCerramiento configuracion={configuracion} moduloActivoId={modulo?.id ?? ''}
               seleccion={seleccion ?? { moduloId: '', elemento: '', parte: 'vidrio' }}
               onModuloActivo={() => undefined} onSeleccion={seleccionar}
               insercion={{ activa: Boolean(insertando) && !edicion.pendientes,
-                onInsertar: (anclaje) => colocar(insertando!, anclaje) }} />
-          : <LienzoVacio preparada={preparada} onColocar={(plantilla) => colocar(plantilla, null)} />}
+                onInsertar: (anclaje) => insercion.solicitar(insertando!, anclaje) }} />
+            </LienzoConExtremos>
+          : <LienzoVacio preparada={preparada} onColocar={(plantilla) => insercion.solicitar(plantilla, null)}
+              onAbrir={() => insercion.abrirSelector(null)} />}
       </div>
 
       <aside className="al-designer-lista">
@@ -189,25 +209,16 @@ export function DisenadorEstructura({
                   onDescartar={() => edicion.descartar('uniones', union.id)} />
               </div>}
       </div>
+      {insercion.selector && <SelectorVentana onCerrar={insercion.cerrarSelector}
+        onElegir={plantilla => insercion.solicitar(plantilla, insercion.selector!.destino)} />}
+      {insercion.pregunta && insercion.medidas && <PreguntaMedidas {...insercion.medidas}
+        onCerrar={insercion.cerrarPregunta} onElegir={insercion.responder}
+        guardando={insercion.preferencia.guardando} error={insercion.preferencia.error} />}
+      {insercion.opciones && <OpcionesMedidas preferencia={insercion.preferencia.preferencia}
+        onCerrar={insercion.cerrarOpciones} guardando={insercion.preferencia.guardando}
+        error={insercion.preferencia.error} onElegir={async opcion => {
+          if (await insercion.preferencia.cambiar(opcion)) insercion.cerrarOpciones()
+        }} />}
     </section>
-  )
-}
-
-function LienzoVacio({ preparada, onColocar }: {
-  preparada: PlantillaDiseno | null
-  onColocar: (plantilla: PlantillaDiseno) => void
-}) {
-  return (
-    <div className="al-lienzo-vacio"
-      onDragOver={(evento) => { evento.preventDefault(); evento.dataTransfer.dropEffect = 'copy' }}
-      onDrop={(evento) => {
-        evento.preventDefault()
-        const plantilla = plantillaDiseno(evento.dataTransfer.getData(TIPO_ARRASTRE_ESTRUCTURA))
-        if (plantilla) onColocar(plantilla)
-      }}>
-      {preparada && <button type="button" className="al-command-primary" onClick={() => onColocar(preparada)}>
-        Colocar {preparada.codigo}
-      </button>}
-    </div>
   )
 }

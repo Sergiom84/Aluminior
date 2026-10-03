@@ -12,3 +12,11 @@ export function anclajeLateral(configuracion: ConfiguracionCerramiento): Anclaje
     .filter((anclaje) => anclaje.lado === 'derecha')
     .sort((a, b) => a.y - b.y || b.x - a.x)[0] ?? null
 }
+
+/** Dos extremos físicos del conjunto; el origen sigue siendo el primer módulo. */
+export function anclajesExtremosCerramiento(configuracion: ConfiguracionCerramiento): AnclajeLibre[] {
+  const libres = anclajesLibresCerramiento(configuracion, true)
+  const izquierda = libres.filter(a => a.lado === 'izquierda').sort((a, b) => a.x - b.x || a.y - b.y)[0]
+  const derecha = libres.filter(a => a.lado === 'derecha').sort((a, b) => b.x - a.x || a.y - b.y)[0]
+  return [izquierda, derecha].filter((a): a is AnclajeLibre => Boolean(a))
+}

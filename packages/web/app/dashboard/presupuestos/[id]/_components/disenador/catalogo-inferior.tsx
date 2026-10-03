@@ -16,7 +16,8 @@ const POR_PAGINA = 6
  * preparada para colocarla con teclado o pulsación en un anclaje, y el doble
  * clic la coloca directamente a la derecha.
  */
-export function CatalogoInferior({ preparada, onPreparar, onArrastre, onColocar }: {
+export function CatalogoInferior({ preparada, onPreparar, onArrastre, onColocar, onElegir }: {
+  onElegir?: (plantilla: PlantillaDiseno) => void
   preparada: PlantillaDiseno | null
   onPreparar: (plantilla: PlantillaDiseno | null) => void
   onArrastre: (plantilla: PlantillaDiseno | null) => void
@@ -33,6 +34,7 @@ export function CatalogoInferior({ preparada, onPreparar, onArrastre, onColocar 
         {CATEGORIAS_ESCAPARATE.map((categoria) => (
           <button key={categoria.id} type="button" role="option"
             aria-selected={categoria.id === categoriaId}
+            data-foco-inicial={onElegir && categoria.id === categoriaId || undefined}
             data-empty={!categoriaConCatalogo(categoria) || undefined}
             onClick={() => { setCategoriaId(categoria.id); setPagina(1) }}>
             {categoria.nombre}
@@ -41,14 +43,15 @@ export function CatalogoInferior({ preparada, onPreparar, onArrastre, onColocar 
       </div>
       <div className="al-catalogo-miniaturas">
         {vista.items.map((plantilla) => (
-          <button key={plantilla.codigo} type="button" draggable
+          <button key={plantilla.codigo} type="button" draggable={!onElegir}
             className="al-designer-thumb" aria-pressed={preparada?.codigo === plantilla.codigo}
             title={`${plantilla.descripcion} [${plantilla.codigo}]`}
             aria-label={`${plantilla.descripcion} [${plantilla.codigo}]`}
             onClick={(evento) => {
+              if (onElegir) { onElegir(plantilla); return }
               if (evento.detail < 2) onPreparar(preparada?.codigo === plantilla.codigo ? null : plantilla)
             }}
-            onDoubleClick={() => onColocar(plantilla)}
+            onDoubleClick={() => { if (!onElegir) onColocar(plantilla) }}
             onDragStart={(evento) => {
               evento.dataTransfer.setData(TIPO_ARRASTRE_ESTRUCTURA, plantilla.codigo)
               evento.dataTransfer.effectAllowed = 'copy'

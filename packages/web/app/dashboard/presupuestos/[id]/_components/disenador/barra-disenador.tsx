@@ -10,8 +10,9 @@ export type VistaDisenador = 'catalogo' | 'propiedades'
  * medidas globales y, con una miniatura preparada, su colocación lateral.
  */
 export function BarraDisenador({
-  elementos, vista, onVista, medidas, preparada, onColocarDerecha,
+  elementos, vista, onVista, medidas, preparada, onColocarDerecha, onMedidas,
 }: {
+  onMedidas?: () => void
   elementos: number
   vista: VistaDisenador
   onVista: (vista: VistaDisenador) => void
@@ -32,6 +33,7 @@ export function BarraDisenador({
           Colocar {preparada.codigo} a la derecha
         </button>
       )}
+      {onMedidas && <button type="button" className="al-command" onClick={onMedidas}>Medidas de nuevas ventanas</button>}
       <span className="al-designer-global">
         Ancho <b className="cifra">{medidas.anchoMm}</b> mm × Alto <b className="cifra">{medidas.altoMm}</b> mm
       </span>
