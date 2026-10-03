@@ -16,7 +16,9 @@ Las capturas originales se conservan localmente en
 `output/paridad-productor/20260920-operador/`, fuera de Git por contener datos
 comerciales. `manifest.json` relaciona E01–E12 con los nombres originales, tamaño
 y SHA256. Se verificó que las doce copias coinciden con los originales de Temp.
-Los enlaces de este documento requieren esa carpeta privada en el equipo.
+Las capturas viven en el portátil de Windows del operador; no se subieron a
+GitHub ni se incluyen en otras copias del repositorio. Los enlaces requieren
+esa carpeta privada en ese equipo y aparecerán rotos fuera de él.
 Los identificadores E01–E12 son locales a este registro, no los del plan de fase 0.
 No se transcriben los clientes de la lista.
 
@@ -101,18 +103,18 @@ reconstruirlo inventando opciones fuera de las capturas.
 
 | ID | Captura local | Lo que acredita visualmente |
 |---|---|---|
-| E01 | [Lista](../../output/paridad-productor/20260920-operador/captura-01.png) | Lista de presupuestos; acciones Editar, Nuevo y Emitir. |
-| E02 | [Nuevo Documento](../../output/paridad-productor/20260920-operador/captura-02.png) | Formulario inicial y botones Aceptar/Cerrar; no es pantalla de alta del maestro de clientes. |
-| E03 | [Detalle vacío](../../output/paridad-productor/20260920-operador/captura-03.png) | Presupuesto 260496, revisión 0, serie A, tarifa 1; + verde bajo las líneas. |
-| E04 | [Composición y elemento](../../output/paridad-productor/20260920-operador/captura-04.png) | Seis módulos; estructura 2O seleccionada, 1200 × 1200; campos y actualizaciones. |
-| E05 | [Catálogo de uniones](../../output/paridad-productor/20260920-operador/captura-05.png) | Búsqueda de Estructuras con varias familias y opción sin unión. |
-| E06 | [Estado intermedio de unión](../../output/paridad-productor/20260920-operador/captura-06.png) | Global 6400 × 1200; código GMU038 junto a descripción PS 100mm; longitud 1200 y grosor 2. |
-| E07 | [Acceso señalado](../../output/paridad-productor/20260920-operador/captura-07.png) | Botón marcado con flecha roja; global 6380 × 1200; unión sin código, grosor 20. |
-| E08 | [PSU001 seleccionada](../../output/paridad-productor/20260920-operador/captura-08.png) | Código y descripción coinciden; longitud 1200, grosor 2; actualización individual/colectiva. |
-| E09 | [Catálogo de perfiles](../../output/paridad-productor/20260920-operador/captura-09.png) | ELEGANTPVC y otras series; tres columnas de identificación/descripción. |
-| E10 | [Catálogo de vidrio/artículos](../../output/paridad-productor/20260920-operador/captura-10.png) | Varias familias de vidrio, paneles y opciones sin vidrio. |
-| E11 | [Doble acristalamiento](../../output/paridad-productor/20260920-operador/captura-11.png) | Cámara, dos vidrios, código resultante, resultados y pestaña Equivalentes. |
-| E12 | [GRUPO generado](../../output/paridad-productor/20260920-operador/captura-12.png) | Una línea GRUPO, dibujo, medidas, valoración y totales del documento. |
+| E01 | [Lista](../../output/paridad-productor/20260920-operador/captura-01.png) · privada, solo en Windows | Lista de presupuestos; acciones Editar, Nuevo y Emitir. |
+| E02 | [Nuevo Documento](../../output/paridad-productor/20260920-operador/captura-02.png) · privada, solo en Windows | Formulario inicial y botones Aceptar/Cerrar; no es pantalla de alta del maestro de clientes. |
+| E03 | [Detalle vacío](../../output/paridad-productor/20260920-operador/captura-03.png) · privada, solo en Windows | Presupuesto 260496, revisión 0, serie A, tarifa 1; + verde bajo las líneas. |
+| E04 | [Composición y elemento](../../output/paridad-productor/20260920-operador/captura-04.png) · privada, solo en Windows | Seis módulos; estructura 2O seleccionada, 1200 × 1200; campos y actualizaciones. |
+| E05 | [Catálogo de uniones](../../output/paridad-productor/20260920-operador/captura-05.png) · privada, solo en Windows | Búsqueda de Estructuras con varias familias y opción sin unión. |
+| E06 | [Estado intermedio de unión](../../output/paridad-productor/20260920-operador/captura-06.png) · privada, solo en Windows | Global 6400 × 1200; código GMU038 junto a descripción PS 100mm; longitud 1200 y grosor 2. |
+| E07 | [Acceso señalado](../../output/paridad-productor/20260920-operador/captura-07.png) · privada, solo en Windows | Botón marcado con flecha roja; global 6380 × 1200; unión sin código, grosor 20. |
+| E08 | [PSU001 seleccionada](../../output/paridad-productor/20260920-operador/captura-08.png) · privada, solo en Windows | Código y descripción coinciden; longitud 1200, grosor 2; actualización individual/colectiva. |
+| E09 | [Catálogo de perfiles](../../output/paridad-productor/20260920-operador/captura-09.png) · privada, solo en Windows | ELEGANTPVC y otras series; tres columnas de identificación/descripción. |
+| E10 | [Catálogo de vidrio/artículos](../../output/paridad-productor/20260920-operador/captura-10.png) · privada, solo en Windows | Varias familias de vidrio, paneles y opciones sin vidrio. |
+| E11 | [Doble acristalamiento](../../output/paridad-productor/20260920-operador/captura-11.png) · privada, solo en Windows | Cámara, dos vidrios, código resultante, resultados y pestaña Equivalentes. |
+| E12 | [GRUPO generado](../../output/paridad-productor/20260920-operador/captura-12.png) · privada, solo en Windows | Una línea GRUPO, dibujo, medidas, valoración y totales del documento. |
 
 ## Resultado visible y correcciones respecto a supuestos anteriores
 

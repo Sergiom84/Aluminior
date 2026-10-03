@@ -4,8 +4,8 @@
  * T.31 dejó el diagnóstico: 0/216 líneas exactas en cantidades, y el error se
  * concentra en ESCUADRAS (238 de 344 cantidades erróneas), sesgo sistemático a
  * la BAJA — las piezas "una por esquina" que el recuento por aparición de ranura
- * (v5) infravalora. CONTINUACION.md §3.1 pide medir si la GEOMETRÍA de la
- * estructura (huecos, hojas, esquinas) reconstruye la cantidad mejor que v5.
+ * (v5) infravalora. El ensayo de docs/historico/PLAN.md (T.33) mide si la
+ * GEOMETRÍA (huecos, hojas, esquinas) reconstruye la cantidad mejor que v5.
  *
  * Este script NO predice la selección: toma las líneas del oráculo donde el
  * artículo de escuadra es REAL (enlace exacto por VDatosLinDetDis / hijas de

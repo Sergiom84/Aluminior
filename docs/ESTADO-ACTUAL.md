@@ -1,6 +1,7 @@
 # Estado actual de Aluminior
 
-Revisión documental: 03/10/2026. Código comprobado: `main`, `9bc879e`.
+Revisión documental: 03/10/2026. Consolidación documental: `ee0dc16`, sobre el código
+`main` de `9bc879e`.
 Este es el único punto de entrada de estado y siguiente trabajo.
 
 ## Qué funciona
@@ -8,7 +9,9 @@ Este es el único punto de entrada de estado y siguiente trabajo.
 - Producción: catálogo visual de **160 estructuras**, incluida la entrada
   directa al configurador. Migración `0022_catalogo_diseno` y relleno aplicados
   en Supabase según el cierre autorizado del 02/10 y el contexto del usuario.
-  **Sin verificar directamente en producción durante esta auditoría.**
+  **Verificado por Sergio en la web publicada el 02/10/2026:** 160 modelos
+  y composición C2 + C3. Esta observación acredita el catálogo y la composición;
+  no certifica la valoración del motor.
 - Código: composición bidimensional, configuración por elemento, búsqueda de
   vidrio, uniones, guardado de una línea GRUPO, reapertura, copia y PDF.
   La existencia del código no acredita paridad integral con Productor.
@@ -49,8 +52,12 @@ Este es el único punto de entrada de estado y siguiente trabajo.
 Verificar destino, respaldo y estado de las once tablas; simular la carga
 dirigida del motor con el origen autorizado. Revisar conservación de documentos
 y solicitar la autorización específica de aplicación antes de `--apply`.
-Después, comprobar valoración, guardado, recarga y PDF con iguales entradas
-en ambos sistemas. La aprobación de documentación no autoriza esa carga remota.
+Preparar el [banco de contraste](paridad/BANCO-COMPARACION-PRECIOS.md): verificar
+el contexto de cada caso y comparar artículos, medidas, cantidades, herrajes,
+vidrio, mano de obra, tarifa y redondeo con iguales entradas en Productor y
+Aluminior. Registrar diferencias y casos incompletos antes de aceptar el motor.
+Después, comprobar guardado, recarga y PDF. La aprobación de documentación
+no autoriza esa carga remota.
 
 ## Enlaces
 

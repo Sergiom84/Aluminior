@@ -3,8 +3,9 @@
 Fecha: 02/10/2026. Autorizado por el usuario: «empieza por los dos puntos»
 (entrar directamente al configurador de cerramientos y conectar el catálogo
 real al escaparate). Trabajo inicial en local, en el Mac; la ejecución posterior de 0022 y el relleno
-en Supabase está registrada más abajo. Estado remoto informado por ese cierre,
-sin verificar directamente en esta auditoría.
+en Supabase está registrada más abajo. Sergio verificó en la web publicada el
+02/10/2026 los 160 modelos y la composición C2 + C3; esta confirmación se recoge
+en la revisión documental del 03/10, sin certificar precios del motor.
 
 ## Problema observado
 
@@ -65,6 +66,8 @@ zócalos (nodo 4), curvas, oscilantes/proyectantes (21, 22, 49), 3HO y PCM1D/I
 
 ## Verificación
 
+- Producción, verificada por Sergio el 02/10/2026: 160 modelos disponibles
+  y composición C2 + C3 en la web publicada. No implica paridad de valoración.
 - Pruebas: core 484, web 645, etl 17 (+1 omitida previa), db 55. Typecheck de los
   cuatro paquetes y `check:architecture` sin infracciones. La referencia del
   importador se regeneró comprobando que solo cambian las columnas nuevas.
