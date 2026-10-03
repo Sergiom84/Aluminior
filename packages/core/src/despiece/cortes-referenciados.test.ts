@@ -81,16 +81,21 @@ describe('división del hueco por grupos adicionales', () => {
     { grupoPrincipal: 'B', grupo: 'HP', tipoHoja: 'G', mm: 6 },
     { grupoPrincipal: 'HVL', grupo: 'HP', tipoHoja: 'G', mm: -10 },
     { grupoPrincipal: 'HVC', grupo: 'HP', tipoHoja: 'G', mm: -12 },
+    { grupoPrincipal: 'TMG', grupo: 'HP', tipoHoja: 'G', mm: 20 },
   ]
   it('reparte el batiente central entre las dos hojas', () => {
     expect(resolverCortesReferenciados([marco, hojaHorizontal(['B', null])], tabla, { A: 1500 }).get(9)?.largoMm).toBe(717)
+  })
+  it('con extremos distintos reparte también la media de ambos extremos', () => {
+    // Forma de 3HO: (REF-600)/2 entre travesaño y marco, batiente en el centro.
+    const hoja = hojaHorizontal(['B'], { grupoFin: 'TMG', formulaReferencia: '(REF-600)/2' })
+    expect(resolverCortesReferenciados([marco, hoja], tabla, { A: 2380 }).get(9)?.largoMm).toBe(890 - 25 - 3)
   })
   it('resta completos los descuentos de las verticales de corredera', () => {
     expect(resolverCortesReferenciados([marco, hojaHorizontal(['HVL', 'HVC'])], tabla, { A: 1500 }).get(9)?.largoMm).toBe(712)
   })
   it.each([
     ['otros grupos', hojaHorizontal(['B', 'B3'])],
-    ['batiente con extremos distintos', hojaHorizontal(['B'], { grupoFin: 'TMG' })],
     ['descuento adicional ausente', hojaHorizontal(['HVL'], { tipoHoja: 'X' }), [tabla[0]!, tabla[1]!]],
   ])('bloquea %s', (_, hoja, filas = tabla) => {
     const r = resolverCortesReferenciados([marco, hoja as NodoCorteReferenciado], filas as DescuentoCorte[], { A: 1500 }).get(9)

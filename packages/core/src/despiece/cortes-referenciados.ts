@@ -39,7 +39,9 @@ export interface CorteCatalogo {
  * Grupos adicionales (división del hueco en varias hojas), contrastados con
  * las facturas de 2026 (fase-7/06):
  * - verticales de corredera `HVL`/`HVC`: se restan también sus descuentos;
- * - batiente central `B` con extremos iguales: `F(REF) − dto(extremo) − dto(B)/2`.
+ * - batiente central `B`: `F(REF) − (dto(inicio) + dto(fin))/2 − dto(B)/2`; con
+ *   extremos iguales es `F(REF) − dto(extremo) − dto(B)/2`. Extremos distintos
+ *   contrastados en 3HO ELEGANTPVC (TMG 22, MV 35, B 5,8): 858,6 / 818,6 / 643,6.
  * Cualquier otra combinación bloquea la pieza.
  */
 export function resolverCortesReferenciados(
@@ -69,8 +71,8 @@ export function resolverCortesReferenciados(
       return descuento(nodo, nodo.grupoInicio) + descuento(nodo, nodo.grupoFin) +
         adicionales.reduce((s, g) => s + descuento(nodo, g), 0)
     }
-    if (adicionales.length === 1 && adicionales[0] === 'B' && nodo.grupoInicio === nodo.grupoFin) {
-      return descuento(nodo, nodo.grupoInicio) + descuento(nodo, 'B') / 2
+    if (adicionales.length === 1 && adicionales[0] === 'B') {
+      return (descuento(nodo, nodo.grupoInicio) + descuento(nodo, nodo.grupoFin)) / 2 + descuento(nodo, 'B') / 2
     }
     throw new Error(`división de hueco con grupos ${adicionales.join('/')} sin contrastar`)
   }
