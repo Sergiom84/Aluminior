@@ -18,11 +18,12 @@ Este es el único punto de entrada de estado y siguiente trabajo.
 - Motor de catálogo integrado en main: tablas de `0023_motor_catalogo`,
   protección `0024_motor_catalogo_rls`, cargador dirigido y lector compatible.
 - Banco local medido el 03/10 con la copia `Anterior.mdb` y los servicios web:
-  **5/523 líneas elegibles al mismo precio (0,96 %)**; en 2026, 5/496 (1,01 %).
-  434 exclusiones justificadas; 3 cercanas, 172 distintas, 335 sin valorar y 8 errores.
-  El segundo acabado sin mapeo demostrado impide contar coincidencias parciales como aciertos.
+  **91/523 líneas elegibles al mismo precio (17,40 %)**, frente a 5/523 de base.
+  434 exclusiones conservadas; 26 cercanas, 321 distintas, 85 sin valorar y 0 errores.
+  Iteraciones `363e258`, `f235dfc`, `b21abe6`: Acabado2, escala de cortes del snapshot
+  y mapeo de nTAcris 0/1 a la primera opción. Ninguna igualdad anterior perdida.
   [Resultados, mapeo y propuestas](paridad/BANCO-CONTRASTE-2026-10-03.md).
-  Catálogo cargado solo en `aluminior_real_test`; motor y precios sin modificar.
+  Catálogo cargado solo en `aluminior_real_test`; precios y márgenes sin modificar.
 - Desarrollo en Mac con Docker. En la base local `aluminior_test` se comprobaron el 02/10
   25 migraciones y RLS en las once tablas del motor; catálogo y estructuras
   vacíos. La base con datos reales de ensayos anteriores no estaba disponible el 02/10.

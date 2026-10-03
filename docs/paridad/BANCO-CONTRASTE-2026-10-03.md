@@ -6,15 +6,15 @@ Se mide coincidencia numérica de la copia y del código actual, no aceptación 
 
 ## Historial
 
-El commit de cada fila identifica el cambio medido. La tercera iteración se
-identifica temporalmente por su mensaje `nTAcris base: iguales 73→91`.
+El commit de cada fila identifica el cambio medido. Las tres iteraciones están
+publicadas en `main`; cada una conserva todas las igualdades anteriores.
 
 | Fecha | Commit | Causa atacada | Iguales | Cercanas | Distintas | Sin valorar | Errores |
 |---|---|---|---:|---:|---:|---:|---:|
 | 03/10/2026 | `1274389` | Base reproducida; diagnóstico inicial | 5 | 3 | 172 | 335 | 8 |
 | 03/10/2026 | `363e258` | Acabado2 transmitido al núcleo | 73 | 25 | 263 | 154 | 8 |
 | 03/10/2026 | `f235dfc` | Escala de cortes en snapshot GRUPO | 73 | 25 | 271 | 154 | 0 |
-| 03/10/2026 | `iteración-3` | nTAcris=1 identifica la primera opción | 91 | 26 | 321 | 85 | 0 |
+| 03/10/2026 | `b21abe6` | nTAcris=1 identifica la primera opción | 91 | 26 | 321 | 85 | 0 |
 
 
 
@@ -408,7 +408,7 @@ node --import tsx scripts/banco-contraste.ts catalogo --mdb /Users/sergio/Deskto
 # Solo sobre la base vacía; rechaza sobreescribir un catálogo existente:
 node --import tsx scripts/banco-contraste.ts preparar --origen export_datos/banco-contraste/catalogo
 node --import tsx scripts/banco-contraste.ts medir --informe docs/paridad/BANCO-CONTRASTE-2026-10-03.md
-node --import tsx --test scripts/lib/banco-contraste/banco.test.ts scripts/banco-motor.test.ts scripts/banco-precios.test.mjs
+node --import tsx --test scripts/lib/banco-contraste/*.test.ts scripts/banco-motor.test.ts scripts/banco-precios.test.mjs
 npx tsc -p scripts/tsconfig.banco-contraste.json --noEmit
 ```
 
@@ -417,7 +417,7 @@ aluminior_real_test, no carga entorno ni admite parámetros de conexión alterna
 La exportación guarda huellas de cada CSV y la carga comprueba que banco y catálogo proceden de la misma copia.
 No usar el importador completo ni modificar el catálogo para elevar el porcentaje.
 
-Verificación de esta entrega: 12 pruebas sintéticas nuevas más 19 del banco/adaptador anterior;
-typecheck específico y del monorepo, auditoría de arquitectura y suite general.
-Los recuentos de pruebas y comandos de cada iteración constan en su evidencia y logs privados.
+Verificación de cierre: 35 pruebas del banco/adaptadores; typecheck específico y del
+monorepo, auditoría de arquitectura y suite general (1.322 pruebas pasadas, 1 omitida).
+Cada iteración detalla su evidencia y sus logs privados.
 Migraciones sin cambios. La base local es efímera y se pierde si se recrea/parada Docker.
