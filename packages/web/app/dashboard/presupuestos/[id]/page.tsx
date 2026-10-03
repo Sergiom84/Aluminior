@@ -17,6 +17,7 @@ import { asegurarCatalogoDiseno } from '../_lib/catalogo-diseno/index.ts'
 import { CatalogoDiseno } from './_components/catalogo-diseno.tsx'
 import { leerGastos } from '../_lib/gastos/index.ts'
 import { PaginaGastos } from './_components/pagina-gastos.tsx'
+import { PreferenciaMedidasPresupuesto } from './_components/disenador/preferencia-medidas.tsx'
 import styles from './presupuesto-movil.module.css'
 
 export const dynamic = 'force-dynamic'
@@ -123,6 +124,7 @@ export default async function DetallePresupuesto({ params, searchParams }: {
 
         {gastos ? <PaginaGastos datos={{ presupuestoId: id, ...gastos,
           editable: p.estado === 'PENDIENTE' }} /> :
+        <PreferenciaMedidasPresupuesto presupuestoId={id} inicial={p.medidasNuevasVentanas}>
         <CatalogoDiseno plantillas={plantillas}>
         {p.estado === 'PENDIENTE' && (
           <AnyadirLinea presupuestoId={id} series={series.map((serie) => serie.codigo)} acabados={acabados} />
@@ -152,7 +154,8 @@ export default async function DetallePresupuesto({ params, searchParams }: {
             ))}</tbody>
           </table>
         </div>
-        </CatalogoDiseno>}
+        </CatalogoDiseno>
+        </PreferenciaMedidasPresupuesto>}
 
         <div className="al-ficha-totals">
           <dl className={`${styles.totals} w-72 text-sm`}>

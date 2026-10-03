@@ -12,7 +12,7 @@ import type {
   ConfiguracionCerramiento, ConfiguracionCerramientoV3, ModuloCerramiento, UnionCerramiento,
 } from './cerramiento.ts'
 
-export type LadoAnclaje = 'derecha' | 'abajo'
+export type LadoAnclaje = 'derecha' | 'abajo' | 'izquierda'
 
 export interface AnclajeModulo {
   moduloId: string
@@ -73,11 +73,24 @@ export function posicionesCerramiento(configuracion: ConfiguracionCerramiento): 
         ancho: union.grosorMm, alto: union.longitudMm })
       rectModulos.set(modulo.id, { x: padre.x + padre.ancho + union.grosorMm, y: padre.y,
         ancho: modulo.anchoMm, alto: modulo.altoMm })
+    } else if (anclaje.lado === 'izquierda') {
+      rectUniones.set(union.id, { x: padre.x - union.grosorMm, y: padre.y,
+        ancho: union.grosorMm, alto: union.longitudMm })
+      rectModulos.set(modulo.id, { x: padre.x - union.grosorMm - modulo.anchoMm, y: padre.y,
+        ancho: modulo.anchoMm, alto: modulo.altoMm })
     } else {
       rectUniones.set(union.id, { x: padre.x, y: padre.y + padre.alto,
         ancho: union.longitudMm, alto: union.grosorMm })
       rectModulos.set(modulo.id, { x: padre.x, y: padre.y + padre.alto + union.grosorMm,
         ancho: modulo.anchoMm, alto: modulo.altoMm })
+    }
+  }
+  // Normalizar el origen permite dibujar y exportar inserciones a la izquierda
+  // sin cambiar la identidad, las medidas ni los anclajes persistidos.
+  const minimoX = Math.min(0, ...[...rectModulos.values()].map(rect => rect.x))
+  if (minimoX < 0) {
+    for (const mapa of [rectModulos, rectUniones]) {
+      for (const [id, rect] of mapa) mapa.set(id, { ...rect, x: rect.x - minimoX })
     }
   }
   return { modulos: rectModulos, uniones: rectUniones }
@@ -98,6 +111,7 @@ function solapan(a: RectVisual, b: RectVisual): boolean {
 /** Rectángulo que ocuparía un elemento nuevo en el anclaje, con la unión provisional. */
 function rectEnAnclaje(padre: RectVisual, lado: LadoAnclaje, ancho: number, alto: number): RectVisual {
   const separacion = UNION_SIN_CONFIGURAR.grosorMm
+  if (lado === 'izquierda') return { x: padre.x - separacion - ancho, y: padre.y, ancho, alto }
   return lado === 'derecha'
     ? { x: padre.x + padre.ancho + separacion, y: padre.y, ancho, alto }
     : { x: padre.x, y: padre.y + padre.alto + separacion, ancho, alto }
@@ -108,7 +122,7 @@ function rectEnAnclaje(padre: RectVisual, lado: LadoAnclaje, ancho: number, alto
  * Mejora sobre Productor, que también ofrecía anclajes ya cubiertos por otro
  * elemento: se omite el anclaje cuyo arranque cae dentro de un elemento.
  */
-export function anclajesLibresCerramiento(configuracion: ConfiguracionCerramiento): AnclajeLibre[] {
+export function anclajesLibresCerramiento(configuracion: ConfiguracionCerramiento, incluirIzquierda = false): AnclajeLibre[] {
   const usados = new Set([...anclajesCerramiento(configuracion).values()]
     .map((anclaje) => `${anclaje.moduloId}:${anclaje.lado}`))
   const { modulos } = posicionesCerramiento(configuracion)
@@ -116,10 +130,12 @@ export function anclajesLibresCerramiento(configuracion: ConfiguracionCerramient
   const libres: AnclajeLibre[] = []
   for (const modulo of configuracion.modulos) {
     const rect = modulos.get(modulo.id)!
-    for (const lado of ['derecha', 'abajo'] as const) {
+    for (const lado of (incluirIzquierda ? ['derecha', 'abajo', 'izquierda'] : ['derecha', 'abajo']) as LadoAnclaje[]) {
       if (usados.has(`${modulo.id}:${lado}`)) continue
       if (ocupados.some((otro) => solapan(rectEnAnclaje(rect, lado, 1, 1), otro))) continue
-      libres.push(lado === 'derecha'
+      libres.push(lado === 'izquierda'
+        ? { moduloId: modulo.id, lado, x: rect.x, y: rect.y }
+        : lado === 'derecha'
         ? { moduloId: modulo.id, lado, x: rect.x + rect.ancho, y: rect.y }
         : { moduloId: modulo.id, lado, x: rect.x, y: rect.y + rect.alto })
     }
@@ -172,7 +188,7 @@ export function insertarModuloEnAnclaje(
   modulo: Omit<ModuloCerramiento, 'id' | 'anclaje'>,
   destino: { moduloId: string; lado: LadoAnclaje },
 ): ConfiguracionCerramiento {
-  const libre = anclajesLibresCerramiento(configuracion)
+  const libre = anclajesLibresCerramiento(configuracion, destino.lado === 'izquierda')
     .some((anclaje) => anclaje.moduloId === destino.moduloId && anclaje.lado === destino.lado)
   const padre = configuracion.modulos.find((actual) => actual.id === destino.moduloId)
   if (!libre || !padre) return configuracion
@@ -187,7 +203,7 @@ export function insertarModuloEnAnclaje(
     modulos: [...base.modulos, { ...modulo, id, anclaje: { ...destino, unionId } }],
     uniones: [...base.uniones, {
       id: unionId, codigo: UNION_SIN_CONFIGURAR.codigo, grosorMm: UNION_SIN_CONFIGURAR.grosorMm,
-      longitudMm: destino.lado === 'derecha' ? padre.altoMm : padre.anchoMm,
+      longitudMm: destino.lado !== 'abajo' ? padre.altoMm : padre.anchoMm,
     }],
   }
 }
@@ -250,7 +266,7 @@ export function anclajesV3Validos(
     if (indice > 0) {
       const anclaje = modulo.anclaje
       if (!anclaje || typeof anclaje !== 'object' || typeof anclaje.moduloId !== 'string' ||
-        typeof anclaje.unionId !== 'string' || (anclaje.lado !== 'derecha' && anclaje.lado !== 'abajo') ||
+        typeof anclaje.unionId !== 'string' || !['derecha', 'abajo', 'izquierda'].includes(anclaje.lado) ||
         !vistos.has(anclaje.moduloId) || !unionIds.has(anclaje.unionId) ||
         lados.has(`${anclaje.moduloId}:${anclaje.lado}`) || unionesUsadas.has(anclaje.unionId)) return false
       lados.add(`${anclaje.moduloId}:${anclaje.lado}`)

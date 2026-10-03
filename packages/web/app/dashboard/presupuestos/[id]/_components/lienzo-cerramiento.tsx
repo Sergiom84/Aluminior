@@ -34,7 +34,7 @@ export function LienzoCerramiento({ configuracion, moduloActivoId, seleccion, on
         const plantilla = plantillaDiseno(configuracion.modulos[indice].estructuraCodigo)!
         const activa = modulo.id === moduloActivoId
         return (
-          <g key={modulo.id} role="button" tabIndex={0}
+          <g key={modulo.id} data-modulo-id={modulo.id} role="button" tabIndex={0}
             aria-label={`Elemento ${indice}: ${plantilla.descripcion}`}
             data-selected={activa} className="al-chain-module"
             onClick={() => {

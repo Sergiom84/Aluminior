@@ -7,7 +7,7 @@ import {
 
 export type Entrada =
   | { tipo: 'modulo'; id: string; indice: number; texto: string }
-  | { tipo: 'union'; id: string; indice: number; texto: string; configurada: boolean; lado: 'derecha' | 'abajo' }
+  | { tipo: 'union'; id: string; indice: number; texto: string; configurada: boolean; lado: 'derecha' | 'abajo' | 'izquierda' }
 
 /** Orden de creación, como la lista de Productor: cada elemento seguido de su unión. */
 export function entradasCerramiento(configuracion: ConfiguracionCerramiento): Entrada[] {

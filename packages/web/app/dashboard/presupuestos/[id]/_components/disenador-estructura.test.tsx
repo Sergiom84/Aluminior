@@ -18,6 +18,8 @@ describe('configurador con la disposición de Productor', () => {
     expect(html).toContain('CERRAMIENTO · 0 ELEMENTOS')
     expect(html).toContain('VENTANAS ABATIBLES')
     expect(html).toContain('draggable="true"')
+    expect(html).toContain('aria-label="Añadir primera ventana"')
+    expect(html).toContain('Medidas de nuevas ventanas')
     expect(html).not.toContain('al-chain-drawing')
   })
 
@@ -29,6 +31,8 @@ describe('configurador con la disposición de Productor', () => {
     expect(html).toMatch(/>0<\/span><span>2 de 1200 x 1200/)
     expect(html).toMatch(/>2<\/span><span>\*\(UNION NO CONFIG\.\)/)
     expect(html).toContain('data-pendiente="true"')
+    expect(html).toContain('aria-label="Añadir ventana a la izquierda"')
+    expect(html).toContain('aria-label="Añadir ventana a la derecha"')
     expect(html).toContain('Ancho <b class="cifra">1200</b> mm × Alto <b class="cifra">2420</b> mm')
   })
 })

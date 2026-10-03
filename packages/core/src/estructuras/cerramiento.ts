@@ -141,7 +141,7 @@ export function actualizarModuloCerramiento(
   for (const [hijoId, anclaje] of anclajesCerramiento(configuracion)) {
     const padre = porId.get(anclaje.moduloId)!
     const hijo = porId.get(hijoId)!
-    const [compartido, cambiado] = anclaje.lado === 'derecha'
+    const [compartido, cambiado] = anclaje.lado !== 'abajo'
       ? [padre.altoMm === hijo.altoMm ? padre.altoMm : null, cambios.altoMm !== undefined]
       : [padre.anchoMm === hijo.anchoMm ? padre.anchoMm : null, cambios.anchoMm !== undefined]
     if (compartido !== null && cambiado) longitudes.set(anclaje.unionId, compartido)

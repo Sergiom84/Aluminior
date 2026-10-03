@@ -122,6 +122,8 @@ export const presupuestos = pgTable('presupuestos', {
 
   tarifa: integer('tarifa').notNull().default(1),
   bloqueoPrecios: boolean('bloqueo_precios').notNull().default(false),
+  /** Preferencia reversible de inserción; nunca impide editar un elemento. */
+  medidasNuevasVentanas: text('medidas_nuevas_ventanas').notNull().default('PREGUNTAR'),
 
   estado: text('estado').notNull().default('PENDIENTE'),
 
