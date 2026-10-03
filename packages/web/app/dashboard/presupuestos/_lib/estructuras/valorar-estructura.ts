@@ -39,6 +39,12 @@ export interface EntradaValoracionEstructura {
   comisionPorc?: string | null
   tarifa: number
   opcionesHerraje: readonly string[]
+  /**
+   * Sin selección guardada (documento sin `VOpcionesHerraje`): cada conjunto toma
+   * sus opciones por defecto (`SelecDefSN`) en vez de leer `opcionesHerraje` como
+   * un formulario con todo desmarcado.
+   */
+  opcionesPorDefecto?: boolean
   trazabilidad?: boolean
 }
 

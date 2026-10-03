@@ -84,7 +84,7 @@ export async function valorarConCatalogo(
     .where(inArray(schema.opcionesHerraje.conjuntoCodigo, conjuntos)))
     .map(o => ({ conjunto: o.conjuntoCodigo, opcion: String(Number(o.opcionCodigo)), oculta: o.oculta,
       porDefecto: o.porDefecto, descripcion: o.descripcion }))
-  const guardadas = seleccionGuardada(conjuntos, entrada.opcionesHerraje, opciones)
+  const guardadas = entrada.opcionesPorDefecto ? [] : seleccionGuardada(conjuntos, entrada.opcionesHerraje, opciones)
   const acabado = entrada.acabadoCodigo ?? 'UNI'
   const resultado = despiezarLineaCatalogo(catalogo, {
     estructura: entrada.codigo, serie: entrada.serieCodigo, anchoMm: entrada.anchoMm, altoMm: entrada.altoMm,

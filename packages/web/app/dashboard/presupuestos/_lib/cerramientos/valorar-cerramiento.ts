@@ -21,6 +21,8 @@ export interface EntradaValoracionCerramiento {
   varianteAcristalamiento: '1' | '2'
   tarifa: number
   opcionesHerraje?: readonly string[]
+  /** Sin selección guardada: opciones por defecto en cada módulo. */
+  opcionesPorDefecto?: boolean
 }
 
 /** Resuelve por origen; nunca multiplica el despiece por la cantidad comercial. */

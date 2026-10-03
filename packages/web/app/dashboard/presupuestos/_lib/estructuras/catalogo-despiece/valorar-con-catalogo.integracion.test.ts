@@ -171,6 +171,11 @@ describe('valoración con el catálogo de despiece completo', () => {
     expect(r.piezas.map(p => p.acabadoCodigo)).toEqual([...Array(6).fill('L'), 'ACC', 'ACC', 'ACC', 'ACC', 'L', 'L', 'ACC'])
     expect(r.partidas!.filter(p => p.articuloCodigo === 'QA-VIDRIO').map(p => p.precioUnitario)).toEqual(['50.0000', '50.0000'])
   }))
+  it('sin selección guardada toma las opciones por defecto del catálogo', () => caso(async tx => {
+    const r = await valorarEstructura(tx, { ...entrada, opcionesHerraje: [], opcionesPorDefecto: true })
+    expect(r).toMatchObject({ ok: true, precioUnitario: 139.56,
+      opcionesHerraje: [{ categoria: 'QA-HERR', opcionCodigo: '1', descripcion: 'Cierre' }] })
+  }))
   it('una opción visible desmarcada en el formulario no vuelve por defecto', () => caso(async tx => {
     const r = await valorarEstructura(tx, { ...entrada, opcionesHerraje: [] })
     expect(r).toMatchObject({ ok: true, motor: 'catalogo', precioUnitario: 131.56, opcionesHerraje: [] })

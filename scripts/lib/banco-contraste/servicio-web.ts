@@ -49,7 +49,7 @@ export async function ejecutarServicio(cliente: ClienteEscritura, c: Caso): Prom
   const general = { serieCodigo: c.serie, vidrioCodigo: c.vidrio, acabadoCodigo: acabado,
     acabadoAccesoriosCodigo: texto(c.padre.Acabado2) || null,
     varianteAcristalamiento, opcionAcristalamiento: opcionAcristalamientoOrigen(c.configuracion?.nTAcris)!, tarifa: c.tarifa!, opcionesHerraje: opciones(c),
-    comisionPorc: c.comision ?? null }
+    comisionPorc: c.comision ?? null, opcionesPorDefecto: !c.opciones.length }
   // Access REAL conserva 6,07000017: formato de formulario a dos decimales.
   const horas = { fabricacion: numero(c.configuracion?.HorasAdFabr)!.toFixed(2), colocacion: numero(c.configuracion?.HorasColoc)!.toFixed(2) }
   if (c.tipo === 'GRUPO') {
@@ -99,7 +99,9 @@ export async function ejecutarServicio(cliente: ClienteEscritura, c: Caso): Prom
       vidrioCodigo: base.vidrio, acabadoCodigo: [...acabados][0] ?? acabado,
       acabadoAccesoriosCodigo: [...acabadosAccesorios][0],
       varianteAcristalamiento: base.vidrio ? variantes.get(base.vidrio)! : '1',
-      opcionesHerraje: [...selecciones].filter(([, s]) => s.has(true)).map(([k]) => k), configuracion: g.configuracion })
+      opcionesHerraje: [...selecciones].filter(([, s]) => s.has(true)).map(([k]) => k), configuracion: g.configuracion,
+      // Ningún elemento guarda selección: Productor usa las opciones por defecto.
+      opcionesPorDefecto: es.every(e => !e.opciones.length) })
     const piezas = r.origenes.flatMap(o => {
       const partidas = o.partidasValoracion.filter(p => p.cantidadFacturable === null || Number(p.cantidadFacturable) !== 0)
       return o.piezas.map((p, i) => {
