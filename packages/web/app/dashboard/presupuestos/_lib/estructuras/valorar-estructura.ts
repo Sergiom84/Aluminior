@@ -23,6 +23,8 @@ export interface EntradaValoracionEstructura {
   opcionAcristalamiento?: number
   varianteAcristalamiento: '1' | '2'
   acabadoCodigo: string | null
+  /** Acabado de accesorios (Acabado2); omitido conserva UNI. */
+  acabadoAccesoriosCodigo?: string | null
   tarifa: number
   opcionesHerraje: readonly string[]
   trazabilidad?: boolean

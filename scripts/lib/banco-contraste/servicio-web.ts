@@ -18,7 +18,6 @@ function restricciones(c: Caso) {
   if (c.familias.some(f => f.familia !== '001' && f.familia !== '050' && f.conjunto)) motivos.push('familia-adicional-no-representable')
   if (c.opciones.some(o => numero(o.nOpcion) === null)) motivos.push('opcion-invalida')
   if ([c.configuracion?.HorasAdFabr, c.configuracion?.HorasColoc].some(h => numero(h) === null || numero(h)! < 0)) motivos.push('horas-no-representables')
-  if (texto(c.padre.Acabado2) && texto(c.padre.Acabado2) !== texto(c.padre.Acabado)) motivos.push('segundo-acabado-sin-mapeo')
   return motivos
 }
 function opciones(c: Caso) { return c.opciones.filter(o => si(o.SelecSN)).map(o => `${texto(o.Conjunto)}|${numero(o.nOpcion)}`) }
@@ -36,12 +35,12 @@ function proyectar(p: { articuloCodigo: string; funcion?: string | null; acabado
 }
 export async function ejecutarServicio(cliente: ClienteEscritura, c: Caso): Promise<SalidaServicio> {
   const motivos = restricciones(c)
-  // Acabado2 desconocido permite diagnóstico con el principal, jamás un acierto.
-  if (motivos.some(m => m !== 'segundo-acabado-sin-mapeo')) return vacia(motivos)
+  if (motivos.length) return vacia(motivos)
   const acabado = texto(c.padre.Acabado) || null
   const [vidrio] = c.vidrio ? await cliente.select().from(schema.articulosDespiece).where(eq(schema.articulosDespiece.articuloCodigo, c.vidrio)).limit(1) : []
   const varianteAcristalamiento = vidrio?.dobleAcristalamiento ? '2' as const : '1' as const
   const general = { serieCodigo: c.serie, vidrioCodigo: c.vidrio, acabadoCodigo: acabado,
+    acabadoAccesoriosCodigo: texto(c.padre.Acabado2) || null,
     varianteAcristalamiento, tarifa: c.tarifa!, opcionesHerraje: opciones(c) }
   const manoObra = await prepararManoObra(cliente, { tarifa: c.tarifa!, horas: {
     // Access REAL conserva 6,07000017: formato de formulario a dos decimales.
@@ -66,8 +65,9 @@ export async function ejecutarServicio(cliente: ClienteEscritura, c: Caso): Prom
     }
     const es = c.elementos ?? [], config = es.filter(e => !si(c.geometria?.find(g => texto(g.nLinEstr) === texto(e.padre.nLinea))?.EsUnionSN))
     const incompatibles = config.flatMap(e => restricciones(e))
-    if (incompatibles.some(m => m !== 'segundo-acabado-sin-mapeo')) return vacia([...new Set(incompatibles)])
-    if (es.some(e => texto(e.padre.Acabado2) && texto(e.padre.Acabado2) !== texto(e.padre.Acabado))) motivos.push('segundo-acabado-sin-mapeo')
+    if (incompatibles.length) return vacia([...new Set(incompatibles)])
+    const acabadosAccesorios = new Set(es.map(e => texto(e.padre.Acabado2) || 'UNI'))
+    if (acabadosAccesorios.size > 1) return vacia(['acabados-accesorios-por-elemento-no-representables'])
     const selecciones = new Map<string, Set<boolean>>()
     for (const e of es) for (const o of e.opciones) {
       const k = `${texto(o.Conjunto)}|${numero(o.nOpcion)}`, s = selecciones.get(k) ?? new Set<boolean>()
@@ -89,6 +89,7 @@ export async function ejecutarServicio(cliente: ClienteEscritura, c: Caso): Prom
     if (new Set(variantes.values()).size > 1) return vacia(['variantes-de-vidrio-por-elemento-no-representables'])
     const r = await valorarCerramiento(cliente, { ...general, serieCodigo: base.serie,
       vidrioCodigo: base.vidrio, acabadoCodigo: [...acabados][0] ?? acabado,
+      acabadoAccesoriosCodigo: [...acabadosAccesorios][0],
       varianteAcristalamiento: base.vidrio ? variantes.get(base.vidrio)! : '1',
       opcionesHerraje: [...selecciones].filter(([, s]) => s.has(true)).map(([k]) => k), configuracion: g.configuracion })
     const piezas = r.origenes.flatMap(o => {

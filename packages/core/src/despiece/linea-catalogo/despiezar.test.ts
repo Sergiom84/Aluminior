@@ -96,6 +96,25 @@ describe('despiezarLineaCatalogo', () => {
     ])
     expect(r.importe).toBe(139.56)
   })
+  it('separa perfiles y accesorios y respeta el acabado explícito de la asociación', () => {
+    const base = catalogo()
+    const conAcabados = catalogo({
+      asociaciones: c => c === 'HERR' ? [
+        ...asociaciones.HERR!,
+        { ...asociaciones.HERR![1]!, id: 'perfil', acabado: '---P' },
+        { ...asociaciones.HERR![1]!, id: 'fijo', acabado: 'FIJO' },
+      ] : [],
+      tarifa: (c, acabado) => ({ ...base.tarifa(c, acabado)!, pvp: acabado === 'ACC' ? 2 : 1 }),
+    })
+    const r = despiezarLineaCatalogo(conAcabados, { ...entrada, acabado: 'PER', acabadoAccesorios: 'ACC' })
+    expect(r.incidencias).toEqual([])
+    expect(r.filas.filter(f => f.origen === 'plantilla').every(f => f.acabado === 'PER')).toBe(true)
+    expect(r.filas.filter(f => ['vidrio', 'mano-obra'].includes(f.origen)).every(f => f.acabado === 'ACC')).toBe(true)
+    expect(new Set(r.filas.filter(f => f.articulo === 'CIERRE').map(f => f.acabado))).toEqual(new Set(['ACC', 'PER', 'FIJO']))
+    expect(r.filas.filter(f => f.articulo === 'CIERRE' && f.acabado === 'ACC').map(f => f.importe)).toEqual([2, 2])
+    const estandar = despiezarLineaCatalogo(conAcabados, { ...entrada, estructura: 'UNION', acabado: 'PER', acabadoAccesorios: 'ACC' })
+    expect(estandar.filas.map(f => f.acabado)).toEqual(['PER', 'ACC'])
+  })
   it('elige el perfil de vidrio simple por el rango de grosor de la serie', () => {
     const simple = catalogo({ articulo: c => c === 'VIDRIO' ? { codigo: c, tipoMetraje: 'M2', componente: null, grosorAcristalar: 6, dobleAcristalamiento: false, generico: false } : catalogo().articulo(c) })
     const r = despiezarLineaCatalogo(simple, entrada)

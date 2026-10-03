@@ -15,6 +15,8 @@ export interface EntradaValoracionCerramiento {
   configuracion: ConfiguracionCerramiento
   serieCodigo: string | null
   acabadoCodigo: string | null
+  /** Acabado de accesorios (Acabado2); omitido conserva UNI. */
+  acabadoAccesoriosCodigo?: string | null
   vidrioCodigo: string | null
   varianteAcristalamiento: '1' | '2'
   tarifa: number

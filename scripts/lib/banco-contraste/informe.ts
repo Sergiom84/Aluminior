@@ -1,5 +1,5 @@
 /** Solo agregados: ninguna fila documental, identificador, persona ni importe por cliente. */
-import { writeFileSync } from 'node:fs'
+import { readFileSync, existsSync, writeFileSync } from 'node:fs'
 import { resolve, relative } from 'node:path'
 import { clasificar } from './comparar.ts'
 import type { ejecutarBanco } from './ejecutar.ts'
@@ -22,17 +22,42 @@ export function escribirInforme(destino: string, r: Resultado, manifiesto: { sha
   const fechas = s.porFechaTarifa.map(a => `| ${a.contexto} | ${a.lineas} | ${a.igual} | ${a.cercano} | ${a.distinto} | ${a['sin valorar']} | ${a.error} |`).join('\n')
   const exclusiones = Object.entries(s.excluidasPrimarias).map(([k, n]) => `| ${k} | ${n} | ${s.exclusiones[k]} |`).join('\n')
   const fecha = rel.match(/\d{4}-\d{2}-\d{2}/)![0].split('-').reverse().join('/')
+  const anterior = existsSync(destino) ? readFileSync(destino, 'utf8') : ''
+  const historial = anterior.match(/## Historial[\s\S]*?(?=\n## |$)/)?.[0] ?? ''
+  const seguimiento = anterior.match(/## Iteraciones y evidencia[\s\S]*?(?=\n## |$)/)?.[0] ?? ''
+  const distribucion = r.diagnostico.distribucion.map(d => `| ${d.intervalo} | ${d.lineas} |`).join('\n')
+  const bloqueos = r.diagnostico.principales.map(b => `| ${b.modelo} | ${b.causa} | ${b.lineas} |`).join('\n')
   const informe = `# Banco de contraste de presupuestos — ${fecha}
 
 **${decimal(s.total.porcentajeIgual)} % de las líneas elegibles salen al mismo precio efectivo que Productor: ${s.total.igual}/${s.total.lineas}.**
 En 2026: **${decimal(s.porAno[0]!.porcentajeIgual)} % (${s.porAno[0]!.igual}/${s.porAno[0]!.lineas})**.
 Se mide coincidencia numérica de la copia y del código actual, no aceptación comercial ni certificación de fabricación.
 
+${historial}
+
+${seguimiento}
+
+## Diagnóstico de distribución y bloqueos
+
+Intervalos excluyentes, sobre las distintas; error relativo absoluto en céntimos.
+
+| Error | Líneas |
+|---|---:|
+${distribucion}
+
+Una causa principal por línea: primer impedimento de representación, después primer aviso bloqueante.
+Los resultados valorados distintos no tienen bloqueo; sus discrepancias se investigan pieza a pieza.
+La asignación por identidad queda en \`resultados.json → diagnostico.bloqueos\`, fuera de Git.
+
+| Modelo | Causa principal | Líneas |
+|---|---|---:|
+${bloqueos}
+
 ## Alcance, fuente y preparación
 
 Copia autorizada \`EMP0016/Anterior.mdb\`, solo lectura con \`mdb-reader\` y proyección de campos técnicos.
 SHA-256: \`${manifiesto.sha256}\`. Ejecución: \`${r.ejecutado}\`.
-Revisión base del motor medido: \`${r.revisionGit}\`; el banco y las entradas públicas de esta entrega reutilizan los servicios sin cambiar sus cálculos.
+Revisión Git anterior al cambio de trabajo medido: \`${r.revisionGit}\`; el Historial identifica cada corrección posterior.
 Confirmados ${e.documentos} presupuestos (22 de 2025, 381 de 2026) y ${e.filas} filas:
 ${e.independientes} estructuras independientes, ${e.grupos} GRUPO y ${e.elementos} elementos internos
 (${e.elementosConPrecio} con Precio > 0). Los ${e.elementos} elementos no se suman de nuevo al denominador del GRUPO.
@@ -46,7 +71,7 @@ Postgres local \`127.0.0.1:55433/aluminior_real_test\`: 25 migraciones existente
 17.547 artículos, 83.367 PVP y 260.760 filas del motor. Simulación y carga dirigida:
 cero descartes, tablas protegidas conservadas. Clientes, proveedores, obras y documentos no importados.
 No se cargaron reglas calibradas del histórico para la vía antigua; los resultados de esa vía no pueden ser aciertos.
-No se leyó \`.env\`, ni se ejecutaron consultas o escrituras en Supabase. Motor y precios sin modificaciones.
+No se leyó \`.env\`, ni se ejecutaron consultas o escrituras en Supabase. No se modifican los datos del catálogo; los cambios de motor están en el Historial.
 
 Se amplía el banco con una frontera de extracción/ejecución nueva porque el banco v1 no lee cabeceras ni GRUPO
 y el adaptador \`banco-motor\` solo admite materiales parciales; se reutilizan normalización, avisos y cargadores existentes,
@@ -75,11 +100,10 @@ y se conserva el banco v1. [Contrato anterior](BANCO-COMPARACION-PRECIOS.md),
 Hipótesis pendiente: la semántica de alternativas \`nTAcris != 0\`; ${numeroCausa('acristalamiento-alternativo-sin-mapeo')}
 líneas se bloquean y nunca se declaran iguales. Para \`nTAcris=0\` se ejecuta la selección base del servicio.
 Los códigos de guías, segundos acabados y accesorios se conservan como evidencia; no se infieren reglas nuevas de sus precios.
-Acabado2 distinto del principal tampoco tiene semántica demostrada: ${numeroCausa('segundo-acabado-sin-mapeo')}
-líneas quedan sin valorar. Se conserva el cálculo con acabado principal exclusivamente como diagnóstico,
-incluidas sus coincidencias numéricas; ninguna se incorpora al porcentaje de aciertos.
-Hay ${coincidenciasParciales} coincidencias adicionales con entradas parcialmente representadas,
-excluidas expresamente del acierto por esta regla.
+Acabado2 se transmite al núcleo como acabado de accesorios; se respetan los selectores
+explícitos de las asociaciones (ver evidencia de la iteración). Quedan bloqueadas las entradas
+no representables. Hay ${coincidenciasParciales} coincidencias numéricas adicionales con
+entradas parcialmente representadas, que no se cuentan como aciertos.
 
 ## Qué precio se compara
 
@@ -153,16 +177,16 @@ El margen no se deduce de costes nulos/cero. \`total-padre-no-reconciliado\` exi
 redondeo o reglas de cabecera; no demuestra un margen concreto.
 
 Errores de GRUPO fuera del top diez: ${numeroCausa('error-del-servicio')} líneas devuelven
-«El motor produjo un snapshot incompatible». No se les asigna precio ni se corrige el motor.
+«El motor produjo un snapshot incompatible». No se les asigna precio mientras incumplan el contrato.
 El catálogo visual y su validación se preparan con la misma función que usa la web.
 
-## Arreglos propuestos, sin implementar
+## Causas pendientes tras la última medición
 
 Las cifras son **líneas candidatas a revisar como máximo**, solapadas; no garantizan desbloqueo tras un único arreglo.
 
 | Prioridad | Causa → líneas candidatas | Dónde investigar/tocar después de verificar |
 |---|---|---|
-| 1 | Segundo acabado → ${numeroCausa('segundo-acabado-sin-mapeo')} bloqueadas; acabados por artículo → hasta ${numeroCausa('acabado-de-articulo')} | Primero demostrar Acabado2; después contrato de configuración, web \`estructuras/catalogo-despiece/valorar-con-catalogo.ts\`; core \`despiece/linea-catalogo/estandar.ts\`, \`diseno.ts\`: accesorio fijo UNI y ---P/---A |
+| 1 | Acabados por artículo → hasta ${numeroCausa('acabado-de-articulo')} discrepancias | Acabado2 resuelto en esta iteración; investigar las discrepancias restantes por origen y acabado efectivo, sin generalizar por familia |
 | 2 | Compactos/accesorios ausentes → hasta ${numeroCausa('compactos-y-accesorios-adicionales')} medidas; además 206 elementos adicionales en 82 GRUPO | Contrato de configuración y core \`despiece/linea-catalogo/\`; investigar COM*, MOCOMP y accesorios desde sus entradas, no aprender sus importes |
 | 3 | PVP/tarifa → hasta ${numeroCausa('pvp-o-tarifa')} | \`estructuras/pvp-articulos.ts\`, \`catalogo-despiece/leer-catalogo.ts\`, importación PVP; separar cambio de acabado de precio antiguo; no cambiar tarifa del catálogo para cuadrar |
 | 4 | Alternativa de acristalamiento → ${numeroCausa('acristalamiento-alternativo-sin-mapeo')} bloqueadas | Primero demostrar nTAcris con CHM/configuración/ensayo; después contrato de entrada y \`acristalamiento-serie.ts\` |
@@ -198,8 +222,8 @@ No usar el importador completo ni modificar el catálogo para elevar el porcenta
 
 Verificación de esta entrega: 12 pruebas sintéticas nuevas más 19 del banco/adaptador anterior;
 typecheck específico y del monorepo, auditoría de arquitectura y suite general.
-Suite general: core 557, db 55, ETL 40 + 1 omitida, web 666; sin fallos.
-Motor y migraciones sin cambios. La base local es efímera y se pierde si se recrea/parada Docker.
+Los recuentos de pruebas y comandos de cada iteración constan en su evidencia y logs privados.
+Migraciones sin cambios. La base local es efímera y se pierde si se recrea/parada Docker.
 `
   writeFileSync(destino, informe)
 }

@@ -3,6 +3,7 @@ import { asegurarCatalogoDiseno, type ClienteEscritura } from '@aluminior/web/ba
 import { ejecutarServicio } from './servicio-web.ts'
 import { clasificar, diagnosticar, causasAviso, precioComparable } from './comparar.ts'
 import { numero, texto, type Caso, type Tablas, type Medicion, type Fila } from './datos.ts'
+import { diagnosticoBanco } from './diagnostico.ts'
 import { resumir } from './resumen.ts'
 
 export async function ejecutarBanco(db: ClienteEscritura, banco: { casos: Caso[]; elementos: Caso[]; evidencia: unknown }, t: Tablas) {
@@ -50,5 +51,5 @@ export async function ejecutarBanco(db: ClienteEscritura, banco: { casos: Caso[]
   const resumen = resumir(banco.casos, mediciones)
   return { version: 1, ejecutado: new Date().toISOString(), revisionGit: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(), evidencia: banco.evidencia,
     resumen, mediciones, detalles, servicio: 'valorarEstructura / valorarCerramiento + prepararManoObra; core decimal',
-    motorSinCambios: true }
+    diagnostico: diagnosticoBanco(mediciones) }
 }

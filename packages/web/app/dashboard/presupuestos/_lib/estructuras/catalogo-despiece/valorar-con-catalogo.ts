@@ -78,7 +78,7 @@ export async function valorarConCatalogo(
   const acabado = entrada.acabadoCodigo ?? 'UNI'
   const resultado = despiezarLineaCatalogo(catalogo, {
     estructura: entrada.codigo, serie: entrada.serieCodigo, anchoMm: entrada.anchoMm, altoMm: entrada.altoMm,
-    vidrio: entrada.vidrioCodigo, acabado, acabadoAccesorios: 'UNI', opcionesGuardadas: guardadas,
+    vidrio: entrada.vidrioCodigo, acabado, acabadoAccesorios: entrada.acabadoAccesoriosCodigo || 'UNI', opcionesGuardadas: guardadas,
   })
 
   const codigos = [...new Set(resultado.filas.map(f => f.articulo))]

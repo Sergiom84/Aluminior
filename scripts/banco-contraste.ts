@@ -7,6 +7,7 @@ import { leerFuente } from './lib/banco-contraste/fuente.ts'
 import { construirContraste } from './lib/banco-contraste/extraer.ts'
 import { conectarLocal, prepararLocal, URL_LOCAL } from './lib/banco-contraste/local.ts'
 import { exportarCatalogo, verificarCatalogo } from './lib/banco-contraste/catalogo.ts'
+import { comprobarNoRegresion } from './lib/banco-contraste/diagnostico.ts'
 import { verificarBase } from './lib/banco-contraste/verificar-base.ts'
 
 const { positionals, values } = parseArgs({ allowPositionals: true, options: {
@@ -56,6 +57,10 @@ if (accion === 'catalogo') {
     const r = await ejecutarBanco(db, banco, t)
     const despues = await verificarBase(sql, t)
     if (JSON.stringify(despues.firmas) !== JSON.stringify(verificacion.firmas)) throw new Error('El catálogo cambió durante la medición; resultado descartado')
+    try {
+      const anteriores = JSON.parse(readFileSync(join(salida, 'resultados.json'), 'utf8'))
+      comprobarNoRegresion(anteriores.mediciones, r.mediciones)
+    } catch (e) { if ((e as NodeJS.ErrnoException).code !== 'ENOENT') throw e }
     guardar('resultados', r)
     if (values.informe) {
       const { escribirInforme } = await import('./lib/banco-contraste/informe.ts')

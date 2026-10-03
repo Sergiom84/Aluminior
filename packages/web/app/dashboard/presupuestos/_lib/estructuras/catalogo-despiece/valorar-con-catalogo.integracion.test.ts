@@ -93,6 +93,17 @@ describe('valoración con el catálogo de despiece completo', () => {
     expect(r.opcionesHerraje).toEqual([{ categoria: 'QA-HERR', opcionCodigo: '1', descripcion: 'Cierre' }])
     expect(r.acristalamiento).toHaveLength(2)
   }))
+  it('usa Acabado2 para accesorios, vidrio y MO, manteniendo el acabado de perfiles', () => caso(async tx => {
+    await tx.insert(schema.articulosPvp).values(['QA-FELPUDO', 'QA-CIERRE', 'QA-VIDRIO', 'MO'].map(articuloCodigo => ({
+      articuloCodigo, acabadoCodigo: 'ACC', tarifa: 1, precio: '2',
+    })))
+    const r = await valorarEstructura(tx, { ...entrada, acabadoAccesoriosCodigo: 'ACC', trazabilidad: true })
+    if (!r.ok) throw new Error('rechazada')
+    expect(r.precioUnitario).toBe(108.16)
+    expect(r.piezas.slice(0, 6).every(p => p.acabadoCodigo === 'L')).toBe(true)
+    expect(r.piezas.slice(6).every(p => p.acabadoCodigo === 'ACC')).toBe(true)
+    expect(r.partidas!.slice(6).every(p => p.precioUnitario === '2.0000')).toBe(true)
+  }))
   it('una opción visible desmarcada en el formulario no vuelve por defecto', () => caso(async tx => {
     const r = await valorarEstructura(tx, { ...entrada, opcionesHerraje: [] })
     expect(r).toMatchObject({ ok: true, motor: 'catalogo', precioUnitario: 131.56, opcionesHerraje: [] })
