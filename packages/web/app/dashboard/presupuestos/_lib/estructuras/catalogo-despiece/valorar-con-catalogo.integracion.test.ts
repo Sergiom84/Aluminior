@@ -160,16 +160,16 @@ describe('valoración con el catálogo de despiece completo', () => {
     const sinCatalogo = await valorarEstructura(tx, { ...entrada, serieCodigo: 'QA-SIN-SERIE', compacto })
     expect(sinCatalogo.ok).toBe(false)
   }))
-  it('usa Acabado2 para accesorios, vidrio y MO, manteniendo el acabado de perfiles', () => caso(async tx => {
+  it('usa Acabado2 para accesorios y MO; perfiles y vidrio siguen el acabado principal', () => caso(async tx => {
     await tx.insert(schema.articulosPvp).values(['QA-FELPUDO', 'QA-CIERRE', 'QA-VIDRIO', 'MO'].map(articuloCodigo => ({
       articuloCodigo, acabadoCodigo: 'ACC', tarifa: 1, precio: '2',
     })))
     const r = await valorarEstructura(tx, { ...entrada, acabadoAccesoriosCodigo: 'ACC', trazabilidad: true })
     if (!r.ok) throw new Error('rechazada')
-    expect(r.precioUnitario).toBe(108.16)
-    expect(r.piezas.slice(0, 6).every(p => p.acabadoCodigo === 'L')).toBe(true)
-    expect(r.piezas.slice(6).every(p => p.acabadoCodigo === 'ACC')).toBe(true)
-    expect(r.partidas!.slice(6).every(p => p.precioUnitario === '2.0000')).toBe(true)
+    // Vidrio sin precio en L: genérico UNI (50), no el de accesorios.
+    expect(r.precioUnitario).toBe(170.56)
+    expect(r.piezas.map(p => p.acabadoCodigo)).toEqual([...Array(6).fill('L'), 'ACC', 'ACC', 'ACC', 'ACC', 'L', 'L', 'ACC'])
+    expect(r.partidas!.filter(p => p.articuloCodigo === 'QA-VIDRIO').map(p => p.precioUnitario)).toEqual(['50.0000', '50.0000'])
   }))
   it('una opción visible desmarcada en el formulario no vuelve por defecto', () => caso(async tx => {
     const r = await valorarEstructura(tx, { ...entrada, opcionesHerraje: [] })

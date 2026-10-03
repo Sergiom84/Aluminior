@@ -31,7 +31,8 @@ export function despiezarVidrios(entrada: {
     if (!linea.vidrio || !vidrio) { r.incidencias.push('estructura con vidrio sin vidrio elegido'); continue }
     const m = medidas.get(f.id)
     if (m?.largoMm == null || m.anchoMm == null) { r.incidencias.push(`vidrio: ${m?.incidencia ?? 'sin medida'}`); continue }
-    r.filas.push(fila({ origen: 'vidrio', articulo: linea.vidrio, acabado: linea.acabadoAccesorios, cantidad: f.cantidad,
+    // Vidrio o panel con el acabado principal y genérico de reserva: PAN16 118/118 en EMP0016.
+    r.filas.push(fila({ origen: 'vidrio', articulo: linea.vidrio, acabado: linea.acabado, cantidad: f.cantidad,
       largoMm: m.largoMm, anchoMm: m.anchoMm }))
     const tabla = esTipoHojaMarco(f.tipoHoja) ? serie.tablaFijos : serie.tablaHojas
     const moduloLargo = evaluarOnull(f.formulaLargo, contexto)
