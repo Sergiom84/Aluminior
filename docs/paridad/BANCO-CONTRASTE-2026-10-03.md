@@ -4,6 +4,7 @@
 En 2026: **80,65 % (400/496)**.
 Se mide coincidencia numérica de la copia y del código actual, no aceptación comercial ni certificación de fabricación.
 
+
 ## Historial
 
 El commit de cada fila identifica el cambio medido. Todas las iteraciones están
@@ -454,6 +455,65 @@ de integración; el pase con dos workers evita esa saturación. Los primeros
 ensayos compartiendo base encontraron tablas de otras suites: se repitieron
 con los destinos separados documentados. Los parámetros de ejecución quedan
 en los logs privados; la configuración de pruebas versionada permanece intacta.
+
+### Auditoría de cobertura de resultados guardados — 03/10/2026
+
+Continuación del relevo de raíz, con checkout `08310cb`. No cambia el motor ni
+ejecuta una nueva medición; complementa el precio con despiece y variantes.
+[Matriz de reglas y fuentes](MATRIZ-COBERTURA-PRODUCTOR-2026-10-03.md),
+[detalle de 97 pares modelo/serie](COBERTURA-MODELO-SERIE-2026-10-03.md) y
+[ensayos mínimos](ENSAYOS-MINIMOS-PRODUCTOR-2026-10-03.md).
+
+Lectura reconstruida desde tablas.json, banco.json y resultados.json, con
+huellas de catálogo y archivos estables: 957 candidatas, 434 excluidas y 523
+elegibles; 400/81/5/37/0 sin cambio. Artículos y cantidades coinciden en 440;
+cortes y unidad también en 436. Precio y esos campos coinciden simultáneamente
+en 360. El acabado literal coincide en cinco de las líneas de despiece completo;
+se documentan discrepancias UNI/L sin asumir equivalencia ni causalidad de PVP.
+Funciones vacías impiden acreditar el campo completo. Costes, metraje e importes
+se separan; no se deduce margen de costes nulos/cero ni fabricación del total.
+
+Herramienta: `node --import tsx scripts/cobertura-productor.ts`. Solo escribe
+el informe agregado; no lee .env/MDB ni conecta a BD. Fuente: copia ya extraída
+de Anterior.mdb con la huella de este banco. El informe conserva las huellas de
+los cinco JSON de procedencia y el alcance de los metadatos antiguos.
+
+Verificación de esta entrega: 47 pruebas de banco/adaptadores/analizador;
+typecheck dirigido del banco y monorepo, arquitectura con cero infracciones.
+Las suites de integración del producto no se repiten: no cambia su código.
+No se operó Productor ni se obtuvieron resultados nuevos de los seis ensayos.
+El progreso leído de la conversación de visión solo acredita la inserción de
+una ventana; faltan sus entradas completas y resultados. E1–E7 permanecen
+pendientes. Producción consta como verificada por Claude en el relevo recibido,
+con aceptación de valorar/guardar/recargar/PDF todavía pendiente.
+
+## Avance E1 — 04/10/2026, fuera del corpus del banco
+
+[Evidencia y reproducción](EVIDENCIA-E1-DESPUNTE-2026-10-04.md). Manual y
+VDespunteDetalle de otra copia Windows: 13 documentos positivos con detalle
+reconcilian la resta; ocho cabeceras a cero discrepan y un positivo no tiene
+detalle. Base/porcentaje a cero no explican el reparto. Hay 3.517 filas de
+detalle sin cabecera presente, conservadas y fuera del contraste económico.
+La huella no coincide con la de este banco: no reextraer ni sobrescribir sus
+fuentes. Ninguna candidata del banco se da por resuelta por estos resultados.
+
+Nueve pruebas nuevas de diagnóstico y las 47 existentes, typechecks y
+arquitectura correctos. Sin cambios del producto ni nueva valoración del banco.
+Continuación visual del 04/10: A–F en 0017 conservados; recálculo sustituye,
+repetición y reapertura mantienen resultado. Copia F verificada y lector propio,
+13 pruebas de diagnóstico/fronteras. Margen GID 0,01 % sobre coste explica
+residuo B/D de 0,02 €. Complementario G1–G5 observado en documento nuevo:
+alta independiente de segunda C2 de distinto importe no hereda ni reparte el
+cargo; recálculo sustituye y reparte por bases sin cargo. F9/reapertura conserva
+proyección técnica completa. Copias verificadas por estado y predicciones
+anteriores al recálculo; tres políticas de precisión coinciden en G4. E1 sigue
+En curso: G6-incidencia conserva variante1207 con propiedades verificadas,
+error de opciones/SessionFactory y alta de tercer GRUPO. No se recalculó.
+Pendiente autorización para quitar solo tercer GRUPO y confirmar edición sin
+alta antes de precisión y frontera económica del presupuesto web. Cantidad 1 y
+descuentos cero no prueban base bruta/neta ni otras cantidades. No repetir
+A–F ni G1–G5. Sin nueva medición del banco ni cambio del motor; archivos,
+discrepancias, 400/523 y 434 exclusiones se conservan.
 
 ## Diagnóstico de distribución y bloqueos
 

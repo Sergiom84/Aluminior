@@ -1,0 +1,4 @@
+{
+  "extends": "./tsconfig.banco-contraste.json",
+  "include": ["contrastar-despunte-guardado.ts", "lib/despunte-guardado/**/*.ts"]
+}

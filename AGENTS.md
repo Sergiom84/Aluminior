@@ -92,6 +92,29 @@ verified Productor behavior contradicts it.
 - Run legacy executables and register old COM/OCX components only in an isolated VM or sandbox using copies. Never register them on the main workstation without explicit authorization and a rollback plan.
 - Treat `EMP0016\aluminio.mdb` as active. Use a verified copy such as `EMP0016\Anterior.mdb` for read-only investigation.
 
+## Task tracking and document maintenance
+
+- For Productor parity work, read `docs/ESTADO-ACTUAL.md` and
+  `ROADMAP-PARIDAD-PRODUCTOR.md` before selecting a task. The state document is
+  the entry point; the roadmap owns task order and lifecycle. Check current
+  evidence and other conversations before repeating an observation or fix.
+- Document maintenance is part of every delivery. Update the existing task
+  with its actual stage, date, evidence and remaining work; then update the
+  next-step pointer. Planning, observation, implementation and verification
+  are distinct stages; do not close a task merely because a plan was written.
+- Search for affected task IDs, instructions and incoming links. Update or
+  remove exhausted instructions in active plans, handoffs and procedures.
+  Delete redundant task documents only after integrating any useful content
+  and repairing references. Preserve unique evidence or decisions as dated
+  history, clearly marked as inactive and linked to the current document.
+- Do not delete bank history, source evidence or discrepancies to make the
+  state look complete. Do not copy old pending lists into new handoffs. Update
+  the existing July item when applicable, respecting its identity and sync
+  workflow; local changes do not prove publication or reception elsewhere.
+- Before finishing, verify that active instructions cannot send the next
+  agent back to completed work. Report the documentation updated or retired,
+  evidence preserved, and the concrete next open task.
+
 ## Verification
 
 Run the relevant package tests and typechecks. Review the diff and git status;

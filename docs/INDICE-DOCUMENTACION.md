@@ -1,9 +1,11 @@
 # Índice de documentación
 
 Entrada de trabajo: [ESTADO-ACTUAL.md](ESTADO-ACTUAL.md).
-Revisión documental: 03/10/2026; hechos contrastados con main `9bc879e` y
-comprobación local del 02/10. Estado remoto informado por el cierre del importador,
-sin verificar directamente en esta auditoría.
+Clasificación documental inicial sobre `9bc879e` y comprobación local del 02/10.
+Actualización operativa del 04/10/2026: checkout `08310cb`, matriz del 03/10,
+roadmap y evidencia parcial E1. Estado remoto atribuido al relevo de Claude;
+sin nueva comprobación remota en esta entrega.
+
 
 ## Lectura operativa
 
@@ -11,6 +13,8 @@ sin verificar directamente en esta auditoría.
 |---|---|
 | [README](../README.md) | Arranque y comandos |
 | [Estado actual](ESTADO-ACTUAL.md) | Estado, riesgos y siguiente paso |
+| [Roadmap de paridad](../ROADMAP-PARIDAD-PRODUCTOR.md) | Registro único de etapas/orden de tareas e instrucciones para actualizar o retirar documentos obsoletos |
+| [Paso E1: despunte](paridad/PASO-E1-DESPUNTE.md) | G1–G5 entregados; G6-incidencia preservada. Recuperar dos líneas tras autorización para quitar solo tercer GRUPO y verificar edición antes de precisión |
 | [AGENTS](../AGENTS.md) / [CLAUDE](../CLAUDE.md) | Contratos de trabajo |
 | [Arquitectura](../ARQUITECTURA.md) | Responsabilidades y fronteras |
 | [Paridad](paridad/PARIDAD-PRODUCTOR.md) | Mapa de evidencia y aceptación |
@@ -19,7 +23,7 @@ sin verificar directamente en esta auditoría.
 ## Evidencia y referencias de paridad
 
 Las observaciones y mediciones fechadas se conservan. Sus antiguos «pendientes»
-no son una lista de tareas: el siguiente paso se encuentra solo en el estado.
+no son una lista de tareas: el estado enlaza al roadmap vigente y su siguiente paso.
 Los antecedentes con nombres de prompt o roadmap contienen información única;
 se conservan como fuentes inactivas, sin reactivar instrucciones ni permisos.
 
@@ -28,6 +32,9 @@ se conservan como fuentes inactivas, sin reactivar instrucciones ni permisos.
 | [AUDITORIA-FASE-0-CORRECCIONES-TERRA.md](paridad/AUDITORIA-FASE-0-CORRECCIONES-TERRA.md) | Evidencia o verificación fechada; conservar sus límites |
 | [BANCO-COMPARACION-PRECIOS.md](paridad/BANCO-COMPARACION-PRECIOS.md) | Banco diagnóstico; contexto económico pendiente |
 | [BANCO-CONTRASTE-2026-10-03.md](paridad/BANCO-CONTRASTE-2026-10-03.md) | Medición local de presupuestos reales, exclusiones, causas y propuestas |
+| [MATRIZ-COBERTURA-PRODUCTOR-2026-10-03.md](paridad/MATRIZ-COBERTURA-PRODUCTOR-2026-10-03.md) | Fuentes, implementación, contraste y variantes por regla; enlaza el detalle por modelo/serie |
+| [COBERTURA-MODELO-SERIE-2026-10-03.md](paridad/COBERTURA-MODELO-SERIE-2026-10-03.md) | Informe reproducible de despieces guardados: 97 pares, campos, variantes y ausencias de contraste |
+| [ENSAYOS-MINIMOS-PRODUCTOR-2026-10-03.md](paridad/ENSAYOS-MINIMOS-PRODUCTOR-2026-10-03.md) | Comparaciones discriminantes priorizadas; estados y coordinación con visión |
 | [CATALOGO-REAL-2026-10-02.md](paridad/CATALOGO-REAL-2026-10-02.md) | Catálogo visual y ejecución informada de 0022 |
 | [CIERRE-JORNADA-2026-09-20.md](paridad/CIERRE-JORNADA-2026-09-20.md) | Evidencia o verificación fechada; conservar sus límites |
 | [EVIDENCIA-ASIGNACION-HERRAJE.md](paridad/EVIDENCIA-ASIGNACION-HERRAJE.md) | Evidencia o verificación fechada; conservar sus límites |
@@ -36,6 +43,7 @@ se conservan como fuentes inactivas, sin reactivar instrucciones ni permisos.
 | [EVIDENCIA-ESCAPARATE.md](paridad/EVIDENCIA-ESCAPARATE.md) | Evidencia o verificación fechada; conservar sus límites |
 | [EVIDENCIA-MANOS-0017.md](paridad/EVIDENCIA-MANOS-0017.md) | Evidencia o verificación fechada; conservar sus límites |
 | [EVIDENCIA-VIDEO-PRESUPUESTO.md](paridad/EVIDENCIA-VIDEO-PRESUPUESTO.md) | Evidencia o verificación fechada; conservar sus límites |
+| [EVIDENCIA-E1-DESPUNTE-2026-10-04.md](paridad/EVIDENCIA-E1-DESPUNTE-2026-10-04.md) | Manual, contraste histórico, A–F y G1–G5 verificados; G6-incidencia conservada y precisión pendiente; E1 abierto |
 | [INTEGRACION-MOTOR-CATALOGO-2026-10-02.md](paridad/INTEGRACION-MOTOR-CATALOGO-2026-10-02.md) | Motor integrado, ensayos y procedimiento pendiente |
 | [OBSERVACION-PRODUCTOR-2026-09-20.md](paridad/OBSERVACION-PRODUCTOR-2026-09-20.md) | Evidencia o verificación fechada; conservar sus límites |
 | [PARIDAD-PRODUCTOR.md](paridad/PARIDAD-PRODUCTOR.md) | Mapa y criterios de aceptación |

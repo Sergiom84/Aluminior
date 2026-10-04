@@ -30,7 +30,7 @@ dibujo, descripción, medidas, cantidad, precio y horas manuales explícitas.
 | Materiales por elemento | Excepciones y modelos iguales; [fase 4](fase-4/01-evidencia-actualizar-y-diseno-v3.md) | Herencia y «Actualizar todos» |
 | Vidrio | Búsqueda por código/descripción; [fase 5](fase-5/00-resumen.md) | Composición de doble vidrio, equivalentes y editor interno |
 | Uniones | Catálogo y longitud; [fase 6](fase-6/00-resumen.md) | Reparto de grosor y compatibilidad |
-| Despiece y precio | [Reglas](fase-7/06-reglas-catalogo-despiece-completo.md) y [motor integrado](INTEGRACION-MOTOR-CATALOGO-2026-10-02.md) | Carga y cobertura económica contrastada |
+| Despiece y precio | [Reglas](fase-7/06-reglas-catalogo-despiece-completo.md), [banco](BANCO-CONTRASTE-2026-10-03.md) y [matriz modelo/serie/regla](MATRIZ-COBERTURA-PRODUCTOR-2026-10-03.md) | Ramas sin contraste, acabados efectivos y ensayos mínimos; aceptación en producción pendiente |
 | Horas manuales | [Especificación y mediciones](SPEC-MANO-DE-OBRA.md) | Aceptación integral; fabricación base es otra vía |
 | PDF | Configuración y resultados persistidos; [fase 7](fase-7/00-resumen.md) | Varias páginas y recorrido integral por teclado |
 

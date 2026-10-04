@@ -102,6 +102,32 @@ deshabilitadas.
 
 ### Elemento seleccionado
 
+**Procedimiento indicado por Sergio el 04/10/2026**, para futuras operaciones:
+clic con el ratón dentro de cada campo y escribir la medida (por ejemplo,
+Ancho `1500`, Alto `1150`). En PERFILES, escribir `GMC400` y pulsar su lupa;
+en VIDRIO, pulsar la lupa y seleccionar el artículo. Después, `Actualizar`.
+No asumir que escribir un código ya lo ha resuelto: comprobar descripción y
+medidas tras actualizar. Evitar `Ctrl+A` en este recorrido: el intento del
+04/10 abrió «Artículos». Observar la pantalla actual antes de cada entrada;
+si el árbol de accesibilidad corresponde a otra ventana, usar campos visibles
+y volver a comprobar el resultado. No fijar coordenadas como instrucciones.
+
+**Complementario E1 del 04/10:** Productor tardó en aplicar entradas y mostró
+«No responde»/una ventana DWM temporal. Las capturas inmediatamente posteriores
+al clic pueden conservar el estado anterior. Esperar y volver a observar antes
+de repetir; Actualizar y comprobar también las medidas del conjunto. La primera
+altura se introdujo por teclas y quedó verificada a 1150; en la segunda se pidió
+ayuda manual al no reflejarse la entrada; quedó verificada y aceptada a
+1200×1150. Después se pidió ayuda para cambiar solo Ancho a 1207 en una
+variante de precisión: medidas posteriormente verificadas. Perfiles/vidrio/
+acabado estaban vacíos al retomar; la búsqueda mostró GMC400 pero no cerró
+con Aceptar/Enter y se pidió ayuda manual. Tras ayuda, medidas/códigos y
+descripción fueron verificados; Aceptar produjo error de opciones/SessionFactory
+y añadió tercer GRUPO, sin sustituir la segunda C2. No usar ese recorrido como
+edición demostrada de esta variante; confirmar con el operador y conservar
+la incidencia. No asumir que las teclas enviadas son
+valores aplicados. Evidencia y continuación: [E1](EVIDENCIA-E1-DESPUNTE-2026-10-04.md).
+
 | Campo | Control | Observado |
 |---|---|---|
 | Estructura | código (solo lectura) + descripción azul | `2` VENTANA ABATIBLE DE DOS HOJAS; `0` FIJO DE 1 HUECO |
