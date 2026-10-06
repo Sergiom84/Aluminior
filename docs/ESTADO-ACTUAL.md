@@ -76,6 +76,11 @@ estado único de las tareas de paridad, con mantenimiento documental obligatorio
   obra, tarifas y redondeo con iguales entradas en Productor.
   No hay aceptación general de precio ni fabricación.
 
+- Tarifa de proveedor de doble acristalamiento del 27/08/2026: propuesta
+  calculada sin aplicar. El modelo reproduce los 14.652 costes y PVP guardados;
+  faltan la decisión del titular y la confirmación de las hipótesis.
+  [Procedimiento y decisiones](TARIFA-DOBLE-ACRISTALAMIENTO.md).
+
 ## Riesgos
 
 - El importador completo vacía tablas y puede destruir documentos.

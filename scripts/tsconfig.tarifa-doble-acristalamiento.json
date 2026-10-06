@@ -1,0 +1,4 @@
+{
+  "extends": "./tsconfig.banco-contraste.json",
+  "include": ["tarifa-doble-acristalamiento.ts", "lib/tarifa-doble-acristalamiento/**/*.ts"]
+}

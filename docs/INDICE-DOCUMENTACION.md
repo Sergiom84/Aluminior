@@ -19,6 +19,7 @@ sin nueva comprobación remota en esta entrega.
 | [Arquitectura](../ARQUITECTURA.md) | Responsabilidades y fronteras |
 | [Paridad](paridad/PARIDAD-PRODUCTOR.md) | Mapa de evidencia y aceptación |
 | [BD local](../packages/db/README.md) | Mac/Docker y aislamiento de tests |
+| [Tarifa de doble acristalamiento](TARIFA-DOBLE-ACRISTALAMIENTO.md) | Tarifa de proveedor de vidrio: modelo medido, propuesta sin aplicar y decisiones pendientes |
 
 ## Evidencia y referencias de paridad
 
