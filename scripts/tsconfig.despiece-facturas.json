@@ -1,0 +1,4 @@
+{
+  "extends": "./tsconfig.banco-contraste.json",
+  "include": ["contrastar-despiece-facturas.ts", "lib/catalogo-csv.ts", "lib/contraste-despiece-facturas*.ts"]
+}

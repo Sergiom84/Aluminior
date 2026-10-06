@@ -13,7 +13,7 @@ import { resolverPvpCatalogo } from '../../packages/core/src/precios/pvp-catalog
 import type {
   ArticuloCatalogo, CatalogoLinea, FilaPlantillaCatalogo, SerieCatalogo,
 } from '../../packages/core/src/despiece/linea-catalogo/tipos.ts'
-import type { OpcionCatalogo, ReglaAsociacion } from '../../packages/core/src/despiece/asociaciones/tipos.ts'
+import type { OpcionCatalogo, ReglaAsociacion } from '../../packages/core/src/despiece/asociaciones/index.ts'
 import type { FilaTablaAcristalamiento } from '../../packages/core/src/despiece/acristalamiento-catalogo.ts'
 import type { ConceptoManoObraCatalogo } from '../../packages/core/src/despiece/mano-obra-fabricacion.ts'
 import type { ArticuloTarifado, IncrementoPrecio } from '../../packages/core/src/precios/importe-fila.ts'
