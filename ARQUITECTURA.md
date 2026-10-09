@@ -49,7 +49,7 @@ La línea agregada, su configuración y sus satélites se guardan de forma coher
 
 Alta y copia HTTP exigen una clave de operación. `_lib/idempotencia/` toma un
 lock por actor/clave antes de reservar numeración y guarda un recibo en la misma
-transacción (0029, aplicación remota pendiente). Repetir recupera el resultado
+transacción (0029, aplicada el 09/10/2026). Repetir recupera el resultado
 confirmado; cambiar la intención con una clave confirmada se rechaza. El cliente
 conserva por pestaña la clave y, en alta incierta, la solicitud para reintentar.
 

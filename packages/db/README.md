@@ -78,10 +78,11 @@ catálogo completo, precios del taller ni aceptación en producción.
 ## Migraciones
 
 El journal de la rama A3 llega a `0029_operaciones_presupuesto` (30 entradas;
-verificado sólo en bases locales nuevas el 09/10/2026). Tabla de recibos con
-RLS y PK por actor/clave; no modifica documentos. Aplicación remota pendiente:
+verificado en bases locales nuevas y aplicado en remoto el 09/10/2026). Tabla de recibos con
+RLS y PK por actor/clave; no modifica documentos. Aplicación remota verificada:
 ver [plan A3](../../docs/paridad/IDEMPOTENCIA-PRESUPUESTOS-2026-10-09.md).
-El estado remoto anterior informado llega a 0028, no se volvió a consultar.
+Preflight remoto posterior: 30 migraciones hasta 0029, cero pendientes, RLS y
+permisos verificados. Los nueve presupuestos y tres líneas previos se conservaron.
 `0022_catalogo_diseno` corresponde al catálogo visual;
 `0023_motor_catalogo`, a las once tablas del motor económico;
 `0024`, a sus permisos y RLS; `0025`, a `formula_seleccion` (`OPCformulaSelec`) de la

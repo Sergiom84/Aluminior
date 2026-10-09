@@ -8,7 +8,7 @@ conservan evidencia. Sus antiguas listas de pendientes no sustituyen este regist
 
 ## Siguiente paso
 
-**A3 implementado y verificado localmente; siguiente: revisión y autorización de publicación y migración 0029.** [Informe A3](docs/paridad/IDEMPOTENCIA-PRESUPUESTOS-2026-10-09.md). No repetir la reproducción ni la implementación. Rama `codex/a3-idempotencia` desde `origin/main` `d2d07ed`; sin cambios de valoración ni escritura remota. P.2 sigue publicado en `46c613d`; aceptación comercial separada (July 205).
+**A3 publicado/verificado el 09/10 en `a06cd4f`, con 0029 aplicada.** Siguiente abierto: E1, recuperando el ensayo Windows según su procedimiento y autorización pendiente; P.2 conserva aceptación comercial (July 205). S2 espera el anuncio del 14/10. No repetir alta/copia A3 ni migración.
 
 **S1 y A2 publicados y verificados el 09/10**, Render live `7ad0ee2`: dependencias
 sin avisos npm publicados a la fecha, 1.431 pruebas y miniaturas de conjunto.
@@ -60,7 +60,7 @@ Sin aplicación al presupuesto web ni nueva medición del banco.
 | S1 | Mantenimiento de dependencias | Publicado/verificado 09/10 | b1682a3 incluido en Render live 7ad0ee2; audit 11→0 / producción 4→0; ci, 1.431 tests, tipos, arquitectura y build correctos. Guardado/recarga/PDF 260009; no cubre el anuncio futuro S2 |
 | S2 | Revisar anuncio de seguridad Next.js del 08/10 | Pendiente de publicación prevista 14/10 | Consultar advisory y versiones cuando estén publicados; alcance aún desconocido. No darlo por corregido porque el audit actual quede limpio. Fuente en informe de mantenimiento; sin automatización creada |
 | A2 | Miniatura del GRUPO completo | Publicado/verificado 09/10 | 7ad0ee2; tres módulos desiguales con dos uniones guardados/reabiertos en QA, SVG/PDF completos; teclado y escritorio/móvil. Basado en RECON-CERRAMIENTOS §4 quater; sin cambios de valoración |
-| A3 | Idempotencia de nueva cabecera y copia | Implementado/verificado local 09/10; publicación pendiente | Recibos transaccionales y recuperación de clave/solicitud; pérdida HTTP real verificada en los tres destinos. Migración aditiva 0029 sólo local; ver informe A3 |
+| A3 | Idempotencia de nueva cabecera y copia | Publicado/verificado 09/10 | a06cd4f live; 0029 aplicada, RLS y documentos previos conservados. Alta/copia/revisión sintéticas y tres reintentos READ ONLY remotos con mismos IDs; pérdida HTTP física local. Ver informe A3 |
 | P.2 | Aceptación PDF multipágina | Paginación publicada/verificada 09/10; formato comercial pendiente | [Informe](docs/paridad/PDF-MULTIPAGINA-2026-10-09.md): 6 escenarios, 21 páginas, 628 marcadores, 28 bloques; endpoint local 12 líneas/4 páginas. 741 tests web, tipos/build/arquitectura. Render live 46c613d, endpoint 260009 verificado (1 página, 805,65 €); formato comercial Productor/titular pendiente. July 205 |
 | D1 | Reconciliar ficha de acceso de July | Pendiente documental | Actualizar información antigua con fuente/fecha del relevo; distinguir verificación recibida de comprobación directa |
 
@@ -134,8 +134,8 @@ a pedir el trabajo cerrado y que las menciones antiguas restantes se identifican
 claramente como evidencia histórica. Los detalles históricos no prevalecen
 sobre este registro y ESTADO-ACTUAL.
 
-Avance A3, 09/10/2026: implementación y verificación local completadas. Publicación
-y migración remota pendientes; no es cierre de producción.
+Cierre A3, 09/10/2026: a06cd4f live en Render y migración 0029 aplicada.
+Tres operaciones sintéticas y sus recibos comprobados; documentos anteriores intactos.
 
 ## Cierres registrados
 
@@ -158,7 +158,7 @@ ese corpus con el banco vigente ni cerrar por la coincidencia de costes.
 > Lee AGENTS.md, docs/ESTADO-ACTUAL.md y ROADMAP-PARIDAD-PRODUCTOR.md.
 > S1/A2 publicados y verificados; lee docs/paridad/MANTENIMIENTO-Y-MINIATURAS-2026-10-09.md.
 > P.2 publicado y verificado en 46c613d: lee docs/paridad/PDF-MULTIPAGINA-2026-10-09.md.
-> A3 ya implementado/verificado localmente: lee docs/paridad/IDEMPOTENCIA-PRESUPUESTOS-2026-10-09.md. Siguiente: autorizar publicación y aplicación remota de 0029.
+> A3 publicado/verificado en a06cd4f y 0029 aplicada: lee docs/paridad/IDEMPOTENCIA-PRESUPUESTOS-2026-10-09.md. No repetir.
 > P.2: sólo queda aceptación comercial, July 205; no repetir paginación.
 > Continuar en codex/a3-idempotencia, checkout a3-idempotencia/Aluminior desde origin/main d2d07ed; main local contiene cambios ajenos.
 > S2 requiere revisar el anuncio Next cuando se publiquen versiones el 14/10. No repetir S1/A2.

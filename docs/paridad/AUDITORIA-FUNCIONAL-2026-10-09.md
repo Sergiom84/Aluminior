@@ -217,7 +217,7 @@ ni confundirla con S2, el anuncio posterior aún sin versiones. Evidencia privad
 
 ## Mejoras propuestas y límites
 
-A1 y S1 publicados/verificados. Estado único en el roadmap: P.2 publicado/verificado en 46c613d; A3 implementado/verificado localmente, pendiente de publicación,
+A1 y S1 publicados/verificados. Estado único en el roadmap: P.2 publicado/verificado en 46c613d; A3 publicado/verificado en a06cd4f,
 A2 (miniatura) cerrado. Las otras propuestas siguen pendientes, sin reabrir investigaciones cerradas:
 
 1. Selección guiada por compatibilidad modelo/serie y disponibilidad real de
@@ -237,4 +237,4 @@ A2 (miniatura) cerrado. Las otras propuestas siguen pendientes, sin reabrir inve
 La información ya extraída se conserva: no se eliminaron banco, discrepancias,
 fuentes ni observaciones E1 A–F/G1–G5/G6. No se duplicó extracción de catálogo.
 
-Continuación A3: [implementación y verificación local](IDEMPOTENCIA-PRESUPUESTOS-2026-10-09.md), pendiente de publicación; no repetir el trabajo entregado.
+Continuación A3: [publicación y verificación](IDEMPOTENCIA-PRESUPUESTOS-2026-10-09.md), a06cd4f y 0029 aplicada; no repetir el trabajo entregado.

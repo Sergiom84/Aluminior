@@ -1,7 +1,7 @@
 # Estado actual de Aluminior
 
 Revisión funcional: 09/10/2026, checkout inicial `787d1ad`. Producción comprobada
-en `46c613d` (Render live, 09/10 16:29:21 UTC); correcciones y mantenimiento publicados. Se conserva
+en `a06cd4f` (Render live, 09/10 17:06:26 UTC); A3 y migración 0029 publicados/verificados. Se conserva
 la cobertura histórica del 03/10 y la investigación E1 del 04/10.
 Consolidación documental inicial: `ee0dc16`, sobre `9bc879e`.
 Este es el único punto de entrada de estado y siguiente trabajo.
@@ -29,6 +29,13 @@ QA local de tres módulos, dos uniones, guardado/recarga, teclado, escritorio/m�
 y PDF correcto; 260009 repetido en producción mantiene 805,65 € y sus avisos.
 No hay cambios de tarifas, valoración ni migraciones. El anuncio posterior de
 Next para el 14/10 conserva seguimiento S2; no queda cubierto por audit 0.
+
+## A3 publicado
+
+[Informe A3](paridad/IDEMPOTENCIA-PRESUPUESTOS-2026-10-09.md): alta/copia/revisión
+idempotentes con recibo transaccional. 0029 aplicada; prueba sintética remota
+260010/0, 260011/0 y 260010/1, tres recibos y mismos IDs al reintentar en READ ONLY.
+Los nueve documentos anteriores y tres líneas conservan sus huellas.
 
 ## Qué funciona
 
@@ -112,7 +119,7 @@ Next para el 14/10 conserva seguimiento S2; no queda cubierto por audit 0.
 
 ## Siguiente paso
 
-**A3 implementado y verificado localmente; siguiente: revisión y autorización de publicación y migración 0029.** [Informe A3](paridad/IDEMPOTENCIA-PRESUPUESTOS-2026-10-09.md). No repetir la reproducción ni la implementación. Rama `codex/a3-idempotencia` desde `origin/main` `d2d07ed`; sin cambios de valoración ni escritura remota. P.2 sigue publicado en `46c613d`; aceptación comercial separada (July 205).
+**A3 publicado/verificado el 09/10 en `a06cd4f`, con 0029 aplicada.** Siguiente abierto: E1, recuperando el ensayo Windows según su procedimiento y autorización pendiente; P.2 conserva aceptación comercial (July 205). S2 espera el anuncio del 14/10. No repetir alta/copia A3 ni migración.
 
 Antecedente P.2: rama `codex/pdf-multipagina`, worktree `pdf-multipagina/Aluminior`, desde
 `7ad0ee2`. P.2 publicado en `46c613d`; endpoint PDF 260009 comprobado sin escritura, 1 página / 805,65 €. El main principal

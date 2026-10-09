@@ -1,10 +1,11 @@
 # A3 — idempotencia de alta y copia, 09/10/2026
 
-Estado: implementado y verificado localmente. Commit y push de la rama autorizados
-por Sergio el 09/10; entrega en rama, sin integración en main, despliegue ni
-migración remota. Rama `codex/a3-idempotencia`, checkout administrado
+Estado: publicado y verificado el 09/10/2026. Código `a06cd4f` integrado en
+`origin/main`; Render live `dep-db4htb6k1f9s73818vcg`, 17:06:26 UTC
+(19:06:26 Madrid). Migración 0029 aplicada antes del despliegue.
+Rama `codex/a3-idempotencia`, checkout administrado
 `/Users/sergio/.codex/worktrees/a3-idempotencia/Aluminior`, desde `origin/main`
-`d2d07ed`, confirmado con fetch. Main local y sus cambios ajenos no se editaron.
+`d2d07ed`. El main local y sus cambios ajenos no se editaron.
 Estado único de tarea: [roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md), A3.
 
 ## Evidencia y alcance
@@ -83,27 +84,58 @@ autorizan y revalidan; `nuevo/use-alta-presupuesto.ts` lleva recuperación clien
   snapshots, avisos e importes queda cubierta por integración/suite de copia.
   No prueba nueva paridad económica ni fabricación. Servidor y proxy detenidos.
 
-## Migración y siguiente paso abierto
+## Migración: alcance y reversión
 
 `0029_operaciones_presupuesto` sólo añade una tabla de recibos con PK compuesta,
 RLS y permisos revocados a PUBLIC/anon/authenticated. No modifica tablas
 comerciales ni migraciones aplicadas. El snapshot y journal incluyen la entrada.
 Sin 0029, las nuevas acciones fallan de forma segura antes de crear documentos.
 
-Siguiente: autorizar la aplicación remota de 0029 e integración de A3 en main.
-El push autorizado se limita a `codex/a3-idempotencia`; no activa el autodeploy de main.
-Antes de aplicar: confirmar destino y journal hasta 0028, respaldo recuperable,
-rol servidor con acceso y revisión del SQL aditivo. Aplicar 0029 antes del código;
-verificar tabla/PK/RLS/permisos y repetir pérdida de respuesta con documentos
-sintéticos expresamente autorizados. No usar presupuestos comerciales.
+Sergio autorizó aplicar 0029 e integrar A3 en main después del preflight de
+solo lectura. Destino contrastado `cwtyrpqwdbfylqdlydez`: 29 migraciones hasta
+0028, hash coincidente, tabla A3 ausente y una única migración pendiente.
+Se aplicaron SQL y entrada de journal juntos, en una transacción con timeout
+de bloqueo y comprobación de huellas de documentos antes/después.
 
 Reversión: el código anterior puede convivir con la tabla; conservar los recibos
 si se revierte la app, para no perder la deduplicación al volver a desplegar A3.
 No borrar una tabla con recibos. Sólo antes de uso y con tabla vacía, una
 reversión DDL puede retirar la tabla y reconciliar journal bajo autorización.
 La reversión de app retira la garantía A3: no presentarla como equivalente.
-No se ha aplicado este procedimiento remoto.
+La migración y sus verificaciones remotas sí se aplicaron; no fue necesario revertir.
 
 Documentación actualizada: estado, roadmap, relevo, índice, arquitectura,
 README de BD y punteros de A1/S1-A2/P.2. Banco, discrepancias, evidencia económica
-E1 y demás fuentes fechadas intactos. A3 no se cierra como publicado.
+E1 y demás fuentes fechadas intactos. A3 queda publicado; E1 y aceptación comercial P.2 conservan sus límites.
+
+## Publicación y aceptación en producción
+
+- Respaldo privado previo: `export_datos/respaldos/a3-antes-0029-1791565411278.dump`
+  del checkout principal, ignorado por Git y permisos 600. Public + drizzle,
+  2.811.100 bytes, 309 entradas leídas por pg_restore; SHA-256
+  `254335803f7d48da8898d30e9ed7a9e2330a0f2ebf2f65bea162bda450f8202b`.
+  Archivo legible; no se afirma restauración completa ensayada.
+- Migración: 29→30, hash 0029
+  `39c610927984136a3b8c455da063102bce6bf408e88cbce15d7fa9234faa766b`.
+  Preflight posterior confirma cero pendientes, RLS y denegación a
+  anon/authenticated. No cambia datos comerciales.
+- Push fast-forward de `a06cd4f2a9d5590248fd974fb338ce5ea500aae9` a main,
+  desde el checkout aislado. Render API confirma ese mismo commit live.
+- Web autenticada: alta sintética `260010/0`, copia como nuevo `260011/0`,
+  copia como revisión `260010/1`, todas «PRUEBA A3 2026-10-09», sin cliente ni
+  líneas comerciales. Apertura y recarga correctas; tres recibos persistidos.
+  Se conservan estos documentos de prueba; no se borraron ni ocultaron.
+- Reejecución de los tres servicios de `a06cd4f` con las mismas claves/actores
+  y entradas, sobre BD remota dentro de una transacción READ ONLY: devuelven
+  sus mismos IDs sin reservar ni escribir. No es un segundo ensayo de pérdida
+  HTTP en Render: esa pérdida física se probó localmente con el proxy.
+- Los nueve presupuestos anteriores y tres líneas conservan sus huellas
+  exactas tras la migración y la prueba sintética. 260009 sigue en 805,65 €.
+  Total posterior: 12 cabeceras, 3 líneas, 3 recibos A3.
+- Evidencia privada: `/tmp/aluminior-a3-{backup,migration,prod-qa}.json` y
+  `/tmp/aluminior-a3-produccion.png`. El acceso directo al destino autorizado
+  funcionó; no se desactivaron protecciones del navegador.
+
+Siguiente abierto: E1, con la coordinación y autorización Windows ya descritas
+en el roadmap; P.2 conserva aceptación comercial, y S2 sigue condicionado al
+anuncio previsto del 14/10. No repetir A3 ni su migración.

@@ -155,7 +155,7 @@ no cierra P.2, aceptación multipágina.
 
 Actualización posterior 09/10: [P.2 publicado y verificado](PDF-MULTIPAGINA-2026-10-09.md).
 La indicación de ensayar multipágina que sigue conserva el orden de esta entrega;
-A3 ya tiene implementación y verificación local; siguiente: autorizar publicación y migración 0029.
+A3 publicado/verificado en a06cd4f; 0029 aplicada. Siguiente según roadmap.
 
 **S1 y A2 cerrados para el alcance comprobado.** Al cerrar esta entrega se
 señaló P.2 como siguiente mejora independiente. Su aceptación multipágina
@@ -173,4 +173,4 @@ actualización documental, preservando las notas locales de tarifas. No ejecutar
 un push desde ese main sin reconciliarlo. July se actualiza localmente;
 publicación Git/Render no acredita sincronización o recepción en otro equipo.
 
-Continuación A3: [implementación y verificación local](IDEMPOTENCIA-PRESUPUESTOS-2026-10-09.md), pendiente de publicación; no repetir el trabajo entregado.
+Continuación A3: [publicación y verificación](IDEMPOTENCIA-PRESUPUESTOS-2026-10-09.md), a06cd4f y 0029 aplicada; no repetir el trabajo entregado.
