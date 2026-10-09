@@ -153,13 +153,13 @@ no cierra P.2, aceptación multipágina.
 
 ## Continuación y entrega del contexto
 
-Actualización posterior 09/10: [P.2 verificado localmente](PDF-MULTIPAGINA-2026-10-09.md).
+Actualización posterior 09/10: [P.2 publicado y verificado](PDF-MULTIPAGINA-2026-10-09.md).
 La indicación de ensayar multipágina que sigue conserva el orden de esta entrega;
-el siguiente paso vigente es publicar su corrección y verificar el endpoint.
+el siguiente paso vigente es A3: idempotencia de creación/copia ante pérdida HTTP.
 
 **S1 y A2 cerrados para el alcance comprobado.** Al cerrar esta entrega se
 señaló P.2 como siguiente mejora independiente. Su aceptación multipágina
-sintética ya está verificada en la continuación enlazada: falta publicación y
+sintética ya está verificada en la continuación enlazada: falta
 aceptación del formato comercial. No repetir la investigación entregada.
 Se reutiliza el pendiente July 205, sin duplicarlo. S2 queda fechado para revisar
 el anuncio Next cuando publique versiones; E1/E2/E6 conservan sus límites de

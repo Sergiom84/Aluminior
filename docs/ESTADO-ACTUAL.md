@@ -1,7 +1,7 @@
 # Estado actual de Aluminior
 
 Revisión funcional: 09/10/2026, checkout inicial `787d1ad`. Producción comprobada
-en `7ad0ee2` (Render live, 09/10 15:48:17 UTC); correcciones y mantenimiento publicados. Se conserva
+en `46c613d` (Render live, 09/10 16:29:21 UTC); correcciones y mantenimiento publicados. Se conserva
 la cobertura histórica del 03/10 y la investigación E1 del 04/10.
 Consolidación documental inicial: `ee0dc16`, sobre `9bc879e`.
 Este es el único punto de entrada de estado y siguiente trabajo.
@@ -112,15 +112,10 @@ Next para el 14/10 conserva seguimiento S2; no queda cubierto por audit 0.
 
 ## Siguiente paso
 
-**P.2 — publicar la corrección PDF ya verificada localmente** y comprobar el
-endpoint desplegado. [Informe](paridad/PDF-MULTIPAGINA-2026-10-09.md): rótulo,
-dibujo, medidas y mano de obra permanecen juntos; 6 escenarios / 21 páginas,
-741 pruebas web y endpoint local 12 líneas / 4 páginas correctos. La aceptación
-del formato comercial Productor/titular queda separada; July 205 sigue en curso.
-No repetir la investigación de paginación ni S1/A2. S2 conserva el anuncio futuro.
+**A3 — evitar presupuestos duplicados al crear o copiar si se pierde la respuesta HTTP** (propuesta 4 de A1). Reproducir primero en local, definir una clave estable de operación y verificar reintentos; no tocar valoración. P.2 está publicado en `46c613d`; queda separada la aceptación comercial Productor/titular (July 205).
 
 Rama `codex/pdf-multipagina`, worktree `pdf-multipagina/Aluminior`, desde
-`7ad0ee2`. P.2 no publicado; Render sigue en ese commit. El main principal
+`7ad0ee2`. P.2 publicado en `46c613d`; endpoint PDF 260009 comprobado sin escritura, 1 página / 805,65 €. El main principal
 conserva dos commits de tarifas excluidos y código anterior sin indexar; solo
 se sincroniza allí documentación. No publicar desde ese main sin reconciliarlo.
 

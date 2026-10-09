@@ -3,7 +3,7 @@
 Entrada de trabajo: [ESTADO-ACTUAL.md](ESTADO-ACTUAL.md).
 Clasificación documental inicial sobre `9bc879e` y comprobación local del 02/10.
 Actualización operativa del 09/10/2026: auditoría funcional, correcciones publicadas
-y S1/A2 publicados/verificados en 7ad0ee2. P.2 verificado localmente, pendiente de publicación; estados en el roadmap.
+y S1/A2 publicados/verificados en 7ad0ee2. P.2 publicado/verificado en 46c613d; siguiente A3 (idempotencia); estados en el roadmap.
 
 
 ## Lectura operativa
@@ -11,7 +11,7 @@ y S1/A2 publicados/verificados en 7ad0ee2. P.2 verificado localmente, pendiente 
 | Documento | Uso |
 |---|---|
 | [README](../README.md) | Arranque y comandos |
-| [PDF multipágina 09/10](paridad/PDF-MULTIPAGINA-2026-10-09.md) | P.2: reproducción, corrección, regresión sintética y endpoint local; publicación pendiente |
+| [PDF multipágina 09/10](paridad/PDF-MULTIPAGINA-2026-10-09.md) | P.2: reproducción, corrección, regresión sintética, endpoint local y publicación 46c613d verificada |
 | [Mantenimiento y miniaturas 09/10](paridad/MANTENIMIENTO-Y-MINIATURAS-2026-10-09.md) | S1 y A2: dependencias, evidencia de dibujo y verificación de la continuación |
 | [Auditoría funcional 09/10](paridad/AUDITORIA-FUNCIONAL-2026-10-09.md) | Fallos reproducidos, correcciones, aceptación y mejoras propuestas |
 | [Estado actual](ESTADO-ACTUAL.md) | Estado, riesgos y siguiente paso |

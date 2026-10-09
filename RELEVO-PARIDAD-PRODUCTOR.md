@@ -5,9 +5,9 @@ Fecha: 03/10/2026. Contexto recibido en Codex Windows; comprobar cambios posteri
 **Referencia de contexto; no usar sus listas fechadas como tareas vigentes.**
 Entrada actual: [estado](docs/ESTADO-ACTUAL.md) →
 [roadmap operativo](ROADMAP-PARIDAD-PRODUCTOR.md). La matriz y la lista de
-ensayos ya están entregadas (M0 cerrado). Actualización 09/10: A1 y S1/A2 publicados/verificados, último Render live `7ad0ee2`.
-Siguiente **P.2: publicación de la corrección ya verificada localmente**, según [informe PDF](docs/paridad/PDF-MULTIPAGINA-2026-10-09.md).
-No repetir S1/A2 ni la investigación de paginación. Rama `codex/pdf-multipagina`; producción sigue en `7ad0ee2`.
+ensayos ya están entregadas (M0 cerrado). Actualización 09/10: A1 y S1/A2 publicados/verificados, último Render live `46c613d`.
+Siguiente **A3: idempotencia de nueva cabecera y copia ante pérdida HTTP**, según [informe PDF](docs/paridad/PDF-MULTIPAGINA-2026-10-09.md).
+No repetir S1/A2 ni la investigación de paginación. Rama `codex/pdf-multipagina`; producción está en `46c613d`; PDF 260009 descargado válido, 1 página y 805,65 €.
 S2 conserva el anuncio Next previsto para el 14/10; no repetir mantenimiento ya entregado.
 E1 conserva su [procedimiento](docs/paridad/PASO-E1-DESPUNTE.md) para después.
 Avance del 04/10: [evidencia parcial E1](docs/paridad/EVIDENCIA-E1-DESPUNTE-2026-10-04.md).

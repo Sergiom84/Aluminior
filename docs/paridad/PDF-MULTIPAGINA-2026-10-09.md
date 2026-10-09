@@ -1,6 +1,6 @@
 # PDF multipágina — aceptación local del 09/10/2026
 
-Estado: **corrección implementada y verificada localmente; pendiente de publicación**.
+Estado: **corrección publicada y verificada; formato comercial pendiente**.
 Registro único: [roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md), P.2.
 Entrada: [estado actual](../ESTADO-ACTUAL.md). No es un segundo backlog.
 
@@ -94,11 +94,16 @@ Logs privados: `/tmp/aluminior-p2-*.log`,
 
 ## Etapa y siguiente paso
 
-La aceptación sintética local está terminada. **No está publicada esta corrección**:
-Render sigue en `7ad0ee2`. Siguiente paso P.2: publicar el cambio aislado y
-comprobar el endpoint desplegado; conservar aparte la aceptación del formato
-comercial con evidencia Productor/titular. No repetir los seis escenarios como
-investigación nueva; son la regresión reutilizable de esta entrega.
+La aceptación sintética local está terminada. Publicación autorizada por Sergio y
+completada el 09/10 a las 16:29:21 UTC (18:29:21 Madrid): Render live
+`dep-db4hbvp7lnhs739a7l7g`, commit `46c613d8018bf20968115239170229c15c40ccb2`.
+Descarga autenticada posterior del PDF 260009: archivo válido, una página,
+«Línea 1» y total 805,65 €. Verificación de sólo lectura, sin reguardar ni cambiar datos.
+La regresión multipágina de 21 páginas es local; el documento remoto comprobado
+tiene una sola página. No confundir ambos alcances.
+Queda la aceptación del formato comercial con evidencia Productor/titular.
+Siguiente tarea local A3: idempotencia de nueva cabecera y copia ante pérdida HTTP.
+No repetir los seis escenarios como investigación nueva; son regresión reutilizable.
 
 Se incorporó el cierre previo S1/A2 y se actualizaron roadmap, estado, relevo,
 índice, informe A1 y contrato de paridad. En el checkout principal se sincroniza

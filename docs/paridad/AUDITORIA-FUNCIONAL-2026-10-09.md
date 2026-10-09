@@ -217,7 +217,7 @@ ni confundirla con S2, el anuncio posterior aún sin versiones. Evidencia privad
 
 ## Mejoras propuestas y límites
 
-A1 y S1 publicados/verificados. Estado único en el roadmap: P.2 verificado localmente, pendiente de publicación,
+A1 y S1 publicados/verificados. Estado único en el roadmap: P.2 publicado/verificado en 46c613d; siguiente A3 (idempotencia),
 A2 (miniatura) cerrado. Las otras propuestas siguen pendientes, sin reabrir investigaciones cerradas:
 
 1. Selección guiada por compatibilidad modelo/serie y disponibilidad real de
@@ -228,7 +228,7 @@ A2 (miniatura) cerrado. Las otras propuestas siguen pendientes, sin reabrir inve
    local, respaldo y alcance remoto autorizado; no redondear para ocultar el límite.
 4. Idempotencia de nueva cabecera y copia ante pérdida completa de respuesta
    HTTP. Separar caché postcommit no resuelve esa pérdida de transporte.
-5. Miniatura completa del GRUPO **entregada como A2** en 7ad0ee2. P.2 tiene [aceptación local posterior](PDF-MULTIPAGINA-2026-10-09.md); resta publicación y formato comercial. Alcance original:
+5. Miniatura completa del GRUPO **entregada como A2** en 7ad0ee2. P.2 tiene [aceptación y publicación posteriores](PDF-MULTIPAGINA-2026-10-09.md); resta formato comercial. Alcance original:
    aceptación PDF multipágina y, por separado, flujos de fabricación antes de usarlos en taller.
 6. Automatizar el recorrido sintético de navegador en CI, incluyendo latencia,
    fallo/reintento de catálogos y foco/teclado. Mantenerlo separado del contraste
