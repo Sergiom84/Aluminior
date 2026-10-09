@@ -69,6 +69,7 @@ export function EditarCerramiento({
       <input type="hidden" name="tipo" value="CERRAMIENTO" />
       <input type="hidden" name="codigo" value="GRUPO" />
       <input type="hidden" name="configuracionCerramiento" value={JSON.stringify(configuracion)} />
+      <ErrorCampo nombre="configuracionCerramiento" />
 
       <DisenadorEstructura codigo={configuracion.modulos[0].estructuraCodigo}
         anchoMm={anchoMm} altoMm={altoMm} configuracionInicial={datos.configuracion}
@@ -127,8 +128,6 @@ export function EditarCerramiento({
             className={`cifra ${entrada}`} style={estilo} />
           <ErrorCampo nombre="cantidad" />
         </div>
-        <input type="hidden" name="anchoMm" value={anchoMm} />
-        <input type="hidden" name="altoMm" value={altoMm} />
       </div>
 
       <fieldset className="mt-4 rounded-md border p-3" style={{ borderColor: 'var(--al-border)' }}>

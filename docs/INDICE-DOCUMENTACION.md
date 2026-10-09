@@ -2,9 +2,8 @@
 
 Entrada de trabajo: [ESTADO-ACTUAL.md](ESTADO-ACTUAL.md).
 Clasificación documental inicial sobre `9bc879e` y comprobación local del 02/10.
-Actualización operativa del 04/10/2026: checkout `08310cb`, matriz del 03/10,
-roadmap y evidencia parcial E1. Estado remoto atribuido al relevo de Claude;
-sin nueva comprobación remota en esta entrega.
+Actualización operativa del 09/10/2026: auditoría funcional, correcciones locales
+y recorrido publicado A1 comprobado. Estado y publicación en el roadmap.
 
 
 ## Lectura operativa
@@ -12,6 +11,7 @@ sin nueva comprobación remota en esta entrega.
 | Documento | Uso |
 |---|---|
 | [README](../README.md) | Arranque y comandos |
+| [Auditoría funcional 09/10](paridad/AUDITORIA-FUNCIONAL-2026-10-09.md) | Fallos reproducidos, correcciones, aceptación y mejoras propuestas |
 | [Estado actual](ESTADO-ACTUAL.md) | Estado, riesgos y siguiente paso |
 | [Roadmap de paridad](../ROADMAP-PARIDAD-PRODUCTOR.md) | Registro único de etapas/orden de tareas e instrucciones para actualizar o retirar documentos obsoletos |
 | [Paso E1: despunte](paridad/PASO-E1-DESPUNTE.md) | G1–G5 entregados; G6-incidencia preservada. Recuperar dos líneas tras autorización para quitar solo tercer GRUPO y verificar edición antes de precisión |

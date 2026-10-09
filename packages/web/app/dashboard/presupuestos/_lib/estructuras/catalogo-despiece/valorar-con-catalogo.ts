@@ -72,12 +72,26 @@ export async function valorarConCatalogo(
   if (!catalogo) return null
   const [estructura] = await cliente.select({ descripcion: schema.estructuras.descripcion })
     .from(schema.estructuras).where(eq(schema.estructuras.codigo, entrada.codigo)).limit(1)
+  const acristalamiento: RanuraAcristalamiento[] = catalogo.plantilla(entrada.codigo).filter(f => f.componente === '1')
+    .map((f, i) => ({ slot: i + 1, variante: entrada.varianteAcristalamiento,
+      vidrioHojas: esTipoHojaMarco(f.tipoHoja) ? null : entrada.vidrioCodigo,
+      vidrioFijos: esTipoHojaMarco(f.tipoHoja) ? entrada.vidrioCodigo : null }))
   const conjuntos = conjuntosDeLinea(catalogo, entrada.codigo, entrada.serieCodigo)
   const opciones: OpcionVisible[] = (await cliente.select().from(schema.opcionesHerraje)
     .where(inArray(schema.opcionesHerraje.conjuntoCodigo, conjuntos)))
     .map(o => ({ conjunto: o.conjuntoCodigo, opcion: String(Number(o.opcionCodigo)), oculta: o.oculta,
       porDefecto: o.porDefecto, descripcion: o.descripcion }))
   const guardadas = entrada.opcionesPorDefecto ? [] : seleccionGuardada(conjuntos, entrada.opcionesHerraje, opciones)
+  const marcadas = opcionesMarcadas(conjuntos, opciones, guardadas)
+  const opcionesHerraje: OpcionHerrajeElegida[] = opciones.filter(o => marcadas.get(o.conjunto)?.has(o.opcion))
+    .map(o => ({ categoria: o.conjunto, opcionCodigo: o.opcion, descripcion: o.descripcion }))
+  // El adaptador sólo carga las tablas originales de la serie. Hasta verificar
+  // E6, otra opción debe conservarse sin recibir el precio/despiece de la 1.
+  if ((entrada.opcionAcristalamiento ?? 1) !== 1) return {
+    ok: true, descripcion: estructura?.descripcion ?? entrada.codigo, precioUnitario: null,
+    aviso: `Importe incompleto: la opción de acristalamiento ${entrada.opcionAcristalamiento} aún no dispone de valoración verificada con el catálogo de despiece.`,
+    piezas: [], acristalamiento, opcionesHerraje, partidas: [], materialCompleto: false, motor: 'catalogo',
+  }
   const acabado = entrada.acabadoCodigo ?? 'UNI'
   const resultado = despiezarLineaCatalogo(catalogo, {
     estructura: entrada.codigo, serie: entrada.serieCodigo, anchoMm: entrada.anchoMm, altoMm: entrada.altoMm,
@@ -98,14 +112,6 @@ export async function valorarConCatalogo(
     mapa, costePorArticulo: costes,
   }).map((p, i) => ({ ...p, acabadoCodigo: resultado.filas[i]!.acabado,
     anchoCorteMm: resultado.filas[i]!.anchoMm === null ? null : String(resultado.filas[i]!.anchoMm) }))
-
-  const acristalamiento: RanuraAcristalamiento[] = catalogo.plantilla(entrada.codigo).filter(f => f.componente === '1')
-    .map((f, i) => ({ slot: i + 1, variante: entrada.varianteAcristalamiento,
-      vidrioHojas: esTipoHojaMarco(f.tipoHoja) ? null : entrada.vidrioCodigo,
-      vidrioFijos: esTipoHojaMarco(f.tipoHoja) ? entrada.vidrioCodigo : null }))
-  const marcadas = opcionesMarcadas(conjuntos, opciones, guardadas)
-  const opcionesHerraje: OpcionHerrajeElegida[] = opciones.filter(o => marcadas.get(o.conjunto)?.has(o.opcion))
-    .map(o => ({ categoria: o.conjunto, opcionCodigo: o.opcion, descripcion: o.descripcion }))
 
   const partidas: PartidaValoracionCerramiento[] = resultado.filas.map((f, ordinal) => {
     const t = catalogo.tarifa(f.articulo, f.acabado)

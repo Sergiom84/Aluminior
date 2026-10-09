@@ -20,12 +20,18 @@ import { asegurarCatalogoDiseno } from '../../_lib/catalogo-diseno/index.ts'
 // @react-pdf/renderer no es compatible con el runtime Edge.
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 export async function GET(
   _req: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params
+  if (!UUID.test(id)) {
+    return new Response('Presupuesto no encontrado', {
+      status: 404, headers: { 'Cache-Control': 'no-store' },
+    })
+  }
   const db = crearDb()
   await asegurarCatalogoDiseno(db)
 
