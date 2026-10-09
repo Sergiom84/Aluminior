@@ -1,6 +1,6 @@
 # Auditoría funcional de presupuestos — 09/10/2026
 
-Estado: correcciones locales verificadas; publicación pendiente. Registro de tareas:
+Estado: correcciones publicadas y recorrido de prueba verificado el 09/10/2026. Registro de tareas:
 [roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md), A1. Entrada:
 [estado](../ESTADO-ACTUAL.md). No usar este informe como un segundo backlog.
 
@@ -9,8 +9,8 @@ Estado: correcciones locales verificadas; publicación pendiente. Registro de ta
 Encargo: hacer utilizable Aluminior mientras se completa el catálogo de Productor.
 Auditoría de backend, configurador, copia/PDF y recorrido en navegador con tres
 agentes y revisión independiente del diff. Checkout inicial limpio: `787d1ad`.
-No se modificaron core, migraciones, precios, catálogos ni documentos existentes
-remotos. Original Windows no ejecutado: Mac y ausencia de mochila; no se ha
+No se modificaron core, migraciones, tarifas ni catálogos. Sólo se creó y
+revaloró el presupuesto sintético autorizado 260009; documentos previos intactos. Original Windows no ejecutado: Mac y ausencia de mochila; no se ha
 bypasseado protección ni abierto la MDB activa.
 
 Sergio identifica el ejercicio 2026 como empresa 0016 y la 0017 como pruebas;
@@ -32,11 +32,11 @@ Evidencia reutilizada, sin repetir extracciones:
 - [Contrato de paridad](PARIDAD-PRODUCTOR.md): misma tarea y terminología,
   sin rediseño ni nueva regla económica asumida.
 
-## Observación directa de producción
+## Observación de producción antes de publicar
 
 Render consultado en lectura: despliegue `dep-db17kqivcj2c739uorq0`, estado
 `live`, commit `d451274956672faf1bb5da31c6e27a2178203fec`, finalizado el
-04/10/2026. No confundir con `787d1ad` local ni con estos arreglos sin publicar.
+04/10/2026. Esta es la observación previa; la publicación corregida consta más abajo.
 No se repitió consulta directa a Supabase; sus conteos históricos siguen
 atribuidos al relevo del 03/10.
 
@@ -58,8 +58,8 @@ Caso A1: 2O, ELEGANTPVC, 1200×540 mm, L, VCG420AGS4, tarifa 1, cantidad 1,
 Esto prueba persistencia y emisión del caso, **no certifica precio correcto ni
 fabricación**. La producción examinada todavía omite defaults de herraje en
 este flujo. No usar 739,71 € como objetivo del código corregido, ni exigir
-652,24 € histórico. Revalorar sólo el documento de prueba después de publicar
-permitirá comprobar el efecto real sin tocar presupuestos del negocio.
+652,24 € histórico. La revaloración posterior, sólo del documento de prueba, se recoge en el cierre
+de publicación; no se tocaron presupuestos anteriores del negocio.
 
 En un documento previo se observó C2+C2 con ELEGANTPVC, DABASE y unión sin
 configurar. La aplicación permitía abrirlo, pero no explicaba visiblemente
@@ -145,12 +145,53 @@ archivos, 375 módulos, 0 infracciones). Pruebas exactas de esta rama: core
 frente a 1426 del checkout inicial son siete pruebas de los commits excluidos.
 Dos ejecuciones paralelas tuvieron un timeout de 5 s en pruebas distintas de
 BD; la suite web completa pasó con `--maxWorkers=2`, sin cambiar aserciones ni
-timeouts. Logs privados `/tmp/aluminior-release-*.log`. La aceptación de
-producción se incorporará después del despliegue.
+timeouts. Logs privados `/tmp/aluminior-release-*.log`. La aceptación de producción se recoge a continuación.
 
 La autorización se limita a esta entrega y al documento sintético; no permite
 recalcular presupuestos previos ni cambiar datos de catálogo. El checkout
 principal conserva los dos commits locales anteriores, fuera de la publicación.
+
+## Publicación y aceptación posterior
+
+Commit de código `f6d5bcd78ed82f8cd7b4cfa700164e6d33363e1f`, enviado a
+`origin/main` sin incluir los dos commits anteriores de tarifas. Render
+`dep-db4g8hbbc2fs73bprsj0`, estado **live**, finalizado el 09/10/2026 a las
+15:13:43 UTC (17:13:43 Madrid), consultado por API.
+
+Tras recargar la aplicación se editó y guardó únicamente 260009 con las mismas
+entradas. Conserva una línea 2O, 1200×540, cantidad 1, ELEGANTPVC, L,
+VCG420AGS4, tarifa 1, 0 h fabricación y 5 h colocación total de línea.
+
+| Verificación | Resultado publicado |
+|---|---|
+| Edición y guardado | Correctos; editor recupera estado normal |
+| Herrajes predeterminados | Material 515,83 €; despiece pasa de 66 a 88 piezas |
+| Colocación | 150,00 €, mantiene las 5 h de toda la línea |
+| Totales | Base 665,83 €, IVA 139,82 €, total **805,65 €** |
+| Recarga de página | Conserva datos, una línea y los mismos importes |
+| PDF descargado desde Emitir | 4455 bytes, una página A4, lectura estricta y render PDFium correctos; dibujo y totales coinciden |
+| Avisos | Siguen dos piezas sin coste y «Pendiente de revisión técnica» en PDF |
+
+El aumento de 54,50 € en material corresponde al cambio de aplicación de
+opciones por defecto; no se han actualizado tarifas. Tampoco se certifica
+paridad económica o fabricación. A1 queda cerrado para este recorrido y las
+correcciones auditadas; E2/E6 y las demás reglas conservan su estado.
+
+El visor PDF del navegador interno quedó gris tanto al recargar como en una
+pestaña nueva. La descarga autenticada produjo el PDF válido, inspeccionado
+independientemente. Se conserva como limitación del recorrido visual sin
+atribuir una causa no demostrada. Se abrió el archivo descargado en Codex.
+Evidencia privada ignorada: `produccion-corregida-260009.png`,
+`produccion-corregida-260009.pdf`, `produccion-corregida-260009-1.png`, texto y
+verificación JSON dentro de `output/auditoria-2026-10-09/`.
+
+El cierre documental se publica separadamente con `[skip render]`, mecanismo
+[documentado por Render](https://render.com/docs/deploys#skipping-an-auto-deploy),
+para no repetir un despliegue por Markdown. La versión ejecutable sigue siendo
+`f6d5bcd`. Worktree de entrega: `/Users/sergio/.codex/worktrees/auditoria-presupuestos/Aluminior`.
+El checkout principal conserva `main` en `787d1ad` y la copia de los cambios de
+esta auditoría sin indexar. No publicar ese main local sin reconciliar los dos
+commits de tarifas que quedaron expresamente fuera de esta entrega.
 
 ## Dependencias preexistentes detectadas durante la entrega
 
@@ -175,7 +216,7 @@ y resto de avisos, con pruebas/build propios antes de publicar. No ejecutar
 
 ## Mejoras propuestas y límites
 
-Priorizar después de publicar/verificar A1, sin reabrir investigaciones cerradas:
+A1 publicado/verificado; priorizar S1 y después estas mejoras, sin reabrir investigaciones cerradas:
 
 1. Selección guiada por compatibilidad modelo/serie y disponibilidad real de
    receta/precio. El catálogo de dibujos no debe parecer una garantía económica.

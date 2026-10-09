@@ -8,13 +8,14 @@ conservan evidencia. Sus antiguas listas de pendientes no sustituyen este regist
 
 ## Siguiente paso
 
-**A1 — completar la entrega funcional de presupuestos.** Prioridad indicada por
-Sergio el 09/10: [auditoría y correcciones](docs/paridad/AUDITORIA-FUNCIONAL-2026-10-09.md).
-Caso publicado 260009 guardado, recargado y emitido; correcciones locales
-verificadas. Falta publicación y revalidación del caso con la versión corregida.
-No esperar a disponer del catálogo entero ni repetir M0/E1 para esta entrega.
+**S1 — mantenimiento de dependencias con avisos de seguridad.** Revisar Next y
+el override Sharp conjuntamente y comprobar el resto de avisos antes de actualizar.
+[A1](docs/paridad/AUDITORIA-FUNCIONAL-2026-10-09.md) publicado en `f6d5bcd` y
+verificado el 09/10: prueba 260009 guardada/recargada, PDF descargado válido,
+total 805,65 € con avisos técnicos. No repetir esa entrega ni certificar precios
+con esa única observación. El visor PDF interno quedó gris: límite conservado.
 
-### Siguiente investigación económica (tras A1)
+### Siguiente investigación económica
 
 **E1 — demostrar el cálculo y reparto del despunte.**
 Continuar [PASO-E1-DESPUNTE](docs/paridad/PASO-E1-DESPUNTE.md) desde los resultados A–F conservados.
@@ -48,14 +49,14 @@ Sin aplicación al presupuesto web ni nueva medición del banco.
 | E3 | Comisión: orden de redondeo y edición de líneas guardadas | Pendiente | Caso 0/−10/+10, suma de filas y momento de aplicación; separar cantidades/horas; seis residuos comunicados |
 | E4 | Tapajuntas de puerta con inferior SI/NO | Pendiente | GMT004, 1P 867×2098 con serie/ala/cajón reales; comparación lateral y travesaño |
 | E5 | Compacto y metraje COMPVAL | Pendiente | Identificar hueco/ventana/accesorio, COM009, cajón, vuelos y opciones; discriminar 4,93/4,94 con PVP vigente |
-| E6 | Acristalamiento alternativo y vidrio por elemento | Contención local 09/10; paridad pendiente | Motor catálogo rechaza precio falso de opción 1 para opción alternativa y guarda incompleto.  Mapeo observado de opción/nTAcris/tablas/junquillos/juntas; iniciar con 1/2/3 y mismo vidrio |
+| E6 | Acristalamiento alternativo y vidrio por elemento | Contención publicada 09/10; paridad pendiente | Motor catálogo rechaza precio falso de opción 1 para opción alternativa y guarda incompleto.  Mapeo observado de opción/nTAcris/tablas/junquillos/juntas; iniciar con 1/2/3 y mismo vidrio |
 | E7 | Conservación de medidas fraccionarias | Pendiente de observación | C2 970×439,5 y 970×1999,5: entrada, cortes, guardar/reabrir; configuración histórica ya resuelta, no reimplementar |
 | E8 | Tramos y opciones de herraje | Condicionado | Solo si falta cobertura tras catálogo/CHM/diagnóstico; límite real del corte de hoja, no dimensión exterior supuesta |
 | E9 | Referencias, cotas y divisiones restantes | Condicionado | Aislar cadena en los cortes discrepantes; predicción independiente de la instancia |
 | E10 | Acabado efectivo UNI/L y selección PVP | Pendiente de investigación | Comparar acabado de pieza, selector y tarifa; no normalizar por coincidencia económica |
 | E11 | Mínimos, múltiplos e intervalos restantes | Condicionado | Usar límites reales de catálogo y entradas compatibles a ambos lados de cada frontera |
-| A1 | Aceptación en web publicada | Implementado y verificado localmente 09/10; publicación pendiente | [Auditoría](docs/paridad/AUDITORIA-FUNCIONAL-2026-10-09.md): caso 260009 guardado/recargado/PDF en código anterior; publicar arreglos y repetir. No certifica fabricación ni precio |
-| S1 | Mantenimiento de dependencias | Pendiente prioritario tras A1, 09/10 | Auditoría detectó avisos preexistentes en Next/Sharp y herramientas; revisar actualización conjunta y aplicabilidad, probar y publicar por separado. Sin cambios de dependencias en A1 |
+| A1 | Aceptación en web publicada | Cerrado el recorrido auditado 09/10 | [Auditoría](docs/paridad/AUDITORIA-FUNCIONAL-2026-10-09.md): Render live f6d5bcd, 260009 guardado/recargado y PDF válido 805,65 €. Visor IAB gris, archivo comprobado aparte. No certifica todas las familias, fabricación ni precio |
+| S1 | Mantenimiento de dependencias | Pendiente prioritario, 09/10 | Auditoría detectó avisos preexistentes en Next/Sharp y herramientas; revisar actualización conjunta y aplicabilidad, probar y publicar por separado. Sin cambios de dependencias en A1 |
 | D1 | Reconciliar ficha de acceso de July | Pendiente documental | Actualizar información antigua con fuente/fecha del relevo; distinguir verificación recibida de comprobación directa |
 
 Detalles E2–E11: [ensayos mínimos](docs/paridad/ENSAYOS-MINIMOS-PRODUCTOR-2026-10-03.md).
@@ -132,6 +133,7 @@ sobre este registro y ESTADO-ACTUAL.
 
 | Fecha | Tarea | Evidencia / mantenimiento realizado |
 |---|---|---|
+| 09/10/2026 | A1 | Correcciones f6d5bcd publicadas; 260009 editado/guardado/recargado y PDF descargado válido. Informe, estado, índice y relevo actualizados. Límites de catálogo y visor IAB conservados; S1 siguiente |
 | 03/10/2026 | M0 | Matriz e informe reproducible entregados; estado, paridad, banco e índice actualizados |
 | 03/10/2026 | Roadmap y preparación de E1 | Procedimiento de despunte creado; regla de mantenimiento incorporada a AGENTS; relevo de raíz actualizado y ensayos remitidos a este registro. E1 sigue pendiente de ejecución |
 
@@ -145,7 +147,9 @@ ese corpus con el banco vigente ni cerrar por la coincidencia de costes.
 ## Instrucción breve para continuar
 
 > Lee AGENTS.md, docs/ESTADO-ACTUAL.md y ROADMAP-PARIDAD-PRODUCTOR.md.
-> Continúa la primera tarea abierta que pueda avanzar; actualmente E1 mediante
+> S1 es el mantenimiento prioritario: revisar avisos de dependencias descritos
+> en docs/paridad/AUDITORIA-FUNCIONAL-2026-10-09.md, aislado de tarifas.
+> La siguiente investigación económica sigue siendo E1 mediante
 > docs/paridad/PASO-E1-DESPUNTE.md, tras leer EVIDENCIA-E1-DESPUNTE-2026-10-04.md.
 > Usa copia F y resultados A–F; el residuo B/D ya está explicado por margen GID.
 > G1–G5 entregados. Conserva G6-incidencia: quitar solo tercer GRUPO requiere autorización solicitada; verificar edición de segunda línea antes de precisión. No repitas A–F, G1–G5 ni contraste histórico.

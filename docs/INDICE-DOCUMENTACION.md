@@ -2,8 +2,8 @@
 
 Entrada de trabajo: [ESTADO-ACTUAL.md](ESTADO-ACTUAL.md).
 Clasificación documental inicial sobre `9bc879e` y comprobación local del 02/10.
-Actualización operativa del 09/10/2026: auditoría funcional, correcciones locales
-y recorrido publicado A1 comprobado. Estado y publicación en el roadmap.
+Actualización operativa del 09/10/2026: auditoría funcional, correcciones publicadas
+y recorrido A1 comprobado en f6d5bcd. S1 siguiente; estados en el roadmap.
 
 
 ## Lectura operativa

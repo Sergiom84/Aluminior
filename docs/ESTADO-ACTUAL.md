@@ -1,7 +1,7 @@
 # Estado actual de Aluminior
 
 Revisión funcional: 09/10/2026, checkout inicial `787d1ad`. Producción comprobada
-en `d451274`; correcciones locales verificadas, aún sin publicar. Se conserva
+en `f6d5bcd` (Render live, 09/10 15:13:43 UTC); correcciones publicadas. Se conserva
 la cobertura histórica del 03/10 y la investigación E1 del 04/10.
 Consolidación documental inicial: `ee0dc16`, sobre `9bc879e`.
 Este es el único punto de entrada de estado y siguiente trabajo.
@@ -9,13 +9,13 @@ El [roadmap operativo](../ROADMAP-PARIDAD-PRODUCTOR.md) conserva el orden y
 estado único de las tareas de paridad, con mantenimiento documental obligatorio.
 
 
-## Prioridad actual: funcionamiento de presupuestos
+## Entrega funcional de presupuestos verificada
 
-[A1: auditoría del 09/10](paridad/AUDITORIA-FUNCIONAL-2026-10-09.md) pasa delante
-de los ensayos de precios por el encargo de Sergio. Prueba publicada 260009:
-crear, guardar 2O, recargar y PDF correctos; total 739,71 € con avisos técnicos.
-Ese importe pertenece al código anterior y no certifica paridad económica.
-Correcciones locales: herraje por defecto, errores recuperables, estados de
+[A1: auditoría del 09/10](paridad/AUDITORIA-FUNCIONAL-2026-10-09.md) publicada y
+verificada sobre 260009: editar/guardar, recargar y PDF descargado válido;
+base 665,83 €, IVA 139,82 €, total 805,65 €, con avisos técnicos conservados.
+El visor PDF interno quedó gris; archivo analizado y renderizado correctamente.
+No certifica paridad económica ni fabricación. Correcciones publicadas: herraje por defecto, errores recuperables, estados de
 documento, diagnósticos visibles y cargas de opciones seguras. Acristalamiento
 alternativo sin receta verificada queda incompleto; exterior fraccionario
 se rechaza explícitamente, sin redondeo. Ver informe para pruebas y límites.
@@ -76,9 +76,9 @@ se rechaza explícitamente, sin redondeo. Ver informe para pruebas y límites.
 
 - Caso publicado A1 ejecutado el 09/10: 2O ELEGANTPVC 1200×540, L,
   VCG420AGS4, 5 h de colocación y tarifa 1; guardado/recarga/PDF coherentes.
-  Falta repetir con las correcciones publicadas y revisar sus avisos técnicos.
-  Ni los 652,24 € históricos ni los 739,71 € observados son objetivo impuesto
-  al precio corregido.
+  Repetido con `f6d5bcd`: 805,65 € total; dos piezas siguen sin coste.
+  Los defaults de herraje añadieron 54,50 € al material; no se tocaron tarifas.
+  Ni 652,24 € histórico ni 739,71 € anterior son objetivos impuestos.
 - La web conserva la vía anterior si falta el catálogo. Tener 160 dibujos
   disponibles no significa que las 160 estructuras tengan precio completo.
 - Ensayos locales fechados con catálogo cargado obtuvieron PVP con avisos para
@@ -102,11 +102,15 @@ se rechaza explícitamente, sin redondeo. Ver informe para pruebas y límites.
 
 ## Siguiente paso
 
-**A1 — publicar las correcciones revisadas y verificar el presupuesto de prueba
-260009.** No modificar documentos previos ni aplicar migraciones/cargas.
-[Informe y mejoras propuestas](paridad/AUDITORIA-FUNCIONAL-2026-10-09.md).
+**S1 — revisar y actualizar las dependencias con avisos de seguridad**, primero
+Next y su override Sharp, con pruebas/build propios. Avisos preexistentes;
+no se incluyeron cambios de dependencias en la publicación acotada de A1.
+A1 cerrado para el recorrido auditado, sin nueva importación ni migraciones.
+[Informe, evidencia y mejoras](paridad/AUDITORIA-FUNCIONAL-2026-10-09.md).
+Entrega desde `codex/auditoria-presupuestos`; el main local conserva dos commits
+de tarifas excluidos y cambios sin indexar. Consultar el informe antes de integrar.
 
-### Investigación económica conservada, después de A1
+### Investigación económica conservada
 
 Pendientes del [banco local](paridad/BANCO-CONTRASTE-2026-10-03.md): de los 31 GRUPO
 de la iteración 13 quedan 8 con unión material de serie distinta, 1 con variantes
@@ -150,14 +154,14 @@ unidad (`lineas/alta-linea.ts`); GRUPO conserva ajustes por línea. Los accesori
 tienen valoración de catálogo, pero no se afirma cobertura integral de sus
 controles UI sin aceptación. La carga de producción informada ya incluye
 0025/0026; la vía anterior se conserva para entornos sin catálogo completo.
-La aceptación de las correcciones en producción sigue pendiente; el recorrido
-del código anterior sí fue comprobado el 09/10. Se distingue de la medición local. La ficha de acceso de July aún requiere reconciliar su estado
+La aceptación del recorrido A1 con las correcciones publicadas quedó verificada
+el 09/10; no equivale a paridad integral de precio ni fabricación. La ficha de acceso de July aún requiere reconciliar su estado
 antiguo con el relevo fechado; no se modificó en esta entrega.
 
 ## Enlaces
 
 - [Roadmap y reglas de mantenimiento](../ROADMAP-PARIDAD-PRODUCTOR.md).
-- [Siguiente paso E1: despunte](paridad/PASO-E1-DESPUNTE.md).
+- [Investigación económica E1: despunte](paridad/PASO-E1-DESPUNTE.md).
 - [E1: evidencia parcial y diagnóstico reproducible](paridad/EVIDENCIA-E1-DESPUNTE-2026-10-04.md).
 - [Cobertura, reglas y fuentes](paridad/MATRIZ-COBERTURA-PRODUCTOR-2026-10-03.md).
 - [Ensayos mínimos pendientes](paridad/ENSAYOS-MINIMOS-PRODUCTOR-2026-10-03.md).
