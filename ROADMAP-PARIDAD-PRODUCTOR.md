@@ -8,6 +8,8 @@ conservan evidencia. Sus antiguas listas de pendientes no sustituyen este regist
 
 ## Siguiente paso
 
+**S3 verificado en CI el 09/10:** 1.448 pruebas correctas/una condicionada a CSV privado, seis recorridos de navegador, tipos, arquitectura y build en 36a47f4. Siguiente Mac: tramo técnico P.6/P.7, teclado/foco/responsive. [Evidencia](docs/paridad/MEDIDAS-Y-CI-2026-10-09.md#s3-validación-completa-de-los-paquetes-en-ci--09102026).
+
 **A3 publicado/verificado el 09/10 en `a06cd4f`, con 0029 aplicada.** A4 publicado/verificado en `487feb1`: 0030 aplicada, conexiones renovadas y alta/edición/recarga/copia/PDF decimales comprobados en producción. A5 verificado en GitHub Actions (run 37971854995, seis recorridos correctos). D1 reconciliado localmente. [Informe](docs/paridad/MEDIDAS-Y-CI-2026-10-09.md). E1 depende de Windows; P.2 conserva aceptación comercial y S2 el anuncio del 14/10.
 
 **S1 y A2 publicados y verificados el 09/10**, Render live `7ad0ee2`: dependencias
@@ -64,7 +66,9 @@ Sin aplicación al presupuesto web ni nueva medición del banco.
 | P.2 | Aceptación PDF multipágina | Paginación publicada/verificada 09/10; formato comercial pendiente | [Informe](docs/paridad/PDF-MULTIPAGINA-2026-10-09.md): 6 escenarios, 21 páginas, 628 marcadores, 28 bloques; endpoint local 12 líneas/4 páginas. 741 tests web, tipos/build/arquitectura. Render live 46c613d, endpoint 260009 verificado (1 página, 805,65 €); formato comercial Productor/titular pendiente. July 205 |
 | A4 | Conservar medidas exteriores decimales | Publicado/verificado 09/10 | Render live 487feb1, 0030 aplicada; alta/edición/recarga/copia/PDF decimales en producción, documentos previos intactos. 757 tests web y 56 BD. No cierra E7 |
 | A5 | Recorrido sintético de navegador en CI | Verificado local y CI 09/10 | Seis recorridos escritorio/móvil: postcommit, medidas, latencia/fallo de catálogo y teclado; GitHub Actions run 37971854995 correcto |
-| D1 | Reconciliar ficha de acceso de July | Cerrado local 09/10 | Ficha actualizada con comprobación directa A3, Render live y 30 migraciones; historial fechado preservado. Sin sync/recepción acreditados |
+| S3 | Validación completa de paquetes en CI | Verificado local y CI 09/10 | 9bf9a64/36a47f4: 1.448 tests correctos/uno condicionado a CSV privado; tipos, arquitectura y build, run 37978474635. Seis recorridos, run 37978474739. Corrige test ETL obsoleto y contrato de fixture PDF; no toca producción |
+| P.6/P.7 | Teclado, foco y adaptación responsive | Pendiente; tramo técnico abordable desde Mac | July 206: auditar foco, teclado, overflow, zoom 200% y reduced motion. Correcciones técnicas verificables localmente; contraste integral Productor y aceptación humana separados |
+| D1 | Reconciliar ficha de acceso de July | Cerrado local 09/10 | Ficha actualizada con comprobación directa A4, Render live 487feb1 y 31 migraciones; historial fechado preservado. Sin sync/recepción acreditados |
 
 Detalles E2–E11: [ensayos mínimos](docs/paridad/ENSAYOS-MINIMOS-PRODUCTOR-2026-10-03.md).
 A1 y D1: [estado operativo](docs/ESTADO-ACTUAL.md).
@@ -162,9 +166,9 @@ ese corpus con el banco vigente ni cerrar por la coincidencia de costes.
 > P.2 publicado y verificado en 46c613d: lee docs/paridad/PDF-MULTIPAGINA-2026-10-09.md.
 > A3 publicado/verificado en a06cd4f y 0029 aplicada: lee docs/paridad/IDEMPOTENCIA-PRESUPUESTOS-2026-10-09.md. No repetir.
 > P.2: sólo queda aceptación comercial, July 205; no repetir paginación.
-> Continuar en codex/a3-idempotencia, checkout a3-idempotencia/Aluminior desde origin/main d2d07ed; main local contiene cambios ajenos.
+> Checkout aislado a3-idempotencia/Aluminior, rama codex/ci-validacion-completa desde origin/main eb3b53c. Comprobar estado remoto antes de continuar; main local contiene cambios ajenos.
 > S2 requiere revisar el anuncio Next cuando se publiquen versiones el 14/10. No repetir S1/A2.
-> Mac: A4 publicado/verificado en 487feb1, 0030 aplicada; A5 CI alojada correcta, run 37971854995; D1 cerrado local. No repetir esta entrega. Siguiente: aceptación comercial P.2 con el titular; E1/E7 requieren Windows y S2 espera al 14/10. Lee docs/paridad/MEDIDAS-Y-CI-2026-10-09.md.
+> Mac: A4 publicado/verificado en 487feb1, 0030 aplicada; A5 CI alojada correcta, run 37971854995; D1 cerrado local. No repetir esta entrega. Siguiente Mac: tramo técnico P.6/P.7 (foco, teclado y responsive). P.2 conserva aceptación comercial; E1/E7 requieren Windows y S2 espera al 14/10. Lee docs/paridad/MEDIDAS-Y-CI-2026-10-09.md.
 > La siguiente investigación económica sigue siendo E1 mediante
 > docs/paridad/PASO-E1-DESPUNTE.md, tras leer EVIDENCIA-E1-DESPUNTE-2026-10-04.md.
 > Usa copia F y resultados A–F; el residuo B/D ya está explicado por margen GID.

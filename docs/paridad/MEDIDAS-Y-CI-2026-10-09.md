@@ -96,5 +96,56 @@ reconectar GitHub/Render. Auth del 29/09 e historia de hashes conservadas con fe
 Actualización local: no acredita sync ni recepción en Windows. Sin secretos.
 
 Estado y siguiente paso los gobierna el [roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md).
-No repetir A3, A4 ni D1. Siguiente: aceptación comercial P.2 con el titular.
-E1/E7 requieren observación Windows; S2 espera el anuncio del 14/10.
+No repetir A3, A4 ni D1. La continuación S3 de este informe incorpora CI
+completa. Siguiente Mac: tramo técnico P.6/P.7 (teclado/foco/responsive). P.2
+conserva aceptación comercial; E1/E7 requieren Windows; S2 espera al 14/10.
+
+
+## S3: validación completa de los paquetes en CI — 09/10/2026
+
+Continuación autorizada por Sergio para resolver otro punto desde Mac, sin
+Windows ni aceptación comercial. Antes sólo existía el workflow de seis
+recorridos de navegador: no ejecutaba la suite de los cuatro paquetes, sus
+typechecks, la comprobación de arquitectura ni la compilación de producción.
+
+Implementado en `9bf9a64` y corregido en `36a47f4`, rama `codex/ci-validacion-completa`, desde `origin/main`
+`eb3b53c`, conservando el main principal ajeno:
+
+- Workflow `Validación completa`: Ubuntu, Node 22, npm 10.9.8, PostgreSQL 16;
+  pushes a main/codex y PR a main. Lectura de repositorio, límite 20 minutos y
+  cancelación de ejecuciones anteriores de la misma referencia.
+- Bootstrap existente de Docker: auth.users sintético y base ETL separada.
+  No se fija TEST_DATABASE_URL a una base única: varios tests ETL necesitan
+  crear/destruir su propio esquema. Sin secretos, Supabase ni datos reales.
+- `npm run test:ci`: mismos tests de cuatro paquetes, dos workers por paquete
+  para limitar presión sobre memoria/conexiones; no cambia los timeouts ni
+  omite fallos. Arquitectura, build y tipos se ejecutan secuencialmente;
+  el workflow de navegador conserva su proceso/BD propios.
+- Reproducción roja: la suite del cargador de motor esperaba 29 migraciones
+  aunque se aplicaban 31. Fallaba su beforeAll y no ejecutaba diez tests.
+  Ahora contrasta fecha y SHA-256 de todas las entradas del journal vigente;
+  mantiene la prueba histórica de actualización desde 0022 y sus diez casos.
+- Local: 1.448 pruebas correctas (592 core, 56 BD, 43 ETL, 757 web) y una
+  omitida porque exige CSV histórico privado. Build y arquitectura correctas.
+  La primera comprobación de tipos falló, aunque se comunicó como correcta al
+  resumir el código de salida del último comando. El log conservaba el error;
+  la CI lo detectó correctamente. No atribuir a esa ejecución tipos correctos.
+- Primera CI [37977871209](https://github.com/Sergiom84/Aluminior/actions/runs/37977871209):
+  1.448 tests correctos/uno omitido, arquitectura y build correctas; typecheck
+  falló porque el test decimal de A4 pasaba una transacción al lector PDF que
+  necesita conexión. Corrige el límite de verificación de tipos comunicado en A4.
+  El navegador [37977871144](https://github.com/Sergiom84/Aluminior/actions/runs/37977871144) sí pasó.
+- `36a47f4` corrige sólo esa fixture: confirma los documentos sintéticos, lee
+  PDF mediante su conexión/vista MVCC propia y elimina únicamente sus IDs en
+  finally. Serie UUID aislada y base local validada. Contrato productivo intacto.
+  Test decimal y typechecks de cuatro paquetes posteriores correctos por separado.
+  Un intento local sufrió ENOSPC: liberada sólo la caché Next regenerable del
+  worktree (317 MB); los reintentos posteriores terminaron correctamente.
+- CI final correcta sobre `36a47f4`: [validación completa 37978474635](https://github.com/Sergiom84/Aluminior/actions/runs/37978474635)
+  y [navegador 37978474739](https://github.com/Sergiom84/Aluminior/actions/runs/37978474739).
+  Confirman 1.448 pruebas correctas/una condicionada a CSV privado, seis recorridos,
+  todos los typechecks y build; arquitectura 755 archivos/380 módulos, cero infracciones.
+
+No cambia UI, reglas de precio, datos ni migraciones de producción. No configura
+protección de ramas: los checks informan, no son una barrera de merge obligatoria.
+La verificación de paquetes sintéticos no acredita paridad comercial ni fabricación.

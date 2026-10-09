@@ -1,7 +1,7 @@
 # Estado actual de Aluminior
 
 Revisión funcional: 09/10/2026, checkout inicial `787d1ad`. Producción comprobada
-en `a06cd4f` (Render live, 09/10 17:06:26 UTC); A3 y migración 0029 publicados/verificados. Se conserva
+en `487feb1` (Render live, 09/10 18:30:14 UTC); A3/A4 y migraciones 0029/0030 publicados/verificados. Se conserva
 la cobertura histórica del 03/10 y la investigación E1 del 04/10.
 Consolidación documental inicial: `ee0dc16`, sobre `9bc879e`.
 Este es el único punto de entrada de estado y siguiente trabajo.
@@ -17,8 +17,9 @@ base 665,83 €, IVA 139,82 €, total 805,65 €, con avisos técnicos conserva
 El visor PDF interno quedó gris; archivo analizado y renderizado correctamente.
 No certifica paridad económica ni fabricación. Correcciones publicadas: herraje por defecto, errores recuperables, estados de
 documento, diagnósticos visibles y cargas de opciones seguras. Acristalamiento
-alternativo sin receta verificada queda incompleto; exterior fraccionario
-se rechaza explícitamente, sin redondeo. Ver informe para pruebas y límites.
+alternativo sin receta verificada queda incompleto. El rechazo de exteriores
+fraccionarios de A1 quedó superado por A4/0030: alta, edición, copia y PDF
+conservan decimales en producción. Ver informes para pruebas y límites.
 
 ## Continuación S1/A2 publicada
 
@@ -119,6 +120,11 @@ Los nueve documentos anteriores y tres líneas conservan sus huellas.
 
 ## Siguiente paso
 
+S3 verificado localmente y en GitHub Actions (`36a47f4`): 1.448 pruebas correctas,
+una condicionada a CSV privado, seis recorridos, tipos, arquitectura y build; ver [evidencia y ejecuciones](paridad/MEDIDAS-Y-CI-2026-10-09.md#s3-validación-completa-de-los-paquetes-en-ci--09102026).
+Siguiente independiente desde Mac: tramo técnico P.6/P.7, foco/teclado y responsive;
+no equivale a cerrar su aceptación integral con Productor.
+
 **A3 publicado/verificado el 09/10 en `a06cd4f`, con 0029 aplicada.** A4 publicado/verificado en `487feb1`: 0030 aplicada, conexiones renovadas y alta/edición/recarga/copia/PDF decimales comprobados en producción. A5 verificado en GitHub Actions (run 37971854995, seis recorridos correctos). D1 reconciliado localmente. [Informe](paridad/MEDIDAS-Y-CI-2026-10-09.md). E1 depende de Windows; P.2 conserva aceptación comercial y S2 el anuncio del 14/10.
 
 Antecedente P.2: rama `codex/pdf-multipagina`, worktree `pdf-multipagina/Aluminior`, desde
@@ -171,7 +177,7 @@ tienen valoración de catálogo, pero no se afirma cobertura integral de sus
 controles UI sin aceptación. La carga de producción informada ya incluye
 0025/0026; la vía anterior se conserva para entornos sin catálogo completo.
 La aceptación del recorrido A1 con las correcciones publicadas quedó verificada
-el 09/10; no equivale a paridad integral de precio ni fabricación. D1: ficha de acceso de July reconciliada localmente el 09/10 con evidencia A3;
+el 09/10; no equivale a paridad integral de precio ni fabricación. D1: ficha de acceso de July reconciliada localmente el 09/10 con evidencia A4/0030;
 sin sync ni recepción Windows acreditados.
 
 ## Enlaces

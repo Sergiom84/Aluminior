@@ -10,7 +10,7 @@ y S1/A2 publicados/verificados en 7ad0ee2. P.2 publicado/verificado en 46c613d; 
 
 | Documento | Uso |
 |---|---|
-| [Medidas y CI 09/10](paridad/MEDIDAS-Y-CI-2026-10-09.md) | A4 publicado/verificado, 0030 aplicada; A5 navegador/CI y D1 ficha July |
+| [Medidas y CI 09/10](paridad/MEDIDAS-Y-CI-2026-10-09.md) | A4 publicado/verificado, 0030 aplicada; A5 navegador/CI, S3 validación de paquetes y D1 ficha July |
 | [Idempotencia 09/10](paridad/IDEMPOTENCIA-PRESUPUESTOS-2026-10-09.md) | A3: reproducción, implementación, pérdida HTTP real y migración aplicada y publicación verificada |
 | [README](../README.md) | Arranque y comandos |
 | [PDF multipágina 09/10](paridad/PDF-MULTIPAGINA-2026-10-09.md) | P.2: reproducción, corrección, regresión sintética, endpoint local y publicación 46c613d verificada |
