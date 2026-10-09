@@ -77,7 +77,11 @@ catálogo completo, precios del taller ni aceptación en producción.
 
 ## Migraciones
 
-El journal de la rama A3 llega a `0029_operaciones_presupuesto` (30 entradas;
+0030 amplía ancho/alto de línea a double precision (31 entradas locales), ver
+[informe A4](../../docs/paridad/MEDIDAS-Y-CI-2026-10-09.md). Sólo verificada local;
+requiere ventana de cambio y renovación de conexiones antes de uso remoto.
+
+El journal publicado en A3 llega a `0029_operaciones_presupuesto` (30 entradas;
 verificado en bases locales nuevas y aplicado en remoto el 09/10/2026). Tabla de recibos con
 RLS y PK por actor/clave; no modifica documentos. Aplicación remota verificada:
 ver [plan A3](../../docs/paridad/IDEMPOTENCIA-PRESUPUESTOS-2026-10-09.md).

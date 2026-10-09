@@ -211,6 +211,13 @@
       "when": 1791565200000,
       "tag": "0029_operaciones_presupuesto",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1791569050213,
+      "tag": "0030_medidas_exteriores_decimales",
+      "breakpoints": true
     }
   ]
 }

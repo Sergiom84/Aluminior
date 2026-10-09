@@ -19,13 +19,13 @@ describe('medidas admitidas por los formularios de líneas', () => {
     expect(html).toContain('step="any" value="439.5"')
   })
 
-  it('la estructura individual acepta medidas enteras que no son múltiplos de 10', () => {
+  it('la estructura individual acepta medidas fraccionarias', () => {
     const html = renderToStaticMarkup(<PestanaEstructura plantilla={plantillaDiseno('2O')!}
-      series={[]} acabados={[]} serie="" setSerie={vi.fn()} anchoMm={1207} setAnchoMm={vi.fn()}
-      altoMm={1153} setAltoMm={vi.fn()} vidrio="" setVidrio={vi.fn()}
+      series={[]} acabados={[]} serie="" setSerie={vi.fn()} anchoMm={1207.25} setAnchoMm={vi.fn()}
+      altoMm={439.5} setAltoMm={vi.fn()} vidrio="" setVidrio={vi.fn()}
       acabado="" setAcabado={vi.fn()} variante="2" setVariante={vi.fn()} err={{}} />)
-    expect(html).toMatch(/id="anchoMm"[^>]*step="1"[^>]*value="1207"/)
-    expect(html).toMatch(/id="altoMm"[^>]*step="1"[^>]*value="1153"/)
+    expect(html).toMatch(/id="anchoMm"[^>]*step="any"[^>]*value="1207.25"/)
+    expect(html).toMatch(/id="altoMm"[^>]*step="any"[^>]*value="439.5"/)
   })
 
   it('editar un GRUPO fraccionario envía su configuración sin duplicarla como metadatos enteros', () => {

@@ -22,9 +22,12 @@
     "dev:web": "npm run -w @aluminior/web dev",
     "test": "npm run -ws --if-present test",
     "typecheck": "npm run -ws --if-present typecheck",
-    "check:architecture": "node scripts/auditar-modularidad.mjs"
+    "check:architecture": "node scripts/auditar-modularidad.mjs",
+    "test:e2e": "playwright test",
+    "typecheck:e2e": "tsc -p e2e/tsconfig.json"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.0",
     "@types/node": "^22.10.1",
     "tsx": "^4.19.2",
     "typescript": "^5.6.3",

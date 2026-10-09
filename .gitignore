@@ -77,3 +77,7 @@ recon-cerramientos/
 
 # Ajustes personales de Claude Code (sandbox local)
 .claude/settings.local.json
+
+# Recorridos sintéticos de navegador
+playwright-report/
+test-results/

@@ -119,7 +119,7 @@ Los nueve documentos anteriores y tres líneas conservan sus huellas.
 
 ## Siguiente paso
 
-**A3 publicado/verificado el 09/10 en `a06cd4f`, con 0029 aplicada.** Siguiente abierto: E1, recuperando el ensayo Windows según su procedimiento y autorización pendiente; P.2 conserva aceptación comercial (July 205). S2 espera el anuncio del 14/10. No repetir alta/copia A3 ni migración.
+**A3 publicado/verificado el 09/10 en `a06cd4f`, con 0029 aplicada.** Continuación Mac: A4 medidas exteriores implementado/verificado localmente; siguiente autorizar 0030 remota y despliegue con renovación de conexiones. A5 CI preparado, ejecución alojada pendiente. D1 reconciliado localmente. [Informe](paridad/MEDIDAS-Y-CI-2026-10-09.md). E1 depende de Windows; P.2 conserva aceptación comercial y S2 el anuncio del 14/10.
 
 Antecedente P.2: rama `codex/pdf-multipagina`, worktree `pdf-multipagina/Aluminior`, desde
 `7ad0ee2`. P.2 publicado en `46c613d`; endpoint PDF 260009 comprobado sin escritura, 1 página / 805,65 €. El main principal
@@ -171,8 +171,8 @@ tienen valoración de catálogo, pero no se afirma cobertura integral de sus
 controles UI sin aceptación. La carga de producción informada ya incluye
 0025/0026; la vía anterior se conserva para entornos sin catálogo completo.
 La aceptación del recorrido A1 con las correcciones publicadas quedó verificada
-el 09/10; no equivale a paridad integral de precio ni fabricación. La ficha de acceso de July aún requiere reconciliar su estado
-antiguo con el relevo fechado; no se modificó en esta entrega.
+el 09/10; no equivale a paridad integral de precio ni fabricación. D1: ficha de acceso de July reconciliada localmente el 09/10 con evidencia A3;
+sin sync ni recepción Windows acreditados.
 
 ## Enlaces
 

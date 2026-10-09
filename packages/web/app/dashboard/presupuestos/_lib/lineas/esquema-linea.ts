@@ -19,7 +19,7 @@ export const MAXIMO_NUMERIC_12_2 = 9_999_999_999.99
 export const MAXIMO_NUMERIC_10_2 = 99_999_999.99
 /** `numeric(6,2)` de `lineas_mano_obra.horas`. Tope técnico, no comercial. */
 export const MAXIMO_HORAS: Decimal = '9999.99'
-/** `integer` de `lineas.ancho_mm` y `alto_mm`. */
+/** Tope técnico histórico de dimensiones; no ampliamos el rango al admitir fracciones. */
 export const MAXIMO_INT4 = 2_147_483_647
 /** Escala de las columnas numéricas que teclea el operador. */
 export const DECIMALES = 2
@@ -115,8 +115,8 @@ export const esquemaLinea = z.object({
   cantidad: decimalTecleado('Cantidad', {
     maximo: String(MAXIMO_NUMERIC_10_2), porDefecto: '1', mayorQueCero: true,
   }).transform(Number),
-  anchoMm: z.coerce.number().int().min(0).max(MAXIMO_INT4).optional(),
-  altoMm: z.coerce.number().int().min(0).max(MAXIMO_INT4).optional(),
+  anchoMm: z.coerce.number().min(0).max(MAXIMO_INT4).optional(),
+  altoMm: z.coerce.number().min(0).max(MAXIMO_INT4).optional(),
   acabadoCodigo: z.string().trim().optional().transform((v) => v || null),
   configuracionCerramiento: z.string().trim().optional().transform((v) => v || null),
   /**

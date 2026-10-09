@@ -15,7 +15,7 @@
  */
 
 import {
-  pgTable, text, integer, smallint, numeric, boolean, uuid, index, primaryKey, jsonb, check, unique,
+  pgTable, text, integer, doublePrecision, smallint, numeric, boolean, uuid, index, primaryKey, jsonb, check, unique,
 } from 'drizzle-orm/pg-core'
 import { sql } from 'drizzle-orm'
 import { presupuestos } from './comercial.ts'
@@ -43,9 +43,9 @@ export const lineas = pgTable('lineas', {
 
   cantidad: numeric('cantidad', { precision: 10, scale: 2 }).notNull().default('1'),
 
-  // --- Dimensiones en milímetros ---
-  anchoMm: integer('ancho_mm'),
-  altoMm: integer('alto_mm'),
+  // --- Dimensiones en milímetros: misma precisión IEEE-754 que la configuración JSON. ---
+  anchoMm: doublePrecision('ancho_mm'),
+  altoMm: doublePrecision('alto_mm'),
   /**
    * true  = las medidas son del HUECO de obra (la carpintería se calcula descontando)
    * false = las medidas son de la carpintería acabada

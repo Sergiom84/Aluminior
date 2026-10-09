@@ -55,7 +55,7 @@ describe('esquema del alta de línea: rango', () => {
     expect(errores({ cantidad: '0' }).cantidad).toEqual(['Cantidad: debe ser mayor que cero'])
   })
 
-  it('acota las medidas al rango de integer', () => {
+  it('conserva el tope técnico histórico de las medidas', () => {
     expect(analizar({ anchoMm: '2147483647' }).success).toBe(true)
     expect(analizar({ anchoMm: '2147483648' }).success).toBe(false)
   })
@@ -132,3 +132,8 @@ describe('esquema del alta de línea: escala decimal', () => {
       .toEqual(['cantidad', 'horasColocacion', 'horasFabricacion'])
   })
 })
+
+it('conserva medidas exteriores decimales y rechaza valores no finitos', () => {
+   expect(datos({ anchoMm: '970.25', altoMm: '439.5' })).toMatchObject({ anchoMm: 970.25, altoMm: 439.5 })
+   for (const valor of ['NaN', 'Infinity', '-1']) expect(errores({ anchoMm: valor }).anchoMm).toBeDefined()
+ })

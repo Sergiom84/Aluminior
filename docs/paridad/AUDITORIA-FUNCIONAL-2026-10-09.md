@@ -224,15 +224,14 @@ A2 (miniatura) cerrado. Las otras propuestas siguen pendientes, sin reabrir inve
    receta/precio. El catálogo de dibujos no debe parecer una garantía económica.
 2. Completar E6 (acristalamiento alternativo/por elemento) y E2 (uniones de otra
    serie) con los ensayos existentes. Faltan reglas/opciones, no sólo precios.
-3. Migración aditiva revisada para medidas exteriores decimales, con ensayo
-   local, respaldo y alcance remoto autorizado; no redondear para ocultar el límite.
-4. Idempotencia de nueva cabecera y copia ante pérdida completa de respuesta
-   HTTP. Separar caché postcommit no resuelve esa pérdida de transporte.
+3. **A4 implementado/verificado localmente:** ampliación 0030 para medidas exteriores
+   decimales; pendiente publicación remota. [Informe](MEDIDAS-Y-CI-2026-10-09.md).
+4. **Idempotencia entregada como A3:** alta y ambas copias tras pérdida HTTP;
+   publicación y recibos remotos verificados, ver informe A3.
 5. Miniatura completa del GRUPO **entregada como A2** en 7ad0ee2. P.2 tiene [aceptación y publicación posteriores](PDF-MULTIPAGINA-2026-10-09.md); resta formato comercial. Alcance original:
    aceptación PDF multipágina y, por separado, flujos de fabricación antes de usarlos en taller.
-6. Automatizar el recorrido sintético de navegador en CI, incluyendo latencia,
-   fallo/reintento de catálogos y foco/teclado. Mantenerlo separado del contraste
-   económico con datos originales.
+6. **A5 implementado/verificado localmente:** seis recorridos de navegador, incluida
+   latencia, fallo/reintento y teclado. Ejecución alojada pendiente; informe A4/A5.
 
 La información ya extraída se conserva: no se eliminaron banco, discrepancias,
 fuentes ni observaciones E1 A–F/G1–G5/G6. No se duplicó extracción de catálogo.
