@@ -224,8 +224,8 @@ A2 (miniatura) cerrado. Las otras propuestas siguen pendientes, sin reabrir inve
    receta/precio. El catálogo de dibujos no debe parecer una garantía económica.
 2. Completar E6 (acristalamiento alternativo/por elemento) y E2 (uniones de otra
    serie) con los ensayos existentes. Faltan reglas/opciones, no sólo precios.
-3. **A4 implementado/verificado localmente:** ampliación 0030 para medidas exteriores
-   decimales; pendiente publicación remota. [Informe](MEDIDAS-Y-CI-2026-10-09.md).
+3. **A4 publicado/verificado:** ampliación 0030 aplicada para medidas exteriores
+   decimales; Render live 487feb1 y recorrido remoto comprobado. [Informe](MEDIDAS-Y-CI-2026-10-09.md).
 4. **Idempotencia entregada como A3:** alta y ambas copias tras pérdida HTTP;
    publicación y recibos remotos verificados, ver informe A3.
 5. Miniatura completa del GRUPO **entregada como A2** en 7ad0ee2. P.2 tiene [aceptación y publicación posteriores](PDF-MULTIPAGINA-2026-10-09.md); resta formato comercial. Alcance original:

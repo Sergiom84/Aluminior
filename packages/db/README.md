@@ -77,9 +77,10 @@ catálogo completo, precios del taller ni aceptación en producción.
 
 ## Migraciones
 
-0030 amplía ancho/alto de línea a double precision (31 entradas locales), ver
-[informe A4](../../docs/paridad/MEDIDAS-Y-CI-2026-10-09.md). Sólo verificada local;
-requiere ventana de cambio y renovación de conexiones antes de uso remoto.
+0030 amplía ancho/alto de línea a double precision (31 entradas locales y remotas), ver
+[informe A4](../../docs/paridad/MEDIDAS-Y-CI-2026-10-09.md). Aplicada el 09/10/2026
+con respaldo y pausa/reanudación autorizadas; conexiones renovadas, cero pendientes.
+Documentos anteriores y permisos conservados, recorrido decimal remoto verificado.
 
 El journal publicado en A3 llega a `0029_operaciones_presupuesto` (30 entradas;
 verificado en bases locales nuevas y aplicado en remoto el 09/10/2026). Tabla de recibos con

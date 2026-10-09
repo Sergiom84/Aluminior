@@ -58,7 +58,7 @@ compatiblemente, sin reescribir las medidas del documento al abrirlo.
 Las medidas económicas de módulo admiten números finitos positivos, incluidas
 fracciones de milímetro; su validación no las redondea.
 0030 amplía las dimensiones exteriores de línea a double precision para conservar
-la misma representación numérica; ver estado de publicación A4, aún local.
+la misma representación numérica; aplicada en producción el 09/10/2026, A4 verificado.
 La geometría compartida alimenta UI y PDF; no constituye por sí sola una regla
 de fabricación. Las horas manuales de fabricación y colocación tienen valoración
 decimal y snapshot propios.

@@ -1,6 +1,6 @@
 # Medidas exteriores, recorridos CI y ficha July — 09/10/2026
 
-Estado: A4 implementado/verificado localmente; 0030 pendiente remota. A5 recorrido
+Estado: A4 publicado/verificado en producción; 0030 aplicada. A5 recorrido
 de navegador verificado localmente y en GitHub Actions.
 D1 ficha de acceso reconciliada localmente. Trabajo desde origin/main `18701a4`
 en `codex/medidas-decimales-ci`, commit `e7aed24`; main principal con cambios ajenos intacto.
@@ -44,22 +44,41 @@ como antes y deja de rechazarlas por no ser enteras.
 - [Harness y ejecución](../../e2e/README.md). La build se repitió sola tras una
   colisión inicial con `next dev` en `.next`; la ejecución final fue correcta.
 
-## Publicación pendiente: alcance y reversión
+## Publicación y verificación remota — 09/10/2026
 
-0030 no está aplicada en Supabase. Antes de publicar, autorizar específicamente
-la ampliación de las dos columnas remotas y el despliegue. Preparación:
+Sergio autorizó migración y publicación, y después confirmó expresamente la
+pausa/reanudación de Render. La revisión automática rechazó inicialmente la
+pausa por no considerar explícita la interrupción; no hubo mutación hasta esa
+confirmación. Servicio reanudado inmediatamente después de completar el SQL.
 
-1. Confirmar destino `cwtyrpqwdbfylqdlydez`, journal hasta 0029 y sólo 0030 pendiente.
-2. Respaldo privado verificable y huellas de documentos/líneas/satélites; breve
-   ventana sin escrituras durante el cambio de tipo y renovación de conexiones.
-3. Aplicar el SQL y su entrada de journal en una transacción, con lock_timeout
-   y statement_timeout; confirmar tipos, huellas, RLS y permisos conservados.
-4. Reiniciar/desplegar la app para renovar conexiones y consultas preparadas.
-   Cambiar un tipo puede invalidar planes preparados antiguos: ocurrió en la
-   prueba DDL local; ésta usa prepare=false deliberadamente. No esconder el
-   requisito de reconexión en producción.
-5. Comprobar Render live en el commit correcto y repetir con documento sintético
-   autorizado alta/recarga/copia/PDF con fracción; conservar los anteriores.
+- Respaldo privado previo: `export_datos/respaldos/a4-antes-0030-1791570256401.dump`
+  en el checkout principal, ignorado por Git y permisos 600. 2.813.148 bytes,
+  SHA-256 `26d01457ef15a6e9bd40e4f780800f7ab376fb0e2c1ac08a4c7b5d42fcdc1d11`.
+  Índice pg_restore legible, 313 entradas; no es un ensayo de restauración completa.
+- Destino `cwtyrpqwdbfylqdlydez`: 30 entradas previas, sólo 0030 pendiente.
+  DDL y journal en una transacción con límites de espera, bloqueo de tablas y
+  comprobación antes/después. Las dos columnas son double precision; RLS y ACL
+  intactas. Huellas de las 12 tablas documentales idénticas durante la migración:
+  12 presupuestos y tres líneas previos conservados.
+- Journal posterior: 31 entradas, hash SQL
+  `88d5af5dec5350df74f0f115483bb9e807befde691e471397ace4fc8d72ce3b8`, cero pendientes.
+- Push main `18701a4→487feb1`; despliegue explícito, ya que el commit documental
+  incluía skip render. Render `dep-db4j4mui0phs73csggrg` live en
+  `487feb179c2885e811d3f1cf183cb9e2c085c1b4`, 18:30:14 UTC. Estado not_suspended
+  y web autenticada accesible. La pausa/reanudación y despliegue renuevan conexiones:
+  el cambio de tipo invalidó planes preparados en el ensayo local, de ahí esta ventana.
+- Navegador autenticado: presupuesto sintético `260012/0`, fijo 0 sin serie,
+  alta 970.25×439.5, guardado y recarga; edición a 970.25×1999.5, guardado y
+  recarga; copia `260012/1` conserva las medidas tras reabrir. Se mantienen ambos.
+- PDF descargado mediante Emitir: 4.622 bytes, una página, parser estricto pypdf
+  correcto; página 1 conserva `970.25 × 1999.5` en fila y dibujo, y declara
+  Sin valorar/PRESUPUESTO INCOMPLETO. No certifica formato comercial ni fabricación.
+- Consulta READ ONLY posterior: 14 presupuestos, cinco líneas, ninguna migración
+  pendiente. Todas las filas previas a QA conservan su huella en las 12 tablas;
+  sólo se añadieron el presupuesto sintético y su revisión con sus líneas.
+- Evidencia privada: `/tmp/aluminior-a4-{backup,migration}.json`, huellas en
+  `/tmp/aluminior-a4-docs-before.json`, captura `/tmp/aluminior-a4-produccion.png`,
+  PDF `~/Downloads/presupuesto-A-260012-revision-0.pdf`. Sin datos reales versionados.
 
 Reversión preferente: volver al código anterior conservando columnas ampliadas.
 No convertir a integer si hay fracciones: perdería medidas. La app anterior
@@ -70,12 +89,12 @@ Antes de uso decimal, revertir DDL sólo con autorización y prueba de integrida
 ## D1: ficha de acceso July
 
 Actualizado `July_unificada/context/access/aluminior.md`: Render y conexión
-Postgres comprobados el 09/10 durante A3; 30 migraciones, último deploy a06cd4f,
+Postgres comprobados el 09/10; 31 migraciones, último deploy 487feb1,
 respaldo y herramientas Mac, punteros seguros y distinción de evidencia recibida
 del motor frente a comprobación directa. Retirada la instrucción caducada de
 reconectar GitHub/Render. Auth del 29/09 e historia de hashes conservadas con fecha.
 Actualización local: no acredita sync ni recepción en Windows. Sin secretos.
 
 Estado y siguiente paso los gobierna el [roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md).
-No repetir A3, A4 local ni D1. La publicación A4 requiere el alcance anterior;
-E1/E7 y aceptación comercial PDF siguen separados.
+No repetir A3, A4 ni D1. Siguiente: aceptación comercial P.2 con el titular.
+E1/E7 requieren observación Windows; S2 espera el anuncio del 14/10.
