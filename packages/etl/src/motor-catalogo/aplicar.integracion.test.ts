@@ -7,7 +7,7 @@ import postgres from 'postgres'
 import { drizzle } from 'drizzle-orm/postgres-js'
 import { migrate } from 'drizzle-orm/postgres-js/migrator'
 import { fileURLToPath } from 'node:url'
-import { randomUUID } from 'node:crypto'
+import { createHash, randomUUID } from 'node:crypto'
 import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, unlinkSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
@@ -50,16 +50,23 @@ beforeAll(async () => {
   const migraciones = fileURLToPath(new URL('../../../db/migrations', import.meta.url))
   const hasta0022 = join(origen, 'migraciones-0022')
   mkdirSync(join(hasta0022, 'meta'), { recursive: true })
-  const journal = JSON.parse(readFileSync(join(migraciones, 'meta/_journal.json'), 'utf8'))
-  journal.entries = journal.entries.filter((e: { idx: number }) => e.idx <= 22)
+  const journalActual = JSON.parse(readFileSync(join(migraciones, 'meta/_journal.json'), 'utf8')) as {
+    entries: { idx: number; tag: string; when: number }[]
+  }
+  const journal = { ...journalActual, entries: journalActual.entries.filter(e => e.idx <= 22) }
   writeFileSync(join(hasta0022, 'meta/_journal.json'), JSON.stringify(journal))
   for (const e of journal.entries) copyFileSync(join(migraciones, `${e.tag}.sql`), join(hasta0022, `${e.tag}.sql`))
   await migrate(drizzle(sql), { migrationsFolder: hasta0022 })
   expect((await sql`SELECT to_regclass('public.conjunto_parametros_despiece') AS tabla`)[0]!.tabla).toBeNull()
   expect((await sql`SELECT max(created_at)::text AS ultima FROM drizzle.__drizzle_migrations`)[0]!.ultima).toBe('1790951000407')
   await migrate(drizzle(sql), { migrationsFolder: migraciones })
-  expect((await sql`SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations`)[0]!.n).toBe(29)
-  expect((await sql`SELECT max(created_at)::text AS ultima FROM drizzle.__drizzle_migrations`)[0]!.ultima).toBe('1791045497880')
+  // Comprobar todas las migraciones vigentes, sin caducar al añadir otra.
+  const aplicadas = await sql`SELECT hash, created_at::text AS fecha
+    FROM drizzle.__drizzle_migrations ORDER BY created_at`
+  expect([...aplicadas]).toEqual(journalActual.entries.map(e => ({
+    hash: createHash('sha256').update(readFileSync(join(migraciones, `${e.tag}.sql`))).digest('hex'),
+    fecha: String(e.when),
+  })))
   await sql`INSERT INTO estructuras (codigo, descripcion) VALUES ('QA-MOTOR', 'Estructura sintética')`
   await sql`INSERT INTO presupuestos (numero, revision, serie, fecha, nombre_libre, tarifa, estado)
     VALUES (999001, 0, 'A', '2026-10-02', 'QA motor', 1, 'PENDIENTE')`

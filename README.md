@@ -35,6 +35,17 @@ npm run check:architecture
 Las pruebas de escritura utilizan PostgreSQL local desechable. Conserva los
 destinos separados de cada suite; no fuerces una única base para todos los tests.
 
+GitHub Actions ejecuta `Validación completa` en pushes a `main`/`codex/**` y en
+pull requests a `main`: cuatro paquetes (`npm run test:ci`, dos workers),
+arquitectura, build web y typechecks, con PostgreSQL 16 sintético. El bootstrap
+crea `auth.users` y la base ETL aparte, igual que Docker local. No usa secretos
+ni datos de producción. El workflow `Recorrido web sintético` mantiene por
+separado la comprobación de navegador de escritorio y móvil.
+
+La CI informa del resultado; no configura protección de ramas ni convierte
+por sí sola esos checks en requisitos de merge.
+
+
 ## Organización
 
 | Paquete | Responsabilidad |

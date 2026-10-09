@@ -21,6 +21,7 @@
     "dev": "npm run dev:web",
     "dev:web": "npm run -w @aluminior/web dev",
     "test": "npm run -ws --if-present test",
+    "test:ci": "npm run -ws --if-present test -- --maxWorkers=2",
     "typecheck": "npm run -ws --if-present typecheck",
     "check:architecture": "node scripts/auditar-modularidad.mjs",
     "test:e2e": "playwright test",
