@@ -1,9 +1,12 @@
 # Medidas exteriores, recorridos CI y ficha July — 09/10/2026
 
 Estado: A4 implementado/verificado localmente; 0030 pendiente remota. A5 recorrido
-de navegador verificado localmente, workflow preparado; ejecución alojada pendiente.
+de navegador verificado localmente y en GitHub Actions.
 D1 ficha de acceso reconciliada localmente. Trabajo desde origin/main `18701a4`
-en `codex/medidas-decimales-ci`; main principal con cambios ajenos intacto.
+en `codex/medidas-decimales-ci`, commit `e7aed24`; main principal con cambios ajenos intacto.
+[CI 37971854995](https://github.com/Sergiom84/Aluminior/actions/runs/37971854995):
+correcta sobre ese commit, seis recorridos en Linux/Postgres nuevo, typecheck
+del harness y artefactos publicados. Sin secretos de producción.
 
 ## Alcance y evidencia
 

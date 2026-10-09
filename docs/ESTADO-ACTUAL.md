@@ -119,7 +119,7 @@ Los nueve documentos anteriores y tres líneas conservan sus huellas.
 
 ## Siguiente paso
 
-**A3 publicado/verificado el 09/10 en `a06cd4f`, con 0029 aplicada.** Continuación Mac: A4 medidas exteriores implementado/verificado localmente; siguiente autorizar 0030 remota y despliegue con renovación de conexiones. A5 CI preparado, ejecución alojada pendiente. D1 reconciliado localmente. [Informe](paridad/MEDIDAS-Y-CI-2026-10-09.md). E1 depende de Windows; P.2 conserva aceptación comercial y S2 el anuncio del 14/10.
+**A3 publicado/verificado el 09/10 en `a06cd4f`, con 0029 aplicada.** Continuación Mac: A4 medidas exteriores implementado/verificado localmente; siguiente autorizar 0030 remota y despliegue con renovación de conexiones. A5 verificado en GitHub Actions (run 37971854995, seis recorridos correctos). D1 reconciliado localmente. [Informe](paridad/MEDIDAS-Y-CI-2026-10-09.md). E1 depende de Windows; P.2 conserva aceptación comercial y S2 el anuncio del 14/10.
 
 Antecedente P.2: rama `codex/pdf-multipagina`, worktree `pdf-multipagina/Aluminior`, desde
 `7ad0ee2`. P.2 publicado en `46c613d`; endpoint PDF 260009 comprobado sin escritura, 1 página / 805,65 €. El main principal

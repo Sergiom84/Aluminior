@@ -136,6 +136,7 @@ E1 y demás fuentes fechadas intactos. A3 queda publicado; E1 y aceptación come
   `/tmp/aluminior-a3-produccion.png`. El acceso directo al destino autorizado
   funcionó; no se desactivaron protecciones del navegador.
 
-Siguiente abierto: E1, con la coordinación y autorización Windows ya descritas
+Continuación posterior desde Mac: [A4/A5 y cierre D1](MEDIDAS-Y-CI-2026-10-09.md).
+La investigación económica E1 conserva la coordinación y autorización Windows ya descritas
 en el roadmap; P.2 conserva aceptación comercial, y S2 sigue condicionado al
 anuncio previsto del 14/10. No repetir A3 ni su migración.

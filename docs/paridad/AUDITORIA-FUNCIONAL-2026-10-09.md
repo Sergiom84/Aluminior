@@ -230,8 +230,8 @@ A2 (miniatura) cerrado. Las otras propuestas siguen pendientes, sin reabrir inve
    publicación y recibos remotos verificados, ver informe A3.
 5. Miniatura completa del GRUPO **entregada como A2** en 7ad0ee2. P.2 tiene [aceptación y publicación posteriores](PDF-MULTIPAGINA-2026-10-09.md); resta formato comercial. Alcance original:
    aceptación PDF multipágina y, por separado, flujos de fabricación antes de usarlos en taller.
-6. **A5 implementado/verificado localmente:** seis recorridos de navegador, incluida
-   latencia, fallo/reintento y teclado. Ejecución alojada pendiente; informe A4/A5.
+6. **A5 verificado localmente y en GitHub Actions:** seis recorridos de navegador, incluida
+   latencia, fallo/reintento y teclado. CI 37971854995 correcta; informe A4/A5.
 
 La información ya extraída se conserva: no se eliminaron banco, discrepancias,
 fuentes ni observaciones E1 A–F/G1–G5/G6. No se duplicó extracción de catálogo.

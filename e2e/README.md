@@ -31,3 +31,5 @@ remoto; publica trazas de fallos y capturas de datos sintéticos durante siete
 días. [Referencia CI](https://playwright.dev/docs/ci-intro).
 Los registros sintéticos se conservan en la base E2E local; los nombres incluyen
 fecha y proyecto, no se mezclan con suites transaccionales ni datos comerciales.
+
+Primera ejecución alojada verificada el 09/10/2026: [37971854995](https://github.com/Sergiom84/Aluminior/actions/runs/37971854995), seis recorridos correctos en e7aed24.

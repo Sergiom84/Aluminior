@@ -6,7 +6,7 @@ Fecha: 03/10/2026. Contexto recibido en Codex Windows; comprobar cambios posteri
 Entrada actual: [estado](docs/ESTADO-ACTUAL.md) →
 [roadmap operativo](ROADMAP-PARIDAD-PRODUCTOR.md). La matriz y la lista de
 ensayos ya están entregadas (M0 cerrado). Actualización 09/10: A1 y S1/A2 publicados/verificados, último Render live `a06cd4f`.
-A3 publicado/verificado en `a06cd4f`, 0029 aplicada: [informe](docs/paridad/IDEMPOTENCIA-PRESUPUESTOS-2026-10-09.md). Siguiente: E1 según procedimiento Windows y autorización pendiente; no repetir A3.
+A3 publicado/verificado en `a06cd4f`, 0029 aplicada: [informe](docs/paridad/IDEMPOTENCIA-PRESUPUESTOS-2026-10-09.md). Continuación Mac: A4 local y A5 CI, ver [informe](docs/paridad/MEDIDAS-Y-CI-2026-10-09.md); 0030 remota pendiente. E1 conserva procedimiento Windows y autorización pendiente; no repetir A3.
 No repetir S1/A2 ni la investigación de paginación. Rama `codex/pdf-multipagina`; P.2 se publicó en `46c613d`; PDF 260009 descargado válido, 1 página y 805,65 €.
 S2 conserva el anuncio Next previsto para el 14/10; no repetir mantenimiento ya entregado.
 E1 conserva su [procedimiento](docs/paridad/PASO-E1-DESPUNTE.md) para después.
@@ -89,7 +89,7 @@ se repitió tras publicar f6d5bcd: guardado/recarga y PDF válido, total 805,65 
 
 La continuación S1/A2 en `7ad0ee2` quedó live a las 15:48:17 UTC: 260009 reguardado/recargado conserva 805,65 €, miniatura nueva y PDF descargado. Sin tarifas ni migraciones; ver informe de continuación para pruebas locales y límites.
 
-La reconciliación de `ESTADO-ACTUAL.md` con el relevo fechado está realizada: carga/despliegue atribuidos a Claude, comisión y horas en UI diferenciadas. A1 se verificó el 09/10 con alcance limitado al recorrido auditado. La ficha de acceso de July conserva datos antiguos de migraciones/Render; su actualización es D1 en el roadmap. Conservar los informes históricos y no repetir la corrección del estado ya entregada.
+La reconciliación de `ESTADO-ACTUAL.md` con el relevo fechado está realizada: carga/despliegue atribuidos a Claude, comisión y horas en UI diferenciadas. A1 se verificó el 09/10 con alcance limitado al recorrido auditado. D1: ficha de acceso de July reconciliada localmente el 09/10 con 30 migraciones y Render live A3, distinguiendo verificaciones directas de evidencia recibida; sin sync acreditado. Conservar los informes históricos y no repetir la corrección del estado ya entregada.
 
 ## July y coordinación
 
