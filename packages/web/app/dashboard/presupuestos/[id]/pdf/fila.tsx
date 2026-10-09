@@ -6,7 +6,7 @@ import { eur } from './formato'
 import type { LineaPdf } from './tipos'
 import { TextoPdf } from './texto'
 
-/** La descripción puede cruzar página; únicamente el dibujo es indivisible. */
+/** La descripción puede cruzar página; dibujo y sus dos conceptos de MO permanecen identificados. */
 export function FilaPdf({ l }: { l: LineaPdf }) {
   return <View>
     <View style={styles.row} minPresenceAhead={24}>
@@ -36,8 +36,8 @@ export function FilaPdf({ l }: { l: LineaPdf }) {
         {l.valoracionCompleta && l.total !== null ? eur.format(Number(l.total)) : 'Sin valorar'}
       </Text>
     </View>
-    {l.cerramiento && <View style={{ paddingVertical: 6 }}>
-      <Text style={{ fontSize: 7, marginBottom: 3 }} minPresenceAhead={150}>Línea {l.orden}</Text>
+    {l.cerramiento && <View style={{ paddingVertical: 6 }} wrap={false}>
+      <Text style={{ fontSize: 7, marginBottom: 3 }}>Línea {l.orden}</Text>
       <DibujoCerramientoPdf configuracion={l.cerramiento.configuracion} />
       {l.cerramiento.manoObra.map(m => <Text key={m.concepto} style={{ fontSize: 8, marginTop: 3 }}>
         {m.concepto === 'COLOCACION' ? 'Colocación' : 'Fabricación'} {m.horas === null ? '—' : Number(m.horas)} h

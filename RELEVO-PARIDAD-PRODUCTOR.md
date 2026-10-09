@@ -5,8 +5,10 @@ Fecha: 03/10/2026. Contexto recibido en Codex Windows; comprobar cambios posteri
 **Referencia de contexto; no usar sus listas fechadas como tareas vigentes.**
 Entrada actual: [estado](docs/ESTADO-ACTUAL.md) →
 [roadmap operativo](ROADMAP-PARIDAD-PRODUCTOR.md). La matriz y la lista de
-ensayos ya están entregadas (M0 cerrado). Actualización 09/10: A1 publicado/verificado; prioridad **S1,
-mantenimiento de dependencias**, según [auditoría](docs/paridad/AUDITORIA-FUNCIONAL-2026-10-09.md).
+ensayos ya están entregadas (M0 cerrado). Actualización 09/10: A1 y S1/A2 publicados/verificados, último Render live `7ad0ee2`.
+Siguiente **P.2: publicación de la corrección ya verificada localmente**, según [informe PDF](docs/paridad/PDF-MULTIPAGINA-2026-10-09.md).
+No repetir S1/A2 ni la investigación de paginación. Rama `codex/pdf-multipagina`; producción sigue en `7ad0ee2`.
+S2 conserva el anuncio Next previsto para el 14/10; no repetir mantenimiento ya entregado.
 E1 conserva su [procedimiento](docs/paridad/PASO-E1-DESPUNTE.md) para después.
 Avance del 04/10: [evidencia parcial E1](docs/paridad/EVIDENCIA-E1-DESPUNTE-2026-10-04.md).
 Manual, diagnóstico histórico y observación A–F entregados; usar copia F de 0017, sin repetirlos
@@ -84,6 +86,8 @@ Claude comunicó verificaciones directas:
 Codex recibió estas verificaciones; no las repitió. Observación histórica del 03/10: entonces seguía pendiente la aceptación funcional.
 El 09/10 se verificaron guardado, recarga y PDF en el presupuesto de prueba 260009;
 se repitió tras publicar f6d5bcd: guardado/recarga y PDF válido, total 805,65 €, con dos piezas sin coste. Visor IAB gris; archivo revisado aparte (ver A1). Caso recibido: 2O ELEGANTPVC 1200×540, L, VCG420AGS4, 5 h de colocación, tarifa 1. **652,24 € es referencia histórica anterior a una subida de PVP, no un resultado actual exigible.**
+
+La continuación S1/A2 en `7ad0ee2` quedó live a las 15:48:17 UTC: 260009 reguardado/recargado conserva 805,65 €, miniatura nueva y PDF descargado. Sin tarifas ni migraciones; ver informe de continuación para pruebas locales y límites.
 
 La reconciliación de `ESTADO-ACTUAL.md` con el relevo fechado está realizada: carga/despliegue atribuidos a Claude, comisión y horas en UI diferenciadas. A1 se verificó el 09/10 con alcance limitado al recorrido auditado. La ficha de acceso de July conserva datos antiguos de migraciones/Render; su actualización es D1 en el roadmap. Conservar los informes históricos y no repetir la corrección del estado ya entregada.
 

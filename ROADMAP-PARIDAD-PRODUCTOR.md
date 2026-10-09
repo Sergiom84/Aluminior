@@ -8,12 +8,18 @@ conservan evidencia. Sus antiguas listas de pendientes no sustituyen este regist
 
 ## Siguiente paso
 
-**S1 — mantenimiento de dependencias con avisos de seguridad.** Revisar Next y
-el override Sharp conjuntamente y comprobar el resto de avisos antes de actualizar.
-[A1](docs/paridad/AUDITORIA-FUNCIONAL-2026-10-09.md) publicado en `f6d5bcd` y
-verificado el 09/10: prueba 260009 guardada/recargada, PDF descargado válido,
-total 805,65 € con avisos técnicos. No repetir esa entrega ni certificar precios
-con esa única observación. El visor PDF interno quedó gris: límite conservado.
+**P.2 — publicar la corrección de paginación ya verificada localmente** y
+comprobar el endpoint desplegado. Rótulo, dibujo, medidas y mano de obra ya
+permanecen juntos; 6 escenarios / 21 páginas y endpoint local de 12 líneas / 4
+páginas comprobados. [Evidencia y límites](docs/paridad/PDF-MULTIPAGINA-2026-10-09.md).
+La aceptación del formato comercial Productor/titular sigue separada. Reutilizar
+July 205; no repetir S1/A2 ni la investigación multipágina ya entregada.
+
+**S1 y A2 publicados y verificados el 09/10**, Render live `7ad0ee2`: dependencias
+sin avisos npm publicados a la fecha, 1.431 pruebas y miniaturas de conjunto.
+260009 reguardado/recargado conserva 805,65 € y avisos. [Informe y límites](docs/paridad/MANTENIMIENTO-Y-MINIATURAS-2026-10-09.md).
+**S2**: revisar el anuncio Next previsto para el 14/10 cuando se publiquen las
+versiones afectadas/corregidas. Sin seguimiento automático creado.
 
 ### Siguiente investigación económica
 
@@ -56,7 +62,10 @@ Sin aplicación al presupuesto web ni nueva medición del banco.
 | E10 | Acabado efectivo UNI/L y selección PVP | Pendiente de investigación | Comparar acabado de pieza, selector y tarifa; no normalizar por coincidencia económica |
 | E11 | Mínimos, múltiplos e intervalos restantes | Condicionado | Usar límites reales de catálogo y entradas compatibles a ambos lados de cada frontera |
 | A1 | Aceptación en web publicada | Cerrado el recorrido auditado 09/10 | [Auditoría](docs/paridad/AUDITORIA-FUNCIONAL-2026-10-09.md): Render live f6d5bcd, 260009 guardado/recargado y PDF válido 805,65 €. Visor IAB gris, archivo comprobado aparte. No certifica todas las familias, fabricación ni precio |
-| S1 | Mantenimiento de dependencias | Pendiente prioritario, 09/10 | Auditoría detectó avisos preexistentes en Next/Sharp y herramientas; revisar actualización conjunta y aplicabilidad, probar y publicar por separado. Sin cambios de dependencias en A1 |
+| S1 | Mantenimiento de dependencias | Publicado/verificado 09/10 | b1682a3 incluido en Render live 7ad0ee2; audit 11→0 / producción 4→0; ci, 1.431 tests, tipos, arquitectura y build correctos. Guardado/recarga/PDF 260009; no cubre el anuncio futuro S2 |
+| S2 | Revisar anuncio de seguridad Next.js del 08/10 | Pendiente de publicación prevista 14/10 | Consultar advisory y versiones cuando estén publicados; alcance aún desconocido. No darlo por corregido porque el audit actual quede limpio. Fuente en informe de mantenimiento; sin automatización creada |
+| A2 | Miniatura del GRUPO completo | Publicado/verificado 09/10 | 7ad0ee2; tres módulos desiguales con dos uniones guardados/reabiertos en QA, SVG/PDF completos; teclado y escritorio/móvil. Basado en RECON-CERRAMIENTOS §4 quater; sin cambios de valoración |
+| P.2 | Aceptación PDF multipágina | Implementado/verificado local 09/10; publicación pendiente | [Informe](docs/paridad/PDF-MULTIPAGINA-2026-10-09.md): 6 escenarios, 21 páginas, 628 marcadores, 28 bloques; endpoint local 12 líneas/4 páginas. 741 tests web, tipos/build/arquitectura. Publicar corrección aislada y verificar endpoint; formato comercial Productor/titular pendiente. July 205 |
 | D1 | Reconciliar ficha de acceso de July | Pendiente documental | Actualizar información antigua con fuente/fecha del relevo; distinguir verificación recibida de comprobación directa |
 
 Detalles E2–E11: [ensayos mínimos](docs/paridad/ENSAYOS-MINIMOS-PRODUCTOR-2026-10-03.md).
@@ -133,6 +142,7 @@ sobre este registro y ESTADO-ACTUAL.
 
 | Fecha | Tarea | Evidencia / mantenimiento realizado |
 |---|---|---|
+| 09/10/2026 | S1/A2 | Publicadas en 7ad0ee2; audit 0, 1.431 pruebas, QA completa de tres módulos y prueba publicada 260009 con importes conservados. Estado/roadmap/relevo actualizados; siguiente P.2, S2 condicionado a publicación 14/10 |
 | 09/10/2026 | A1 | Correcciones f6d5bcd publicadas; 260009 editado/guardado/recargado y PDF descargado válido. Informe, estado, índice y relevo actualizados. Límites de catálogo y visor IAB conservados; S1 siguiente |
 | 03/10/2026 | M0 | Matriz e informe reproducible entregados; estado, paridad, banco e índice actualizados |
 | 03/10/2026 | Roadmap y preparación de E1 | Procedimiento de despunte creado; regla de mantenimiento incorporada a AGENTS; relevo de raíz actualizado y ensayos remitidos a este registro. E1 sigue pendiente de ejecución |
@@ -147,8 +157,10 @@ ese corpus con el banco vigente ni cerrar por la coincidencia de costes.
 ## Instrucción breve para continuar
 
 > Lee AGENTS.md, docs/ESTADO-ACTUAL.md y ROADMAP-PARIDAD-PRODUCTOR.md.
-> S1 es el mantenimiento prioritario: revisar avisos de dependencias descritos
-> en docs/paridad/AUDITORIA-FUNCIONAL-2026-10-09.md, aislado de tarifas.
+> S1/A2 publicados y verificados; lee docs/paridad/MANTENIMIENTO-Y-MINIATURAS-2026-10-09.md.
+> P.2 verificado localmente: lee docs/paridad/PDF-MULTIPAGINA-2026-10-09.md.
+> Siguiente: publicar corrección aislada y verificar endpoint; formato comercial pendiente, July 205.
+> S2 requiere revisar el anuncio Next cuando se publiquen versiones el 14/10. No repetir S1/A2.
 > La siguiente investigación económica sigue siendo E1 mediante
 > docs/paridad/PASO-E1-DESPUNTE.md, tras leer EVIDENCIA-E1-DESPUNTE-2026-10-04.md.
 > Usa copia F y resultados A–F; el residuo B/D ya está explicado por margen GID.

@@ -209,14 +209,16 @@ el optimizador continúa habilitado. [Aviso Next Windows](https://github.com/ver
 [aviso AVIF](https://github.com/advisories/GHSA-2xp9-vwfh-vxw4) y
 [aviso Sharp](https://github.com/lovell/sharp/security/advisories/GHSA-wq5f-xc86-pv6w).
 
-S1 del roadmap: revisar actualización de Next y override Sharp conjuntamente,
-y resto de avisos, con pruebas/build propios antes de publicar. No ejecutar
-`npm audit fix --force` como sustituto de esa revisión. Evidencia privada:
+S1 resuelto en la [continuación del 09/10](MANTENIMIENTO-Y-MINIATURAS-2026-10-09.md):
+Next/Sharp y demás avisos actualizados, verificados y publicados en 7ad0ee2.
+Los conteos anteriores son históricos; audit posterior 0. No repetir esta tarea
+ni confundirla con S2, el anuncio posterior aún sin versiones. Evidencia privada histórica:
 `/tmp/aluminior-release-npm-audit.json` y su variante `-prod.json`.
 
 ## Mejoras propuestas y límites
 
-A1 publicado/verificado; priorizar S1 y después estas mejoras, sin reabrir investigaciones cerradas:
+A1 y S1 publicados/verificados. Estado único en el roadmap: P.2 verificado localmente, pendiente de publicación,
+A2 (miniatura) cerrado. Las otras propuestas siguen pendientes, sin reabrir investigaciones cerradas:
 
 1. Selección guiada por compatibilidad modelo/serie y disponibilidad real de
    receta/precio. El catálogo de dibujos no debe parecer una garantía económica.
@@ -226,8 +228,8 @@ A1 publicado/verificado; priorizar S1 y después estas mejoras, sin reabrir inve
    local, respaldo y alcance remoto autorizado; no redondear para ocultar el límite.
 4. Idempotencia de nueva cabecera y copia ante pérdida completa de respuesta
    HTTP. Separar caché postcommit no resuelve esa pérdida de transporte.
-5. Miniatura de línea compuesta que represente el GRUPO completo; ampliar
-   aceptación PDF multipágina y flujos de fabricación antes de usarlos en taller.
+5. Miniatura completa del GRUPO **entregada como A2** en 7ad0ee2. P.2 tiene [aceptación local posterior](PDF-MULTIPAGINA-2026-10-09.md); resta publicación y formato comercial. Alcance original:
+   aceptación PDF multipágina y, por separado, flujos de fabricación antes de usarlos en taller.
 6. Automatizar el recorrido sintético de navegador en CI, incluyendo latencia,
    fallo/reintento de catálogos y foco/teclado. Mantenerlo separado del contraste
    económico con datos originales.

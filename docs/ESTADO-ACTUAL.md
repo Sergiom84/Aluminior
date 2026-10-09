@@ -1,7 +1,7 @@
 # Estado actual de Aluminior
 
 Revisión funcional: 09/10/2026, checkout inicial `787d1ad`. Producción comprobada
-en `f6d5bcd` (Render live, 09/10 15:13:43 UTC); correcciones publicadas. Se conserva
+en `7ad0ee2` (Render live, 09/10 15:48:17 UTC); correcciones y mantenimiento publicados. Se conserva
 la cobertura histórica del 03/10 y la investigación E1 del 04/10.
 Consolidación documental inicial: `ee0dc16`, sobre `9bc879e`.
 Este es el único punto de entrada de estado y siguiente trabajo.
@@ -19,6 +19,16 @@ No certifica paridad económica ni fabricación. Correcciones publicadas: herraj
 documento, diagnósticos visibles y cargas de opciones seguras. Acristalamiento
 alternativo sin receta verificada queda incompleto; exterior fraccionario
 se rechaza explícitamente, sin redondeo. Ver informe para pruebas y límites.
+
+## Continuación S1/A2 publicada
+
+[Informe de mantenimiento y miniaturas](paridad/MANTENIMIENTO-Y-MINIATURAS-2026-10-09.md):
+audit npm 11→0 y producción 4→0, 1.431 pruebas, tipos/arquitectura/build correctos.
+La miniatura representa todo el GRUPO con posiciones/proporciones guardadas.
+QA local de tres módulos, dos uniones, guardado/recarga, teclado, escritorio/móvil
+y PDF correcto; 260009 repetido en producción mantiene 805,65 € y sus avisos.
+No hay cambios de tarifas, valoración ni migraciones. El anuncio posterior de
+Next para el 14/10 conserva seguimiento S2; no queda cubierto por audit 0.
 
 ## Qué funciona
 
@@ -102,13 +112,17 @@ se rechaza explícitamente, sin redondeo. Ver informe para pruebas y límites.
 
 ## Siguiente paso
 
-**S1 — revisar y actualizar las dependencias con avisos de seguridad**, primero
-Next y su override Sharp, con pruebas/build propios. Avisos preexistentes;
-no se incluyeron cambios de dependencias en la publicación acotada de A1.
-A1 cerrado para el recorrido auditado, sin nueva importación ni migraciones.
-[Informe, evidencia y mejoras](paridad/AUDITORIA-FUNCIONAL-2026-10-09.md).
-Entrega desde `codex/auditoria-presupuestos`; el main local conserva dos commits
-de tarifas excluidos y cambios sin indexar. Consultar el informe antes de integrar.
+**P.2 — publicar la corrección PDF ya verificada localmente** y comprobar el
+endpoint desplegado. [Informe](paridad/PDF-MULTIPAGINA-2026-10-09.md): rótulo,
+dibujo, medidas y mano de obra permanecen juntos; 6 escenarios / 21 páginas,
+741 pruebas web y endpoint local 12 líneas / 4 páginas correctos. La aceptación
+del formato comercial Productor/titular queda separada; July 205 sigue en curso.
+No repetir la investigación de paginación ni S1/A2. S2 conserva el anuncio futuro.
+
+Rama `codex/pdf-multipagina`, worktree `pdf-multipagina/Aluminior`, desde
+`7ad0ee2`. P.2 no publicado; Render sigue en ese commit. El main principal
+conserva dos commits de tarifas excluidos y código anterior sin indexar; solo
+se sincroniza allí documentación. No publicar desde ese main sin reconciliarlo.
 
 ### Investigación económica conservada
 
