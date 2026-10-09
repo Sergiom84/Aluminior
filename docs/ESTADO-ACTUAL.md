@@ -112,9 +112,9 @@ Next para el 14/10 conserva seguimiento S2; no queda cubierto por audit 0.
 
 ## Siguiente paso
 
-**A3 — evitar presupuestos duplicados al crear o copiar si se pierde la respuesta HTTP** (propuesta 4 de A1). Reproducir primero en local, definir una clave estable de operación y verificar reintentos; no tocar valoración. P.2 está publicado en `46c613d`; queda separada la aceptación comercial Productor/titular (July 205).
+**A3 implementado y verificado localmente; siguiente: revisión y autorización de publicación y migración 0029.** [Informe A3](paridad/IDEMPOTENCIA-PRESUPUESTOS-2026-10-09.md). No repetir la reproducción ni la implementación. Rama `codex/a3-idempotencia` desde `origin/main` `d2d07ed`; sin cambios de valoración ni escritura remota. P.2 sigue publicado en `46c613d`; aceptación comercial separada (July 205).
 
-Rama `codex/pdf-multipagina`, worktree `pdf-multipagina/Aluminior`, desde
+Antecedente P.2: rama `codex/pdf-multipagina`, worktree `pdf-multipagina/Aluminior`, desde
 `7ad0ee2`. P.2 publicado en `46c613d`; endpoint PDF 260009 comprobado sin escritura, 1 página / 805,65 €. El main principal
 conserva dos commits de tarifas excluidos y código anterior sin indexar; solo
 se sincroniza allí documentación. No publicar desde ese main sin reconciliarlo.

@@ -7,6 +7,7 @@
  * delega en `_lib/estructuras`; el cálculo sigue ocurriendo SIEMPRE en servidor.
  */
 
+import { claveOperacionValida } from './idempotencia/clave.ts'
 import { esquemaCabeceraAlta } from './cabecera/esquema'
 import { buscarClientesEnCatalogo, type ClienteEncontrado } from './cabecera/buscar-clientes.ts'
 import { ErrorOperacionCerramiento } from './cerramientos/error-operativo.ts'
@@ -52,6 +53,8 @@ export async function crearPresupuesto(_previo: Estado, datos: FormData): Promis
   const p = esquemaCabeceraAlta.safeParse(Object.fromEntries(datos))
   if (!p.success) return { ok: false, errores: p.error.flatten().fieldErrors }
 
+  const operacionId = datos.get('operacionId')
+  if (!claveOperacionValida(operacionId)) return { ok: false, errores: {}, mensaje: 'Operación no válida. Recarga el formulario.' }
   const d = p.data
   const fecha = fechaLocalMadrid()
   let resultado: Awaited<ReturnType<typeof crearPresupuestoAlta>>
@@ -63,6 +66,7 @@ export async function crearPresupuesto(_previo: Estado, datos: FormData): Promis
     // número y escribir la cabecera es responsabilidad de
     // `presupuestos/crear-presupuesto.ts` (T.71.4).
     resultado = await crearPresupuestoAlta(db, {
+      operacionId,
       serie: 'A',
       fecha,
       clienteCodigo: d.clienteCodigo,

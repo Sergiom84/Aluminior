@@ -6,7 +6,7 @@ Fecha: 03/10/2026. Contexto recibido en Codex Windows; comprobar cambios posteri
 Entrada actual: [estado](docs/ESTADO-ACTUAL.md) →
 [roadmap operativo](ROADMAP-PARIDAD-PRODUCTOR.md). La matriz y la lista de
 ensayos ya están entregadas (M0 cerrado). Actualización 09/10: A1 y S1/A2 publicados/verificados, último Render live `46c613d`.
-Siguiente **A3: idempotencia de nueva cabecera y copia ante pérdida HTTP**, según [informe PDF](docs/paridad/PDF-MULTIPAGINA-2026-10-09.md).
+A3 implementado/verificado localmente en `codex/a3-idempotencia`: [informe](docs/paridad/IDEMPOTENCIA-PRESUPUESTOS-2026-10-09.md). Siguiente: revisión y autorización de publicación y migración remota 0029; no repetir implementación.
 No repetir S1/A2 ni la investigación de paginación. Rama `codex/pdf-multipagina`; producción está en `46c613d`; PDF 260009 descargado válido, 1 página y 805,65 €.
 S2 conserva el anuncio Next previsto para el 14/10; no repetir mantenimiento ya entregado.
 E1 conserva su [procedimiento](docs/paridad/PASO-E1-DESPUNTE.md) para después.

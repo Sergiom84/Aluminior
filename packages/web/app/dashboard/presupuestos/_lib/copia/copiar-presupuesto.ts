@@ -10,6 +10,7 @@
  * escritura quedan en sus dos módulos, ambos sin reglas.
  */
 
+import { ejecutarIdempotente } from '../idempotencia/ejecutar.ts'
 import { schema, type crearDb } from '@aluminior/db'
 import { eq } from 'drizzle-orm'
 import { bloquearPresupuesto } from '../lineas/bloquear-presupuesto.ts'
@@ -27,6 +28,7 @@ type Db = Pick<ReturnType<typeof crearDb>, 'transaction'>
 type Tx = Parameters<Parameters<Db['transaction']>[0]>[0]
 
 export interface EntradaCopia {
+  readonly operacionId?: string
   readonly presupuestoId: string
   /** Numeración tecleada, o la estrategia con la que reservarla. */
   readonly destino: NumeracionDocumento | { readonly estrategia: EstrategiaDestino }
@@ -152,7 +154,10 @@ async function copiarPresupuestoConGanchos(
   try {
     // Automático sólo para las estrategias calculadas (decisión #9): un
     // destino manual nunca se reintenta con otro número.
-    return await ejecutarConNumeracion(db, intento, { automatico: !esManual })
+    const { operacionId, creadoPor, fecha: _fecha, ...intencion } = entrada
+    return await ejecutarConNumeracion(db, (tx) => ejecutarIdempotente(
+      tx, operacionId, creadoPor, { tipo: 'COPIA', datos: intencion }, () => intento(tx),
+    ), { automatico: !esManual })
   } catch (error) {
     if (esColisionIdentidad(error)) return { ok: false, errores: ['El destino ya está ocupado'] }
     throw error

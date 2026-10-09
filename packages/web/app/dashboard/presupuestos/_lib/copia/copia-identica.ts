@@ -16,6 +16,7 @@
  * son.
  */
 
+import { claveOperacionValida } from '../idempotencia/clave.ts'
 import { revalidatePath } from 'next/cache'
 import { crearDb } from '@aluminior/db'
 import { usuarioActual } from '../usuario-actual.ts'
@@ -41,10 +42,13 @@ const ERROR_SIN_SESION = 'Sesión no válida'
 export async function copiarIdentica(
   estrategia: EstrategiaDestino,
   presupuestoId: string,
+  operacionId: string,
 ): Promise<ResultadoCopiaIdentica> {
   if (typeof presupuestoId !== 'string' || !UUID.test(presupuestoId)) {
     return { ok: false, error: ERROR_ID_INVALIDO }
   }
+
+  if (!claveOperacionValida(operacionId)) return { ok: false, error: 'Operación no válida' }
 
   const creadoPor = await usuarioActual()
   if (!creadoPor) {
@@ -57,6 +61,7 @@ export async function copiarIdentica(
     await asegurarCatalogoDiseno(db)
     resultado = await copiarPresupuesto(db, {
       presupuestoId,
+      operacionId,
       destino: { estrategia },
       opciones: { ...OPCIONES_COPIA_IDENTICA, mapa: MAPA_VACIO },
       creadoPor,

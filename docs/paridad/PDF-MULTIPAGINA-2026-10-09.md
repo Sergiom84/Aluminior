@@ -102,7 +102,7 @@ Descarga autenticada posterior del PDF 260009: archivo válido, una página,
 La regresión multipágina de 21 páginas es local; el documento remoto comprobado
 tiene una sola página. No confundir ambos alcances.
 Queda la aceptación del formato comercial con evidencia Productor/titular.
-Siguiente tarea local A3: idempotencia de nueva cabecera y copia ante pérdida HTTP.
+A3 ya implementado y verificado localmente; siguiente: autorizar publicación y migración 0029.
 No repetir los seis escenarios como investigación nueva; son regresión reutilizable.
 
 Se incorporó el cierre previo S1/A2 y se actualizaron roadmap, estado, relevo,
@@ -112,3 +112,5 @@ código anteriores. Su main sigue en `787d1ad`: no publicar desde ese checkout.
 July 205 (`e852cf44a94f7b81f1d9b98817cd53bd`) se mantiene en curso hasta cerrar el
 alcance restante; actualización local no acredita sync ni recepción remota.
 E1 y S2 conservan sus condiciones. No se eliminó evidencia histórica.
+
+Continuación A3: [implementación y verificación local](IDEMPOTENCIA-PRESUPUESTOS-2026-10-09.md), pendiente de publicación; no repetir el trabajo entregado.

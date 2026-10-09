@@ -35,7 +35,7 @@ describe('acciones productivas de copia idéntica: fijan su estrategia, nada má
     expect(nuevo).toMatch(/copiarIdentica\(\s*['"]NUEVO_NUMERO['"]/)
   })
 
-  it('ninguna acción lee FormData: la única entrada es el id del presupuesto', () => {
+  it('ninguna acción lee FormData: acepta origen y clave, sin opciones económicas', () => {
     for (const codigo of [codigoDe(revision), codigoDe(nuevo)]) {
       expect(codigo).not.toMatch(/FormData/)
       expect(codigo).not.toMatch(/\.get\(/)
@@ -51,13 +51,13 @@ describe('acciones productivas de copia idéntica: fijan su estrategia, nada má
       const firma = fuente.match(new RegExp(`export async function ${nombre}\\(([^)]*)\\)`))
       expect(firma).not.toBeNull()
       const parametros = firma![1]
-      expect(parametros).toMatch(/^presupuestoId:\s*string$/)
+      expect(parametros).toMatch(/^presupuestoId:\s*string, operacionId:\s*string$/)
       for (const prohibido of prohibidos) expect(parametros).not.toContain(prohibido)
     }
   })
 
-  it('las funciones exportadas sólo declaran un parámetro (comprobación en tiempo de ejecución)', () => {
-    expect(copiarComoRevision.length).toBe(1)
-    expect(copiarComoNuevo.length).toBe(1)
+  it('las funciones exportadas declaran origen y clave (comprobación en tiempo de ejecución)', () => {
+    expect(copiarComoRevision.length).toBe(2)
+    expect(copiarComoNuevo.length).toBe(2)
   })
 })

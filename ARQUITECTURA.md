@@ -47,6 +47,12 @@ Un caso de uso que escribe varias tablas utiliza una transacción compartida.
 Los módulos reciben la conexión o transacción: no abren otra por su cuenta.
 La línea agregada, su configuración y sus satélites se guardan de forma coherente.
 
+Alta y copia HTTP exigen una clave de operación. `_lib/idempotencia/` toma un
+lock por actor/clave antes de reservar numeración y guarda un recibo en la misma
+transacción (0029, aplicación remota pendiente). Repetir recupera el resultado
+confirmado; cambiar la intención con una clave confirmada se rechaza. El cliente
+conserva por pestaña la clave y, en alta incierta, la solicitud para reintentar.
+
 La configuración v3 permite composición bidimensional. Las v1/v2 se interpretan
 compatiblemente, sin reescribir las medidas del documento al abrirlo.
 Las medidas económicas de módulo admiten números finitos positivos, incluidas
