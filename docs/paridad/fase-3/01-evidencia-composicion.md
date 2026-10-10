@@ -1,6 +1,6 @@
 # Fase 3 — evidencia de composición e inserción
 
-> Estado operativo: [ESTADO-ACTUAL.md](../../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites.
+> Estado operativo: [ESTADO-ACTUAL.md](../../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites. El orden y estado de tareas pertenece al [roadmap vigente](../../../ROADMAP-PARIDAD-PRODUCTOR.md); sus encargos, permisos y pendientes fechados no se reactivan.
 
 Fecha: 25/09/2026. Observación directa autorizada por el usuario en Productor,
 empresa **PRUEBAS ALUMINIOR [0017]**, presupuesto 260497 (vacío al empezar).

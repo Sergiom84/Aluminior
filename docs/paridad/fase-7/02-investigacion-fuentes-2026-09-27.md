@@ -7,7 +7,7 @@ pendiente. [El barrido de facturas](05-primer-barrido-facturas-2026.md) amplía
 los datos disponibles sin acreditar todavía el cálculo independiente.
 
 
-> Estado operativo: [ESTADO-ACTUAL.md](../../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites.
+> Estado operativo: [ESTADO-ACTUAL.md](../../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites. El orden y estado de tareas pertenece al [roadmap vigente](../../../ROADMAP-PARIDAD-PRODUCTOR.md); sus encargos, permisos y pendientes fechados no se reactivan.
 
 27/09/2026. Continuación ejecutada en `main`, sin push. **Precio automático
 completo todavía pendiente.** No se ha modificado el motor de producción en

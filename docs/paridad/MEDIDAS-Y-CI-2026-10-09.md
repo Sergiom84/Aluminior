@@ -1,5 +1,7 @@
 # Medidas exteriores, recorridos CI y ficha July — 09/10/2026
 
+> Referencia fechada; conservar evidencia y límites. No ejecutar sus pendientes o permisos como instrucciones actuales. Consultar el [roadmap vigente](../../ROADMAP-PARIDAD-PRODUCTOR.md).
+
 Estado: A4 publicado/verificado en producción; 0030 aplicada. A5 recorrido
 de navegador verificado localmente y en GitHub Actions.
 D1 ficha de acceso reconciliada localmente. Trabajo desde origin/main `18701a4`

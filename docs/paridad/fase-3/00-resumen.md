@@ -1,6 +1,6 @@
 # Fase 3 — composición, catálogo e inserción
 
-> Estado operativo: [ESTADO-ACTUAL.md](../../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites.
+> Estado operativo: [ESTADO-ACTUAL.md](../../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites. El orden y estado de tareas pertenece al [roadmap vigente](../../../ROADMAP-PARIDAD-PRODUCTOR.md); sus encargos, permisos y pendientes fechados no se reactivan.
 
 Fecha: 25/09/2026. Evidencia en [01-evidencia-composicion.md](01-evidencia-composicion.md).
 

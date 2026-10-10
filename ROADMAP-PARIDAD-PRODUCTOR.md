@@ -1,12 +1,19 @@
 # Roadmap operativo de paridad con Productor
 
-Actualizado: 09/10/2026. Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
+Actualizado: 10/10/2026 (reconciliación documental; sin nueva implementación). Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
 Este archivo es el registro único del orden y estado de estas tareas.
 Los documentos de ensayo explican cómo realizarlas; los informes fechados
 conservan evidencia. Sus antiguas listas de pendientes no sustituyen este registro.
 
 
 ## Siguiente paso
+
+**Continuidad Windows:** seguir [la guía](docs/CONTINUAR-EN-WINDOWS.md),
+recibir código/documentación y localizar fuentes privadas. P.2: aceptación
+comercial con el titular. E1: recuperar el ensayo tras G6-incidencia con la
+autorización de borrado aún pendiente; después discriminar precisión. E7:
+contraste Productor de fracciones, con A4 ya publicado. Esta entrega no
+reabre tareas técnicas cerradas ni cambia el orden E1–E11.
 
 **S3 verificado en CI el 09/10:** 1.448 pruebas correctas/una condicionada a CSV privado, seis recorridos de navegador, tipos, arquitectura y build en 36a47f4. Siguiente Mac: tramo técnico P.6/P.7, teclado/foco/responsive. [Evidencia](docs/paridad/MEDIDAS-Y-CI-2026-10-09.md#s3-validación-completa-de-los-paquetes-en-ci--09102026).
 
@@ -53,7 +60,7 @@ Sin aplicación al presupuesto web ni nueva medición del banco.
 | E4 | Tapajuntas de puerta con inferior SI/NO | Pendiente | GMT004, 1P 867×2098 con serie/ala/cajón reales; comparación lateral y travesaño |
 | E5 | Compacto y metraje COMPVAL | Pendiente | Identificar hueco/ventana/accesorio, COM009, cajón, vuelos y opciones; discriminar 4,93/4,94 con PVP vigente |
 | E6 | Acristalamiento alternativo y vidrio por elemento | Contención publicada 09/10; paridad pendiente | Motor catálogo rechaza precio falso de opción 1 para opción alternativa y guarda incompleto.  Mapeo observado de opción/nTAcris/tablas/junquillos/juntas; iniciar con 1/2/3 y mismo vidrio |
-| E7 | Conservación de medidas fraccionarias | Pendiente de observación | C2 970×439,5 y 970×1999,5: entrada, cortes, guardar/reabrir; configuración histórica ya resuelta, no reimplementar |
+| E7 | Conservación de medidas fraccionarias | Pendiente de contraste Productor; A4 web verificado 09/10 | C2 970×439,5 y 970×1999,5 con configuración real fijada: entrada, cortes, guardar/reabrir. 0030 y persistencia web ya entregados; no repetir migración ni equiparar el fijo sintético A4 con esta receta |
 | E8 | Tramos y opciones de herraje | Condicionado | Solo si falta cobertura tras catálogo/CHM/diagnóstico; límite real del corte de hoja, no dimensión exterior supuesta |
 | E9 | Referencias, cotas y divisiones restantes | Condicionado | Aislar cadena en los cortes discrepantes; predicción independiente de la instancia |
 | E10 | Acabado efectivo UNI/L y selección PVP | Pendiente de investigación | Comparar acabado de pieza, selector y tarifa; no normalizar por coincidencia económica |

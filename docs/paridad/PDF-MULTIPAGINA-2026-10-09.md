@@ -1,5 +1,7 @@
 # PDF multipágina — aceptación local del 09/10/2026
 
+> Referencia fechada; conservar evidencia y límites. No ejecutar sus pendientes o permisos como instrucciones actuales. Consultar el [roadmap vigente](../../ROADMAP-PARIDAD-PRODUCTOR.md).
+
 Estado: **corrección publicada y verificada; formato comercial pendiente**.
 Registro único: [roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md), P.2.
 Entrada: [estado actual](../ESTADO-ACTUAL.md). No es un segundo backlog.

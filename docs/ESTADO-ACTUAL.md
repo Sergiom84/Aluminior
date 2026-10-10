@@ -1,8 +1,13 @@
 # Estado actual de Aluminior
 
-Revisión funcional: 09/10/2026, checkout inicial `787d1ad`. Producción comprobada
+Revisión documental: 10/10/2026, desde `origin/main` `9673659`.
+Revisión funcional conservada: 09/10/2026, checkout inicial `787d1ad`. Producción comprobada
 en `487feb1` (Render live, 09/10 18:30:14 UTC); A3/A4 y migraciones 0029/0030 publicados/verificados. Se conserva
 la cobertura histórica del 03/10 y la investigación E1 del 04/10.
+API Render reconsultada el 10/10: sigue live `487feb1`; recibos finales S3
+correctos. BD y aceptación funcional conservan la verificación del 09/10.
+[Auditoría documental](AUDITORIA-DOCUMENTAL-2026-10-10.md) y
+[continuación en Windows](CONTINUAR-EN-WINDOWS.md).
 Consolidación documental inicial: `ee0dc16`, sobre `9bc879e`.
 Este es el único punto de entrada de estado y siguiente trabajo.
 El [roadmap operativo](../ROADMAP-PARIDAD-PRODUCTOR.md) conserva el orden y
@@ -119,6 +124,10 @@ Los nueve documentos anteriores y tres líneas conservan sus huellas.
   en otra copia; no reconstruir evidencia ni asumir sus resultados.
 
 ## Siguiente paso
+
+**Windows:** recepción y fuentes privadas → aceptación comercial P.2 con el
+titular; investigación económica E1 desde G6-incidencia y E7 tras A4, según
+[la guía](CONTINUAR-EN-WINDOWS.md). No repetir A3/A4 ni migraciones.
 
 S3 verificado localmente y en GitHub Actions (`36a47f4`): 1.448 pruebas correctas,
 una condicionada a CSV privado, seis recorridos, tipos, arquitectura y build; ver [evidencia y ejecuciones](paridad/MEDIDAS-Y-CI-2026-10-09.md#s3-validación-completa-de-los-paquetes-en-ci--09102026).

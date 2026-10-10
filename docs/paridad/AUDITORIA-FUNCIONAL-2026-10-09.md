@@ -1,5 +1,7 @@
 # Auditoría funcional de presupuestos — 09/10/2026
 
+> Referencia fechada; conservar evidencia y límites. No ejecutar sus pendientes o permisos como instrucciones actuales. Consultar el [roadmap vigente](../../ROADMAP-PARIDAD-PRODUCTOR.md).
+
 Estado: correcciones publicadas y recorrido de prueba verificado el 09/10/2026. Registro de tareas:
 [roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md), A1. Entrada:
 [estado](../ESTADO-ACTUAL.md). No usar este informe como un segundo backlog.

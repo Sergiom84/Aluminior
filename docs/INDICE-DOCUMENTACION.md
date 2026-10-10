@@ -2,14 +2,20 @@
 
 Entrada de trabajo: [ESTADO-ACTUAL.md](ESTADO-ACTUAL.md).
 Clasificación documental inicial sobre `9bc879e` y comprobación local del 02/10.
-Actualización operativa del 09/10/2026: auditoría funcional, correcciones publicadas
-y S1/A2 publicados/verificados en 7ad0ee2. P.2 publicado/verificado en 46c613d; A3 publicado/verificado en a06cd4f, con migración 0029 aplicada; estados en el roadmap.
+Revisión del 10/10/2026: 84 Markdown de `origin/main` `9673659` y una
+propuesta exclusiva del main local. A3/A4 y S3 ya entregados; Render live
+487feb1 reconsultado, CI S3 correcta.
+[Informe e inventario](AUDITORIA-DOCUMENTAL-2026-10-10.md). Estados en el roadmap.
 
 
 ## Lectura operativa
 
 | Documento | Uso |
 |---|---|
+| [Continuar en Windows](CONTINUAR-EN-WINDOWS.md) | Recepción, fuentes privadas, P.2, E1/E7 y prompt de continuación |
+| [Auditoría documental 10/10](AUDITORIA-DOCUMENTAL-2026-10-10.md) | Hallazgos, cambios, verificación y límites |
+| [Inventario documental 10/10](INVENTARIO-DOCUMENTAL-2026-10-10.md) | Clasificación y tratamiento de todo el corpus revisado |
+| [Tarifa de doble acristalamiento](TARIFA-DOBLE-ACRISTALAMIENTO.md) | Propuesta del main local excluida de origin/main; no aplicada ni capacidad publicada |
 | [Medidas y CI 09/10](paridad/MEDIDAS-Y-CI-2026-10-09.md) | A4 publicado/verificado, 0030 aplicada; A5 navegador/CI, S3 validación de paquetes y D1 ficha July |
 | [Idempotencia 09/10](paridad/IDEMPOTENCIA-PRESUPUESTOS-2026-10-09.md) | A3: reproducción, implementación, pérdida HTTP real y migración aplicada y publicación verificada |
 | [README](../README.md) | Arranque y comandos |
@@ -142,4 +148,6 @@ en main, 0022 es diseño y el motor económico corresponde a 0023/0024.
 
 Las citas literales a PLAN/ENTREGA/CONTINUACION en comentarios de código se
 conservan sin tocar código: consultar el histórico o el commit indicado.
-July todavía cita PLAN.md y CONTINUACION.md; sus punteros requieren actualización.
+Las memorias July anteriores también pueden citar esas entradas antiguas:
+resolverlas mediante este índice; la antigüedad no cierra una tarea. El relevo
+general y E1 se identifican por sync_uid en la guía Windows.

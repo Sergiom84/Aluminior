@@ -12,7 +12,7 @@ como calculable/contrastado. Alcance: todas las tipologías, series y uniones.
 Los apartados diagnósticos siguientes conservan el alcance del ensayo original.
 
 
-> Estado operativo: [ESTADO-ACTUAL.md](../../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites.
+> Estado operativo: [ESTADO-ACTUAL.md](../../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites. El orden y estado de tareas pertenece al [roadmap vigente](../../../ROADMAP-PARIDAD-PRODUCTOR.md); sus encargos, permisos y pendientes fechados no se reactivan.
 
 27/09/2026. No se declara valoración comercial completa.
 
@@ -25,7 +25,10 @@ Requisito confirmado por Sergio: **precio automático completo**. No acepta una
 entrega provisional basada en precio manual. Este requisito sigue pendiente;
 el guardado y el PDF operativos no son aceptación de la entrega.
 
-Estado operativo: [estado y siguiente paso](https://github.com/Sergiom84/Aluminior/blob/9bc879e1530b076c4e7c17dee8e0a076c76e7b4e/docs/paridad/CONTINUAR-2026-09-27.md).
+Estado operativo: [estado actual](../../ESTADO-ACTUAL.md) y
+[roadmap](../../../ROADMAP-PARIDAD-PRODUCTOR.md). El
+[relevo del 27/09](https://github.com/Sergiom84/Aluminior/blob/9bc879e1530b076c4e7c17dee8e0a076c76e7b4e/docs/paridad/CONTINUAR-2026-09-27.md)
+es histórico, no el siguiente paso.
 
 Investigación ampliada: [fuentes y cadena de cortes](02-investigacion-fuentes-2026-09-27.md).
 Ocho MDB inspeccionadas sobre copias; localizada tarifa TXT y releído el CHM.

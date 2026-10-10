@@ -1,5 +1,7 @@
 # Inserción contextual de ventanas · 03/10/2026
 
+> Referencia fechada; conservar evidencia y límites. No ejecutar sus pendientes o permisos como instrucciones actuales. Consultar el [roadmap vigente](../../ROADMAP-PARIDAD-PRODUCTOR.md).
+
 ## Decisión y evidencia
 
 Cambio solicitado y confirmado por Sergio mediante entrevista en esta conversación.

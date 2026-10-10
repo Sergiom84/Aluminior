@@ -1,11 +1,14 @@
 # Relevo: paridad y fuentes de Productor
 
-Fecha: 03/10/2026. Contexto recibido en Codex Windows; comprobar cambios posteriores antes de actuar.
+Histórico de coordinación del 03–09/10/2026, conservado por sus fuentes y
+resultados únicos. **No ejecutar como lista de tareas.** Desde el 10/10 la
+recepción y los pasos Windows se mantienen en [CONTINUAR-EN-WINDOWS](docs/CONTINUAR-EN-WINDOWS.md);
+los estados pertenecen al [roadmap](ROADMAP-PARIDAD-PRODUCTOR.md).
 
 **Referencia de contexto; no usar sus listas fechadas como tareas vigentes.**
 Entrada actual: [estado](docs/ESTADO-ACTUAL.md) →
 [roadmap operativo](ROADMAP-PARIDAD-PRODUCTOR.md). La matriz y la lista de
-ensayos ya están entregadas (M0 cerrado). Actualización 09/10: A1 y S1/A2 publicados/verificados, último Render live `a06cd4f`.
+ensayos ya están entregadas (M0 cerrado). Actualización 09/10: A1 y S1/A2 publicados/verificados, Render de aquella entrega `a06cd4f`, sustituido por A4 en `487feb1` (API reconsultada el 10/10).
 A3 publicado/verificado en `a06cd4f`, 0029 aplicada: [informe](docs/paridad/IDEMPOTENCIA-PRESUPUESTOS-2026-10-09.md). Continuación Mac: A4 publicado/verificado en 487feb1, 0030 aplicada, y A5 CI correcta, ver [informe](docs/paridad/MEDIDAS-Y-CI-2026-10-09.md). No repetir A4. S3 verificado en CI sobre 36a47f4: 1.448 tests correctos/uno condicionado a CSV privado, seis recorridos, tipos/arquitectura/build; runs 37978474635 y 37978474739. Siguiente Mac: tramo técnico P.6/P.7, teclado/foco/responsive; P.2 conserva aceptación comercial. E1 conserva procedimiento Windows y autorización pendiente; no repetir A3.
 No repetir S1/A2 ni la investigación de paginación. Rama `codex/pdf-multipagina`; P.2 se publicó en `46c613d`; PDF 260009 descargado válido, 1 página y 805,65 €.
 S2 conserva el anuncio Next previsto para el 14/10; no repetir mantenimiento ya entregado.
@@ -33,8 +36,10 @@ SessionFactory y tercer GRUPO. Copia G6-incidencia conserva fuente y error;
 previos intactos, sin otro despunte. Siguiente: quitar solo tercer GRUPO tras
 autorización solicitada y verificar edición segura de segunda línea sin alta.
 No repetir A–F/G1–G5 ni diagnóstico GID. Descuentos/otras cantidades fuera
-del alcance; E1 En curso, motor y banco sin cambios. July 180 mantiene identidad
-y resultado local; no acredita publicación ni recepción Mac.
+del alcance; E1 En curso, motor y banco sin cambios. El item E1 mantiene sync_uid `398049fbd618069e36bb84bab37913ed`
+(Windows del ensayo 180, Mac 192); los IDs no se trasladan entre equipos.
+La recepción de la evidencia del 04/10 en Mac consta en July; no demuestra
+recepción en Windows de las actualizaciones posteriores del 09–10/10.
 
 Primer entregable completado: [matriz por modelo/serie/regla](docs/paridad/MATRIZ-COBERTURA-PRODUCTOR-2026-10-03.md) y [ensayos mínimos](docs/paridad/ENSAYOS-MINIMOS-PRODUCTOR-2026-10-03.md). Resultados visuales E1 en su evidencia del 04/10; consultar el roadmap antes de repetir pruebas.
 
@@ -46,7 +51,7 @@ Primer entregable completado: [matriz por modelo/serie/regla](docs/paridad/MATRI
 - Zona horaria: Europe/Madrid.
 - Stack: TypeScript/Node, Drizzle, PostgreSQL/Supabase, Next.js y React. Paquetes `db`, `etl`, `core` y `web`; `packages/api` es histórico.
 
-Leer [AGENTS.md](AGENTS.md), [estado](docs/ESTADO-ACTUAL.md), [arquitectura](ARQUITECTURA.md), [índice documental](docs/INDICE-DOCUMENTACION.md), [paridad](docs/paridad/PARIDAD-PRODUCTOR.md) y especialmente [banco](docs/paridad/BANCO-CONTRASTE-2026-10-03.md). Inspeccionar git status e instrucciones aplicables. `env.example` contiene únicamente valores de ejemplo y campos vacíos; .env y datos privados permanecen excluidos.
+Leer [AGENTS.md](AGENTS.md), [estado](docs/ESTADO-ACTUAL.md), [arquitectura](ARQUITECTURA.md), [índice documental](docs/INDICE-DOCUMENTACION.md), [paridad](docs/paridad/PARIDAD-PRODUCTOR.md) y especialmente [banco](docs/paridad/BANCO-CONTRASTE-2026-10-03.md). Inspeccionar git status e instrucciones aplicables. El arranque actual usa `.env.example`; `env.example` también existe como antecedente, y ambos contienen ejemplos; .env y datos privados permanecen excluidos.
 
 ## Autorización y límites
 
@@ -160,7 +165,8 @@ Este relevo integra la conversación «Completa ensayo E1 de despiece»
 Actualizar Aluminior con `git pull --ff-only` y July con `sync pull` en el
 receptor; leer estado → roadmap → procedimiento E1 → evidencia E1.
 
-Pendiente vigente: proyecto `aluminior`, ID local Windows **180**, identidad
+Identidad de E1: proyecto `aluminior`, ID de aquel Windows **180**
+(Mac **192** al consultar el 10/10; no confundir con su 180 de descuentos), identidad
 `398049fbd618069e36bb84bab37913ed`, título «E1/G1: G1-G5 verificados;
 recuperar ensayo tras incidencia de variante». Buscar por identidad en el otro
 equipo: su ID local puede cambiar. Sigue `in_progress`.

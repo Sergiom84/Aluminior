@@ -1,6 +1,6 @@
 # Fase 2 — aceptación local de geometría e interacción
 
-> Estado operativo: [ESTADO-ACTUAL.md](../../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites.
+> Estado operativo: [ESTADO-ACTUAL.md](../../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites. El orden y estado de tareas pertenece al [roadmap vigente](../../../ROADMAP-PARIDAD-PRODUCTOR.md); sus encargos, permisos y pendientes fechados no se reactivan.
 
 20/09/2026. Aceptación técnica en Aluminior completada junto con fase 1.
 El contraste de la misma tarea con Productor continúa pendiente; no se declara

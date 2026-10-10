@@ -1,6 +1,7 @@
 # Paridad con Productor Aluminio
 
-Mapa de evidencia y aceptación, revisado contra main `9bc879e`.
+Mapa de evidencia y aceptación: base `9bc879e`, continuidad documental
+reconciliada el 10/10/2026 con `origin/main` `9673659`.
 El estado operativo se consulta en [ESTADO-ACTUAL.md](../ESTADO-ACTUAL.md).
 
 ## Objetivo y fuentes
@@ -25,6 +26,7 @@ dibujo, descripción, medidas, cantidad, precio y horas manuales explícitas.
 | Capacidad | Código y evidencia disponibles | Contraste pendiente |
 |---|---|---|
 | Guardado, reapertura y copia | Servicios transaccionales; [fase 1](fase-1/00-resumen.md) | [A3 publicado](IDEMPOTENCIA-PRESUPUESTOS-2026-10-09.md): reintentos y pérdida HTTP locales; publicación y recibos remotos verificados. Resta comparación integral con Productor |
+| Medidas fraccionarias | [A4/0030 publicado y verificado](MEDIDAS-Y-CI-2026-10-09.md): alta, edición, recarga, copia y PDF | E7 sigue pendiente con C2 y configuración real idéntica a Productor; no repetir implementación |
 | Composición 2D | Configuración v3 compatible; [geometría](fase-2/03-aceptacion-local.md) y [composición](fase-3/01-evidencia-composicion.md) | Mismas tareas y entradas en ambos sistemas |
 | Catálogo y correderas | Plantillas verificadas y generadas; [catálogo real](CATALOGO-REAL-2026-10-02.md) | Tipologías no representables, mano 58 y sentido de correderas |
 | Materiales por elemento | Excepciones y modelos iguales; [fase 4](fase-4/01-evidencia-actualizar-y-diseno-v3.md) | Herencia y «Actualizar todos» |

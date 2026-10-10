@@ -4,7 +4,8 @@ Sistema de gestión para carpintería de aluminio y PVC. Productor Aluminio es
 la referencia funcional y de interacción; las diferencias requieren evidencia.
 
 Para retomar el proyecto, lee [el estado actual](docs/ESTADO-ACTUAL.md):
-qué funciona, qué falta y cuál es el siguiente paso. Consulta
+qué funciona, qué falta y cuál es el siguiente paso. Para Productor y el
+portátil, usa la [guía de continuidad en Windows](docs/CONTINUAR-EN-WINDOWS.md). Consulta
 [el índice](docs/INDICE-DOCUMENTACION.md) para encontrar evidencia e histórico.
 
 ## Desarrollo en Mac

@@ -1,5 +1,7 @@
 # E1: evidencia documental y contraste de despunte guardado
 
+> Referencia fechada; conservar evidencia y límites. No ejecutar sus pendientes o permisos como instrucciones actuales. Consultar el [roadmap vigente](../../ROADMAP-PARIDAD-PRODUCTOR.md).
+
 04/10/2026. **A–F conservados; complementario G1–G5 observado y verificado.
 Alta independiente y reparto por bases distintos demostrados; precisión aún
 no discriminada por G4. E1 sigue En curso.** Estado y siguiente trabajo en el

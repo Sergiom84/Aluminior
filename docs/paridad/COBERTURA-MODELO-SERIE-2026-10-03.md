@@ -1,5 +1,7 @@
 # Cobertura por modelo, serie y campo de contraste
 
+> Referencia fechada; conservar evidencia y límites. No ejecutar sus pendientes o permisos como instrucciones actuales. Consultar el [roadmap vigente](../../ROADMAP-PARIDAD-PRODUCTOR.md).
+
 Informe generado por scripts/cobertura-productor.ts; complemento de [fuentes, reglas y ensayos mínimos](MATRIZ-COBERTURA-PRODUCTOR-2026-10-03.md).
 No es una nueva ejecución del motor: analiza el banco y los resultados guardados.
 

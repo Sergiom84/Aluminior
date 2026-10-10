@@ -1,5 +1,7 @@
 # Matriz de cobertura y ensayos mínimos de Productor
 
+> Referencia fechada; conservar evidencia y límites. No ejecutar sus pendientes o permisos como instrucciones actuales. Consultar el [roadmap vigente](../../ROADMAP-PARIDAD-PRODUCTOR.md).
+
 03/10/2026. Revisión del checkout `08310cb`, del relevo de la raíz, del banco
 local y del último «RELEVO DEL MAC» del documento compartido. Primera entrega
 de la continuación: investigación y contraste; ninguna regla del motor cambia.

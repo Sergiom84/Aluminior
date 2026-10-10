@@ -1,5 +1,7 @@
 # A3 — idempotencia de alta y copia, 09/10/2026
 
+> Referencia fechada; conservar evidencia y límites. No ejecutar sus pendientes o permisos como instrucciones actuales. Consultar el [roadmap vigente](../../ROADMAP-PARIDAD-PRODUCTOR.md).
+
 Estado: publicado y verificado el 09/10/2026. Código `a06cd4f` integrado en
 `origin/main`; Render live `dep-db4htb6k1f9s73818vcg`, 17:06:26 UTC
 (19:06:26 Madrid). Migración 0029 aplicada antes del despliegue.

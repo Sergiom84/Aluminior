@@ -1,5 +1,7 @@
 # Catálogo real en el configurador y entrada directa
 
+> Referencia fechada; conservar evidencia y límites. No ejecutar sus pendientes o permisos como instrucciones actuales. Consultar el [roadmap vigente](../../ROADMAP-PARIDAD-PRODUCTOR.md).
+
 Fecha: 02/10/2026. Autorizado por el usuario: «empieza por los dos puntos»
 (entrar directamente al configurador de cerramientos y conectar el catálogo
 real al escaparate). Trabajo inicial en local, en el Mac; la ejecución posterior de 0022 y el relleno

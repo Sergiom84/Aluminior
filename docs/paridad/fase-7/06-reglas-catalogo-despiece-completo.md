@@ -1,5 +1,7 @@
 # Reglas de catálogo para el despiece completo
 
+> Referencia fechada; conservar evidencia y límites. No ejecutar sus pendientes o permisos como instrucciones actuales. Consultar el [roadmap vigente](../../../ROADMAP-PARIDAD-PRODUCTOR.md).
+
 27/09/2026. Continuación de [fuentes](02-investigacion-fuentes-2026-09-27.md) y
 [barrido de facturas](05-primer-barrido-facturas-2026.md). Investigación sobre
 copias verificadas; sin escrituras en Productor, Supabase ni base activa.
@@ -131,7 +133,12 @@ precio manual (C2 34/34). El PVP de la copia coincide con el unitario de la
 mayoría de facturas 2026; los documentos 250 (×0,839) y 421 (×1,393) y
 algunos perfiles VS (×0,973) usan otra tarifa o precio anterior.
 
-## Límites y siguiente paso
+## Límites y siguiente paso del 27/09 (histórico)
+
+La carga remota citada debajo se completó en el cierre del 03/10; la matriz
+versionada y el banco ya están entregados. No ejecutar de nuevo esa carga
+por este antecedente. La [entrada actual](../../ESTADO-ACTUAL.md) conserva
+las verificaciones y sus límites; las variantes sin contraste siguen abiertas.
 
 - Las reglas, importación dirigida y valoración web tienen código integrado
   en main `9bc879e`. Falta carga remota autorizada y contraste de cobertura;

@@ -1,12 +1,13 @@
 # RECON — El CONFIGURADOR paramétrico (¿puede Aluminior generar el despiece?)
 
-> Estado operativo: [ESTADO-ACTUAL.md](../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites.
+> Estado operativo: [ESTADO-ACTUAL.md](../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites. El orden y estado de tareas pertenece al [roadmap vigente](../../ROADMAP-PARIDAD-PRODUCTOR.md); sus encargos, permisos y pendientes fechados no se reactivan.
 
 > Revisión documental 20/09/2026: **Investigación histórica cerrada**. No reejecutar el encargo; reglas medidas no equivalen a exactitud universal de corte.
 > Para continuar: [estado actual](../ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
 
 > Investigación histórica ya ejecutada. No usar como lista activa de tareas.
-> El siguiente paso vigente está en `docs/paridad/INICIO-SIGUIENTE-CONVERSACION.md`.
+> La continuidad vigente está en [estado](../ESTADO-ACTUAL.md) y
+> [roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md); el antiguo handoff ya no es una entrada activa.
 
 > **Para:** Fable, en local (Windows, con acceso a las MDB originales).
 > **De:** sesión Claude Code actuando de arquitecto. Fecha: 2026-07-31.

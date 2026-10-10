@@ -10,6 +10,12 @@ Siguiente: retirar solo ese tercer GRUPO tras autorización y verificar edición
 de segunda línea sin alta, antes del ensayo discriminante de precisión.
 No repetir A–F ni G1–G5 ni atribuir G6-incidencia a un recálculo válido.
 
+Continuidad entre equipos: [guía Windows](../CONTINUAR-EN-WINDOWS.md).
+Item E1 por proyecto `aluminior` + sync_uid
+`398049fbd618069e36bb84bab37913ed`: Windows del ensayo 180, Mac 192.
+No editar el 180 del Mac, que trata descuentos. Las fuentes privadas no
+viajan por Git/July; comprobar copias y autorización antes de operar.
+
 ## Antes de abrir un ensayo
 
 Leer AGENTS, [estado](../ESTADO-ACTUAL.md) y roadmap. Consultar la conversación

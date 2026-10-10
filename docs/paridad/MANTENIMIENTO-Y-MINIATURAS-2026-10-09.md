@@ -1,5 +1,7 @@
 # Mantenimiento y miniaturas de presupuestos — 09/10/2026
 
+> Referencia fechada; conservar evidencia y límites. No ejecutar sus pendientes o permisos como instrucciones actuales. Consultar el [roadmap vigente](../../ROADMAP-PARIDAD-PRODUCTOR.md).
+
 Estado: publicado y verificado el 09/10/2026. Registro de tareas:
 [roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md), S1 y A2. Entrada:
 [estado](../ESTADO-ACTUAL.md). Este informe conserva evidencia, no otro backlog.
