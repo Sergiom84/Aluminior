@@ -24,10 +24,11 @@ export function despiezarEstandar(
     if (!f.articulo || f.articulo === '0') continue
     const articulo = catalogo.articulo(f.articulo)
     if (!articulo) { r.incidencias.push(`artículo ${f.articulo} ausente del catálogo`); continue }
-    const largoMm = articulo.tipoMetraje === 'UD' ? null : medir(f.formulaLargo)
-    const anchoMm = articulo.tipoMetraje === 'M2' ? medir(f.formulaAncho) : null
+    const porDimensiones = articulo.precioEnTabla === true
+    const largoMm = articulo.tipoMetraje === 'UD' && !porDimensiones ? null : medir(f.formulaLargo)
+    const anchoMm = articulo.tipoMetraje === 'M2' || porDimensiones ? medir(f.formulaAncho) : null
     r.filas.push(fila({
-      origen: 'plantilla', articulo: f.articulo, acabado: articulo.tipoMetraje === 'UD' ? entrada.acabadoAccesorios : entrada.acabado,
+      origen: 'plantilla', articulo: f.articulo, acabado: articulo.tipoMetraje === 'UD' && !porDimensiones ? entrada.acabadoAccesorios : entrada.acabado,
       cantidad: f.cantidad, largoMm, anchoMm, funcion: f.funcion,
     }))
   }

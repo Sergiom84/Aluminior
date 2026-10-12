@@ -11,6 +11,7 @@
  */
 
 import { importeFila, redondearCentimos } from '../../precios/importe-fila.ts'
+import { incidenciaPrecioEnTabla } from '../../precios/precio-en-tabla.ts'
 import { despiezarAccesoriosVentana, despiezarCompacto } from './compacto.ts'
 import { despiezarDiseno } from './diseno.ts'
 import { despiezarEstandar } from './estandar.ts'
@@ -48,7 +49,16 @@ export function despiezarLineaCatalogo(catalogo: CatalogoLinea, entrada: Entrada
 
   let total = 0
   for (const f of filas) {
-    const r = importeFila(f, catalogo.tarifa(f.articulo, f.acabado))
+    const articulo = catalogo.articulo(f.articulo)
+    const bloqueo = incidenciaPrecioEnTabla(f.articulo, articulo?.precioEnTabla)
+    let tarifa = catalogo.tarifa(f.articulo, f.acabado)
+    if (articulo?.precioEnTabla === true && catalogo.precioTabla) {
+      if (articulo.tipoMetraje !== 'UD') { incidencias.push(`${f.articulo}: precio por tabla para ${articulo.tipoMetraje} sin contrastar`); continue }
+      const tabla = catalogo.precioTabla(f.articulo, f.acabado, f.anchoMm, f.largoMm)
+      if (!tabla.completo) { incidencias.push(`${f.articulo}: ${tabla.motivo}`); continue }
+      tarifa = { tipoMetraje: 'UD', pvp: tabla.precio, minimo: 0, multiploAnchoCm: 0, multiploLargoCm: 0, incrementos: [] }
+    } else if (bloqueo) { incidencias.push(bloqueo); continue }
+    const r = importeFila(f, tarifa)
     f.metraje = r.metraje
     f.precio = r.precio
     f.importe = r.importe

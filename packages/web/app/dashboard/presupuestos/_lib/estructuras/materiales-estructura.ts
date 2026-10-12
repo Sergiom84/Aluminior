@@ -1,11 +1,12 @@
 import { eq, inArray } from 'drizzle-orm'
 import { schema } from '@aluminior/db'
 import { calcularDespiece, type ComponentePlantilla } from '@aluminior/core/despiece'
-import { valorarDespiece, type DatosArticuloPrecio } from '@aluminior/core/precios'
+import { incidenciaPrecioEnTabla, valorarDespiece, type DatosArticuloPrecio } from '@aluminior/core/precios'
 import type { ClienteEscritura } from '../cliente-db.ts'
 import { UNIONES_VISUALES } from '@aluminior/core/estructuras'
 import type { EntradaValoracionEstructura } from './valorar-estructura.ts'
 import { resolverCosteDespiece } from './coste-despiece.ts'
+import { leerCatalogoPreciosTabla } from '../precios-tabla/index.ts'
 import { resolverPerfiles } from './resolucion-perfiles.ts'
 import { prepararCortesCatalogo } from './cortes-catalogo.ts'
 import {
@@ -102,7 +103,15 @@ export async function resolverMaterialesEstructura(cliente: ClienteEscritura, en
   // El PVP se lee aparte y se resuelve en `resolverPvpCatalogo` (T.73). Antes
   // era una subconsulta con `ORDER BY ... acabado_codigo LIMIT 1`, que sin
   // acabado exacto cobraba el precio del primer acabado por orden de código.
-  const filasPvp = await leerPvpArticulos(cliente, codigos, entrada.tarifa)
+  // Esta frontera también sirve a las uniones legacy. Una receta dimensional o
+  // desconocida nunca se acredita con la reserva de PVP/coste planos.
+  const preciosTabla = await leerCatalogoPreciosTabla(cliente, codigos, entrada.tarifa)
+  const bloqueosPrecioTabla = new Map(codigos.flatMap(codigo => {
+    const motivo = incidenciaPrecioEnTabla(codigo, preciosTabla.get(codigo)?.precioEnTabla ?? null)
+    return motivo ? [[codigo, motivo] as const] : []
+  }))
+  const filasPvp = (await leerPvpArticulos(cliente, codigos, entrada.tarifa))
+    .filter(fila => !bloqueosPrecioTabla.has(fila.articuloCodigo))
   const pvp = pvpPorArticuloDe(
     filasPvp,
     entrada.acabadoCodigo,
@@ -120,13 +129,16 @@ export async function resolverMaterialesEstructura(cliente: ClienteEscritura, en
   despiece.incalculables = despiece.piezas.filter(p => p.largoMm === null &&
     (mapa.get(p.articuloCodigo)?.tipoMetraje !== 'UD' || p.formula !== null)).length
   const valoracion = valorarDespiece(despiece.piezas, mapa)
-  const precioUnitario = valoracion.importe
+  for (const linea of valoracion.lineas) {
+    linea.incidencia = bloqueosPrecioTabla.get(linea.articuloCodigo) ?? linea.incidencia
+  }
+  const precioUnitario = bloqueosPrecioTabla.size ? null : valoracion.importe
   const piezas = await resolverCosteDespiece(cliente, {
     piezas: despiece.piezas,
-    codigos,
+    codigos: codigos.filter(codigo => !bloqueosPrecioTabla.has(codigo)),
     mapa,
     acabadoCodigo: entrada.acabadoCodigo,
   })
 
-  return { ok: true as const, estructura, plantillaResuelta, genericos, sinResolver, sinResolverAsoc, variantesAplicadas, cotas, despiece, valoracion, precioUnitario, piezas, pvp, mapa, filasPvp }
+  return { ok: true as const, estructura, plantillaResuelta, genericos, sinResolver, sinResolverAsoc, variantesAplicadas, cotas, despiece, valoracion, precioUnitario, piezas, pvp, mapa, filasPvp, bloqueosPrecioTabla }
 }

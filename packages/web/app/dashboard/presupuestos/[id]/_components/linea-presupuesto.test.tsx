@@ -13,7 +13,7 @@ function renderizarLinea(configuracion: ConfiguracionCerramiento) {
   return renderToStaticMarkup(<table><tbody><LineaPresupuesto
     editable={false}
     linea={{
-      id: 'linea-1', orden: 1, tipo: 'CERRAMIENTO', articuloCodigo: null,
+      id: 'linea-1', orden: 1, tipo: 'CERRAMIENTO', articuloCodigo: null, acabadoArticuloCodigo: null,
       descripcion: 'CERRAMIENTO SEGÚN DIBUJO · 1OFI', referencia: null,
       anchoMm: 900, altoMm: 1800, cantidad: '1', precioUnitario: null,
       descuento: '0', total: null, valoracionCompleta: false,

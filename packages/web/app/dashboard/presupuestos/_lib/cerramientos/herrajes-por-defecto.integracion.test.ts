@@ -25,7 +25,7 @@ async function caso(verificar: (tx: Tx, presupuestoId: string) => Promise<void>)
         { codigo: herraje, descripcion: 'Herraje SINTÉTICO', tipoMetraje: 'UD' },
       ])
       await tx.insert(schema.articulosDespiece).values([perfil, herraje].map(articuloCodigo => ({
-        articuloCodigo, generico: false, dobleAcristalamiento: false, grosorAcristalar: '0', incrementosPrecio: false,
+        articuloCodigo, generico: false, dobleAcristalamiento: false, grosorAcristalar: '0', incrementosPrecio: false, precioEnTabla: false,
       })))
       await tx.insert(schema.articulosPvp).values([perfil, herraje].map(articuloCodigo => ({
         articuloCodigo, acabadoCodigo: 'UNI', tarifa: 1, precio: articuloCodigo === perfil ? '10' : '4',

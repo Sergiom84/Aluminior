@@ -90,7 +90,7 @@ export function AnyadirLinea({
     <form onSubmit={evento => {
       if (!puedeEnviar) { evento.preventDefault(); return }
       void enviar(evento)
-    }} id="configurador"
+    }} id="configurador" tabIndex={-1} aria-label="Introducir línea" aria-keyshortcuts="F7"
       className={`${styles.formCard} rounded-lg border`}
       style={{ background: 'var(--al-surface)', borderColor: 'var(--al-border)' }}>
       <input type="hidden" name="presupuestoId" value={presupuestoId} />

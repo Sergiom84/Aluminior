@@ -41,7 +41,11 @@ async function caso(verificar: (tx: Tx) => Promise<void>) {
       await tx.insert(schema.articulosDespiece).values(articulos.map(([codigo]) => ({ articuloCodigo: codigo!,
         componente: { 'QA-G-HH': '23', 'QA-G-HV': '21', 'QA-G-INF': 'EHC', 'QA-G-MO': '39', 'QA-G-CRISTAL': '1' }[codigo!] ?? null,
         generico: codigo!.startsWith('QA-G'),
-        dobleAcristalamiento: codigo === 'QA-VIDRIO', grosorAcristalar: codigo === 'QA-VIDRIO' ? '16' : '0', incrementosPrecio: false })))
+        dobleAcristalamiento: codigo === 'QA-VIDRIO', grosorAcristalar: codigo === 'QA-VIDRIO' ? '16' : '0', incrementosPrecio: false, precioEnTabla: false })))
+        .onConflictDoUpdate({ target: schema.articulosDespiece.articuloCodigo, set: { precioEnTabla: false } })
+      await tx.insert(schema.articulosDespiece).values(['MOCOL', 'QA-LAMA', 'QA-MOCOMP'].map(articuloCodigo => ({
+        articuloCodigo, generico: false, dobleAcristalamiento: false, grosorAcristalar: '0', incrementosPrecio: false, precioEnTabla: false })))
+        .onConflictDoUpdate({ target: schema.articulosDespiece.articuloCodigo, set: { precioEnTabla: false } })
       await tx.insert(schema.articulosPvp).values([['QA-MARCO', 'L', '10'], ['QA-HOJA', 'L', '8'], ['QA-ROD', 'L', '6'],
         ['QA-FELPUDO', 'UNI', '1'], ['QA-CIERRE', 'UNI', '4'], ['MO', 'UNI', '0.5'], ['QA-VIDRIO', 'UNI', '50']]
         .map(([articuloCodigo, acabadoCodigo, precio]) => ({ articuloCodigo: articuloCodigo!, acabadoCodigo: acabadoCodigo!, tarifa: 1, precio: precio! })))

@@ -1,5 +1,12 @@
 # Relevo: paridad y fuentes de Productor
 
+
+Continuación local 12/10 en worktree `productor-clonersoft/Aluminior`: leer
+[el informe ClonerSoft](docs/paridad/INVESTIGACION-CLONERSOFT-2026-10-12.md).
+C1 dimensional y teclado/foco verificados localmente; no publicar main antiguo ni
+repetir investigación MO cero. 0031/0032/carga/despliegue requieren ciclo coordinado;
+E1/E2/E6 conservan sus etapas. Fuentes privadas preservadas en output ignorado.
+
 Histórico de coordinación del 03–09/10/2026, conservado por sus fuentes y
 resultados únicos. **No ejecutar como lista de tareas.** Desde el 10/10 la
 recepción y los pasos Windows se mantienen en [CONTINUAR-EN-WINDOWS](docs/CONTINUAR-EN-WINDOWS.md);
@@ -9,7 +16,7 @@ los estados pertenecen al [roadmap](ROADMAP-PARIDAD-PRODUCTOR.md).
 Entrada actual: [estado](docs/ESTADO-ACTUAL.md) →
 [roadmap operativo](ROADMAP-PARIDAD-PRODUCTOR.md). La matriz y la lista de
 ensayos ya están entregadas (M0 cerrado). Actualización 09/10: A1 y S1/A2 publicados/verificados, Render de aquella entrega `a06cd4f`, sustituido por A4 en `487feb1` (API reconsultada el 10/10).
-A3 publicado/verificado en `a06cd4f`, 0029 aplicada: [informe](docs/paridad/IDEMPOTENCIA-PRESUPUESTOS-2026-10-09.md). Continuación Mac: A4 publicado/verificado en 487feb1, 0030 aplicada, y A5 CI correcta, ver [informe](docs/paridad/MEDIDAS-Y-CI-2026-10-09.md). No repetir A4. S3 verificado en CI sobre 36a47f4: 1.448 tests correctos/uno condicionado a CSV privado, seis recorridos, tipos/arquitectura/build; runs 37978474635 y 37978474739. Siguiente Mac: tramo técnico P.6/P.7, teclado/foco/responsive; P.2 conserva aceptación comercial. E1 conserva procedimiento Windows y autorización pendiente; no repetir A3.
+A3 publicado/verificado en `a06cd4f`, 0029 aplicada: [informe](docs/paridad/IDEMPOTENCIA-PRESUPUESTOS-2026-10-09.md). Continuación Mac: A4 publicado/verificado en 487feb1, 0030 aplicada, y A5 CI correcta, ver [informe](docs/paridad/MEDIDAS-Y-CI-2026-10-09.md). No repetir A4. S3 verificado en CI sobre 36a47f4: 1.448 tests correctos/uno condicionado a CSV privado, seis recorridos, tipos/arquitectura/build; runs 37978474635 y 37978474739. Siguiente Mac vigente: entrega local C1 del 12/10 y matriz restante P.6/P.7; P.2 conserva aceptación comercial. E1 conserva procedimiento Windows y autorización pendiente; no repetir A3.
 No repetir S1/A2 ni la investigación de paginación. Rama `codex/pdf-multipagina`; P.2 se publicó en `46c613d`; PDF 260009 descargado válido, 1 página y 805,65 €.
 S2 conserva el anuncio Next previsto para el 14/10; no repetir mantenimiento ya entregado.
 E1 conserva su [procedimiento](docs/paridad/PASO-E1-DESPUNTE.md) para después.

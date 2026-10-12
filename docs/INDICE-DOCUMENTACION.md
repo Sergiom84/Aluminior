@@ -12,6 +12,7 @@ propuesta exclusiva del main local. A3/A4 y S3 ya entregados; Render live
 
 | Documento | Uso |
 |---|---|
+| [ClonerSoft 12/10](paridad/INVESTIGACION-CLONERSOFT-2026-10-12.md) | Fuentes/ejercicios, REA efectiva, C1 dimensional, P.6/P.7 parcial y verificación local; sin publicación |
 | [Continuar en Windows](CONTINUAR-EN-WINDOWS.md) | Recepción, fuentes privadas, P.2, E1/E7 y prompt de continuación |
 | [Auditoría documental 10/10](AUDITORIA-DOCUMENTAL-2026-10-10.md) | Hallazgos, cambios, verificación y límites |
 | [Inventario documental 10/10](INVENTARIO-DOCUMENTAL-2026-10-10.md) | Clasificación y tratamiento de todo el corpus revisado |

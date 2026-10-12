@@ -9,6 +9,7 @@ import type { OpcionCatalogo, ReglaAsociacion, SeleccionGuardada } from '../asoc
 import type { FilaTablaAcristalamiento } from '../acristalamiento-catalogo.ts'
 import type { ConceptoManoObraCatalogo } from '../mano-obra-fabricacion.ts'
 import type { ArticuloTarifado } from '../../precios/importe-fila.ts'
+import type { ResultadoPrecioTabla } from '../../precios/seleccionar-precio-tabla.ts'
 import type { VarianteAcristalamiento } from '../../series/resolver.ts'
 
 /** Fila de plantilla (`EstructurasArticulos` con `TipoDoc` vacío). */
@@ -51,6 +52,8 @@ export interface ArticuloCatalogo {
   dobleAcristalamiento: boolean
   /** Ranura genérica de plantilla (`GenericoSN`): debe resolverla la serie. */
   generico: boolean
+  /** `PrecioTablaSN`: null = fuente todavía desconocida; omisión solo para catálogos anteriores inyectados. */
+  precioEnTabla?: boolean | null
 }
 
 export interface SerieCatalogo {
@@ -88,6 +91,8 @@ export interface CatalogoLinea {
   tipoPerfil?(estructura: string): string | null
   /** PVP y reglas de metraje del artículo en ese acabado; null si no está en catálogo. */
   tarifa(articulo: string, acabado: string): ArticuloTarifado | null
+  /** Sólo precio por dimensiones verificado; nunca usa tarifa plana como reserva. */
+  precioTabla?(articulo: string, acabado: string, anchoMm: number | null, largoMm: number | null): ResultadoPrecioTabla
 }
 
 /** Accesorio de línea (`VAccesorios` + `VOpciones`): estructura propia, acabado y opciones. */

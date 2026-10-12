@@ -1,0 +1,2 @@
+ALTER TABLE "lineas" ADD COLUMN "acabado_articulo_codigo" text;--> statement-breakpoint
+ALTER TABLE "lineas" ADD CONSTRAINT "lineas_acabado_articulo_tipo_check" CHECK ("lineas"."acabado_articulo_codigo" IS NULL OR "lineas"."tipo" = 'ARTICULO');

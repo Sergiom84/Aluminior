@@ -1,8 +1,9 @@
 import { and, eq } from 'drizzle-orm'
 import { crearDb, schema } from '@aluminior/db'
 import {
-  ESCALA_PVP_CATALOGO, normalizarAcabado, resolverPorAcabado,
+  ESCALA_PVP_CATALOGO, normalizarAcabado, normalizarDecimal, resolverPorAcabado,
 } from '@aluminior/core/precios'
+import { leerPrecioTablaArticulo } from '../precios-tabla/index.ts'
 
 type Db = ReturnType<typeof crearDb>
 
@@ -113,7 +114,10 @@ export type ValoracionArticulo =
 /** Lee todas las candidatas de la tarifa y delega la decisión a una regla pura. */
 export async function valorarArticulo(
   db: Db,
-  entrada: { codigo: string; tarifa: number; acabadoCodigo: string | null },
+  entrada: {
+    codigo: string; tarifa: number; acabadoCodigo: string | null
+    anchoMm?: number | null; altoMm?: number | null
+  },
 ): Promise<ValoracionArticulo> {
   const [articulo] = await db.select({
     descripcion: schema.articulos.descripcion,
@@ -125,15 +129,39 @@ export async function valorarArticulo(
 
   if (!articulo) return { ok: false, error: 'Artículo no encontrado' }
 
-  // Cdad son unidades del documento. El alta de artículo no captura medidas;
-  // un precio por metro o m² no puede cobrarse como si fuera un precio por UD.
+  // Cdad son unidades del documento. Capturar medidas no acredita todavía
+  // una regla de metraje; ML y M2 no se cobran como si fueran precios por UD.
   if (articulo.tipoMetraje === 'ML' || articulo.tipoMetraje === 'M2') {
     return {
       ok: true,
       descripcion: articulo.descripcion,
       precioUnitario: null,
-      aviso: `Importe incompleto: el artículo ${articulo.tipoMetraje} necesita medidas para calcular el metraje.`,
+      aviso: entrada.anchoMm != null || entrada.altoMm != null
+        ? `Importe incompleto: la valoración del artículo ${articulo.tipoMetraje} por metraje no está disponible.`
+        : `Importe incompleto: el artículo ${articulo.tipoMetraje} necesita medidas para calcular el metraje.`,
       acabadoAplicado: null,
+    }
+  }
+
+  const tabla = await leerPrecioTablaArticulo(db, {
+    articuloCodigo: entrada.codigo,
+    acabadoCodigo: entrada.acabadoCodigo ?? '',
+    tarifa: entrada.tarifa,
+    anchoMm: entrada.anchoMm ?? null,
+    largoMm: entrada.altoMm ?? null,
+  })
+  // Sólo una marca explícita false autoriza la tarifa plana. Ni una tabla sin
+  // fila ni una configuración desconocida deben cobrar el PVP ordinario.
+  if (tabla.precioEnTabla !== false) {
+    const resultado = tabla.resultado
+    const compatible = articulo.tipoMetraje === 'UD' && resultado.completo
+    return {
+      ok: true,
+      descripcion: articulo.descripcion,
+      precioUnitario: compatible ? normalizarDecimal(String(resultado.precio), ESCALA_PVP_CATALOGO) : null,
+      aviso: compatible ? null : `Importe incompleto: ${articulo.tipoMetraje === 'UD'
+        ? resultado.motivo : 'la unidad de medida del artículo no admite esta valoración por tabla'}.`,
+      acabadoAplicado: compatible ? entrada.acabadoCodigo : null,
     }
   }
 

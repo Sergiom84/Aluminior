@@ -1,4 +1,5 @@
 import { EditarCabecera } from './_components/editar-cabecera'
+import { AtajosPresupuesto } from './_components/atajos-presupuesto.tsx'
 import { resolverDestinatarioPresupuesto } from '../_lib/destinatario'
 import { leerResultadoCerramiento } from '../_lib/cerramientos/resultado-persistido.ts'
 import { notFound } from 'next/navigation'
@@ -93,12 +94,13 @@ export default async function DetallePresupuesto({ params, searchParams }: {
   return (
     <Shell moduloActivo="presupuestos">
       <section className="al-document-window" aria-labelledby="titulo-presupuesto">
+        <AtajosPresupuesto />
         <header className={`${styles.detailHeader} al-document-heading`}>
           <h2 id="titulo-presupuesto">Presupuestos de Clientes. Detalle</h2>
         </header>
 
         <div className="al-commandbar" aria-label="Acciones del presupuesto">
-          <Link href="/dashboard/presupuestos" className="al-command-primary" title="Grabar datos (F9)">
+          <Link href="/dashboard/presupuestos" className="al-command-primary">
             Aceptar
           </Link>
           <Link href="/dashboard/presupuestos" className="al-command">Cerrar</Link>

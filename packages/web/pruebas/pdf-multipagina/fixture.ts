@@ -27,6 +27,7 @@ function linea(orden: number, dibujo = true, configuracion?: ConfiguracionCerram
   const medidas = medidasCerramiento(config)
   return {
     id: etiqueta(orden), orden, tipo: dibujo ? 'CERRAMIENTO' : 'ARTICULO',
+    acabadoArticuloCodigo: null,
     descripcion: `${etiqueta(orden)}INI ${dibujo ? 'GRUPO' : 'Articulo'} de prueba. ` +
       `Acabado blanco y vidrio transparente. ${etiqueta(orden)}FIN`,
     referencia: `U${String(orden).padStart(3, '0')}`,

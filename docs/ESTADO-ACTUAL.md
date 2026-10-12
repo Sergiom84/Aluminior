@@ -1,6 +1,6 @@
 # Estado actual de Aluminior
 
-Revisión documental: 10/10/2026, desde `origin/main` `9673659`.
+Revisión documental: 12/10/2026, entrega local desde `origin/main` `9ae7a6e`.
 Revisión funcional conservada: 09/10/2026, checkout inicial `787d1ad`. Producción comprobada
 en `487feb1` (Render live, 09/10 18:30:14 UTC); A3/A4 y migraciones 0029/0030 publicados/verificados. Se conserva
 la cobertura histórica del 03/10 y la investigación E1 del 04/10.
@@ -13,6 +13,20 @@ Este es el único punto de entrada de estado y siguiente trabajo.
 El [roadmap operativo](../ROADMAP-PARIDAD-PRODUCTOR.md) conserva el orden y
 estado único de las tareas de paridad, con mantenimiento documental obligatorio.
 
+
+## Continuación local con ClonerSoft — 12/10/2026
+
+[Investigación y cambios](paridad/INVESTIGACION-CLONERSOFT-2026-10-12.md) en
+worktree `productor-clonersoft/Aluminior`, desde `origin/main` `9ae7a6e`.
+EMP0016=2026 y EMP0015=2025 confirmados; copia del banco identificada por huella.
+C1: precio por medidas, acabado de artículo y contención de tarifa plana
+verificados en local; 0031/0032/carga dirigida pendientes de publicación.
+P.6/P.7: búsqueda/teclado/foco verificados con diez recorridos escritorio/móvil.
+1.644 pruebas correctas, una condicionada a CSV privado; tipos, arquitectura y build
+correctos. Banco nuevo conserva 400/523 y sus exclusiones. Supabase sólo leído: 31
+migraciones, 14 presupuestos y cinco líneas; catálogo compatible por huella. La MO del vidrio
+no se activa con coeficientes cero. E1/E2/E6 y aceptación comercial siguen abiertos.
+Checkout principal conservado exactamente; no publicar sus tarifas excluidas.
 
 ## Entrega funcional de presupuestos verificada
 
@@ -131,8 +145,9 @@ titular; investigación económica E1 desde G6-incidencia y E7 tras A4, según
 
 S3 verificado localmente y en GitHub Actions (`36a47f4`): 1.448 pruebas correctas,
 una condicionada a CSV privado, seis recorridos, tipos, arquitectura y build; ver [evidencia y ejecuciones](paridad/MEDIDAS-Y-CI-2026-10-09.md#s3-validación-completa-de-los-paquetes-en-ci--09102026).
-Siguiente independiente desde Mac: tramo técnico P.6/P.7, foco/teclado y responsive;
-no equivale a cerrar su aceptación integral con Productor.
+Siguiente desde Mac: publicación coordinada C1/0031/0032/carga dirigida si se
+autoriza; P.6/P.7 conserva otras anchuras, zoom 200%, reduced motion y recorrido
+humano comparativo. Teclado/búsqueda/foco de esta entrega ya verificados localmente.
 
 **A3 publicado/verificado el 09/10 en `a06cd4f`, con 0029 aplicada.** A4 publicado/verificado en `487feb1`: 0030 aplicada, conexiones renovadas y alta/edición/recarga/copia/PDF decimales comprobados en producción. A5 verificado en GitHub Actions (run 37971854995, seis recorridos correctos). D1 reconciliado localmente. [Informe](paridad/MEDIDAS-Y-CI-2026-10-09.md). E1 depende de Windows; P.2 conserva aceptación comercial y S2 el anuncio del 14/10.
 

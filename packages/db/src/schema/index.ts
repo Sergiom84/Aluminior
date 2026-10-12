@@ -10,3 +10,5 @@ export * from './mano-obra.ts'
 export * from './cerramiento-resultados.ts'
 export * from './despiece-catalogo.ts'
 export * from './operaciones-presupuesto.ts'
+
+export * from './precio-tabla-catalogo.ts'

@@ -35,10 +35,16 @@ export async function altaLinea(db: ReturnType<typeof crearDb>, d: EntradaAltaLi
     let opcionesHerraje: OpcionHerrajeElegida[] = []
     let comisionPorc: string | null = null
     if (d.tipo === 'ARTICULO') {
+      // Los campos opcionales vacíos llegan como 0 por la coerción del esquema.
+      // Una medida cero no identifica una pieza: se conserva como ausencia.
+      anchoLinea = anchoLinea === 0 ? null : anchoLinea
+      altoLinea = altoLinea === 0 ? null : altoLinea
       const valoracion = await valorarArticulo(db, {
         codigo: d.codigo,
         tarifa: presupuesto.tarifa,
         acabadoCodigo: d.acabadoCodigo,
+        anchoMm: anchoLinea,
+        altoMm: altoLinea,
       })
       if (!valoracion.ok) {
         return { ok: false, errores: { codigo: [valoracion.error] } }
@@ -83,6 +89,7 @@ export async function altaLinea(db: ReturnType<typeof crearDb>, d: EntradaAltaLi
       id: d.solicitudId,
       presupuestoId: d.presupuestoId,
       articuloCodigo: d.tipo === 'ARTICULO' ? d.codigo : null,
+      acabadoArticuloCodigo: d.tipo === 'ARTICULO' ? d.acabadoCodigo : null,
       descripcion,
       referencia: d.referencia,
       cantidad: String(d.cantidad),

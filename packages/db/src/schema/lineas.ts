@@ -33,6 +33,8 @@ export const lineas = pgTable('lineas', {
 
   /** Sólo en tipo ARTICULO. */
   articuloCodigo: text('articulo_codigo').references(() => articulos.codigo),
+  /** Acabado elegido del ARTICULO; null en históricos sin ese dato. */
+  acabadoArticuloCodigo: text('acabado_articulo_codigo'),
 
   /** Descripción mostrada. Se autogenera salvo que se marque manual. */
   descripcion: text('descripcion').notNull(),
@@ -70,6 +72,8 @@ export const lineas = pgTable('lineas', {
 }, (t) => ({
   presupuestoIdx: index('lineas_presupuesto_idx').on(t.presupuestoId, t.orden),
   tipoIdx: index('lineas_tipo_idx').on(t.tipo),
+  acabadoArticuloTipo: check('lineas_acabado_articulo_tipo_check',
+    sql`${t.acabadoArticuloCodigo} IS NULL OR ${t.tipo} = 'ARTICULO'`),
 }))
 
 /**

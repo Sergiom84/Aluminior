@@ -81,6 +81,15 @@ decimal y snapshot propios.
 - Los snapshots `FILA_CENTIMOS` requieren el lector compatible integrado.
   Revertir el catálogo no autoriza volver a un lector antiguo incompatible.
 
+`core/precios/seleccionar-precio-tabla.ts` selecciona PVP dimensional con
+catálogo y políticas inyectados, sin I/O. `web/.../_lib/precios-tabla/index.ts`
+es la entrada pública compartida por catálogo, fallback y artículo suelto.
+0031 conserva metadata nullable y tabla dimensional con RLS; la carga dirigida
+`etl:precio-tabla` es transaccional y simula por defecto. Coste dimensional
+permanece desconocido. 0032 guarda el acabado elegido del artículo en la línea,
+nullable en históricos; copia/edición/PDF conservan el snapshot. Estas dos
+migraciones son entrega local del 12/10, sin aplicación remota acreditada.
+
 Todos los paquetes declaran ESM. El banco Node/tsx y los servicios web comparten
 así una sola instancia del registro de diseños de core; no se duplica el catálogo
 entre cargas ESM y CommonJS. Los códigos desconocidos siguen siendo inválidos.

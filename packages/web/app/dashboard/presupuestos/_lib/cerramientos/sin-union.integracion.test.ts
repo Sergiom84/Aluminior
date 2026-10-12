@@ -22,7 +22,7 @@ async function caso(fn: (tx: Tx) => Promise<void>) {
         herrajes: {}, manoObra: {}, grosorMaximoSimple: '10', grosorMaximoDoble: '20' })
       await tx.insert(schema.articulos).values({ codigo: 'QA-SIN-UNION-P', descripcion: 'Perfil SINTÉTICO', tipoMetraje: 'ML' })
       await tx.insert(schema.articulosDespiece).values({ articuloCodigo: 'QA-SIN-UNION-P', generico: false,
-        dobleAcristalamiento: false, grosorAcristalar: '0', incrementosPrecio: false })
+        dobleAcristalamiento: false, grosorAcristalar: '0', incrementosPrecio: false, precioEnTabla: false })
       await tx.insert(schema.articulosPvp).values({ articuloCodigo: 'QA-SIN-UNION-P', acabadoCodigo: 'UNI', tarifa: 1, precio: '10' })
       await tx.insert(schema.articulosCoste).values({ articuloCodigo: 'QA-SIN-UNION-P', acabadoCodigo: 'UNI', proveedorCodigo: 'QA', coste: '4' })
       const fila = { idPieza: 1, lineaOrigen: 1, cantidad: '1', tipoHoja: '-1', hoja: 0, gruposAdicionales: ['', '', '', ''] }

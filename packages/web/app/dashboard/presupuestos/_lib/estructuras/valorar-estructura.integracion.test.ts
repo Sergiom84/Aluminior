@@ -49,6 +49,7 @@ describe('valorarEstructura', () => {
       .where(eq(schema.articulosCoste.articuloCodigo, PERFIL))
     await db.delete(schema.estructuras)
       .where(eq(schema.estructuras.codigo, ESTRUCTURA))
+    await db.delete(schema.articulosDespiece).where(inArray(schema.articulosDespiece.articuloCodigo, [PERFIL, 'VIDRIO_CON_PROBLEMA']))
     await db.delete(schema.articulos)
       .where(eq(schema.articulos.codigo, PERFIL))
     await db.delete(schema.series).where(eq(schema.series.codigo, SERIE))
@@ -66,6 +67,9 @@ describe('valorarEstructura', () => {
       descripcion: 'PERFIL REAL DE CARACTERIZACIÓN',
       tipoMetraje: 'ML',
     })
+    await db.insert(schema.articulosDespiece).values([PERFIL, 'VIDRIO_CON_PROBLEMA'].map(articuloCodigo => ({
+      articuloCodigo, generico: false, dobleAcristalamiento: false, grosorAcristalar: '0',
+      incrementosPrecio: false, precioEnTabla: false })))
     await db.insert(schema.estructuraComponentes).values({
       estructuraCodigo: ESTRUCTURA,
       articuloCodigo: PERFIL,
@@ -179,17 +183,20 @@ describe('valorarEstructura', () => {
     }
 
     it('no bloquean: guardan MO y MOCOL sin valorar y la línea queda incompleta', async () => {
-      const r = await valorarEstructura(db, { ...base, horasFabricacion: '1', horasColocacion: '6.07' })
-
-      // Sin ellas el material vale 24: ese total omitiría las horas, así que no se da.
-      expect(r).toMatchObject({
-        ok: true, motor: 'anterior', precioUnitario: null,
-        aviso: 'Importe incompleto: horas por unidad sin valorar: necesitan el catálogo de despiece completo.',
-      })
-      if (!r.ok) return
-      expect(r.piezas.map(p => [p.articuloCodigo, p.cantidad, p.funcion]))
-        .toEqual([[PERFIL, '2', 'MV'], ['MO', '60', 'MO'], ['MOCOL', '364.2', 'MOCOL']])
-      expect(r.piezas.slice(1).map(p => [p.costeUnitario, p.costeTotal])).toEqual([[null, null], [null, null]])
+      const rollback = new Error('rollback de artículos manuales sintéticos')
+      try { await db.transaction(async tx => {
+        await tx.insert(schema.articulosDespiece).values(['MO', 'MOCOL'].map(articuloCodigo => ({ articuloCodigo,
+          generico: false, dobleAcristalamiento: false, grosorAcristalar: '0', incrementosPrecio: false, precioEnTabla: false })))
+          .onConflictDoUpdate({ target: schema.articulosDespiece.articuloCodigo, set: { precioEnTabla: false } })
+        const r = await valorarEstructura(tx, { ...base, horasFabricacion: '1', horasColocacion: '6.07' })
+        expect(r).toMatchObject({ ok: true, motor: 'anterior', precioUnitario: null,
+          aviso: 'Importe incompleto: horas por unidad sin valorar: necesitan el catálogo de despiece completo.' })
+        if (!r.ok) throw new Error('Valoración rechazada')
+        expect(r.piezas.map(p => [p.articuloCodigo, p.cantidad, p.funcion]))
+          .toEqual([[PERFIL, '2', 'MV'], ['MO', '60', 'MO'], ['MOCOL', '364.2', 'MOCOL']])
+        expect(r.piezas.slice(1).map(p => [p.costeUnitario, p.costeTotal])).toEqual([[null, null], [null, null]])
+        throw rollback
+      }) } catch (e) { if (e !== rollback) throw e }
     })
 
     it('a cero, como las envía el formulario vacío, no cambian la valoración', async () => {

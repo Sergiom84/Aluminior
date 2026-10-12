@@ -15,6 +15,7 @@ export interface LineaDetalle {
   orden: number
   tipo: string
   articuloCodigo: string | null
+  acabadoArticuloCodigo: string | null
   descripcion: string
   referencia: string | null
   anchoMm: number | null
@@ -68,7 +69,9 @@ export function LineaPresupuesto({
         ? edicion.configuracion.modulos[0].estructuraCodigo
         : 'GRUPO')
       : (l.articuloCodigo ?? '—')
-  const acabado = edicion?.acabadoCodigo ?? '—'
+  const acabado = l.tipo === 'ARTICULO'
+    ? (l.acabadoArticuloCodigo ?? '—')
+    : (edicion?.acabadoCodigo ?? '—')
 
   return (
     <>

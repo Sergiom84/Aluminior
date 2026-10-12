@@ -15,6 +15,9 @@ export function FilaPdf({ l }: { l: LineaPdf }) {
         <TextoPdf style={styles.td} orphans={2} widows={2}>
           {l.tipo === 'ESTRUCTURA' ? '[EST] ' : ''}{l.descripcion}
         </TextoPdf>
+        {l.tipo === 'ARTICULO' && <TextoPdf style={[styles.td, { fontSize: 8 }]}>
+          Acabado: {l.acabadoArticuloCodigo ?? '—'}
+        </TextoPdf>}
         {l.avisoValoracion && <TextoPdf style={[styles.td, styles.aviso]}>
           {l.cerramiento
             ? (l.valoracionCompleta ? 'Pendiente de revisión técnica.' : 'Valoración pendiente.')

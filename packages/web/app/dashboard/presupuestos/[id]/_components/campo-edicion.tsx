@@ -1,13 +1,12 @@
 'use client'
 import { useEffect, useState, type ChangeEvent, type RefObject } from 'react'
 import type { EstadoEdicion } from '../../_lib/edicion/estado'
+import { enfocarEdicion } from './foco-edicion.ts'
 
 export function usarResultadoEdicion(estado: EstadoEdicion, formulario: RefObject<HTMLFormElement | null>, cerrar: () => void) {
   useEffect(() => {
     if (estado?.ok) cerrar()
-    else if (estado) (formulario.current?.querySelector<HTMLElement>('[aria-invalid="true"]') ??
-      formulario.current?.querySelector<HTMLElement>('[role="alert"]'))?.focus()
-    else formulario.current?.querySelector<HTMLElement>('input:not([type="hidden"]), textarea')?.focus()
+    else enfocarEdicion(estado, formulario.current)
   }, [estado, formulario, cerrar])
 }
 

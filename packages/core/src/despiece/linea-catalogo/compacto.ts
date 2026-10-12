@@ -54,10 +54,11 @@ function despiezarAccesorio(catalogo: CatalogoLinea, accesorio: AccesorioLineaCa
     if (!f.articulo || f.articulo === '0') continue
     const articulo = catalogo.articulo(f.articulo)
     if (!articulo) { r.incidencias.push(`artículo ${f.articulo} ausente del catálogo`); continue }
+    const porDimensiones = articulo.precioEnTabla === true
     r.filas.push(fila({
       origen: 'compacto', articulo: f.articulo, acabado: accesorio.acabado, cantidad: f.cantidad, funcion: f.funcion,
-      largoMm: articulo.tipoMetraje === 'UD' ? null : medir(f.formulaLargo),
-      anchoMm: articulo.tipoMetraje === 'M2' ? medir(f.formulaAncho) : null,
+      largoMm: articulo.tipoMetraje === 'UD' && !porDimensiones ? null : medir(f.formulaLargo),
+      anchoMm: articulo.tipoMetraje === 'M2' || porDimensiones ? medir(f.formulaAncho) : null,
     }))
   }
   r.incidencias = [...new Set(r.incidencias)]

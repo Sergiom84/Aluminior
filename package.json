@@ -25,7 +25,8 @@
     "typecheck": "npm run -ws --if-present typecheck",
     "check:architecture": "node scripts/auditar-modularidad.mjs",
     "test:e2e": "playwright test",
-    "typecheck:e2e": "tsc -p e2e/tsconfig.json"
+    "typecheck:e2e": "tsc -p e2e/tsconfig.json",
+    "etl:precio-tabla": "tsx packages/etl/src/cargar-precio-tabla.ts"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.0",

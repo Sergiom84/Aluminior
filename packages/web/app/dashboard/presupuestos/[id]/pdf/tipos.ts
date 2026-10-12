@@ -12,6 +12,7 @@ export interface LineaPdf {
   id: string
   orden: number
   tipo: string
+  acabadoArticuloCodigo: string | null
   descripcion: string
   referencia: string | null
   anchoMm: number | null
