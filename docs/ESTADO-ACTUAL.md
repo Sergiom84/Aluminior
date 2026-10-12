@@ -1,11 +1,13 @@
 # Estado actual de Aluminior
 
-Revisión documental: 12/10/2026, entrega local desde `origin/main` `9ae7a6e`.
-Revisión funcional conservada: 09/10/2026, checkout inicial `787d1ad`. Producción comprobada
-en `487feb1` (Render live, 09/10 18:30:14 UTC); A3/A4 y migraciones 0029/0030 publicados/verificados. Se conserva
-la cobertura histórica del 03/10 y la investigación E1 del 04/10.
-API Render reconsultada el 10/10: sigue live `487feb1`; recibos finales S3
-correctos. BD y aceptación funcional conservan la verificación del 09/10.
+Revisión documental y producción: 12/10/2026. Código `40cedd1` live en Render,
+deploy `dep-db6hi2navr4c739d2e4g`, terminado a las 19:31:21 Europe/Madrid
+(17:31:21 UTC). Supabase: 33 migraciones, 0031/0032 y carga dirigida aplicadas;
+QA técnico remoto y preservación final correctos. Ver
+[publicación del 12/10](paridad/PUBLICACION-CLONERSOFT-2026-10-12.md).
+La revisión funcional del 09/10 en `487feb1` y la consulta Render del 10/10
+son antecedentes conservados; no sustituyen esta comprobación de producción.
+Se preservan la cobertura histórica del 03/10 y la investigación E1 del 04/10.
 [Auditoría documental](AUDITORIA-DOCUMENTAL-2026-10-10.md) y
 [continuación en Windows](CONTINUAR-EN-WINDOWS.md).
 Consolidación documental inicial: `ee0dc16`, sobre `9bc879e`.
@@ -14,19 +16,32 @@ El [roadmap operativo](../ROADMAP-PARIDAD-PRODUCTOR.md) conserva el orden y
 estado único de las tareas de paridad, con mantenimiento documental obligatorio.
 
 
-## Continuación local con ClonerSoft — 12/10/2026
+## ClonerSoft publicado técnicamente — 12/10/2026
 
-[Investigación y cambios](paridad/INVESTIGACION-CLONERSOFT-2026-10-12.md) en
-worktree `productor-clonersoft/Aluminior`, desde `origin/main` `9ae7a6e`.
-EMP0016=2026 y EMP0015=2025 confirmados; copia del banco identificada por huella.
-C1: precio por medidas, acabado de artículo y contención de tarifa plana
-verificados en local; 0031/0032/carga dirigida pendientes de publicación.
-P.6/P.7: búsqueda/teclado/foco verificados con diez recorridos escritorio/móvil.
-1.644 pruebas correctas, una condicionada a CSV privado; tipos, arquitectura y build
-correctos. Banco nuevo conserva 400/523 y sus exclusiones. Supabase sólo leído: 31
-migraciones, 14 presupuestos y cinco líneas; catálogo compatible por huella. La MO del vidrio
-no se activa con coeficientes cero. E1/E2/E6 y aceptación comercial siguen abiertos.
-Checkout principal conservado exactamente; no publicar sus tarifas excluidas.
+[Investigación y cambios](paridad/INVESTIGACION-CLONERSOFT-2026-10-12.md) desde
+`origin/main` `9ae7a6e`; [publicación y recibos](paridad/PUBLICACION-CLONERSOFT-2026-10-12.md)
+en `40cedd1`. EMP0016=2026 y EMP0015=2025 confirmados; copia del banco
+identificada por huella. C1: precio por medidas, acabado de artículo y
+contención de tarifa plana publicados y verificados en su alcance acotado.
+0031/0032 aplicadas; 17.547 metadatos y dos PVP cargados desde la misma
+proyección. Respaldo completo y restauración local comprobados; proyección
+original de 59 tablas/462.617 filas y 31 migraciones previas intacta.
+
+Gate remoto final correcto: tres documentos QA nuevos sin clientes previos,
+siete líneas, guardado/recarga, edición de cantidad con misma identidad,
+copia/revisión y cinco PDF, incluido el posterior a F9. Acabado/medidas/PVP
+conservados; falta de medidas produce nulos y «Sin valorar» en web/PDF. Tras QA hay 17 presupuestos/12 líneas;
+los 14 presupuestos/cinco líneas anteriores conservan sus firmas. El contenido
+de las 60 tablas postcarga permanece intacto salvo los documentos, líneas y
+tres recibos QA autorizados.
+
+P.6/P.7 está parcialmente publicado: búsqueda/teclado/foco verificados con diez
+recorridos escritorio/móvil. 1.644 pruebas correctas, una condicionada a CSV
+privado; tipos, arquitectura y build correctos. Ambos workflows de `40cedd1`
+finalizaron con `success`. Banco nuevo conserva 400/523 y sus exclusiones.
+La MO del vidrio no se activa con coeficientes cero. E1/E2/E6, coste dimensional,
+fabricación y aceptación comercial siguen abiertos. El checkout principal
+antiguo se conserva exactamente; no publicar sus tarifas excluidas.
 
 ## Entrega funcional de presupuestos verificada
 
@@ -131,8 +146,11 @@ Los nueve documentos anteriores y tres líneas conservan sus huellas.
   Usar únicamente la carga dirigida para el alcance autorizado.
 - Un resultado incompleto conserva importe nulo y «Sin valorar»;
   no convertirlo en cero ni aceptar sumas parciales como precio completo.
-- Los snapshots `FILA_CENTIMOS` necesitan el lector integrado compatible:
-  no revertir a una versión antigua sin revisar documentos guardados.
+- Los snapshots `FILA_CENTIMOS` y los acabados de artículo necesitan lectores
+  compatibles. Una reversión requiere bloquear escrituras primero y preservar
+  columnas/journal/líneas nuevas; restaurar sólo metadata/PVP afectados. Volver
+  sólo a web antigua puede perder acabados en copias y eludir la contención
+  de PVP plano. Ver [reversión](paridad/PUBLICACION-CLONERSOFT-2026-10-12.md#reversión-compatible).
 - Diseños específicos, variantes y flujos sin evidencia siguen pendientes.
   Las capturas y salidas privadas mencionadas en informes pueden no existir
   en otra copia; no reconstruir evidencia ni asumir sus resultados.
@@ -145,9 +163,10 @@ titular; investigación económica E1 desde G6-incidencia y E7 tras A4, según
 
 S3 verificado localmente y en GitHub Actions (`36a47f4`): 1.448 pruebas correctas,
 una condicionada a CSV privado, seis recorridos, tipos, arquitectura y build; ver [evidencia y ejecuciones](paridad/MEDIDAS-Y-CI-2026-10-09.md#s3-validación-completa-de-los-paquetes-en-ci--09102026).
-Siguiente desde Mac: publicación coordinada C1/0031/0032/carga dirigida si se
-autoriza; P.6/P.7 conserva otras anchuras, zoom 200%, reduced motion y recorrido
-humano comparativo. Teclado/búsqueda/foco de esta entrega ya verificados localmente.
+Siguiente desde Mac: matriz restante de P.6/P.7 — otras anchuras, zoom 200%,
+reduced motion y recorrido humano comparativo. C1/0031/0032/carga/publicación
+y QA remoto completados el 12/10; no repetirlos. Teclado/búsqueda/foco de este
+tramo están parcialmente publicados; su aceptación integral sigue abierta.
 
 **A3 publicado/verificado el 09/10 en `a06cd4f`, con 0029 aplicada.** A4 publicado/verificado en `487feb1`: 0030 aplicada, conexiones renovadas y alta/edición/recarga/copia/PDF decimales comprobados en producción. A5 verificado en GitHub Actions (run 37971854995, seis recorridos correctos). D1 reconciliado localmente. [Informe](paridad/MEDIDAS-Y-CI-2026-10-09.md). E1 depende de Windows; P.2 conserva aceptación comercial y S2 el anuncio del 14/10.
 

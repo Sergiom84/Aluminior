@@ -1,8 +1,10 @@
 # Productor: investigación con ClonerSoft y aplicación local
 
 12/10/2026. Entrega desde `origin/main` `9ae7a6e`, en el worktree
-`productor-clonersoft/Aluminior`. Estado de esta revisión: implementación local
-verificada técnicamente en local. No implica publicación, carga remota ni aceptación
+`productor-clonersoft/Aluminior`. Investigación y verificación local conservadas;
+publicación técnica posterior comprobada en `40cedd1`, con 0031/0032 y carga
+dirigida aplicadas. El [informe de publicación](PUBLICACION-CLONERSOFT-2026-10-12.md)
+registra respaldo, migraciones, CI, Render y QA remoto. No acredita aceptación
 general de Productor. Registro vigente: [roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md).
 
 ## Objetivo y separación de fuentes
@@ -116,7 +118,7 @@ devuelve foco a la entrada antes de desmontar el botón. No hay rediseño ni CSS
 nuevo. La comparación usa CHM/observación/snapshots, no Productor vivo en este Mac.
 No cerrar aceptación integral, zoom 200% o reduced motion por estas pruebas.
 
-## Verificación y publicación
+## Verificación local anterior a la publicación
 
 Revisión independiente económica y de UI, una corrección de cada lote y gate
 final del arquitecto. Se corrigieron booleanos con mayúsculas, tarifas
@@ -148,28 +150,31 @@ Logs crudos, resultados detallados y capturas se conservan en el output privado
 mencionado arriba. El resultado nuevo del banco es independiente del anterior;
 no se sobrescribieron historia, exclusiones ni fuentes.
 
-Publicación preparada, pendiente de autorización del alcance remoto:
+## Publicación técnica completada
 
-1. Reconsultar revisión remota, migraciones y firmas. Respaldo privado de
-   metadata/tabla afectada, journal y líneas, con huellas y restauración probada
-   en una base local separada. No incluir ese respaldo en Git.
-2. Aplicar 0031/0032 mediante el migrador canónico. El código anterior admite
-   las columnas aditivas; comprobar RLS, nulabilidad y CHECK de artículo.
-3. Simular la carga dirigida de la misma proyección, con rollback; exigir
-   17.547 coincidencias, dos PVP y firmas protegidas idénticas. Aplicarla
-   atómicamente sólo después de esa verificación. No usar importador completo.
-4. Publicar únicamente este checkout y comprobar el commit live de Render,
-   acceso autenticado, guardado/recarga/PDF sintéticos y datos previos intactos.
-5. Si falla, volver al código anterior antes de restaurar metadata/PVP desde
-   el respaldo. Conservar las columnas aditivas y las nuevas líneas; no borrar
-   documentos ni quitar columnas para simular un rollback. Restaurar sólo
-   las filas afectadas conforme al preimage y volver a comprobar sus firmas.
+Autorización recibida y ciclo remoto ejecutado el 12/10/2026; véase el
+[informe de publicación](PUBLICACION-CLONERSOFT-2026-10-12.md). Render live
+`40cedd1`, terminado a las 19:31:21 Europe/Madrid; 33 migraciones y carga
+dirigida de 17.547 metadatos/dos PVP comprobadas. Ambos workflows de CI del
+commit publicado finalizaron correctamente. Restauración completa del respaldo
+ensayada localmente; seguridad de la tabla nueva verificada en Supabase.
 
-Revertir sólo el código tras cargar no sustituye la restauración de metadata.
-En pruebas se usan bases locales nuevas, aislamiento ETL y auth sintética;
-no hay migración, carga ni escritura comercial remota en esta entrega.
+La aceptación final publicada y la conservación de la proyección previa
+terminaron con exit 0: tres documentos QA con nombre libre, siete líneas,
+tres recibos, precio por medidas, acabado, cantidad, recarga, copia/revisión
+y PDF. El caso sin medidas permanece sin valorar. Datos anteriores intactos;
+importes empresariales e identificadores quedan en los recibos privados.
 
-Siguiente abierto: publicación coordinada de C1/0031/0032 si se autoriza y
-continuación de la matriz pendiente de P.6/P.7 (otras anchuras, zoom 200%,
-reduced motion y recorrido humano comparativo). No repetir este gate local. E1 conserva su procedimiento Windows;
-E2/E6 y aceptación comercial no se cierran por esta entrega.
+Las instrucciones de autorización, migración y carga que seguían aquí ya
+se ejecutaron; se retiran para impedir su repetición. La reversión vigente
+requiere mantenimiento/lectura y bloqueo de escrituras antes de volver a
+una versión compatible; conservar columnas, journal y líneas nuevas, y
+restaurar sólo los metadatos/PVP afectados. Volver sólo a código antiguo
+puede perder acabados en copias y eludir la contención de precio plano.
+
+
+Siguiente abierto: matriz pendiente de P.6/P.7 (otras anchuras, zoom 200%,
+reduced motion y recorrido humano comparativo). C1 está publicado y verificado
+técnicamente en su alcance acotado; no repetir extracción, 0031/0032, carga,
+publicación ni gates local/remoto entregados. E1 conserva su procedimiento
+Windows; E2/E6 y aceptación comercial no se cierran por esta entrega.

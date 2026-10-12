@@ -88,7 +88,12 @@ es la entrada pública compartida por catálogo, fallback y artículo suelto.
 `etl:precio-tabla` es transaccional y simula por defecto. Coste dimensional
 permanece desconocido. 0032 guarda el acabado elegido del artículo en la línea,
 nullable en históricos; copia/edición/PDF conservan el snapshot. Estas dos
-migraciones son entrega local del 12/10, sin aplicación remota acreditada.
+migraciones se aplicaron en Supabase el 12/10, con carga dirigida y código
+`40cedd1` live; ver [recibo técnico](docs/paridad/PUBLICACION-CLONERSOFT-2026-10-12.md).
+Una reversión exige mantenimiento/lectura y bloqueo de escrituras hasta una
+versión compatible: código antiguo puede perder acabados en copias y eludir
+la contención de PVP plano. Conservar columnas, journal y líneas nuevas;
+restaurar únicamente metadata/PVP afectados y comprobar las firmas.
 
 Todos los paquetes declaran ESM. El banco Node/tsx y los servicios web comparten
 así una sola instancia del registro de diseños de core; no se duplica el catálogo
