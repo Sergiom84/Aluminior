@@ -29,7 +29,9 @@ verified Productor behavior contradicts it.
   files close to the feature that owns them.
 - Keep server actions thin: parse the request, authorize, call a domain/application
   service and revalidate. Database queries, valuation, configuration persistence
-  and document numbering must not accumulate in one action file.
+  and document numbering must not accumulate in one action file. Budget actions
+  already delegate to feature-local services; do not move SQL, valuation or
+  numbering back into them or into the enclosure designer.
 - Prefer feature-local folders with explicit public entry points. Do not import
   another feature's private components or reach across packages to internal files.
 - A file approaching 250 lines requires a cohesion review. A handwritten file over
@@ -39,8 +41,6 @@ verified Productor behavior contradicts it.
   preserve behavior and be covered by the relevant tests before feature work resumes.
 - Keep tests beside the module they protect. Prefer pure functions in `packages/core`
   and dependency-injected application services over logic embedded in UI components.
-- Budget actions already delegate to feature-local services. Keep that boundary:
-  do not move SQL, valuation or numbering back into actions or the enclosure designer.
 - Run `npm run check:architecture` when changing module boundaries. Historical
   research exceptions are frozen in `scripts/modularidad-excepciones.json`;
   review and extract the relevant use case before extending or reusing them.
@@ -65,11 +65,9 @@ verified Productor behavior contradicts it.
 
 ## Product and UI rules
 
-- Treat Productor as the source of truth for information architecture, workflow order, screen hierarchy, field grouping, tables, actions, terminology, document states, keyboard navigation, function-key shortcuts, and operational density.
-- In budgets, optimize for the observed operator path: a minimal header with optional customer record, free name and work description, followed immediately by the enclosure configurator. The configurator—not the document list—is the primary product surface.
+- Treat Productor as the source of truth for information architecture, workflow order, screen hierarchy, field grouping, tables, actions, terminology, document states, keyboard navigation, function-key shortcuts, and operational density. Do not add, remove, merge, rename, or reorder Productor concepts without evidence and an explicit product decision.
+- In budgets, optimize for the observed operator path: a minimal header with optional customer record, free name and work description, followed immediately by the enclosure configurator. The configurator—not the document list—is the primary product surface. Its output is one aggregate `GRUPO` line with drawing, generated description, measures, price and explicit manual fabrication/installation adjustments; never infer those adjustments from historical tables.
 - Customer lookup in budget headers must support code prefixes and multiple partial name fragments in any order; selecting a result must persist the canonical customer code.
-- Preserve enclosure output as one aggregate `GRUPO` line with drawing, generated description, measures, price and explicit manual fabrication/installation adjustments. Never infer manual adjustments from historical tables.
-- Aim for the closest practical behavioral and structural parity. Do not add, remove, merge, rename, or reorder Productor concepts without evidence and an explicit product decision.
 - Modernize the visual layer without reproducing Windows XP chrome: use contemporary surfaces, spacing, focus states, iconography, accessibility and responsive behavior while keeping the original task model recognizable.
 - Do not import generic shells, card dashboards, oversized whitespace, marketing layouts, or patterns from F-Gestor-IA or another project when they reduce parity or increase clicks.
 - Prefer dense, document-centred workspaces: primary actions near the active document, contextual operations visible, totals and state available without unnecessary navigation, and tables sized for real workshop workloads.
