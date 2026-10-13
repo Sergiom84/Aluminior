@@ -16,6 +16,41 @@ El [roadmap operativo](../ROADMAP-PARIDAD-PRODUCTOR.md) conserva el orden y
 estado único de las tareas de paridad, con mantenimiento documental obligatorio.
 
 
+## Reconciliación Windows — 13/10/2026 (verificación en curso)
+
+Integración autorizada de `origin/main` `913dd43` con los siete commits
+locales de septiembre, hasta `97099bc`. El main posterior del Mac conserva
+el estado operativo vigente; las ampliaciones compatibles de catálogo,
+cotas, TMP, dibujo y PDF se recuperan sin convertir los ensayos de septiembre
+en aceptación económica o fabricación.
+
+Se preservan los informes [fase 7/07–13](paridad/fase-7/13-cierre-cotas-c2.md)
+y [fase 8/00–13](paridad/fase-8/13-cotas-economicas-y-relevo.md) como evidencia
+fechada. Los recuentos 25 plantillas/14 uniones y los contrastes de 03V/C2FI
+pertenecen a aquella copia y fecha; no sustituyen el catálogo posterior de
+160 estructuras, el banco 400/523 ni las verificaciones de producción.
+EMP0015 (2025), EMP0016 (2026), tarifas y originales se mantienen separados;
+las copias `Anterior` no aportan muestras independientes.
+
+**Verificación local de la integración, 13/10:** `npm run test:ci`: 1.890
+pruebas correctas y una condicionada al CSV privado (850 core, 56 DB, 112 ETL,
+872 web). Scripts: 123 Vitest y 119 node:test correctos; tipos de paquetes,
+E2E y scripts correctos; arquitectura: 851 archivos, cero infracciones.
+Diez recorridos E2E en escritorio/móvil correctos con PostgreSQL sintético:
+alta, copia, decimales, PDF y teclado. Se corrigieron la fixture incompleta
+de acristalamiento, el TipoPerf omitido por el adaptador CSV, la validación
+visual de cotas explícitas y el campo del error de cota vertical. Antes del
+arreglo se midieron dos fallos de fixture, quince de CSV con la fixture
+completa y dos de cotas. Aserciones originales preservadas.
+Revisión independiente: dos hallazgos de cotas, una corrección y gate ejecutado.
+`packages/db` y sus migraciones coinciden con HEAD: sin SQL nuevo ni operación
+remota. El cierre Git se registra en el historial local; publicación, recepción
+y aceptación Productor siguen separadas. La verificación remota de 33/33 de
+la sesión anterior es un antecedente, no una reconsulta en esta sesión.
+La continuidad funcional sigue en el [roadmap](../ROADMAP-PARIDAD-PRODUCTOR.md)
+y [guía Windows](CONTINUAR-EN-WINDOWS.md): P.2, E1/E7 y matriz restante P.6/P.7;
+no repetir A3/A4 ni las cargas y migraciones ya documentadas.
+
 ## Reconciliación del main Mac — 13/10/2026
 
 Por petición de Sergio, se revisan todos los cambios pendientes y se integra

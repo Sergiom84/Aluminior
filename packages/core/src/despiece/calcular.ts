@@ -28,7 +28,7 @@ export interface ComponentePlantilla {
   /** Rango de medidas en que aplica; fuera de él, el componente no entra. */
   medidaMinima?: string | number | null
   medidaMaxima?: string | number | null
-  /** Nodo de diseÃ±o (DisIdIt), necesario para emparejar perfiles y vidrios. */
+  /** Nodo de diseño (DisIdIt), necesario para emparejar perfiles y vidrios. */
   idItemDisenyo?: number | null
   grupoDisenyo?: string | null
 }

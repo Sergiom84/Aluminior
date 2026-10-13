@@ -13,6 +13,34 @@ const pieza = (articuloCodigo: string, cantidad: string, largoCorteMm: string | 
 })
 
 describe('piezas del snapshot desde el catálogo real', () => {
+  // Contrato main/Mac: el snapshot guarda centésimas; venta y coste no se recalculan.
+  it.each([
+    ['1.01000000000000001', '1.01'], ['99999999.990000001', '99999999.99'],
+  ])('serializa %s como %s conservando precio y coste', (valor, esperado) => {
+    const r = completarCostesOrigen(origen(), [pieza('PRECISION', '1', valor)] as never)
+    expect(r.piezas[0].largoCorteMm).toBe(esperado)
+    expect(r.venta).toEqual({ completo: true, importe: '10.00' })
+    expect(r.coste).toEqual({ completo: true, importe: '1.0000' })
+    expect(r.diagnosticos).toEqual([])
+  })
+  it('una medida en notación exponencial que redondea a cero bloquea fabricación sin lanzar', () => {
+    const r = completarCostesOrigen(origen(), [pieza('PRECISION', '1', '1e-7')] as never)
+    expect(r.piezas[0].largoCorteMm).toBeNull()
+    expect(r.venta).toEqual({ completo: true, importe: '10.00' })
+    expect(r.coste).toEqual({ completo: false, importe: null })
+    expect(r.diagnosticos).toContainEqual(expect.objectContaining({
+      ambito: 'FABRICACION', bloqueante: true, detalle: expect.stringContaining('1e-7'),
+    }))
+  })
+  it('conserva la medida exacta y representa el corte periódico a centésimas sin recalcular costes', () => {
+    const r = completarCostesOrigen(origen(), [
+      pieza('EXACTA', '1', '1200.25'), pieza('TERCIO', '1', '363.3333333333333'),
+    ] as never)
+    expect(r.piezas.map(p => p.largoCorteMm)).toEqual(['1200.25', '363.33'])
+    expect(r.venta).toEqual({ completo: true, importe: '10.00' })
+    expect(r.coste).toEqual({ completo: true, importe: '2.0000' })
+    expect(r.diagnosticos).toEqual([])
+  })
   it('omite una pieza de cantidad 0 sin alterar el coste', () => {
     const r = completarCostesOrigen(origen(), [pieza('A', '2', '1200'), pieza('MO', '0', null)] as never)
     expect(r.piezas.map((p) => p.articuloCodigo)).toEqual(['A'])

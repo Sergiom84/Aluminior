@@ -2,6 +2,19 @@
 
 > Estado operativo: [ESTADO-ACTUAL.md](../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites. El orden y estado de tareas pertenece al [roadmap vigente](../../ROADMAP-PARIDAD-PRODUCTOR.md); sus encargos, permisos y pendientes fechados no se reactivan.
 
+## Ampliación local del 27/09/2026 (antecedente)
+
+EMP0016 conservaba 541 registros, 393 con árbol y 5597 nodos de catálogo.
+El traductor pasó de 47 a 54 candidatas y el catálogo operativo de 15 a 22
+plantillas, más 14 uniones. Se incorporaron 03H/03V/06 y CF/CFT/FC con
+recorrido local; sus 18 casos económicos seguían bloqueados.
+[Inventario](fase-8/01-inventario.md) y [evidencia](fase-8/03-fijos-operativos.md).
+C2P añadió una puerta con cuatro casos de precio/material contrastados;
+coste y fabricación seguían incompletos. [Cierre](fase-8/05-puerta-corredera-y-relevo.md).
+El [lote posterior](fase-8/08-cotas-absolutas-y-relevo.md) alcanzó 25 plantillas.
+Estos recuentos son históricos y no sustituyen las 160 estructuras del main
+posterior ni acreditan valoración completa o aptitud de taller.
+
 > Revisión documental 20/09/2026: **Evidencia fechada**. Catálogo visual no acredita estructura operativa o fabricable.
 > Para continuar: [estado actual](../ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.
 

@@ -6,6 +6,11 @@
 [barrido de facturas](05-primer-barrido-facturas-2026.md). Investigación sobre
 copias verificadas; sin escrituras en Productor, Supabase ni base activa.
 
+Actualización posterior: el motor, ETL y conexión web descritos aquí sí se
+implementaron en `0ecdc9c`, rama `feat/motor-catalogo-completo`. Ver la
+[continuación local](09-continuacion-local.md) para la regresión completa,
+las rectificaciones del contraste y los cambios posteriores.
+
 Resultado principal: los asociados (herraje, escuadras, juntas de hoja,
 patillas, kits), la mano de obra de fabricación, el vidrio, los junquillos y
 el metraje facturable se derivan de tablas de catálogo de Productor. No hacen
@@ -100,6 +105,8 @@ hojas (`DisGrupoAdicional`, `DisGrupoAd2`):
 
 Otras variantes (B3, independientes 4HE/4HC, travesaños, cotas FI/FD/TD/F de
 la instancia) no están contrastadas y deben bloquear el cálculo.
+Excepción implementada después: módulo de dos hojas entre TMG/MV dentro
+de `3HO`, con batiente B; ver [fase 7/08](08-cortes-tres-hojas.md).
 
 Vidrio: largo con referencia `DisIdRefLargo` y extremos superior/inferior;
 ancho con `DisIdRefAncho` y extremos izquierdo/derecho. C2 GMC400:
@@ -141,9 +148,11 @@ por este antecedente. La [entrada actual](../../ESTADO-ACTUAL.md) conserva
 las verificaciones y sus límites; las variantes sin contraste siguen abiertas.
 
 - Las reglas, importación dirigida y valoración web tienen código integrado
-  en main `9bc879e`. Falta carga remota autorizada y contraste de cobertura;
+  en main `9bc879e`. La carga remota posterior consta en el estado actual; sigue pendiente el contraste integral de cobertura;
   un resultado incompleto conserva precio nulo. Ver [ensayos posteriores](../INTEGRACION-MOTOR-CATALOGO-2026-10-02.md).
+- GM60 conserva sus filas generadas: selección comprobada entonces en 127 líneas.
+  Ver [rectificación y guardas](07-acristalamiento-gm60.md).
 - Diseños específicos, compactos (COM*), cotas de instancia y variantes de
   división no contrastadas quedan pendientes.
-- Recuentos locales obtenidos con scripts provisionales; se sustituirán por el
-  contraste versionado que usa el core.
+- El contraste versionado usa el core. Sus cifras vigentes y límites se
+  publican en [la continuación local](09-continuacion-local.md).

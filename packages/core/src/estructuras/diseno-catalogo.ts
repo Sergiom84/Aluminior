@@ -36,8 +36,8 @@ export type ResultadoPlantilla =
 
 const apertura = (nodo: NodoCatalogo) => aperturaTipoHoja(nodo.hoja, nodo.numeroHoja)
 
-/** Candidata a medida inicial, NO validada para redimensionar ni valorar.
- * TipoCota=1 se proyecta a proporción: falta mantener cotas absolutas al editar.
+/** Candidata visual, NO acreditación de valoración ni fabricación.
+ * TipoCota=1 conserva la distancia física y las proporciones iniciales.
  */
 export function generarPlantillaCatalogo(entrada: EstructuraCatalogo): ResultadoPlantilla {
   const motivos = new Set<string>()
@@ -108,6 +108,10 @@ export function generarPlantillaCatalogo(entrada: EstructuraCatalogo): Resultado
     return {
       tipo: 'division', id: `division-${trav.id}`, eje,
       separador: trav.invisible ? 'division-invisible' : 'travesano',
+      ...(trav.tipoCota === 1 ? { cotaFija: {
+        desde: ['HB', 'VD'].includes(trav.travesano) ? 'fin' as const : 'inicio' as const,
+        mm: trav.cota,
+      } } : {}),
       hijos: huecos.map((h, i) => ({ proporcion: medidas[i], nodo: visitar(h,
         eje === 'vertical' ? medidas[i] : ancho, eje === 'horizontal' ? medidas[i] : alto, profundidad + 1) })),
     }

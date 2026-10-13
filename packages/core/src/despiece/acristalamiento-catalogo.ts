@@ -1,7 +1,7 @@
 /**
  * Junquillos y juntas de acristalamiento a partir del catálogo.
  *
- * Tabla manual (`TAcristalamientoLin`, posición `*`): fila con el menor
+ * Tabla persistida (`TAcristalamientoLin`, posición `*`): fila con el menor
  * `Grosor` ≥ grosor del vidrio. Su grosor es el galce menos junquillo y juntas
  * (GM02: 36,5 − 10,5 − 4,5 − 6 = 15,5).
  *
@@ -13,7 +13,8 @@
  *
  * Contrastado con facturas 2026 (GMA350 fijo y hoja, ELEGANTPVC): fase-7/06.
  * Productor omite sin aviso juntas cuyo artículo no existe (V1000); aquí se
- * omiten igual y se informa. Tablas automáticas y por posición: sin contrastar.
+ * omiten igual y se informa. Las tablas generadas por Productor también dejan
+ * sus filas aquí (GM60: fase-7/07). Regeneración y posiciones: sin contrastar.
  */
 
 import type { DescuentoCorte } from './cortes-referenciados.ts'
@@ -70,10 +71,23 @@ export function acristalarVidrio(
   const incidencias: string[] = []
   const avisos: string[] = []
   const piezas: PiezaAcristalamiento[] = []
-  if (!tabla.length) return { piezas, incidencias: ['tabla de acristalamiento sin filas: generación automática sin contrastar'], avisos }
+  if (!Number.isFinite(vidrio.grosorMm) || vidrio.grosorMm <= 0) {
+    return { piezas, incidencias: ['grosor de vidrio no válido para acristalamiento'], avisos }
+  }
+  if (!tabla.length) return { piezas, incidencias: ['tabla de acristalamiento sin filas persistidas'], avisos }
   if (tabla.some(f => f.posicion !== '*')) return { piezas, incidencias: ['tabla de acristalamiento por posiciones sin contrastar'], avisos }
+  if (tabla.some(f => !Number.isFinite(f.grosor) || f.grosor < 0)) {
+    return { piezas, incidencias: ['tabla de acristalamiento con grosor no válido'], avisos }
+  }
   const fila = [...tabla].sort((a, b) => a.grosor - b.grosor).find(f => f.grosor >= vidrio.grosorMm - 1e-9)
   if (!fila) return { piezas, incidencias: [`sin junquillo para vidrio de ${vidrio.grosorMm} mm`], avisos }
+  const codigo = (c: string | null) => c && c !== '0' ? c : null
+  const alternativas = tabla.filter(f => Math.abs(f.grosor - fila.grosor) <= 1e-9)
+  if (alternativas.some(f => codigo(f.junquillo) !== codigo(fila.junquillo)
+    || codigo(f.juntaExterior) !== codigo(fila.juntaExterior)
+    || codigo(f.juntaInterior) !== codigo(fila.juntaInterior))) {
+    return { piezas, incidencias: [`selección de acristalamiento ambigua para grosor ${fila.grosor} mm`], avisos }
+  }
 
   const junquillo = fila.junquillo && fila.junquillo !== '0' ? fila.junquillo : null
   if (junquillo) {

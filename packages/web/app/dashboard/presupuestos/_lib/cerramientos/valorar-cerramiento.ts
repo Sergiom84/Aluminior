@@ -58,11 +58,12 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
     }
     // Horas y comisión del cerramiento se aplican a la línea (importesLineaCerramiento), nunca por módulo.
     const parametros = { ...entrada, horasFabricacion: null, horasColocacion: null, compacto: null, accesorios: null,
-      comisionPorc: null, cotas: null,
+      comisionPorc: null, cotas: undefined,
       trazabilidad: true, codigo: g.codigo, anchoMm: g.anchoMm, altoMm: g.altoMm,
       serieCodigo: origen.serieCodigo,
-      vidrioCodigo: origen.vidrioCodigo, opcionesHerraje: entrada.opcionesHerraje ?? [] }
+      vidrioCodigo: origen.vidrioCodigo, opcionesHerraje: entrada.opcionesHerraje }
     let ventaMotor: number | null = null
+    let avisoMotor: string | null = null
     let piezas: Parameters<typeof completarCostesOrigen>[1] = []
     if (g.tipo === 'UNION' && !unionConfigurada(g)) {
       bloquear(`Unión ${g.id} sin configurar`)
@@ -75,6 +76,7 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
         if (sinUnion) { origenes.push(sinUnion); continue }
         piezas = valor.piezas
         ventaMotor = valor.precioUnitario
+        avisoMotor = valor.aviso
         origen.reglaMaterial = piezas.length ? `estructura:${g.codigo}` : null
         origen.partidasValoracion = valor.partidas ?? []
         if (valor.precioUnitario === null) bloquear(valor.aviso ?? `Unión ${g.id} incompleta`, valor.materialCompleto !== true)
@@ -115,6 +117,7 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
       else {
         piezas = valor.piezas
         ventaMotor = valor.precioUnitario
+        avisoMotor = valor.aviso
         origen.reglaMaterial = piezas.length ? `estructura:${g.codigo}` : null
         origen.partidasValoracion = valor.partidas ?? []
         origen.acristalamiento = valor.acristalamiento.map(r => ({ slot: r.slot,
@@ -122,19 +125,22 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
         origen.opcionesHerraje = valor.opcionesHerraje.map(o => ({ categoria: o.categoria,
           opcionCodigo: o.opcionCodigo, descripcion: o.descripcion ?? null }))
         if (valor.precioUnitario === null) bloquear(valor.aviso ?? 'Estructura incompleta', valor.materialCompleto !== true)
-        if (valor.motor !== 'catalogo' && (origen.opcionesHerraje.length || parametros.opcionesHerraje.length)) {
+        if (valor.motor !== 'catalogo' && (origen.opcionesHerraje.length || parametros.opcionesHerraje?.length)) {
           bloquear('Herrajes seleccionados sin resolución material demostrada')
         }
         if (redondeo === 'FILA_CENTIMOS' && valor.motor !== 'catalogo') bloquear(`Módulo ${g.codigo} sin catálogo de despiece completo`)
       }
     }
+    if (ventaMotor !== null && avisoMotor) origen.diagnosticos = [...origen.diagnosticos, {
+      codigo: 'AVISO_VALORACION', ambito: 'VENTA', bloqueante: false, detalle: avisoMotor,
+    }]
     const etapas = etapasVentaCerramiento(origen.partidasValoracion, redondeo)
     if (etapas && ventaMotor !== null && Number(etapas.total) !== ventaMotor)
       bloquear('El metraje no se puede representar en el snapshot sin cambiar el importe del motor', false)
     if (!piezas.some(p => Number(p.cantidad) > 0) || !origen.partidasValoracion.length) bloquear('Receta material vacía')
     if (etapas && !origen.diagnosticos.some(d => d.ambito === 'VENTA' && d.bloqueante))
       origen.venta = { completo: true, importe: etapas.total }
-    else if (!origen.diagnosticos.length) bloquear('Partidas de venta incompletas')
+    else if (!origen.diagnosticos.some(d => d.ambito === 'VENTA' && d.bloqueante)) bloquear('Partidas de venta incompletas')
     origenes.push(completarCostesOrigen(origen, piezas))
   }
   const total = (campo: 'venta' | 'coste', escala: number) => {

@@ -14,8 +14,8 @@ const base = (parcial: Partial<NodoDisenyo> & Pick<NodoDisenyo, 'idItem' | 'tipo
   tipoTravesano: null, invisible: false, ...parcial,
 })
 
-describe('geometrÃ­a de huecos', () => {
-  it('reconstruye marco + travesaÃ±o en el fijo inferior de 2OFI', () => {
+describe('geometría de huecos', () => {
+  it('reconstruye marco + travesaño en el fijo inferior de 2OFI', () => {
     const nodos = mapa([
       base({ idItem: 0, tipo: 1 }),
       base({ idItem: 1, tipo: 6, contenidoEn: 0, tipoTravesano: 'HB' }),
@@ -30,7 +30,7 @@ describe('geometrÃ­a de huecos', () => {
     expect(l?.derecho).toMatchObject({ clase: 'MARCO', orientacion: 'V' })
   })
 
-  it('conserva una divisiÃ³n invisible en el alojamiento de una hoja', () => {
+  it('conserva una división invisible en el alojamiento de una hoja', () => {
     const nodos = mapa([
       base({ idItem: 0, tipo: 1 }),
       base({ idItem: 4, tipo: 6, contenidoEn: 0, tipoTravesano: 'VI', invisible: true }),

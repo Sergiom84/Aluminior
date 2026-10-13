@@ -4,6 +4,10 @@ import { urlDePruebasValidada } from '@aluminior/db/pruebas'
 import { eq, sql } from 'drizzle-orm'
 import { valorarEstructura, type EntradaValoracionEstructura } from '../valorar-estructura.ts'
 import { altaLinea } from '../../lineas/alta-linea.ts'
+import { and } from 'drizzle-orm'
+import { despiezarLineaCatalogo } from '@aluminior/core/despiece'
+import { leerCatalogoLinea } from './leer-catalogo.ts'
+import { valorarCerramiento } from '../../cerramientos/valorar-cerramiento.ts'
 
 const db = crearDb(urlDePruebasValidada(process.env.TEST_DATABASE_URL))
 type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0]
@@ -88,6 +92,21 @@ const entrada: EntradaValoracionEstructura = {
   varianteAcristalamiento: '2', acabadoCodigo: 'L', tarifa: 1, opcionesHerraje: ['QA-HERR|1'],
 }
 
+async function alternativaAcristalamiento(tx: Tx) {
+  await tx.insert(schema.articulos).values({ codigo: 'QA-J2', descripcion: 'Junquillo alternativo', tipoMetraje: 'ML' })
+  await tx.insert(schema.articulosDespiece).values({ articuloCodigo: 'QA-J2', precioEnTabla: false,
+    generico: false, dobleAcristalamiento: false, grosorAcristalar: '0', incrementosPrecio: false })
+  await tx.insert(schema.articulosPvp).values({ articuloCodigo: 'QA-J2', acabadoCodigo: 'L', tarifa: 1, precio: '2' })
+  await tx.insert(schema.tacrisFilas).values({ tabla: 'QA-T2', posicion: '*', grosor: '99', junquillo: 'QA-J2' })
+  await tx.insert(schema.conjuntoAcristalamientos).values([
+    { conjuntoCodigo: 'QA-SERIE', opcion: 1, tablaHojas: 'QA-T', tablaFijos: 'QA-T' },
+    { conjuntoCodigo: 'QA-SERIE', opcion: 2, tablaHojas: 'QA-T2', tablaFijos: 'QA-T2' },
+  ])
+  await tx.insert(schema.conjuntoDescuentosCorte).values([['HVL', 'JH'], ['HH', 'JV']].map(([grupoPrincipal, grupo]) => ({
+    conjuntoCodigo: 'QA-SERIE', familia: '001', grupoPrincipal: grupoPrincipal!, grupo: grupo!, tipoHoja: 'G', descuentoMm: '0',
+  })))
+}
+
 describe('valoración con el catálogo de despiece completo', () => {
   it('una opción alternativa no recibe el precio ni el despiece de la opción predeterminada', () => caso(async tx => {
     await tx.insert(schema.conjuntoAcristalamientos).values([
@@ -117,6 +136,93 @@ describe('valoración con el catálogo de despiece completo', () => {
     expect(await tx.select().from(schema.lineasDespiece).where(eq(schema.lineasDespiece.lineaId, l!.id))).toEqual([])
   }))
 
+  it('sin selección guardada usa las opciones del catálogo en la estructura directa', () => caso(async tx => {
+    const r = await valorarEstructura(tx, { ...entrada, opcionesHerraje: undefined })
+    expect(r).toMatchObject({ ok: true, motor: 'catalogo', precioUnitario: 139.56,
+      opcionesHerraje: [{ categoria: 'QA-HERR', opcionCodigo: '1', descripcion: 'Cierre' }] })
+    if (!r.ok) throw new Error('rechazada')
+    expect(r.piezas.filter(p => p.articuloCodigo === 'QA-CIERRE')).toHaveLength(2)
+  }))
+  it('el GRUPO conserva ausencia y selección vacía con el mismo catálogo y precio que la estructura', () => caso(async tx => {
+    await tx.insert(schema.estructuras).values({ codigo: 'C2', descripcion: 'Corredera de prueba' })
+    await tx.update(schema.estructuraPlantillaCatalogo).set({ estructuraCodigo: 'C2' })
+      .where(eq(schema.estructuraPlantillaCatalogo.estructuraCodigo, 'QA-CORR'))
+    const configuracion = { version: 1 as const, modulos: [{ id: 'sintetico', estructuraCodigo: 'C2', anchoMm: 1200, altoMm: 1300 }], uniones: [] }
+    for (const opcionesHerraje of [undefined, [], ['QA-HERR|1']]) {
+      const directo = await valorarEstructura(tx, { ...entrada, codigo: 'C2', opcionesHerraje })
+      const grupo = await valorarCerramiento(tx, { ...entrada, configuracion, opcionesHerraje })
+      if (!directo.ok) throw new Error('rechazada')
+      expect(grupo.ventaMateriales).toEqual({ completo: true, importe: opcionesHerraje?.length === 0 ? '131.56' : '139.56' })
+      expect(Number(grupo.ventaMateriales.importe)).toBe(directo.precioUnitario)
+      expect(grupo.origenes[0]!.piezas.map(p => p.articuloCodigo)).toEqual(directo.piezas.map(p => p.articuloCodigo))
+      expect(grupo.origenes[0]!.opcionesHerraje).toEqual(directo.opcionesHerraje)
+    }
+  }))
+  it('el GRUPO conserva los avisos de grosor y junta sin bloquear la venta calculable', () => caso(async tx => {
+    await tx.insert(schema.estructuras).values({ codigo: 'C2', descripcion: 'Corredera de prueba' })
+    await tx.update(schema.estructuraPlantillaCatalogo).set({ estructuraCodigo: 'C2' })
+      .where(eq(schema.estructuraPlantillaCatalogo.estructuraCodigo, 'QA-CORR'))
+    await tx.update(schema.articulosDespiece).set({ grosorAcristalar: '20' })
+      .where(eq(schema.articulosDespiece.articuloCodigo, 'QA-VIDRIO'))
+    await tx.update(schema.tacrisFilas).set({ juntaExterior: 'QA-JUNTA-AUSENTE' })
+      .where(eq(schema.tacrisFilas.tabla, 'QA-T'))
+    const directo = await valorarEstructura(tx, { ...entrada, codigo: 'C2' })
+    if (!directo.ok) throw new Error('rechazada')
+    expect(directo.aviso).toContain('vidrio de 20 mm por encima del rango')
+    expect(directo.aviso).toContain('junta QA-JUNTA-AUSENTE')
+    const grupo = await valorarCerramiento(tx, { ...entrada, configuracion: { version: 1,
+      modulos: [{ id: 'sintetico', estructuraCodigo: 'C2', anchoMm: 1200, altoMm: 1300 }], uniones: [] } })
+    expect(grupo.ventaMateriales).toEqual({ completo: true, importe: '139.56' })
+    expect(grupo.origenes[0]!.diagnosticos.filter(d => d.ambito === 'VENTA')).toEqual([
+      { codigo: 'AVISO_VALORACION', ambito: 'VENTA', bloqueante: false, detalle: directo.aviso },
+    ])
+  }))
+  it('aplica FI explícito a perfiles y vidrio; la ausencia no toma un valor estándar', () => caso(async tx => {
+    await tx.update(schema.estructuraPlantillaCatalogo).set({ formulaReferenciaLargo: 'REF-FI' }).where(and(
+      eq(schema.estructuraPlantillaCatalogo.estructuraCodigo, 'QA-CORR'),
+      eq(schema.estructuraPlantillaCatalogo.componente, '21'),
+    ))
+    const sinCota = await valorarEstructura(tx, entrada)
+    expect(sinCota).toMatchObject({ ok: true, motor: 'catalogo', precioUnitario: null, materialCompleto: false })
+    for (const [FI, largoHoja, largoVidrio] of [[100, 1150, 1070], [200, 1050, 970]]) {
+      const r = await valorarEstructura(tx, { ...entrada, cotas: { FI: FI! } })
+      expect(r).toMatchObject({ ok: true, motor: 'catalogo', materialCompleto: true, aviso: null })
+      if (!r.ok) throw new Error('rechazada')
+      expect(r.precioUnitario).not.toBeNull()
+      expect(r.piezas.filter(p => p.articuloCodigo === 'QA-HOJA').map(p => Number(p.largoCorteMm))).toEqual([largoHoja, largoHoja])
+      expect(r.piezas.filter(p => p.articuloCodigo === 'QA-VIDRIO').map(p => Number(p.largoCorteMm))).toEqual([largoVidrio, largoVidrio])
+    }
+  }))
+  it('si falta catálogo completo no descarta las cotas para usar la vía anterior', () => caso(async tx => {
+    await tx.delete(schema.estructuraPlantillaCatalogo).where(eq(schema.estructuraPlantillaCatalogo.estructuraCodigo, 'QA-CORR'))
+    expect(await valorarEstructura(tx, { ...entrada, cotas: { FI: 100 } }))
+      .toMatchObject({ ok: false, errores: { cotas: ['Las cotas de instancia requieren el catálogo completo'] } })
+  }))
+  it('el adaptador y core reproducen la tabla alternativa sin activar E6 en web', () => caso(async tx => {
+    await alternativaAcristalamiento(tx)
+    const base = await valorarEstructura(tx, entrada)
+    const catalogo = await leerCatalogoLinea(tx, { estructura: entrada.codigo, serie: entrada.serieCodigo!, vidrio: entrada.vidrioCodigo, tarifa: 1, opcionAcristalamiento: 2 })
+    if (!catalogo) throw new Error('Catálogo sintético ausente')
+    const alternativa = despiezarLineaCatalogo(catalogo, { estructura: entrada.codigo, serie: entrada.serieCodigo!, anchoMm: 1200, altoMm: 1300, vidrio: entrada.vidrioCodigo, acabado: 'L', acabadoAccesorios: 'UNI', opcionesGuardadas: [] })
+    expect(base).toMatchObject({ ok: true, motor: 'catalogo', precioUnitario: 139.56 })
+    expect(alternativa).toMatchObject({ importe: 154.2, incidencias: [] })
+    expect(alternativa.filas.filter(p => p.articulo === 'QA-J2')).toHaveLength(4)
+    expect(await valorarEstructura(tx, { ...entrada, opcionAcristalamiento: 2 }))
+      .toMatchObject({ ok: true, precioUnitario: null, piezas: [], materialCompleto: false })
+  }))
+  it('una tabla alternativa sin filas bloquea core y web sin usar la opción principal', () => caso(async tx => {
+    await alternativaAcristalamiento(tx)
+    await tx.delete(schema.tacrisFilas).where(eq(schema.tacrisFilas.tabla, 'QA-T2'))
+    const r = await valorarEstructura(tx, { ...entrada, opcionAcristalamiento: 2 })
+    expect(r).toMatchObject({ ok: true, motor: 'catalogo', precioUnitario: null, materialCompleto: false })
+    if (!r.ok) throw new Error('rechazada')
+    expect(r.aviso).toContain('opción de acristalamiento 2')
+    const catalogo = await leerCatalogoLinea(tx, { estructura: entrada.codigo, serie: entrada.serieCodigo!, vidrio: entrada.vidrioCodigo, tarifa: 1, opcionAcristalamiento: 2 })
+    if (!catalogo) throw new Error('Catálogo sintético ausente')
+    const calculo = despiezarLineaCatalogo(catalogo, { estructura: entrada.codigo, serie: entrada.serieCodigo!, anchoMm: 1200, altoMm: 1300, vidrio: entrada.vidrioCodigo, acabado: 'L', acabadoAccesorios: 'UNI', opcionesGuardadas: [] })
+    expect(calculo.importe).toBeNull()
+    expect(calculo.incidencias.join('; ')).toContain('sin filas persistidas')
+  }))
   it('valora perfiles, asociados, vidrio y mano de obra desde PostgreSQL', () => caso(async tx => {
     const r = await valorarEstructura(tx, entrada)
     expect(r).toMatchObject({ ok: true, motor: 'catalogo', precioUnitario: 139.56, aviso: null, materialCompleto: true })
@@ -124,7 +230,9 @@ describe('valoración con el catálogo de despiece completo', () => {
     expect(r.piezas.map(p => p.articuloCodigo)).toEqual(['QA-MARCO', 'QA-MARCO', 'QA-ROD', 'QA-HOJA', 'QA-ROD', 'QA-HOJA',
       'QA-FELPUDO', 'QA-FELPUDO', 'QA-CIERRE', 'QA-CIERRE', 'QA-VIDRIO', 'QA-VIDRIO', 'MO'])
     expect(r.opcionesHerraje).toEqual([{ categoria: 'QA-HERR', opcionCodigo: '1', descripcion: 'Cierre' }])
-    expect(r.acristalamiento).toHaveLength(2)
+    // Se conserva la identidad de los dos paños del catálogo publicado en Mac.
+    expect(r.piezas.filter(p => p.articuloCodigo === 'QA-VIDRIO')).toHaveLength(2)
+    expect(r.acristalamiento).toEqual([1, 2].map(slot => ({ slot, variante: '2', vidrioHojas: 'QA-VIDRIO', vidrioFijos: null })))
   }))
   it('las cotas de la instancia llegan a las fórmulas de la plantilla', () => caso(async tx => {
     // Travesaño sintético con descuento cero entre montantes: el largo depende solo de A y FI.

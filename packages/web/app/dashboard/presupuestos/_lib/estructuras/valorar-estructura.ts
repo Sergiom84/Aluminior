@@ -13,6 +13,8 @@ import { resolverAcristalamientoEstructura } from './acristalamiento-estructura.
 import { resolverOpcionesHerraje, ErrorSeleccionHerraje } from './herraje.ts'
 import { valorarConCatalogo } from './catalogo-despiece/valorar-con-catalogo.ts'
 import { MOTIVO_HORAS_SIN_CATALOGO, piezasHorasSinValorar } from './horas-por-unidad.ts'
+import { validarCotasEntrada } from './cotas-entrada.ts'
+import { erroresMedidasCatalogo } from './medidas-catalogo.ts'
 import {
   articulosAmbiguos, avisoAmbiguos,
 } from './pvp-articulos.ts'
@@ -39,16 +41,12 @@ export interface EntradaValoracionEstructura {
   horasFabricacion?: string | null
   horasColocacion?: string | null
   /** Cotas de la instancia (`VEstructurasVariables`: FI, FS, F…); solo catálogo completo. */
-  cotas?: Readonly<Record<string, number>> | null
+  cotas?: Readonly<Record<string, number>>
   /** `Comisión` % de la cabecera con `Sumar Comisión`: multiplica el precio de la línea. */
   comisionPorc?: string | null
   tarifa: number
-  opcionesHerraje: readonly string[]
-  /**
-   * Sin selección guardada (documento sin `VOpcionesHerraje`): cada conjunto toma
-   * sus opciones por defecto (`SelecDefSN`) en vez de leer `opcionesHerraje` como
-   * un formulario con todo desmarcado.
-   */
+  /** Ausente: catálogo por defecto. Vacío explícito: opciones visibles desmarcadas. */
+  opcionesHerraje?: readonly string[]
   opcionesPorDefecto?: boolean
   trazabilidad?: boolean
 }
@@ -90,13 +88,17 @@ async function valorarSinComision(
   cliente: ClienteEscritura,
   entrada: EntradaValoracionEstructura,
 ): Promise<ResultadoValoracionEstructura> {
+  const cotasEntrada = validarCotasEntrada(entrada.cotas)
+  if (!cotasEntrada.ok) return { ok: false, errores: { cotas: [cotasEntrada.error] } }
+  const erroresMedidas = erroresMedidasCatalogo({ ...entrada, cotas: cotasEntrada.cotas })
+  if (erroresMedidas) return { ok: false, errores: erroresMedidas }
   const numero = entrada.opcionAcristalamiento ?? 1
   if (!Number.isInteger(numero) || numero < 1 || numero > 5) return { ok: false, errores: { opcionAcristalamiento: ['Opción de acristalamiento inválida'] } }
   if (numero !== 1) {
     const opciones = await opcionesAcristalamientoDeSerie(cliente, entrada.serieCodigo ?? '')
     if (!opciones.some(o => o.numero === numero)) return { ok: false, errores: { opcionAcristalamiento: ['Opción no disponible para la serie'] } }
   }
-  const catalogo = await valorarConCatalogo(cliente, entrada)
+  const catalogo = await valorarConCatalogo(cliente, { ...entrada, cotas: cotasEntrada.cotas })
   if (catalogo) return catalogo
   if (entrada.compacto || entrada.accesorios?.length) {
     return { ok: false, errores: { compacto: ['Los accesorios de línea necesitan el catálogo de despiece completo'] } }
@@ -105,6 +107,9 @@ async function valorarSinComision(
   // coste y línea incompleta. Bloquear el alta dejaba sin presupuesto a quien
   // no tiene el catálogo cargado; omitirlas daba un total menor como completo.
   const horasSinValorar = piezasHorasSinValorar(entrada)
+  if (Object.keys(cotasEntrada.cotas).length) {
+    return { ok: false, errores: { cotas: ['Las cotas de instancia requieren el catálogo completo'] } }
+  }
   const material = await resolverMaterialesEstructura(cliente, entrada)
   if (!material.ok) return { ok: false, errores: material.errores }
   if (entrada.anchoMm === null || entrada.altoMm === null || !entrada.serieCodigo) throw new Error('Material válido sin medidas')
@@ -192,7 +197,7 @@ async function valorarSinComision(
   let opcionesHerraje: OpcionHerrajeElegida[]
   try {
     opcionesHerraje = await resolverOpcionesHerraje(cliente, {
-      serieCodigo: entrada.serieCodigo, estructuraCodigo: entrada.codigo, elegidas: entrada.opcionesHerraje,
+      serieCodigo: entrada.serieCodigo, estructuraCodigo: entrada.codigo, elegidas: entrada.opcionesHerraje ?? [],
     })
   } catch (error) {
     if (error instanceof ErrorSeleccionHerraje) return { ok: false, errores: { opcionHerraje: [error.message] } }

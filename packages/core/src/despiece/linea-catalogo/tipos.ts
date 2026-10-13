@@ -58,6 +58,9 @@ export interface ArticuloCatalogo {
 
 export interface SerieCatalogo {
   codigo: string
+  /** Metadatos originales de Conjuntos, no derivados del nombre de serie. */
+  tipoPerfiles?: string | null
+  familia?: string | null
   /** Columnas `herr*` y `mo*` sin prefijo: `2HC` -> `HU315`. */
   herrajes: Readonly<Record<string, string>>
   manoObra: Readonly<Record<string, string>>
@@ -116,6 +119,8 @@ export interface CompactoLineaCatalogo extends AccesorioLineaCatalogo {
 
 export interface EntradaLineaCatalogo {
   estructura: string
+  /** False solo cuando la fuente acredita la plantilla estándar. */
+  disenoEspecifico?: boolean
   serie: string
   anchoMm: number
   altoMm: number
