@@ -1,12 +1,25 @@
 # Roadmap operativo de paridad con Productor
 
-Actualizado: 13/10/2026 (reconciliación Git del main Mac; C1 y P.6/P.7 conservan su etapa del 12/10). Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
+Actualizado: 13/10/2026 (integración local Windows–Mac cerrada y contrato físico E1; C1 y P.6/P.7 conservan su etapa del 12/10). Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
 Este archivo es el registro único del orden y estado de estas tareas.
 Los documentos de ensayo explican cómo realizarlas; los informes fechados
 conservan evidencia. Sus antiguas listas de pendientes no sustituyen este registro.
 
 
 ## Siguiente paso
+
+**Investigación incremental 13/10:** consultar la
+[extracción diferencial](docs/paridad/EXTRACCION-DIFERENCIAL-CLONERSOFT-2026-10-13.md)
+antes de volver a inventariar fuentes. Las 204 tablas pobladas de la copia
+e851 ya tienen CSV/cabeceras completas; 33 difieren en recuento y no se mezclan.
+Se recuperan contratos físicos/condicionales de E1, tarifa dinámica, almacén,
+compras, cobros, listados y recargo. El [subcontrato físico de E1](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md)
+se implementa como una unidad pura local; la aplicación monetaria conserva su
+bloqueo. Siguiente unidad económica: localizar el llamador monetario E1 con
+esta evidencia; G6 conserva sus límites de autorización.
+El merge Windows–Mac quedó cerrado, revisado y verificado localmente en
+`fa32fba`, con cero conflictos. No repetir su resolución. No se ha publicado
+esta integración ni reconsultado producción.
 
 **Publicación técnica 12/10:** C1 y el tramo de P.6/P.7 están en Render live
 `40cedd1`, con 0031/0032, carga dirigida y QA remoto verificados; ambos CI
@@ -63,7 +76,7 @@ Sin aplicación al presupuesto web ni nueva medición del banco.
 | ID | Trabajo | Estado actual | Prueba necesaria para avanzar o cerrar |
 |---|---|---|---|
 | M0 | Matriz por modelo/serie/regla y ensayos mínimos | Cerrado 03/10/2026 | [Matriz](docs/paridad/MATRIZ-COBERTURA-PRODUCTOR-2026-10-03.md), 97 pares, 47 pruebas, typechecks y arquitectura; no volver a crearla, regenerar si cambian las fuentes |
-| E1 | Despunte de cabecera: base, momento y reparto | En curso 04/10/2026; G1–G5 verificados, G6-incidencia preservada | [Evidencia](docs/paridad/EVIDENCIA-E1-DESPUNTE-2026-10-04.md): alta independiente/reparto por bases/persistencia demostrados. Pendiente autorización para quitar solo tercer GRUPO de incidencia y verificar edición sin alta antes de precisión. Sin aplicación web ni nueva medición |
+| E1 | Despunte de cabecera: base, momento y reparto | En curso; subcontrato físico/condicional implementado y verificado localmente 13/10; G1–G5 y G6-incidencia preservados | [Entrega local](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md): 67 pruebas nuevas, identidad triple, metraje/cortes, largo explícito y selección condicional; revisión independiente. Sin activar cabecera, adaptar snapshots o expandir acabados dependientes. Pendientes monetarios: filas comerciales, base bruta/neta, cantidades y precisión. Siguiente estático: referencias VPresupDespunte.cmAceptar_Click/FinalCalculo; observar G6 requiere autorización propia |
 | E2 | Unión material de otra serie en GRUPO | Pendiente | Selección desde diagnóstico privado de los ocho casos de iteración 13; código/serie/acabado y geometría demostrados, sin extrapolar U |
 | E3 | Comisión: orden de redondeo y edición de líneas guardadas | Pendiente | Caso 0/−10/+10, suma de filas y momento de aplicación; separar cantidades/horas; seis residuos comunicados |
 | E4 | Tapajuntas de puerta con inferior SI/NO | Pendiente | GMT004, 1P 867×2098 con serie/ala/cajón reales; comparación lateral y travesaño |
@@ -92,6 +105,43 @@ A1 y D1: [estado operativo](docs/ESTADO-ACTUAL.md).
 Los recuentos se solapan: no sumarlos como previsión de líneas recuperadas.
 El orden es una prioridad, no una obligación de detenerse si una fuente concreta
 falta: registrar qué falta y avanzar con otra tarea autorizada e independiente.
+
+## Reconciliación de hallazgos ClonerSoft — 13/10
+
+Registro de cobertura del encargo dentro de este roadmap; no crea otro orden
+ni IDs paralelos. «Implementación pendiente» requiere contrato y aceptación
+antes de construir. Extraído no equivale a implementado o verificado.
+
+| Hallazgo | Prioridad / etapa | Frontera o siguiente condición |
+|---|---|---|
+| Datos y maestros, catálogo, cabecera/GRUPO, materiales, cortes, herrajes, vidrio, MO, compacto, tapajuntas, metraje, PVP, comisión, uniones y fracciones | Reutilizado, con los límites de E1–E11 y M0 | No repetir inventario/carga ni convertir disponibilidad en aceptación; 204 CSV y 33 diferencias de instantánea preservados |
+| Precio dimensional y acabado del artículo | Reutilizado: C1 técnico publicado/verificado | Coste dimensional sigue separado; 0031/0032/carga no se repiten |
+| Despunte físico/condicional | Ahora — E1, implementado y verificado localmente | [Contrato/entrega](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md); 67 pruebas y revisión independiente; sin adaptar snapshots ni activar cabecera |
+| Despunte monetario | Ahora — E1, pendiente de evidencia | Llamador, filas comerciales, base bruta/neta, cantidades y precisión; G6 pendiente de autorización propia |
+| Coste dimensional | Ahora — pendiente de evidencia | Proveedor, medidas, divisa, gastos y precedencias; no reutilizar selector PVP |
+| Coste calculado | Ahora — pendiente de evidencia/configuración | Material por peso + acabado por superficie; unidades y activación sin confirmar |
+| Tarifa dinámica | Ahora — contrato estático parcial, activación pendiente de evidencia | Cuatro búsquedas conocidas; grupo aplicable, solapamientos, redondeo y caso positivo pendientes |
+| Descuento máximo primero | Ahora — pendiente de evidencia | Límite independiente; falta efecto visible y al guardar; no recorte silencioso |
+| Descuento máximo segundo | Ahora — pendiente de evidencia | Límite independiente; falta precedencia y efecto al guardar |
+| Recargo energético y precios especiales | Ahora — pendiente de configuración | Familia/subfamilia, medida/corte, alternativa general y mínimo; excepción del artículo concreto; sin migración histórica |
+| Pedidos de compra | Reutilizado | Estado RECIBIDO no acredita recepción física |
+| Movimientos de almacén | Después — contrato/implementación pendientes | Artículo/acabado/dimensiones/almacén, proveedor y precio; cantidades/reintentos/concurrencia como decisiones técnicas |
+| Reservas, consumos y restos | Después — contrato/implementación pendientes | Separar existencias/reserva/consumo, parciales, estados y reversión con historial |
+| Recepciones completas/parciales | Después — implementación pendiente | Depende del contrato de movimientos; conciliación de entregas y pendientes |
+| Facturas de compra | Después — contrato/implementación pendientes | Agrupar albaranes del mismo proveedor; línea de origen opcional, trazabilidad persistente por especificar |
+| Producción y optimización 1D | Reutilizado | Ampliar tras contrato de almacén; no reconstruir hojas ni inferir fabricación aceptada |
+| Documentos de venta/facturas/vencimientos | Después — contrato pendiente | Demostrar relaciones antes de ampliar el ciclo comercial |
+| Cobros parciales, historial y reversión | Después — contrato/implementación pendientes, en serie | Depende de vencimientos; conciliación, idempotencia y permisos; fiscal/bancario requiere especificación propia |
+| PDF de presupuesto | Reutilizado: P.2 técnico | Aceptación comercial pendiente; no sustituye informes operativos |
+| Informes configurables | Después — contrato/implementación pendientes | Columnas, filtros, agrupaciones y totales sobre datos disponibles, con permisos |
+| Consultas rápidas | Después — extraídas | 91 plantillas / 59 nombres; no ejecutar o trasplantar SQL legado |
+| Exportación de tablas | Después — contrato/implementación pendientes | Filas/columnas autorizadas, filtros/selección y formato fiel |
+| Horas por trabajador/obra/tarea | Después — contrato/implementación pendientes | Distintas de horas manuales presupuestadas |
+| Agenda y asignaciones | Después — contrato/implementación pendientes | Tipos de tarea, usuarios y uso real |
+| Calidad e incidencias | Después — contrato/implementación pendientes | Orden, controles e historial; no certificación legal |
+| Planificación avanzada, CNC y mecanizados | Experimental — evidencia insuficiente | Entradas/salidas/aceptación antes de construir; páginas vacías no son contrato |
+| Integraciones sin documentación completa | Experimental — evidencia insuficiente | Especificación propia; ningún descarte de comportamiento se presume |
+| Bitmap propietario omitido de DisForTrazos | Fuera de alcance de copia | Omisión explícita conservada; no publicar o reutilizar recursos propietarios |
 
 ## Ciclo de cada regla
 

@@ -118,6 +118,12 @@ vaciar documentos y no se utiliza como procedimiento de producción.
 - ETL: CLI separado de `importacion/index.ts` y cargadores por responsabilidad.
 - Diseño: tipos, catálogo, composición y representación separados.
 - Producción: documento, parámetros de sierra, extremos y orientación separados.
+- `core/produccion/despunte-catalogo/` prepara grupos físicos y selección
+  condicional E1 con entradas explícitas, sin I/O. Metraje decimal textual,
+  identidad artículo/acabado/tonalidad y procedencia línea/detalle; las incidencias
+  bloquean la salida completa. Su entrada pública es `@aluminior/core/produccion`.
+  No sustituye `despunte.ts` técnico ni aplica cargos al presupuesto: adaptador,
+  acabados dependientes, coste y llamador monetario siguen pendientes de contrato.
 - Precios: valoración individual separada del recálculo masivo de tarifas.
 - Esquema: series compuesta por catálogo, acristalamiento, herraje y rebajes.
 - Estilos: `globals.css` compone hojas conservando el orden de cascada.

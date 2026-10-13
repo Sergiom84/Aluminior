@@ -16,13 +16,30 @@ El [roadmap operativo](../ROADMAP-PARIDAD-PRODUCTOR.md) conserva el orden y
 estado único de las tareas de paridad, con mantenimiento documental obligatorio.
 
 
-## Reconciliación Windows — 13/10/2026 (verificación en curso)
+## ClonerSoft E1 — implementación local parcial, 13/10/2026
+
+[Contrato y entrega](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md):
+`core/produccion/despunte-catalogo/` prepara grupos artículo/acabado/tonalidad,
+metraje decimal exacto, cantidades de cortes y largo de barra explícito.
+La selección condicional respeta filtros conjuntivos y prioridad; los empates
+y los datos insuficientes bloquean. Son funciones independientes, sin conectar
+presupuestos o producción ni escribir cargos. 67 pruebas nuevas y 1.957
+pruebas de paquetes correctas, una omisión previa por CSV privado; tipos y
+arquitectura correctos, revisión independiente y aserción de origen reforzada.
+La aceptación monetaria E1 permanece abierta.
+La investigación estática localiza nombres candidatos del controlador de
+Aceptar despunte, sin demostrar base, cantidades económicas ni redondeo.
+Los detalles, fuentes, contenciones y continuidad están en el contrato y
+la [reconciliación del roadmap](../ROADMAP-PARIDAD-PRODUCTOR.md).
+
+## Reconciliación Windows — 13/10/2026 (cerrada localmente)
 
 Integración autorizada de `origin/main` `913dd43` con los siete commits
 locales de septiembre, hasta `97099bc`. El main posterior del Mac conserva
 el estado operativo vigente; las ampliaciones compatibles de catálogo,
 cotas, TMP, dibujo y PDF se recuperan sin convertir los ensayos de septiembre
 en aceptación económica o fabricación.
+Commit local `fa32fba`, con ambos padres y cero conflictos; todavía sin publicar.
 
 Se preservan los informes [fase 7/07–13](paridad/fase-7/13-cierre-cotas-c2.md)
 y [fase 8/00–13](paridad/fase-8/13-cotas-economicas-y-relevo.md) como evidencia
@@ -222,7 +239,12 @@ Los nueve documentos anteriores y tres líneas conservan sus huellas.
 
 ## Siguiente paso
 
-**Windows:** recepción y fuentes privadas → aceptación comercial P.2 con el
+**ClonerSoft/E1 local:** preparación física/condicional entregada; continuar
+por las referencias estáticas de `VPresupDespunte.cmAceptar_Click` y
+`FinalCalculo`, con las preguntas monetarias del [contrato](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md).
+No repetir la integración `fa32fba` ni construir otra preparación física.
+
+**Windows, observación pendiente:** recepción y fuentes privadas → aceptación comercial P.2 con el
 titular; investigación económica E1 desde G6-incidencia y E7 tras A4, según
 [la guía](CONTINUAR-EN-WINDOWS.md). No repetir A3/A4 ni migraciones.
 
@@ -256,7 +278,7 @@ En curso: [manual y contraste guardado del 04/10](paridad/EVIDENCIA-E1-DESPUNTE-
 acreditan la resta de costes en 13 documentos positivos con detalle de otra
 copia Windows; ocho discrepancias y un cargo sin detalle se conservan.
 La huella difiere de la del banco; no sustituye su medición ni resuelve sus diez
-candidatas. Motor y UI sin cambios. No repetir esa investigación; comprobar
+candidatas. Motor y UI no cambiaron en aquella observación. No repetir esa investigación; comprobar
 evidencia posterior. A–F conservados: C2 GMC400 1500×1150, VCG4 y acabado L;
 segunda línea por duplicación. Recálculo sustituye el cargo; repetición y
 reapertura conservan resultado. Copia privada F de 0017 verificada y lector
@@ -274,7 +296,8 @@ Siguiente: autorización solicitada para retirar solo tercer GRUPO y confirmar
 edición segura de segunda línea antes de comparación de precisión. Las dos
 líneas previas siguen idénticas a G4/G5. No repetir A–F, G1–G5 ni diagnóstico
 GID. Descuentos cero/cantidad 1 no discriminan base bruta/neta. E1 sigue En
-curso; motor y banco sin cambios. Retirar instrucciones agotadas y preservar
+curso; cargo presupuestario y banco conservados. El subcontrato físico local
+del 13/10 se registra por separado arriba. Retirar instrucciones agotadas y preservar
 evidencia al completar cada etapa.
 
 Comisión sí está en Gastos. Los campos de horas de fabricación/colocación están

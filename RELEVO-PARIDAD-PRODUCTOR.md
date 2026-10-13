@@ -1,5 +1,25 @@
 # Relevo: paridad y fuentes de Productor
 
+Investigación Windows del 13/10:
+[extracción diferencial ClonerSoft](docs/paridad/EXTRACCION-DIFERENCIAL-CLONERSOFT-2026-10-13.md).
+Reutilizar su inventario, matriz de 30 dominios y contratos estáticos antes de
+repetir extracción. E1 recibe evidencia física/condicional, no cierre económico.
+Los 204 CSV ya contienen las cabeceras de todas las tablas pobladas de la copia;
+33 recuentos diferentes impiden mezclar instantáneas. Evidencia privada local en
+`output/clonersoft-20261013/`, sin publicación ni recepción acreditadas.
+El merge Windows–Mac quedó cerrado y verificado localmente en `fa32fba`:
+1.890 pruebas de paquetes y diez recorridos E2E correctos, tipos y arquitectura
+correctos, revisión independiente y corrección de sus dos hallazgos. Sin
+publicación ni nueva comprobación remota. No repetir esa integración.
+Entregado localmente: [contrato físico E1](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md),
+67 pruebas nuevas, 1.957 pruebas de paquetes correctas, tipos, arquitectura y
+revisión independiente. No repetir esta preparación pura. Siguiente E1:
+referencias estáticas de `VPresupDespunte.cmAceptar_Click` / `FinalCalculo`;
+el cargo monetario continúa bloqueado por evidencia. G6 conserva su autorización
+pendiente. El roadmap reconcilia todos los hallazgos del encargo sin cerrar
+los módulos pendientes ni publicar/desplegar esta entrega local.
+Siguiente acción económica y estados: [roadmap](ROADMAP-PARIDAD-PRODUCTOR.md).
+
 
 Publicación técnica 12/10 desde worktree `productor-clonersoft/Aluminior`:
 [investigación](docs/paridad/INVESTIGACION-CLONERSOFT-2026-10-12.md) y

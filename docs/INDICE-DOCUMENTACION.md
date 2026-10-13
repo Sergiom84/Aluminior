@@ -12,6 +12,9 @@ propuesta entonces exclusiva del main local (integrada como herramienta el 13/10
 
 | Documento | Uso |
 |---|---|
+| [Contrato y lote E1 ClonerSoft 13/10](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md) | Integración local `fa32fba`, preparación física/selección condicional y aceptación; cargo económico y adaptador pendientes |
+| [Encargo ClonerSoft 13/10](paridad/ENCARGO-IMPLEMENTACION-CLONERSOFT-2026-10-13.md) | Alcance de implementación local, fuentes y protecciones; el roadmap conserva etapas/orden |
+| [Extracción diferencial 13/10](paridad/EXTRACCION-DIFERENCIAL-CLONERSOFT-2026-10-13.md) | Evidencia estática/documental reutilizable, inventarios y límites; fotografía de integración abierta anterior a `fa32fba` |
 | [Publicación ClonerSoft 12/10](paridad/PUBLICACION-CLONERSOFT-2026-10-12.md) | `40cedd1` live, 0031/0032/carga, respaldo/restauración, CI y QA remoto/preservación; C1 técnico acotado y P.6/P.7 parcial |
 | [Investigación ClonerSoft 12/10](paridad/INVESTIGACION-CLONERSOFT-2026-10-12.md) | Fuentes/ejercicios, REA efectiva, contrato C1 dimensional, evidencia local y enlace a su publicación; E1/E2/E6 abiertos |
 | [Continuar en Windows](CONTINUAR-EN-WINDOWS.md) | Recepción, fuentes privadas, P.2, E1/E7 y prompt de continuación |

@@ -7,6 +7,13 @@ al roadmap. [Auditoría y límites de esta revisión](AUDITORIA-DOCUMENTAL-2026-
 
 ## 1. Recibir el trabajo correcto
 
+Actualización local Windows, 13/10: la integración con el catálogo de septiembre
+quedó cerrada en `fa32fba`, rama `codex/integracion-windows-mac-20261013`, con
+cero conflictos y gates/revisión correctos. El [lote E1](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md)
+conserva aparte preparación física y cargo económico. Estos commits locales
+todavía no están publicados: recibir `origin/main` no los entrega. Inspeccionar
+esta rama antes de crear otro checkout o repetir la integración.
+
 El main principal del Mac se reconcilia el **13/10/2026** con `origin/main`
 `4fb54b3`, conservando las mejoras del 09–12/10 y los commits locales pendientes.
 Sergio autoriza revisar y subir todos los cambios pendientes. La herramienta
@@ -120,6 +127,13 @@ entradas o tarifas difieren, separar formato de comparación económica.
 El pendiente P.2 sigue abierto hasta esta aceptación; no repetir su corrección técnica.
 
 ### E1: recuperar el ensayo de despunte
+
+Continuación ClonerSoft del 13/10: la preparación física/condicional pura ya
+está implementada y verificada; no reconstruirla. El siguiente paso estático
+son referencias de `VPresupDespunte.cmAceptar_Click` / `FinalCalculo` para
+resolver el cargo monetario. Leer el [lote local](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md).
+Los pasos de observación siguientes son una vía separada y conservan la
+autorización pendiente de G6; este lote no autoriza ejecutar el original.
 
 Leer [PASO-E1-DESPUNTE](paridad/PASO-E1-DESPUNTE.md) y su evidencia del 04/10.
 A–F, G1–G5 y el margen GID que explica los dos céntimos ya están demostrados.
