@@ -7,6 +7,7 @@ import { PestanaEstructura, type PropsPestanaEstructura } from './editor-linea/p
 import { ErroresSeleccion } from './editor-linea/errores-seleccion.tsx'
 import { PestanaHerraje } from './editor-linea/pestana-herraje.tsx'
 import { PestanaAcristalamiento } from './editor-linea/pestana-acristalamiento.tsx'
+import { claveCatalogoHerraje, type EstadoCargaCatalogo } from './editor-linea/disponibilidad-catalogos.ts'
 
 const entrada = 'w-full rounded-md border px-3 py-2 text-sm'
 const estilo = { background: 'var(--al-surface)', borderColor: 'var(--al-border-strong)' }
@@ -23,7 +24,11 @@ const PESTANAS: readonly PestanaEditor[] = [
   { id: 'acristalamiento', etiqueta: 'Acristalamiento' },
 ]
 
-export function EditorLineaEstructura(props: PropsPestanaEstructura & { onCambiarEstructura: () => void }) {
+export function EditorLineaEstructura(props: PropsPestanaEstructura & {
+  onCambiarEstructura: () => void
+  onHerrajeChange: (estado: EstadoCargaCatalogo) => void
+  onAcristalamientoChange: (estado: EstadoCargaCatalogo) => void
+}) {
   const { plantilla, acabados, acabado, anchoMm, altoMm, serie, vidrio, variante, onCambiarEstructura } = props
   const [activa, setActiva] = useState('estructura')
   const acabadoEtiqueta = acabados.find((item) => item.codigo === acabado)
@@ -44,8 +49,9 @@ export function EditorLineaEstructura(props: PropsPestanaEstructura & { onCambia
       <PestanasEditor etiqueta="Edición de Línea" pestanas={PESTANAS} activa={activa} onCambiar={setActiva}
         paneles={{
           estructura: <PestanaEstructura {...props} />,
-          herraje: <PestanaHerraje serie={serie} estructuraCodigo={plantilla.codigo} />,
-          acristalamiento: <PestanaAcristalamiento serie={serie} />,
+          herraje: <PestanaHerraje key={claveCatalogoHerraje(serie, plantilla.codigo)} serie={serie}
+            estructuraCodigo={plantilla.codigo} onEstadoChange={props.onHerrajeChange} />,
+          acristalamiento: <PestanaAcristalamiento key={serie} serie={serie} onEstadoChange={props.onAcristalamientoChange} />,
         }} />
 
       <ErroresSeleccion errores={props.err} />

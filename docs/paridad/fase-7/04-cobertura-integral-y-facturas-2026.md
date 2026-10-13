@@ -1,6 +1,6 @@
 # Cobertura integral y contraste con facturas de 2026
 
-> Estado operativo: [ESTADO-ACTUAL.md](../../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites.
+> Estado operativo: [ESTADO-ACTUAL.md](../../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites. El orden y estado de tareas pertenece al [roadmap vigente](../../../ROADMAP-PARIDAD-PRODUCTOR.md); sus encargos, permisos y pendientes fechados no se reactivan.
 
 27/09/2026. Alcance confirmado por Sergio: cubrir todas las tipologías,
 series y uniones disponibles en su Productor, conservando su funcionamiento

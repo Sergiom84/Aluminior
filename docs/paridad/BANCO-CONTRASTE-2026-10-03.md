@@ -1,5 +1,7 @@
 # Banco de contraste de presupuestos — 03/10/2026
 
+> Referencia fechada; conservar evidencia y límites. No ejecutar sus pendientes o permisos como instrucciones actuales. Consultar el [roadmap vigente](../../ROADMAP-PARIDAD-PRODUCTOR.md).
+
 **76,48 % de las líneas elegibles salen al mismo precio efectivo que Productor: 400/523.**
 En 2026: **80,65 % (400/496)**.
 Se mide coincidencia numérica de la copia y del código actual, no aceptación comercial ni certificación de fabricación.

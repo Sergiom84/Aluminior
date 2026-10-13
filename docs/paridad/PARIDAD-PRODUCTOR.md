@@ -1,6 +1,7 @@
 # Paridad con Productor Aluminio
 
-Mapa de evidencia y aceptación, revisado contra main `9bc879e`.
+Mapa de evidencia y aceptación: base `9bc879e`, continuidad documental
+reconciliada el 10/10/2026 con `origin/main` `9673659`.
 El estado operativo se consulta en [ESTADO-ACTUAL.md](../ESTADO-ACTUAL.md).
 
 ## Objetivo y fuentes
@@ -24,7 +25,8 @@ dibujo, descripción, medidas, cantidad, precio y horas manuales explícitas.
 
 | Capacidad | Código y evidencia disponibles | Contraste pendiente |
 |---|---|---|
-| Guardado, reapertura y copia | Servicios transaccionales; [fase 1](fase-1/00-resumen.md) | Recorrido integral con errores y doble envío |
+| Guardado, reapertura y copia | Servicios transaccionales; [fase 1](fase-1/00-resumen.md) | [A3 publicado](IDEMPOTENCIA-PRESUPUESTOS-2026-10-09.md): reintentos y pérdida HTTP locales; publicación y recibos remotos verificados. Resta comparación integral con Productor |
+| Medidas fraccionarias | [A4/0030 publicado y verificado](MEDIDAS-Y-CI-2026-10-09.md): alta, edición, recarga, copia y PDF | E7 sigue pendiente con C2 y configuración real idéntica a Productor; no repetir implementación |
 | Composición 2D | Configuración v3 compatible; [geometría](fase-2/03-aceptacion-local.md) y [composición](fase-3/01-evidencia-composicion.md) | Mismas tareas y entradas en ambos sistemas |
 | Catálogo y correderas | Plantillas verificadas y generadas; [catálogo real](CATALOGO-REAL-2026-10-02.md) | Tipologías no representables, mano 58 y sentido de correderas |
 | Materiales por elemento | Excepciones y modelos iguales; [fase 4](fase-4/01-evidencia-actualizar-y-diseno-v3.md) | Herencia y «Actualizar todos» |
@@ -32,7 +34,7 @@ dibujo, descripción, medidas, cantidad, precio y horas manuales explícitas.
 | Uniones | Catálogo y longitud; [fase 6](fase-6/00-resumen.md) | Reparto de grosor y compatibilidad |
 | Despiece y precio | [Reglas](fase-7/06-reglas-catalogo-despiece-completo.md), [banco](BANCO-CONTRASTE-2026-10-03.md) y [matriz modelo/serie/regla](MATRIZ-COBERTURA-PRODUCTOR-2026-10-03.md) | Ramas sin contraste, acabados efectivos y ensayos mínimos; aceptación en producción pendiente |
 | Horas manuales | [Especificación y mediciones](SPEC-MANO-DE-OBRA.md) | Aceptación integral; fabricación base es otra vía |
-| PDF | Configuración y resultados persistidos; [fase 7](fase-7/00-resumen.md) | Varias páginas y recorrido integral por teclado |
+| PDF | Configuración y resultados persistidos; [fase 7](fase-7/00-resumen.md); [P.2 publicado 09/10](PDF-MULTIPAGINA-2026-10-09.md), 21 páginas sintéticas y endpoint local de 4 páginas | Endpoint desplegado comprobado (260009, 1 página, 805,65 €); aceptar formato comercial Productor/titular; recorrido integral por teclado |
 
 Código disponible no significa aceptación ni funcionamiento verificado en
 producción. Los informes conservan sus fechas y límites.

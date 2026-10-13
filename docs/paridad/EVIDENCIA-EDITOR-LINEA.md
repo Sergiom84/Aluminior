@@ -1,6 +1,6 @@
 # Evidencia: pestañas del editor de línea
 
-> Estado operativo: [ESTADO-ACTUAL.md](../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites.
+> Estado operativo: [ESTADO-ACTUAL.md](../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites. El orden y estado de tareas pertenece al [roadmap vigente](../../ROADMAP-PARIDAD-PRODUCTOR.md); sus encargos, permisos y pendientes fechados no se reactivan.
 
 > Revisión documental 20/09/2026: **Evidencia fechada**. CHM, captura y vídeo con límites; implementación posterior no cambia la observación.
 > Para continuar: [estado actual](../ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.

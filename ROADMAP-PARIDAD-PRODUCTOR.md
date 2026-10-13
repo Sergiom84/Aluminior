@@ -1,12 +1,31 @@
 # Roadmap operativo de paridad con Productor
 
-Actualizado: 04/10/2026. Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
+Actualizado: 10/10/2026 (reconciliación documental; sin nueva implementación). Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
 Este archivo es el registro único del orden y estado de estas tareas.
 Los documentos de ensayo explican cómo realizarlas; los informes fechados
 conservan evidencia. Sus antiguas listas de pendientes no sustituyen este registro.
 
 
 ## Siguiente paso
+
+**Continuidad Windows:** seguir [la guía](docs/CONTINUAR-EN-WINDOWS.md),
+recibir código/documentación y localizar fuentes privadas. P.2: aceptación
+comercial con el titular. E1: recuperar el ensayo tras G6-incidencia con la
+autorización de borrado aún pendiente; después discriminar precisión. E7:
+contraste Productor de fracciones, con A4 ya publicado. Esta entrega no
+reabre tareas técnicas cerradas ni cambia el orden E1–E11.
+
+**S3 verificado en CI el 09/10:** 1.448 pruebas correctas/una condicionada a CSV privado, seis recorridos de navegador, tipos, arquitectura y build en 36a47f4. Siguiente Mac: tramo técnico P.6/P.7, teclado/foco/responsive. [Evidencia](docs/paridad/MEDIDAS-Y-CI-2026-10-09.md#s3-validación-completa-de-los-paquetes-en-ci--09102026).
+
+**A3 publicado/verificado el 09/10 en `a06cd4f`, con 0029 aplicada.** A4 publicado/verificado en `487feb1`: 0030 aplicada, conexiones renovadas y alta/edición/recarga/copia/PDF decimales comprobados en producción. A5 verificado en GitHub Actions (run 37971854995, seis recorridos correctos). D1 reconciliado localmente. [Informe](docs/paridad/MEDIDAS-Y-CI-2026-10-09.md). E1 depende de Windows; P.2 conserva aceptación comercial y S2 el anuncio del 14/10.
+
+**S1 y A2 publicados y verificados el 09/10**, Render live `7ad0ee2`: dependencias
+sin avisos npm publicados a la fecha, 1.431 pruebas y miniaturas de conjunto.
+260009 reguardado/recargado conserva 805,65 € y avisos. [Informe y límites](docs/paridad/MANTENIMIENTO-Y-MINIATURAS-2026-10-09.md).
+**S2**: revisar el anuncio Next previsto para el 14/10 cuando se publiquen las
+versiones afectadas/corregidas. Sin seguimiento automático creado.
+
+### Siguiente investigación económica
 
 **E1 — demostrar el cálculo y reparto del despunte.**
 Continuar [PASO-E1-DESPUNTE](docs/paridad/PASO-E1-DESPUNTE.md) desde los resultados A–F conservados.
@@ -40,14 +59,23 @@ Sin aplicación al presupuesto web ni nueva medición del banco.
 | E3 | Comisión: orden de redondeo y edición de líneas guardadas | Pendiente | Caso 0/−10/+10, suma de filas y momento de aplicación; separar cantidades/horas; seis residuos comunicados |
 | E4 | Tapajuntas de puerta con inferior SI/NO | Pendiente | GMT004, 1P 867×2098 con serie/ala/cajón reales; comparación lateral y travesaño |
 | E5 | Compacto y metraje COMPVAL | Pendiente | Identificar hueco/ventana/accesorio, COM009, cajón, vuelos y opciones; discriminar 4,93/4,94 con PVP vigente |
-| E6 | Acristalamiento alternativo y vidrio por elemento | Pendiente | Mapeo observado de opción/nTAcris/tablas/junquillos/juntas; iniciar con 1/2/3 y mismo vidrio |
-| E7 | Conservación de medidas fraccionarias | Pendiente de observación | C2 970×439,5 y 970×1999,5: entrada, cortes, guardar/reabrir; configuración histórica ya resuelta, no reimplementar |
+| E6 | Acristalamiento alternativo y vidrio por elemento | Contención publicada 09/10; paridad pendiente | Motor catálogo rechaza precio falso de opción 1 para opción alternativa y guarda incompleto.  Mapeo observado de opción/nTAcris/tablas/junquillos/juntas; iniciar con 1/2/3 y mismo vidrio |
+| E7 | Conservación de medidas fraccionarias | Pendiente de contraste Productor; A4 web verificado 09/10 | C2 970×439,5 y 970×1999,5 con configuración real fijada: entrada, cortes, guardar/reabrir. 0030 y persistencia web ya entregados; no repetir migración ni equiparar el fijo sintético A4 con esta receta |
 | E8 | Tramos y opciones de herraje | Condicionado | Solo si falta cobertura tras catálogo/CHM/diagnóstico; límite real del corte de hoja, no dimensión exterior supuesta |
 | E9 | Referencias, cotas y divisiones restantes | Condicionado | Aislar cadena en los cortes discrepantes; predicción independiente de la instancia |
 | E10 | Acabado efectivo UNI/L y selección PVP | Pendiente de investigación | Comparar acabado de pieza, selector y tarifa; no normalizar por coincidencia económica |
 | E11 | Mínimos, múltiplos e intervalos restantes | Condicionado | Usar límites reales de catálogo y entradas compatibles a ambos lados de cada frontera |
-| A1 | Aceptación en web publicada | Pendiente; independiente de los ensayos | Valorar, guardar, recargar y PDF del caso recibido; precio actual, sin exigir el antiguo 652,24 € |
-| D1 | Reconciliar ficha de acceso de July | Pendiente documental | Actualizar información antigua con fuente/fecha del relevo; distinguir verificación recibida de comprobación directa |
+| A1 | Aceptación en web publicada | Cerrado el recorrido auditado 09/10 | [Auditoría](docs/paridad/AUDITORIA-FUNCIONAL-2026-10-09.md): Render live f6d5bcd, 260009 guardado/recargado y PDF válido 805,65 €. Visor IAB gris, archivo comprobado aparte. No certifica todas las familias, fabricación ni precio |
+| S1 | Mantenimiento de dependencias | Publicado/verificado 09/10 | b1682a3 incluido en Render live 7ad0ee2; audit 11→0 / producción 4→0; ci, 1.431 tests, tipos, arquitectura y build correctos. Guardado/recarga/PDF 260009; no cubre el anuncio futuro S2 |
+| S2 | Revisar anuncio de seguridad Next.js del 08/10 | Pendiente de publicación prevista 14/10 | Consultar advisory y versiones cuando estén publicados; alcance aún desconocido. No darlo por corregido porque el audit actual quede limpio. Fuente en informe de mantenimiento; sin automatización creada |
+| A2 | Miniatura del GRUPO completo | Publicado/verificado 09/10 | 7ad0ee2; tres módulos desiguales con dos uniones guardados/reabiertos en QA, SVG/PDF completos; teclado y escritorio/móvil. Basado en RECON-CERRAMIENTOS §4 quater; sin cambios de valoración |
+| A3 | Idempotencia de nueva cabecera y copia | Publicado/verificado 09/10 | a06cd4f live; 0029 aplicada, RLS y documentos previos conservados. Alta/copia/revisión sintéticas y tres reintentos READ ONLY remotos con mismos IDs; pérdida HTTP física local. Ver informe A3 |
+| P.2 | Aceptación PDF multipágina | Paginación publicada/verificada 09/10; formato comercial pendiente | [Informe](docs/paridad/PDF-MULTIPAGINA-2026-10-09.md): 6 escenarios, 21 páginas, 628 marcadores, 28 bloques; endpoint local 12 líneas/4 páginas. 741 tests web, tipos/build/arquitectura. Render live 46c613d, endpoint 260009 verificado (1 página, 805,65 €); formato comercial Productor/titular pendiente. July 205 |
+| A4 | Conservar medidas exteriores decimales | Publicado/verificado 09/10 | Render live 487feb1, 0030 aplicada; alta/edición/recarga/copia/PDF decimales en producción, documentos previos intactos. 757 tests web y 56 BD. No cierra E7 |
+| A5 | Recorrido sintético de navegador en CI | Verificado local y CI 09/10 | Seis recorridos escritorio/móvil: postcommit, medidas, latencia/fallo de catálogo y teclado; GitHub Actions run 37971854995 correcto |
+| S3 | Validación completa de paquetes en CI | Verificado local y CI 09/10 | 9bf9a64/36a47f4: 1.448 tests correctos/uno condicionado a CSV privado; tipos, arquitectura y build, run 37978474635. Seis recorridos, run 37978474739. Corrige test ETL obsoleto y contrato de fixture PDF; no toca producción |
+| P.6/P.7 | Teclado, foco y adaptación responsive | Pendiente; tramo técnico abordable desde Mac | July 206: auditar foco, teclado, overflow, zoom 200% y reduced motion. Correcciones técnicas verificables localmente; contraste integral Productor y aceptación humana separados |
+| D1 | Reconciliar ficha de acceso de July | Cerrado local 09/10 | Ficha actualizada con comprobación directa A4, Render live 487feb1 y 31 migraciones; historial fechado preservado. Sin sync/recepción acreditados |
 
 Detalles E2–E11: [ensayos mínimos](docs/paridad/ENSAYOS-MINIMOS-PRODUCTOR-2026-10-03.md).
 A1 y D1: [estado operativo](docs/ESTADO-ACTUAL.md).
@@ -119,10 +147,15 @@ a pedir el trabajo cerrado y que las menciones antiguas restantes se identifican
 claramente como evidencia histórica. Los detalles históricos no prevalecen
 sobre este registro y ESTADO-ACTUAL.
 
+Cierre A3, 09/10/2026: a06cd4f live en Render y migración 0029 aplicada.
+Tres operaciones sintéticas y sus recibos comprobados; documentos anteriores intactos.
+
 ## Cierres registrados
 
 | Fecha | Tarea | Evidencia / mantenimiento realizado |
 |---|---|---|
+| 09/10/2026 | S1/A2 | Publicadas en 7ad0ee2; audit 0, 1.431 pruebas, QA completa de tres módulos y prueba publicada 260009 con importes conservados. Estado/roadmap/relevo actualizados; siguiente P.2, S2 condicionado a publicación 14/10 |
+| 09/10/2026 | A1 | Correcciones f6d5bcd publicadas; 260009 editado/guardado/recargado y PDF descargado válido. Informe, estado, índice y relevo actualizados. Límites de catálogo y visor IAB conservados; S1 siguiente |
 | 03/10/2026 | M0 | Matriz e informe reproducible entregados; estado, paridad, banco e índice actualizados |
 | 03/10/2026 | Roadmap y preparación de E1 | Procedimiento de despunte creado; regla de mantenimiento incorporada a AGENTS; relevo de raíz actualizado y ensayos remitidos a este registro. E1 sigue pendiente de ejecución |
 
@@ -136,7 +169,14 @@ ese corpus con el banco vigente ni cerrar por la coincidencia de costes.
 ## Instrucción breve para continuar
 
 > Lee AGENTS.md, docs/ESTADO-ACTUAL.md y ROADMAP-PARIDAD-PRODUCTOR.md.
-> Continúa la primera tarea abierta que pueda avanzar; actualmente E1 mediante
+> S1/A2 publicados y verificados; lee docs/paridad/MANTENIMIENTO-Y-MINIATURAS-2026-10-09.md.
+> P.2 publicado y verificado en 46c613d: lee docs/paridad/PDF-MULTIPAGINA-2026-10-09.md.
+> A3 publicado/verificado en a06cd4f y 0029 aplicada: lee docs/paridad/IDEMPOTENCIA-PRESUPUESTOS-2026-10-09.md. No repetir.
+> P.2: sólo queda aceptación comercial, July 205; no repetir paginación.
+> Checkout aislado a3-idempotencia/Aluminior, rama codex/ci-validacion-completa desde origin/main eb3b53c. Comprobar estado remoto antes de continuar; main local contiene cambios ajenos.
+> S2 requiere revisar el anuncio Next cuando se publiquen versiones el 14/10. No repetir S1/A2.
+> Mac: A4 publicado/verificado en 487feb1, 0030 aplicada; A5 CI alojada correcta, run 37971854995; D1 cerrado local. No repetir esta entrega. Siguiente Mac: tramo técnico P.6/P.7 (foco, teclado y responsive). P.2 conserva aceptación comercial; E1/E7 requieren Windows y S2 espera al 14/10. Lee docs/paridad/MEDIDAS-Y-CI-2026-10-09.md.
+> La siguiente investigación económica sigue siendo E1 mediante
 > docs/paridad/PASO-E1-DESPUNTE.md, tras leer EVIDENCIA-E1-DESPUNTE-2026-10-04.md.
 > Usa copia F y resultados A–F; el residuo B/D ya está explicado por margen GID.
 > G1–G5 entregados. Conserva G6-incidencia: quitar solo tercer GRUPO requiere autorización solicitada; verificar edición de segunda línea antes de precisión. No repitas A–F, G1–G5 ni contraste histórico.

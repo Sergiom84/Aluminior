@@ -1,5 +1,7 @@
 # Revisión documental de continuidad — 27/09/2026
 
+> Histórico; no ejecutar como lista de tareas. Revisión documental del 10/10/2026: conservar el contenido fechado y consultar el [estado vigente](../ESTADO-ACTUAL.md) y el [roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md).
+
 Alcance: 76 Markdown propios inventariados, más este registro.
 Excluidos dependencias, builds, exportaciones y output privado. No se modifican
 Markdown de software externo ni copias de evidencia privada.

@@ -6,11 +6,13 @@ import {
   type ConfiguracionCerramiento,
   type PlantillaDiseno,
 } from '@aluminior/core/estructuras'
-import { anyadirLinea, borrarLinea, type Estado } from '../../_lib/acciones.ts'
+import { anyadirLinea, type Estado } from '../../_lib/acciones.ts'
 import { DisenadorEstructura } from './disenador-estructura.tsx'
 import { EditorLineaEstructura } from './editor-linea.tsx'
 import { Escaparate } from './escaparate.tsx'
 import { CamposArticulo, CamposCerramiento, acabadoPorDefecto } from './campos-alta.tsx'
+import { MensajeError } from './mensaje-error.tsx'
+import { catalogosEstructuraListos, claveCatalogoHerraje, type EstadoCargaCatalogo } from './editor-linea/disponibilidad-catalogos.ts'
 import styles from '../presupuesto-movil.module.css'
 
 type TipoLinea = 'ESTRUCTURA' | 'ARTICULO' | 'CERRAMIENTO'
@@ -39,6 +41,8 @@ export function AnyadirLinea({
   const [configuracion, setConfiguracion] = useState<ConfiguracionCerramiento | null>(null)
   const [edicion, setEdicion] = useState(0)
   const [configuracionValida, setConfiguracionValida] = useState(true)
+  const [herraje, setHerraje] = useState<EstadoCargaCatalogo | null>(null)
+  const [acristalamiento, setAcristalamiento] = useState<EstadoCargaCatalogo | null>(null)
   const actualizarDimensiones = useCallback((ancho: number, alto: number) => {
     setAnchoMm(ancho)
     setAltoMm(alto)
@@ -49,6 +53,8 @@ export function AnyadirLinea({
     setAnchoMm(1200)
     setAltoMm(1200)
     setConfiguracion(null)
+    setHerraje(null)
+    setAcristalamiento(null)
     setEdicion((actual) => actual + 1)
   }, [])
 
@@ -63,6 +69,8 @@ export function AnyadirLinea({
   }
 
   const elegirPlantilla = (siguiente: PlantillaDiseno) => {
+    setHerraje(null)
+    setAcristalamiento(null)
     setPlantilla(siguiente)
     setAnchoMm(siguiente.anchoMm)
     setAltoMm(siguiente.altoMm)
@@ -72,9 +80,17 @@ export function AnyadirLinea({
   const err = estado && !estado.ok ? estado.errores : {}
   const enEscaparate = tipo === 'ESTRUCTURA' && !plantilla
   const codigoLinea = tipo === 'CERRAMIENTO' ? 'GRUPO' : plantilla?.codigo ?? ''
+  const puedeEnviar = tipo === 'ESTRUCTURA'
+    ? Boolean(plantilla) && catalogosEstructuraListos(serie, codigoLinea, herraje, acristalamiento)
+    : tipo !== 'CERRAMIENTO' || configuracionValida
+  const falloCatalogos = herraje?.clave === claveCatalogoHerraje(serie, codigoLinea) && herraje.estado === 'ERROR' ||
+    acristalamiento?.clave === serie && acristalamiento.estado === 'ERROR'
 
   return (
-    <form onSubmit={enviar} id="configurador"
+    <form onSubmit={evento => {
+      if (!puedeEnviar) { evento.preventDefault(); return }
+      void enviar(evento)
+    }} id="configurador"
       className={`${styles.formCard} rounded-lg border`}
       style={{ background: 'var(--al-surface)', borderColor: 'var(--al-border)' }}>
       <input type="hidden" name="presupuestoId" value={presupuestoId} />
@@ -127,11 +143,14 @@ export function AnyadirLinea({
           serie={serie} setSerie={setSerie} anchoMm={anchoMm} setAnchoMm={setAnchoMm}
           altoMm={altoMm} setAltoMm={setAltoMm} vidrio={vidrio} setVidrio={setVidrio}
           acabado={acabado} setAcabado={setAcabado} variante={variante} setVariante={setVariante}
+          onHerrajeChange={setHerraje} onAcristalamientoChange={setAcristalamiento}
           err={err} onCambiarEstructura={() => setPlantilla(null)} />
       )}
 
       {tipo === 'CERRAMIENTO' && (
         <>
+          <MensajeError campo="codigo" errores={err} />
+          <MensajeError campo="configuracionCerramiento" errores={err} />
           <DisenadorEstructura key={edicion} codigo="2O" anchoMm={anchoMm} altoMm={altoMm} vacio
             onConfiguracionChange={setConfiguracion}
             onDimensionesChange={actualizarDimensiones}
@@ -146,7 +165,14 @@ export function AnyadirLinea({
 
       {!enEscaparate && (
         <div className={`${styles.formActions} mt-4`}>
-          <button type="submit" disabled={enviando || (tipo === 'CERRAMIENTO' && !configuracionValida)}
+          {tipo === 'ESTRUCTURA' && !puedeEnviar && (
+            <p role={falloCatalogos ? 'alert' : 'status'} className="text-sm">
+              {falloCatalogos
+                ? 'No se pudieron cargar las opciones. Reintenta la consulta en Opc.Herraje o Acristalamiento.'
+                : 'Cargando opciones de la estructura…'}
+            </p>
+          )}
+          <button type="submit" disabled={enviando || !puedeEnviar}
             className="al-command-primary disabled:opacity-50">
             {enviando ? 'Añadiendo…' : 'Aceptar'}
           </button>
@@ -158,19 +184,5 @@ export function AnyadirLinea({
         </div>
       )}
     </form>
-  )
-}
-
-export function BotonBorrarLinea({
-  lineaId, presupuestoId,
-}: { lineaId: string; presupuestoId: string }) {
-  const [borrando, setBorrando] = useState(false)
-  return (
-    <button type="button" disabled={borrando}
-      onClick={async () => { setBorrando(true); await borrarLinea(lineaId, presupuestoId) }}
-      className="text-xs disabled:opacity-40" style={{ color: 'var(--al-error)' }}
-      aria-label="Eliminar línea">
-      {borrando ? '…' : 'Eliminar'}
-    </button>
   )
 }

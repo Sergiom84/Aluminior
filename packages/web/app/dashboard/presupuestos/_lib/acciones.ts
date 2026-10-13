@@ -20,7 +20,7 @@ import { crearPresupuestoAlta } from './presupuestos/crear-presupuesto.ts'
 import { fechaLocalMadrid } from './fecha-local.ts'
 import { prepararAltaCerramiento } from './cerramientos/index.ts'
 import { altaLinea } from './lineas/alta-linea.ts'
-import { borrarLineaDePresupuesto } from './lineas/borrar-linea.ts'
+import { borrarLineaDePresupuesto, type ResultadoBorradoLinea } from './lineas/borrar-linea.ts'
 import { opcionesHerrajeDe as opcionesDeHerrajeOfrecidas, type GrupoOpcionesHerraje } from './estructuras/index.ts'
 import { asegurarCatalogoDiseno, necesitaCatalogoDiseno } from './catalogo-diseno/index.ts'
 
@@ -53,14 +53,16 @@ export async function crearPresupuesto(_previo: Estado, datos: FormData): Promis
   if (!p.success) return { ok: false, errores: p.error.flatten().fieldErrors }
 
   const d = p.data
-  const db = crearDb()
   const fecha = fechaLocalMadrid()
+  let resultado: Awaited<ReturnType<typeof crearPresupuestoAlta>>
   try {
     const creadoPor = await usuarioActual()
+    if (!creadoPor) return { ok: false, errores: {}, mensaje: 'Sesión no válida' }
+    const db = crearDb()
     // Parseo, validación, usuario y revalidate se quedan aquí; reservar el
     // número y escribir la cabecera es responsabilidad de
     // `presupuestos/crear-presupuesto.ts` (T.71.4).
-    const resultado = await crearPresupuestoAlta(db, {
+    resultado = await crearPresupuestoAlta(db, {
       serie: 'A',
       fecha,
       clienteCodigo: d.clienteCodigo,
@@ -72,14 +74,13 @@ export async function crearPresupuesto(_previo: Estado, datos: FormData): Promis
       observaciones: d.observaciones,
       creadoPor,
     })
-    if (!resultado.ok) return { ok: false, errores: {}, mensaje: resultado.errores.join('; ') }
-
-    revalidatePath('/dashboard/presupuestos')
-    return { ok: true, id: resultado.id }
   } catch (e) {
     if (e instanceof ErrorOperacionCerramiento) return { ok: false, errores: {}, mensaje: e.message }
     return { ok: false, errores: {}, mensaje: registrarFallo('crearPresupuesto', e) }
   }
+  if (!resultado.ok) return { ok: false, errores: {}, mensaje: resultado.errores.join('; ') }
+  revalidarTrasEscritura('crearPresupuesto', '/dashboard/presupuestos')
+  return { ok: true, id: resultado.id }
 }
 
 /**
@@ -93,25 +94,43 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
   const p = esquemaLinea.safeParse(Object.fromEntries(datos))
   if (!p.success) return { ok: false, errores: p.error.flatten().fieldErrors }
 
-  if (p.data.tipo === 'CERRAMIENTO') {
-    if (necesitaCatalogoDiseno(p.data.configuracionCerramiento)) await asegurarCatalogoDiseno(crearDb())
+  const cargarCatalogo = p.data.tipo === 'CERRAMIENTO' && necesitaCatalogoDiseno(p.data.configuracionCerramiento)
+  if (p.data.tipo === 'CERRAMIENTO' && !cargarCatalogo) {
     const alta = prepararAltaCerramiento({ ...p.data, configuracionSerializada: p.data.configuracionCerramiento })
     if (!alta.ok) return alta
   }
+  let resultado: Awaited<ReturnType<typeof altaLinea>>
   try {
     if (!await usuarioActual()) return { ok: false, errores: {}, mensaje: 'Sesión no válida' }
-    const resultado = await altaLinea(crearDb(), p.data, datos.getAll('opcionHerraje').map(String))
-    if (resultado.ok) revalidatePath(`/dashboard/presupuestos/${p.data.presupuestoId}`)
-    return resultado
+    const db = crearDb()
+    if (cargarCatalogo) await asegurarCatalogoDiseno(db)
+    resultado = await altaLinea(db, p.data, datos.getAll('opcionHerraje').map(String))
   } catch (e) {
     if (e instanceof ErrorOperacionCerramiento) return { ok: false, errores: {}, mensaje: e.message }
     return { ok: false, errores: {}, mensaje: registrarFallo('anyadirLinea', e) }
   }
+  if (resultado.ok) revalidarTrasEscritura('anyadirLinea', `/dashboard/presupuestos/${p.data.presupuestoId}`)
+  return resultado
 }
 
-export async function borrarLinea(lineaId: string, presupuestoId: string) {
-  if (await borrarLineaDePresupuesto(crearDb(), lineaId, presupuestoId)) {
-    revalidatePath(`/dashboard/presupuestos/${presupuestoId}`)
+export async function borrarLinea(lineaId: string, presupuestoId: string): Promise<ResultadoBorradoLinea> {
+  let resultado: ResultadoBorradoLinea
+  try {
+    if (!await usuarioActual()) return { ok: false, mensaje: 'Sesión no válida' }
+    resultado = await borrarLineaDePresupuesto(crearDb(), lineaId, presupuestoId)
+  } catch (e) {
+    return { ok: false, mensaje: registrarFallo('borrarLinea', e) }
+  }
+  if (resultado.ok) revalidarTrasEscritura('borrarLinea',
+    `/dashboard/presupuestos/${presupuestoId}`, '/dashboard/presupuestos')
+  return resultado
+}
+
+/** La escritura ya se confirmó: un fallo de caché no debe provocar un reintento. */
+function revalidarTrasEscritura(contexto: string, ...rutas: string[]) {
+  for (const ruta of rutas) {
+    try { revalidatePath(ruta) }
+    catch (e) { registrarFallo(`${contexto}: revalidación tras escritura (${ruta})`, e) }
   }
 }
 

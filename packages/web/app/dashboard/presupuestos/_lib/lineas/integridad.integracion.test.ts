@@ -137,7 +137,7 @@ describe('integridad de líneas de presupuesto', () => {
     })
     await actualizarTotales(db, presupuestoId)
 
-    expect(await borrarLineaDePresupuesto(db, linea.id, otroPresupuestoId)).toBe(false)
+    expect(await borrarLineaDePresupuesto(db, linea.id, otroPresupuestoId)).toMatchObject({ ok: false })
 
     const conservada = await db.select({ id: schema.lineas.id })
       .from(schema.lineas).where(eq(schema.lineas.id, linea.id))
@@ -155,7 +155,7 @@ describe('integridad de líneas de presupuesto', () => {
       [otroPresupuestoId]: '0.00',
     })
 
-    expect(await borrarLineaDePresupuesto(db, linea.id, presupuestoId)).toBe(true)
+    expect(await borrarLineaDePresupuesto(db, linea.id, presupuestoId)).toEqual({ ok: true })
     expect(await db.select().from(schema.lineas).where(eq(schema.lineas.id, linea.id))).toHaveLength(0)
     expect(await db.select().from(schema.lineasCerramiento)
       .where(eq(schema.lineasCerramiento.lineaId, linea.id))).toHaveLength(0)

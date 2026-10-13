@@ -1,6 +1,6 @@
 # Evidencia: vídeo oficial de Gaia sobre presupuestos en Productor Aluminio
 
-> Estado operativo: [ESTADO-ACTUAL.md](../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites.
+> Estado operativo: [ESTADO-ACTUAL.md](../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites. El orden y estado de tareas pertenece al [roadmap vigente](../../ROADMAP-PARIDAD-PRODUCTOR.md); sus encargos, permisos y pendientes fechados no se reactivan.
 
 > Revisión documental 20/09/2026: **Evidencia fechada**. Timestamps y conceptos de Productor; no inventario del código actual.
 > Para continuar: [estado actual](../ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.

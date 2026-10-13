@@ -1,5 +1,7 @@
 # Auditoría de fases 0–8 y trabajo sin escritorio
 
+> Histórico; no ejecutar como lista de tareas. Revisión documental del 10/10/2026: conservar el contenido fechado y consultar el [estado vigente](../../ESTADO-ACTUAL.md) y el [roadmap](../../../ROADMAP-PARIDAD-PRODUCTOR.md).
+
 ## Estado consolidado posterior — 27/09/2026
 
 Esta tabla sustituye el dictamen del 20/09 como estado actual. Los apartados

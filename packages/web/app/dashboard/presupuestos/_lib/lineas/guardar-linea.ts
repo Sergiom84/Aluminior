@@ -7,7 +7,7 @@ import { actualizarTotales } from '../totales.ts'
 import { guardarAltaCerramiento, type AltaCerramiento } from '../cerramientos/index.ts'
 import { persistirManoObra, type SnapshotManoObra } from '../mano-obra/index.ts'
 import { bloquearPresupuesto } from './bloquear-presupuesto.ts'
-import { sql } from 'drizzle-orm'
+import { eq, sql } from 'drizzle-orm'
 import { leerAltaRepetida } from './alta-repetida.ts'
 import { comisionDeLineas, mismaComision } from '../gastos/gastos-documento.ts'
 import { ErrorOperacionCerramiento } from '../cerramientos/error-operativo.ts'
@@ -95,6 +95,10 @@ async function guardarLineaConGanchos(
 
     const repetida = await leerAltaRepetida(tx, entrada.valores.presupuestoId, entrada.valores.id)
     if (repetida) return repetida.id
+    const [cabecera] = await tx.select({ estado: schema.presupuestos.estado }).from(schema.presupuestos)
+      .where(eq(schema.presupuestos.id, entrada.valores.presupuestoId)).limit(1)
+    if (cabecera?.estado !== 'PENDIENTE')
+      throw new ErrorOperacionCerramiento('Sólo se pueden añadir líneas a un presupuesto pendiente')
     if (entrada.tipo === 'ESTRUCTURA' && entrada.valores.precioUnitario != null &&
       !mismaComision(entrada.comisionPorc ?? null, await comisionDeLineas(tx, entrada.valores.presupuestoId)))
       throw new ErrorOperacionCerramiento('La comisión del presupuesto ha cambiado; vuelve a añadir la línea')
@@ -120,6 +124,8 @@ export async function guardarLineaValorada(db: Db, presupuestoId: string,
       solicitud!.alRepetir(repetida.avisoValoracion)
       return repetida.id
     }
+    if (cabecera.estado !== 'PENDIENTE')
+      throw new ErrorOperacionCerramiento('Sólo se pueden añadir líneas a un presupuesto pendiente')
     const entrada = await preparar(tx, cabecera)
     if (entrada.valores.presupuestoId !== presupuestoId) throw new Error('Presupuesto de escritura diferente')
     if (solicitud) entrada.valores.id = solicitud.id

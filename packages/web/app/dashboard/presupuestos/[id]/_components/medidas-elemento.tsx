@@ -13,7 +13,7 @@ export function MedidasElemento({ modulo, pendiente, onChange, onActualizar, onD
   return <>
     {(['anchoMm', 'altoMm'] as const).map(campo => <label key={campo} className="al-designer-measure">
       <span className="al-designer-properties-label">{campo === 'anchoMm' ? 'Ancho elemento' : 'Alto elemento'}</span>
-      <input type="number" min={1} step={1}
+      <input type="number" min={1} step="any"
         value={Number.isFinite(modulo[campo]) ? modulo[campo] : ''}
         onChange={evento => onChange({ [campo]: evento.target.valueAsNumber })} />
     </label>)}

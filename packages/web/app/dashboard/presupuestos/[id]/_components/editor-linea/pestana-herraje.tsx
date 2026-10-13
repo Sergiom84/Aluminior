@@ -6,6 +6,7 @@ import {
   filtrarPorCategoriaHerraje, seleccionInicialHerraje, type OpcionHerrajeCatalogo,
 } from '@aluminior/core/estructuras'
 import { opcionesHerrajeDe, type GrupoOpcionesHerraje } from '../../../_lib/acciones.ts'
+import { claveCatalogoHerraje, type EstadoCargaCatalogo } from './disponibilidad-catalogos.ts'
 import styles from './editor-linea.module.css'
 
 /**
@@ -16,14 +17,24 @@ import styles from './editor-linea.module.css'
  * Emite `opcionHerraje` = `conjunto|opción` por cada opción visible marcada;
  * el servidor añade las ocultas por defecto y descarta lo ajeno al catálogo.
  */
-export function PestanaHerraje({ serie, estructuraCodigo }: { serie: string; estructuraCodigo: string }) {
+export function PestanaHerraje({ serie, estructuraCodigo, onEstadoChange }: {
+  serie: string; estructuraCodigo: string; onEstadoChange: (estado: EstadoCargaCatalogo) => void
+}) {
   const [grupos, setGrupos] = useState<GrupoOpcionesHerraje[]>([])
   const [marcas, setMarcas] = useState<Record<string, Set<string>>>({})
   const [conjunto, setConjunto] = useState('')
   const [categoria, setCategoria] = useState(CATEGORIA_HERRAJE_TODAS)
+  const [cargando, setCargando] = useState(Boolean(serie && estructuraCodigo))
+  const [error, setError] = useState(false)
+  const [intento, setIntento] = useState(0)
+  const clave = claveCatalogoHerraje(serie, estructuraCodigo)
+  const estado = cargando ? 'PENDIENTE' : error ? 'ERROR' : 'LISTO'
+  useEffect(() => { onEstadoChange({ clave, estado }) }, [clave, estado, onEstadoChange])
 
   useEffect(() => {
     let vigente = true
+    setCargando(Boolean(serie && estructuraCodigo))
+    setError(false)
     const cargar = serie && estructuraCodigo
       ? opcionesHerrajeDe(serie, estructuraCodigo)
       : Promise.resolve(null)
@@ -34,9 +45,11 @@ export function PestanaHerraje({ serie, estructuraCodigo }: { serie: string; est
       setMarcas(Object.fromEntries(lista.map((g) => [g.conjuntoCodigo, seleccionInicialHerraje(catalogoDe(g))])))
       setConjunto(lista[0]?.conjuntoCodigo ?? '')
       setCategoria(CATEGORIA_HERRAJE_TODAS)
-    }).catch(() => { if (vigente) setGrupos([]) })
+    }).catch(() => {
+      if (vigente) { setGrupos([]); setError(true) }
+    }).finally(() => { if (vigente) setCargando(false) })
     return () => { vigente = false }
-  }, [serie, estructuraCodigo])
+  }, [serie, estructuraCodigo, intento])
 
   const grupo = grupos.find((g) => g.conjuntoCodigo === conjunto) ?? null
   const catalogo = useMemo(() => (grupo ? catalogoDe(grupo) : []), [grupo])
@@ -50,6 +63,11 @@ export function PestanaHerraje({ serie, estructuraCodigo }: { serie: string; est
 
   return (
     <div>
+      {cargando && <p role="status">Cargando opciones de herraje…</p>}
+      {error && <p role="alert">
+        No se pudieron consultar las opciones de herraje.{' '}
+        <button type="button" className="al-command" onClick={() => setIntento(actual => actual + 1)}>Reintentar</button>
+      </p>}
       {grupos.flatMap((g) => [...(marcas[g.conjuntoCodigo] ?? [])]
         .filter((codigo) => g.opciones.some((o) => String(Number(o.codigo)) === codigo && !o.oculta))
         .map((codigo) => (

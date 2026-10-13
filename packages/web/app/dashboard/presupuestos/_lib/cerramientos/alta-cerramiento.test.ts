@@ -41,6 +41,26 @@ function clienteEspia(fallar = false) {
 }
 
 describe('alta de cerramiento', () => {
+  it.each(['anchoMm', 'altoMm'] as const)('rechaza %s exterior fraccionario antes de escribir', campo => {
+    const entrada = { version: 1,
+      modulos: [{ id: 'm1', estructuraCodigo: '0', anchoMm: 1200, altoMm: 800, [campo]: 439.5 }], uniones: [] }
+    const resultado = prepararAltaCerramiento({ ...datos, configuracionSerializada: JSON.stringify(entrada) })
+    expect(resultado).toMatchObject({ ok: false, errores: {
+      configuracionCerramiento: [expect.stringContaining('milímetros enteros')],
+    } })
+    expect(entrada.modulos[0][campo]).toBe(439.5)
+  })
+
+  it('conserva fracciones internas cuando la medida exterior es entera', () => {
+    const entrada = { ...configuracion,
+      modulos: configuracion.modulos.map(m => ({ ...m, anchoMm: 439.5 })) }
+    const resultado = prepararAltaCerramiento({ ...datos, configuracionSerializada: JSON.stringify(entrada) })
+    expect(resultado.ok).toBe(true)
+    if (!resultado.ok) throw new Error('Fracciones internas válidas rechazadas')
+    expect(resultado.alta.anchoMm).toBe(881)
+    expect(resultado.alta.configuracion.modulos.map(m => m.anchoMm)).toEqual([439.5, 439.5])
+  })
+
   it.each(['PSU006', 'PSU007', 'PSU008', 'PSU009'])('guarda %s con grosor cero y ancho sin separación', codigo => {
     const entrada = { ...configuracion, uniones: [{ ...configuracion.uniones[0], codigo, grosorMm: 0 }] }
     const resultado = prepararAltaCerramiento({ ...datos, configuracionSerializada: JSON.stringify(entrada) })

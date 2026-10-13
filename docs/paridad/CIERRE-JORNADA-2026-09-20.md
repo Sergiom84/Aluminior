@@ -1,6 +1,6 @@
 # Cierre de jornada — 20/09/2026
 
-> Estado operativo: [ESTADO-ACTUAL.md](../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites.
+> Estado operativo: [ESTADO-ACTUAL.md](../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites. El orden y estado de tareas pertenece al [roadmap vigente](../../ROADMAP-PARIDAD-PRODUCTOR.md); sus encargos, permisos y pendientes fechados no se reactivan.
 
 El usuario da por finalizado el trabajo por hoy y solicita actualizar la
 documentación, commit, integración en main y push. No reanudar automáticamente

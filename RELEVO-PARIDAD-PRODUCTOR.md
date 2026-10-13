@@ -1,12 +1,18 @@
 # Relevo: paridad y fuentes de Productor
 
-Fecha: 03/10/2026. Contexto recibido en Codex Windows; comprobar cambios posteriores antes de actuar.
+Histórico de coordinación del 03–09/10/2026, conservado por sus fuentes y
+resultados únicos. **No ejecutar como lista de tareas.** Desde el 10/10 la
+recepción y los pasos Windows se mantienen en [CONTINUAR-EN-WINDOWS](docs/CONTINUAR-EN-WINDOWS.md);
+los estados pertenecen al [roadmap](ROADMAP-PARIDAD-PRODUCTOR.md).
 
 **Referencia de contexto; no usar sus listas fechadas como tareas vigentes.**
 Entrada actual: [estado](docs/ESTADO-ACTUAL.md) →
 [roadmap operativo](ROADMAP-PARIDAD-PRODUCTOR.md). La matriz y la lista de
-ensayos ya están entregadas (M0 cerrado). Siguiente trabajo: **E1 despunte**,
-mediante [procedimiento](docs/paridad/PASO-E1-DESPUNTE.md).
+ensayos ya están entregadas (M0 cerrado). Actualización 09/10: A1 y S1/A2 publicados/verificados, Render de aquella entrega `a06cd4f`, sustituido por A4 en `487feb1` (API reconsultada el 10/10).
+A3 publicado/verificado en `a06cd4f`, 0029 aplicada: [informe](docs/paridad/IDEMPOTENCIA-PRESUPUESTOS-2026-10-09.md). Continuación Mac: A4 publicado/verificado en 487feb1, 0030 aplicada, y A5 CI correcta, ver [informe](docs/paridad/MEDIDAS-Y-CI-2026-10-09.md). No repetir A4. S3 verificado en CI sobre 36a47f4: 1.448 tests correctos/uno condicionado a CSV privado, seis recorridos, tipos/arquitectura/build; runs 37978474635 y 37978474739. Siguiente Mac: tramo técnico P.6/P.7, teclado/foco/responsive; P.2 conserva aceptación comercial. E1 conserva procedimiento Windows y autorización pendiente; no repetir A3.
+No repetir S1/A2 ni la investigación de paginación. Rama `codex/pdf-multipagina`; P.2 se publicó en `46c613d`; PDF 260009 descargado válido, 1 página y 805,65 €.
+S2 conserva el anuncio Next previsto para el 14/10; no repetir mantenimiento ya entregado.
+E1 conserva su [procedimiento](docs/paridad/PASO-E1-DESPUNTE.md) para después.
 Avance del 04/10: [evidencia parcial E1](docs/paridad/EVIDENCIA-E1-DESPUNTE-2026-10-04.md).
 Manual, diagnóstico histórico y observación A–F entregados; usar copia F de 0017, sin repetirlos
 ni atribuir ese corpus Windows al banco vigente. Estado: En curso, no cerrado.
@@ -30,8 +36,10 @@ SessionFactory y tercer GRUPO. Copia G6-incidencia conserva fuente y error;
 previos intactos, sin otro despunte. Siguiente: quitar solo tercer GRUPO tras
 autorización solicitada y verificar edición segura de segunda línea sin alta.
 No repetir A–F/G1–G5 ni diagnóstico GID. Descuentos/otras cantidades fuera
-del alcance; E1 En curso, motor y banco sin cambios. July 180 mantiene identidad
-y resultado local; no acredita publicación ni recepción Mac.
+del alcance; E1 En curso, motor y banco sin cambios. El item E1 mantiene sync_uid `398049fbd618069e36bb84bab37913ed`
+(Windows del ensayo 180, Mac 192); los IDs no se trasladan entre equipos.
+La recepción de la evidencia del 04/10 en Mac consta en July; no demuestra
+recepción en Windows de las actualizaciones posteriores del 09–10/10.
 
 Primer entregable completado: [matriz por modelo/serie/regla](docs/paridad/MATRIZ-COBERTURA-PRODUCTOR-2026-10-03.md) y [ensayos mínimos](docs/paridad/ENSAYOS-MINIMOS-PRODUCTOR-2026-10-03.md). Resultados visuales E1 en su evidencia del 04/10; consultar el roadmap antes de repetir pruebas.
 
@@ -43,7 +51,7 @@ Primer entregable completado: [matriz por modelo/serie/regla](docs/paridad/MATRI
 - Zona horaria: Europe/Madrid.
 - Stack: TypeScript/Node, Drizzle, PostgreSQL/Supabase, Next.js y React. Paquetes `db`, `etl`, `core` y `web`; `packages/api` es histórico.
 
-Leer [AGENTS.md](AGENTS.md), [estado](docs/ESTADO-ACTUAL.md), [arquitectura](ARQUITECTURA.md), [índice documental](docs/INDICE-DOCUMENTACION.md), [paridad](docs/paridad/PARIDAD-PRODUCTOR.md) y especialmente [banco](docs/paridad/BANCO-CONTRASTE-2026-10-03.md). Inspeccionar git status e instrucciones aplicables. `env.example` contiene únicamente valores de ejemplo y campos vacíos; .env y datos privados permanecen excluidos.
+Leer [AGENTS.md](AGENTS.md), [estado](docs/ESTADO-ACTUAL.md), [arquitectura](ARQUITECTURA.md), [índice documental](docs/INDICE-DOCUMENTACION.md), [paridad](docs/paridad/PARIDAD-PRODUCTOR.md) y especialmente [banco](docs/paridad/BANCO-CONTRASTE-2026-10-03.md). Inspeccionar git status e instrucciones aplicables. El arranque actual usa `.env.example`; `env.example` también existe como antecedente, y ambos contienen ejemplos; .env y datos privados permanecen excluidos.
 
 ## Autorización y límites
 
@@ -80,9 +88,13 @@ Claude comunicó verificaciones directas:
 - Supabase: 29 migraciones hasta `0028_medidas_nuevas_ventanas` y 261.301 filas en doce tablas del motor.
 - 15.263 filas de plantilla, 15.063 parámetros de conjunto/serie y 541 parámetros de estructura; conteos protegidos coincidentes con el relevo.
 
-Codex recibió estas verificaciones; no las repitió. Sigue pendiente la aceptación funcional en navegador: valorar, guardar, recargar y PDF. Caso recibido: 2O ELEGANTPVC 1200×540, L, VCG420AGS4, 5 h de colocación, tarifa 1. **652,24 € es referencia histórica anterior a una subida de PVP, no un resultado actual exigible.**
+Codex recibió estas verificaciones; no las repitió. Observación histórica del 03/10: entonces seguía pendiente la aceptación funcional.
+El 09/10 se verificaron guardado, recarga y PDF en el presupuesto de prueba 260009;
+se repitió tras publicar f6d5bcd: guardado/recarga y PDF válido, total 805,65 €, con dos piezas sin coste. Visor IAB gris; archivo revisado aparte (ver A1). Caso recibido: 2O ELEGANTPVC 1200×540, L, VCG420AGS4, 5 h de colocación, tarifa 1. **652,24 € es referencia histórica anterior a una subida de PVP, no un resultado actual exigible.**
 
-La reconciliación de `ESTADO-ACTUAL.md` con el relevo fechado está realizada: carga/despliegue atribuidos a Claude, comisión y horas en UI diferenciadas, aceptación funcional pendiente. La ficha de acceso de July conserva datos antiguos de migraciones/Render; su actualización es D1 en el roadmap. Conservar los informes históricos y no repetir la corrección del estado ya entregada.
+La continuación S1/A2 en `7ad0ee2` quedó live a las 15:48:17 UTC: 260009 reguardado/recargado conserva 805,65 €, miniatura nueva y PDF descargado. Sin tarifas ni migraciones; ver informe de continuación para pruebas locales y límites.
+
+La reconciliación de `ESTADO-ACTUAL.md` con el relevo fechado está realizada: carga/despliegue atribuidos a Claude, comisión y horas en UI diferenciadas. A1 se verificó el 09/10 con alcance limitado al recorrido auditado. D1: ficha de acceso de July reconciliada localmente el 09/10 con 30 migraciones y Render live A3, distinguiendo verificaciones directas de evidencia recibida; sin sync acreditado. Conservar los informes históricos y no repetir la corrección del estado ya entregada.
 
 ## July y coordinación
 
@@ -153,7 +165,8 @@ Este relevo integra la conversación «Completa ensayo E1 de despiece»
 Actualizar Aluminior con `git pull --ff-only` y July con `sync pull` en el
 receptor; leer estado → roadmap → procedimiento E1 → evidencia E1.
 
-Pendiente vigente: proyecto `aluminior`, ID local Windows **180**, identidad
+Identidad de E1: proyecto `aluminior`, ID de aquel Windows **180**
+(Mac **192** al consultar el 10/10; no confundir con su 180 de descuentos), identidad
 `398049fbd618069e36bb84bab37913ed`, título «E1/G1: G1-G5 verificados;
 recuperar ensayo tras incidencia de variante». Buscar por identidad en el otro
 equipo: su ID local puede cambiar. Sigue `in_progress`.

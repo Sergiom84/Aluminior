@@ -2,16 +2,26 @@
 
 Entrada de trabajo: [ESTADO-ACTUAL.md](ESTADO-ACTUAL.md).
 Clasificación documental inicial sobre `9bc879e` y comprobación local del 02/10.
-Actualización operativa del 04/10/2026: checkout `08310cb`, matriz del 03/10,
-roadmap y evidencia parcial E1. Estado remoto atribuido al relevo de Claude;
-sin nueva comprobación remota en esta entrega.
+Revisión del 10/10/2026: 84 Markdown de `origin/main` `9673659` y una
+propuesta exclusiva del main local. A3/A4 y S3 ya entregados; Render live
+487feb1 reconsultado, CI S3 correcta.
+[Informe e inventario](AUDITORIA-DOCUMENTAL-2026-10-10.md). Estados en el roadmap.
 
 
 ## Lectura operativa
 
 | Documento | Uso |
 |---|---|
+| [Continuar en Windows](CONTINUAR-EN-WINDOWS.md) | Recepción, fuentes privadas, P.2, E1/E7 y prompt de continuación |
+| [Auditoría documental 10/10](AUDITORIA-DOCUMENTAL-2026-10-10.md) | Hallazgos, cambios, verificación y límites |
+| [Inventario documental 10/10](INVENTARIO-DOCUMENTAL-2026-10-10.md) | Clasificación y tratamiento de todo el corpus revisado |
+| [Tarifa de doble acristalamiento](TARIFA-DOBLE-ACRISTALAMIENTO.md) | Propuesta del main local excluida de origin/main; no aplicada ni capacidad publicada |
+| [Medidas y CI 09/10](paridad/MEDIDAS-Y-CI-2026-10-09.md) | A4 publicado/verificado, 0030 aplicada; A5 navegador/CI, S3 validación de paquetes y D1 ficha July |
+| [Idempotencia 09/10](paridad/IDEMPOTENCIA-PRESUPUESTOS-2026-10-09.md) | A3: reproducción, implementación, pérdida HTTP real y migración aplicada y publicación verificada |
 | [README](../README.md) | Arranque y comandos |
+| [PDF multipágina 09/10](paridad/PDF-MULTIPAGINA-2026-10-09.md) | P.2: reproducción, corrección, regresión sintética, endpoint local y publicación 46c613d verificada |
+| [Mantenimiento y miniaturas 09/10](paridad/MANTENIMIENTO-Y-MINIATURAS-2026-10-09.md) | S1 y A2: dependencias, evidencia de dibujo y verificación de la continuación |
+| [Auditoría funcional 09/10](paridad/AUDITORIA-FUNCIONAL-2026-10-09.md) | Fallos reproducidos, correcciones, aceptación y mejoras propuestas |
 | [Estado actual](ESTADO-ACTUAL.md) | Estado, riesgos y siguiente paso |
 | [Roadmap de paridad](../ROADMAP-PARIDAD-PRODUCTOR.md) | Registro único de etapas/orden de tareas e instrucciones para actualizar o retirar documentos obsoletos |
 | [Paso E1: despunte](paridad/PASO-E1-DESPUNTE.md) | G1–G5 entregados; G6-incidencia preservada. Recuperar dos líneas tras autorización para quitar solo tercer GRUPO y verificar edición antes de precisión |
@@ -19,7 +29,6 @@ sin nueva comprobación remota en esta entrega.
 | [Arquitectura](../ARQUITECTURA.md) | Responsabilidades y fronteras |
 | [Paridad](paridad/PARIDAD-PRODUCTOR.md) | Mapa de evidencia y aceptación |
 | [BD local](../packages/db/README.md) | Mac/Docker y aislamiento de tests |
-| [Tarifa de doble acristalamiento](TARIFA-DOBLE-ACRISTALAMIENTO.md) | Tarifa de proveedor de vidrio: modelo medido, propuesta sin aplicar y decisiones pendientes |
 
 ## Evidencia y referencias de paridad
 
@@ -139,4 +148,6 @@ en main, 0022 es diseño y el motor económico corresponde a 0023/0024.
 
 Las citas literales a PLAN/ENTREGA/CONTINUACION en comentarios de código se
 conservan sin tocar código: consultar el histórico o el commit indicado.
-July todavía cita PLAN.md y CONTINUACION.md; sus punteros requieren actualización.
+Las memorias July anteriores también pueden citar esas entradas antiguas:
+resolverlas mediante este índice; la antigüedad no cierra una tarea. El relevo
+general y E1 se identifican por sync_uid en la guía Windows.

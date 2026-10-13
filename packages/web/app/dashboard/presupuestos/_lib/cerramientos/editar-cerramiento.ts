@@ -56,6 +56,8 @@ export async function actualizarCerramiento(
   if (!alta.ok) return alta
 
   return conPresupuestoBloqueado(db, entrada.presupuestoId, async (tx, documento) => {
+    if (documento.estado !== 'PENDIENTE') return { ok: false, errores: {},
+      mensaje: 'Sólo se puede editar un presupuesto pendiente' }
     const linea = await lineaEditable(tx, entrada)
     if (!linea) return { ok: false, errores: {}, mensaje: 'La línea no pertenece al presupuesto o no es un cerramiento' }
     const preparada = await prepararLineaValorada(tx, alta.alta, { ...entrada, tarifa: documento.tarifa })

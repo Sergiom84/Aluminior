@@ -15,11 +15,14 @@ const usuarioActual = vi.fn()
 const crearDb = vi.fn(() => ({ marcador: 'db-simulada' }))
 const copiarPresupuesto = vi.fn()
 const revalidatePath = vi.fn()
+const registrarFallo = vi.fn()
 
 vi.mock('../usuario-actual.ts', () => ({ usuarioActual }))
 vi.mock('@aluminior/db', () => ({ crearDb, schema: new Proxy({}, { get: () => ({}) }) }))
 vi.mock('./copiar-presupuesto.ts', () => ({ copiarPresupuesto }))
 vi.mock('next/cache', () => ({ revalidatePath }))
+vi.mock('../errores.ts', () => ({ registrarFallo }))
+vi.mock('../catalogo-diseno/index.ts', () => ({ asegurarCatalogoDiseno: vi.fn() }))
 
 const { copiarIdentica } = await import('./copia-identica.ts')
 const { fechaLocalMadrid } = await import('../fecha-local.ts')
@@ -33,6 +36,7 @@ describe('copiarIdentica', () => {
     crearDb.mockClear()
     copiarPresupuesto.mockReset()
     revalidatePath.mockClear()
+    registrarFallo.mockClear()
   })
 
   it('UUID inválido: no consulta autenticación ni base', async () => {
@@ -89,12 +93,16 @@ describe('copiarIdentica', () => {
 
   it('copiarPresupuesto lanza: error controlado, sin exponer el detalle', async () => {
     usuarioActual.mockResolvedValue('operador@aluminior')
-    copiarPresupuesto.mockRejectedValue(new Error('duplicate key value violates unique constraint'))
+    const fallo = new Error('duplicate key value violates unique constraint')
+    copiarPresupuesto.mockRejectedValue(fallo)
 
     const resultado = await copiarIdentica('MISMO_NUMERO_NUEVA_REVISION', ID_VALIDO)
 
     expect(resultado).toEqual({ ok: false, error: 'No se pudo copiar el presupuesto' })
     expect(revalidatePath).not.toHaveBeenCalled()
+    expect(registrarFallo).toHaveBeenCalledWith(
+      `copiarIdentica(MISMO_NUMERO_NUEVA_REVISION): copia de ${ID_VALIDO}`, fallo,
+    )
   })
 
   it('éxito: devuelve el id nuevo y revalida listado y destino', async () => {

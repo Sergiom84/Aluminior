@@ -3,7 +3,7 @@
 import { plantillaDiseno, type ResultadoCerramientoV1 } from '@aluminior/core/estructuras'
 import { useCallback, useRef, useState } from 'react'
 import { EditarArticulo } from './editar-articulo'
-import { BotonBorrarLinea } from './anyadir-linea.tsx'
+import { BotonBorrarLinea } from './boton-borrar-linea.tsx'
 import { DibujoEstructura } from './dibujo-estructura.tsx'
 import { EditarCerramiento, type DatosEdicionCerramiento } from './editar-cerramiento.tsx'
 import styles from '../presupuesto-movil.module.css'
@@ -42,9 +42,9 @@ export interface PiezaDetalle {
 }
 
 export function LineaPresupuesto({
-  linea: l, presupuestoId, despiece, edicion, series, acabados, resultado, manoObra, articuloEditable,
+  linea: l, presupuestoId, despiece, edicion, series, acabados, resultado, manoObra, editable,
 }: {
-  articuloEditable: boolean
+  editable: boolean
   linea: LineaDetalle
   resultado: ResultadoCerramientoV1 | null
   manoObra: { id: string; concepto: string; horas: string | null; importe: string | null }[]
@@ -57,7 +57,8 @@ export function LineaPresupuesto({
   const [editando, setEditando] = useState(false)
   const botonEditar = useRef<HTMLButtonElement>(null)
   const cerrarEditor = useCallback(() => { setEditando(false); requestAnimationFrame(() => botonEditar.current?.focus()) }, [])
-  const esArticuloEditable = articuloEditable && l.tipo === 'ARTICULO'
+  const esArticuloEditable = editable && l.tipo === 'ARTICULO'
+  const esCerramientoEditable = editable && Boolean(edicion)
   const costeTotal = despiece.reduce((acc, pieza) => acc + (pieza.costeTotal ? Number(pieza.costeTotal) : 0), 0)
   const sinCoste = despiece.filter((pieza) => pieza.costeTotal === null).length
   const modulo = edicion?.configuracion.modulos[0]
@@ -77,7 +78,7 @@ export function LineaPresupuesto({
         <td className="px-3 py-2 font-mono text-[11px]">{articulo}</td>
         <td className="px-3 py-2">
           {l.descripcion}
-          {l.valoracionCompleta && l.avisoValoracion && (
+          {l.avisoValoracion && (
             <div className="mt-0.5 text-xs" style={{ color: 'var(--al-warn)' }}>{l.avisoValoracion}</div>
           )}
         </td>
@@ -113,17 +114,17 @@ export function LineaPresupuesto({
         </td>
         <td className="px-3 py-2 text-right">
           <div className="flex justify-end gap-2">
-            {(edicion || esArticuloEditable) && (
+            {(esCerramientoEditable || esArticuloEditable) && (
               <button ref={botonEditar} type="button" onClick={() => setEditando((actual) => !actual)}
                 className="text-xs" style={{ color: 'var(--al-accent)' }} aria-expanded={editando}>
                 {editando ? 'Cerrar edición' : 'Editar'}
               </button>
             )}
-            <BotonBorrarLinea lineaId={l.id} presupuestoId={presupuestoId} />
+            {editable && <BotonBorrarLinea lineaId={l.id} presupuestoId={presupuestoId} />}
           </div>
         </td>
       </tr>
-      {editando && edicion && (
+      {editando && esCerramientoEditable && edicion && (
         <tr className="border-b" style={{ borderColor: 'var(--al-border)' }}>
           <td colSpan={12} className={`${styles.editorCell} p-3`}>
             <EditarCerramiento presupuestoId={presupuestoId} lineaId={l.id} datos={edicion}

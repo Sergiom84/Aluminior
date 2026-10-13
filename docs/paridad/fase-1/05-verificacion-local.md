@@ -1,6 +1,6 @@
 # Verificación local de fases 1 y 2
 
-> Estado operativo: [ESTADO-ACTUAL.md](../../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites.
+> Estado operativo: [ESTADO-ACTUAL.md](../../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites. El orden y estado de tareas pertenece al [roadmap vigente](../../../ROADMAP-PARIDAD-PRODUCTOR.md); sus encargos, permisos y pendientes fechados no se reactivan.
 
 Fecha: 20/09/2026. Base del código: a2d62ce; rama codex/cierre-fases-1-2.
 Esta evidencia es nueva; no se presenta como recuperación de la sesión ausente.

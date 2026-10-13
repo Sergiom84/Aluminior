@@ -1,12 +1,47 @@
 # Estado actual de Aluminior
 
-Revisión documental: 04/10/2026, sobre el checkout `08310cb`, con investigación
-parcial de E1. Se conserva la cobertura del 03/10 y el relevo recibido del Mac.
+Revisión documental: 10/10/2026, desde `origin/main` `9673659`.
+Revisión funcional conservada: 09/10/2026, checkout inicial `787d1ad`. Producción comprobada
+en `487feb1` (Render live, 09/10 18:30:14 UTC); A3/A4 y migraciones 0029/0030 publicados/verificados. Se conserva
+la cobertura histórica del 03/10 y la investigación E1 del 04/10.
+API Render reconsultada el 10/10: sigue live `487feb1`; recibos finales S3
+correctos. BD y aceptación funcional conservan la verificación del 09/10.
+[Auditoría documental](AUDITORIA-DOCUMENTAL-2026-10-10.md) y
+[continuación en Windows](CONTINUAR-EN-WINDOWS.md).
 Consolidación documental inicial: `ee0dc16`, sobre `9bc879e`.
 Este es el único punto de entrada de estado y siguiente trabajo.
 El [roadmap operativo](../ROADMAP-PARIDAD-PRODUCTOR.md) conserva el orden y
 estado único de las tareas de paridad, con mantenimiento documental obligatorio.
 
+
+## Entrega funcional de presupuestos verificada
+
+[A1: auditoría del 09/10](paridad/AUDITORIA-FUNCIONAL-2026-10-09.md) publicada y
+verificada sobre 260009: editar/guardar, recargar y PDF descargado válido;
+base 665,83 €, IVA 139,82 €, total 805,65 €, con avisos técnicos conservados.
+El visor PDF interno quedó gris; archivo analizado y renderizado correctamente.
+No certifica paridad económica ni fabricación. Correcciones publicadas: herraje por defecto, errores recuperables, estados de
+documento, diagnósticos visibles y cargas de opciones seguras. Acristalamiento
+alternativo sin receta verificada queda incompleto. El rechazo de exteriores
+fraccionarios de A1 quedó superado por A4/0030: alta, edición, copia y PDF
+conservan decimales en producción. Ver informes para pruebas y límites.
+
+## Continuación S1/A2 publicada
+
+[Informe de mantenimiento y miniaturas](paridad/MANTENIMIENTO-Y-MINIATURAS-2026-10-09.md):
+audit npm 11→0 y producción 4→0, 1.431 pruebas, tipos/arquitectura/build correctos.
+La miniatura representa todo el GRUPO con posiciones/proporciones guardadas.
+QA local de tres módulos, dos uniones, guardado/recarga, teclado, escritorio/móvil
+y PDF correcto; 260009 repetido en producción mantiene 805,65 € y sus avisos.
+No hay cambios de tarifas, valoración ni migraciones. El anuncio posterior de
+Next para el 14/10 conserva seguimiento S2; no queda cubierto por audit 0.
+
+## A3 publicado
+
+[Informe A3](paridad/IDEMPOTENCIA-PRESUPUESTOS-2026-10-09.md): alta/copia/revisión
+idempotentes con recibo transaccional. 0029 aplicada; prueba sintética remota
+260010/0, 260011/0 y 260010/1, tres recibos y mismos IDs al reintentar en READ ONLY.
+Los nueve documentos anteriores y tres líneas conservan sus huellas.
 
 ## Qué funciona
 
@@ -62,11 +97,11 @@ estado único de las tareas de paridad, con mantenimiento documental obligatorio
 
 ## Qué falta: valoración
 
-- Aceptación funcional en la web publicada: valorar, guardar, recargar y PDF.
-  Caso recibido: 2O ELEGANTPVC 1200×540, L, VCG420AGS4, 5 h de colocación,
-  tarifa 1. Debe quedar valorado y conservar precio al recargar/PDF.
-  652,24 € es referencia histórica anterior a la subida de PVP; no es un
-  resultado actual exigible. No se ha ejecutado esta aceptación aquí.
+- Caso publicado A1 ejecutado el 09/10: 2O ELEGANTPVC 1200×540, L,
+  VCG420AGS4, 5 h de colocación y tarifa 1; guardado/recarga/PDF coherentes.
+  Repetido con `f6d5bcd`: 805,65 € total; dos piezas siguen sin coste.
+  Los defaults de herraje añadieron 54,50 € al material; no se tocaron tarifas.
+  Ni 652,24 € histórico ni 739,71 € anterior son objetivos impuestos.
 - La web conserva la vía anterior si falta el catálogo. Tener 160 dibujos
   disponibles no significa que las 160 estructuras tengan precio completo.
 - Ensayos locales fechados con catálogo cargado obtuvieron PVP con avisos para
@@ -75,11 +110,6 @@ estado único de las tareas de paridad, con mantenimiento documental obligatorio
 - Falta contraste integral de artículos, medidas, herrajes, vidrio, mano de
   obra, tarifas y redondeo con iguales entradas en Productor.
   No hay aceptación general de precio ni fabricación.
-
-- Tarifa de proveedor de doble acristalamiento del 27/08/2026: propuesta
-  calculada sin aplicar. El modelo reproduce los 14.652 costes y PVP guardados;
-  faltan la decisión del titular y la confirmación de las hipótesis.
-  [Procedimiento y decisiones](TARIFA-DOBLE-ACRISTALAMIENTO.md).
 
 ## Riesgos
 
@@ -95,6 +125,24 @@ estado único de las tareas de paridad, con mantenimiento documental obligatorio
 
 ## Siguiente paso
 
+**Windows:** recepción y fuentes privadas → aceptación comercial P.2 con el
+titular; investigación económica E1 desde G6-incidencia y E7 tras A4, según
+[la guía](CONTINUAR-EN-WINDOWS.md). No repetir A3/A4 ni migraciones.
+
+S3 verificado localmente y en GitHub Actions (`36a47f4`): 1.448 pruebas correctas,
+una condicionada a CSV privado, seis recorridos, tipos, arquitectura y build; ver [evidencia y ejecuciones](paridad/MEDIDAS-Y-CI-2026-10-09.md#s3-validación-completa-de-los-paquetes-en-ci--09102026).
+Siguiente independiente desde Mac: tramo técnico P.6/P.7, foco/teclado y responsive;
+no equivale a cerrar su aceptación integral con Productor.
+
+**A3 publicado/verificado el 09/10 en `a06cd4f`, con 0029 aplicada.** A4 publicado/verificado en `487feb1`: 0030 aplicada, conexiones renovadas y alta/edición/recarga/copia/PDF decimales comprobados en producción. A5 verificado en GitHub Actions (run 37971854995, seis recorridos correctos). D1 reconciliado localmente. [Informe](paridad/MEDIDAS-Y-CI-2026-10-09.md). E1 depende de Windows; P.2 conserva aceptación comercial y S2 el anuncio del 14/10.
+
+Antecedente P.2: rama `codex/pdf-multipagina`, worktree `pdf-multipagina/Aluminior`, desde
+`7ad0ee2`. P.2 publicado en `46c613d`; endpoint PDF 260009 comprobado sin escritura, 1 página / 805,65 €. El main principal
+conserva dos commits de tarifas excluidos y código anterior sin indexar; solo
+se sincroniza allí documentación. No publicar desde ese main sin reconciliarlo.
+
+### Investigación económica conservada
+
 Pendientes del [banco local](paridad/BANCO-CONTRASTE-2026-10-03.md): de los 31 GRUPO
 de la iteración 13 quedan 8 con unión material de serie distinta, 1 con variantes
 de vidrio por elemento, 1 con PVP ausente/ambiguo y 1 con bloqueo de acristalamiento.
@@ -105,7 +153,7 @@ fracciones. Coordinar con la conversación de visión antes de operar 0017 u
 obtener una copia. Verificar una regla antes de corregir el motor y repetir el
 banco conservando igualdades/exclusiones.
 
-**Siguiente tarea: E1 — despunte**, según el [procedimiento preparado](paridad/PASO-E1-DESPUNTE.md).
+**Siguiente ensayo económico: E1 — despunte**, según el [procedimiento preparado](paridad/PASO-E1-DESPUNTE.md).
 En curso: [manual y contraste guardado del 04/10](paridad/EVIDENCIA-E1-DESPUNTE-2026-10-04.md)
 acreditan la resta de costes en 13 documentos positivos con detalle de otra
 copia Windows; ocho discrepancias y un cargo sin detalle se conservan.
@@ -137,14 +185,14 @@ unidad (`lineas/alta-linea.ts`); GRUPO conserva ajustes por línea. Los accesori
 tienen valoración de catálogo, pero no se afirma cobertura integral de sus
 controles UI sin aceptación. La carga de producción informada ya incluye
 0025/0026; la vía anterior se conserva para entornos sin catálogo completo.
-La aceptación funcional de producción sigue pendiente y se distingue de la
-medición local. La ficha de acceso de July aún requiere reconciliar su estado
-antiguo con el relevo fechado; no se modificó en esta entrega.
+La aceptación del recorrido A1 con las correcciones publicadas quedó verificada
+el 09/10; no equivale a paridad integral de precio ni fabricación. D1: ficha de acceso de July reconciliada localmente el 09/10 con evidencia A4/0030;
+sin sync ni recepción Windows acreditados.
 
 ## Enlaces
 
 - [Roadmap y reglas de mantenimiento](../ROADMAP-PARIDAD-PRODUCTOR.md).
-- [Siguiente paso E1: despunte](paridad/PASO-E1-DESPUNTE.md).
+- [Investigación económica E1: despunte](paridad/PASO-E1-DESPUNTE.md).
 - [E1: evidencia parcial y diagnóstico reproducible](paridad/EVIDENCIA-E1-DESPUNTE-2026-10-04.md).
 - [Cobertura, reglas y fuentes](paridad/MATRIZ-COBERTURA-PRODUCTOR-2026-10-03.md).
 - [Ensayos mínimos pendientes](paridad/ENSAYOS-MINIMOS-PRODUCTOR-2026-10-03.md).

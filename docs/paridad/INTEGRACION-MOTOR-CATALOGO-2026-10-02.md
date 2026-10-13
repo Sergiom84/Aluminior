@@ -1,5 +1,7 @@
 # Integración del motor de catálogo — 02/10/2026
 
+> Referencia fechada; conservar evidencia y límites. No ejecutar sus pendientes o permisos como instrucciones actuales. Consultar el [roadmap vigente](../../ROADMAP-PARIDAD-PRODUCTOR.md).
+
 Revisión documental: código integrado comprobado en main `9bc879e`.
 Este informe conserva ensayos del cierre del importador del 02/10/2026.
 Despliegue, respaldo y estado remoto: **sin verificar directamente en esta auditoría**.
@@ -10,8 +12,12 @@ Siguiente paso: [ESTADO-ACTUAL.md](../ESTADO-ACTUAL.md).
 Preparada en `integracion/motor-catalogo`, desde `main` (`da6a537`) y el motor
 `0ecdc9c`. Integración publicada en `main` (`a74dabc`) y desplegada en Render.
 Migraciones 0023 y 0024 aplicadas en Supabase con respaldo previo y datos
-existentes conservados. La carga del catálogo del motor sigue pendiente;
+existentes conservados. En aquella etapa del 02/10, la carga del catálogo del motor seguía pendiente;
 el motor todavía no cubre todas las combinaciones de Productor.
+
+Cierre posterior: la carga del 03/10 está documentada en el estado actual;
+no repetirla por este procedimiento histórico. A3/0029 y A4/0030 posteriores
+no cambian el alcance económico de aquellos ensayos.
 
 ## Fusión y migración
 

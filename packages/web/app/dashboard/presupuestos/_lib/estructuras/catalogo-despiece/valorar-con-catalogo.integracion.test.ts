@@ -85,6 +85,34 @@ const entrada: EntradaValoracionEstructura = {
 }
 
 describe('valoración con el catálogo de despiece completo', () => {
+  it('una opción alternativa no recibe el precio ni el despiece de la opción predeterminada', () => caso(async tx => {
+    await tx.insert(schema.conjuntoAcristalamientos).values([
+      { conjuntoCodigo: 'QA-SERIE', opcion: 1, tablaHojas: 'QA-T', tablaFijos: 'QA-T' },
+      { conjuntoCodigo: 'QA-SERIE', opcion: 2, tablaHojas: 'QA-T-ALTERNATIVA', tablaFijos: 'QA-T-ALTERNATIVA' },
+    ])
+    await tx.insert(schema.tacrisFilas).values({ tabla: 'QA-T-ALTERNATIVA', grosor: '99',
+      junquillo: 'QA-JUNQUILLO-SIN-CATALOGO' })
+    expect(await valorarEstructura(tx, entrada)).toMatchObject({ ok: true, precioUnitario: 139.56 })
+    expect(await valorarEstructura(tx, { ...entrada, opcionAcristalamiento: 2 }))
+      .toMatchObject({ ok: true, precioUnitario: null, piezas: [], materialCompleto: false,
+        aviso: expect.stringContaining('opción de acristalamiento 2') })
+    const [p] = await tx.insert(schema.presupuestos).values({ numero: 989529, serie: 'QA-E6',
+      fecha: '2026-10-09', nombreLibre: 'QA acristalamiento alternativo', tarifa: 1 }).returning()
+    expect((await altaLinea(tx as unknown as Parameters<typeof altaLinea>[0], {
+      presupuestoId: p!.id, tipo: 'ESTRUCTURA', codigo: 'QA-CORR', serieCodigo: 'QA-SERIE', referencia: null,
+      vidrioCodigo: 'QA-VIDRIO', opcionAcristalamiento: 2, varianteAcristalamiento: '2', cantidad: 1,
+      anchoMm: 1200, altoMm: 1300, acabadoCodigo: 'L', configuracionCerramiento: null,
+      horasFabricacion: '0', horasColocacion: '0',
+    }, ['QA-HERR|1'])).ok).toBe(true)
+    const [l] = await tx.select().from(schema.lineas).where(eq(schema.lineas.presupuestoId, p!.id))
+    expect(l).toMatchObject({ precioUnitario: null, total: null, valoracionCompleta: false })
+    expect(await tx.select().from(schema.lineasEstructura).where(eq(schema.lineasEstructura.lineaId, l!.id)))
+      .toMatchObject([{ opcionAcristalamiento: 2 }])
+    expect(await tx.select().from(schema.lineasAcristalamiento).where(eq(schema.lineasAcristalamiento.lineaId, l!.id)))
+      .toMatchObject([{ vidrioHojas: 'QA-VIDRIO' }, { vidrioHojas: 'QA-VIDRIO' }])
+    expect(await tx.select().from(schema.lineasDespiece).where(eq(schema.lineasDespiece.lineaId, l!.id))).toEqual([])
+  }))
+
   it('valora perfiles, asociados, vidrio y mano de obra desde PostgreSQL', () => caso(async tx => {
     const r = await valorarEstructura(tx, entrada)
     expect(r).toMatchObject({ ok: true, motor: 'catalogo', precioUnitario: 139.56, aviso: null, materialCompleto: true })

@@ -8,7 +8,7 @@ no sustituyen esa validación ni son una comparación económica. Las mejoras
 de integridad de reanudación/CSV están recogidas en el relevo vigente.
 
 
-> Estado operativo: [ESTADO-ACTUAL.md](../../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites.
+> Estado operativo: [ESTADO-ACTUAL.md](../../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites. El orden y estado de tareas pertenece al [roadmap vigente](../../../ROADMAP-PARIDAD-PRODUCTOR.md); sus encargos, permisos y pendientes fechados no se reactivan.
 
 27/09/2026. Este barrido inicia el trabajo de
 [cobertura integral](04-cobertura-integral-y-facturas-2026.md). **No certifica

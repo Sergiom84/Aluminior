@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { MAXIMO_OPCIONES_ACRISTALAMIENTO, type OpcionAcristalamiento } from '@aluminior/core/estructuras'
 import { opcionesAcristalamientoLinea } from '../../../_lib/editor-linea-action.ts'
+import type { EstadoCargaCatalogo } from './disponibilidad-catalogos.ts'
 import styles from './editor-linea.module.css'
 
 /**
@@ -12,20 +13,31 @@ import styles from './editor-linea.module.css'
  *
  * La opción elegida viaja al servidor para seleccionar tablas y persistirla.
  */
-export function PestanaAcristalamiento({ serie }: { serie: string }) {
+export function PestanaAcristalamiento({ serie, onEstadoChange }: {
+  serie: string; onEstadoChange: (estado: EstadoCargaCatalogo) => void
+}) {
   const [opciones, setOpciones] = useState<OpcionAcristalamiento[]>([])
   const [elegida, setElegida] = useState(1)
+  const [cargando, setCargando] = useState(Boolean(serie))
+  const [error, setError] = useState(false)
+  const [intento, setIntento] = useState(0)
+  const estado = cargando ? 'PENDIENTE' : error ? 'ERROR' : 'LISTO'
+  useEffect(() => { onEstadoChange({ clave: serie, estado }) }, [serie, estado, onEstadoChange])
 
   useEffect(() => {
     let vigente = true
+    setCargando(Boolean(serie))
+    setError(false)
     const cargar = serie ? opcionesAcristalamientoLinea(serie) : Promise.resolve([])
     cargar.then((leidas) => {
       if (!vigente) return
       setOpciones(leidas)
       setElegida(leidas.find((o) => o.predeterminada)?.numero ?? 1)
-    }).catch(() => { if (vigente) setOpciones([]) })
+    }).catch(() => {
+      if (vigente) { setOpciones([]); setError(true) }
+    }).finally(() => { if (vigente) setCargando(false) })
     return () => { vigente = false }
-  }, [serie])
+  }, [serie, intento])
 
   const posiciones = Array.from({ length: MAXIMO_OPCIONES_ACRISTALAMIENTO }, (_, i) => i + 1)
   const tabla = (t: OpcionAcristalamiento['hojas']) => (t ? `${t.codigo}${t.descripcion ? ` ${t.descripcion}` : ''}` : '')
@@ -33,6 +45,11 @@ export function PestanaAcristalamiento({ serie }: { serie: string }) {
   return (
     <fieldset className={styles.radios}>
       <legend>Acristalamiento</legend>
+      {cargando && <p role="status">Cargando opciones de acristalamiento…</p>}
+      {error && <p role="alert">
+        No se pudieron consultar las opciones de acristalamiento.{' '}
+        <button type="button" className="al-command" onClick={() => setIntento(actual => actual + 1)}>Reintentar</button>
+      </p>}
       {posiciones.map((numero) => {
         const opcion = opciones.find((o) => o.numero === numero)
         const id = `acristalamiento-${numero}`

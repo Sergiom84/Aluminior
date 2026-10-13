@@ -8,7 +8,7 @@ no el límite del catálogo visual actual de 160. El adaptador diagnóstico exis
 los casos históricos siguen pendientes de contexto y contraste económico.
 El [motor posterior](INTEGRACION-MOTOR-CATALOGO-2026-10-02.md) no sustituye esa aceptación.
 
-> Estado operativo: [ESTADO-ACTUAL.md](../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites.
+> Estado operativo: [ESTADO-ACTUAL.md](../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites. El orden y estado de tareas pertenece al [roadmap vigente](../../ROADMAP-PARIDAD-PRODUCTOR.md); sus encargos, permisos y pendientes fechados no se reactivan.
 
 > Revisión documental 20/09/2026: **Contrato y evidencia**. Banco y adaptador implementados; cobertura observada no certifica precios generales.
 > Para continuar: [estado actual](../ESTADO-ACTUAL.md). Este registro no activa trabajo ni permisos de sesiones anteriores.

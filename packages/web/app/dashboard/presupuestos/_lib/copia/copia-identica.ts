@@ -62,7 +62,8 @@ export async function copiarIdentica(
       creadoPor,
       fecha: fechaLocalMadrid(),
     })
-  } catch {
+  } catch (error) {
+    registrarFallo(`copiarIdentica(${estrategia}): copia de ${presupuestoId}`, error)
     return { ok: false, error: ERROR_GENERICO }
   }
 

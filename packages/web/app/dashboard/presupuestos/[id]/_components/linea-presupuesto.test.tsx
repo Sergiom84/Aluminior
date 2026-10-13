@@ -3,14 +3,14 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it, vi } from 'vitest'
 import { LineaPresupuesto } from './linea-presupuesto.tsx'
 
-vi.mock('./anyadir-linea.tsx', () => ({ BotonBorrarLinea: () => null }))
+vi.mock('./boton-borrar-linea.tsx', () => ({ BotonBorrarLinea: () => <button>Eliminar</button> }))
 vi.mock('./editar-articulo.tsx', () => ({ EditarArticulo: () => null }))
 vi.mock('./editar-cerramiento.tsx', () => ({ EditarCerramiento: () => null }))
 
 describe('miniatura del cerramiento persistido', () => {
   it('dibuja 1OFI con el FI guardado en vez del reparto legado', () => {
     const html = renderToStaticMarkup(<table><tbody><LineaPresupuesto
-      articuloEditable={false}
+      editable={false}
       linea={{
         id: 'linea-1', orden: 1, tipo: 'CERRAMIENTO', articuloCodigo: null,
         descripcion: 'CERRAMIENTO SEGÚN DIBUJO · 1OFI', referencia: null,
@@ -36,5 +36,9 @@ describe('miniatura del cerramiento persistido', () => {
     expect(travesano).not.toBeNull()
     // Caja compacta: margen 24 + eje físico 1400/1800 sobre 372 px útiles.
     expect(Number(travesano![1]) + Number(travesano![2]) / 2).toBeCloseTo(313.3333333333)
+    expect(html).not.toContain('>Editar<')
+    expect(html).not.toContain('>Eliminar<')
+    // El diagnóstico debe ser texto visible, también sin hover en un móvil.
+    expect(html).toMatch(/<div[^>]*>Configuración guardada sin valorar<\/div>/)
   })
 })

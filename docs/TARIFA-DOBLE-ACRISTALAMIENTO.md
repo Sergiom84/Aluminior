@@ -1,5 +1,11 @@
 # Tarifa de proveedor de doble acristalamiento
 
+**Referencia local, no publicada ni aplicada.** La herramienta y módulos
+de esta propuesta están en el main Mac `787d1ad`, excluidos de `origin/main`
+`9673659`. Conservar la evidencia y las decisiones; no ejecutar su comando
+desde la versión publicada ni mezclar esos commits para retomar A3/A4.
+El pendiente del titular se conserva en July (228 en este Mac).
+
 Fecha: 04/10/2026. Estado: **propuesta calculada, sin aplicar**. Pendiente de
 decisión del titular y de confirmar hipótesis con el proveedor.
 
@@ -69,5 +75,7 @@ laminar gris/bronce, que la tarifa remite a consultar, quedan sin precio nuevo.
   la tarifa nueva (mínimo de facturación de 0,50 m²).
 - Cualquier escritura en Supabase exige autorización expresa y un dry-run previo.
 
-Aplicarla no afecta al banco de contraste, que se mide contra la copia
-histórica del catálogo con los precios del proveedor anterior.
+La propuesta no ha modificado el banco de contraste, medido contra la copia
+histórica del catálogo con los precios del proveedor anterior. Una eventual
+aplicación requiere mantener ese corpus separado y verificar el destino;
+no se promete que una modificación de datos carezca de efectos económicos.

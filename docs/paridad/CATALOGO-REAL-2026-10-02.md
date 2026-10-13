@@ -1,5 +1,7 @@
 # Catálogo real en el configurador y entrada directa
 
+> Referencia fechada; conservar evidencia y límites. No ejecutar sus pendientes o permisos como instrucciones actuales. Consultar el [roadmap vigente](../../ROADMAP-PARIDAD-PRODUCTOR.md).
+
 Fecha: 02/10/2026. Autorizado por el usuario: «empieza por los dos puntos»
 (entrar directamente al configurador de cerramientos y conectar el catálogo
 real al escaparate). Trabajo inicial en local, en el Mac; la ejecución posterior de 0022 y el relleno
@@ -81,7 +83,9 @@ zócalos (nodo 4), curvas, oscilantes/proyectantes (21, 22, 49), 3HO y PCM1D/I
 - Ensayo de valoración anterior a la integración del motor: una C2 con serie GMC400 genera despiece (30 piezas) pero 22 sin
   coste, así que queda «sin valorar». El [ensayo posterior](INTEGRACION-MOTOR-CATALOGO-2026-10-02.md) obtuvo PVP con
   avisos para C2/PC2 con el motor cargado; no acredita paridad general.
-  La carga remota del motor sigue pendiente según el cierre del importador.
+  En aquel ensayo la carga remota del motor seguía pendiente. El relevo del
+  03/10 ya la informa aplicada; consultar el [estado vigente](../ESTADO-ACTUAL.md)
+  y verificar por separado la aceptación funcional de producción.
 - Producción: ver «Procedimiento y ejecución fechada de 0022». No usar el importador completo:
   `vaciarDestino` trunca presupuestos y clientes.
 - Mano 58, sentido de las correderas y orden del escaparate: contrastar

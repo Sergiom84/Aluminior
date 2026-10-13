@@ -146,7 +146,7 @@ export default async function DetallePresupuesto({ params, searchParams }: {
                 Todavía no hay líneas. Elige una estructura en el escaparate.
               </td></tr>
             ) : lineas.map((linea) => (
-              <LineaPresupuesto key={linea.id} linea={linea} presupuestoId={id} articuloEditable={p.estado === 'PENDIENTE'}
+              <LineaPresupuesto key={linea.id} linea={linea} presupuestoId={id} editable={p.estado === 'PENDIENTE'}
                 resultado={resultadosPorLinea.get(linea.id) ?? null}
                 manoObra={manoObra.filter(f => f.lineaId === linea.id)}
                 despiece={piezasPorLinea.get(linea.id) ?? []} edicion={edicionPorLinea.get(linea.id) ?? null}

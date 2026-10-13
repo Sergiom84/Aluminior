@@ -54,6 +54,13 @@ export function prepararAltaCerramiento(datos: DatosAltaCerramiento): ResultadoA
   }
   const { configuracion } = validacion
   const medidas = medidasCerramiento(configuracion)
+  // El snapshot permite fracciones internas; las medidas exteriores de la
+  // línea siguen siendo integer. Evitar un fallo SQL y no redondear el diseño.
+  if (!Number.isInteger(medidas.anchoMm) || !Number.isInteger(medidas.altoMm)) {
+    return { ok: false, errores: { configuracionCerramiento: [
+      'No se puede guardar: el ancho y el alto exteriores del cerramiento deben ser milímetros enteros. Las medidas no se han redondeado.',
+    ] } }
+  }
   return {
     ok: true,
     alta: {
