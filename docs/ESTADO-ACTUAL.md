@@ -37,6 +37,15 @@ Esta entrega verifica código local y publicación Git; no reconsulta producció
 no aplica migraciones ni certifica aceptación Productor. El siguiente trabajo
 sigue siendo la matriz restante de P.6/P.7 y E1 en Windows.
 
+Comprobación directa de Supabase el 13/10/2026 tras petición de aplicar cualquier
+migración pendiente: journal remoto con las 33 entradas locales hasta `0032`,
+fechas concordantes y cero pendientes. Los hashes coinciden salvo `0020`, cuyo
+hash remoto coincide exactamente con el SQL local convertido a CRLF; es una
+diferencia de saltos de línea, no de contenido. Verificadas las dimensiones
+`double precision` de `lineas`, `acabado_articulo_codigo` y la tabla dimensional
+con RLS. Consulta de solo lectura; no se aplicaron migraciones ni se modificaron
+datos o journal remoto.
+
 ## ClonerSoft publicado técnicamente — 12/10/2026
 
 [Investigación y cambios](paridad/INVESTIGACION-CLONERSOFT-2026-10-12.md) desde
