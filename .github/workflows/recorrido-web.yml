@@ -1,0 +1,43 @@
+name: Recorrido web sintético
+on:
+  push:
+    branches: [main, 'codex/**']
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: recorrido-web-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  navegador:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: aluminior
+          POSTGRES_PASSWORD: aluminior
+          POSTGRES_DB: aluminior_test
+        ports: ['55433:5432']
+        options: >-
+          --health-cmd "pg_isready -U aluminior -d aluminior_test"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run typecheck:e2e
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: recorrido-web
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7

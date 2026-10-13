@@ -131,6 +131,12 @@ export const articulosDespiece = pgTable('articulos_despiece', {
   dobleAcristalamiento: boolean('doble_acristalamiento').notNull(),
   grosorAcristalar: numeric('grosor_acristalar', { precision: 10, scale: 3 }).notNull(),
   incrementosPrecio: boolean('incrementos_precio').notNull(),
+  /** null conserva desconocida la configuración anterior a la carga dirigida de `PrecioTablaSN`. */
+  precioEnTabla: boolean('precio_en_tabla'),
+  politicasPrecioTabla: jsonb('politicas_precio_tabla').$type<{
+    noMedidasInferiores?: boolean | null; noMedidasSuperiores?: boolean | null
+    soloMedidasAncho?: boolean | null; soloMedidasLargo?: boolean | null; noPrecioCero?: boolean | null
+  }>(),
 }).enableRLS()
 
 /** Parámetros de serie de `Conjuntos`: códigos de herraje y de mano de obra y rangos de grosor. */

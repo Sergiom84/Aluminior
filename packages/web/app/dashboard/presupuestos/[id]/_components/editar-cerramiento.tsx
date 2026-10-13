@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { useEnvioFormulario } from './use-envio-formulario.ts'
 import { medidasCerramiento, type ConfiguracionCerramiento } from '@aluminior/core/estructuras'
 import { editarCerramiento, type EstadoEdicionCerramiento } from '../../_lib/editar-cerramiento-action.ts'
@@ -8,6 +8,7 @@ import { MAXIMO_HORAS } from '../../_lib/lineas/esquema-linea.ts'
 import { DisenadorEstructura } from './disenador-estructura.tsx'
 import styles from '../presupuesto-movil.module.css'
 import { CampoVidrio } from './vidrios/campo-vidrio.tsx'
+import { usarResultadoEdicion } from './campo-edicion.tsx'
 
 export interface DatosEdicionCerramiento {
   configuracion: ConfiguracionCerramiento
@@ -35,6 +36,8 @@ export function EditarCerramiento({
   onCancelar: () => void
 }) {
   const { estado, enviar, enviando: guardando } = useEnvioFormulario<EstadoEdicionCerramiento>(editarCerramiento)
+  const formulario = useRef<HTMLFormElement>(null)
+  usarResultadoEdicion(estado, formulario, onCancelar)
   const [configuracion, setConfiguracion] = useState(datos.configuracion)
   const [serie, setSerie] = useState(datos.serieCodigo ?? '')
   const [vidrio, setVidrio] = useState(datos.vidrioCodigo ?? '')
@@ -46,7 +49,6 @@ export function EditarCerramiento({
     setAnchoMm(ancho)
     setAltoMm(alto)
   }, [])
-  useEffect(() => { if (estado?.ok) onCancelar() }, [estado, onCancelar])
 
   const errores = estado && !estado.ok ? estado.errores : {}
   const identificador = (campo: string) => `${campo}-${lineaId}`
@@ -56,13 +58,13 @@ export function EditarCerramiento({
     'aria-describedby': errores[nombre]?.length ? `${identificador(nombre)}-error` : undefined,
   })
   const ErrorCampo = ({ nombre }: { nombre: string }) => errores[nombre]?.length ? (
-    <p id={`${identificador(nombre)}-error`} className="mt-1 text-xs" style={{ color: 'var(--al-error)' }}>
+    <p id={`${identificador(nombre)}-error`} role="alert" tabIndex={-1} className="mt-1 text-xs" style={{ color: 'var(--al-error)' }}>
       {errores[nombre].join('. ')}
     </p>
   ) : null
 
   return (
-    <form onSubmit={enviar} className={`${styles.editorForm} rounded-md border p-4`}
+    <form ref={formulario} onSubmit={enviar} aria-label="Editar cerramiento" className={`${styles.editorForm} rounded-md border p-4`}
       style={{ background: 'var(--al-surface)', borderColor: 'var(--al-accent)' }}>
       <input type="hidden" name="presupuestoId" value={presupuestoId} />
       <input type="hidden" name="lineaId" value={lineaId} />
@@ -78,7 +80,7 @@ export function EditarCerramiento({
         generales={{ serieCodigo: serie || null, vidrioCodigo: vidrio || null }} />
 
       {estado?.mensaje && (
-        <div className="mb-3 mt-4 rounded-md border p-3 text-sm"
+        <div role={estado.ok ? 'status' : 'alert'} tabIndex={-1} className="mb-3 mt-4 rounded-md border p-3 text-sm"
           style={{ borderColor: estado.ok ? 'var(--al-accent)' : 'var(--al-error)' }}>
           {estado.mensaje}
         </div>

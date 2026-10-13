@@ -2,6 +2,7 @@ import type { Sql } from 'postgres'
 import { leerLotes, rutaTabla } from '../csv.ts'
 import type { Cargar } from './cargar.ts'
 import type { Resultado } from './resultado.ts'
+import { serializarPoliticasSql } from './jsonb.ts'
 
 /** Cargas de sustitución: cualquier rechazo o clave duplicada revierte la transacción. */
 export function crearCargadorEstricto(sql: Sql, origen: string): Cargar {
@@ -15,7 +16,7 @@ export function crearCargadorEstricto(sql: Sql, origen: string): Cargar {
       const filas = lote.map(f => mapear(f, r)).filter(f => f !== null)
       if (!filas.length) continue
       // No ignorar conflictos ni reintentar dentro de una transacción abortada.
-      const insertadas = await sql`INSERT INTO ${sql(tablaDestino)} ${sql(filas)}`
+      const insertadas = await sql`INSERT INTO ${sql(tablaDestino)} ${sql(serializarPoliticasSql(sql, filas))}`
       r.insertadas += insertadas.count
     }
     return r

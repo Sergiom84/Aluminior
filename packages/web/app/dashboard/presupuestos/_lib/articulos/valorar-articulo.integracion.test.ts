@@ -12,6 +12,8 @@ describe('valoración de artículo, SQL real contra PostgreSQL', () => {
   const limpiar = async () => {
     await db.delete(schema.articulosPvp)
       .where(eq(schema.articulosPvp.articuloCodigo, CODIGO))
+    await db.delete(schema.articulosDespiece)
+      .where(eq(schema.articulosDespiece.articuloCodigo, CODIGO))
     await db.delete(schema.articulos)
       .where(eq(schema.articulos.codigo, CODIGO))
   }
@@ -21,6 +23,10 @@ describe('valoración de artículo, SQL real contra PostgreSQL', () => {
     await db.insert(schema.articulos).values({
       codigo: CODIGO,
       descripcion: 'Artículo de prueba con acabados',
+    })
+    await db.insert(schema.articulosDespiece).values({
+      articuloCodigo: CODIGO, generico: false, dobleAcristalamiento: false,
+      grosorAcristalar: '0', incrementosPrecio: false, precioEnTabla: false,
     })
     await db.insert(schema.articulosPvp).values([
       { articuloCodigo: CODIGO, acabadoCodigo: 'BLA', tarifa: 7, precio: '12.3400' },

@@ -15,7 +15,7 @@ import { parseArgs } from 'node:util'
 import { normalizarDecimal, parsearComposicion, type TarifaDobleAcristalamiento } from '../packages/core/src/precios/index.ts'
 import { parse } from 'csv-parse/sync'
 import { derivarTarifaGuardada } from './lib/tarifa-doble-acristalamiento/derivar.ts'
-import { construirPropuesta, medirFactores, resumirPropuesta, type ArticuloConPvp } from './lib/tarifa-doble-acristalamiento/propuesta.ts'
+import { construirPropuesta, medirFactores, resumirPropuesta, validarModeloGuardado, type ArticuloConPvp } from './lib/tarifa-doble-acristalamiento/propuesta.ts'
 
 const { values } = parseArgs({ options: { tarifa: { type: 'string' },
   catalogo: { type: 'string', default: 'export_datos/EMP0016' }, salida: { type: 'string' } } })
@@ -48,6 +48,7 @@ const metrajes = new Set(vidrios.filter(a => parsearComposicion(a.Descripcion ??
 
 const guardada = derivarTarifaGuardada(articulos)
 const factores = medirFactores(articulos)
+validarModeloGuardado(guardada, factores)
 const filas = construirPropuesta(articulos, tarifa, factores)
 const resumen = { proveedor: tarifa.proveedor, fecha: tarifa.fecha, tarifaSha256: tarifa.sha256,
   catalogo: resolve(carpeta), vidriosFamilia050: vidrios.length, compuestos: articulos.length,

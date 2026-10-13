@@ -94,7 +94,7 @@ export function PestanaEstructura({
         </div>
         <div className="col-span-2">
           <label htmlFor="anchoMm">Ancho (mm)</label>
-          <input {...atributosCampo('anchoMm', err)} type="number" min={100} step={1} value={anchoMm}
+          <input {...atributosCampo('anchoMm', err)} type="number" min={100} step="any" value={anchoMm}
             onChange={(evento) => setAnchoMm(Number(evento.target.value))}
             className={`cifra ${entrada}`}
             style={{ ...estilo, borderColor: bordeCampo('anchoMm', err, estilo.borderColor) }} />
@@ -102,7 +102,7 @@ export function PestanaEstructura({
         </div>
         <div className="col-span-2">
           <label htmlFor="altoMm">Alto (mm)</label>
-          <input {...atributosCampo('altoMm', err)} type="number" min={100} step={1} value={altoMm}
+          <input {...atributosCampo('altoMm', err)} type="number" min={100} step="any" value={altoMm}
             onChange={(evento) => setAltoMm(Number(evento.target.value))}
             className={`cifra ${entrada}`}
             style={{ ...estilo, borderColor: bordeCampo('altoMm', err, estilo.borderColor) }} />

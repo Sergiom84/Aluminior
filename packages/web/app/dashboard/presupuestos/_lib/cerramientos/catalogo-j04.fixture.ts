@@ -38,6 +38,8 @@ export async function sembrarCatalogoJ04(db: ClienteEscritura) {
       apareceEnHojaCorte: ['P', 'J', 'U'].includes(sufijo), apareceEnHojaDespiece: true,
       familiaCodigo: sufijo === 'V' ? '050' : null, tamJunquilloGoma: sufijo === 'V' ? '4' : null,
       metrajeMultiploLargo: sufijo === 'V' ? '1' : null, metrajeMultiploAncho: sufijo === 'V' ? '1' : null })
+    await db.insert(schema.articulosDespiece).values({ articuloCodigo: codigo, generico: false,
+      dobleAcristalamiento: false, grosorAcristalar: sufijo === 'V' ? '4' : '0', incrementosPrecio: false, precioEnTabla: false })
     await db.insert(schema.articulosPvp).values({ articuloCodigo: codigo, acabadoCodigo: J04.acabado, tarifa: J04.tarifa, precio })
     await db.insert(schema.articulosCoste).values({ articuloCodigo: codigo, acabadoCodigo: J04.acabado, proveedorCodigo: 'QA-J04-PROV', coste })
   }

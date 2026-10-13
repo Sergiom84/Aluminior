@@ -16,6 +16,7 @@ import { anyadirLinea, borrarLinea, crearPresupuesto } from './acciones.ts'
 const presupuestoId = '11111111-1111-4111-8111-111111111111'
 const formulario = (campos: Record<string, string>) => {
   const datos = new FormData()
+  datos.set('operacionId', '22222222-2222-4222-8222-222222222222')
   for (const [campo, valor] of Object.entries(campos)) datos.set(campo, valor)
   return datos
 }

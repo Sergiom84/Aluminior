@@ -11,7 +11,7 @@ import {
   costeDobleAcristalamiento, multiplicarDecimal, normalizarDecimal, type MotivoSinCoste,
   type TarifaDobleAcristalamiento,
 } from '../../../packages/core/src/precios/index.ts'
-import type { ArticuloCompuesto } from './derivar.ts'
+import type { ArticuloCompuesto, TarifaDerivada } from './derivar.ts'
 
 export interface ArticuloConPvp extends ArticuloCompuesto {
   /** PVP guardado por tarifa de venta ('1', '2', '3'). */
@@ -19,6 +19,14 @@ export interface ArticuloConPvp extends ArticuloCompuesto {
 }
 
 export interface FactorTarifa { tarifa: string; factor: string; reproducidos: number; total: number }
+
+/** Impide exportar una propuesta basada en un modelo que no explica el catálogo. */
+export function validarModeloGuardado(guardada: TarifaDerivada, factores: readonly FactorTarifa[]): void {
+  if (guardada.reproducidos === 0 || guardada.discrepancias.length > 0)
+    throw new Error('El modelo no reproduce todos los costes guardados; se conserva el catálogo sin propuesta')
+  if (factores.length === 0 || factores.some(f => f.total === 0 || f.reproducidos !== f.total))
+    throw new Error('Los factores no reproducen todos los PVP guardados; no se exporta la propuesta')
+}
 
 export interface FilaPropuesta {
   codigo: string

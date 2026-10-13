@@ -125,6 +125,20 @@ export function CamposArticulo({
         <MensajeError campo="referencia" errores={err} />
       </div>
       <div className="col-span-3">
+        <label htmlFor="anchoMm">Ancho (mm)</label>
+        <input {...atributosCampo('anchoMm', err)} type="number" min={0} step="0.01"
+          className={`cifra ${entrada}`}
+          style={{ ...estilo, borderColor: bordeCampo('anchoMm', err, estilo.borderColor) }} />
+        <MensajeError campo="anchoMm" errores={err} />
+      </div>
+      <div className="col-span-3">
+        <label htmlFor="altoMm">Alto (mm)</label>
+        <input {...atributosCampo('altoMm', err)} type="number" min={0} step="0.01"
+          className={`cifra ${entrada}`}
+          style={{ ...estilo, borderColor: bordeCampo('altoMm', err, estilo.borderColor) }} />
+        <MensajeError campo="altoMm" errores={err} />
+      </div>
+      <div className="col-span-3">
         <label htmlFor="cantidad">Cdad.</label>
         <input {...atributosCampo('cantidad', err)} type="number" defaultValue={1} min={1} step={1}
           className={`cifra ${entrada}`}

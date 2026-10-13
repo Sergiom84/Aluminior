@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { derivarTarifaGuardada, type ArticuloCompuesto } from './derivar.ts'
-import { construirPropuesta, medirFactores, resumirPropuesta, type ArticuloConPvp } from './propuesta.ts'
+import { construirPropuesta, medirFactores, resumirPropuesta, validarModeloGuardado, type ArticuloConPvp } from './propuesta.ts'
 
 const art = (codigo: string, exterior: string, camaraMm: number, argon: boolean, interior: string,
   coste: string | null, pvp: Record<string, string> = {}): ArticuloConPvp =>
@@ -36,6 +36,17 @@ describe('tarifa implícita en el coste guardado', () => {
 })
 
 describe('propuesta con tarifa nueva', () => {
+  it('bloquea la exportación si el catálogo deja de seguir el modelo de costes o PVP', () => {
+    expect(() => validarModeloGuardado(derivarTarifaGuardada(catalogo), medirFactores(catalogo))).not.toThrow()
+    const costeIncompatible = [...catalogo, art('G', 'X', 16, false, 'X', '41.00')]
+    expect(() => validarModeloGuardado(derivarTarifaGuardada(costeIncompatible), medirFactores(catalogo)))
+      .toThrow('costes guardados')
+    const pvpIncompatible = catalogo.map(a => a.codigo === 'F' ? { ...a, pvp: { ...a.pvp, '1': '86.00' } } : a)
+    expect(() => validarModeloGuardado(derivarTarifaGuardada(pvpIncompatible), medirFactores(pvpIncompatible)))
+      .toThrow('PVP guardados')
+    expect(() => validarModeloGuardado(derivarTarifaGuardada(catalogo), [])).toThrow('PVP guardados')
+  })
+
   it('mide el factor PVP/coste por tarifa y cuántos PVP reproduce', () => {
     expect(medirFactores(catalogo)).toEqual([
       { tarifa: '1', factor: '2', reproducidos: 6, total: 6 },

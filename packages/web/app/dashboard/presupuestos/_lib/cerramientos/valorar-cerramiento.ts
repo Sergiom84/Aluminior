@@ -96,7 +96,7 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
           `Unión ${g.id}: ${material.valoracion.lineas.filter(p => p.incidencia).map(p => `${p.articuloCodigo}: ${p.incidencia}`).join('; ') || 'Componentes sin resolver'}`,
           material.despiece.incalculables > 0 || material.valoracion.sinMedida.length > 0 ||
           material.sinResolver.size > 0 || material.sinResolverAsoc.size > 0 ||
-          material.despiece.piezas.some(p => !material.mapa.has(p.articuloCodigo)))
+          material.bloqueosPrecioTabla.size > 0 || material.despiece.piezas.some(p => !material.mapa.has(p.articuloCodigo)))
       }
     } else {
       const valor = await valorarEstructura(cliente, parametros)

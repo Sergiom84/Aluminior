@@ -3,7 +3,7 @@
 Entrada de trabajo: [ESTADO-ACTUAL.md](ESTADO-ACTUAL.md).
 Clasificación documental inicial sobre `9bc879e` y comprobación local del 02/10.
 Revisión del 10/10/2026: 84 Markdown de `origin/main` `9673659` y una
-propuesta exclusiva del main local. A3/A4 y S3 ya entregados; Render live
+propuesta entonces exclusiva del main local (integrada como herramienta el 13/10, sin aplicar tarifas). A3/A4 y S3 ya entregados; Render live
 487feb1 reconsultado, CI S3 correcta.
 [Informe e inventario](AUDITORIA-DOCUMENTAL-2026-10-10.md). Estados en el roadmap.
 
@@ -12,10 +12,12 @@ propuesta exclusiva del main local. A3/A4 y S3 ya entregados; Render live
 
 | Documento | Uso |
 |---|---|
+| [Publicación ClonerSoft 12/10](paridad/PUBLICACION-CLONERSOFT-2026-10-12.md) | `40cedd1` live, 0031/0032/carga, respaldo/restauración, CI y QA remoto/preservación; C1 técnico acotado y P.6/P.7 parcial |
+| [Investigación ClonerSoft 12/10](paridad/INVESTIGACION-CLONERSOFT-2026-10-12.md) | Fuentes/ejercicios, REA efectiva, contrato C1 dimensional, evidencia local y enlace a su publicación; E1/E2/E6 abiertos |
 | [Continuar en Windows](CONTINUAR-EN-WINDOWS.md) | Recepción, fuentes privadas, P.2, E1/E7 y prompt de continuación |
 | [Auditoría documental 10/10](AUDITORIA-DOCUMENTAL-2026-10-10.md) | Hallazgos, cambios, verificación y límites |
 | [Inventario documental 10/10](INVENTARIO-DOCUMENTAL-2026-10-10.md) | Clasificación y tratamiento de todo el corpus revisado |
-| [Tarifa de doble acristalamiento](TARIFA-DOBLE-ACRISTALAMIENTO.md) | Propuesta del main local excluida de origin/main; no aplicada ni capacidad publicada |
+| [Tarifa de doble acristalamiento](TARIFA-DOBLE-ACRISTALAMIENTO.md) | Herramienta integrada el 13/10; propuesta no aplicada, hipótesis y decisión del titular pendientes |
 | [Medidas y CI 09/10](paridad/MEDIDAS-Y-CI-2026-10-09.md) | A4 publicado/verificado, 0030 aplicada; A5 navegador/CI, S3 validación de paquetes y D1 ficha July |
 | [Idempotencia 09/10](paridad/IDEMPOTENCIA-PRESUPUESTOS-2026-10-09.md) | A3: reproducción, implementación, pérdida HTTP real y migración aplicada y publicación verificada |
 | [README](../README.md) | Arranque y comandos |

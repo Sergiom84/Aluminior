@@ -16,7 +16,7 @@ function FormularioCabecera({ datos: d, cerrar }: { datos: DatosCabeceraEdicion;
   const formulario = useRef<HTMLFormElement>(null)
   usarResultadoEdicion(estado, formulario, cerrar)
   const errores = estado && !estado.ok ? estado.errores : {}
-  return <form ref={formulario} action={accion} aria-label="Editar cabecera"
+  return <form ref={formulario} action={accion} aria-label="Editar cabecera" data-guardar-ficha
     className="mt-3 rounded-md border p-3" style={{ borderColor: 'var(--al-accent)' }}>
     <input type="hidden" name="presupuestoId" value={d.presupuestoId} />
     {estado && !estado.ok && estado.mensaje && <p role="alert" tabIndex={-1} style={{ color: 'var(--al-error)' }}>{estado.mensaje}</p>}
@@ -30,7 +30,7 @@ function FormularioCabecera({ datos: d, cerrar }: { datos: DatosCabeceraEdicion;
       <CampoEdicion id="editar-observaciones" nombre="observaciones" etiqueta="Observaciones" valor={d.observaciones} errores={errores.observaciones} largo={4000} area />
     </div>
     <div className="mt-3 flex flex-wrap gap-2">
-      <button type="submit" disabled={guardando} className="al-command-primary">{guardando ? 'Guardando…' : 'Guardar cambios'}</button>
+      <button type="submit" disabled={guardando} aria-keyshortcuts="F9" title="Grabar datos (F9)" className="al-command-primary">{guardando ? 'Guardando…' : 'Guardar cambios'}</button>
       <button type="button" disabled={guardando} onClick={cerrar} className="al-command">Cancelar</button>
     </div>
   </form>

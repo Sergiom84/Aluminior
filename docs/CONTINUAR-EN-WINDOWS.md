@@ -7,18 +7,15 @@ al roadmap. [Auditoría y límites de esta revisión](AUDITORIA-DOCUMENTAL-2026-
 
 ## 1. Recibir el trabajo correcto
 
-La copia principal del Mac está en `787d1ad`, con tarifas y cambios sin confirmar
-ajenos a estas entregas. **No copiar esa carpeta como versión de la aplicación.**
-El remoto comprobado el 10/10 está en `9673659`; producción continúa en `487feb1`.
-Los commits posteriores de CI/documentación no requieren otro despliegue de producto.
-
-Sergio autorizó **commit + push** de esta entrega documental el 10/10.
-Recibir la revisión de documentación desde `origin/main` mediante los pasos
-de Git siguientes y abrir `docs/CONTINUAR-EN-WINDOWS.md` en el checkout recibido.
-La publicación en Git y la recepción en Windows son comprobaciones distintas.
-El paquete `aluminior-documentacion-windows-20261010.zip` queda como copia
-alternativa de lectura: extraer fuera del repositorio. Contiene documentación
-y un parche contra `9673659`, sin aplicación, MDB, secretos ni capturas.
+El main principal del Mac se reconcilia el **13/10/2026** con `origin/main`
+`4fb54b3`, conservando las mejoras del 09–12/10 y los commits locales pendientes.
+Sergio autoriza revisar y subir todos los cambios pendientes. La herramienta
+de propuesta de doble acristalamiento pasa a formar parte del código; las tarifas
+continúan sin aplicar y requieren las decisiones de su documento.
+Recibir `origin/main` mediante los pasos siguientes, conservando trabajo propio.
+El estado de producción del 12/10 es evidencia previa: esta reconciliación no
+reconsulta Render ni Supabase. Git y recepción en Windows son verificaciones
+distintas. El ZIP del 10/10 queda como histórico de lectura, anterior a esta entrega.
 
 Localizar el repositorio real: en un portátil se documentó
 `C:\Users\laral\Documents\Aluminior`; en otro,
@@ -46,7 +43,7 @@ git rev-parse HEAD
 
 En una copia limpia de `main` sin commits propios pendientes puede usarse
 `git pull --ff-only`. Si no admite avance rápido, conservar la copia y usar
-el checkout aislado. No ejecutar una fusión de las tarifas del Mac para ponerse al día.
+el checkout aislado. La reconciliación del Mac ya está integrada; no aplicar propuestas de tarifas para ponerse al día.
 
 Leer AGENTS, estado, roadmap y esta guía antes de abrir Productor. Para recibir
 July, usar su herramienta `july_sync` con acción `pull`, revisar el resultado

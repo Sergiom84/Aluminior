@@ -9,6 +9,7 @@
  * única frontera de numeración (`_lib/numeracion/`).
  */
 
+import { ejecutarIdempotente } from '../idempotencia/ejecutar.ts'
 import type { crearDb } from '@aluminior/db'
 import { schema } from '@aluminior/db'
 import {
@@ -19,6 +20,7 @@ import { reservarNumeracionParaPruebas } from '../numeracion/reservar.ts'
 type Db = ReturnType<typeof crearDb>
 
 export interface DatosAltaPresupuesto {
+  readonly operacionId?: string
   readonly serie: string
   readonly fecha: string
   readonly clienteCodigo: string | null
@@ -52,7 +54,9 @@ async function crearPresupuestoAltaConGanchos(
   db: Db, datos: DatosAltaPresupuesto, ganchos: GanchosDePrueba,
 ): Promise<ResultadoAltaPresupuesto> {
   try {
-    const id = await ejecutarConNumeracion(db, async (tx) => {
+    const { operacionId, fecha: _fecha, creadoPor, ...intencion } = datos
+    return await ejecutarConNumeracion(db, (tx) => ejecutarIdempotente(
+      tx, operacionId, creadoPor, { tipo: 'ALTA', datos: intencion }, async () => {
       const entrada = { modo: 'NUMERO_NUEVO' as const, fecha: datos.fecha, serie: datos.serie }
       const numeracion = ganchos.pausaTrasLecturaMs
         ? await reservarNumeracionParaPruebas(tx, entrada, ganchos)
@@ -74,10 +78,8 @@ async function crearPresupuestoAltaConGanchos(
         estado: 'PENDIENTE',
         creadoPor: datos.creadoPor,
       }).returning({ id: schema.presupuestos.id })
-      return fila.id
-    }, { automatico: true })
-
-    return { ok: true, id }
+      return { ok: true as const, id: fila.id }
+    }), { automatico: true })
   } catch (e) {
     if (esColisionIdentidad(e)) {
       return { ok: false, errores: ['No se pudo asignar el número: inténtalo de nuevo'] }

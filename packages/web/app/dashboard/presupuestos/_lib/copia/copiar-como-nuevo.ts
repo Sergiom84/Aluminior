@@ -16,6 +16,6 @@ import { copiarIdentica, type ResultadoCopiaIdentica } from './copia-identica.ts
 
 export type ResultadoCopiarComoNuevo = ResultadoCopiaIdentica
 
-export async function copiarComoNuevo(presupuestoId: string): Promise<ResultadoCopiarComoNuevo> {
-  return copiarIdentica('NUEVO_NUMERO', presupuestoId)
+export async function copiarComoNuevo(presupuestoId: string, operacionId: string): Promise<ResultadoCopiarComoNuevo> {
+  return copiarIdentica('NUEVO_NUMERO', presupuestoId, operacionId)
 }

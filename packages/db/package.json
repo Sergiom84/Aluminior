@@ -21,7 +21,7 @@
     "postgres": "^3.4.5"
   },
   "devDependencies": {
-    "drizzle-kit": "^0.28.1",
+    "drizzle-kit": "^0.31.11",
     "typescript": "^5.6.3",
     "@aluminior/core": "*"
   }

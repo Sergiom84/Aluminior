@@ -1,9 +1,10 @@
 # Tarifa de proveedor de doble acristalamiento
 
-**Referencia local, no publicada ni aplicada.** La herramienta y módulos
-de esta propuesta están en el main Mac `787d1ad`, excluidos de `origin/main`
-`9673659`. Conservar la evidencia y las decisiones; no ejecutar su comando
-desde la versión publicada ni mezclar esos commits para retomar A3/A4.
+**Herramienta incluida en la reconciliación de main del 13/10/2026, sin aplicar tarifas.**
+La propuesta original de `787d1ad` se integra con el código remoto del 12/10.
+El comando solo lee fuentes privadas y genera propuestas en una ruta ignorada.
+La revisión añade rechazo si el modelo no reproduce todos los costes o PVP
+originales. No escribe en BD ni cambia la valoración activa.
 El pendiente del titular se conserva en July (228 en este Mac).
 
 Fecha: 04/10/2026. Estado: **propuesta calculada, sin aplicar**. Pendiente de

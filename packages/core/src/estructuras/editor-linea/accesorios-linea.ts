@@ -14,6 +14,7 @@
  */
 
 import { multiplicarDecimal, type Decimal } from '../../precios/decimal.ts'
+import { incidenciaPrecioEnTabla } from '../../precios/precio-en-tabla.ts'
 import { metrajeSuperficie, type ReglaMetrajeSuperficie } from '../../precios/metraje-superficie.ts'
 import { medidasConCompacto } from './compacto.ts'
 
@@ -52,7 +53,8 @@ function valorarSuperficie(articulo: ArticuloSuperficie, anchoMm: number, altoMm
   if (articulo.tipoMetraje !== 'M2' || articulo.precioEnTabla) {
     return {
       completo: false, anchoMm, altoMm, metraje: null, importe: null,
-      incidencia: `${articulo.codigo}: valoración ${articulo.precioEnTabla ? 'por tabla' : articulo.tipoMetraje} sin regla verificada`,
+      incidencia: incidenciaPrecioEnTabla(articulo.codigo, articulo.precioEnTabla) ??
+        `${articulo.codigo}: valoración ${articulo.tipoMetraje} sin regla verificada`,
     }
   }
   const metraje = metrajeSuperficie(anchoMm, altoMm, articulo)

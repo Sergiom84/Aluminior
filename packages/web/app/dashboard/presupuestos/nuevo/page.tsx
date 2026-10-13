@@ -1,21 +1,13 @@
 'use client'
 
-import { useActionState } from 'react'
 import { useRouter } from 'next/navigation'
-import { crearPresupuesto, type Estado } from '../_lib/acciones.ts'
+import { useAltaPresupuesto } from './use-alta-presupuesto.ts'
 import { Shell } from '../../_components/shell.tsx'
 import { SelectorCliente } from './selector-cliente.tsx'
 
 export default function NuevoPresupuesto() {
   const router = useRouter()
-  const [estado, accion, enviando] = useActionState<Estado, FormData>(
-    async (previo, datos) => {
-      const r = await crearPresupuesto(previo, datos)
-      if (r?.ok) router.push(`/dashboard/presupuestos/${r.id}#configurador`)
-      return r
-    },
-    null,
-  )
+  const { estado, accion, enviando, recuperando, mensaje } = useAltaPresupuesto()
 
   const err = estado && !estado.ok ? estado.errores : {}
   const entrada = 'w-full rounded-md border px-3 py-2 text-sm'
@@ -24,10 +16,10 @@ export default function NuevoPresupuesto() {
   return (
     <Shell moduloActivo="presupuestos">
       <form action={accion} className="al-new-document">
-        {estado && !estado.ok && estado.mensaje && (
-          <div className="al-form-alert"
+        {mensaje && (
+          <div role="alert" className="al-form-alert"
             style={{ background: 'var(--al-error-soft)', borderColor: 'var(--al-error)' }}>
-            {estado.mensaje}
+            {mensaje}
           </div>
         )}
 
@@ -35,7 +27,7 @@ export default function NuevoPresupuesto() {
           <h2>Nuevo Documento</h2>
         </header>
 
-        <fieldset className="al-new-document-fields">
+        <fieldset disabled={recuperando || enviando} className="al-new-document-fields">
           <legend>Nuevo Documento de Ventas</legend>
 
           <div className="al-new-document-grid">
@@ -98,7 +90,7 @@ export default function NuevoPresupuesto() {
           </div>
         </fieldset>
 
-        <fieldset className="al-new-document-notes">
+        <fieldset disabled={recuperando || enviando} className="al-new-document-notes">
           <legend>Observaciones del cliente</legend>
           <textarea id="observaciones" name="observaciones" rows={5} />
         </fieldset>
@@ -106,7 +98,7 @@ export default function NuevoPresupuesto() {
         <div className="al-new-document-actions">
           <button type="submit" disabled={enviando}
             className="al-command-primary disabled:opacity-50">
-            {enviando ? 'Creando…' : 'Aceptar y continuar'}
+            {enviando ? 'Creando…' : recuperando ? 'Reintentar' : 'Aceptar y continuar'}
           </button>
           <button type="button" onClick={() => router.push('/dashboard/presupuestos')}
             className="al-command">

@@ -40,7 +40,7 @@ describe('copiarIdentica', () => {
   })
 
   it('UUID inválido: no consulta autenticación ni base', async () => {
-    const resultado = await copiarIdentica('MISMO_NUMERO_NUEVA_REVISION', 'no-es-un-uuid')
+    const resultado = await copiarIdentica('MISMO_NUMERO_NUEVA_REVISION', 'no-es-un-uuid', '22222222-2222-4222-8222-222222222222')
 
     expect(resultado).toEqual({ ok: false, error: 'Presupuesto no válido' })
     expect(usuarioActual).not.toHaveBeenCalled()
@@ -51,7 +51,7 @@ describe('copiarIdentica', () => {
   it('sesión ausente: no crea Db ni llama a copiarPresupuesto', async () => {
     usuarioActual.mockResolvedValue(null)
 
-    const resultado = await copiarIdentica('NUEVO_NUMERO', ID_VALIDO)
+    const resultado = await copiarIdentica('NUEVO_NUMERO', ID_VALIDO, '22222222-2222-4222-8222-222222222222')
 
     expect(resultado).toEqual({ ok: false, error: 'Sesión no válida' })
     expect(crearDb).not.toHaveBeenCalled()
@@ -65,7 +65,7 @@ describe('copiarIdentica', () => {
       lineasCopiadas: 2, sustitucionesAplicadas: 0, avisos: [],
     })
 
-    await copiarIdentica(estrategia, ID_VALIDO)
+    await copiarIdentica(estrategia, ID_VALIDO, '22222222-2222-4222-8222-222222222222')
 
     expect(copiarPresupuesto).toHaveBeenCalledWith(
       { marcador: 'db-simulada' },
@@ -85,7 +85,7 @@ describe('copiarIdentica', () => {
       ok: false, errores: ['presupuestos_identidad_uq viola UNIQUE (serie, numero, revision)'],
     })
 
-    const resultado = await copiarIdentica('NUEVO_NUMERO', ID_VALIDO)
+    const resultado = await copiarIdentica('NUEVO_NUMERO', ID_VALIDO, '22222222-2222-4222-8222-222222222222')
 
     expect(resultado).toEqual({ ok: false, error: 'No se pudo copiar el presupuesto' })
     expect(revalidatePath).not.toHaveBeenCalled()
@@ -96,7 +96,7 @@ describe('copiarIdentica', () => {
     const fallo = new Error('duplicate key value violates unique constraint')
     copiarPresupuesto.mockRejectedValue(fallo)
 
-    const resultado = await copiarIdentica('MISMO_NUMERO_NUEVA_REVISION', ID_VALIDO)
+    const resultado = await copiarIdentica('MISMO_NUMERO_NUEVA_REVISION', ID_VALIDO, '22222222-2222-4222-8222-222222222222')
 
     expect(resultado).toEqual({ ok: false, error: 'No se pudo copiar el presupuesto' })
     expect(revalidatePath).not.toHaveBeenCalled()
@@ -112,7 +112,7 @@ describe('copiarIdentica', () => {
       lineasCopiadas: 2, sustitucionesAplicadas: 0, avisos: [],
     })
 
-    const resultado = await copiarIdentica('NUEVO_NUMERO', ID_VALIDO)
+    const resultado = await copiarIdentica('NUEVO_NUMERO', ID_VALIDO, '22222222-2222-4222-8222-222222222222')
 
     expect(resultado).toEqual({ ok: true, presupuestoId: 'nuevo-id' })
     expect(revalidatePath).toHaveBeenCalledWith('/dashboard/presupuestos')
@@ -127,7 +127,7 @@ describe('copiarIdentica', () => {
     })
     revalidatePath.mockImplementation(() => { throw new Error('fallo de revalidación') })
 
-    const resultado = await copiarIdentica('MISMO_NUMERO_NUEVA_REVISION', ID_VALIDO)
+    const resultado = await copiarIdentica('MISMO_NUMERO_NUEVA_REVISION', ID_VALIDO, '22222222-2222-4222-8222-222222222222')
 
     expect(resultado).toEqual({ ok: true, presupuestoId: 'nuevo-id' })
     expect(copiarPresupuesto).toHaveBeenCalledTimes(1)

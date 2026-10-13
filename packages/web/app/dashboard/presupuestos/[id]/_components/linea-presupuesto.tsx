@@ -1,10 +1,10 @@
 'use client'
 
-import { plantillaDiseno, type ResultadoCerramientoV1 } from '@aluminior/core/estructuras'
+import type { ResultadoCerramientoV1 } from '@aluminior/core/estructuras'
 import { useCallback, useRef, useState } from 'react'
 import { EditarArticulo } from './editar-articulo'
 import { BotonBorrarLinea } from './boton-borrar-linea.tsx'
-import { DibujoEstructura } from './dibujo-estructura.tsx'
+import { MiniaturaCerramiento } from './miniatura-cerramiento.tsx'
 import { EditarCerramiento, type DatosEdicionCerramiento } from './editar-cerramiento.tsx'
 import styles from '../presupuesto-movil.module.css'
 
@@ -15,6 +15,7 @@ export interface LineaDetalle {
   orden: number
   tipo: string
   articuloCodigo: string | null
+  acabadoArticuloCodigo: string | null
   descripcion: string
   referencia: string | null
   anchoMm: number | null
@@ -61,8 +62,6 @@ export function LineaPresupuesto({
   const esCerramientoEditable = editable && Boolean(edicion)
   const costeTotal = despiece.reduce((acc, pieza) => acc + (pieza.costeTotal ? Number(pieza.costeTotal) : 0), 0)
   const sinCoste = despiece.filter((pieza) => pieza.costeTotal === null).length
-  const modulo = edicion?.configuracion.modulos[0]
-  const plantilla = modulo ? plantillaDiseno(modulo.estructuraCodigo) : null
   const articulo = l.tipo === 'ARTICULO'
     ? (l.articuloCodigo ?? '—')
     : l.tipo === 'CERRAMIENTO'
@@ -70,7 +69,9 @@ export function LineaPresupuesto({
         ? edicion.configuracion.modulos[0].estructuraCodigo
         : 'GRUPO')
       : (l.articuloCodigo ?? '—')
-  const acabado = edicion?.acabadoCodigo ?? '—'
+  const acabado = l.tipo === 'ARTICULO'
+    ? (l.acabadoArticuloCodigo ?? '—')
+    : (edicion?.acabadoCodigo ?? '—')
 
   return (
     <>
@@ -106,9 +107,9 @@ export function LineaPresupuesto({
           </div>)}
         </td>
         <td className="px-2 py-1">
-          {plantilla && (
+          {edicion && (
             <div className="al-line-thumb">
-              <DibujoEstructura plantilla={plantilla} modulo={modulo} compacto />
+              <MiniaturaCerramiento configuracion={edicion.configuracion} />
             </div>
           )}
         </td>

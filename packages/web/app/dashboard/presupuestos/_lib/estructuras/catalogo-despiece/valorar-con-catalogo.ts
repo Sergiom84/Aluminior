@@ -14,7 +14,7 @@ import {
   clavesTipoHoja, despiezarLineaCatalogo, esTipoHojaMarco, opcionesMarcadas, type CatalogoLinea,
   type FilaDespieceCatalogo, type SeleccionGuardada,
 } from '@aluminior/core/despiece'
-import { multiplicarDecimal, normalizarDecimal, type DatosArticuloPrecio } from '@aluminior/core/precios'
+import { incidenciaPrecioEnTabla, multiplicarDecimal, normalizarDecimal, type DatosArticuloPrecio } from '@aluminior/core/precios'
 import type { PartidaValoracionCerramiento } from '@aluminior/core/estructuras'
 import type { ClienteEscritura } from '../../cliente-db.ts'
 import type { OpcionHerrajeElegida, PiezaDespiece, RanuraAcristalamiento } from '../../lineas/guardar-linea.ts'
@@ -106,6 +106,7 @@ export async function valorarConCatalogo(
     return [c, { codigo: c, tipoMetraje: t?.tipoMetraje ?? '?', precio: t?.pvp ?? null, metrajeMinimo: null, metrajeMultiploLargo: null }]
   }))
   const costes = costePorArticuloDe(await leerCostesArticulos(cliente, codigos), entrada.acabadoCodigo)
+  for (const c of codigos) if (incidenciaPrecioEnTabla(c, catalogo.articulo(c)?.precioEnTabla)) costes.set(c, null)
   const piezas: PiezaDespiece[] = prepararPiezasDespiece({
     piezas: resultado.filas.map(f => ({ articuloCodigo: f.articulo, cantidad: f.cantidad, largoMm: f.largoMm, formula: null,
       tipoCorte: null, anguloIzquierdo: null, anguloDerecho: null, funcion: f.funcion, incidencia: null })),

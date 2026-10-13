@@ -1,12 +1,21 @@
 # Roadmap operativo de paridad con Productor
 
-Actualizado: 10/10/2026 (reconciliación documental; sin nueva implementación). Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
+Actualizado: 13/10/2026 (reconciliación Git del main Mac; C1 y P.6/P.7 conservan su etapa del 12/10). Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
 Este archivo es el registro único del orden y estado de estas tareas.
 Los documentos de ensayo explican cómo realizarlas; los informes fechados
 conservan evidencia. Sus antiguas listas de pendientes no sustituyen este registro.
 
 
 ## Siguiente paso
+
+**Publicación técnica 12/10:** C1 y el tramo de P.6/P.7 están en Render live
+`40cedd1`, con 0031/0032, carga dirigida y QA remoto verificados; ambos CI
+correctos. [Recibo de publicación](docs/paridad/PUBLICACION-CLONERSOFT-2026-10-12.md).
+No repetir extracción, investigación MO cero, migraciones, carga, despliegue
+ni gates entregados. Siguiente Mac: matriz restante de P.6/P.7 — otras anchuras,
+zoom 200%, reduced motion y recorrido humano comparativo. C1 conserva su alcance
+acotado; E1–E11 y su evidencia permanecen.
+
 
 **Continuidad Windows:** seguir [la guía](docs/CONTINUAR-EN-WINDOWS.md),
 recibir código/documentación y localizar fuentes privadas. P.2: aceptación
@@ -15,7 +24,7 @@ autorización de borrado aún pendiente; después discriminar precisión. E7:
 contraste Productor de fracciones, con A4 ya publicado. Esta entrega no
 reabre tareas técnicas cerradas ni cambia el orden E1–E11.
 
-**S3 verificado en CI el 09/10:** 1.448 pruebas correctas/una condicionada a CSV privado, seis recorridos de navegador, tipos, arquitectura y build en 36a47f4. Siguiente Mac: tramo técnico P.6/P.7, teclado/foco/responsive. [Evidencia](docs/paridad/MEDIDAS-Y-CI-2026-10-09.md#s3-validación-completa-de-los-paquetes-en-ci--09102026).
+**S3 verificado en CI el 09/10:** 1.448 pruebas correctas/una condicionada a CSV privado, seis recorridos de navegador, tipos, arquitectura y build en 36a47f4. Siguiente Mac vigente: matriz restante de P.6/P.7; C1 publicado/verificado técnico, ver recibo 12/10. [Evidencia](docs/paridad/MEDIDAS-Y-CI-2026-10-09.md#s3-validación-completa-de-los-paquetes-en-ci--09102026).
 
 **A3 publicado/verificado el 09/10 en `a06cd4f`, con 0029 aplicada.** A4 publicado/verificado en `487feb1`: 0030 aplicada, conexiones renovadas y alta/edición/recarga/copia/PDF decimales comprobados en producción. A5 verificado en GitHub Actions (run 37971854995, seis recorridos correctos). D1 reconciliado localmente. [Informe](docs/paridad/MEDIDAS-Y-CI-2026-10-09.md). E1 depende de Windows; P.2 conserva aceptación comercial y S2 el anuncio del 14/10.
 
@@ -74,7 +83,8 @@ Sin aplicación al presupuesto web ni nueva medición del banco.
 | A4 | Conservar medidas exteriores decimales | Publicado/verificado 09/10 | Render live 487feb1, 0030 aplicada; alta/edición/recarga/copia/PDF decimales en producción, documentos previos intactos. 757 tests web y 56 BD. No cierra E7 |
 | A5 | Recorrido sintético de navegador en CI | Verificado local y CI 09/10 | Seis recorridos escritorio/móvil: postcommit, medidas, latencia/fallo de catálogo y teclado; GitHub Actions run 37971854995 correcto |
 | S3 | Validación completa de paquetes en CI | Verificado local y CI 09/10 | 9bf9a64/36a47f4: 1.448 tests correctos/uno condicionado a CSV privado; tipos, arquitectura y build, run 37978474635. Seis recorridos, run 37978474739. Corrige test ETL obsoleto y contrato de fixture PDF; no toca producción |
-| P.6/P.7 | Teclado, foco y adaptación responsive | Pendiente; tramo técnico abordable desde Mac | July 206: auditar foco, teclado, overflow, zoom 200% y reduced motion. Correcciones técnicas verificables localmente; contraste integral Productor y aceptación humana separados |
+| C1 | PVP por medidas y contención de precio plano | Publicado/verificado técnico 12/10; alcance acotado | [Publicación](docs/paridad/PUBLICACION-CLONERSOFT-2026-10-12.md): `40cedd1` live, 0031/0032 y carga dirigida, CI y QA remoto/preservación correctos. Dos precios dimensionales corroborados; coste/fabricación fuera del cierre y banco 400/523 conservado |
+| P.6/P.7 | Teclado, foco y adaptación responsive | Parcialmente publicado 12/10; matriz y aceptación integral abiertas | [Investigación](docs/paridad/INVESTIGACION-CLONERSOFT-2026-10-12.md) y [publicación](docs/paridad/PUBLICACION-CLONERSOFT-2026-10-12.md): selector vigente, F7/F9 de cabecera y foco/error; diez recorridos escritorio/móvil y CI correctos. July 206 conserva otras anchuras, zoom 200%, reduced motion y recorrido humano comparativo |
 | D1 | Reconciliar ficha de acceso de July | Cerrado local 09/10 | Ficha actualizada con comprobación directa A4, Render live 487feb1 y 31 migraciones; historial fechado preservado. Sin sync/recepción acreditados |
 
 Detalles E2–E11: [ensayos mínimos](docs/paridad/ENSAYOS-MINIMOS-PRODUCTOR-2026-10-03.md).
@@ -154,6 +164,8 @@ Tres operaciones sintéticas y sus recibos comprobados; documentos anteriores in
 
 | Fecha | Tarea | Evidencia / mantenimiento realizado |
 |---|---|---|
+| 13/10/2026 | Reconciliación del main Mac | Cambios locales integrados con `4fb54b3`; se conservan A3/A4/C1/CI y evidencia anterior. Herramienta de propuesta de acristalamiento incluida, con bloqueo de modelo incompatible; tarifas sin aplicar. Continuidad Windows, estado, índice y relevo actualizados; P.6/P.7 y E1 siguen abiertos |
+| 12/10/2026 | Publicación técnica C1 y tramo parcial P.6/P.7 | `40cedd1` live, 0031/0032 y carga dirigida; respaldo/restauración, ambos CI, QA remoto y datos anteriores preservados. Estado, investigación, índice, arquitectura y relevo reconciliados; siguiente matriz P.6/P.7 y E1 Windows. No cierra fabricación ni paridad integral |
 | 09/10/2026 | S1/A2 | Publicadas en 7ad0ee2; audit 0, 1.431 pruebas, QA completa de tres módulos y prueba publicada 260009 con importes conservados. Estado/roadmap/relevo actualizados; siguiente P.2, S2 condicionado a publicación 14/10 |
 | 09/10/2026 | A1 | Correcciones f6d5bcd publicadas; 260009 editado/guardado/recargado y PDF descargado válido. Informe, estado, índice y relevo actualizados. Límites de catálogo y visor IAB conservados; S1 siguiente |
 | 03/10/2026 | M0 | Matriz e informe reproducible entregados; estado, paridad, banco e índice actualizados |
@@ -175,7 +187,7 @@ ese corpus con el banco vigente ni cerrar por la coincidencia de costes.
 > P.2: sólo queda aceptación comercial, July 205; no repetir paginación.
 > Checkout aislado a3-idempotencia/Aluminior, rama codex/ci-validacion-completa desde origin/main eb3b53c. Comprobar estado remoto antes de continuar; main local contiene cambios ajenos.
 > S2 requiere revisar el anuncio Next cuando se publiquen versiones el 14/10. No repetir S1/A2.
-> Mac: A4 publicado/verificado en 487feb1, 0030 aplicada; A5 CI alojada correcta, run 37971854995; D1 cerrado local. No repetir esta entrega. Siguiente Mac: tramo técnico P.6/P.7 (foco, teclado y responsive). P.2 conserva aceptación comercial; E1/E7 requieren Windows y S2 espera al 14/10. Lee docs/paridad/MEDIDAS-Y-CI-2026-10-09.md.
+> Mac: A4 publicado/verificado en 487feb1, 0030 aplicada; A5 CI alojada correcta, run 37971854995; D1 cerrado local. No repetir esta entrega. Siguiente Mac vigente: matriz restante P.6/P.7; C1/0031/0032/carga y publicación técnica ya verificados en 40cedd1, no repetir. Lee docs/paridad/PUBLICACION-CLONERSOFT-2026-10-12.md. P.2 conserva aceptación comercial; E1/E7 requieren Windows y S2 espera al 14/10. Lee docs/paridad/MEDIDAS-Y-CI-2026-10-09.md.
 > La siguiente investigación económica sigue siendo E1 mediante
 > docs/paridad/PASO-E1-DESPUNTE.md, tras leer EVIDENCIA-E1-DESPUNTE-2026-10-04.md.
 > Usa copia F y resultados A–F; el residuo B/D ya está explicado por margen GID.

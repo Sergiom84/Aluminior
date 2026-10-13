@@ -17,13 +17,13 @@ describe('copiarComoRevision', () => {
   it('fija MISMO_NUMERO_NUEVA_REVISION y delega el id tal cual', async () => {
     copiarIdentica.mockResolvedValue({ ok: true, presupuestoId: 'nuevo-id' })
 
-    const resultado = await copiarComoRevision('un-id')
+    const resultado = await copiarComoRevision('un-id', 'clave')
 
-    expect(copiarIdentica).toHaveBeenCalledWith('MISMO_NUMERO_NUEVA_REVISION', 'un-id')
+    expect(copiarIdentica).toHaveBeenCalledWith('MISMO_NUMERO_NUEVA_REVISION', 'un-id', 'clave')
     expect(resultado).toEqual({ ok: true, presupuestoId: 'nuevo-id' })
   })
 
-  it('sólo acepta el id del presupuesto: ningún otro parámetro en su firma', () => {
-    expect(copiarComoRevision.length).toBe(1)
+  it('acepta origen y clave de operación', () => {
+    expect(copiarComoRevision.length).toBe(2)
   })
 })

@@ -81,6 +81,20 @@ decimal y snapshot propios.
 - Los snapshots `FILA_CENTIMOS` requieren el lector compatible integrado.
   Revertir el catálogo no autoriza volver a un lector antiguo incompatible.
 
+`core/precios/seleccionar-precio-tabla.ts` selecciona PVP dimensional con
+catálogo y políticas inyectados, sin I/O. `web/.../_lib/precios-tabla/index.ts`
+es la entrada pública compartida por catálogo, fallback y artículo suelto.
+0031 conserva metadata nullable y tabla dimensional con RLS; la carga dirigida
+`etl:precio-tabla` es transaccional y simula por defecto. Coste dimensional
+permanece desconocido. 0032 guarda el acabado elegido del artículo en la línea,
+nullable en históricos; copia/edición/PDF conservan el snapshot. Estas dos
+migraciones se aplicaron en Supabase el 12/10, con carga dirigida y código
+`40cedd1` live; ver [recibo técnico](docs/paridad/PUBLICACION-CLONERSOFT-2026-10-12.md).
+Una reversión exige mantenimiento/lectura y bloqueo de escrituras hasta una
+versión compatible: código antiguo puede perder acabados en copias y eludir
+la contención de PVP plano. Conservar columnas, journal y líneas nuevas;
+restaurar únicamente metadata/PVP afectados y comprobar las firmas.
+
 Todos los paquetes declaran ESM. El banco Node/tsx y los servicios web comparten
 así una sola instancia del registro de diseños de core; no se duplica el catálogo
 entre cargas ESM y CommonJS. Los códigos desconocidos siguen siendo inválidos.

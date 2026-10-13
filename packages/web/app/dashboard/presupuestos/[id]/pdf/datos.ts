@@ -39,6 +39,7 @@ export async function cargarPresupuestoPdf(
         }
         return {
           id: l.id, orden: l.orden, tipo: l.tipo, descripcion: l.descripcion, referencia: l.referencia,
+          acabadoArticuloCodigo: l.tipo === 'ARTICULO' ? l.acabadoArticuloCodigo : null,
           anchoMm: l.anchoMm, altoMm: l.altoMm, cantidad: l.cantidad, precioUnitario: l.precioUnitario,
           total: l.total, valoracionCompleta: l.valoracionCompleta, avisoValoracion: l.avisoValoracion,
           cerramiento: configuracion ? adaptarCerramientoPdf({ ...configuracion,

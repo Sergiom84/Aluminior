@@ -41,13 +41,11 @@ function clienteEspia(fallar = false) {
 }
 
 describe('alta de cerramiento', () => {
-  it.each(['anchoMm', 'altoMm'] as const)('rechaza %s exterior fraccionario antes de escribir', campo => {
+  it.each(['anchoMm', 'altoMm'] as const)('conserva %s exterior fraccionario sin redondear', campo => {
     const entrada = { version: 1,
       modulos: [{ id: 'm1', estructuraCodigo: '0', anchoMm: 1200, altoMm: 800, [campo]: 439.5 }], uniones: [] }
     const resultado = prepararAltaCerramiento({ ...datos, configuracionSerializada: JSON.stringify(entrada) })
-    expect(resultado).toMatchObject({ ok: false, errores: {
-      configuracionCerramiento: [expect.stringContaining('milímetros enteros')],
-    } })
+    expect(resultado).toMatchObject({ ok: true, alta: { [campo]: 439.5 } })
     expect(entrada.modulos[0][campo]).toBe(439.5)
   })
 

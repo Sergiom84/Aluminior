@@ -3,7 +3,8 @@ import { partidasValoracion } from './partidas-valoracion.ts'
 import type { PartidaValoracionCerramiento } from '@aluminior/core/estructuras'
 import type { AccesorioLineaCatalogo, CompactoLineaCatalogo } from '@aluminior/core/despiece'
 import { resolverMaterialesEstructura } from './materiales-estructura.ts'
-import { lineaValorable, precioConComision } from '@aluminior/core/precios'
+import { incidenciaPrecioEnTabla, lineaValorable, precioConComision } from '@aluminior/core/precios'
+import { leerCatalogoPreciosTabla } from '../precios-tabla/index.ts'
 import type { ClienteEscritura } from '../cliente-db.ts'
 import type {
   OpcionHerrajeElegida, PiezaDespiece, RanuraAcristalamiento,
@@ -125,14 +126,25 @@ async function valorarSinComision(
     genericos,
     cotas,
     despiece,
-    precioInicial: precioUnitario,
+    // El acristalamiento conserva su suma parcial interna; los bloqueos del
+    // material impiden publicar esa suma como un precio completo.
+    precioInicial: valoracion.importe,
     trazabilidad: entrada.trazabilidad,
   })
   if (!acristalamiento.ok) return acristalamiento
   precioUnitario = acristalamiento.precio
   piezas.push(...acristalamiento.piezas, ...horasSinValorar)
 
-  const problemas = [...acristalamiento.problemas]
+  // La vía anterior tampoco acredita un precio dimensional ni una configuración ausente.
+  const codigosMateriales = new Set(despiece.piezas.map(p => p.articuloCodigo))
+  const adicionales = [...new Set(piezas.map(p => p.articuloCodigo))].filter(c => !codigosMateriales.has(c))
+  const preciosTabla = await leerCatalogoPreciosTabla(cliente, adicionales, entrada.tarifa)
+  const bloqueosTabla = new Map([...material.bloqueosPrecioTabla, ...adicionales.flatMap(c => {
+    const aviso = incidenciaPrecioEnTabla(c, preciosTabla.get(c)?.precioEnTabla ?? null)
+    return aviso ? [[c, aviso] as const] : []
+  })])
+  for (const p of piezas) if (bloqueosTabla.has(p.articuloCodigo)) { p.costeUnitario = null; p.costeTotal = null }
+  const problemas = [...acristalamiento.problemas, ...bloqueosTabla.values()]
   if (horasSinValorar.length) problemas.push(MOTIVO_HORAS_SIN_CATALOGO)
   // Faltar un precio y sobrar son incidencias distintas y se arreglan en sitios
   // distintos del catálogo, así que cada una tiene su aviso. Los ambiguos se
@@ -198,8 +210,11 @@ async function valorarSinComision(
     materialCompleto: sinResolver.size === 0 && sinResolverAsoc.size === 0 &&
       despiece.incalculables === 0 && valoracion.sinMedida.length === 0 &&
       despiece.piezas.every(p => material.mapa.has(p.articuloCodigo)) &&
-      acristalamiento.materialCompleto !== false,
+      acristalamiento.materialCompleto !== false && bloqueosTabla.size === 0,
     partidas: [...(entrada.trazabilidad ? partidasValoracion(valoracion.lineas, entrada, 'MATERIALES', material.filasPvp) : []),
-      ...(acristalamiento.partidas ?? [])].map((p, ordinal) => ({ ...p, ordinal })),
+      ...(acristalamiento.partidas ?? [])].map((p, ordinal) => bloqueosTabla.has(p.articuloCodigo)
+        ? { ...p, ordinal, precioUnitario: null, importeExacto: null, criterioPrecio: 'SIN_PRECIO',
+          acabadoCodigo: null, incidencia: bloqueosTabla.get(p.articuloCodigo)! }
+        : { ...p, ordinal }),
   }
 }

@@ -15,7 +15,7 @@
  */
 
 import {
-  pgTable, text, integer, smallint, numeric, boolean, uuid, index, primaryKey, jsonb, check, unique,
+  pgTable, text, integer, doublePrecision, smallint, numeric, boolean, uuid, index, primaryKey, jsonb, check, unique,
 } from 'drizzle-orm/pg-core'
 import { sql } from 'drizzle-orm'
 import { presupuestos } from './comercial.ts'
@@ -33,6 +33,8 @@ export const lineas = pgTable('lineas', {
 
   /** Sólo en tipo ARTICULO. */
   articuloCodigo: text('articulo_codigo').references(() => articulos.codigo),
+  /** Acabado elegido del ARTICULO; null en históricos sin ese dato. */
+  acabadoArticuloCodigo: text('acabado_articulo_codigo'),
 
   /** Descripción mostrada. Se autogenera salvo que se marque manual. */
   descripcion: text('descripcion').notNull(),
@@ -43,9 +45,9 @@ export const lineas = pgTable('lineas', {
 
   cantidad: numeric('cantidad', { precision: 10, scale: 2 }).notNull().default('1'),
 
-  // --- Dimensiones en milímetros ---
-  anchoMm: integer('ancho_mm'),
-  altoMm: integer('alto_mm'),
+  // --- Dimensiones en milímetros: misma precisión IEEE-754 que la configuración JSON. ---
+  anchoMm: doublePrecision('ancho_mm'),
+  altoMm: doublePrecision('alto_mm'),
   /**
    * true  = las medidas son del HUECO de obra (la carpintería se calcula descontando)
    * false = las medidas son de la carpintería acabada
@@ -70,6 +72,8 @@ export const lineas = pgTable('lineas', {
 }, (t) => ({
   presupuestoIdx: index('lineas_presupuesto_idx').on(t.presupuestoId, t.orden),
   tipoIdx: index('lineas_tipo_idx').on(t.tipo),
+  acabadoArticuloTipo: check('lineas_acabado_articulo_tipo_check',
+    sql`${t.acabadoArticuloCodigo} IS NULL OR ${t.tipo} = 'ARTICULO'`),
 }))
 
 /**

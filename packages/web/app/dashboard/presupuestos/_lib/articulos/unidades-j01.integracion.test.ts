@@ -10,12 +10,17 @@ describe('J01 — artículo dimensional sin medidas', () => {
   const db = crearDb(urlDePruebasValidada(process.env.TEST_DATABASE_URL))
   const limpiar = async () => {
     await db.delete(schema.articulosPvp).where(inArray(schema.articulosPvp.articuloCodigo, codigos))
+    await db.delete(schema.articulosDespiece).where(inArray(schema.articulosDespiece.articuloCodigo, codigos))
     await db.delete(schema.articulos).where(inArray(schema.articulos.codigo, codigos))
   }
   beforeAll(async () => {
     await limpiar()
     await db.insert(schema.articulos).values(tipos.map((tipoMetraje, i) => ({
       codigo: codigos[i], descripcion: `J01 ${tipoMetraje}`, tipoMetraje,
+    })))
+    await db.insert(schema.articulosDespiece).values(codigos.map((articuloCodigo) => ({
+      articuloCodigo, generico: false, dobleAcristalamiento: false,
+      grosorAcristalar: '0', incrementosPrecio: false, precioEnTabla: false,
     })))
     await db.insert(schema.articulosPvp).values(codigos.flatMap((articuloCodigo) => [
       { articuloCodigo, acabadoCodigo: 'BLA', tarifa: 9101, precio: '20.0000' },

@@ -14,9 +14,10 @@ import {
   clavesTipoHoja, esTipoHojaMarco, type CatalogoLinea, type FilaPlantillaCatalogo,
 } from '@aluminior/core/despiece'
 import { construirResoluciones, expandirCadena } from '@aluminior/core/series'
-import { resolverPvpCatalogo } from '@aluminior/core/precios'
+import { incidenciaPrecioEnTabla, resolverPvpCatalogo } from '@aluminior/core/precios'
 import type { ClienteEscritura } from '../../cliente-db.ts'
 import { tablasMotorCatalogo } from './disponible.ts'
+import { leerCatalogoPreciosTabla, seleccionarDesdeCatalogo } from '../../precios-tabla/index.ts'
 
 const n = (v: string | null | undefined) => v === null || v === undefined ? 0 : Number(v)
 const vacioANull = (v: string | null) => v && v.trim() ? v : null
@@ -91,9 +92,14 @@ export async function leerCatalogoLinea(cliente: ClienteEscritura, e: EntradaCat
   // Horas manuales por unidad: fabricación y colocación.
   for (const c of ['MO', 'MOCOL']) codigos.add(c)
   const lista = [...codigos].filter(c => c && c !== '0')
+  const preciosTabla = await leerCatalogoPreciosTabla(cliente, lista, e.tarifa)
   const [articulos, despiece, pvp, incrementos] = lista.length ? await Promise.all([
     cliente.select().from(schema.articulos).where(inArray(schema.articulos.codigo, lista)),
-    cliente.select().from(schema.articulosDespiece).where(inArray(schema.articulosDespiece.articuloCodigo, lista)),
+    cliente.select({
+      articuloCodigo: schema.articulosDespiece.articuloCodigo, componente: schema.articulosDespiece.componente,
+      generico: schema.articulosDespiece.generico, dobleAcristalamiento: schema.articulosDespiece.dobleAcristalamiento,
+      grosorAcristalar: schema.articulosDespiece.grosorAcristalar, incrementosPrecio: schema.articulosDespiece.incrementosPrecio,
+    }).from(schema.articulosDespiece).where(inArray(schema.articulosDespiece.articuloCodigo, lista)),
     cliente.select().from(schema.articulosPvp).where(and(inArray(schema.articulosPvp.articuloCodigo, lista), eq(schema.articulosPvp.tarifa, e.tarifa))),
     cliente.select().from(schema.articulosIncrementosPrecio).where(inArray(schema.articulosIncrementosPrecio.articuloCodigo, lista)),
   ]) : [[], [], [], []]
@@ -112,7 +118,8 @@ export async function leerCatalogoLinea(cliente: ClienteEscritura, e: EntradaCat
     articulo: codigo => {
       const a = articuloPor.get(codigo), d = despiecePor.get(codigo)
       return a ? { codigo, tipoMetraje: a.tipoMetraje, componente: d?.componente ?? null, grosorAcristalar: n(d?.grosorAcristalar),
-        dobleAcristalamiento: d?.dobleAcristalamiento ?? false, generico: d?.generico ?? false } : null
+        dobleAcristalamiento: d?.dobleAcristalamiento ?? false, generico: d?.generico ?? false,
+        precioEnTabla: preciosTabla.get(codigo)?.precioEnTabla ?? null } : null
     },
     serie: codigo => codigo === e.serie ? {
       codigo, herrajes, manoObra: parametros.manoObra as Record<string, string>, tablaHojas, tablaFijos,
@@ -143,12 +150,15 @@ export async function leerCatalogoLinea(cliente: ClienteEscritura, e: EntradaCat
       categoria: c.categoria,
     })),
     tipoPerfil: codigo => parametrosEstructura.find(p => p.estructuraCodigo === codigo)?.tipoPerfil ?? null,
+    precioTabla: (articuloCodigo, acabadoCodigo, anchoMm, largoMm) => seleccionarDesdeCatalogo(preciosTabla,
+      { articuloCodigo, acabadoCodigo, tarifa: e.tarifa, anchoMm, largoMm }),
     tarifa: (codigo, acabado) => {
       const a = articuloPor.get(codigo)
       if (!a) return null
       const r = resolverPvpCatalogo((pvpPor.get(codigo) ?? []).map(p => ({ acabadoCodigo: p.acabadoCodigo, precio: p.precio })), acabado)
       return {
-        tipoMetraje: a.tipoMetraje, pvp: r.estado === 'RESUELTO' ? Number(r.precio) : null,
+        tipoMetraje: a.tipoMetraje, pvp: !incidenciaPrecioEnTabla(codigo, preciosTabla.get(codigo)?.precioEnTabla ?? null) &&
+          r.estado === 'RESUELTO' ? Number(r.precio) : null,
         multiploLargoCm: n(a.metrajeMultiploLargo), multiploAnchoCm: n(a.metrajeMultiploAncho), minimo: n(a.metrajeMinimo),
         incrementos: despiecePor.get(codigo)?.incrementosPrecio
           ? (incrementosPor.get(codigo) ?? []).map(i => ({ tipo: i.tipo as 'MET' | 'MED', desde: n(i.desde), hasta: n(i.hasta), porcentaje: n(i.porcentaje) }))

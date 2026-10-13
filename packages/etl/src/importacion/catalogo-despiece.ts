@@ -8,6 +8,7 @@ import type { Sql } from 'postgres'
 import { bool, ent, leerLotes, num, rutaTabla, txt, type Fila } from '../csv.ts'
 import type { Cargar } from './cargar.ts'
 import { crearCargadorEstricto } from './cargar-estricto.ts'
+import { configuracionPrecioTabla } from './precio-en-tabla.ts'
 import { descartar, excluir, type Resultado } from './resultado.ts'
 
 const cero = (v: string | undefined) => num(v) ?? '0'
@@ -127,9 +128,11 @@ export async function cargarCatalogoDespiece(cargar: Cargar, estructuras: Readon
     await cargar('Articulos', 'articulos_despiece', (f, r) => {
       const codigo = txt(f.Codigo)
       if (!codigo) { descartar(r, 'artículo sin código'); return null }
+      const precioTabla = configuracionPrecioTabla(f)
       return {
         articulo_codigo: codigo, componente: txt(f.Componente), generico: bool(f.GenericoSN),
         doble_acristalamiento: bool(f.DAcrisSN), grosor_acristalar: cero(f.TamJunqGoma), incrementos_precio: bool(f.IncrementosPrecioSN),
+        ...precioTabla, politicas_precio_tabla: JSON.stringify(precioTabla.politicas_precio_tabla),
       }
     }),
     await cargar('ConjuntosLin', 'conjunto_ranuras_vacias', (f, r) => {

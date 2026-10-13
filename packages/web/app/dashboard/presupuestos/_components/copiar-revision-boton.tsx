@@ -1,5 +1,6 @@
 'use client'
 
+import { obtenerOperacion, confirmarOperacion } from '../_lib/idempotencia/cliente.ts'
 import { useEffect, useRef, useReducer, useTransition, type KeyboardEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { copiarComoRevision } from '../_lib/copia/copiar-revision-identica.ts'
@@ -15,7 +16,7 @@ interface Props {
 
 const ERROR_INESPERADO = 'No se pudo copiar el presupuesto'
 
-const EJECUTOR: Record<Operacion, (id: string) => Promise<{ ok: true; presupuestoId: string } | { ok: false; error: string }>> = {
+const EJECUTOR: Record<Operacion, (id: string, operacionId: string) => Promise<{ ok: true; presupuestoId: string } | { ok: false; error: string }>> = {
   REVISION: copiarComoRevision,
   NUEVO: copiarComoNuevo,
 }
@@ -60,11 +61,13 @@ export function CopiarRevisionBoton({ presupuestoId, numero, revision, serie }: 
     dispatch({ tipo: 'ENVIAR', operacion })
     iniciar(async () => {
       try {
-        const resultado = await EJECUTOR[operacion](presupuestoId)
+        const ambito = `copia:${presupuestoId}:${operacion}`
+        const resultado = await EJECUTOR[operacion](presupuestoId, obtenerOperacion(ambito))
         if (!resultado.ok) {
           dispatch({ tipo: 'FALLO', mensaje: resultado.error })
           return
         }
+        confirmarOperacion(ambito)
         dispatch({ tipo: 'EXITO' })
         router.push(`/dashboard/presupuestos/${resultado.presupuestoId}`)
       } catch {
