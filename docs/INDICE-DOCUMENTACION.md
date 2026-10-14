@@ -12,7 +12,8 @@ propuesta entonces exclusiva del main local (integrada como herramienta el 13/10
 
 | Documento | Uso |
 |---|---|
-| [Contrato y lote E1 ClonerSoft 13/10](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md) | Integración local `fa32fba`, preparación física/selección condicional y aceptación; cargo económico y adaptador pendientes |
+| [Contrato y lote E1 ClonerSoft 13/10, continuación 14/10](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md) | Integración `fa32fba`, preparación física/condicional y anclajes nativos dirigidos; llamador monetario y adaptador pendientes |
+| [Selector de registros de tarifa dinámica 14/10](paridad/IMPLEMENTACION-CLONERSOFT-TARIFA-DINAMICA-2026-10-14.md) | Cuatro búsquedas, intervalos decimales y ambigüedad; unidad pura local, sin precio ni activación |
 | [Encargo ClonerSoft 13/10](paridad/ENCARGO-IMPLEMENTACION-CLONERSOFT-2026-10-13.md) | Alcance de implementación local, fuentes y protecciones; el roadmap conserva etapas/orden |
 | [Extracción diferencial 13/10](paridad/EXTRACCION-DIFERENCIAL-CLONERSOFT-2026-10-13.md) | Evidencia estática/documental reutilizable, inventarios y límites; fotografía de integración abierta anterior a `fa32fba` |
 | [Publicación ClonerSoft 12/10](paridad/PUBLICACION-CLONERSOFT-2026-10-12.md) | `40cedd1` live, 0031/0032/carga, respaldo/restauración, CI y QA remoto/preservación; C1 técnico acotado y P.6/P.7 parcial |

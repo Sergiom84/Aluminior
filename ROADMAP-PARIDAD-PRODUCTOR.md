@@ -1,6 +1,6 @@
 # Roadmap operativo de paridad con Productor
 
-Actualizado: 13/10/2026 (integración local Windows–Mac cerrada y contrato físico E1; C1 y P.6/P.7 conservan su etapa del 12/10). Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
+Actualizado: 14/10/2026 (referencias nativas E1 y selector puro de registros de tarifa dinámica; C1 y P.6/P.7 conservan su etapa del 12/10). Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
 Este archivo es el registro único del orden y estado de estas tareas.
 Los documentos de ensayo explican cómo realizarlas; los informes fechados
 conservan evidencia. Sus antiguas listas de pendientes no sustituyen este registro.
@@ -8,15 +8,28 @@ conservan evidencia. Sus antiguas listas de pendientes no sustituyen este regist
 
 ## Siguiente paso
 
-**Investigación incremental 13/10:** consultar la
+**Continuación local 14/10:** E1 ya tiene referencias y thunks verificables de
+`cmAceptar_Click` y `FinalCalculo`; seguir su despacho virtual y el consumidor
+del resultado del formulario, según la [continuación E1](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#continuación-estática-dirigida--14102026).
+No repetir búsqueda de literales, inventarios o preparación física/condicional.
+El cargo monetario permanece bloqueado: filas comerciales, base bruta/neta,
+cantidades, descuentos, sustitución, redondeo y persistencia sin contrato completo.
+Ghidra agotó 300 segundos y su sesión está cerrada; el parsing dirigido sí produjo
+anclajes de código. En paralelo se entregó el [selector puro de registros](docs/paridad/IMPLEMENTACION-CLONERSOFT-TARIFA-DINAMICA-2026-10-14.md),
+47 pruebas nuevas, sin activar tarifa ni producir precios. Grupo, habilitación,
+fórmula, redondeo y caso positivo siguen pendientes. Gate local actual: 2.004
+pruebas correctas y la omisión previa por CSV privado; tipos/arquitectura correctos.
+G6 mantiene su protección. Sin publicación, aceptación Productor ni despliegue.
+
+**Investigación incremental 13/10, antecedente:** consultar la
 [extracción diferencial](docs/paridad/EXTRACCION-DIFERENCIAL-CLONERSOFT-2026-10-13.md)
 antes de volver a inventariar fuentes. Las 204 tablas pobladas de la copia
 e851 ya tienen CSV/cabeceras completas; 33 difieren en recuento y no se mezclan.
 Se recuperan contratos físicos/condicionales de E1, tarifa dinámica, almacén,
 compras, cobros, listados y recargo. El [subcontrato físico de E1](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md)
-se implementa como una unidad pura local; la aplicación monetaria conserva su
-bloqueo. Siguiente unidad económica: localizar el llamador monetario E1 con
-esta evidencia; G6 conserva sus límites de autorización.
+se implementó como una unidad pura local; la aplicación monetaria conserva su
+bloqueo. La continuación del llamador monetario es la del 14/10 anterior;
+G6 conserva sus límites de autorización.
 El merge Windows–Mac quedó cerrado, revisado y verificado localmente en
 `fa32fba`, con cero conflictos. No repetir su resolución. No se ha publicado
 esta integración ni reconsultado producción.
@@ -65,7 +78,7 @@ la proyección técnica de G4 tras F9/reapertura. Copias privadas por estado.
 No repetir A–F ni G1–G5. Tres políticas de redondeo coinciden en G4. Variante
 1207×1150 verificada produjo error de opciones/SessionFactory y añadió tercer
 GRUPO; G6-incidencia conservada, sin recálculo y con previos intactos.
-Siguiente: retirar solo tercer GRUPO tras autorización solicitada y comprobar
+Vía de observación, solo con autorización: retirar tercer GRUPO y comprobar
 edición de segunda línea sin crear otra. Después comparación discriminante
 con bases reales y predicciones previas; no certificar opciones tras el error.
 Descuentos cero/cantidad 1 no discriminan base bruta/neta ni otras cantidades.
@@ -76,7 +89,7 @@ Sin aplicación al presupuesto web ni nueva medición del banco.
 | ID | Trabajo | Estado actual | Prueba necesaria para avanzar o cerrar |
 |---|---|---|---|
 | M0 | Matriz por modelo/serie/regla y ensayos mínimos | Cerrado 03/10/2026 | [Matriz](docs/paridad/MATRIZ-COBERTURA-PRODUCTOR-2026-10-03.md), 97 pares, 47 pruebas, typechecks y arquitectura; no volver a crearla, regenerar si cambian las fuentes |
-| E1 | Despunte de cabecera: base, momento y reparto | En curso; subcontrato físico/condicional implementado y verificado localmente 13/10; G1–G5 y G6-incidencia preservados | [Entrega local](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md): 67 pruebas nuevas, identidad triple, metraje/cortes, largo explícito y selección condicional; revisión independiente. Sin activar cabecera, adaptar snapshots o expandir acabados dependientes. Pendientes monetarios: filas comerciales, base bruta/neta, cantidades y precisión. Siguiente estático: referencias VPresupDespunte.cmAceptar_Click/FinalCalculo; observar G6 requiere autorización propia |
+| E1 | Despunte de cabecera: base, momento y reparto | En curso; subcontrato físico/condicional verificado localmente 13/10 y wrappers nativos anclados 14/10; G1–G5 y G6-incidencia preservados | [Entrega y continuación](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md): no repetir preparación/literales. Seguir despacho virtual de FinalCalculo y consumidor del resultado del formulario; contrato monetario completo pendiente. Sin activar cabecera o adaptar snapshots; G6 requiere autorización propia |
 | E2 | Unión material de otra serie en GRUPO | Pendiente | Selección desde diagnóstico privado de los ocho casos de iteración 13; código/serie/acabado y geometría demostrados, sin extrapolar U |
 | E3 | Comisión: orden de redondeo y edición de líneas guardadas | Pendiente | Caso 0/−10/+10, suma de filas y momento de aplicación; separar cantidades/horas; seis residuos comunicados |
 | E4 | Tapajuntas de puerta con inferior SI/NO | Pendiente | GMT004, 1P 867×2098 con serie/ala/cajón reales; comparación lateral y travesaño |
@@ -120,7 +133,7 @@ antes de construir. Extraído no equivale a implementado o verificado.
 | Despunte monetario | Ahora — E1, pendiente de evidencia | Llamador, filas comerciales, base bruta/neta, cantidades y precisión; G6 pendiente de autorización propia |
 | Coste dimensional | Ahora — pendiente de evidencia | Proveedor, medidas, divisa, gastos y precedencias; no reutilizar selector PVP |
 | Coste calculado | Ahora — pendiente de evidencia/configuración | Material por peso + acabado por superficie; unidades y activación sin confirmar |
-| Tarifa dinámica | Ahora — contrato estático parcial, activación pendiente de evidencia | Cuatro búsquedas conocidas; grupo aplicable, solapamientos, redondeo y caso positivo pendientes |
+| Tarifa dinámica | Ahora — selección de registro implementada/verificada localmente 14/10; precio y activación pendientes | [Contrato y gate](docs/paridad/IMPLEMENTACION-CLONERSOFT-TARIFA-DINAMICA-2026-10-14.md): cuatro búsquedas, decimales exactos y bloqueo de empate; 47 pruebas. Sin precios ni activar motor; grupo, habilitación, fórmula, redondeo y caso positivo pendientes |
 | Descuento máximo primero | Ahora — pendiente de evidencia | Límite independiente; falta efecto visible y al guardar; no recorte silencioso |
 | Descuento máximo segundo | Ahora — pendiente de evidencia | Límite independiente; falta precedencia y efecto al guardar |
 | Recargo energético y precios especiales | Ahora — pendiente de configuración | Familia/subfamilia, medida/corte, alternativa general y mínimo; excepción del artículo concreto; sin migración histórica |

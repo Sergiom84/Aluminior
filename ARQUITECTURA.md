@@ -124,6 +124,11 @@ vaciar documentos y no se utiliza como procedimiento de producción.
   bloquean la salida completa. Su entrada pública es `@aluminior/core/produccion`.
   No sustituye `despunte.ts` técnico ni aplica cargos al presupuesto: adaptador,
   acabados dependientes, coste y llamador monetario siguen pendientes de contrato.
+- `core/precios/tarifa-dinamica/` selecciona criterios de un registro mediante
+  cuatro búsquedas demostradas y comparación decimal exacta; expone identidad,
+  etapa, ausencia, ambigüedad o bloqueo desde `@aluminior/core/precios`.
+  No calcula precios ni activa tarifa. Grupo aplicable, habilitación, fórmulas,
+  redondeo comercial y adaptadores necesitan contratos independientes.
 - Precios: valoración individual separada del recálculo masivo de tarifas.
 - Esquema: series compuesta por catálogo, acristalamiento, herraje y rebajes.
 - Estilos: `globals.css` compone hojas conservando el orden de cascada.

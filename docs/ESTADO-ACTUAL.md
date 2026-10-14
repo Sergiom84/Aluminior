@@ -16,6 +16,28 @@ El [roadmap operativo](../ROADMAP-PARIDAD-PRODUCTOR.md) conserva el orden y
 estado único de las tareas de paridad, con mantenimiento documental obligatorio.
 
 
+## ClonerSoft — continuación local, 14/10/2026
+
+[Selector de registros de tarifa dinámica](paridad/IMPLEMENTACION-CLONERSOFT-TARIFA-DINAMICA-2026-10-14.md)
+implementado en `core/precios/tarifa-dinamica/`: cuatro búsquedas ordenadas,
+intervalos decimales inclusivos y estados de ausencia, ambigüedad o bloqueo.
+Selecciona criterios e identidad; no calcula precio ni activa tarifa.
+47 pruebas nuevas; gate ejecutado: 2.004 correctas y la omisión previa por CSV
+privado (964 core, 56 DB, 112 ETL, 872 web), tipos y arquitectura correctos;
+revisión independiente sin hallazgos reproducibles en el contrato puro.
+La aceptación integral Productor y la publicación siguen separadas.
+
+E1: referencias y thunks de `cmAceptar_Click` y `FinalCalculo` recuperados
+estáticamente y anclados a bytes del mismo EXE. Los wrappers no acreditan
+el cargo; `FinalCalculo` delega mediante un despacho virtual. Continuar desde
+esas direcciones, sin repetir literales/inventarios ni la preparación pura.
+La consulta Ghidra agotó 300 segundos durante el análisis inicial;
+sesión cerrada, fuente conservada. Detalle y siguiente enlace en la
+[continuación E1](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#continuación-estática-dirigida--14102026).
+Sin ejecución Productor, modificación de G6, datos reales, migraciones nuevas,
+operación remota de negocio o despliegue. El navegador publicado no se usa
+como evidencia de estos cambios locales.
+
 ## ClonerSoft E1 — implementación local parcial, 13/10/2026
 
 [Contrato y entrega](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md):
@@ -27,8 +49,9 @@ presupuestos o producción ni escribir cargos. 67 pruebas nuevas y 1.957
 pruebas de paquetes correctas, una omisión previa por CSV privado; tipos y
 arquitectura correctos, revisión independiente y aserción de origen reforzada.
 La aceptación monetaria E1 permanece abierta.
-La investigación estática localiza nombres candidatos del controlador de
-Aceptar despunte, sin demostrar base, cantidades económicas ni redondeo.
+La investigación del 13/10 localizó nombres candidatos; su continuación
+estática del 14/10 figura arriba. Siguen sin demostrar base, cantidades
+económicas ni redondeo.
 Los detalles, fuentes, contenciones y continuidad están en el contrato y
 la [reconciliación del roadmap](../ROADMAP-PARIDAD-PRODUCTOR.md).
 

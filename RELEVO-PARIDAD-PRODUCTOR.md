@@ -1,5 +1,28 @@
 # Relevo: paridad y fuentes de Productor
 
+Continuación local Windows del 14/10, sobre `81dcef9`, rama
+`codex/integracion-windows-mac-20261013`, árbol inicial limpio.
+E1: [wrappers y campos de salida anclados](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#continuación-estática-dirigida--14102026).
+No repetir inventarios, literales, integración o preparación física/condicional.
+Siguiente exacto: validar slot `+0x7ac` desde `0x019b83d8` y localizar un
+consumidor con receptor demostrado de los accesos codificados `+0x728`
+(`pbAceptar`) y `+0x730` (`pDespunte`), validando su interpretación como
+getters; seguir después las escrituras comerciales.
+El candidato `cargaDetalle` es inferencia, no llamador confirmado. Faltan filas,
+base bruta/neta, cantidades, descuentos, sustitución, redondeo y persistencia.
+E1 y G6 siguen abiertos/protegidos; no activar cargo ni ejecutar el original.
+
+Entregado el [selector puro de registros de tarifa dinámica](docs/paridad/IMPLEMENTACION-CLONERSOFT-TARIFA-DINAMICA-2026-10-14.md):
+47 pruebas nuevas, cuatro búsquedas y bloqueo de ambigüedad. No entrega precio,
+grupo, habilitación, fórmula ni redondeo. Gate del arquitecto: 2.004 pruebas
+correctas y la omisión previa por CSV privado; tipos/arquitectura correctos;
+revisión independiente y reproducción de su oráculo. Sin nueva migración,
+datos reales, aceptación Productor, publicación o despliegue.
+Fuentes, reproducción y logs privados:
+`output/clonersoft-implementacion-20261013/e1-estatico-20261014/`,
+`tarifa-dinamica-20261014/` y logs `aluminior-clonersoft-20261014-*` de esa raíz.
+No viajan por Git/July. El roadmap existente conserva el orden y estado únicos.
+
 Investigación Windows del 13/10:
 [extracción diferencial ClonerSoft](docs/paridad/EXTRACCION-DIFERENCIAL-CLONERSOFT-2026-10-13.md).
 Reutilizar su inventario, matriz de 30 dominios y contratos estáticos antes de
@@ -13,8 +36,8 @@ correctos, revisión independiente y corrección de sus dos hallazgos. Sin
 publicación ni nueva comprobación remota. No repetir esa integración.
 Entregado localmente: [contrato físico E1](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md),
 67 pruebas nuevas, 1.957 pruebas de paquetes correctas, tipos, arquitectura y
-revisión independiente. No repetir esta preparación pura. Siguiente E1:
-referencias estáticas de `VPresupDespunte.cmAceptar_Click` / `FinalCalculo`;
+revisión independiente. No repetir esta preparación pura. La búsqueda inicial
+de referencias estáticas quedó cubierta por la continuación del 14/10;
 el cargo monetario continúa bloqueado por evidencia. G6 conserva su autorización
 pendiente. El roadmap reconcilia todos los hallazgos del encargo sin cerrar
 los módulos pendientes ni publicar/desplegar esta entrega local.

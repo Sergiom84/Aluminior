@@ -1,7 +1,11 @@
 # Siguiente paso E1: cálculo y reparto del despunte
 
 Procedimiento preparado el 03/10/2026 y actualizado el 04/10. Estado vigente:
-[roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md). Ya se entregó la
+[roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md). La [continuación estática del 14/10](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#continuación-estática-dirigida--14102026)
+ya recuperó wrappers y campos; seguir despacho virtual y consumidor desde sus
+anclajes, sin repetir inventarios/literales/preparación pura. El procedimiento
+de observación siguiente es una vía separada y necesita autorización propia.
+Ya se entregó la
 [investigación documental y contraste guardado](EVIDENCIA-E1-DESPUNTE-2026-10-04.md);
 no repetirla. G1–G5 demuestran alta independiente, reparto por bases distintas
 y persistencia. La variante 1207×1150 produjo error de opciones/SessionFactory

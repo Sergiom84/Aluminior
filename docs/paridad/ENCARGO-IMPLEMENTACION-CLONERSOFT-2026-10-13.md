@@ -58,6 +58,13 @@ Dentro de la evidencia privada, utiliza `cobertura-aluminior.md`, `coste-tarifa.
 
 ## Punto de partida que debes verificar
 
+Actualización de continuidad, 14/10: la integración quedó cerrada en `fa32fba`
+y la preparación física/condicional E1 en `81dcef9`. Su gate histórico está
+conservado; la continuación actual tiene wrappers E1 anclados y un selector
+puro de registros de tarifa dinámica verificado localmente. Leer estado y
+roadmap para el siguiente despacho/consumidor pendiente. No repetir esas unidades;
+el contexto de conflictos siguiente es únicamente la fotografía inicial.
+
 En la investigación del 13/10 había un merge Windows–Mac sin resolver, con 21 rutas en conflicto, en `codex/integracion-windows-mac-20261013`. Es una fotografía histórica: comprueba el estado actual, no ejecutes checkout o reset para forzar ese estado.
 
 Respeta la tarea que esté resolviendo la integración. No la resuelvas en paralelo ni añadas funciones sobre un árbol inconsistente. Mientras se cierra, puedes avanzar en contratos y casos de aceptación. Si necesitas aislamiento, verifica primero qué revisión integrada debe servir de base; no pierdas ampliaciones compatibles del trabajo existente.

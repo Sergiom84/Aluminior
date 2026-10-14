@@ -14,6 +14,14 @@ conserva aparte preparación física y cargo económico. Estos commits locales
 todavía no están publicados: recibir `origin/main` no los entrega. Inspeccionar
 esta rama antes de crear otro checkout o repetir la integración.
 
+Continuación local del 14/10 en la misma rama: anclajes dirigidos E1 y
+[selector de registros de tarifa dinámica](paridad/IMPLEMENTACION-CLONERSOFT-TARIFA-DINAMICA-2026-10-14.md)
+verificados con gate de 2.004 pruebas y la omisión previa por CSV privado,
+tipos/arquitectura y revisión independiente. No activar cargos ni tarifa.
+La recepción requiere el commit local de esta entrega; recibir main no lo
+incluye. Fuentes privadas y actualización local de July necesitan sus canales
+propios; no hay publicación o recibo acreditados de esta continuación.
+
 El main principal del Mac se reconcilia el **13/10/2026** con `origin/main`
 `4fb54b3`, conservando las mejoras del 09–12/10 y los commits locales pendientes.
 Sergio autoriza revisar y subir todos los cambios pendientes. La herramienta
@@ -128,10 +136,15 @@ El pendiente P.2 sigue abierto hasta esta aceptación; no repetir su corrección
 
 ### E1: recuperar el ensayo de despunte
 
-Continuación ClonerSoft del 13/10: la preparación física/condicional pura ya
-está implementada y verificada; no reconstruirla. El siguiente paso estático
-son referencias de `VPresupDespunte.cmAceptar_Click` / `FinalCalculo` para
-resolver el cargo monetario. Leer el [lote local](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md).
+Continuación ClonerSoft del 14/10: preparación física/condicional y referencias
+de los dos wrappers ya verificadas; no reconstruirlas ni repetir literales.
+El siguiente paso estático es validar el despacho `+0x7ac` en `0x019b83d8`
+y localizar el consumidor de `pbAceptar/pDespunte` con receptor demostrado
+del mismo formulario (accesos codificados `+0x728/+0x730`, interpretación
+como getters pendiente). Leer la
+[continuación del lote](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#continuación-estática-dirigida--14102026).
+El selector independiente de registros de tarifa dinámica ya está implementado
+y verificado localmente; no activar precios a partir de esa selección.
 Los pasos de observación siguientes son una vía separada y conservan la
 autorización pendiente de G6; este lote no autoriza ejecutar el original.
 

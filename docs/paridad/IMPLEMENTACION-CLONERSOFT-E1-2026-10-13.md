@@ -130,9 +130,10 @@ Los snapshots actuales carecen de tonalidad y metraje valorado explícitos;
 la función nueva necesita un contrato de adaptador antes de conectarse.
 La repetición de la función pura no prueba persistencia del cargo.
 
-El siguiente paso E1 es localizar el controlador que acepta «Repartir entre
-las líneas»: qué filas selecciona, qué base usa, cómo intervienen descuentos
-y cantidades y dónde retira el cargo anterior, redondea y persiste.
+El paso fijado el 13/10 era localizar el controlador que acepta «Repartir entre
+las líneas». La continuación del 14/10 recuperó los wrappers; ahora falta seguir
+su despacho y consumidor: qué filas selecciona, qué base usa, cómo intervienen
+descuentos/cantidades y dónde retira el cargo anterior, redondea y persiste.
 Mientras falte ese enlace, no activar el cargo ni certificar ausencia de
 doble cómputo entre GRUPO, componentes y detalles comerciales.
 
@@ -154,6 +155,80 @@ esperando el análisis automático inicial de Ghidra y se canceló al alcanzar
 el límite de la unidad. Sesión cerrada: `open:false`, `analysis_run:null`.
 No se ejecutó Productor, instaló proveedor ni modificó G6.
 
-Siguiente estático exacto: referencias del handler `cmAceptar_Click` y
-`FinalCalculo`, con una sesión de análisis acotada preparada antes de depender
-de sus resultados. No repetir los inventarios ni la búsqueda general.
+El paso estático anterior de búsqueda de referencias quedó cubierto por la
+continuación siguiente. No repetir inventarios, literales ni wrappers.
+
+## Continuación estática dirigida — 14/10/2026
+
+- **Resultado exacto:** enlazar los dos nombres candidatos con código y seguir únicamente su salida/despacho para intentar cerrar el contrato monetario.
+- **Destinatario y motivo:** motor de presupuestos; impedir un cargo económico basado en literales o cantidades físicas.
+- **Éxito medible:** identidad de fuente, anclajes reproducibles, separación de hechos/inferencias/desconocidos y siguiente llamada concreta; solo implementar dinero si se demuestran todas sus reglas.
+- **Alcance autorizado:** parsing estático dirigido del mismo EXE, disassembly privado, pruebas locales y documentación; reutilización del corpus ya extraído.
+- **Fuera de alcance:** ejecución Productor, G6, cargos supuestos, inventarios generales y mezcla de instantáneas.
+- **Ficheros o sistemas protegidos:** WIP, fuente original, datos comerciales, preparación física/condicional entregada, migraciones y producción.
+- **Comprobaciones obligatorias:** huella antes/después, anclajes de bytes, gate local y revisión independiente; conservar los límites aunque los wrappers sean legibles.
+- **Acciones que requieren autorización:** ejecución legacy aislada, G6, datos reales, publicación/despliegue; ninguna realizada en este lote.
+
+Fuente única: `aluminioApp.exe`, misma SHA-256 anterior; PE32/i386 VB6,
+sin CLR. La consulta REA `search_procedures` de `VPresupDespunte` agotó el límite
+de transporte de 300 segundos durante el análisis automático inicial Ghidra
+12.1.4; no hubo resultado parcial utilizable. No se repitió la consulta.
+Se cerró la sesión y se verificó `open:false`, `analysis_run:null`.
+El parsing/disassembly dirigido sí permite avanzar sin ejecutar el programa.
+
+| Hecho estático | Anclaje en la misma fuente | Alcance |
+|---|---|---|
+| Literal FinalCalculo enlazado a push en código | Literal VA `0x0076eaa0`, offset 3.599.008; push `0x019b8426` | Nombre de diagnóstico; no fórmula |
+| Handler y thunk FinalCalculo | Entrada `0x019b8390`; thunk `0x0054670b`, celda `0x005455cc` | Wrapper recuperado; llamada virtual `0x019b83d8`, slot `+0x7ac` |
+| Literal Aceptar enlazado a push en código | Literal VA `0x0076eae0`, offset 3.599.072; push `0x019b85d7` | Nombre de diagnóstico; no reparto |
+| Handler y thunk Aceptar | Entrada `0x019b8490`; thunk `0x00546718`, celda `0x005455d0` | Escribe word en instancia `+0x4a` y float32 en `+0x4c` después de conversión de texto |
+| Metadata del formulario | Objeto índice `0x5e`, descriptor `0x0071f580`, ObjectInfo `0x00544e7c` | Une código y campos al formulario seleccionado |
+| Nombres públicos de salida | `pbAceptar`: registro `0x018321bc`, offset `+0x4a`, acceso codificado `+0x728`; `pDespunte`: registro `0x01832504`, offset `+0x4c`, acceso codificado `+0x730` | Nombres y offsets; no prueban base, unidades ni persistencia |
+
+La tabla de thunks y la secuencia de campos/métodos ofrecen un candidato
+para `+0x7ac`: celda `0x00545618` → thunk `0x005467f5` → `cargaDetalle`
+`0x019bc960`. Es una inferencia de mapeo VB6 pendiente de confirmar;
+no se transforma en llamador comercial ni en regla de cálculo.
+Tres coincidencias de bytes del descriptor resultaron solapamientos de
+instrucciones, no referencias de llamadas: sus capturas se conservan como
+descartadas en la evidencia privada, sin presentarlas como callers.
+
+El bloqueo monetario queda concretado: falta unir la salida de este formulario
+con quien selecciona las filas comerciales y modifica el documento.
+Siguen desconocidos base bruta/neta, intervención de cantidad y descuentos,
+retirada del cargo anterior, doble cómputo GRUPO/componentes/detalles,
+escala/política de redondeo y escritura/persistencia. Las observaciones G1–G5
+mantienen su alcance de cantidad uno y descuentos cero; no se generalizan.
+Una conversión float32 de interfaz no demuestra el redondeo comercial E1.
+
+Reproducción privada: `output/clonersoft-implementacion-20261013/e1-estatico-20261014/`.
+`node .../verificar-anclajes.mjs` verifica SHA-256 antes/después, ambos
+literales, pushes, thunks/celdas, llamada virtual y escrituras de offsets,
+con resultado en `anclajes-arquitecto.json`. No afirma haber comprobado fórmula.
+`python .../repro-directed.py` reproduce dos wrappers, trece campos y veinte
+procedimientos con la misma huella. Usa Capstone únicamente en el directorio
+privado, sin dependencia de runtime para Aluminior.
+El disassembly, metadata y herramientas auxiliares permanecen ignorados.
+No se incorpora código, binarios o recursos propietarios a Git.
+
+Revisión independiente descontaminada: anclajes, decodificación completa,
+36 llamadas y registros de dos campos/dos controles comprobados contra los
+bytes; sin hallazgo reproducible en ese alcance. El arquitecto volvió a
+ejecutar la comprobación propia Node del revisor y su decodificación Python.
+Una ronda, sin corrección funcional. Evidencia en
+`output/clonersoft-implementacion-20261013/revision-e1-estatico-20261014.md`
+y `e1-estatico-20261014/verificar-revision-e1.mjs`.
+El visto bueno se limita a anclajes estáticos; no cierra el cargo económico.
+
+Siguiente estático exacto: validar el despacho de `0x019b83d8` (`+0x7ac`) y,
+desde los accesos codificados `+0x728/+0x730` del mismo objeto, validar su
+interpretación como getters e identificar el consumidor
+de `pbAceptar/pDespunte` y su modificación del presupuesto. Exigir camino de
+llamadas/valores antes de interpretar porcentajes, bases o cargos.
+No reabrir el análisis general ni repetir los dos wrappers.
+
+Ante este bloqueo se avanzó con el [selector independiente de registros de tarifa
+dinámica](IMPLEMENTACION-CLONERSOFT-TARIFA-DINAMICA-2026-10-14.md): unidad pura
+local de 47 pruebas, sin activar precios. Gate actual de paquetes: 2.004
+correctas y una omisión previa por CSV privado; tipos y arquitectura correctos.
+E1 sigue `in_progress`, sin implementación monetaria ni aceptación Productor.
