@@ -1,10 +1,11 @@
 # Siguiente paso E1: cálculo y reparto del despunte
 
 Procedimiento preparado el 03/10/2026 y actualizado el 04/10. Estado vigente:
-[roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md). La [continuación estática del 14/10](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#receptores-delegados)
+[roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md). La [continuación estática del 14/10](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#control-reparto-y-totales)
 ya recuperó wrappers/campos y, en su segunda unidad, layout estático y
 consumidor DEScalcula, declaraciones COM y receptores/selector de alBDADO.
-Seguir los cuerpos de control/total desde sus slots públicos, sin repetir
+Los cuerpos de control/reparto/totales también están seguidos; continuar por
+`VarFormat`, configuración efectiva y entrada de agregados comerciales. No repetir
 inventarios/literales/preparación pura/declaraciones. El procedimiento
 de observación siguiente es una vía separada y necesita autorización propia.
 Ya se entregó la

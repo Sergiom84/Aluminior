@@ -36,9 +36,12 @@ Las TypeLib de `alBLLvdoc.dll` y `gaBBDD.dll` acreditan las declaraciones
 COM del consumidor. La siguiente unidad acredita la creación estática de los
 receptores de `alBDADO` como `alRecordset`, WORD `+0x56` de tabla auxiliar,
 selector `rsTabla` y cuerpos delegados `rsEdit/rsCampo/rsUpdate`.
-Siguiente borde: cuerpos de control/total. No repetir receptores, selector,
+Control, reparto y totales también seguidos: selección comercial, sustitución,
+descuentos y escrituras estáticas con límites explícitos. La frontera de formato
+pasa a `VarFormat` de Automation; configuración efectiva, entrada de agregados
+y persistencia durable siguen sin aceptación monetaria. No repetir receptores, selector,
 wrappers/getters, declaraciones ya verificadas o inventarios.
-[Evidencia y condiciones](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#receptores-delegados).
+[Evidencia y condiciones](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#control-reparto-y-totales).
 Fuentes conservadas, verificadores reproducidos y revisión independiente.
 Este lote es documental/estático; el gate de paquetes anterior corresponde a
 `2a2dc57`, sin cambio nuevo del motor ni aceptación económica.
@@ -272,11 +275,12 @@ Los nueve documentos anteriores y tres líneas conservan sus huellas.
 ## Siguiente paso
 
 **ClonerSoft/E1 local:** preparación física/condicional, layout/getters,
-consumidor, declaraciones COM y receptores delegados entregados. Continuar por
-los cuerpos de `marcaDespunteCalculado` y `calculaTotalDoc`, según el
-[contrato y evidencia](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#receptores-delegados).
+consumidor, declaraciones COM, receptores y cuerpos de control/reparto/totales
+entregados en su alcance estático. Continuar por el contrato de `VarFormat`,
+configuración efectiva y entrada de agregados comerciales, según el
+[contrato y evidencia](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#control-reparto-y-totales).
 No repetir integración `fa32fba`, preparación, wrappers/getters, declaraciones,
-WORD de tabla auxiliar, selector `rsTabla` o enlaces delegados.
+WORD de tabla auxiliar, selector `rsTabla`, enlaces delegados o cuerpos ya seguidos.
 Sin activar cargo ni operar G6.
 
 **Windows, observación pendiente:** recepción y fuentes privadas → aceptación comercial P.2 con el

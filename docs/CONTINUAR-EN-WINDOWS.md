@@ -141,9 +141,10 @@ layout estático de `+0x7ac`, getters y consumidor `DEScalcula` ya verificados
 en su alcance; no reconstruirlos ni repetir literales. Receptores delegados de
 `alBDADO`, WORD de tabla auxiliar y selector `rsTabla` también acreditados;
 no repetir población de `this+0x88/+0x8c` ni enlaces `+0x34/+0x58/+0x3c`.
-Las declaraciones TypeLib ya están comprobadas; siguen los cuerpos de
-control/total, persistencia y repercusión comercial. Leer la
-[continuación del lote](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#receptores-delegados).
+Las declaraciones TypeLib y cuerpos de control/reparto/totales ya están seguidos
+en su alcance estático; no repetirlos. Siguen `VarFormat`, valores configurados,
+contrato de agregados y persistencia. Leer la
+[continuación del lote](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#control-reparto-y-totales).
 El selector independiente de registros de tarifa dinámica ya está implementado
 y verificado localmente; no activar precios a partir de esa selección.
 Los pasos de observación siguientes son una vía separada y conservan la

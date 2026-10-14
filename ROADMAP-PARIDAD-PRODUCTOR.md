@@ -1,6 +1,6 @@
 # Roadmap operativo de paridad con Productor
 
-Actualizado: 14/10/2026 (receptores delegados, tabla auxiliar y selector E1; selector puro de registros de tarifa dinámica; C1 y P.6/P.7 conservan su etapa del 12/10). Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
+Actualizado: 14/10/2026 (E1: receptores, control/reparto/totales y frontera VarFormat; contrato monetario pendiente; C1 y P.6/P.7 conservan su etapa del 12/10). Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
 Este archivo es el registro único del orden y estado de estas tareas.
 Los documentos de ensayo explican cómo realizarlas; los informes fechados
 conservan evidencia. Sus antiguas listas de pendientes no sustituyen este registro.
@@ -12,13 +12,15 @@ conservan evidencia. Sus antiguas listas de pendientes no sustituyen este regist
 y consumidor nativo `alVDocumentoDespunte.DEScalcula` con receptor demostrado.
 Las TypeLib acreditan las declaraciones COM; `alBDADO` reenvía la edición.
 Creación estática de receptores `alRecordset`, WORD de tabla auxiliar, selector
-`rsTabla` y cuerpos delegados acreditados. Seguir `marcaDespunteCalculado` y
-`calculaTotalDoc` en `alBLLvdoc.dll`, según la
-[continuación E1](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#receptores-delegados).
+`rsTabla` y cuerpos delegados acreditados. Control/reparto/totales seguidos:
+selección de filas, descuentos, sustitución y defensa parcial de doble cómputo.
+Siguiente frontera: `VarFormat` y configuración efectiva de escalas, contrato
+de agregados comerciales y persistencia, según la
+[continuación E1](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#control-reparto-y-totales).
 No repetir receptores/selector, declaraciones verificadas, wrappers/getters,
-literales, inventarios o preparación física/condicional.
-El cargo monetario permanece bloqueado: filas comerciales, base bruta/neta,
-cantidades, descuentos, sustitución, redondeo y persistencia sin contrato completo.
+literales, inventarios, preparación física/condicional o cuerpos ya seguidos.
+El cargo monetario permanece bloqueado: la matriz de ocho preguntas distingue
+lo acreditado de configuración, agregados, formato y persistencia sin contrato completo.
 Ghidra agotó 300 segundos y su sesión está cerrada; el parsing dirigido sí produjo
 anclajes de código. En paralelo se entregó el [selector puro de registros](docs/paridad/IMPLEMENTACION-CLONERSOFT-TARIFA-DINAMICA-2026-10-14.md),
 47 pruebas nuevas, sin activar tarifa ni producir precios. Grupo, habilitación,
@@ -96,7 +98,7 @@ Sin aplicación al presupuesto web ni nueva medición del banco.
 | ID | Trabajo | Estado actual | Prueba necesaria para avanzar o cerrar |
 |---|---|---|---|
 | M0 | Matriz por modelo/serie/regla y ensayos mínimos | Cerrado 03/10/2026 | [Matriz](docs/paridad/MATRIZ-COBERTURA-PRODUCTOR-2026-10-03.md), 97 pares, 47 pruebas, typechecks y arquitectura; no volver a crearla, regenerar si cambian las fuentes |
-| E1 | Despunte de cabecera: base, momento y reparto | En curso; preparación física/condicional 13/10, consumidor/COM y receptores/selector verificados 14/10; G1–G5 y G6-incidencia preservados | [Entrega y continuación](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#receptores-delegados): cuerpos de control/total. Reparto y contrato monetario completo pendientes; no repetir receptores/selector/preparación/wrappers/getters/declaraciones. Sin activar cabecera, adaptar snapshots u operar G6 |
+| E1 | Despunte de cabecera: base, momento y reparto | En curso; físico/condicional 13/10, consumidor/COM, receptores y control/reparto/totales estáticos 14/10; G1–G5 y G6-incidencia preservados | [Entrega y continuación](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#control-reparto-y-totales): VarFormat/configuración, entrada de agregados y persistencia; contrato monetario incompleto. No repetir unidades estáticas cerradas. Sin activar cabecera, adaptar snapshots u operar G6 |
 | E2 | Unión material de otra serie en GRUPO | Pendiente | Selección desde diagnóstico privado de los ocho casos de iteración 13; código/serie/acabado y geometría demostrados, sin extrapolar U |
 | E3 | Comisión: orden de redondeo y edición de líneas guardadas | Pendiente | Caso 0/−10/+10, suma de filas y momento de aplicación; separar cantidades/horas; seis residuos comunicados |
 | E4 | Tapajuntas de puerta con inferior SI/NO | Pendiente | GMT004, 1P 867×2098 con serie/ala/cajón reales; comparación lateral y travesaño |
@@ -137,7 +139,7 @@ antes de construir. Extraído no equivale a implementado o verificado.
 | Datos y maestros, catálogo, cabecera/GRUPO, materiales, cortes, herrajes, vidrio, MO, compacto, tapajuntas, metraje, PVP, comisión, uniones y fracciones | Reutilizado, con los límites de E1–E11 y M0 | No repetir inventario/carga ni convertir disponibilidad en aceptación; 204 CSV y 33 diferencias de instantánea preservados |
 | Precio dimensional y acabado del artículo | Reutilizado: C1 técnico publicado/verificado | Coste dimensional sigue separado; 0031/0032/carga no se repiten |
 | Despunte físico/condicional | Ahora — E1, implementado y verificado localmente | [Contrato/entrega](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md); 67 pruebas y revisión independiente; sin adaptar snapshots ni activar cabecera |
-| Despunte monetario | Ahora — E1, consumidor y declaraciones localizados; reglas pendientes | Receptores delegados y control/total; filas comerciales, base bruta/neta, cantidades, descuentos, sustitución y redondeo. G6 pendiente de autorización propia |
+| Despunte monetario | Ahora — E1, control/reparto/totales seguidos con verificadores privados; cargo desactivado | Ocho preguntas con evidencia parcial; VarFormat, escalas efectivas, agregados y persistencia pendientes. G6 conserva autorización propia |
 | Coste dimensional | Ahora — pendiente de evidencia | Proveedor, medidas, divisa, gastos y precedencias; no reutilizar selector PVP |
 | Coste calculado | Ahora — pendiente de evidencia/configuración | Material por peso + acabado por superficie; unidades y activación sin confirmar |
 | Tarifa dinámica | Ahora — selección de registro implementada/verificada localmente 14/10; precio y activación pendientes | [Contrato y gate](docs/paridad/IMPLEMENTACION-CLONERSOFT-TARIFA-DINAMICA-2026-10-14.md): cuatro búsquedas, decimales exactos y bloqueo de empate; 47 pruebas. Sin precios ni activar motor; grupo, habilitación, fórmula, redondeo y caso positivo pendientes |

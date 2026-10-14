@@ -133,7 +133,7 @@ La repetición de la función pura no prueba persistencia del cargo.
 El paso fijado el 13/10 era localizar el controlador que acepta «Repartir entre
 las líneas». Los wrappers, despacho y consumidor se acreditaron en las
 continuaciones del 14/10; ese paso histórico está agotado. La continuación
-vigente figura en [Receptores delegados](#receptores-delegados): filas, base,
+vigente figura en [Control, reparto y totales](#control-reparto-y-totales): filas, base,
 descuentos/cantidades, retirada del cargo anterior, redondeo y persistencia.
 Mientras falte ese enlace, no activar el cargo ni certificar ausencia de
 doble cómputo entre GRUPO, componentes y detalles comerciales.
@@ -479,9 +479,230 @@ La guarda documental propia detectó dos instrucciones históricas agotadas;
 una corrección las marca como superadas y enlaza el tramo vigente.
 Reproducción privada en `e1-revision-delegados-20261014/`.
 
-**Siguiente abierto:** cuerpos de `marcaDespunteCalculado` y `calculaTotalDoc`
+Siguiente de U1, seguido en «Control, reparto y totales»: cuerpos de `marcaDespunteCalculado` y `calculaTotalDoc`
 en `alBLLvdoc.dll`; demostrar sus filas/base/cantidades/descuentos,
 sustitución del cargo anterior, doble cómputo, redondeo y escritura.
 No repetir receptores, WORD, selector o enlaces delegados aquí acreditados.
 E1 permanece `in_progress`; esta unidad no implementa dinero ni acredita
 aceptación Productor, publicación o recepción entre equipos.
+
+## Control, reparto y totales
+
+Segunda unidad de esta continuación del 14/10/2026, después del commit local
+`bc7c6ea`. No activa el cargo económico ni modifica paquetes.
+
+- **Resultado exacto:** seguir los cuerpos de control/totales y sus llamadas de
+  gastos hasta acreditar reglas monetarias o dejar una frontera concreta sin prueba.
+- **Destinatario y motivo:** futura adaptación del presupuesto; evitar confundir
+  un total ya valorado, un coste físico y el reparto comercial de un cargo.
+- **Éxito medible:** cada pregunta monetaria enlazada con bytes, metadata, condiciones,
+  llamadas y escritura; verificadores ejecutados y revisión independiente.
+- **Alcance:** análisis estático dirigido y documentación propia, reutilizando
+  el corpus privado; sin inventarios, wrappers, getters o ensayos cerrados.
+- **Fuera de alcance y protegidos:** cargos activos, G6, datos reales, WIP, fuentes,
+  migraciones, producción y despliegue. Sin Productor, DLL/COM o SQL en ejecución.
+- **Comprobaciones obligatorias:** hash antes/después, decodificación, argumentos,
+  guardas de documentación y sensibilidad medida; separar ejecución observada.
+- **Acciones con autorización propia:** observación del original, G6, escritura
+  de negocio, publicación o despliegue; ninguna realizada en esta unidad.
+
+Fuente inicial: `alBLLvdoc.dll`, SHA-256
+`46f0a73c926a096673ba93fb720779d9221bf1a15b16800d53da7c828d18828c`.
+Los enlaces usan las declaraciones propias y el layout condicionado ya
+inspeccionado; ninguna identidad runtime se deduce del IID de diagnóstico HRESULT.
+
+### Marca y secuencia de total
+
+| Entrada | Slot | Celda → thunk → cuerpo |
+|---|---|---|
+| `alVDocumentosControl.marcaDespunteCalculado` | `+0x24` | `0x1102470c` → `0x11024778` → `0x113ab760` |
+| `alVDocumentoCalculaTotal.calculaTotalDoc` | `+0x2c` | `0x11026578` → `0x110265e4` → `0x11125b70` |
+
+El primer cuerpo llama al helper propio `+0x30` y exige su WORD distinto de
+cero (`0x113ab800/804`). Construye una actualización de
+`VDocumentosControl.DespunteCalculadoSN/DespunteCalculadoFecha`, delimitada
+por tipo y número de documento, y la envía al receptor externo `+0x44`
+en `0x113ab951`. Esto identifica la intención de escritura y su llamada;
+no demuestra guardado durable, transacción ni una regla de reparto.
+
+`calculaTotalDoc` carga la cabecera y toma la ruta de edición solo si la carga
+devuelve WORD no cero. Conserva `BaseImponible/ImporteTotal` anteriores;
+solo la rama `VPRES` llama a parámetros/gastos/resultado y al cálculo externo
+de documento. Después prepara parámetros de total mediante helper propio
+`+0x38`, ejecuta `alVDocumentoTotal.calculaTotalDoc` y
+`traspasaTotal_alBD`, y llama a `edUpdate` en `0x11125fdb`.
+La marca `RegistraCambios` controla un tramo posterior de registro; su
+booleano o el de `edUpdate` no certifican una transacción durable.
+
+### Bordes comerciales seguidos
+
+`alVDocumentoGastos.calculaGastos`, slot `+0x2c`, cuerpo `0x11150300`,
+elige `Subtotal` para `VPRES` e `ImporteTotal` para otros documentos en
+`0x11150e45–0x11150e5e`. La agregación de gastos restringe las filas del
+documento a `nEstr=0`, `nGrupo=0` y metraje distinto de cero; el total general
+en `alVDocumentoTotal.calculaTotalDoc` suma `ImporteTotal` de filas con ambos
+identificadores cero y no añade aquella condición de metraje.
+Estas selecciones tienen fines distintos: no sustituir una por la otra.
+
+`traspasaTotal_alBD`, slot `+0x24`, cuerpo `0x1115f5d0`, transfiere campos
+agregados como `Bruto`, `Subtotal`, descuentos, base imponible e importe total
+mediante `edCampo`. No volver a multiplicar esos agregados por una cantidad
+inferida ni interpretar su transferencia como prueba de la base de reparto.
+
+Reproducción privada de control y sus bordes en
+`output/clonersoft-implementacion-20261013/e1-control-total-20261014/`.
+`verificar-control-total.py` comprueba 50 anclajes y 16 literales, ocho capturas
+con 13.371 instrucciones y ocho mutaciones en memoria con un fallo cada una.
+Las ventanas son candidatas delimitadas por la entrada siguiente; las rutas
+indirectas y efectos externos conservan su alcance acotado.
+
+### Ruta E1 y fronteras de aceptación
+
+La transferencia E1 ya acreditada deja `DespuntePorc=0`. En esta ruta,
+`calculaGastos` consulta `DocDespuntePorc` y, cuando es cero, transfiere
+`DocDespunte` a `TotalDesp` sin reconstruir una fórmula física. La rama
+porcentual distinta no se atribuye a este recorrido ni se habilita.
+
+El reparto `VPRES` está en helper propio `+0x3c`, cuerpo `0x11153860`.
+Su consulta excluye contenedores internos y filtra `GastosIndSN` verdadero;
+`BoolSQL` recibe Boolean `-1` y emite `TRUE` o `1` según la rama de dialecto.
+No se deduce el valor del nombre de la bandera. Lee el gasto
+indirecto anterior y el subtotal. La reconstrucción de importe usa subtotal
+más gasto nuevo y termina escribiendo `GastosIndirectos`; la lectura del
+gasto anterior permite entrar en recálculo aunque el nuevo ratio sea cero.
+El denominador se prepara en helper `+0x40`, cuerpo `0x111556a0`, con
+exclusiones propias y descuentos documentales calculados por separado.
+La interpretación comercial completa exige conservar esos pasos previos.
+
+`GastosIndAplicarDescuentoLineaSN` controla la aplicación sucesiva del
+primer y del segundo descuento de línea al nuevo gasto. La configuración
+`Despunte_AplicaCliDtoSN` conserva su rama propia; no fijar ningún descuento
+a cero a partir de los ensayos históricos de cantidad uno.
+
+La línea propia de gastos, `alVDocumentoGastosInsLin.actualizaGI`, tiene
+cantidad y metraje uno; no se generaliza esa cantidad al resto de líneas.
+La marca de línea oculta se selecciona mediante `rtcImmediateIf`, ordinal
+681 del runtime ya inspeccionado. Su ABI y selección se siguen estáticamente;
+las operaciones Automation y los errores mantienen su límite ordinario.
+La exclusión por identificador debe conciliarse con el modo de repercusión,
+sin declarar doble cómputo imposible desde el nombre de una bandera.
+
+El formato numérico usa `D` como `Justificado`. Las escalas proceden de
+`REDlinea`, `REDbase` y `REDtotal`. Una conversión float32 o una cadena
+alineada no fija el número de decimales, la política de empate o un algoritmo
+de reparto de residuos. La aceptación integral continúa separada de estos
+enlaces estáticos y del guardado que sugieren las llamadas.
+
+### Dependencias de formato y configuración
+
+Lecturas dirigidas adicionales, con SHA-256 antes/después:
+
+- `gaCodigoBase.dll`:
+  `2a030e756ac804631e56324065561b4b8e4ac422e3c28406a59d4eb9190f2e8c`.
+- `alAppFramework.dll`:
+  `5fb225caa5cca384b05cbad0c259bd0c2a952a4e821bd8d2cf2e298be3e12adf`.
+- `msvbvm60.dll`: misma fuente
+  `898288bd3b21d0e7d5f406df2e0b69a5bbfa4f241baf29a2cdf8a3cf4d4619f2`.
+
+La factory de `gaVarios`, la coclase/interfaz propias y la importación
+`gaCodigoBase.dll` de la TypeLib de `alBLLvdoc` coinciden en GUID y versión
+codificada `0x3`. La factory de `alAppF_ManagerGlobal` coincide con la
+coclase/interfaz de `alAppFramework`; para este uso interno no hay importación
+pública de esa biblioteca que fije una versión requerida. El registro de
+32 bits se consultó solo para localizar el servidor, no como prueba de carga
+histórica. No se mezclan MDB, CSV ni el helper managed anterior.
+
+`alAppF_ManagerGlobal.alAppF` declara retorno `_alAppFrameworkManager`,
+cuya propiedad `ConfigRed` declara `_alConfigRedondeo`. Las propiedades
+`REDlinea/REDbase/REDtotal` leen WORD de instancia `+0x36/+0x38/+0x3c`;
+el cargador pide `RedondeoLinea/Base/Total` a su proveedor de configuración.
+La cadena `2` enviada al proveedor no demuestra una escala efectiva de dos
+ni un fallback: falta acreditar el significado de ese parámetro y el valor
+configurado. La interfaz de compatibilidad y todas las rutas de creación del
+manager conservan su límite; no se atribuye una instancia observada viva.
+
+En la ruta de base, el valor recibido de `REDbase` pasa al argumento `dec`
+de `gaVarios.formatoNum`; después `ValorDbl` convierte su resultado y se
+escribe el agregado. `formatoNum`, cuerpo `0x1100bca0`, delega en el export
+650 `rtcBstrFromFormatVar`; `ValorDbl`, cuerpo `0x1100b2d0`, utiliza
+`__vbaR8ErrVar` para la conversión posterior. Las máscaras, variantes y
+opciones de separadores forman parte de este recorrido; no sustituirlo por
+un redondeo matemático genérico ni eliminar los pasos intermedios.
+
+El export 650 también quedó seguido: entrada `0x6601dde0`, CFG de 91
+instrucciones, retorno `ret 0x10`. Su destino se puebla mediante
+`GetModuleHandleA("oleaut32.dll")` y `GetProcAddress("VarFormat")`, celda
+`0x66114650`, llamada `0x6601de63`. Envía Variant, máscara, dos enteros
+`1/1`, flags `0/8` según estado global/TLS y salida BSTR. El retorno ordinario
+es BSTR; el HRESULT negativo entra en tratamiento de error.
+La ruta Double del caller prepara `BYREF_R8 0x4005`, llama al formatter y
+formatea después el BSTR, antes de reconvertirlo. No repetir el cuerpo 650:
+la frontera matemática restante es `OLEAUT32.VarFormat` con esos argumentos,
+flags y estado de localización, además de los valores configurados efectivos.
+
+### Contraste de las ocho preguntas
+
+| Requisito | Acreditado estáticamente | Pendiente para aceptación monetaria |
+|---|---|---|
+| Filas comerciales | Reparto por documento, contenedores a cero, metraje distinto de cero y `GastosIndSN` verdadero; saltos específicos de compacto/mosquitera | El filtro booleano no significa «es GI»; faltan filas efectivas y contrato completo de agregados |
+| Base bruta/neta | `VPRES` usa `Subtotal`; el denominador suma subtotales con exclusiones y resta dos descuentos documentales calculados por separado | No reducir todas las rutas a una etiqueta bruto/neto; conservar configuración y formato de cada operación |
+| Cantidades | Reparto sobre importes valorados; precio reconstruido dividiendo por `Metraje`; GI propio con cantidad y metraje uno | La formación de los agregados comerciales y cantidades incorporadas no queda certificada; el censo directo no excluye lecturas indirectas |
+| Descuentos | Dos descuentos sucesivos de línea bajo su bandera; descuento de cliente de despunte precargado en una ruta propia; totales con `DtoPPsNeto` | Valores efectivos, extremos y enlace de todos los descuentos con los importes de entrada |
+| Sustitución anterior | Lee cargo anterior, reconstruye desde subtotal más cargo nuevo y reemplaza `GastosIndirectos`; procesa también nuevo ratio cero cuando había cargo | Idempotencia con la política real de formato, duplicados preexistentes y rutas de error |
+| Doble cómputo | En INS/CST resta venta GI del numerador; REP marca el GI oculto con `nEstr=-1`, excluido por el filtro de contenedores cero, bajo retorno ordinario válido | Exclusión integral de componentes/agregados, todos los modos/errores y representación de Aluminior |
+| Redondeo | Escalas diferenciadas de precio, línea, base y total; flujo configuración → formato → conversión → escritura | Valores configurados y contrato exacto de formato/empates/localización; no asumir céntimos ni mayor resto |
+| Escritura | Setters de importes, precio, descuentos y gasto indirecto; reutilización/alta del GI y llamadas `update/edUpdate` | Resultado efectivo, atomicidad, rollback y persistencia durable no observados |
+
+La secuencia ordinaria de total parte de la suma de importes de líneas,
+resta la deducción anterior, calcula descuento y pronto pago, y obtiene base
+imponible. `DtoPPsNeto` decide si el pronto pago parte del subtotal o del
+subtotal menos el primer descuento. Subtotal, descuento, descuento de pronto
+pago y base imponible atraviesan formato y conversión antes de su escritura.
+Bruto recibe directamente los ocho bytes del agregado `TSubtotal` recibido;
+la transferencia a su campo, condicionada a `VFAC`, conserva esos bytes como
+Variant Double sin formato intermedio. Las ramas de impuestos/retenciones
+conservan su alcance parcial.
+
+Los helpers previos de gastos `+0x4c/+0x50` precargan
+`MargenGastosIndDesp/DtoGastosIndDesp`. No representan una retirada monetaria
+por sí solos ni fijan porcentajes observados. En `actualizaGI`, la marca oculta
+no anula la venta: la rama de solo coste y el bloqueo de precio son condiciones
+distintas. Conservar esa distinción antes de adaptar el motor.
+
+Gate del arquitecto de gastos: 251/251, nueve capturas verificadas y diez
+mutaciones en memoria con un fallo cada una. Reproducción privada:
+`e1-gastos-reparto-20261014/verificar-gastos.py`.
+
+Gate del arquitecto de totales y dependencias ampliadas: 247/247,
+10.437 instrucciones contrastadas y doce mutaciones con un fallo cada una.
+El gate inicial 166 queda como antecedente privado, no como resultado final.
+Reproducción: `e1-totales-20261014/verify-totals.py`; fuentes intactas.
+
+**Bloqueo y siguiente abierto:** demostrar contrato de
+`OLEAUT32.VarFormat` para las máscaras/Variant/flags/localización acreditados;
+resolver proveedor de configuración y valores efectivos `REDprecio/REDlinea/
+REDbase/REDtotal`, sin convertir el literal `2` en una escala observada;
+acreditar entrada de agregados comerciales y cantidades incorporadas.
+Compatibilidad/creación efectiva del manager, todos los errores y persistencia
+durable siguen fuera de la evidencia estática. Las observaciones originales
+requieren autorización propia; G6 no se modifica.
+El cargo permanece desactivado y E1 `in_progress`. Implementación local de
+evidencia, aceptación Productor y publicación son etapas distintas.
+
+Revisión independiente U2: 250/250 comprobaciones propias, 41 capturas y
+24.846 instrucciones contrastadas, nueve mutaciones con un fallo cada una;
+cinco fuentes originales intactas. Reprodujo los gates de autores sin alterar
+sus 142 archivos. Único hallazgo: una frase atribuía formato a todos los
+agregados; se corrigió distinguiendo el bruto transferido directamente de
+subtotal, descuentos y base. Una revisión, una corrección y gate final,
+reproducido por el arquitecto. Informe/logs privados en
+`e1-revision-control-total-20261014/`.
+
+Cierre documental local: 117 Markdown encontrados, siete modificados,
+235 enlaces locales y 13 anchors válidos; puntero vigente y diff correctos.
+Arquitectura: 859 archivos, 414 módulos y cero infracciones. Paquetes, scripts
+del producto, fuentes de datos y migraciones sin cambios. No se repiten suites
+que ejecutan SQL ni se atribuye el gate anterior de 2.004 pruebas a esta unidad.
+Estado, roadmap, relevo, guía, procedimiento e índice existentes actualizados;
+se preservan historia, evidencia privada y discrepancias. Sin push, despliegue,
+sync de July o recepción entre equipos acreditada.

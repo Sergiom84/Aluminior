@@ -2,7 +2,7 @@
 
 Continuación local Windows del 14/10, desde HEAD comprobado `a078975`, rama
 `codex/integracion-windows-mac-20261013`, árbol inicial limpio.
-E1: [receptores delegados y selector](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#receptores-delegados).
+E1: [control, reparto y totales](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#control-reparto-y-totales), después de U1 local `bc7c6ea`.
 No repetir inventarios, literales, integración o preparación física/condicional.
 El layout `+0x7ac` conduce a `cargaDetalle` bajo el constructor inspeccionado;
 no se atribuye una ejecución viva ni todas las rutas de fábrica.
@@ -12,11 +12,14 @@ de cero a `DespuntePorc` y cuatro bytes recibidos a `Despunte`.
 Las TypeLib acreditan las declaraciones de esos receptores COM; `bdDoc`
 devuelve `alBDADO` de `gaBBDD.dll`. Creación de receptores `alRecordset`,
 WORD de tabla auxiliar, selector `rsTabla` y cuerpos delegados acreditados
-estáticamente. Continuar por cuerpos de `marcaDespunteCalculado` y
-`calculaTotalDoc` en `alBLLvdoc.dll`. No repetir receptores, WORD o selector.
+estáticamente. `marcaDespunteCalculado`, `calculaTotalDoc` y cuerpos de gastos,
+reparto/totales ya seguidos: la matriz distingue filtros, bases/descuentos,
+sustitución, cantidades valoradas y defensa parcial de doble cómputo.
+Continuar por `VarFormat`, configuración efectiva y entrada de agregados;
+no repetir receptores, WORD, selector o esos cuerpos.
 El reenvío no acredita guardado durable.
 Usar slots públicos TypeLib y constructor inspeccionado, sin nombres por índice.
-Faltan reglas completas de filas/base/cantidades/descuentos/sustitución/redondeo.
+Falta contrato monetario completo de formato/configuración/agregados y persistencia.
 E1 y G6 siguen abiertos/protegidos; no activar cargo ni ejecutar el original.
 
 Entregado el [selector puro de registros de tarifa dinámica](docs/paridad/IMPLEMENTACION-CLONERSOFT-TARIFA-DINAMICA-2026-10-14.md):
