@@ -27,13 +27,21 @@ privado (964 core, 56 DB, 112 ETL, 872 web), tipos y arquitectura correctos;
 revisión independiente sin hallazgos reproducibles en el contrato puro.
 La aceptación integral Productor y la publicación siguen separadas.
 
-E1: referencias y thunks de `cmAceptar_Click` y `FinalCalculo` recuperados
-estáticamente y anclados a bytes del mismo EXE. Los wrappers no acreditan
-el cargo; `FinalCalculo` delega mediante un despacho virtual. Continuar desde
-esas direcciones, sin repetir literales/inventarios ni la preparación pura.
-La consulta Ghidra agotó 300 segundos durante el análisis inicial;
-sesión cerrada, fuente conservada. Detalle y siguiente enlace en la
-[continuación E1](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#continuación-estática-dirigida--14102026).
+E1, segunda unidad del 14/10: layout del despacho `+0x7ac` validado
+estáticamente bajo el constructor VB6 inspeccionado; destino `cargaDetalle`.
+Consumidor localizado: `alVDocumentoDespunte.DEScalcula`, con receptor del
+formulario demostrado, lectura de `pbAceptar/pDespunte` y transferencia a
+`DespuntePorc`/`Despunte`. No prueba reparto ni redondeo comercial.
+Las TypeLib de `alBLLvdoc.dll` y `gaBBDD.dll` acreditan las declaraciones
+COM del consumidor. `alBDADO.edit/edCampo/edUpdate` reenvían a receptores
+delegados: siguiente borde, población de `this+0x88/+0x8c`, significado del
+WORD `this+0x56` y slots `+0x34/+0x58/+0x3c`; después cuerpos de control/total.
+No repetir wrappers/getters, declaraciones ya verificadas o inventarios.
+[Evidencia y condiciones](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#despacho-y-consumidor-nativo).
+Fuentes conservadas, verificadores reproducidos y revisión independiente.
+Este lote es documental/estático; el gate de paquetes anterior corresponde a
+`2a2dc57`, sin cambio nuevo del motor ni aceptación económica.
+El timeout Ghidra anterior permanece como antecedente; no se reabrió la sesión.
 Sin ejecución Productor, modificación de G6, datos reales, migraciones nuevas,
 operación remota de negocio o despliegue. El navegador publicado no se usa
 como evidencia de estos cambios locales.
@@ -262,10 +270,13 @@ Los nueve documentos anteriores y tres líneas conservan sus huellas.
 
 ## Siguiente paso
 
-**ClonerSoft/E1 local:** preparación física/condicional entregada; continuar
-por las referencias estáticas de `VPresupDespunte.cmAceptar_Click` y
-`FinalCalculo`, con las preguntas monetarias del [contrato](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md).
-No repetir la integración `fa32fba` ni construir otra preparación física.
+**ClonerSoft/E1 local:** preparación física/condicional, layout/getters,
+consumidor y declaraciones COM entregados. Continuar por población/tipos de
+receptores delegados de `alBDADO`, WORD `this+0x56`, selector `+0x88` y slots
+`+0x34/+0x58/+0x3c`; después control/total, según el
+[contrato y evidencia](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#despacho-y-consumidor-nativo).
+No repetir integración `fa32fba`, preparación, wrappers/getters o declaraciones.
+Sin activar cargo ni operar G6.
 
 **Windows, observación pendiente:** recepción y fuentes privadas → aceptación comercial P.2 con el
 titular; investigación económica E1 desde G6-incidencia y E7 tras A4, según

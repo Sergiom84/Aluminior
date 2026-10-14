@@ -2,14 +2,21 @@
 
 Continuación local Windows del 14/10, sobre `81dcef9`, rama
 `codex/integracion-windows-mac-20261013`, árbol inicial limpio.
-E1: [wrappers y campos de salida anclados](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#continuación-estática-dirigida--14102026).
+E1: [despacho estático y consumidor nativo](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#despacho-y-consumidor-nativo),
+segunda unidad del 14/10 desde `2a2dc57`.
 No repetir inventarios, literales, integración o preparación física/condicional.
-Siguiente exacto: validar slot `+0x7ac` desde `0x019b83d8` y localizar un
-consumidor con receptor demostrado de los accesos codificados `+0x728`
-(`pbAceptar`) y `+0x730` (`pDespunte`), validando su interpretación como
-getters; seguir después las escrituras comerciales.
-El candidato `cargaDetalle` es inferencia, no llamador confirmado. Faltan filas,
-base bruta/neta, cantidades, descuentos, sustitución, redondeo y persistencia.
+El layout `+0x7ac` conduce a `cargaDetalle` bajo el constructor inspeccionado;
+no se atribuye una ejecución viva ni todas las rutas de fábrica.
+Getters y consumidor `alVDocumentoDespunte.DEScalcula` ya localizados:
+receptor global `0x02ef4c04`, lecturas `0x01ad9e65/0x01ada0b2`, transferencia
+de cero a `DespuntePorc` y cuatro bytes recibidos a `Despunte`.
+Las TypeLib acreditan las declaraciones de esos receptores COM; `bdDoc`
+devuelve `alBDADO` de `gaBBDD.dll`. Continuar por la población de sus
+receptores `this+0x88/+0x8c`, WORD `this+0x56` y slots delegados
+`+0x34/+0x58/+0x3c`. Después, cuerpos de `marcaDespunteCalculado` y
+`calculaTotalDoc` en `alBLLvdoc.dll`. El reenvío no acredita guardado durable.
+Usar slots públicos TypeLib y constructor inspeccionado, sin nombres por índice.
+Faltan reglas completas de filas/base/cantidades/descuentos/sustitución/redondeo.
 E1 y G6 siguen abiertos/protegidos; no activar cargo ni ejecutar el original.
 
 Entregado el [selector puro de registros de tarifa dinámica](docs/paridad/IMPLEMENTACION-CLONERSOFT-TARIFA-DINAMICA-2026-10-14.md):
@@ -18,8 +25,12 @@ grupo, habilitación, fórmula ni redondeo. Gate del arquitecto: 2.004 pruebas
 correctas y la omisión previa por CSV privado; tipos/arquitectura correctos;
 revisión independiente y reproducción de su oráculo. Sin nueva migración,
 datos reales, aceptación Productor, publicación o despliegue.
+Esta segunda unidad E1 entrega análisis/documentación sin cambiar paquetes;
+su verificación estática y revisiones están en el contrato. El gate de paquetes
+anterior es el de `2a2dc57`; no se atribuye una nueva aceptación Productor.
 Fuentes, reproducción y logs privados:
 `output/clonersoft-implementacion-20261013/e1-estatico-20261014/`,
+`e1-despacho-20261014/`, `e1-consumidor-20261014/`, `e1-com-20261014/`,
 `tarifa-dinamica-20261014/` y logs `aluminior-clonersoft-20261014-*` de esa raíz.
 No viajan por Git/July. El roadmap existente conserva el orden y estado únicos.
 

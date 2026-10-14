@@ -1,9 +1,11 @@
 # Siguiente paso E1: cálculo y reparto del despunte
 
 Procedimiento preparado el 03/10/2026 y actualizado el 04/10. Estado vigente:
-[roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md). La [continuación estática del 14/10](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#continuación-estática-dirigida--14102026)
-ya recuperó wrappers y campos; seguir despacho virtual y consumidor desde sus
-anclajes, sin repetir inventarios/literales/preparación pura. El procedimiento
+[roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md). La [continuación estática del 14/10](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#despacho-y-consumidor-nativo)
+ya recuperó wrappers/campos y, en su segunda unidad, layout estático y
+consumidor DEScalcula y declaraciones COM. Seguir los receptores delegados
+de alBDADO y cuerpos de control/total desde sus slots públicos, sin repetir
+inventarios/literales/preparación pura/declaraciones. El procedimiento
 de observación siguiente es una vía separada y necesita autorización propia.
 Ya se entregó la
 [investigación documental y contraste guardado](EVIDENCIA-E1-DESPUNTE-2026-10-04.md);

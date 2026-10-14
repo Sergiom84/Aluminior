@@ -136,13 +136,14 @@ El pendiente P.2 sigue abierto hasta esta aceptación; no repetir su corrección
 
 ### E1: recuperar el ensayo de despunte
 
-Continuación ClonerSoft del 14/10: preparación física/condicional y referencias
-de los dos wrappers ya verificadas; no reconstruirlas ni repetir literales.
-El siguiente paso estático es validar el despacho `+0x7ac` en `0x019b83d8`
-y localizar el consumidor de `pbAceptar/pDespunte` con receptor demostrado
-del mismo formulario (accesos codificados `+0x728/+0x730`, interpretación
-como getters pendiente). Leer la
-[continuación del lote](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#continuación-estática-dirigida--14102026).
+Continuación ClonerSoft del 14/10: preparación física/condicional, wrappers,
+layout estático de `+0x7ac`, getters y consumidor `DEScalcula` ya verificados
+en su alcance; no reconstruirlos ni repetir literales. Continuar desde sus
+receptores delegados de `alBDADO`: población de `this+0x88/+0x8c`, WORD
+`this+0x56` y slots `+0x34/+0x58/+0x3c`. Las declaraciones TypeLib de
+`alBLLvdoc.dll`/`gaBBDD.dll` ya están comprobadas; siguen los cuerpos de
+control/total, persistencia y repercusión comercial. Leer la
+[continuación del lote](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#despacho-y-consumidor-nativo).
 El selector independiente de registros de tarifa dinámica ya está implementado
 y verificado localmente; no activar precios a partir de esa selección.
 Los pasos de observación siguientes son una vía separada y conservan la

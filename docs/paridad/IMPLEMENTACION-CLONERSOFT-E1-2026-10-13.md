@@ -220,15 +220,179 @@ Una ronda, sin corrección funcional. Evidencia en
 y `e1-estatico-20261014/verificar-revision-e1.mjs`.
 El visto bueno se limita a anclajes estáticos; no cierra el cargo económico.
 
-Siguiente estático exacto: validar el despacho de `0x019b83d8` (`+0x7ac`) y,
-desde los accesos codificados `+0x728/+0x730` del mismo objeto, validar su
-interpretación como getters e identificar el consumidor
-de `pbAceptar/pDespunte` y su modificación del presupuesto. Exigir camino de
-llamadas/valores antes de interpretar porcentajes, bases o cargos.
-No reabrir el análisis general ni repetir los dos wrappers.
+El siguiente paso de aquella unidad quedó cubierto en el apartado siguiente:
+layout estático del despacho, getters y consumidor nativo. La continuación
+económica pasa por las llamadas externas de ese consumidor. No repetir
+wrappers, inventarios o búsquedas de literales.
 
 Ante este bloqueo se avanzó con el [selector independiente de registros de tarifa
 dinámica](IMPLEMENTACION-CLONERSOFT-TARIFA-DINAMICA-2026-10-14.md): unidad pura
 local de 47 pruebas, sin activar precios. Gate actual de paquetes: 2.004
 correctas y una omisión previa por CSV privado; tipos y arquitectura correctos.
 E1 sigue `in_progress`, sin implementación monetaria ni aceptación Productor.
+
+## Despacho y consumidor nativo
+
+Segunda unidad del 14/10/2026, desde `2a2dc57`; árbol inicial limpio.
+Se mantiene el contrato de análisis local: validar el despacho y el consumidor
+con pruebas de bytes/flujo y conservar las reglas económicas desconocidas.
+Sin ejecutar Productor, cargar COM/CLR, modificar G6, datos, migraciones,
+producción o cargo de Aluminior. Los nuevos scripts y capturas son privados.
+
+### Layout estático del despacho
+
+Se inspeccionó el runtime importado `C:/Windows/SysWOW64/msvbvm60.dll`, SHA-256
+`898288bd3b21d0e7d5f406df2e0b69a5bbfa4f241baf29a2cdf8a3cf4d4619f2`.
+El EXE conserva su SHA-256 anterior. No hay DLL homónima junto al EXE;
+no se observó la carga de una ejecución ni se presupone su runtime histórico.
+
+El inicializador nativo `0x6601af12` lee `ObjectInfo+0x62`, añade siete
+entradas y copia `WORD(ObjectInfo+0x60)` punteros desde `ObjectInfo+0x68`.
+La instancia construida usa `*(ObjectInfo+0x6c)+0x0c` como vtable.
+Para este formulario: primera entrada `(0x1b7+7)×4 = 0x6f8`; 46 punteros
+desde `0x00545564`. De ahí:
+
+`(0x7ac−0x6f8)/4 = 45` → celda `0x00545618` → thunk `0x005467f5`
+→ `cargaDetalle`, `0x019bc960`.
+
+Es validación del layout bajo el constructor inspeccionado, sin depender
+de interpretar el descriptor `0x0761`. Conserva la precondición de que el
+contexto construido corresponde al ObjectInfo del formulario. Las lecturas
+directas de contexto de la fábrica exigen, además del flag interno, global
+`0x66114638` cero en dos gates. Las rutas alternativas llaman `0x660eba4e`;
+su contexto no quedó resuelto. No se certifica una ruta viva ni todas las
+ramas de creación de instancias.
+
+Los getters quedan anclados por sus thunks y helpers reales:
+
+| Campo | Slot / índice | Celda y thunk | Efecto estático |
+|---|---|---|---|
+| `pbAceptar` | `+0x728` / 12 | `0x00545594` → `0x00546624` | Lee dos bytes de instancia `+0x4a` mediante `GetMem2` |
+| `pDespunte` | `+0x730` / 14 | `0x0054559c` → `0x00546642` | Lee cuatro bytes de instancia `+0x4c` mediante `GetMem4` |
+
+Reproducción: `e1-despacho-20261014/verificar-despacho.py` dentro de
+`output/clonersoft-implementacion-20261013/`; 46 anclajes, fuentes intactas.
+Revisión independiente encontró una condición de fábrica omitida; una
+corrección del manifiesto/verificador y gate ejecutado. El arquitecto también
+reprodujo el verificador propio del revisor, 49 anclajes correctos.
+
+### Consumidor con receptor demostrado
+
+`alVDocumentoDespunte.DEScalcula`, cuerpo `0x01ad83e0–0x01ada390`
+(fin exclusivo), se enlaza desde el objeto `0x0071fd30`, ObjectInfo
+`0x00494d24`, celda `0x00494dcc` y thunk `0x00494e1c`.
+La instancia del formulario se crea/recupera con `__vbaNew2` y su ObjectInfo
+`0x00544e7c`, en global `0x02ef4c04`. El receptor de los getters procede
+de esa celda, no de una coincidencia genérica de offsets en otro formulario.
+
+| Paso | Dirección | Conducta acreditada |
+|---|---|---|
+| Leer aceptación | `0x01ad9e65`, slot `+0x728` | Recibe word; cero salta a salida `0x01ada2cf` |
+| Comprobar resultado externo | `0x01ad9f2f`, slot `+0x1c`; gate `0x01ad9f68/6b` | La palabra recibida también debe ser distinta de cero para alcanzar las transferencias |
+| Preparar porcentaje | `0x01ada024`, slot `+0x48` | Transfiere `DespuntePorc` con Variant tipo 2 y valor cero |
+| Leer valor del formulario | `0x01ada0b2`, slot `+0x730` | Recibe cuatro bytes en local `ebp−0x100` |
+| Transferir valor | `0x01ada0ec`, slot `+0x48` | Envía esos mismos cuatro bytes a `Despunte` mediante Variant tipo 4 |
+| Continuar | `0x01ada165`, slot `+0x4c` | Llama a `alBDADO.edUpdate`; el reenvío posterior no acredita guardado durable |
+
+El preámbulo llama a `eliminaDetalleDespunte` (`0x01ae06a0`), que afecta
+al detalle físico, y a `DESsumaCosteArticulos` (`0x01adb8b0`), que suma
+costes físicos. Ninguna de esas dos operaciones se presenta como retirada
+del cargo anterior o elección de base comercial.
+
+Reproducción: `e1-consumidor-20261014/repro-consumer.py`, misma raíz privada;
+87 anclajes, decodificación completa de 2.688 instrucciones, huella conservada.
+Revisión independiente sin hallazgo reproducible: 47 anclajes propios y las
+dos secuencias Variant completas, reproducidos por el arquitecto. Los slots
+propios `+0x40/+0x2c` quedan enlazados bajo el mismo constructor inspeccionado.
+La conversión/transferencia de cuatro bytes no fija política de céntimos.
+La aceptación del formulario por sí sola no acredita que se alcance la
+mutación: quedan las condiciones y fallos de las llamadas externas.
+
+### Declaraciones COM y frontera económica pendiente
+
+La consulta de lectura al registro COM de 32 bits identifica tres clases
+posteriores en `C:/Windows/SysWOW64/alBLLvdoc.dll`, SHA-256
+`46f0a73c926a096673ba93fb720779d9221bf1a15b16800d53da7c828d18828c`.
+Se trata de otra fuente identificada, sin mezclarla con las MDB/CSV o atribuir
+el registro a una ejecución histórica. Se contrastaron las declaraciones de
+la TypeLib propia con los GUID compilados, sin atribuir efectos económicos
+por el nombre de una clase o método.
+
+| Clase registrada | CLSID | Declaración pública acreditada |
+|---|---|---|
+| `alVDocumentoBD` | `ff1cddcd-ffb8-42c0-b2ca-a446c39013a5` | `bdDoc`, PropertyGet `+0x1c`; devuelve la interfaz importada de `alBDADO` |
+| `alVDocumentosControl` | `3d49e10d-04ed-436e-b081-e99cbb693229` | `marcaDespunteCalculado`, `+0x24`; cuerpo pendiente |
+| `alVDocumentoCalculaTotal` | `f9730a8c-029c-421a-adb0-57de1af1509f` | `RegistraCambios`/`RegistraCambiosObservaciones`, PropertyLet `+0x20/+0x28`; `calculaTotalDoc`, `+0x2c`; cuerpos pendientes |
+
+La TypeLib `3492b023-2c15-4823-b7d2-27c0fff92e06` enlaza el retorno de
+`bdDoc` con IID `3143e7cb-643e-4e77-b9a1-2cd2bb606d23`, importado de
+`gaBBDD.dll`, TypeLib `4c8f78e2-2a97-4e1c-bcc3-6e9025144cfa`, versión `d.1`.
+Esta segunda DLL conserva SHA-256
+`dc1f4be67fc7b25f8464a686bf890ca7a1bdf15bf267928bbb35fd62169efb95`.
+Su TypeLib propia y coclase acreditan `_alBDADO` y estos slots:
+
+| Slot | Declaración |
+|---|---|
+| `+0x1c` | `bdCarga`, salida booleana; es la segunda condición del consumidor |
+| `+0x40` | `edit`, salida booleana |
+| `+0x48` | `edCampo`, PropertyLet; nombre de campo y Variant |
+| `+0x4c` | `edUpdate`, salida booleana |
+
+Se retiraron las asociaciones de nombres por índice de tabla nativa; la
+revisión independiente detectó dos etiquetas falsas. Su verificador falló
+antes de corregirlas (una aserción) y pasó después sin modificarlo. El gate
+contrasta los nueve slots públicos entre ambos DLL y el enlace de importación.
+Los artefactos iniciales se conservan retirados en la raíz privada.
+
+La asociación por slot del constructor inspeccionado conduce a `edit`
+`0x1107a440`, `edCampo` `0x1107a750` y `edUpdate` `0x1107ab50`.
+Los límites por siguiente prólogo son candidatos; no se afirma cobertura
+íntegra de cuerpos. Los reenvíos y sus condiciones se documentan con ese
+alcance, sin convertir un retorno booleano en prueba de persistencia.
+
+`edit` reenvía al receptor `this+0x88`, slot `+0x34`; `edCampo`, al slot
+`+0x58`; `edUpdate`, al `+0x3c`. WORD `this+0x56` distingue la ruta primaria
+de las rutas con receptor secundario `this+0x8c` y alias/selección de campo.
+En retorno ordinario, `edit/edUpdate` copian el WORD bajo del último resultado
+delegado; no lo combinan con el primero. Excepciones y efectos del tratamiento
+HRESULT permanecen abiertos. `edit` pasa un DWORD reiniciado a cero por
+referencia y salida; `edUpdate`, valores 0/2 y salida; `edCampo`, nombre BSTR
+copiado y Variant preparado. No se atribuye sentido comercial a esos argumentos.
+
+IID `4d004483-d57c-4f2c-89f8-ac20a38162a2` en `0x1100ff30` es argumento
+de diagnóstico de `__vbaHresultCheckObj` en la rama HRESULT negativo;
+no acredita QueryInterface ni identidad runtime del receptor.
+Revisión independiente: 109 comprobaciones, 38 thunks y capturas contrastadas;
+seis mutaciones solo en memoria detectadas, un fallo cada una. Una corrección
+de alcance y reproducción del verificador propio del revisor. Gate del autor:
+32 anclajes, fuentes intactas. Los límites de captura también coinciden con
+la siguiente entrada/ret/NOPs/saltos directos, sin acreditar rutas indirectas.
+
+Siguiente exacto: población y tipos efectivos de los receptores `this+0x88/+0x8c`,
+significado del WORD `this+0x56`, selector propio `+0x88` y cuerpos de los slots
+delegados `+0x34/+0x58/+0x3c`. El IID diagnóstico es una pista. Después, cuerpos
+de `marcaDespunteCalculado` y `calculaTotalDoc` desde sus slots públicos.
+
+Reproducción privada: `e1-com-20261014/verificar-frontera.py`,
+`inspeccionar-albdado.py`, `verificar-reenvio-albdado.py` y verificadores
+independientes en `output/clonersoft-implementacion-20261013/`.
+
+El consumidor solicitado ya está localizado. El cargo permanece bloqueado:
+filas comerciales, base bruta/neta, cantidades/descuentos, retirada monetaria,
+doble cómputo, redondeo y persistencia todavía requieren sus cuerpos de aplicación.
+No implementar esas reglas desde el nombre del campo o de una clase.
+
+Esta unidad entrega análisis y documentación local; no modifica el motor ni
+activa cargos. El gate de 2.004 pruebas/tipos/arquitectura corresponde al código
+de `2a2dc57`, anterior a este lote documental. Las nuevas comprobaciones son
+estáticas y de hashes; no sustituyen aceptación Productor, publicación o recibo
+entre equipos. G6, datos, migraciones y fuentes originales permanecen protegidos.
+
+Revisión documental independiente: corrigió el único puntero activo agotado
+de «Siguiente paso» en el estado. Gate del arquitecto tras la corrección:
+117 Markdown encontrados en barrido real, siete documentos modificados,
+233 enlaces locales y 11 anchors correctos, guard de continuación vigente y
+`git diff --check` correctos. Estado, roadmap, relevo, guía Windows,
+procedimiento e índice existentes quedan actualizados; no se retiró evidencia
+histórica ni se creó otra lista. Arquitectura repetida: 859 archivos,
+414 módulos, cero infracciones.
