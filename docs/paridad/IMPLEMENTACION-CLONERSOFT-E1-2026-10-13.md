@@ -131,9 +131,10 @@ la función nueva necesita un contrato de adaptador antes de conectarse.
 La repetición de la función pura no prueba persistencia del cargo.
 
 El paso fijado el 13/10 era localizar el controlador que acepta «Repartir entre
-las líneas». La continuación del 14/10 recuperó los wrappers; ahora falta seguir
-su despacho y consumidor: qué filas selecciona, qué base usa, cómo intervienen
-descuentos/cantidades y dónde retira el cargo anterior, redondea y persiste.
+las líneas». Los wrappers, despacho y consumidor se acreditaron en las
+continuaciones del 14/10; ese paso histórico está agotado. La continuación
+vigente figura en [Receptores delegados](#receptores-delegados): filas, base,
+descuentos/cantidades, retirada del cargo anterior, redondeo y persistencia.
 Mientras falte ese enlace, no activar el cargo ni certificar ausencia de
 doble cómputo entre GRUPO, componentes y detalles comerciales.
 
@@ -187,8 +188,9 @@ El parsing/disassembly dirigido sí permite avanzar sin ejecutar el programa.
 
 La tabla de thunks y la secuencia de campos/métodos ofrecen un candidato
 para `+0x7ac`: celda `0x00545618` → thunk `0x005467f5` → `cargaDetalle`
-`0x019bc960`. Es una inferencia de mapeo VB6 pendiente de confirmar;
-no se transforma en llamador comercial ni en regla de cálculo.
+`0x019bc960`. Era una inferencia de aquella unidad, posteriormente validada
+en [Layout estático del despacho](#layout-estático-del-despacho) bajo las
+condiciones allí descritas; no es un llamador comercial ni una regla de cálculo.
 Tres coincidencias de bytes del descriptor resultaron solapamientos de
 instrucciones, no referencias de llamadas: sus capturas se conservan como
 descartadas en la evidencia privada, sin presentarlas como callers.
@@ -368,7 +370,7 @@ de alcance y reproducción del verificador propio del revisor. Gate del autor:
 32 anclajes, fuentes intactas. Los límites de captura también coinciden con
 la siguiente entrada/ret/NOPs/saltos directos, sin acreditar rutas indirectas.
 
-Siguiente exacto: población y tipos efectivos de los receptores `this+0x88/+0x8c`,
+Siguiente de aquella unidad, cubierto en «Receptores delegados»: población y tipos efectivos de los receptores `this+0x88/+0x8c`,
 significado del WORD `this+0x56`, selector propio `+0x88` y cuerpos de los slots
 delegados `+0x34/+0x58/+0x3c`. El IID diagnóstico es una pista. Después, cuerpos
 de `marcaDespunteCalculado` y `calculaTotalDoc` desde sus slots públicos.
@@ -396,3 +398,90 @@ de «Siguiente paso» en el estado. Gate del arquitecto tras la corrección:
 procedimiento e índice existentes quedan actualizados; no se retiró evidencia
 histórica ni se creó otra lista. Arquitectura repetida: 859 archivos,
 414 módulos, cero infracciones.
+
+## Receptores delegados
+
+Unidad local del 14/10/2026 desde `a078975d518b72c9e4ed07c6f25df5319c0ff7ec`,
+rama `codex/integracion-windows-mac-20261013`, árbol inicial limpio.
+
+- **Resultado exacto:** acreditar población/tipos estáticos de `this+0x88/+0x8c`,
+  significado del WORD `this+0x56`, selector propio `+0x88` y cuerpos delegados.
+- **Éxito medible:** cadena creación/metadata/TypeLib/slot/celda/thunk/cuerpo,
+  verificadores contra bytes y hashes, sensibilidad medida y revisión independiente.
+- **Alcance:** lectura y parsing dirigidos de la misma `gaBBDD.dll`; auxiliares
+  privados y síntesis propia. Sin inventario general ni repetir unidades cerradas.
+- **Protegidos:** WIP, fuentes, G6, datos reales, paquetes, migraciones y producción.
+  No ejecutar Productor, DLL/COM o SQL, activar cargo ni publicar/desplegar.
+
+### Creación y tipo
+
+`__vbaNew` recibe ObjectInfo `0x1100d184`; el descriptor `0x1100e2e8`
+identifica `alRecordset`. La metadata propia y la TypeLib enlazan coclase
+`50400019-03fe-4eda-ad1e-8823558eef2c` e interfaz `_alRecordset`.
+La población primaria aparece en `bdCarga`; la secundaria en el cuerpo privado
+del slot `+0x98`. El censo dirigido de los 38 métodos copiados de `alBDADO`
+también conserva las creaciones de `edAddNew`, limpiezas y aritmética de punteros.
+Es un censo de esta clase, no una prueba de alias en todo el programa.
+
+El IID `4d004483-d57c-4f2c-89f8-ac20a38162a2` sigue siendo diagnóstico cuando
+se pasa a `__vbaHresultCheckObj`. La identificación anterior procede de la
+creación y de los metadatos propios; no atribuye una identidad observada viva.
+
+| Slot delegado de `_alRecordset` | Declaración propia | Celda → thunk → cuerpo |
+|---|---|---|
+| `+0x34` | `rsEdit` | `0x1100d244` → `0x1100d359` → `0x1102a500` |
+| `+0x58` | `rsCampo`, PropertyLet | `0x1100d268` → `0x1100d3ce` → `0x1102c7e0` |
+| `+0x3c` | `rsUpdate` | `0x1100d24c` → `0x1100d373` → `0x1102af90` |
+
+Las ventanas candidatas terminan respectivamente en `0x1102aad0`,
+`0x1102ca80` y `0x1102bb40`, fin exclusivo. Decodificación y ramas directas
+delimitan el alcance; no se certifican rutas indirectas o persistencia durable.
+
+### Tabla auxiliar y selector
+
+`configTablaAuxiliar`, slot público `+0x68`, enlaza celda `0x1100cbc0`
+→ thunk `0x1100cd45` → cuerpo `0x1107b4d0`. Recibe tabla auxiliar y dos campos
+de código; copia la configuración a `+0x44/+0x4c/+0x50` y escribe WORD
+`+0x56=0xffff` en `0x1107b54a`. `Class_Initialize`, cuerpo `0x1107d5a0`,
+escribe cero en `0x1107d65d`. El WORD controla la ruta de tabla auxiliar;
+no es un importe, porcentaje o marca comercial de despunte.
+
+El selector propio `+0x88` es `rsTabla(campo)`: celda `0x1100cbe0`
+→ thunk `0x1100cdc7` → cuerpo `0x1107c6c0`. La TypeLib declara retorno
+`_alRecordset`. Con WORD cero devuelve el receptor primario `+0x88`.
+Con WORD distinto de cero consulta la lista de campos de la tabla auxiliar:
+`gaLst.xcfg_IDX_Indice(0)` y `gaLstIndice.dimeIdxClave(campo, siete BSTR vacíos)`.
+Resultado convertido a I2 igual a `-1`: primario; otro resultado: secundario
+`+0x8c`. El offset de campo `+0x88` y el slot del selector `+0x88` son conceptos
+distintos. La preparación del índice usa campos SQL de la tabla auxiliar;
+las excepciones y la política interna de comparación conservan su límite.
+
+Evidencia privada nueva en `output/clonersoft-implementacion-20261013/`:
+`e1-receptores-20261014/` y `e1-selector-20261014/`. Reproducción:
+`python .../verificar-receptores.py` y `python .../verify-selector.py`.
+La fuente conserva SHA-256 `dc1f4be67fc7b25f8464a686bf890ca7a1bdf15bf267928bbb35fd62169efb95`.
+No se lleva disassembly, código propietario, SQL o binarios a Git.
+
+Gate del arquitecto: receptores 223/223, siete mutaciones en memoria con
+fallos reales `1,1,1,1,1,1,2`; selector 85/85, seis mutaciones con un fallo
+cada una. Cinco creaciones explícitas y siete limpiezas de receptores.
+La medición inicial de sensibilidad que podía clasificar un falso positivo
+fue retirada y corregida antes de la revisión; su nota privada se conserva.
+Barrido documental final: 117 Markdown encontrados, siete modificados, 235 enlaces
+locales y 13 anchors; puntero vigente y diff correctos. Arquitectura:
+859 archivos, 414 módulos, cero infracciones. Paquetes sin cambios;
+el gate anterior de 2.004 pruebas no se presenta como ejecutado en esta unidad.
+
+Revisión independiente: 137/137 comprobaciones propias, siete mutaciones
+distintas con un fallo cada una; continuidad de creación/argumentos y censo
+de cuerpos contrastados. Sin defecto funcional reproducido en este alcance.
+La guarda documental propia detectó dos instrucciones históricas agotadas;
+una corrección las marca como superadas y enlaza el tramo vigente.
+Reproducción privada en `e1-revision-delegados-20261014/`.
+
+**Siguiente abierto:** cuerpos de `marcaDespunteCalculado` y `calculaTotalDoc`
+en `alBLLvdoc.dll`; demostrar sus filas/base/cantidades/descuentos,
+sustitución del cargo anterior, doble cómputo, redondeo y escritura.
+No repetir receptores, WORD, selector o enlaces delegados aquí acreditados.
+E1 permanece `in_progress`; esta unidad no implementa dinero ni acredita
+aceptación Productor, publicación o recepción entre equipos.

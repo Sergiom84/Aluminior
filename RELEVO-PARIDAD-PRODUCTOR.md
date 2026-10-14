@@ -1,9 +1,8 @@
 # Relevo: paridad y fuentes de Productor
 
-Continuación local Windows del 14/10, sobre `81dcef9`, rama
+Continuación local Windows del 14/10, desde HEAD comprobado `a078975`, rama
 `codex/integracion-windows-mac-20261013`, árbol inicial limpio.
-E1: [despacho estático y consumidor nativo](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#despacho-y-consumidor-nativo),
-segunda unidad del 14/10 desde `2a2dc57`.
+E1: [receptores delegados y selector](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#receptores-delegados).
 No repetir inventarios, literales, integración o preparación física/condicional.
 El layout `+0x7ac` conduce a `cargaDetalle` bajo el constructor inspeccionado;
 no se atribuye una ejecución viva ni todas las rutas de fábrica.
@@ -11,10 +10,11 @@ Getters y consumidor `alVDocumentoDespunte.DEScalcula` ya localizados:
 receptor global `0x02ef4c04`, lecturas `0x01ad9e65/0x01ada0b2`, transferencia
 de cero a `DespuntePorc` y cuatro bytes recibidos a `Despunte`.
 Las TypeLib acreditan las declaraciones de esos receptores COM; `bdDoc`
-devuelve `alBDADO` de `gaBBDD.dll`. Continuar por la población de sus
-receptores `this+0x88/+0x8c`, WORD `this+0x56` y slots delegados
-`+0x34/+0x58/+0x3c`. Después, cuerpos de `marcaDespunteCalculado` y
-`calculaTotalDoc` en `alBLLvdoc.dll`. El reenvío no acredita guardado durable.
+devuelve `alBDADO` de `gaBBDD.dll`. Creación de receptores `alRecordset`,
+WORD de tabla auxiliar, selector `rsTabla` y cuerpos delegados acreditados
+estáticamente. Continuar por cuerpos de `marcaDespunteCalculado` y
+`calculaTotalDoc` en `alBLLvdoc.dll`. No repetir receptores, WORD o selector.
+El reenvío no acredita guardado durable.
 Usar slots públicos TypeLib y constructor inspeccionado, sin nombres por índice.
 Faltan reglas completas de filas/base/cantidades/descuentos/sustitución/redondeo.
 E1 y G6 siguen abiertos/protegidos; no activar cargo ni ejecutar el original.

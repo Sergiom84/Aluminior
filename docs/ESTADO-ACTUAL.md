@@ -33,11 +33,12 @@ Consumidor localizado: `alVDocumentoDespunte.DEScalcula`, con receptor del
 formulario demostrado, lectura de `pbAceptar/pDespunte` y transferencia a
 `DespuntePorc`/`Despunte`. No prueba reparto ni redondeo comercial.
 Las TypeLib de `alBLLvdoc.dll` y `gaBBDD.dll` acreditan las declaraciones
-COM del consumidor. `alBDADO.edit/edCampo/edUpdate` reenvían a receptores
-delegados: siguiente borde, población de `this+0x88/+0x8c`, significado del
-WORD `this+0x56` y slots `+0x34/+0x58/+0x3c`; después cuerpos de control/total.
-No repetir wrappers/getters, declaraciones ya verificadas o inventarios.
-[Evidencia y condiciones](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#despacho-y-consumidor-nativo).
+COM del consumidor. La siguiente unidad acredita la creación estática de los
+receptores de `alBDADO` como `alRecordset`, WORD `+0x56` de tabla auxiliar,
+selector `rsTabla` y cuerpos delegados `rsEdit/rsCampo/rsUpdate`.
+Siguiente borde: cuerpos de control/total. No repetir receptores, selector,
+wrappers/getters, declaraciones ya verificadas o inventarios.
+[Evidencia y condiciones](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#receptores-delegados).
 Fuentes conservadas, verificadores reproducidos y revisión independiente.
 Este lote es documental/estático; el gate de paquetes anterior corresponde a
 `2a2dc57`, sin cambio nuevo del motor ni aceptación económica.
@@ -271,11 +272,11 @@ Los nueve documentos anteriores y tres líneas conservan sus huellas.
 ## Siguiente paso
 
 **ClonerSoft/E1 local:** preparación física/condicional, layout/getters,
-consumidor y declaraciones COM entregados. Continuar por población/tipos de
-receptores delegados de `alBDADO`, WORD `this+0x56`, selector `+0x88` y slots
-`+0x34/+0x58/+0x3c`; después control/total, según el
-[contrato y evidencia](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#despacho-y-consumidor-nativo).
-No repetir integración `fa32fba`, preparación, wrappers/getters o declaraciones.
+consumidor, declaraciones COM y receptores delegados entregados. Continuar por
+los cuerpos de `marcaDespunteCalculado` y `calculaTotalDoc`, según el
+[contrato y evidencia](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#receptores-delegados).
+No repetir integración `fa32fba`, preparación, wrappers/getters, declaraciones,
+WORD de tabla auxiliar, selector `rsTabla` o enlaces delegados.
 Sin activar cargo ni operar G6.
 
 **Windows, observación pendiente:** recepción y fuentes privadas → aceptación comercial P.2 con el

@@ -12,7 +12,7 @@ propuesta entonces exclusiva del main local (integrada como herramienta el 13/10
 
 | Documento | Uso |
 |---|---|
-| [Contrato y lote E1 ClonerSoft 13/10, continuación 14/10](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md) | Preparación física/condicional, layout, consumidor DEScalcula y declaraciones COM; receptores delegados, control/total, reglas monetarias y adaptador pendientes |
+| [Contrato y lote E1 ClonerSoft 13/10, continuación 14/10](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md) | Preparación física/condicional, layout, consumidor DEScalcula, COM y receptores/selector acreditados; control/total, reglas monetarias y adaptador pendientes |
 | [Selector de registros de tarifa dinámica 14/10](paridad/IMPLEMENTACION-CLONERSOFT-TARIFA-DINAMICA-2026-10-14.md) | Cuatro búsquedas, intervalos decimales y ambigüedad; unidad pura local, sin precio ni activación |
 | [Encargo ClonerSoft 13/10](paridad/ENCARGO-IMPLEMENTACION-CLONERSOFT-2026-10-13.md) | Alcance de implementación local, fuentes y protecciones; el roadmap conserva etapas/orden |
 | [Extracción diferencial 13/10](paridad/EXTRACCION-DIFERENCIAL-CLONERSOFT-2026-10-13.md) | Evidencia estática/documental reutilizable, inventarios y límites; fotografía de integración abierta anterior a `fa32fba` |
