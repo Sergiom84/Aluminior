@@ -1,5 +1,19 @@
 # Relevo: paridad y fuentes de Productor
 
+Investigación REA del **16/10**, en worktree separado
+`C:\Users\sergi\.codex\worktrees\rea-productor-20261016\Aluminior`, rama
+`codex/rea-productor-20261016`, base `307bf54`:
+[informe](docs/paridad/INVESTIGACION-REA-PRODUCTOR-2026-10-16.md) y
+[comparación](docs/paridad/COMPARACION-REA-PRODUCTOR-2026-10-16.md).
+Reutilizar inventarios y contratos nuevos antes de repetir investigación.
+La vía nativa acotada produce pseudocódigo con advertencias; no repetir
+el análisis global fallido ni prometer fuentes originales/equivalencia.
+Evidencia privada en `output/rea-productor-20261016/` de ese worktree; recibir
+la rama no transporta esa carpeta. Sin producto/datos/publicación nuevos.
+Siguiente producto: configuración/VarFormat, agregados y persistencia E1;
+G6 continúa protegido y las brechas nuevas no alteran el orden del roadmap.
+La continuación del 14/10 que sigue es antecedente de esta investigación.
+
 Continuación local Windows del 14/10, desde HEAD comprobado `a078975`, rama
 `codex/integracion-windows-mac-20261013`, árbol inicial limpio.
 E1: [control, reparto y totales](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#control-reparto-y-totales), después de U1 local `bc7c6ea`.

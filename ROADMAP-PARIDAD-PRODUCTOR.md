@@ -1,12 +1,24 @@
 # Roadmap operativo de paridad con Productor
 
-Actualizado: 14/10/2026 (E1: receptores, control/reparto/totales y frontera VarFormat; contrato monetario pendiente; C1 y P.6/P.7 conservan su etapa del 12/10). Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
+Actualizado: 16/10/2026 (investigación REA y comparación local; contrato monetario E1 pendiente; C1 y P.6/P.7 conservan su etapa del 12/10). Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
 Este archivo es el registro único del orden y estado de estas tareas.
 Los documentos de ensayo explican cómo realizarlas; los informes fechados
 conservan evidencia. Sus antiguas listas de pendientes no sustituyen este registro.
 
 
 ## Siguiente paso
+
+**Investigación REA 16/10 cerrada en su alcance estático:**
+[informe](docs/paridad/INVESTIGACION-REA-PRODUCTOR-2026-10-16.md) y
+[comparación](docs/paridad/COMPARACION-REA-PRODUCTOR-2026-10-16.md), worktree
+`codex/rea-productor-20261016` desde `307bf54`. Inventario ampliado, fuentes
+parciales, 123 identidades managed, contratos IL seleccionados y pseudocódigo
+nativo acotado con advertencias. No repetir extracción ni análisis global;
+no se ha recuperado el proyecto original o implementado las brechas.
+El siguiente trabajo de producto sigue siendo la frontera E1 que figura abajo;
+la nueva vía nativa no cierra configuración, agregados, redondeo ni persistencia.
+Preparar casos discriminantes de barras/retales antes de ampliar optimización.
+G6, aceptación P.2/P.6/P.7 y límites de publicación se conservan.
 
 **Continuación local 14/10:** E1 ya tiene layout estático `+0x7ac`, getters
 y consumidor nativo `alVDocumentoDespunte.DEScalcula` con receptor demostrado.
@@ -21,8 +33,9 @@ No repetir receptores/selector, declaraciones verificadas, wrappers/getters,
 literales, inventarios, preparación física/condicional o cuerpos ya seguidos.
 El cargo monetario permanece bloqueado: la matriz de ocho preguntas distingue
 lo acreditado de configuración, agregados, formato y persistencia sin contrato completo.
-Ghidra agotó 300 segundos y su sesión está cerrada; el parsing dirigido sí produjo
-anclajes de código. En paralelo se entregó el [selector puro de registros](docs/paridad/IMPLEMENTACION-CLONERSOFT-TARIFA-DINAMICA-2026-10-14.md),
+El intento global previo de Ghidra agotó 300 segundos y se cerró; el ensayo
+acotado del 16/10 sí obtuvo pseudocódigo parcial. No repetir el análisis global.
+En paralelo se entregó el [selector puro de registros](docs/paridad/IMPLEMENTACION-CLONERSOFT-TARIFA-DINAMICA-2026-10-14.md),
 47 pruebas nuevas, sin activar tarifa ni producir precios. Grupo, habilitación,
 fórmula, redondeo y caso positivo siguen pendientes. Gate local actual: 2.004
 pruebas correctas y la omisión previa por CSV privado; tipos/arquitectura correctos

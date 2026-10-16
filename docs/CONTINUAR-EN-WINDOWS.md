@@ -7,6 +7,16 @@ al roadmap. [Auditoría y límites de esta revisión](AUDITORIA-DOCUMENTAL-2026-
 
 ## 1. Recibir el trabajo correcto
 
+Investigación local del 16/10 en **otro worktree**, rama
+`codex/rea-productor-20261016`, base `307bf54`:
+[informe REA](paridad/INVESTIGACION-REA-PRODUCTOR-2026-10-16.md) y
+[comparación](paridad/COMPARACION-REA-PRODUCTOR-2026-10-16.md).
+Consultar esos resultados antes de repetir inventarios, Cut1D o análisis
+global de Ghidra. El pseudocódigo dirigido se obtuvo con advertencias y no
+cierra E1 ni sustituye el oráculo funcional. Los artefactos privados están
+en el output ignorado del worktree; necesitan transporte separado y autorizado.
+Esta rama entrega investigación/documentación, sin cambiar producto ni desplegar.
+
 Actualización local Windows, 13/10: la integración con el catálogo de septiembre
 quedó cerrada en `fa32fba`, rama `codex/integracion-windows-mac-20261013`, con
 cero conflictos y gates/revisión correctos. El [lote E1](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md)

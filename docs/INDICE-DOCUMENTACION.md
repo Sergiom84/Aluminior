@@ -12,6 +12,8 @@ propuesta entonces exclusiva del main local (integrada como herramienta el 13/10
 
 | Documento | Uso |
 |---|---|
+| [Investigación REA 16/10](paridad/INVESTIGACION-REA-PRODUCTOR-2026-10-16.md) | Inventario ampliado, metadatos/contratos managed y pseudocódigo nativo dirigido; evidencia privada, límites e integridad |
+| [Comparación REA 16/10](paridad/COMPARACION-REA-PRODUCTOR-2026-10-16.md) | Capacidades Productor frente al código actual; implementado, parcial y sin módulo localizado; prioridades sin porcentaje de paridad |
 | [Contrato y lote E1 ClonerSoft 13/10, continuación 14/10](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md) | Físico/condicional, layout, consumidor/COM, receptores y control/reparto/totales acreditados estáticamente; matriz de ocho preguntas, VarFormat/configuración/agregados y persistencia pendientes |
 | [Selector de registros de tarifa dinámica 14/10](paridad/IMPLEMENTACION-CLONERSOFT-TARIFA-DINAMICA-2026-10-14.md) | Cuatro búsquedas, intervalos decimales y ambigüedad; unidad pura local, sin precio ni activación |
 | [Encargo ClonerSoft 13/10](paridad/ENCARGO-IMPLEMENTACION-CLONERSOFT-2026-10-13.md) | Alcance de implementación local, fuentes y protecciones; el roadmap conserva etapas/orden |

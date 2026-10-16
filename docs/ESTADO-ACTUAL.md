@@ -16,6 +16,19 @@ El [roadmap operativo](../ROADMAP-PARIDAD-PRODUCTOR.md) conserva el orden y
 estado único de las tareas de paridad, con mantenimiento documental obligatorio.
 
 
+## Investigación REA — 16/10/2026, worktree separado
+
+[Informe REA](paridad/INVESTIGACION-REA-PRODUCTOR-2026-10-16.md) y
+[comparación por capacidades](paridad/COMPARACION-REA-PRODUCTOR-2026-10-16.md),
+en `codex/rea-productor-20261016`, desde `307bf54`. Inventario ampliado,
+123 identidades managed y contratos seleccionados; pseudocódigo nativo
+dirigido obtenido con advertencias, sin repetir análisis global. No cambia
+paquetes, datos, producción ni aceptación económica. Fuentes/IL privados en
+el output ignorado del worktree; no viajan por Git. Reutilizar antes de extraer.
+E1 sigue por configuración/VarFormat, agregados y persistencia; G6 protegido.
+Las brechas de corte, stock, compras, cobros e informes no son tareas ya
+implementadas por haberlas documentado. El roadmap conserva su orden.
+
 ## ClonerSoft — continuación local, 14/10/2026
 
 [Selector de registros de tarifa dinámica](paridad/IMPLEMENTACION-CLONERSOFT-TARIFA-DINAMICA-2026-10-14.md)
