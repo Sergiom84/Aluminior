@@ -15,9 +15,10 @@ atribuye `_gaLstItem.x_Clave +0x38` a `0x11074c00` y sigue las transformaciones.
 Los [predicados internos de rellena](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#predicados-internos-de-rellena)
 ya tienen declaraciones, cuerpos, argumentos y condiciones seguidos estáticamente.
 La [frontera WCTMB](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#frontera-widechartomultibyte)
-acredita contrato público y enlace candidato por ApiSet. Siguiente: procedencia
-del estado leído en `KernelBase.dll 0x10148768 / 0x1014876e`, celdas
-`0x10282d08 / 0x10284990`; inicialización y valores efectivos pendientes.
+acredita contrato público y enlace candidato ApiSet. La [procedencia del estado](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-del-estado-de-kernelbase)
+acredita escrituras y fallback condicionados de las dos celdas. Siguiente:
+procedencia inmediata del byte `0x102838ce`, leído en `KernelBase.dll 0x1015c40e`.
+Estado efectivo, campo `FS:[0x30]+0x228` y resultados del helper siguen abiertos.
 No repetir contrato/enlace WCTMB, predicados, cuerpos ni `xConfig`.
 Empates y
 localización efectiva siguen sin ensayo; cargo desactivado y G6 protegido.
@@ -26,8 +27,8 @@ el roadmap mantiene los estados únicos. Comprobación local del 17/10:
 428, 56, 91 y 145 artefactos de los cuatro índices privados anteriores intactos,
 incluidos los dos `.pyc` antiguos conservados fuera del índice de formato;
 índice íntegro de 140 archivos conservado; evidencia nueva en
-`output/e1-widechar-frontier-20261017/`; ocho árboles históricos completos
-429/59/92/146/140/77/127/374 preservados, sin repetir suites de producto.
+`output/e1-kernelbase-state-20261017/`; nueve árboles históricos completos
+429/59/92/146/140/77/127/374/189 preservados, sin repetir suites de producto.
 Capturas, revisión y recibos nuevos permanecen privados; commit local sin push.
 
 Investigación REA del **16/10**, en worktree separado

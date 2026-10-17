@@ -165,9 +165,11 @@ acreditar sus valores efectivos. La [unidad de fila y delegados](paridad/IMPLEME
 atribuye cuerpo propio de `x_Clave` y proveedor/slots de transformación.
 Los [predicados internos de rellena](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#predicados-internos-de-rellena)
 ya tienen condiciones y efecto en ramas acreditados estáticamente. La [frontera WCTMB](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#frontera-widechartomultibyte)
-acredita contrato público y enlace candidato ApiSet. Siguiente: procedencia del
-estado en `KernelBase.dll 0x10148768 / 0x1014876e`, celdas `0x10282d08 / 0x10284990`.
-Inicialización y conversión efectiva abiertas. No repetir contrato/enlace ni predicados;
+acredita contrato público y enlace candidato ApiSet. La [procedencia del estado](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-del-estado-de-kernelbase)
+acredita escrituras y fallback condicionados de las dos celdas. Siguiente:
+procedencia inmediata del byte `0x102838ce`, leído en `KernelBase.dll 0x1015c40e`.
+Estado efectivo, campo `FS:[0x30]+0x228` y resultados del helper siguen abiertos.
+No repetir escrituras de las dos celdas, contrato/enlace ni predicados;
 después equivalencia, valores efectivos, agregados y persistencia.
 No repetir `x_Clave`/proveedor/delegados ya seguidos, inicializador/normalizador,
 `xConfig`, construcción/búsqueda,

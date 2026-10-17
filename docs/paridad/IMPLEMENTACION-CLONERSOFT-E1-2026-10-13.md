@@ -1878,12 +1878,115 @@ posteriores. Se preservan los seis PE, el vendor original y los 1.099 archivos
 versionados ajenos a esta documentación. Nuevo sello y recibos posteriores
 en la carpeta nueva; ninguna evidencia privada se incorpora a Git o July.
 
-**Ahora:** procedencia e inicialización del estado leído en **KernelBase.dll
-`0x10148768 / 0x1014876e`**, celdas **`0x10282d08 / 0x10284990`**.
-Primero acreditar sus escrituras/inicializadores por bytes, manteniendo la
-premisa pendiente de resolución/carga efectiva; detenerse ante la siguiente
-frontera. No repetir contrato WCTMB, enlace ApiSet, predicados ni unidades cerradas.
+**Antecedente histórico:** la continuación de esta unidad eran las escrituras
+de las dos celdas. Se ha seguido en la [unidad de estado](#procedencia-del-estado-de-kernelbase)
+posterior, que fija la nueva frontera. No repetir contrato WCTMB, enlace ApiSet,
+predicados ni escrituras ya seguidas. Resolución/carga efectiva siguen abiertas.
 **Después:** valores efectivos, equivalencia, agregados y persistencia.
 E1 sigue `in_progress`, cargo desactivado y A–F/G1–G5/G6-incidencia preservados.
 Completar contrato/implementación, comparar Aluminior y probar en entorno
 aislado mantienen su orden como fases posteriores fuera de esta unidad.
+
+## Procedencia del estado de KernelBase
+
+Unidad estática del **17/10/2026**, base `88f077f4a0646e0a66553599e78ee20297ab9ded`,
+rama `codex/rea-productor-20261016`, árbol inicial limpio. Continúa exclusivamente
+desde las lecturas `0x10148768 / 0x1014876e` de las celdas `0x10282d08 / 0x10284990`.
+Evidencia privada nueva: `output/e1-kernelbase-state-20261017/`.
+No se repiten WCTMB, ApiSet ni predicados y no se amplía a NLS global.
+
+### Escrituras localizadas y alcance de la búsqueda
+
+Fuente: `C:\Windows\SysWOW64\KernelBase.dll`, 3.007.824 bytes, SHA-256
+`5be784046dc9731d1c36e872a8022065ed4a733707b1e467b30a96588714b137`.
+Las direcciones son VA preferidas del PE32/x86 con base `0x10000000`.
+No se ha cargado ni ejecutado esta DLL.
+
+El barrido literal de todos los bytes del archivo encuentra **19** ocurrencias
+de la dirección de la primera celda y **15** de la segunda. Las ventanas
+desensambladas clasifican cuatro escrituras directas a la primera, tres a la
+segunda y una transferencia de la dirección de la segunda a un helper.
+Es exhaustivo para esos dos patrones de cuatro bytes, **no para alias,
+direcciones calculadas, código alcanzable ni todas las escrituras posibles**.
+Las ventanas fuera de los cuerpos principales no recuperan funciones completas.
+
+| Celda | Escrituras directas localizadas | Procedencia seguida |
+|---|---|---|
+| `0x10282d08` | `0x1015c41d`, `0x1015c463`, `0x1015c46b` | Rutina escritora `0x1015c405`; constante 65001 o WORD leído del estado del proceso, según ramas |
+| `0x10282d08` | `0x101ff19c` | Rutina `0x101ff172`; constante 65001 bajo condición |
+| `0x10284990` | `0x1015c42f`, `0x1015c471` | Cero desde ESI inicializado con XOR |
+| `0x10284990` | `0x101ff17f` | Puesta a cero mediante AND, bajo condición |
+| Dirección de `0x10284990` | `0x1015c453` → llamada `0x1015c45a` | EDX entrega la dirección al helper `0x101fe820`; no es una escritura directa del llamador |
+
+Se capturan llamadas directas candidatas en `0x1015c20e` y `0x101ff84c`
+hacia esas dos rutinas. No se acredita un camino completo desde el entrypoint,
+su orden de ejecución ni que hayan sido ejecutadas por Productor.
+
+### Inicialización condicionada en la rutina escritora
+
+En `0x1015c40e` se compara con cero el byte `0x102838ce`. ESI se ha puesto a
+cero y EDI contiene `65001`. La tabla describe las escrituras visibles bajo
+esas premisas; no afirma valores de un proceso observado.
+
+| Condición en el tramo seguido | Resultado estático para las dos celdas |
+|---|---|
+| Byte distinto de cero | Escribe `65001` en la primera y cero en la segunda |
+| Byte cero | Lee `FS:[0x30]` en `0x1015c43e` y extiende sin signo el WORD `+0x228` en `0x1015c448` |
+| Ese WORD es `65001` | Salta sobre la llamada y las escrituras de este par; no fija de nuevo sus valores en ese tramo |
+| Otro WORD y retorno del helper no negativo | Escribe el WORD extendido en la primera celda; la segunda depende del helper y del estado previo |
+| Otro WORD y retorno negativo | Escribe el fallback `65001 / cero` |
+
+La condición de `0x1015c461` es **JS después de TEST EAX,EAX**: compara signo,
+no igualdad con cero. El helper contiene una salida con valor positivo **14**
+en `0x101fe8cf / 0x101fe8d1`; ese valor no activaría el fallback del llamador.
+Por tanto, «no negativo» no se traduce aquí en «puntero obtenido con éxito».
+No se atribuye nombre semántico al campo `FS:[0x30]+0x228` ni al byte selector
+sin evidencia adicional. Las otras celdas y el campo `+0x22a` se conservan
+como contexto de la captura, fuera del seguimiento de esta unidad.
+
+### Puntero delegado y segundo escritor
+
+El helper `0x101fe820` guarda EDX en EDI y contiene escrituras por `[EDI]`.
+Puede copiar una celda existente; también entrega ese destino a helpers
+internos que no se expanden. Su cuerpo conserva llamadas y salidas con
+dependencias sin resolver. La llamada indirecta `0x101fe93f`, por IAT
+`0x1028c248`, declara **`ntdll.dll!NtGetNlsSectionPtr`** según descriptor,
+lookup y nombre importados. La declaración no demuestra resolución del cargador,
+resultado de esa llamada ni contenido del puntero. No se sigue ntdll ni se
+interpretan tablas NLS. Tampoco se descartan efectos de los helpers no expandidos.
+
+En la segunda rutina, `0x101ff172`, la comparación inicial de DWORD
+`0x102848f8` con cero omite el cuerpo si vale cero. En la rama no nula se
+pone a cero la segunda celda (`0x101ff17f`) y se escribe `65001` en la primera
+(`0x101ff19c`). Esto acredita otra fuente condicionada de escrituras;
+no demuestra cuándo ocurre ni el estado final tras sus llamadas restantes.
+
+### Evidencia, verificación y límite de cierre
+
+Captura canónica: `static/captured/evidence.json`, con identidad del PE,
+offsets, bytes, instrucciones, referencias y metadata importada. Los seis
+rangos principales suman **752 bytes y 233 instrucciones**. Las 34 ventanas
+de referencias se solapan con esos rangos y no se suman como cobertura.
+Los gates propios y del revisor se reproducen en carpetas nuevas; los recibos
+con comandos y resultados están en `director-final/gate.json` y
+`director-postcommit/gate.json`. La revisión independiente queda en `review/`.
+Las perturbaciones semánticas se hacen en memoria, sin depender del hash global;
+los controles de límite explicitan lo que no detecta la selección parcial.
+No son pruebas funcionales del legado ni aceptación económica de E1.
+
+Los **nueve árboles anteriores completos**, 429/59/92/146/140/77/127/374/189
+archivos, se preservan por tamaño/SHA-256, incluidos índices, pyc históricos,
+sellos y recibos posteriores. Los cuatro índices 428/56/91/145 no se regeneran.
+Se cotejan seis PE, vendor, checkout original y los 1.099 versionados ajenos
+a los ocho documentos. Las suites de producto anteriores conservan su fecha;
+no se vuelven a presentar como ejecutadas en esta entrega documental.
+
+**Ahora:** procedencia inmediata del **byte `0x102838ce`**, leído en
+**`KernelBase.dll 0x1015c40e`**. Localizar y acreditar su escritor y dependencia
+inmediata, deteniéndose ante otra frontera. No repetir la unidad de las dos
+celdas, WCTMB, ApiSet o predicados ni ampliar a NLS global.
+**Después:** campo `FS:[0x30]+0x228`, resultados del helper, resolución/carga,
+conversión efectiva, equivalencia, escalas, agregados y persistencia.
+E1 sigue `in_progress`, cargo desactivado y A–F/G1–G5/G6-incidencia preservados.
+Contrato/implementación, contraste con Aluminior y pruebas aisladas permanecen
+como bloques posteriores; esta unidad no los ejecuta ni los autoriza.

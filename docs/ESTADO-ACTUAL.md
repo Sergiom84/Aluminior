@@ -35,9 +35,10 @@ atribuye `_gaLstItem.x_Clave +0x38` al cuerpo `0x11074c00` y sigue proveedor,
 slots y cuerpo de las transformaciones. La [unidad de predicados internos](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#predicados-internos-de-rellena)
 acredita `+0x48/+0x4c`, intervalos sobre conversión signed16 y efecto en ramas.
 La [frontera WCTMB](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#frontera-widechartomultibyte)
-acredita contrato público y enlace candidato ApiSet. Siguiente: procedencia del
-estado leído en `KernelBase.dll 0x10148768 / 0x1014876e`, celdas
-`0x10282d08 / 0x10284990`; inicialización y conversión efectiva pendientes.
+acredita contrato público y enlace candidato ApiSet. La [procedencia del estado](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-del-estado-de-kernelbase)
+acredita escrituras y fallback condicionados de las dos celdas. Siguiente:
+procedencia inmediata del byte `0x102838ce`, leído en `KernelBase.dll 0x1015c40e`.
+Estado efectivo, campo `FS:[0x30]+0x228` y resultados del helper siguen abiertos.
 Equivalencia y valores efectivos siguen abiertos, después agregados y persistencia.
 Cargo desactivado, G6 protegido.
 Evidencia privada: `output/e1-varformat-20261017/`, `output/e1-config-20261017/`
@@ -45,8 +46,9 @@ y `output/e1-config-origin-20261017/`; índice en `output/e1-index-20261017/`
 y continuación en `output/e1-keys-20261017/`; unidad nueva de fila/delegados
 en `output/e1-rowkeys-20261017/`; predicados en
 `output/e1-rellena-predicates-20261017/`; frontera WCTMB en
-`output/e1-widechar-frontier-20261017/`. Los ocho árboles anteriores completos
-429/59/92/146/140/77/127/374 se preservan por tamaño y SHA-256.
+`output/e1-widechar-frontier-20261017/`; procedencia de estado en
+`output/e1-kernelbase-state-20261017/`. Los nueve árboles anteriores completos
+429/59/92/146/140/77/127/374/189 se preservan por tamaño y SHA-256.
 
 [Relevo completo del 17/10 para otra conversación](paridad/RELEVO-REA-PRODUCTOR-2026-10-17.md):
 428, 56, 91 y 145 artefactos privados de los cuatro índices anteriores comprobados por tamaño y SHA-256; resultados de producto
@@ -338,8 +340,10 @@ atribuye el cuerpo propio `x_Clave` y proveedor/slots de transformación; no rep
 Los [predicados internos](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#predicados-internos-de-rellena)
 quedan seguidos en su alcance estático; no repetirlos. La [frontera WCTMB](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#frontera-widechartomultibyte)
 acredita contrato público y enlace candidato, sin demostrar resolución runtime.
-Siguiente anclaje: `KernelBase.dll 0x10148768 / 0x1014876e`, procedencia e
-inicialización de `0x10282d08 / 0x10284990`. Conversión efectiva, equivalencia,
+Las [escrituras de estado](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-del-estado-de-kernelbase)
+ya están seguidas en su alcance condicionado. Siguiente anclaje: byte
+`0x102838ce`, leído en `KernelBase.dll 0x1015c40e`; acreditar su procedencia
+inmediata. Conversión efectiva, equivalencia,
 prioridad de duplicados y valores runtime siguen abiertos.
 Las cuatro escalas efectivas siguen sin demostrar. Después, entrada de agregados comerciales.
 No repetir integración `fa32fba`, preparación, wrappers/getters, declaraciones,

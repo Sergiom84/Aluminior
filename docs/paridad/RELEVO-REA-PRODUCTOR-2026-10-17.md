@@ -20,9 +20,11 @@ La [unidad de fila y delegados](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#clave
 atribuye `_gaLstItem.x_Clave +0x38` al cuerpo `0x11074c00` por metadata propia
 y sigue proveedor/slots/cuerpos de transformación. La [unidad de predicados](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#predicados-internos-de-rellena)
 acredita `+0x48/+0x4c`, sus condiciones y efecto en ramas. La [frontera WCTMB](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#frontera-widechartomultibyte)
-acredita contrato público y enlace candidato ApiSet. Próximo anclaje:
-`KernelBase.dll 0x10148768 / 0x1014876e`, celdas `0x10282d08 / 0x10284990`;
-procedencia, inicialización y conversión efectiva pendientes. No repetir contrato/enlace ni predicados.
+acredita contrato público y enlace candidato ApiSet. La [procedencia del estado](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-del-estado-de-kernelbase)
+acredita escrituras y fallback condicionados de las dos celdas. Siguiente:
+procedencia inmediata del byte `0x102838ce`, leído en `KernelBase.dll 0x1015c40e`.
+Estado efectivo, campo `FS:[0x30]+0x228` y resultados del helper siguen abiertos.
+No repetir escrituras de las dos celdas, contrato/enlace ni predicados.
 Equivalencia, colación y valores efectivos permanecen abiertos; no repetir cuerpos.
 No repetir `xConfig`,
 construcción, ordenación, búsqueda,
@@ -32,7 +34,54 @@ AbreRS/carga, proveedor/argumento `2` ni máscaras/helpers/650. Evidencias nueva
 anteriores, 428, 56, 91 y 145 artefactos, conservan tamaño y SHA-256.
 El alcance estático, cargo desactivado y protección de G6 siguen vigentes.
 
-## Última unidad estática: frontera WCTMB, 17/10
+## Última unidad estática: procedencia del estado de KernelBase, 17/10
+
+Base comprobada `88f077f4a0646e0a66553599e78ee20297ab9ded`, misma rama exclusiva,
+árbol inicial limpio. Ocho documentos propios y evidencia privada nueva en
+`output/e1-kernelbase-state-20261017/`. La [unidad de estado](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-del-estado-de-kernelbase)
+acredita escrituras directas, entrega del puntero al helper y fallback condicionado.
+La prueba de retorno es de signo; el valor positivo 14 no selecciona el fallback.
+No acredita inicialización ejecutada, página de códigos ni conversión efectivas.
+
+Siguiente unidad única: **procedencia inmediata del byte `0x102838ce`, leído
+en `KernelBase.dll 0x1015c40e`**. Acreditar su escritor y dependencia inmediata;
+detenerse ante otra frontera. Campo `FS:[0x30]+0x228`, resultados del helper,
+carga efectiva y equivalencia permanecen pendientes por separado. No repetir
+las escrituras de las dos celdas, WCTMB, ApiSet o predicados; no NLS global.
+
+Para continuar en otra conversación:
+
+1. Usar exclusivamente el workdir `C:\Users\sergi\.codex\worktrees\rea-productor-20261016\Aluminior`.
+   Verificar Git en sólo lectura; rama `codex/rea-productor-20261016`. El HEAD
+   de cierre consta en `output/e1-kernelbase-state-20261017/postcommit-receipt.json`.
+   Una diferencia exige inspección, nunca reset/checkout/stash para encajarla.
+2. Leer AGENTS, estado, roadmap, este relevo y la sección de estado enlazada.
+   Leer `CONTRATO.md`, `static/captured/evidence.json`, `review/REPORT.md`,
+   gates del director, sello y recibos postcommit de esta unidad.
+3. Proteger los nueve árboles anteriores **429/59/92/146/140/77/127/374/189**
+   y también el árbol completo de esta entrega, incluidos recibos posteriores
+   al sello; el último recibo contiene su inventario final. Crear carpeta nueva.
+   No ejecutar/importar scripts históricos ni regenerar sus cuatro índices.
+4. Cotejar los seis PE por tamaño/SHA-256 contra manifiestos. ApiSet está en
+   System32 y los otros cinco en SysWOW64. Python siempre `-B`; vendor sólo
+   lectura y checkout original protegido. No cargar DLL objetivo ni ejecutar legado.
+5. Declarar contrato; máximo dos subagentes, propietario único de helpers,
+   revisión descontaminada, una corrección máxima y gates reproducidos.
+   Congelar ejecutores antes de staging/commit y verificar identidad Sergio.
+6. Actualizar estos mismos ocho documentos y el E1 July único por proyecto
+   `aluminior` y sync_uid `398049fbd618069e36bb84bab37913ed`, manteniendo historia
+   e `in_progress`; lectura posterior exacta, sin sincronizar. ID local no transferible.
+
+Sólo investigación estática/documentación y commit local sin push. E1 abierto,
+cargo desactivado y A–F/G1–G5/G6-incidencia preservados. Quedan cuatro bloques
+prácticos de E1: investigación pendiente, contrato/implementación, contraste con
+Aluminior y pruebas aisladas. No hay un número fijo de lotes estáticos restantes.
+El roadmap conserva once frentes económicos abiertos E1–E11 y su orden.
+
+## Antecedente histórico: frontera WCTMB, 17/10
+
+Histórico; no ejecutar como lista de tareas. La continuidad vigente está en
+la unidad de estado de KernelBase anterior; sus escrituras ya están seguidas.
 
 Base comprobada `700c9136186583debf22e2f47ab5537af764ef2b`, rama exclusiva
 `codex/rea-productor-20261016`, árbol inicial limpio. La entrega sólo cambia
@@ -375,8 +424,9 @@ No repetir esas unidades. Elegir una pregunta pendiente y cerrar una sola unidad
    proveedor/slots de transformación seguidos en la unidad posterior; no repetirlos.
    Predicados `+0x48/+0x4c` seguidos en la unidad nueva enlazada arriba;
    no repetirlos. Contrato WCTMB y enlace candidato seguidos en la unidad nueva.
-   Seguir procedencia e inicialización de `KernelBase.dll 0x10148768 / 0x1014876e`,
-   celdas `0x10282d08 / 0x10284990`; resolución y valores efectivos aún abiertos. No atribuir colación, prioridad primera/última ni
+   Escrituras de las dos celdas seguidas en la unidad de estado. Continuar sólo
+   por la procedencia inmediata del byte `0x102838ce`, leído en `KernelBase.dll
+   0x1015c40e`; resolución y valores efectivos aún abiertos. No atribuir colación, prioridad primera/última ni
    equivalencia de claves desde condiciones parciales.
    Las cuatro RED efectivas siguen sin demostrar. El BSTR `2` no certifica escala
    dos; el selector BDtipo tampoco prueba backend ni configuración efectiva.
