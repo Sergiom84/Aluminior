@@ -18,6 +18,13 @@ estado único de las tareas de paridad, con mantenimiento documental obligatorio
 
 ## Investigación REA — 16/10/2026, worktree separado
 
+Continuación E1 del **17/10**: [contrato de formato](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#contrato-de-formato-varformat)
+con máscaras/Variant y conversión acreditados estáticamente, referencias oficiales
+congeladas y verificación propia. No cierra empates, localización efectiva ni
+importe comercial. Siguiente: proveedor de configuración y significado del `2`;
+después valores efectivos, agregados y persistencia. Cargo desactivado, G6 protegido.
+La evidencia nueva está en `output/e1-varformat-20261017/` del mismo worktree.
+
 [Relevo completo del 17/10 para otra conversación](paridad/RELEVO-REA-PRODUCTOR-2026-10-17.md):
 428 artefactos privados comprobados por tamaño y SHA-256; resultados de producto
 del 16/10 conservados con su fecha, sin nueva ejecución de suites.
@@ -29,7 +36,8 @@ en `codex/rea-productor-20261016`, desde `307bf54`. Inventario ampliado,
 dirigido obtenido con advertencias, sin repetir análisis global. No cambia
 paquetes, datos, producción ni aceptación económica. Fuentes/IL privados en
 el output ignorado del worktree; no viajan por Git. Reutilizar antes de extraer.
-E1 sigue por configuración/VarFormat, agregados y persistencia; G6 protegido.
+E1 sigue por configuración, aceptación matemática, agregados y persistencia;
+el desglose de formato actualizado es el del 17/10 anterior. G6 protegido.
 Las brechas de corte, stock, compras, cobros e informes no son tareas ya
 implementadas por haberlas documentado. El roadmap conserva su orden.
 
@@ -293,11 +301,13 @@ Los nueve documentos anteriores y tres líneas conservan sus huellas.
 
 **ClonerSoft/E1 local:** preparación física/condicional, layout/getters,
 consumidor, declaraciones COM, receptores y cuerpos de control/reparto/totales
-entregados en su alcance estático. Continuar por el contrato de `VarFormat`,
-configuración efectiva y entrada de agregados comerciales, según el
-[contrato y evidencia](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#control-reparto-y-totales).
+entregados en su alcance estático. Máscaras, tipos y contrato público de formato
+ampliados el 17/10; empates/localización efectiva permanecen sin ensayo.
+Continuar por el proveedor de configuración y el significado del argumento `2`,
+antes de fijar escalas efectivas; después entrada de agregados comerciales, según el
+[contrato y evidencia](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#contrato-de-formato-varformat).
 No repetir integración `fa32fba`, preparación, wrappers/getters, declaraciones,
-WORD de tabla auxiliar, selector `rsTabla`, enlaces delegados o cuerpos ya seguidos.
+WORD de tabla auxiliar, selector `rsTabla`, enlaces delegados, máscaras o cuerpos ya seguidos.
 Sin activar cargo ni operar G6.
 
 **Windows, observación pendiente:** recepción y fuentes privadas → aceptación comercial P.2 con el

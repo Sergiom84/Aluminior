@@ -5,6 +5,14 @@ investigación del 16/10. El trabajo entregado es investigación estática y
 documentación; las brechas encontradas todavía no son nuevas funcionalidades.
 El siguiente trabajo de producto sigue siendo E1 económico según el roadmap.
 
+**Continuación del 17/10, posterior a este relevo inicial:** la
+[unidad de formato](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#contrato-de-formato-varformat)
+acredita máscaras/Variant/cadena de conversión y contrato público, con límites
+de empates y localización efectiva aún abiertos. Próxima unidad estática:
+proveedor de configuración y significado del argumento `2`; no repetir
+máscaras/helpers/650. Evidencia nueva en `output/e1-varformat-20261017/`.
+El alcance estático, cargo desactivado y protección de G6 siguen vigentes.
+
 ## Encargo para la nueva conversación
 
 Actúa como arquitecto de Aluminior y continúa desde el estado descrito aquí.
@@ -194,9 +202,10 @@ resultados, recrear datos empresariales o ejecutar una extracción masiva a cieg
 despacho, consumidor, receptores COM, control/reparto y totales ya tienen evidencia.
 No repetir esas unidades. Elegir una pregunta pendiente y cerrar una sola unidad:
 
-1. Demostrar el contrato de `OLEAUT32.VarFormat` para máscaras, Variant,
-   flags y localización acreditados. Conservar formato → conversión → escritura;
-   no sustituirlo por un redondeo genérico.
+1. Unidad estática/documental de formato ampliada el 17/10 en el enlace inicial:
+   máscaras/Variant, flags y contrato público de localización. No repetir esa
+   extracción; conservar formato → conversión → escritura. Empates y localización
+   efectiva siguen pendientes de un ensayo aislado autorizado, sin redondeo supuesto.
 2. Resolver proveedor de configuración y valores efectivos
    `REDprecio/REDlinea/REDbase/REDtotal`. El literal `2` enviado al proveedor
    no prueba escala efectiva ni fallback.

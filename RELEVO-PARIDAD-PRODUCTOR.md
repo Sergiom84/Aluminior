@@ -1,6 +1,10 @@
 # Relevo: paridad y fuentes de Productor
 
 Para continuar en otra conversación: [relevo completo del 17/10](docs/paridad/RELEVO-REA-PRODUCTOR-2026-10-17.md).
+Continuación posterior de esa mañana: [unidad de formato E1](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#contrato-de-formato-varformat).
+No repetir máscaras/Variant/helpers/650: el siguiente análisis estático es el
+proveedor de configuración y el significado del argumento `2`. Empates y
+localización efectiva siguen sin ensayo; cargo desactivado y G6 protegido.
 Reúne rutas, trabajo realizado, evidencias comprobadas, límites y continuación;
 el roadmap mantiene los estados únicos. Comprobación local del 17/10:
 428 artefactos privados del índice intactos, sin repetir suites de producto.
@@ -15,7 +19,7 @@ La vía nativa acotada produce pseudocódigo con advertencias; no repetir
 el análisis global fallido ni prometer fuentes originales/equivalencia.
 Evidencia privada en `output/rea-productor-20261016/` de ese worktree; recibir
 la rama no transporta esa carpeta. Sin producto/datos/publicación nuevos.
-Siguiente producto: configuración/VarFormat, agregados y persistencia E1;
+Siguiente producto: proveedor/configuración, aceptación matemática, agregados y persistencia E1;
 G6 continúa protegido y las brechas nuevas no alteran el orden del roadmap.
 La continuación del 14/10 que sigue es antecedente de esta investigación.
 
@@ -34,8 +38,9 @@ WORD de tabla auxiliar, selector `rsTabla` y cuerpos delegados acreditados
 estáticamente. `marcaDespunteCalculado`, `calculaTotalDoc` y cuerpos de gastos,
 reparto/totales ya seguidos: la matriz distingue filtros, bases/descuentos,
 sustitución, cantidades valoradas y defensa parcial de doble cómputo.
-Continuar por `VarFormat`, configuración efectiva y entrada de agregados;
-no repetir receptores, WORD, selector o esos cuerpos.
+La continuación entonces pendiente de `VarFormat` se amplió el 17/10 arriba;
+siguen proveedor/configuración efectiva y entrada de agregados. No repetir
+receptores, WORD, selector, máscaras o esos cuerpos.
 El reenvío no acredita guardado durable.
 Usar slots públicos TypeLib y constructor inspeccionado, sin nombres por índice.
 Falta contrato monetario completo de formato/configuración/agregados y persistencia.

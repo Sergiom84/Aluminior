@@ -4,6 +4,8 @@
 La identidad y el estado global siguen en [E1 del roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md).
 El cargo de cabecera continúa abierto. Este contrato no acredita fabricación,
 aceptación Productor, publicación ni producción.
+La continuación vigente del 17/10 está en [Contrato de formato VarFormat](#contrato-de-formato-varformat);
+las unidades del 13/10 y 14/10 siguientes conservan su evidencia y fecha.
 
 ## Base y contrato
 
@@ -678,7 +680,7 @@ Gate del arquitecto de totales y dependencias ampliadas: 247/247,
 El gate inicial 166 queda como antecedente privado, no como resultado final.
 Reproducción: `e1-totales-20261014/verify-totals.py`; fuentes intactas.
 
-**Bloqueo y siguiente abierto:** demostrar contrato de
+**Bloqueo y siguiente abierto al 14/10, histórico:** demostrar contrato de
 `OLEAUT32.VarFormat` para las máscaras/Variant/flags/localización acreditados;
 resolver proveedor de configuración y valores efectivos `REDprecio/REDlinea/
 REDbase/REDtotal`, sin convertir el literal `2` en una escala observada;
@@ -706,3 +708,142 @@ que ejecutan SQL ni se atribuye el gate anterior de 2.004 pruebas a esta unidad.
 Estado, roadmap, relevo, guía, procedimiento e índice existentes actualizados;
 se preservan historia, evidencia privada y discrepancias. Sin push, despliegue,
 sync de July o recepción entre equipos acreditada.
+
+## Contrato de formato VarFormat
+
+Unidad local del **17/10/2026**, desde `2599ee3`, en el worktree
+`rea-productor-20261016/Aluminior`. Amplía únicamente la frontera de formato;
+no cambia paquetes ni implementa el cargo económico. Reutiliza los cuerpos de
+totales/export 650 ya acreditados, sin volver a extraerlos.
+
+- **Resultado exacto:** máscaras y tipos que llegan al formato, sus argumentos,
+  postproceso y conversión; contrato público separado de comportamiento observado.
+- **Destinatario y motivo:** Sergio y el siguiente desarrollador, para evitar
+  sustituir la secuencia real por un redondeo supuesto.
+- **Éxito medible:** anclajes contra bytes, hashes antes/después, reproducción de
+  construcción de máscaras, sensibilidad y revisión independiente.
+- **Alcance autorizado:** lectura estática dirigida y referencias oficiales;
+  resultados privados nuevos y síntesis propia en este worktree.
+- **Fuera de alcance:** proveedor/configuración efectiva, agregados, persistencia
+  y producto. El contrato matemático exacto sigue abierto donde faltan pruebas.
+- **Protegidos:** checkout original, fuentes y evidencias anteriores, G6, WIP,
+  datos reales, credenciales, paquetes, migraciones y producción.
+- **Comprobaciones obligatorias:** Git/ancestro, disponibilidad, hashes, argumentos,
+  máscaras, cadena de conversión y guardas documentales con barrido real.
+- **Acciones con autorización propia:** ejecutar Productor, DLL/COM o Automation,
+  abrir bases de negocio, operar G6, activar cargos, migrar, publicar o desplegar.
+  Ninguna forma parte de esta unidad.
+
+### Máscaras y tipos acreditados
+
+La ruta comercial seleccionada pasa `Entera=11`, `SepMiles=-1` y la escala
+configurada como `dec` a `gaVarios.formatoNum`; no se presupone que valga dos.
+El orden de concatenación queda seguido hasta `__vbaStrCat/VarBstrCat`, y la
+repetición de caracteres hasta los helpers correspondientes del runtime.
+El wrapper invierte los argumentos antes de delegar; se conserva el orden de
+concatenación izquierda/derecha del [contrato público VarBstrCat](https://learn.microsoft.com/en-us/windows/win32/api/oleauto/nf-oleauto-varbstrcat).
+
+| Paso | Contrato estático seleccionado | Límite |
+|---|---|---|
+| Primera máscara, `dec <= 0` | `###,###,##0` | Construcción de máscara, sin resultado numérico ejecutado |
+| Primera máscara, `dec > 0` | La anterior, punto y `dec` caracteres `0`; con `dec=2`, `###,###,##0.00` | El punto es parte de la máscara; no fija el separador regional de salida |
+| Entrada numérica | Variant `BYREF_R8`, `0x4005` | Es Double por referencia; no aritmética decimal exacta ni Currency |
+| Segunda máscara | `@` repetida 11 veces si `dec <= 0`, o `12+dec` veces si `dec > 0` | Longitud de la máscara, no prueba de longitud/truncamiento de la salida |
+| Entrada de la segunda llamada | Variant BSTR, tipo `8`, con el resultado anterior | No es una segunda entrada Double |
+| Justificación `D` | Helper propio `just`, con ancho `Entera+dec+1`; para ancho no mayor que 255 llega a otra llamada 650 con `@` repetida y entrada `BYREF_BSTR`, `0x4008` | Tercera llamada, condicionada; no atribuirle salida observada |
+| Continuación | Postproceso del formatter y `ValorDbl/__vbaR8ErrVar`, antes de las escrituras de total ya seguidas | No omitir los pasos intermedios ni atribuirles invariancia monetaria sin prueba |
+
+`just`, ventana candidata `0x1100c780–0x1100cca0`, compara la longitud con
+el ancho y, si lo excede, llama al helper de substring con inicio uno y longitud
+igual al ancho, antes de la tercera llamada de formato. Esto acredita una ruta
+de recorte; no una garantía de importe invariable ni un defecto observado con
+datos concretos. El ancho de `just` no coincide siempre con el de la segunda
+máscara: con `dec=0` se calcula 12 frente a 11. Las sustituciones personalizadas
+de separadores se omiten cuando sus argumentos son vacíos en el caller elegido;
+los recortes y la justificación permanecen en la secuencia.
+
+Los casos de construcción usan `dec=-1,0,1,2,4,8`. Son entradas sintéticas del
+verificador de instrucciones; no son valores configurados observados ni ensayos
+de importes en Productor. Tampoco fijan una escala máxima aceptada.
+
+### Contrato público y límites de localización
+
+La llamada ya seguida a `VarFormat` conserva Variant, máscara, enteros `1/1`,
+flags `0/8` y salida BSTR. El contrato Win32 no recibe LCID explícito y utiliza
+la configuración regional predeterminada del usuario para tokenizar y formatear.
+Su tabla documenta `iFirstDay=1` como lunes e `iFirstWeek=1` como semana que
+contiene el 1 de enero. Esto describe la API consultada, sin observar una sesión
+Productor. [Microsoft: VarFormat](https://learn.microsoft.com/en-us/windows/win32/api/oleauto/nf-oleauto-varformat).
+
+El encabezado público de Microsoft identifica `0x8` como `VAR_CALENDAR_HIJRI`;
+`VAR_FORMAT_NOSUBSTITUTE` es `0x20`. Por tanto, el `8` acreditado no declara
+una política de empates ni supresión de sustitución. No se ha probado qué rama
+global/TLS tomó una ejecución concreta. [Microsoft: OleAuto.h](https://github.com/microsoft/win32metadata/blob/main/generation/WinSDK/RecompiledIdlHeaders/um/OleAuto.h).
+
+La tokenización distingue la interpretación de la máscara de la localización
+de salida. No convertir la ubicación de este equipo, la interfaz en español o
+el carácter punto de la máscara en un LCID observado.
+[Microsoft: VarTokenizeFormatString](https://learn.microsoft.com/en-us/windows/win32/api/oleauto/nf-oleauto-vartokenizeformatstring),
+[VarFormatFromTokens](https://learn.microsoft.com/en-us/windows/win32/api/oleauto/nf-oleauto-varformatfromtokens).
+
+Como referencia de lenguaje, Microsoft documenta `@` como posición de carácter
+o espacio y rellenado desde la derecha sin `!`. Esto ayuda a interpretar la
+segunda máscara, pero la documentación VBA no prueba la salida de la versión
+VB6/OleAut32 inspeccionada ni permite trasladar sus constantes de calendario.
+[Microsoft: Format de VBA](https://learn.microsoft.com/en-us/office/vba/language/reference/user-interface-help/format-function-visual-basic-for-applications).
+
+**Estado de aceptación:** extraídos y especificados los argumentos/máscaras;
+verificada estáticamente su construcción. No se implementa comportamiento nuevo
+en Aluminior. Siguen sin acreditar empates, valores cercanos a frontera binaria,
+localización efectiva, errores y conversión regional completa con una versión
+identificada de Automation. No adoptar `Math.round`, redondeo bancario, mayor
+resto o céntimos por defecto desde esta unidad.
+
+### Evidencia y continuidad
+
+Evidencia privada nueva en `output/e1-varformat-20261017/`: `preflight/`,
+`static/`, `official/`, `official-vba/` y `official-concat/`. Las seis referencias públicas quedan
+congeladas con URL, fecha, tamaño y SHA-256; el encabezado descargado se identifica
+por su hash, sin asumir que la rama pública `main` sea inmutable. No se lleva
+código, disassembly ni binarios propietarios a Git.
+
+Se volvieron a leer los 428 artefactos del índice anterior: 100.492.633 bytes,
+cero ausencias o discrepancias. Hay 19 antecedentes E1 seleccionados disponibles.
+Estas medidas acreditan artefactos locales, no semántica global de Productor,
+estado de bases activas ni disponibilidad de fuentes en otro equipo.
+
+Reproducción del director: `python output/e1-varformat-20261017/static/verify-static.py
+--output-dir output/e1-varformat-20261017/architect-static`, salida 0:
+**141/141 comprobaciones**, 81 anclajes, ocho capturas con 1.395 instrucciones
+contrastadas, seis casos de construcción y 14 mutaciones solo en memoria.
+Fallos medidos por mutación: `7,7,5,7,7,1,1,1,1,5,1,1,1,1`; tres fuentes intactas.
+Son comprobaciones estáticas, no tests de producto ni salidas de `VarFormat`.
+`architect-static/static-verificado.json` conserva el resultado; la reproducción
+de construcción separada está en `architect-mask-replay.jsonl`. No hay corrección
+funcional que revertir ni se atribuyen suites antiguas a esta unidad.
+
+**Siguiente unidad estática:** proveedor de configuración y significado del
+argumento `2`; después acreditar valores efectivos de `REDprecio/REDlinea/
+REDbase/REDtotal` sin leer bases activas. No repetir máscaras/helpers/650 ni
+las unidades cerradas. La aceptación matemática de Automation exige un ensayo
+aislado autorizado con entradas y versión/localización identificadas; no queda
+cerrada por documentación o construcción de máscaras. Agregados y persistencia
+conservan sus fronteras propias. E1 permanece `in_progress`, cargo desactivado
+y G6 protegido.
+
+Revisión independiente: **77/77 comprobaciones propias**, 3.959 instrucciones
+contrastadas, argumentos y fuentes verificadas; reprodujo además el gate 141/141
+y la guarda documental. Sin defectos reproducibles en el alcance estático;
+no acepta salidas numéricas ni conservación de importes. El director reprodujo
+también ese verificador propio con salida 0. Informe y artefacto revisado en
+`review/REVISION-INDEPENDIENTE.md` y `review/reviewed-artifact.json`; reproducción
+del director en `architect-review/reproduced/independent.json`.
+
+Cierre documental: 119 Markdown encontrados por barrido real, ocho documentos
+actualizados, 264 enlaces locales y 22 anclas válidos; seis referencias oficiales
+íntegras y diff correcto. Estado, roadmap, contrato, índice, relevo de raíz,
+guía Windows, procedimiento y relevo REA apuntan a la misma siguiente unidad.
+No se retiró documentación, evidencia única ni discrepancias. Sin cambios en
+paquetes o fronteras del producto, no se repiten suites de aplicación ni SQL.
+July: mismo pendiente local 181 y sync_uid `398049fbd618069e36bb84bab37913ed`,
+actualizado y comprobado por lectura posterior; continúa `in_progress`, sin sync.
