@@ -1437,6 +1437,10 @@ postcommit están bajo `output/e1-keys-20261017/`, fuera de árboles protegidos.
 
 ## Clave de fila y transformaciones del índice
 
+**Entrega histórica conservada.** Sus siguientes pasos de predicados quedan
+continuados en [la unidad posterior](#predicados-internos-de-rellena); no
+ejecutar como lista de tareas ni escribir en su carpeta de evidencia.
+
 Unidad estática/documental del **17/10/2026**, desde
 `c0c77447f35e313754f9fce3bc94a38ac88e956d`, rama
 `codex/rea-productor-20261016` y árbol limpio comprobados. Contrato previo en
@@ -1524,7 +1528,8 @@ con cotejo contra el PE y anclajes seleccionados. Sus 398 instrucciones son
 La captura nueva de `rellena`, `0x1100cfc0–0x1100d750` exclusivo, acredita
 copia inicial, comprobación de ancho cero, comparaciones de longitud, recorridos
 condicionados de caracteres y comprobaciones contra los literales `*` y `-`.
-Invoca otros predicados mediante `+0x48` y `+0x4c`, cuyo cuerpo sigue abierto.
+Invoca otros predicados mediante `+0x48` y `+0x4c`, cuyos cuerpos estaban
+abiertos en esta entrega y se siguen en [la unidad posterior](#predicados-internos-de-rellena).
 Hay una ruta condicionada de construcción de máscara/formato y una llamada
 al ordinal 528 en `0x1100d60b`; no se atribuyen esos pasos a todas las ramas.
 No se equipara `rellena` con una operación genérica de padding ni se afirma
@@ -1569,9 +1574,9 @@ La preservación comprueba índices 428/56/91/145 y seis árboles completos
 429/59/92/146/140/77 por tamaño y SHA-256, con índices/sellos/recibos y los dos
 pyc históricos intactos. No se ejecutan verificadores ni colectores antiguos.
 
-**Ahora:** seguir los predicados de `gaVarios +0x48`, llamados en
-`0x1100d1ae / 0x1100d38a`, y `+0x4c` en `0x1100d17b`, dentro de `rellena`.
-Acreditar cuerpo y argumentos antes de fijar su transformación exacta.
+**Siguiente de aquella entrega, ya agotado:** predicados `gaVarios +0x48`
+en `0x1100d1ae / 0x1100d38a` y `+0x4c` en `0x1100d17b`, continuados
+en [predicados internos de rellena](#predicados-internos-de-rellena).
 Después quedan las premisas de equivalencia, conversiones/runtime y valores
 efectivos; agregados y persistencia mantienen su frontera propia.
 No repetir la atribución/cuerpo de `x_Clave`, rutas de consulta o proveedor/slots
@@ -1608,7 +1613,7 @@ Barrido de 1.107 versionados: ocho Markdown cambiados y 1.099 intactos;
 299 enlaces locales y 57 anclas válidos; `git diff --check` correcto.
 El barrido de 119 Markdown para las frases de siguiente paso agotadas está
 en `active-pointer-scan-corrected.json`, con su alcance limitado explícito.
-La documentación activa apunta ahora a `gaVarios +0x48 / +0x4c`; los anclajes
+La documentación de aquella entrega apuntaba a `gaVarios +0x48 / +0x4c`; los anclajes
 anteriores quedan marcados como historia. No se retira evidencia única.
 
 Los tres agentes terminaron y congelaron escrituras antes del commit.
@@ -1617,3 +1622,128 @@ sin sincronización. Commit local tras gate e identidad de Sergio; sin push.
 Sellado nuevo y recibos postcommit en `output/e1-rowkeys-20261017/`;
 la evidencia privada no viaja por Git/July. Son verificaciones estáticas
 parciales y solapadas, sin pruebas funcionales ni aceptación económica.
+
+## Predicados internos de rellena
+
+Unidad estática/documental del **17/10/2026**, desde
+`5acc947f8a318abed614f79e3551bbaf4aad8c0b`, rama
+`codex/rea-productor-20261016`, con árbol inicial limpio comprobado.
+Contrato y evidencia privada nuevos en `output/e1-rellena-predicates-20261017/`.
+Se reutiliza la identidad acreditada de gaVarios y el cuerpo de `rellena`;
+no se reabren proveedor, `x_Clave`, `just` ni las unidades anteriores.
+
+### Declaraciones y cuerpos vinculados
+
+Se comprueban de nuevo tamaño y SHA-256 de `gaBBDD.dll`, `gaCodigoBase.dll`
+y `msvbvm60.dll`: coinciden con las identidades de la unidad anterior.
+En la interfaz propia `ac3c4874-c3a9-4bec-8637-3b79ceb84063` de
+`gaCodigoBase.dll`, las declaraciones se enlazan por metadata y bytes:
+
+| Slot y nombre declarado | Registro TypeLib | Celda → thunk → cuerpo, límite exclusivo |
+|---|---|---|
+| `+0x48`, `isletter` | `0x25380` | `0x11003f2c` → `0x11004047` → `0x1100d750–0x1100d92b` |
+| `+0x4c`, `isdigit` | `0x253b0` | `0x11003f30` → `0x11004054` → `0x1100d930–0x1100dad7` |
+
+Ambos declaran un parámetro BSTR por referencia `in/out` y una salida I2 por referencia
+marcada `out/retval`; **no declaran retorno Boolean**. Los nombres identifican
+las declaraciones, pero no se usan como prueba de las condiciones siguientes.
+
+### Condiciones seguidas estáticamente
+
+En las rutas ordinarias examinadas, cadena vacía produce I2 `0`. Para una
+entrada no vacía, ambos solicitan al ordinal 631 el segmento de inicio `1`
+y longitud Variant I2 `1`, y pasan el resultado al ordinal 516.
+Llamando `C(s)` al resultado de esa conversión, interpretado como entero
+con signo de 16 bits, los cuerpos expresan estos intervalos inclusivos:
+
+| Predicado | Condición para escribir I2 `-1`; fuera de ella escribe `0` |
+|---|---|
+| `+0x48` | `C(A) ≤ C(segmento) ≤ C(Z)` o `C(a) ≤ C(segmento) ≤ C(z)` |
+| `+0x4c` | `C(0) ≤ C(segmento) ≤ C(9)` |
+
+Los seis extremos son BSTR literales que pasan por **el mismo convertidor**;
+no se sustituyen por códigos numéricos supuestos. Las comparaciones son
+`signed16`, con `setg/setl`, combinaciones OR/AND y normalización final a
+`-1/0`. No equivalen a una clasificación Unicode universal ni prueban qué
+ocurre con cada carácter no ASCII, sustitución de conversión o error.
+
+El import de `gaCodigoBase` en IAT `0x11001038` enlaza al ordinal 516 de
+`msvbvm60.dll`, export `rtcAnsiValueBstr` en VA preferida `0x6601d76d`.
+Su ruta ordinaria llega a **`0x6601d79a`**, llamada por IAT **`0x660011ac`**
+a `KERNEL32!WideCharToMultiByte`, con argumentos efectivos
+`(0, 0, BSTR, 1, buffer, 2, 0, 0)`. Cuando el resultado es dos bytes,
+el tramo `0x6608e50b` combina `(b0 << 8) + b1`; la otra ruta carga `b0`.
+Ese camino no acredita que la conversión haya tenido éxito si retorna cero.
+Se cierra aquí el seguimiento: contrato externo, página de códigos y retorno
+efectivos siguen sin demostrar. No se carga ni ejecuta ninguna DLL legacy.
+
+### Argumentos y efecto en rellena
+
+Todas las direcciones `0x1100…` de esta tabla pertenecen a **gaCodigoBase.dll**,
+dentro de `0x1100cfc0–0x1100d750`; las direcciones `0x660…` anteriores
+pertenecen a **msvbvm60.dll**. No se mezclan sus bases preferidas.
+
+| Llamada | Argumento efectivo y salida | Uso del resultado |
+|---|---|---|
+| `0x1100d17b`, `+0x4c` | Segmento de longitud `1` de la copia original, eventualmente truncada; BSTR en `ebp-0x34`, salida en `ebp-0xd0` | Se combina mediante OR con `+0x48` y las comparaciones con `*` y `-`; resultado no cero permite concatenar el carácter |
+| `0x1100d1ae`, `+0x48` | Otro segmento de la misma posición de esa copia; BSTR en `ebp-0x38`, salida en `ebp-0xd4` | Participa en el mismo OR; `test di,di` y salto `0x1100d286` deciden si se concatena o se omite |
+| `0x1100d38a`, `+0x48` | Segmento de longitud `1` de la cadena ya filtrada `ebp-0x20`; BSTR en `ebp-0x34`, salida en `ebp-0xd0` | OR con comparación `-` de la filtrada y `*` de la copia original/truncada; salto `0x1100d444` decide entre ruta de carácter y ruta de formato del resto |
+
+La segunda fase conserva dos fuentes diferentes: en `0x1100d3bf` la
+comparación con `*` usa `ebp-0x28`, mientras el predicado y la comparación
+con `-` usan `ebp-0x20`. No se corrige esta diferencia por intuición ni se
+presupone que ambas cadenas conservan posiciones equivalentes tras filtrar.
+Las llamadas se someten a comprobación HRESULT; el I2 se consume aparte.
+
+Esto precisa las ramas que dependen de los predicados, con ancho distinto
+de cero y bajo sus rutas ordinarias. No convierte `rellena` en una operación
+genérica de padding, no declara su transformación exacta para toda entrada
+y no reabre el cuerpo del formateador. Permanecen conversiones externas,
+errores, valores efectivos y premisas de equivalencia fila/consulta.
+
+### Evidencia, verificación y continuación
+
+El director reproduce `predicates/verify.py` en `predicates/director-initial/`:
+**248/248 comprobaciones**, **73 predicados seleccionados / 320 anclajes**
+y **66/66 perturbaciones rechazadas exclusivamente en memoria**, sin consultar
+el hash global para decidir esos rechazos. Canónica:
+`predicates/captured-final-v3/evidence.json`, **74 capturas**, diez de código
+con **1.081 instrucciones**: 634 del llamador ya conocido, 298 de los dos
+cuerpos, dos de los thunks y 147 de rutas runtime necesarias. No sumar estos
+conjuntos a unidades anteriores ni convertir metadata o solapes en código nuevo.
+
+Tres controles pasan los predicados seleccionados y fallan la comparación
+completa de su captura cubriente: bit 0 de slot TypeLib enmascarado por `&~3`,
+prólogo no seleccionado y NOP del llamador. La comprobación algebraica de
+65.536 valores I2 utiliza umbrales sintéticos; no ejecuta ni emula el legado,
+no observa caracteres reales y no demuestra página de códigos.
+
+Se conserva el intento inicial **226/230**, provocado por colisión de nombres
+de archivos A/a y Z/z en Windows, junto con su captura. También permanecen
+la captura v2 y su **230/230**, y el error inicial al decodificar un nombre
+TypeLib perturbado (`predicates/gate-final/error.txt`). El arnés final rechaza
+esa metadata malformada; no son defectos funcionales de Productor. Ningún
+resultado representa cobertura causal exhaustiva o prueba funcional.
+
+Se conservan por tamaño/SHA-256 los cuatro índices de **428/56/91/145**
+artefactos y los siete árboles completos de **429/59/92/146/140/77/127**
+archivos. Incluyen índices, sellos, recibos posteriores y los dos pyc antiguos.
+No se regeneran índices ni se ejecutan colectores/verificadores antiguos;
+Python usa `-B` y las salidas son nuevas en esta unidad.
+
+Se actualizan los ocho documentos activos, conservando evidencia e historia.
+Los antiguos siguientes pasos de investigar `+0x48/+0x4c` quedan agotados.
+Revisión independiente, reproducción final y cierre se registran en
+`review/REPORT.md`, `director-final/gate.json` y `postcommit-receipt.json`
+de la carpeta nueva. Los recibos posteriores al sello se enumeran sin
+sobrescribirlo. La evidencia privada no viaja por Git ni July.
+
+**Ahora:** frontera externa de conversión desde `msvbvm60.dll`
+**`0x6601d79a` → IAT `0x660011ac` → `KERNEL32!WideCharToMultiByte`**:
+acreditar su contrato y premisas efectivas antes de fijar el conjunto exacto
+de caracteres o la transformación completa. No repetir los predicados,
+sus slots/cuerpos, proveedor, `just`, `x_Clave` ni unidades previas.
+**Después:** valores efectivos, equivalencia, agregados y persistencia.
+E1 permanece `in_progress`, cargo desactivado; A–F/G1–G5/G6-incidencia
+preservados. Completar contrato/implementación, comparar Aluminior y probar
+software aislado siguen siendo fases posteriores, fuera de esta unidad.

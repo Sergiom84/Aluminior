@@ -1,6 +1,6 @@
 # Roadmap operativo de paridad con Productor
 
-Actualizado: 17/10/2026 (formato, proveedor, carga, índice, comparador/normalizador, cuerpo de clave de fila y transformaciones delegadas E1 seguidos estáticamente en su alcance; predicados internos de rellena, equivalencia y semántica efectiva pendientes; C1 y P.6/P.7 conservan su etapa del 12/10). Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
+Actualizado: 17/10/2026 (formato, proveedor, carga, índice, comparador/normalizador, cuerpo de clave de fila y transformaciones delegadas E1 seguidos estáticamente en su alcance; condiciones de los predicados seguidas estáticamente; conversión externa, equivalencia y semántica efectiva pendientes; C1 y P.6/P.7 conservan su etapa del 12/10). Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
 Este archivo es el registro único del orden y estado de estas tareas.
 Los documentos de ensayo explican cómo realizarlas; los informes fechados
 conservan evidencia. Sus antiguas listas de pendientes no sustituyen este registro.
@@ -25,9 +25,11 @@ La [continuación de claves](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-1
 sigue inicializador del comparador y bifurcación del normalizador, sin acreditar
 semántica externa ni valores runtime. La [unidad de fila y delegados](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#clave-de-fila-y-transformaciones-del-índice)
 atribuye `_gaLstItem.x_Clave +0x38` al cuerpo `0x11074c00` y sigue las
-transformaciones `+0x3c / +0x44` del proveedor acreditado. Siguiente unidad:
-predicados `gaVarios +0x48` en `0x1100d1ae / 0x1100d38a` y `+0x4c` en
-`0x1100d17b`. No repetir cuerpos/proveedor, inicializador/normalizador,
+transformaciones `+0x3c / +0x44` del proveedor acreditado. La [unidad de predicados](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#predicados-internos-de-rellena)
+acredita `+0x48/+0x4c`, condiciones signed16 y ramas del llamador. Siguiente:
+`msvbvm60.dll 0x6601d79a` → IAT `0x660011ac`, `KERNEL32!WideCharToMultiByte`;
+contrato externo y conversión efectiva pendientes. No repetir predicados,
+cuerpos/proveedor, inicializador/normalizador,
 `xConfig`, construcción ni búsqueda. Equivalencia y prioridad de duplicados siguen abiertas.
 Después siguen valores efectivos, agregados y persistencia. E1 permanece en curso,
 sin cargo activo ni operación sobre G6; el ensayo matemático necesita alcance aislado propio.
@@ -136,7 +138,7 @@ Sin aplicación al presupuesto web ni nueva medición del banco.
 | ID | Trabajo | Estado actual | Prueba necesaria para avanzar o cerrar |
 |---|---|---|---|
 | M0 | Matriz por modelo/serie/regla y ensayos mínimos | Cerrado 03/10/2026 | [Matriz](docs/paridad/MATRIZ-COBERTURA-PRODUCTOR-2026-10-03.md), 97 pares, 47 pruebas, typechecks y arquitectura; no volver a crearla, regenerar si cambian las fuentes |
-| E1 | Despunte de cabecera: base, momento y reparto | En curso; físico/condicional 13/10, consumidor/COM, receptores y control/reparto/totales 14/10; formato, proveedor/argumento `2`, carga, índice, comparador/normalizador y cuerpo de fila/transformaciones estáticos 17/10; G1–G5 y G6-incidencia preservados | [Entrega y continuación](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#clave-de-fila-y-transformaciones-del-índice): siguiente `gaVarios +0x48` en `0x1100d1ae / 0x1100d38a` y `+0x4c` en `0x1100d17b`. Equivalencia, primera/última, comparación externa exacta, valores efectivos, empates/localización, agregados y persistencia pendientes. No repetir unidades estáticas cerradas. Sin activar cabecera, adaptar snapshots u operar G6 |
+| E1 | Despunte de cabecera: base, momento y reparto | En curso; físico/condicional 13/10, consumidor/COM, receptores y control/reparto/totales 14/10; formato, proveedor/argumento `2`, carga, índice, comparador/normalizador y cuerpo de fila/transformaciones estáticos 17/10; G1–G5 y G6-incidencia preservados | [Entrega y continuación](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#predicados-internos-de-rellena): predicados internos acreditados en su alcance; siguiente conversión externa `msvbvm60.dll 0x6601d79a` → IAT `0x660011ac`, `WideCharToMultiByte`. Equivalencia, primera/última, comparación externa exacta, valores efectivos, empates/localización, agregados y persistencia pendientes. No repetir unidades estáticas cerradas. Sin activar cabecera, adaptar snapshots u operar G6 |
 | E2 | Unión material de otra serie en GRUPO | Pendiente | Selección desde diagnóstico privado de los ocho casos de iteración 13; código/serie/acabado y geometría demostrados, sin extrapolar U |
 | E3 | Comisión: orden de redondeo y edición de líneas guardadas | Pendiente | Caso 0/−10/+10, suma de filas y momento de aplicación; separar cantidades/horas; seis residuos comunicados |
 | E4 | Tapajuntas de puerta con inferior SI/NO | Pendiente | GMT004, 1P 867×2098 con serie/ala/cajón reales; comparación lateral y travesaño |
@@ -177,7 +179,7 @@ antes de construir. Extraído no equivale a implementado o verificado.
 | Datos y maestros, catálogo, cabecera/GRUPO, materiales, cortes, herrajes, vidrio, MO, compacto, tapajuntas, metraje, PVP, comisión, uniones y fracciones | Reutilizado, con los límites de E1–E11 y M0 | No repetir inventario/carga ni convertir disponibilidad en aceptación; 204 CSV y 33 diferencias de instantánea preservados |
 | Precio dimensional y acabado del artículo | Reutilizado: C1 técnico publicado/verificado | Coste dimensional sigue separado; 0031/0032/carga no se repiten |
 | Despunte físico/condicional | Ahora — E1, implementado y verificado localmente | [Contrato/entrega](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md); 67 pruebas y revisión independiente; sin adaptar snapshots ni activar cabecera |
-| Despunte monetario | Ahora — E1, control/reparto/totales, formato, proveedor/fallback, índice, comparador/normalizador y cuerpo de fila/transformaciones seguidos en su alcance; cargo desactivado | Ocho preguntas con evidencia parcial; predicados internos de rellena, equivalencia y semántica efectiva pendientes, sin prioridad primera/última demostrada. Escalas efectivas, empates/localización observados, agregados y persistencia pendientes. G6 conserva autorización propia |
+| Despunte monetario | Ahora — E1, control/reparto/totales, formato, proveedor/fallback, índice, comparador/normalizador y cuerpo de fila/transformaciones seguidos en su alcance; cargo desactivado | Ocho preguntas con evidencia parcial; condiciones y ramas de los predicados seguidas estáticamente; conversión externa desde `0x6601d79a`, equivalencia y semántica efectiva pendientes, sin prioridad primera/última demostrada. Escalas efectivas, empates/localización observados, agregados y persistencia pendientes. G6 conserva autorización propia |
 | Coste dimensional | Ahora — pendiente de evidencia | Proveedor, medidas, divisa, gastos y precedencias; no reutilizar selector PVP |
 | Coste calculado | Ahora — pendiente de evidencia/configuración | Material por peso + acabado por superficie; unidades y activación sin confirmar |
 | Tarifa dinámica | Ahora — selección de registro implementada/verificada localmente 14/10; precio y activación pendientes | [Contrato y gate](docs/paridad/IMPLEMENTACION-CLONERSOFT-TARIFA-DINAMICA-2026-10-14.md): cuatro búsquedas, decimales exactos y bloqueo de empate; 47 pruebas. Sin precios ni activar motor; grupo, habilitación, fórmula, redondeo y caso positivo pendientes |

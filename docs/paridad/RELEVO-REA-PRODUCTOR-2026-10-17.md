@@ -18,8 +18,10 @@ La [continuación de claves](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#comparac
 sigue inicializador del comparador y bifurcación del normalizador; no repetirlos.
 La [unidad de fila y delegados](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#clave-de-fila-y-transformaciones-del-índice)
 atribuye `_gaLstItem.x_Clave +0x38` al cuerpo `0x11074c00` por metadata propia
-y sigue proveedor/slots/cuerpos de transformación. Próxima unidad: predicados
-`gaVarios +0x48` (`0x1100d1ae / 0x1100d38a`) y `+0x4c` (`0x1100d17b`).
+y sigue proveedor/slots/cuerpos de transformación. La [unidad de predicados](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#predicados-internos-de-rellena)
+acredita `+0x48/+0x4c`, sus condiciones y efecto en ramas. Próxima frontera:
+`msvbvm60.dll 0x6601d79a` → IAT `0x660011ac`, `KERNEL32!WideCharToMultiByte`;
+contrato externo y conversión efectiva pendientes. No repetir los predicados.
 Equivalencia, colación y valores efectivos permanecen abiertos; no repetir cuerpos.
 No repetir `xConfig`,
 construcción, ordenación, búsqueda,
@@ -28,6 +30,31 @@ AbreRS/carga, proveedor/argumento `2` ni máscaras/helpers/650. Evidencias nueva
 `output/e1-keys-20261017/` y `output/e1-rowkeys-20261017/`; los cuatro índices
 anteriores, 428, 56, 91 y 145 artefactos, conservan tamaño y SHA-256.
 El alcance estático, cargo desactivado y protección de G6 siguen vigentes.
+
+## Última unidad estática: predicados de rellena, 17/10
+
+Base inicial comprobada `5acc947f8a318abed614f79e3551bbaf4aad8c0b`, misma
+rama y árbol limpio. Evidencia nueva exclusivamente en
+`output/e1-rellena-predicates-20261017/`; contrato, capturas canónicas, gates,
+revisión independiente y recibos de cierre se guardan allí. Los siete árboles
+previos completos **429/59/92/146/140/77/127** y los índices **428/56/91/145**
+se conservan por tamaño y SHA-256, incluidos recibos posteriores y pyc antiguos.
+No ejecutar sus colectores/verificadores ni regenerar índices.
+
+Declaraciones `+0x48/+0x4c`, thunks y cuerpos enlazados; I2 `-1/0` condicionado
+por intervalos sobre la conversión signed16 del primer segmento. La segunda
+fase de `rellena` conserva una comparación con `*` de la cadena original y
+las otras condiciones de la filtrada; no asumir posiciones equivalentes.
+Siguiente **`msvbvm60.dll 0x6601d79a` → IAT `0x660011ac` →
+`KERNEL32!WideCharToMultiByte`**: contrato externo y conversión efectiva.
+No repetir predicados ni proclamar transformación exacta, equivalencia,
+colación, RED, backend o persistencia.
+
+Ocho documentos actualizados; historia y evidencia única conservadas. Mismo
+E1 July por proyecto/sync_uid, `in_progress`, sin sincronización. Cierre local
+autoriza sólo documentación propia tras gates e identidad Git; sin push.
+El sello y los recibos posteriores se registran en la carpeta nueva, fuera
+de los siete árboles protegidos. E1 económico permanece abierto y G6 protegido.
 
 ## Encargo para la nueva conversación
 
@@ -232,7 +259,8 @@ commit no entrega los 428 archivos ni las evidencias anteriores. Si faltan,
 identificar la ruta exacta y resolver su transporte autorizado; no inventar
 resultados, recrear datos empresariales o ejecutar una extracción masiva a ciegas.
 
-**Recibo de fila y delegados, 17/10:** `output/e1-rowkeys-20261017/` conserva
+**Recibo histórico de fila y delegados, 17/10; no ejecutar como lista de tareas.**
+Continuación vigente: [predicados internos](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#predicados-internos-de-rellena). `output/e1-rowkeys-20261017/` conserva
 atribución propia de `x_Clave`, rutas/proveedor/slots de transformación y capturas
 nuevas; `row/captured-final/` y `transforms/captured-final/` son canónicas.
 Gates del director: fila 223/223 y 49 perturbaciones; transformaciones 111/111
@@ -242,14 +270,15 @@ sin suma de coberturas ni pruebas funcionales. Se conservan límites medidos e
 intentos previos de arneses, incluido 108/109 del transformador.
 Los seis árboles anteriores 429/59/92/146/140/77 permanecen completos por
 tamaño/SHA-256, incluidos índices, sellos, recibos y dos pyc históricos.
-Usar el `preserve.py` de esta carpeta nueva con `--out <salida nueva>` y
-`--baseline preflight/preservation.json`; no ejecutar verificadores anteriores
-con salida en ninguno de esos árboles protegidos.
+La receta `preserve.py --out … --baseline preflight/preservation.json`
+pertenece a aquella entrega y queda histórica. En continuaciones no ejecutar
+esos scripts ni escribir dentro de los siete árboles ahora protegidos.
 Ocho documentos activos actualizados; 1.099 versionados restantes intactos.
 Mismo E1 July con historia e `in_progress`, sin sincronizar. Cierre local tras
 congelación de los tres agentes, gate final e identidad Git; sin push.
-Siguiente: `gaVarios +0x48` en `0x1100d1ae / 0x1100d38a` y `+0x4c` en
-`0x1100d17b`. No repetir atribución/cuerpo de fila ni proveedor/slots ya seguidos.
+Su siguiente entonces eran `gaVarios +0x48/+0x4c`, continuados en la
+[unidad de predicados](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#predicados-internos-de-rellena).
+Ese paso queda agotado; no repetir atribución/cuerpo de fila ni proveedor/slots.
 El recibo siguiente es histórico; sus instrucciones se subordinan a éste.
 
 **Recibo de la continuación de claves, 17/10:** `output/e1-keys-20261017/`
@@ -259,9 +288,9 @@ propia 2.477/2.477 y 23 perturbaciones en memoria. Son alcances estáticos
 parciales/solapados, no coberturas sumables ni pruebas funcionales. Los cinco
 árboles anteriores conservan íntegros 429/59/92/146/140 archivos por tamaño y
 SHA-256, incluidos índices, dos pyc y recibos posteriores al sellado del índice.
-Usar `python -B output/e1-keys-20261017/preserve.py --out <salida nueva>
---baseline preflight/preservation.json`, con salida bajo la carpeta nueva de
-claves. El siguiente párrafo y su verificador son historia de la unidad del
+La invocación histórica `python -B output/e1-keys-20261017/preserve.py`
+con salida bajo claves pertenece a aquella entrega; no ejecutarla en
+continuaciones ni escribir en ese árbol protegido. El siguiente párrafo y su verificador son historia de la unidad del
 índice; **no ejecutarlo en continuaciones con salida en el árbol protegido**.
 El mismo E1 July conserva historia y `in_progress`, sin sincronización.
 Ocho documentos activos actualizados, evidencia histórica preservada, sin
@@ -297,10 +326,11 @@ No repetir esas unidades. Elegir una pregunta pendiente y cerrar una sola unidad
    Inicializador del comparador y bifurcación del normalizador seguidos en la
    continuación de claves enlazada arriba; no repetirlos. Cuerpo de fila y
    proveedor/slots de transformación seguidos en la unidad posterior; no repetirlos.
-   Seguir `gaVarios +0x48` en `0x1100d1ae / 0x1100d38a` y `+0x4c` en
-   `0x1100d17b`. Comparación externa exacta y selección runtime siguen
-   abiertas. No atribuir colación, prioridad primera/última ni equivalencia
-   de claves antes de cerrar esos cuerpos y sus premisas.
+   Predicados `+0x48/+0x4c` seguidos en la unidad nueva enlazada arriba;
+   no repetirlos. Seguir frontera externa `msvbvm60.dll 0x6601d79a` →
+   IAT `0x660011ac`, `KERNEL32!WideCharToMultiByte`, con contrato y conversión
+   efectiva aún abiertos. No atribuir colación, prioridad primera/última ni
+   equivalencia de claves desde condiciones parciales.
    Las cuatro RED efectivas siguen sin demostrar. El BSTR `2` no certifica escala
    dos; el selector BDtipo tampoco prueba backend ni configuración efectiva.
 3. Acreditar formación de agregados comerciales, cantidades, descuentos y

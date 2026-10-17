@@ -163,8 +163,11 @@ ni equivalencia de claves demostradas. La [continuación de claves](paridad/IMPL
 sigue inicialización del comparador y las dos rutas del normalizador, sin
 acreditar sus valores efectivos. La [unidad de fila y delegados](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#clave-de-fila-y-transformaciones-del-índice)
 atribuye cuerpo propio de `x_Clave` y proveedor/slots de transformación.
-Siguiente: predicados `gaVarios +0x48` (`0x1100d1ae / 0x1100d38a`) y `+0x4c`
-(`0x1100d17b`); equivalencia y valores efectivos abiertos, después agregados y persistencia.
+Los [predicados internos de rellena](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#predicados-internos-de-rellena)
+ya tienen condiciones y efecto en ramas acreditados estáticamente. Siguiente:
+`msvbvm60.dll 0x6601d79a` → IAT `0x660011ac`, `KERNEL32!WideCharToMultiByte`,
+con contrato externo y conversión efectiva abiertos. No repetir predicados;
+después equivalencia, valores efectivos, agregados y persistencia.
 No repetir `x_Clave`/proveedor/delegados ya seguidos, inicializador/normalizador,
 `xConfig`, construcción/búsqueda,
 AbreRS/carga de lista, proveedor/argumento `2` ni unidades anteriores.

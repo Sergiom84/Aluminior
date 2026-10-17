@@ -12,8 +12,11 @@ primera/última o equivalencia de claves. La [continuación de claves](docs/pari
 sigue inicializador del comparador y bifurcación del normalizador; no repetirlos.
 La [unidad de fila y delegados](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#clave-de-fila-y-transformaciones-del-índice)
 atribuye `_gaLstItem.x_Clave +0x38` a `0x11074c00` y sigue las transformaciones.
-Siguiente: predicados `gaVarios +0x48` (`0x1100d1ae / 0x1100d38a`) y `+0x4c`
-(`0x1100d17b`), con equivalencia aún abierta. No repetir cuerpos ni `xConfig`.
+Los [predicados internos de rellena](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#predicados-internos-de-rellena)
+ya tienen declaraciones, cuerpos, argumentos y condiciones seguidos estáticamente.
+Siguiente: conversión externa desde `msvbvm60.dll` en `0x6601d79a` por
+IAT `0x660011ac`, `KERNEL32!WideCharToMultiByte`; página de códigos y resultados
+efectivos pendientes. No repetir predicados, cuerpos ni `xConfig`.
 Empates y
 localización efectiva siguen sin ensayo; cargo desactivado y G6 protegido.
 Reúne rutas, trabajo realizado, evidencias comprobadas, límites y continuación;
@@ -21,8 +24,9 @@ el roadmap mantiene los estados únicos. Comprobación local del 17/10:
 428, 56, 91 y 145 artefactos de los cuatro índices privados anteriores intactos,
 incluidos los dos `.pyc` antiguos conservados fuera del índice de formato;
 índice íntegro de 140 archivos conservado; evidencia nueva en
-`output/e1-rowkeys-20261017/`, preservando también los 77 archivos completos
-de `output/e1-keys-20261017/`, sin repetir suites de producto.
+`output/e1-rellena-predicates-20261017/`; siete árboles históricos completos
+429/59/92/146/140/77/127 preservados, sin repetir suites de producto.
+Capturas, revisión y recibos nuevos permanecen privados; commit local sin push.
 
 Investigación REA del **16/10**, en worktree separado
 `C:\Users\sergi\.codex\worktrees\rea-productor-20261016\Aluminior`, rama
