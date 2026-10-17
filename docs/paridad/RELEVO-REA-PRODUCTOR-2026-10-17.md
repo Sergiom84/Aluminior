@@ -14,11 +14,15 @@ no demuestra escalas efectivas iguales a dos. La [unidad de procedencia](IMPLEME
 sigue AbreRS, consulta y carga de lista con índice NombreDato. La [unidad del índice](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#configuración-construcción-y-selección-del-índice)
 sigue configuración/construcción, partición/intercambio y selección de posición
 ante igualdad; no demuestra prioridad primera/última ni equivalencia de claves.
-Próxima unidad: comparador indirecto `0x6611463c`, normalización `0x66040f46`
-y `_gaLstItem.x_Clave +0x38` (registro TypeLib `0xabcd8`). No repetir `xConfig`,
+La [continuación de claves](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#comparación-y-normalización-de-claves)
+sigue inicializador del comparador y bifurcación del normalizador; no repetirlos.
+Próxima unidad: atribuir cuerpo de `_gaLstItem.x_Clave +0x38` (registro TypeLib
+`0xabcd8`) y transformaciones `0x1107094a / +0x3c`, `0x110709d2 / +0x44`.
+No repetir `xConfig`,
 construcción, ordenación, búsqueda,
 AbreRS/carga, proveedor/argumento `2` ni máscaras/helpers/650. Evidencias nuevas en
-`output/e1-config-origin-20261017/` y `output/e1-index-20261017/`; los cuatro índices
+`output/e1-config-origin-20261017/`, `output/e1-index-20261017/` y
+`output/e1-keys-20261017/`; los cuatro índices
 anteriores, 428, 56, 91 y 145 artefactos, conservan tamaño y SHA-256.
 El alcance estático, cargo desactivado y protección de G6 siguen vigentes.
 
@@ -225,6 +229,23 @@ commit no entrega los 428 archivos ni las evidencias anteriores. Si faltan,
 identificar la ruta exacta y resolver su transporte autorizado; no inventar
 resultados, recrear datos empresariales o ejecutar una extracción masiva a ciegas.
 
+**Recibo de la continuación de claves, 17/10:** `output/e1-keys-20261017/`
+conserva capturas nuevas, revisión independiente y gate del director. Comparador
+68/68 y 17 perturbaciones; normalizador 68/68 y 22 perturbaciones; revisión
+propia 2.477/2.477 y 23 perturbaciones en memoria. Son alcances estáticos
+parciales/solapados, no coberturas sumables ni pruebas funcionales. Los cinco
+árboles anteriores conservan íntegros 429/59/92/146/140 archivos por tamaño y
+SHA-256, incluidos índices, dos pyc y recibos posteriores al sellado del índice.
+Usar `python -B output/e1-keys-20261017/preserve.py --out <salida nueva>
+--baseline preflight/preservation.json`, con salida bajo la carpeta nueva de
+claves. El siguiente párrafo y su verificador son historia de la unidad del
+índice; **no ejecutarlo en continuaciones con salida en el árbol protegido**.
+El mismo E1 July conserva historia y `in_progress`, sin sincronización.
+Ocho documentos activos actualizados, evidencia histórica preservada, sin
+retirar documentos únicos. Cierre local tras congelación de los tres agentes,
+gate final e identidad Git; sin push. El siguiente anclaje es el cuerpo de
+`_gaLstItem.x_Clave +0x38` / TypeLib `0xabcd8` y las transformaciones ya indicadas.
+
 La unidad del índice comprueba **428/428, 56/56, 91/91 y 145/145** artefactos
 antes de investigar, incluidos los índices sin regenerar; conserva además los
 dos `.pyc` antiguos fuera del índice de formato. El verificador nuevo
@@ -249,10 +270,12 @@ No repetir esas unidades. Elegir una pregunta pendiente y cerrar una sola unidad
    efectiva siguen pendientes de un ensayo aislado autorizado, sin redondeo supuesto.
 2. Proveedor y argumento `2`, AbreRS, carga de lista y configuración/construcción,
    ordenación y búsqueda del índice seguidos estáticamente. No repetirlos.
-   Seguir comparación/normalización: puntero `0x6611463c` desde `0x66004ff8`,
-   delegado `0x66040f46` desde `0x66040f1c`, transformaciones en
-   `0x110708ff / 0x1107099f` y `_gaLstItem.x_Clave +0x38`, registro TypeLib
-   `0xabcd8`. No atribuir colación, prioridad primera/última ni equivalencia
+   Inicializador del comparador y bifurcación del normalizador seguidos en la
+   continuación de claves enlazada arriba; no repetirlos. Seguir cuerpo de
+   `_gaLstItem.x_Clave +0x38`, registro TypeLib `0xabcd8`, y transformaciones
+   `0x110708ff / 0x1107099f`, delegados `0x1107094a / +0x3c` y
+   `0x110709d2 / +0x44`. Comparación externa exacta y selección runtime siguen
+   abiertas. No atribuir colación, prioridad primera/última ni equivalencia
    de claves antes de cerrar esos cuerpos y sus premisas.
    Las cuatro RED efectivas siguen sin demostrar. El BSTR `2` no certifica escala
    dos; el selector BDtipo tampoco prueba backend ni configuración efectiva.

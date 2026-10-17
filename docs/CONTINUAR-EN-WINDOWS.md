@@ -159,9 +159,12 @@ identifica `gaConfigDAL.Carga` y el fallback condicionado del BSTR `2`; no
 demuestra escalas efectivas iguales a dos. La [procedencia de carga](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-y-precedencia-del-índice-de-configuración)
 ya sigue AbreRS y la petición de índice NombreDato. La [unidad del índice](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#configuración-construcción-y-selección-del-índice)
 sigue construcción/ordenación y selección de posición, sin prioridad primera/última
-ni equivalencia de claves demostradas. Continuar por comparador `0x6611463c`,
-normalización `0x66040f46` y `_gaLstItem.x_Clave +0x38`; después valores efectivos,
-agregados y persistencia. No repetir `xConfig`, construcción/búsqueda,
+ni equivalencia de claves demostradas. La [continuación de claves](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#comparación-y-normalización-de-claves)
+sigue inicialización del comparador y las dos rutas del normalizador, sin
+acreditar sus valores efectivos. Siguiente: cuerpo de `_gaLstItem.x_Clave +0x38`
+(TypeLib `0xabcd8`) y transformaciones `0x1107094a / +0x3c`,
+`0x110709d2 / +0x44`; después valores efectivos, agregados y persistencia.
+No repetir inicializador/normalizador, `xConfig`, construcción/búsqueda,
 AbreRS/carga de lista, proveedor/argumento `2` ni unidades anteriores.
 El selector independiente de registros de tarifa dinámica ya está implementado
 y verificado localmente; no activar precios a partir de esa selección.

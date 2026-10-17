@@ -4,7 +4,7 @@
 La identidad y el estado global siguen en [E1 del roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md).
 El cargo de cabecera continúa abierto. Este contrato no acredita fabricación,
 aceptación Productor, publicación ni producción.
-La continuación vigente del 17/10 está en [Configuración, construcción y selección del índice](#configuración-construcción-y-selección-del-índice);
+La continuación vigente del 17/10 está en [Comparación y normalización de claves](#comparación-y-normalización-de-claves);
 las unidades del 13/10 y 14/10 siguientes conservan su evidencia y fecha.
 
 ## Base y contrato
@@ -1193,9 +1193,10 @@ algoritmo bajo sus premisas; **no demuestra «gana la primera fila» ni «gana l
 última fila»** ante duplicados de negocio. No se deduce unicidad, prioridad
 estable o valor efectivo de esa secuencia.
 
-### Siguiente anclaje y aceptación
+### Frontera registrada al cerrar la unidad del índice
 
-**Siguiente unidad estática acotada:** resolver el despacho de comparación
+**Anclajes pendientes en aquel cierre**, continuados en la unidad de claves
+que figura al final de este documento: resolver el despacho de comparación
 del runtime mediante `0x6611463c` desde la llamada `0x66004ff8`, y la
 normalización delegada desde `0x66040f1c` a `0x66040f46`. En el generador de
 claves quedan las rutas de transformación en `0x110708ff` y `0x1107099f`,
@@ -1279,3 +1280,156 @@ estado `in_progress`, sin sincronización. Recibo privado `july-readback.json`.
 Los agentes han terminado y sus escrituras están congeladas. El cierre Git
 local se hace tras comprobar identidad de Sergio, diff, integridad y gate;
 sin push ni despliegue. Cargo desactivado y G6-incidencia preservado.
+
+## Comparación y normalización de claves
+
+Unidad estática/documental del **17/10/2026**, desde
+`6b35327e2f0634f853c80e8a337b1ecf70d4f189`, rama
+`codex/rea-productor-20261016` y árbol limpio comprobados antes de escribir.
+Contrato en `output/e1-keys-20261017/CONTRATO.md`. Se reutilizan las identidades
+y atribuciones anteriores después de comprobar hashes actuales. No se repiten
+configuración/construcción, ordenación, búsqueda, AbreRS/carga ni formato.
+
+### Identidad y etapas de esta continuación
+
+| PE leído como bytes | Bytes | SHA-256 |
+|---|---:|---|
+| `gaBBDD.dll` | 794.624 | `dc1f4be67fc7b25f8464a686bf890ca7a1bdf15bf267928bbb35fd62169efb95` |
+| `msvbvm60.dll` | 1.436.032 | `898288bd3b21d0e7d5f406df2e0b69a5bbfa4f241baf29a2cdf8a3cf4d4619f2` |
+| `oleaut32.dll` local, SysWOW64 | 664.800 | `d593243c06adc9a1812b0e6ae5b600429d4b1828dcfa6c6b823d5ca3362c0067` |
+
+| Etapa | Acreditado / límite |
+|---|---|
+| Declaración | IAT gaBBDD `0x11001104` → export `__vbaStrCmp`; IAT `0x110010fc` → ordinal 528. TypeLib `_gaLstIndice` y `_gaLstItem` coinciden con las declaraciones previas bajo el mismo PE |
+| Inicialización | Celda comparador `0x6611463c` cero en disco; escritura directa identificada en `0x6602d2ed`. No es lectura del valor de un proceso |
+| Configuración y construcción | Evidencia de la unidad del índice conservada, sin volver a extraerla ni atribuirle valores efectivos |
+| Comparación | Identidad del símbolo solicitado por el inicializador, argumentos seleccionados y ajuste del retorno seguidos; cuerpo de comparación externo no expandido |
+| Normalización | Delegados y bifurcación por `0x6611468c` seguidos; implementación de tablas externas y rama efectiva no demostradas |
+| Selección | Resultado algorítmico de la unidad anterior conservado; no demuestra primera/última fila de negocio |
+| Valores efectivos | Sin proceso, filas RED, backend, locale ni página de códigos observados; ningún cargo activado |
+
+### Inicializador y destino declarado del comparador
+
+La entrada `0x6601d8e2` pasa modo cero a `0x66004fdc`. El helper prepara
+`0x30001` y los tres argumentos de su pila antes de la llamada por
+`[0x6611463c]` en `0x66004ff8`. En retorno ordinario no negativo decrementa
+EAX; el resultado negativo toma otra rama. No se interpreta `0x30001` como
+una política de colación sin seguir el contrato externo y las premisas.
+
+El prefijo capturado de `0x6602ccb6` contiene guardas y la llamada al
+inicializador en `0x6602ccf0`. En `0x6602ce61`, el literal `oleaut32.dll`
+(`0x66030544`) se pasa a `GetModuleHandleA` por IAT `0x66001230`, llamada
+`0x6602ce68`. Su retorno se conserva en EDI; cero sale. ESI se toma de
+`GetProcAddress`, IAT `0x66001178`, en `0x6602ce78`. Resoluciones intermedias
+tienen salidas si devuelven cero. En la ruta que alcanza `0x6602d2e5` se pasa
+el literal `VarBstrCmp` (`0x6603021c`) y EDI, se llama ESI en `0x6602d2eb` y
+se guarda EAX en la celda en `0x6602d2ed`, sin comprobación final del retorno.
+Esto acredita **quién escribe y qué símbolo solicita**, no ejecución ni éxito.
+
+El PE local de `oleaut32.dll` declara `VarBstrCmp`, ordinal **314**, VA
+preferida **`0x100169b0`**, celda EAT **`0x1008f078`**, sin forwarder.
+Es un candidato local identificado por hash; no demuestra que ese PE fuera el
+módulo cargado por Productor. Su cuerpo no se desensambla en esta unidad.
+El barrido de las cuatro bytes literales de la celda encuentra seis referencias:
+cinco llamadas y esa escritura directa. No cubre escrituras por alias o
+direcciones calculadas ni constituye una prueba de exclusividad global.
+
+### Cuerpo delegado del normalizador
+
+La llamada `0x66040f1c` llega a `0x66040f46`, que delega en `0x66040f64`.
+En la rama no nula se lee la longitud en `BSTR−4`, se desplaza un bit y se
+pasa junto con la cadena al ordinal 4 de OLEAUT32, IAT `0x66001a08`.
+El retorno se guarda por puntero. Si es no nulo, se incrementa la longitud y
+se llama a `0x66040f9a` en `0x66040f8f`; después se pone EAX a cero sin
+comprobar el estado que haya devuelto ese delegado. Son instrucciones y
+argumentos observados estáticamente; no una prueba de conversión sin pérdidas.
+
+En `0x66040fa8`, `[0x6611468c] == 0` continúa hacia la llamada a la IAT de
+`USER32.CharUpperBuffW` en `0x66040fba`. El caso no cero salta a
+`0x6608d0f9`: llamadas declaradas a `WideCharToMultiByte`,
+`CharUpperBuffA` y `MultiByteToWideChar`, con cero en los argumentos de página
+de códigos/flags seleccionados. No se recuperan las tablas de Windows, la
+página efectiva ni sus resultados para caracteres concretos. La celda vale
+cero **en disco**, lo que no permite elegir la rama de una ejecución.
+
+La conversión de entrada `0x660387fc`, el helper de errores `0x6603852c` y
+la reserva auxiliar `0x6601170c` quedan sin expandir. No se atribuye una
+normalización exacta a partir del nombre `rtcUpperCaseVar` o de las IAT.
+
+### Siguiente unidad y límites conservados
+
+**Ahora:** atribuir el cuerpo de `_gaLstItem.x_Clave +0x38`, registro TypeLib
+`0xabcd8`, mediante su propia metadata/slot y anclajes de bytes. La declaración
+está cotejada; no hay todavía atribución de cuerpo aceptada. Seguir después
+las rutas `0x110708ff / 0x1107099f` de `xic_dimeClave`, llamadas delegadas
+`0x1107094a / +0x3c` y `0x110709d2 / +0x44`. No equiparar por nombre las
+claves de construcción, ordenación y búsqueda.
+
+Como fronteras secundarias concretas quedan el selector del normalizador
+desde `0x6602ce26` y ramas `0x66087fc6 / 0x66087fd7`, la conversión de entrada
+`0x660387fc` y el cuerpo externo del candidato `VarBstrCmp` anterior. No
+repetir el inicializador del comparador, las rutas del normalizador ya capturadas
+ni las unidades anteriores para alcanzar esas fronteras.
+
+**Después:** valores efectivos, agregados comerciales y persistencia durable.
+Se mantiene el orden acordado: completar contrato/implementación, comparar con
+Aluminior y después probar el software aislado. Ninguna de esas fases se ejecuta
+en esta unidad. E1 continúa `in_progress`, cargo desactivado y A–F/G1–G5/
+G6-incidencia preservados. Primera/última fila, colación y equivalencia de claves
+siguen abiertas. No hay ejecución Productor/DLL, COM, Automation, SQL o bases.
+
+### Evidencia ejecutada y preservación
+
+Evidencia privada nueva en `output/e1-keys-20261017/`. El director reproduce:
+
+- `comparator/verify_comparator.py --out <carpeta nueva dentro de comparator>`:
+  **68/68 comprobaciones**, **13 grupos de predicados**, **17/17 perturbaciones
+  en memoria rechazadas**, nueve capturas / 433 instrucciones / 1.456 bytes.
+- `normalization/verify.py --out <carpeta nueva dentro de normalization>`:
+  **68/68**, **22 predicados** y **22/22 perturbaciones en memoria rechazadas**,
+  seis capturas / 150 instrucciones / 406 bytes.
+
+Python siempre `-B`. Resultados del director en `comparator/director-initial/`
+y `normalization/director-initial/`; evidencia y desensamblados privados en
+`comparator/captured/` y `normalization/captured-frozen/`. Se cotejan los rangos
+completos contra los PE y predicados seleccionados independientemente de hashes.
+Hay solapes con la unidad anterior: **no sumar estas coberturas** ni confundirlas
+con exhaustividad causal. Cero pruebas funcionales y ningún arreglo de producto
+que revertir; suites de paquetes anteriores conservan sus fechas.
+
+`preserve.py` comprueba los cuatro índices **428/56/91/145**, los dos `.pyc`
+históricos y los árboles completos: **429/59/92/146/140 archivos**, incluidos
+índices y recibos posteriores. El sellado previo de 134 archivos y ocho documentos
+coincide con la línea base inicial. Recibo nuevo `preflight/preservation.json`;
+los índices protegidos no se regeneran ni se ejecutan colectores/verificadores
+anteriores con salidas en esos árboles. Los siguientes recibos usan carpetas
+nuevas y cotejo contra esa línea base. Las fuentes privadas no viajan por Git/July.
+
+### Revisión independiente y recibo de cierre de claves
+
+Revisión descontaminada de los ocho Markdown y artefactos contra contrato y
+evidencia cruda, sin informes/razonamiento de autores: `review/REPORT.md`.
+Sin hallazgos accionables en el alcance estático; ninguna corrección de candidato.
+Parser PE/TypeLib propio y cotejo de los 15 rangos; **2.477/2.477 comprobaciones**,
+**23/23 perturbaciones propias rechazadas en memoria**. Son controles estáticos
+parciales, sin pruebas funcionales ni cobertura causal exhaustiva.
+El control de `0x6602ce7e` no falla los predicados seleccionados y sí el cotejo
+completo de captura/hash; ese límite queda medido. Los errores de construcción
+del arnés independiente se conservan como intentos propios, no fallos de producto.
+
+El director reproduce el cierre con `python -B output/e1-keys-20261017/director_gate.py
+--out director-final --review-script review/gate.py --review-additive-receipts`.
+`director-final/gate.json` conserva comandos, códigos y stdout/stderr literales;
+los resúmenes iniciales de `review-input.json` se precisan en
+`review-input-clarification.json`. La reproducción independiente permite sólo
+inserciones de recibos en este documento y el relevo, preservando el texto
+revisado íntegro y registrando literalmente ese delta.
+
+Preservación final: cuatro índices 428/56/91/145 y cinco árboles completos
+429/59/92/146/140, sin diferencias contra la línea base. Barrido de 1.107
+versionados: ocho Markdown cambiados, 1.099 intactos, 292 enlaces locales y
+50 anclas válidos; `git diff --check` correcto. Los tres agentes terminaron y
+congelaron escrituras antes del commit. July conserva el mismo E1 `aluminior`
+por sync_uid, historia e `in_progress`, sin sincronizar. El cierre es un commit
+local con identidad de Sergio verificada; sin push. El sellado nuevo y recibos
+postcommit están bajo `output/e1-keys-20261017/`, fuera de árboles protegidos.

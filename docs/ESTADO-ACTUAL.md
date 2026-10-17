@@ -28,11 +28,15 @@ sigue AbreRS, la consulta a gaConfig, la recarga y la petición de índice Nombr
 La [unidad del índice](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#configuración-construcción-y-selección-del-índice)
 sigue configuración, construcción, partición/intercambio y devolución inmediata
 de posición ante igualdad. No prueba prioridad primera/última ni equivalencia
-de claves. Siguiente: comparador indirecto `0x6611463c`, normalización
-`0x66040f46` y clave de fila `_gaLstItem.x_Clave +0x38`; después valores
-efectivos, agregados y persistencia. Cargo desactivado, G6 protegido.
+de claves. La [continuación de comparación y normalización](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#comparación-y-normalización-de-claves)
+sigue la inicialización del comparador y las dos rutas del normalizador.
+No demuestra colación ni normalización efectivas. Siguiente: acreditar cuerpo
+de `_gaLstItem.x_Clave +0x38` y transformaciones `0x110708ff / 0x1107099f`,
+sin suponer equivalencia; después valores efectivos, agregados y persistencia.
+Cargo desactivado, G6 protegido.
 Evidencia privada: `output/e1-varformat-20261017/`, `output/e1-config-20261017/`
-y `output/e1-config-origin-20261017/`; unidad nueva en `output/e1-index-20261017/`.
+y `output/e1-config-origin-20261017/`; índice en `output/e1-index-20261017/`
+y continuación nueva en `output/e1-keys-20261017/`.
 
 [Relevo completo del 17/10 para otra conversación](paridad/RELEVO-REA-PRODUCTOR-2026-10-17.md):
 428, 56, 91 y 145 artefactos privados de los cuatro índices anteriores comprobados por tamaño y SHA-256; resultados de producto
@@ -317,8 +321,11 @@ seguidos en la [unidad de configuración](paridad/IMPLEMENTACION-CLONERSOFT-E1-2
 La [procedencia de la carga](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-y-precedencia-del-índice-de-configuración)
 ya está seguida en su alcance estático. La [unidad del índice](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#configuración-construcción-y-selección-del-índice)
 continúa construcción y selección; no repetir `xConfig`, ordenación ni búsqueda.
-Seguir comparador indirecto `0x6611463c`, normalización `0x66040f46` y
-`_gaLstItem.x_Clave +0x38`, sin suponer equivalencia de claves o prioridad de duplicados.
+La [continuación de claves](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#comparación-y-normalización-de-claves)
+sigue inicializador del comparador y bifurcación del normalizador; no repetirlos.
+Seguir `_gaLstItem.x_Clave +0x38` (TypeLib `0xabcd8`) y transformaciones
+`0x1107094a / +0x3c`, `0x110709d2 / +0x44`, sin suponer equivalencia de claves
+o prioridad de duplicados. La semántica externa y valores runtime siguen abiertos.
 Las cuatro escalas efectivas siguen sin demostrar. Después, entrada de agregados comerciales.
 No repetir integración `fa32fba`, preparación, wrappers/getters, declaraciones,
 WORD de tabla auxiliar, selector `rsTabla`, enlaces delegados, máscaras,
