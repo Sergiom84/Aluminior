@@ -25,13 +25,17 @@ importe comercial. La [unidad posterior de configuración](paridad/IMPLEMENTACIO
 identifica `gaConfigDAL.Carga` y demuestra el uso condicionado del BSTR `2`
 como fallback; no demuestra escalas efectivas iguales a dos. La [unidad de procedencia](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-y-precedencia-del-índice-de-configuración)
 sigue AbreRS, la consulta a gaConfig, la recarga y la petición de índice NombreDato.
-Siguiente: orden y duplicados dentro del índice, desde gaLstIndice.xConfig;
-después valores efectivos, agregados y persistencia. Cargo desactivado, G6 protegido.
+La [unidad del índice](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#configuración-construcción-y-selección-del-índice)
+sigue configuración, construcción, partición/intercambio y devolución inmediata
+de posición ante igualdad. No prueba prioridad primera/última ni equivalencia
+de claves. Siguiente: comparador indirecto `0x6611463c`, normalización
+`0x66040f46` y clave de fila `_gaLstItem.x_Clave +0x38`; después valores
+efectivos, agregados y persistencia. Cargo desactivado, G6 protegido.
 Evidencia privada: `output/e1-varformat-20261017/`, `output/e1-config-20261017/`
-y `output/e1-config-origin-20261017/`.
+y `output/e1-config-origin-20261017/`; unidad nueva en `output/e1-index-20261017/`.
 
 [Relevo completo del 17/10 para otra conversación](paridad/RELEVO-REA-PRODUCTOR-2026-10-17.md):
-428, 56 y 91 artefactos privados de los tres índices anteriores comprobados por tamaño y SHA-256; resultados de producto
+428, 56, 91 y 145 artefactos privados de los cuatro índices anteriores comprobados por tamaño y SHA-256; resultados de producto
 del 16/10 conservados con su fecha, sin nueva ejecución de suites.
 
 [Informe REA](paridad/INVESTIGACION-REA-PRODUCTOR-2026-10-16.md) y
@@ -311,8 +315,10 @@ ampliados el 17/10; empates/localización efectiva permanecen sin ensayo.
 Proveedor `gaConfigDAL.Carga` y fallback condicionado del argumento BSTR `2`
 seguidos en la [unidad de configuración](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#proveedor-de-configuración-y-argumento-2).
 La [procedencia de la carga](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-y-precedencia-del-índice-de-configuración)
-ya está seguida en su alcance estático. Continuar por orden y duplicados del índice:
-`gaLst.xcfg_IDX_addIndice +0x64` → `gaLstIndice.xConfig +0x3c`.
+ya está seguida en su alcance estático. La [unidad del índice](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#configuración-construcción-y-selección-del-índice)
+continúa construcción y selección; no repetir `xConfig`, ordenación ni búsqueda.
+Seguir comparador indirecto `0x6611463c`, normalización `0x66040f46` y
+`_gaLstItem.x_Clave +0x38`, sin suponer equivalencia de claves o prioridad de duplicados.
 Las cuatro escalas efectivas siguen sin demostrar. Después, entrada de agregados comerciales.
 No repetir integración `fa32fba`, preparación, wrappers/getters, declaraciones,
 WORD de tabla auxiliar, selector `rsTabla`, enlaces delegados, máscaras,

@@ -11,11 +11,15 @@ acredita máscaras/Variant/cadena de conversión y contrato público, con límit
 de empates y localización efectiva aún abiertos. La [unidad posterior de configuración](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#proveedor-de-configuración-y-argumento-2)
 identifica `gaConfigDAL.Carga` y prueba el fallback condicionado del BSTR `2`;
 no demuestra escalas efectivas iguales a dos. La [unidad de procedencia](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-y-precedencia-del-índice-de-configuración)
-sigue AbreRS, consulta y carga de lista con índice NombreDato. Próxima unidad:
-orden y duplicados internos del índice desde gaLstIndice.xConfig +0x3c. No repetir
+sigue AbreRS, consulta y carga de lista con índice NombreDato. La [unidad del índice](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#configuración-construcción-y-selección-del-índice)
+sigue configuración/construcción, partición/intercambio y selección de posición
+ante igualdad; no demuestra prioridad primera/última ni equivalencia de claves.
+Próxima unidad: comparador indirecto `0x6611463c`, normalización `0x66040f46`
+y `_gaLstItem.x_Clave +0x38` (registro TypeLib `0xabcd8`). No repetir `xConfig`,
+construcción, ordenación, búsqueda,
 AbreRS/carga, proveedor/argumento `2` ni máscaras/helpers/650. Evidencias nuevas en
-`output/e1-config-origin-20261017/`; los tres índices anteriores, 428, 56 y 91
-artefactos, conservan tamaño y SHA-256.
+`output/e1-config-origin-20261017/` y `output/e1-index-20261017/`; los cuatro índices
+anteriores, 428, 56, 91 y 145 artefactos, conservan tamaño y SHA-256.
 El alcance estático, cargo desactivado y protección de G6 siguen vigentes.
 
 ## Encargo para la nueva conversación
@@ -59,6 +63,11 @@ La unidad posterior de configuración empezó en `1bb9b29`, misma rama y árbol
 limpio, comprobados directamente. La unidad de procedencia parte de `18accbc`,
 misma rama y árbol limpio comprobados el 17/10, sin forzar ningún valor Git. Su documentación y evidencias nuevas se
 conservan en este worktree; los commits y resultados anteriores mantienen su fecha.
+
+La unidad del índice parte de `a060a09854e77662fd2014ed35abf62498fdf01a`, misma
+rama y árbol inicial limpio comprobados. No fuerza esa identidad ni altera WIP.
+Su contrato y capturas nuevas están en `output/e1-index-20261017/`; sigue siendo
+investigación estática/documental, sin pruebas funcionales del legado.
 
 `C:\Productor\Aluminio` es una junction al árbol MIX anterior: no son dos
 instalaciones ni dos muestras independientes. Todas las escrituras de la nueva
@@ -216,6 +225,16 @@ commit no entrega los 428 archivos ni las evidencias anteriores. Si faltan,
 identificar la ruta exacta y resolver su transporte autorizado; no inventar
 resultados, recrear datos empresariales o ejecutar una extracción masiva a ciegas.
 
+La unidad del índice comprueba **428/428, 56/56, 91/91 y 145/145** artefactos
+antes de investigar, incluidos los índices sin regenerar; conserva además los
+dos `.pyc` antiguos fuera del índice de formato. El verificador nuevo
+`output/e1-index-20261017/verify_integrity.py` compara contra
+`preflight/integrity.json`, con salida siempre nueva dentro de esa unidad.
+La evidencia reproducible del índice está en `behavior/captured-frozen/`;
+el director reproduce 130 comprobaciones y 30 perturbaciones en memoria,
+con 15 capturas / 3.833 instrucciones únicas. El cotejo PE independiente del
+director cubre esas mismas capturas; los conteos no se suman como cobertura.
+
 ## Lo que queda por hacer
 
 ### Ahora
@@ -228,9 +247,13 @@ No repetir esas unidades. Elegir una pregunta pendiente y cerrar una sola unidad
    máscaras/Variant, flags y contrato público de localización. No repetir esa
    extracción; conservar formato → conversión → escritura. Empates y localización
    efectiva siguen pendientes de un ensayo aislado autorizado, sin redondeo supuesto.
-2. Proveedor y argumento `2`, AbreRS y carga de lista/índice NombreDato seguidos
-   estáticamente. No repetirlos. Seguir orden y duplicados internos del índice:
-   `gaLst.xcfg_IDX_addIndice +0x64` → `gaLstIndice.xConfig +0x3c`.
+2. Proveedor y argumento `2`, AbreRS, carga de lista y configuración/construcción,
+   ordenación y búsqueda del índice seguidos estáticamente. No repetirlos.
+   Seguir comparación/normalización: puntero `0x6611463c` desde `0x66004ff8`,
+   delegado `0x66040f46` desde `0x66040f1c`, transformaciones en
+   `0x110708ff / 0x1107099f` y `_gaLstItem.x_Clave +0x38`, registro TypeLib
+   `0xabcd8`. No atribuir colación, prioridad primera/última ni equivalencia
+   de claves antes de cerrar esos cuerpos y sus premisas.
    Las cuatro RED efectivas siguen sin demostrar. El BSTR `2` no certifica escala
    dos; el selector BDtipo tampoco prueba backend ni configuración efectiva.
 3. Acreditar formación de agregados comerciales, cantidades, descuentos y

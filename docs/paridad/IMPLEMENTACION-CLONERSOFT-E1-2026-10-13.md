@@ -4,7 +4,7 @@
 La identidad y el estado global siguen en [E1 del roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md).
 El cargo de cabecera continúa abierto. Este contrato no acredita fabricación,
 aceptación Productor, publicación ni producción.
-La continuación vigente del 17/10 está en [Procedencia y precedencia del índice de configuración](#procedencia-y-precedencia-del-índice-de-configuración);
+La continuación vigente del 17/10 está en [Configuración, construcción y selección del índice](#configuración-construcción-y-selección-del-índice);
 las unidades del 13/10 y 14/10 siguientes conservan su evidencia y fecha.
 
 ## Base y contrato
@@ -942,8 +942,8 @@ importes, agregados comerciales o persistencia durable. E1 permanece
 `gaConfigDAL.AbreRS`, slot `+0x1c`, celda `0x11007d58` → thunk `0x11007dc0`
 → cuerpo `0x110615d0`. La [unidad de procedencia](#procedencia-y-precedencia-del-índice-de-configuración)
 acredita su consulta y carga dirigida; no volver a seleccionar AbreRS como tarea
-nueva. La resolución de orden/duplicados del índice y los valores efectivos
-siguen los límites y el siguiente anclaje de esa unidad. No reabrir `Carga`, el
+nueva. La continuación de [construcción y selección del índice](#configuración-construcción-y-selección-del-índice)
+actualiza su frontera; los valores efectivos siguen abiertos. No reabrir `Carga`, el
 argumento `2`, máscaras/helpers/650 o las unidades previas. No se autoriza leer
 bases de negocio. Agregados, persistencia y ensayo matemático aislado conservan
 sus alcances propios.
@@ -1060,12 +1060,13 @@ validez a la bandera preparada, ni atomicidad o persistencia a esta secuencia.
 
 ### Continuidad y aceptación
 
-**Siguiente unidad estática:** seguir orden y duplicados dentro del índice.
+**Frontera histórica, seguida en la unidad inferior:** orden y duplicados dentro del índice.
 Entrada: `gaLst.xcfg_IDX_addIndice +0x64`, cuerpo `0x110691d0`, que delega en
 `gaLstIndice.xConfig +0x3c`, celda `0x1100d600` → thunk `0x1100d81d` →
 cuerpo `0x11072920`. La metadata ya cotejada enlaza también `dimeIdxClave +0x2c`,
 celda `0x1100d5f0` → thunk `0x1100d781` → cuerpo `0x1106ff20`; su cuerpo no se
-ha leído en esta unidad. Reutilizar esos enlaces y seguir el comportamiento,
+había leído en aquella unidad. Los enlaces se reutilizan en
+[configuración, construcción y selección](#configuración-construcción-y-selección-del-índice),
 sin reabrir Carga ni el argumento `2`. Valores efectivos requieren evidencia propia sin abrir negocio bajo este
 alcance. Agregados, aceptación matemática y persistencia siguen en unidades
 posteriores; la comparación funcional y las pruebas con software se reservan
@@ -1129,3 +1130,152 @@ Los tres agentes han confirmado el fin de sus escrituras. El commit local se
 realiza tras el gate final del director y la comprobación de identidad Git;
 sin push, publicación o despliegue. E1 económico sigue abierto, cargo desactivado
 y G6-incidencia protegido.
+
+## Configuración, construcción y selección del índice
+
+Unidad estática/documental del **17/10/2026**, desde
+`a060a09854e77662fd2014ed35abf62498fdf01a`, rama comprobada
+`codex/rea-productor-20261016`, árbol inicial limpio. Contrato previo a las
+escrituras en `output/e1-index-20261017/CONTRATO.md`. Se reutiliza la atribución
+de `output/e1-config-origin-20261017/abre-rs/evidence.json`; no se repiten
+AbreRS/carga, proveedor/argumento `2`, formato ni las otras unidades cerradas.
+Sin código de producto, ejecución del legado, carga de DLL, COM, SQL o bases.
+
+### Identidad y etapas separadas
+
+Lectura directa de los PE, sin cargarlos:
+
+| PE seleccionado | Bytes | SHA-256 |
+|---|---:|---|
+| `gaBBDD.dll` | 794.624 | `dc1f4be67fc7b25f8464a686bf890ca7a1bdf15bf267928bbb35fd62169efb95` |
+| `msvbvm60.dll` | 1.436.032 | `898288bd3b21d0e7d5f406df2e0b69a5bbfa4f241baf29a2cdf8a3cf4d4619f2` |
+
+| Etapa | Evidencia y alcance |
+|---|---|
+| Declaración | TypeLib `_gaLstIndice`, IID `a7492311-f0e2-45ca-b8b9-6415ad6412a9`; enlaces previos `xConfig +0x3c` y `dimeIdxClave +0x2c` reutilizados bajo el mismo hash PE |
+| Inicialización/comprobación | `dimeIdxClave` llama al privado `+0x68`, cuerpo `0x11071380`: si `this+0x44` no es cero, solicita reconstruir y limpia ese WORD (`0x110713cd–0x110713f1`). No prueba un evento automático ni una instancia ejecutada |
+| Configuración | `xConfig`, cuerpo `0x11072920`, prepara campos y llama `construyeIndice +0x38` en `0x11072e32`; guarda las opciones de actualización/reconstrucción después de construir, en `0x11072e44–0x11072e56` |
+| Construcción | `construyeIndice`, cuerpo `0x11070e30`, prepara entradas con paso de 12 bytes y conserva la posición de la lista; llama al ordenador privado `+0x6c`, cuerpo `0x110714a0`, en `0x110711e5` |
+| Selección | `dimeIdxClave`, cuerpo `0x1106ff20`, obtiene la clave mediante `xic_dimeClave +0x34` y busca mediante `+0x78`, cuerpo `0x11071b00`; distingue el indicador de coincidencia y el resultado sin coincidencia |
+| Valores efectivos | No se han observado filas, las cuatro RED, una conexión activa ni un resultado comercial; las declaraciones y argumentos estáticos no suplen esa evidencia |
+
+### Orden, comparación y duplicados
+
+La ordenación delega en partición `+0x70`, cuerpo `0x11071640`, e intercambio
+`+0x74`, cuerpo `0x11071840`. La construcción obtiene la clave de fila mediante
+`gaLstItem.x_Clave +0x38` (`0x1107103f`), conserva el string en `+8` y prepara
+una clave decorada en `+4`: posición original como Variant `0x4003`, máscara
+`0000000000`, llamada al ordinal 660 y concatenación (`0x110710f9–0x11071191`).
+Esto acredita los argumentos de decoración, sin reinterpretar su formato ni
+deducir por él una prioridad de duplicados. Después de ordenar, copia `+8` a
+`+4` (`0x11071274–0x1107127c`); la correspondencia con la fila movida no se
+deduce de esa copia.
+
+La consulta obtiene la clave buscada mediante `xic_dimeClave`, cuerpo
+`0x11070520`. La búsqueda vuelve a pedir la clave de fila a `gaLstItem.x_Clave`
+mediante `gaLstIndice.Item`, que traduce su posición usando el mapa original
+(`0x1106fc66–0x1106fc6b`). **La equivalencia de las claves de construcción y
+búsqueda sigue abierta** hasta seguir el cuerpo de `gaLstItem.x_Clave` y las
+transformaciones delegadas; no se infiere por sus nombres.
+
+Las comparaciones seleccionadas llegan por IAT `0x11001104` a la exportación
+`__vbaStrCmp`, entrada `0x6601d8e2`, y al delegado `0x66004fdc` del runtime
+identificado por hash. Ese delegado llama indirectamente mediante
+`0x6611463c`, en `0x66004ff8`. Queda acreditado el enlace y el uso del signo/
+igualdad devueltos; **no una colación textual exacta, sensibilidad a mayúsculas,
+acentos o configuración regional**, mientras no se siga ese destino.
+
+En la búsqueda `+0x78`, la igualdad en el punto medio lleva a `0x110720c3`:
+se devuelve esa posición y se marca coincidencia sin recorrer los extremos
+en esa rama. En el tramo adyacente se comprueba el extremo inferior y después
+el superior (`0x11071f13` / `0x11071fb6`). Es una selección de posición del
+algoritmo bajo sus premisas; **no demuestra «gana la primera fila» ni «gana la
+última fila»** ante duplicados de negocio. No se deduce unicidad, prioridad
+estable o valor efectivo de esa secuencia.
+
+### Siguiente anclaje y aceptación
+
+**Siguiente unidad estática acotada:** resolver el despacho de comparación
+del runtime mediante `0x6611463c` desde la llamada `0x66004ff8`, y la
+normalización delegada desde `0x66040f1c` a `0x66040f46`. En el generador de
+claves quedan las rutas de transformación en `0x110708ff` y `0x1107099f`,
+con llamadas delegadas en `0x1107094a / +0x3c` y `0x110709d2 / +0x44`.
+Para la clave de fila, continuar desde `_gaLstItem.x_Clave +0x38`, registro
+TypeLib `0xabcd8`, acreditando su cuerpo antes de afirmar equivalencia.
+Conservar identidad PE y separar esos frentes; no repetir `xConfig`,
+construcción, partición/intercambio ni búsqueda para llegar a ellos.
+
+Después permanecen valores efectivos, aceptación matemática, agregados y
+persistencia. El orden acordado sigue siendo completar contrato e
+implementación, comparar con Aluminior y después ensayar el software en un
+entorno aislado; esas fases no se autorizan ni ejecutan en esta unidad.
+E1 continúa `in_progress`, cargo desactivado y A–F/G1–G5/G6-incidencia preservados.
+
+### Evidencia de esta unidad
+
+Evidencia privada nueva en `output/e1-index-20261017/`, fuera de los cuatro
+árboles protegidos. La captura reproducible nueva es
+`behavior/capture-index.py --out <carpeta nueva dentro de behavior>`; el conjunto
+entregado está en `behavior/captured-frozen/evidence.json`. Los scripts se
+ejecutan con `python -B` y rechazan sobrescrituras. No ejecutar colectores
+anteriores como verificadores ni escribir en las carpetas protegidas.
+
+El cotejo independiente del director con `verify_frozen_captures.py` verifica
+las **15 capturas, 3.833 instrucciones únicas y 11.492 bytes** contra los PE y
+su desensamblado. `verify_captures.py` verifica además las 11 capturas
+exploratorias de gaBBDD: 3.670 instrucciones; rechaza cuatro perturbaciones
+estructurales en memoria (byte capturado, dirección, mnemónico y byte fuente).
+Estos conjuntos se solapan y **no se suman** como cobertura. Son verificaciones
+estáticas; **cero pruebas funcionales** y ningún arreglo de producto que revertir.
+
+El director reproduce además
+`python -B output/e1-index-20261017/behavior/verify-index.py --out output/e1-index-20261017/behavior/director-gate`:
+salida 0, **130/130 comprobaciones**, **30 predicados seleccionados** sobre operandos/ramas
+y **30/30 perturbaciones rechazadas en memoria**. Cada perturbación registra
+los predicados que fallan; se evalúan sin depender del rechazo por hash PE.
+Este gate comparte las mismas 15 capturas y no añade cobertura sumable.
+
+Integridad inicial: **428/428, 56/56, 91/91 y 145/145**, respectivamente
+100.492.633, 836.521, 2.139.830 y 945.905 bytes, sin diferencias de tamaño/
+SHA-256. También se conservan los dos `.pyc` antiguos fuera del índice de
+formato. Recibo `preflight/integrity.json`; los índices no se regeneran.
+La comprobación final usa una salida nueva y compara con ese recibo.
+Las evidencias privadas no viajan en el commit ni mediante July.
+
+### Revisión independiente y cierre local
+
+El candidato de ocho documentos se revisa mediante ARTEFACTO + CONTRATO +
+EVIDENCIA, sin razonamiento ni informe del autor. No hay hallazgos accionables
+en el alcance estático; se conserva `review/INFORME.md`. El director reproduce
+`python -B output/e1-index-20261017/review/review-verifier.py --out output/e1-index-20261017/review/director-reproduced`:
+salida 0, **15 capturas / 3.833 instrucciones / 11.492 bytes**, **27 slots**,
+ocho grupos de anclajes y **60 perturbaciones estructurales rechazadas**.
+El arnés reproduce también el gate 130/130 y los cuatro verificadores raíz.
+No son conteos de funcionalidad ni coberturas sumables.
+
+La revisión mide un límite de las 30 reglas: alterar en memoria las llamadas/
+saltos de `0x11071d96`, `0x11071f5d` o `0x110719ce` no hace fallar esos
+predicados seleccionados; el cotejo completo de sus capturas sí lo rechaza.
+No se atribuye cobertura causal exhaustiva al verificador. Los intentos
+incompletos de su arnés se conservan, con sus errores y correcciones propios;
+no se modifica el lector ni la evidencia anterior para hacerlos pasar.
+
+Tras la revisión sólo se precisa el término «rutas» para los dos anclajes de
+transformación y se añade este recibo; no se amplían conclusiones de negocio.
+Los ocho documentos activos enlazan la nueva frontera y conservan la historia.
+El barrido de 1.107 archivos versionados acredita ocho Markdown cambiados y
+1.099 intactos; 280 rutas locales enlazadas existentes y `git diff --check`
+correcto. No se repiten suites de producto ni se cambia su fecha histórica.
+
+Los cuatro índices anteriores y todos sus artefactos se cotejan de nuevo con
+el recibo inicial; **428/428, 56/56, 91/91 y 145/145**, sin diferencias,
+incluidos los dos `.pyc` antiguos conservados fuera del índice de formato.
+El gate final del director se guarda en `review/director-final/`, con salida
+nueva. El sellado nuevo de esta unidad no regenera ninguno de aquellos índices.
+
+July: mismo E1 de `aluminior`, sync_uid `398049fbd618069e36bb84bab37913ed`,
+localizado y actualizado con historia conservada y lectura posterior exacta;
+estado `in_progress`, sin sincronización. Recibo privado `july-readback.json`.
+Los agentes han terminado y sus escrituras están congeladas. El cierre Git
+local se hace tras comprobar identidad de Sergio, diff, integridad y gate;
+sin push ni despliegue. Cargo desactivado y G6-incidencia preservado.

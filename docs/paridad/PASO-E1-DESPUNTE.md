@@ -10,9 +10,12 @@ amplía máscaras/Variant y contrato público de formato, sin cerrar empates ni
 localización efectiva. La [unidad posterior de configuración](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#proveedor-de-configuración-y-argumento-2)
 identifica `gaConfigDAL.Carga` y acredita el fallback condicionado del BSTR `2`,
 sin demostrar las cuatro escalas efectivas. La [unidad de procedencia](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-y-precedencia-del-índice-de-configuración)
-sigue AbreRS y la carga de lista con índice NombreDato. Siguiente unidad estática:
-orden y duplicados del índice desde gaLstIndice.xConfig +0x3c; después valores
-efectivos y entrada de agregados. No repetir AbreRS/carga de lista ni
+sigue AbreRS y la carga de lista con índice NombreDato. La [unidad del índice](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#configuración-construcción-y-selección-del-índice)
+sigue configuración/construcción, ordenación y selección de posición; no prueba
+prioridad primera/última ni equivalencia de claves. Siguiente unidad estática:
+comparador `0x6611463c`, normalización `0x66040f46` y `_gaLstItem.x_Clave +0x38`;
+después valores efectivos y entrada de agregados. No repetir `xConfig`,
+construcción/búsqueda, AbreRS/carga de lista ni
 inventarios/literales/preparación pura/declaraciones ni proveedor/argumento `2`. El procedimiento
 de observación siguiente es una vía separada y necesita autorización propia.
 Ya se entregó la

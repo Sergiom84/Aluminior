@@ -6,12 +6,17 @@ después de la unidad de formato. `gaConfigDAL.Carga` y el fallback condicionado
 del BSTR `2` están seguidos; no demuestran escalas efectivas iguales a dos.
 La [unidad de procedencia](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-y-precedencia-del-índice-de-configuración)
 sigue AbreRS y carga de lista con índice NombreDato. No repetir esa carga,
-máscaras/Variant/helpers/650 ni proveedor/argumento `2`. Siguiente análisis:
-orden/duplicados del índice desde gaLstIndice.xConfig +0x3c. Empates y
+máscaras/Variant/helpers/650 ni proveedor/argumento `2`. La [unidad del índice](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#configuración-construcción-y-selección-del-índice)
+sigue configuración/construcción, ordenación y búsqueda sin acreditar prioridad
+primera/última o equivalencia de claves. Siguiente: comparador `0x6611463c`,
+normalización `0x66040f46` y `_gaLstItem.x_Clave +0x38`; no repetir `xConfig`.
+Empates y
 localización efectiva siguen sin ensayo; cargo desactivado y G6 protegido.
 Reúne rutas, trabajo realizado, evidencias comprobadas, límites y continuación;
 el roadmap mantiene los estados únicos. Comprobación local del 17/10:
-428, 56 y 91 artefactos de los tres índices privados anteriores intactos, sin repetir suites de producto.
+428, 56, 91 y 145 artefactos de los cuatro índices privados anteriores intactos,
+incluidos los dos `.pyc` antiguos conservados fuera del índice de formato;
+evidencia nueva en `output/e1-index-20261017/`, sin repetir suites de producto.
 
 Investigación REA del **16/10**, en worktree separado
 `C:\Users\sergi\.codex\worktrees\rea-productor-20261016\Aluminior`, rama

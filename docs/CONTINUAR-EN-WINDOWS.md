@@ -157,9 +157,12 @@ acredita máscaras/Variant y contrato público, sin empates/localización efecti
 observados. La [unidad posterior de configuración](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#proveedor-de-configuración-y-argumento-2)
 identifica `gaConfigDAL.Carga` y el fallback condicionado del BSTR `2`; no
 demuestra escalas efectivas iguales a dos. La [procedencia de carga](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-y-precedencia-del-índice-de-configuración)
-ya sigue AbreRS y la petición de índice NombreDato. Continuar por orden y duplicados
-del índice desde gaLstIndice.xConfig +0x3c; después valores efectivos, agregados
-y persistencia. No repetir AbreRS/carga de lista, proveedor/argumento `2` ni unidades anteriores.
+ya sigue AbreRS y la petición de índice NombreDato. La [unidad del índice](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#configuración-construcción-y-selección-del-índice)
+sigue construcción/ordenación y selección de posición, sin prioridad primera/última
+ni equivalencia de claves demostradas. Continuar por comparador `0x6611463c`,
+normalización `0x66040f46` y `_gaLstItem.x_Clave +0x38`; después valores efectivos,
+agregados y persistencia. No repetir `xConfig`, construcción/búsqueda,
+AbreRS/carga de lista, proveedor/argumento `2` ni unidades anteriores.
 El selector independiente de registros de tarifa dinámica ya está implementado
 y verificado localmente; no activar precios a partir de esa selección.
 Los pasos de observación siguientes son una vía separada y conservan la
