@@ -19,8 +19,10 @@ atribuye el cuerpo propio de `x_Clave` y sigue proveedor/slots de transformació
 Los [predicados internos de rellena](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#predicados-internos-de-rellena)
 ya tienen condiciones y ramas seguidas estáticamente. La [frontera WCTMB](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#frontera-widechartomultibyte)
 acredita contrato público y enlace candidato ApiSet. La [procedencia del estado](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-del-estado-de-kernelbase)
-acredita escrituras y fallback condicionados de las dos celdas. Siguiente:
-procedencia inmediata del byte `0x102838ce`, leído en `KernelBase.dll 0x1015c40e`.
+acredita escrituras y fallback condicionados de las dos celdas. La
+[procedencia del selector](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-del-byte-selector-de-kernelbase)
+acredita una escritura literal condicionada a `1`. Siguiente: procedencia del
+DWORD dinámico leído en `0x1015b9b1`, con puntero tomado en `0x1015b9a8`.
 Estado efectivo, campo `FS:[0x30]+0x228` y resultados del helper siguen abiertos.
 No repetir escrituras de las dos celdas, contrato/enlace ni predicados.
 Después valores efectivos, equivalencia y entrada de agregados. No repetir estos cuerpos ni `xConfig`,

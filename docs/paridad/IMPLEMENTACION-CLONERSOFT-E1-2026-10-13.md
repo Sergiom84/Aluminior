@@ -1889,6 +1889,9 @@ aislado mantienen su orden como fases posteriores fuera de esta unidad.
 
 ## Procedencia del estado de KernelBase
 
+Antecedente histórico; no ejecutar como lista de tareas. Su continuidad queda
+en la [unidad del selector](#procedencia-del-byte-selector-de-kernelbase).
+
 Unidad estática del **17/10/2026**, base `88f077f4a0646e0a66553599e78ee20297ab9ded`,
 rama `codex/rea-productor-20261016`, árbol inicial limpio. Continúa exclusivamente
 desde las lecturas `0x10148768 / 0x1014876e` de las celdas `0x10282d08 / 0x10284990`.
@@ -1981,12 +1984,85 @@ Se cotejan seis PE, vendor, checkout original y los 1.099 versionados ajenos
 a los ocho documentos. Las suites de producto anteriores conservan su fecha;
 no se vuelven a presentar como ejecutadas en esta entrega documental.
 
-**Ahora:** procedencia inmediata del **byte `0x102838ce`**, leído en
-**`KernelBase.dll 0x1015c40e`**. Localizar y acreditar su escritor y dependencia
-inmediata, deteniéndose ante otra frontera. No repetir la unidad de las dos
-celdas, WCTMB, ApiSet o predicados ni ampliar a NLS global.
+**Antecedente histórico:** la procedencia del byte fue continuada en la
+[unidad del selector](#procedencia-del-byte-selector-de-kernelbase). No repetir
+las dos celdas, WCTMB, ApiSet o predicados ni ampliar a NLS global.
 **Después:** campo `FS:[0x30]+0x228`, resultados del helper, resolución/carga,
 conversión efectiva, equivalencia, escalas, agregados y persistencia.
 E1 sigue `in_progress`, cargo desactivado y A–F/G1–G5/G6-incidencia preservados.
 Contrato/implementación, contraste con Aluminior y pruebas aisladas permanecen
 como bloques posteriores; esta unidad no los ejecuta ni los autoriza.
+
+## Procedencia del byte selector de KernelBase
+
+Unidad estática del **17/10/2026**, base `3dff26755b70a8d72e10fc2aaffbe23b1f94ced9`,
+rama `codex/rea-productor-20261016`, árbol inicial limpio. Continúa exclusivamente
+desde el byte `0x102838ce`, leído en `KernelBase.dll 0x1015c40e`.
+Evidencia privada nueva: `output/e1-kernelbase-selector-20261017/`.
+
+### Escritura del selector y alcance
+
+Fuente: `C:\Windows\SysWOW64\KernelBase.dll`, 3.007.824 bytes, SHA-256
+`5be784046dc9731d1c36e872a8022065ed4a733707b1e467b30a96588714b137`,
+PE32/x86, base preferida `0x10000000`. Se buscan los cuatro octetos de la VA
+literal del selector en todo el archivo y se clasifican las instrucciones
+observadas: **18 coincidencias, 17 lecturas de byte y una escritura de byte**.
+La escritura está en `0x1015b9b6` y almacena `1`; no se observa una escritura
+literal de cero ni escape inmediato literal en ese conjunto. Esto no excluye
+alias, direcciones calculadas, escrituras indirectas o más anchas solapadas,
+ni acredita alcanzabilidad global, unicidad absoluta o ejecución.
+
+El selector cae en la cola virtual de `.data`, sin bytes raw que correspondan
+a su dirección. No se convierte esa ausencia en un valor inicial observado
+ni en prueba de que Productor use cero o uno.
+
+### Dependencia inmediata de la escritura
+
+La ruta local capturada parte de `0x1015b8a5`. ESI recibe `FS:[0x30]` en
+`0x1015b8bc`; el EDX de entrada se copia a EBX, luego a EAX, y EBX se pone a
+cero. El despachador salta a `0x1015b9a8` cuando ese EDX de entrada vale `1`.
+No se reconstruyen otras rutas o el ciclo de carga del módulo.
+
+| Punto | Relación acreditada en esa ruta |
+|---|---|
+| `0x1015b9a8` | EAX recibe el puntero almacenado en `[ESI+0x10]` |
+| `0x1015b9b1` | Compara el DWORD dinámico de `[EAX+8]` con EBX, que vale cero en la ruta seguida |
+| `0x1015b9b4` | `JGE` omite la escritura cuando ese DWORD es no negativo como entero con signo |
+| `0x1015b9b6` | Almacena `1` en el selector si el DWORD es negativo, condicionado a alcanzar el tramo por la ruta descrita |
+
+El criterio es el signo del DWORD, equivalente a su bit 31 bajo esas premisas;
+no es una prueba de cualquier valor distinto de cero. El salto conserva el
+valor previo del selector; no escribe cero. No se atribuyen nombre de estructura,
+nombre del campo, valor real o procedencia externa al DWORD ni al puntero.
+
+Un call relativo candidato en `0x1015b819` apunta a `0x1015b8a5`. El tramo
+capturado transmite ESI del llamador a EDX, pero no demuestra que ESI valga uno,
+que exista un camino ejecutado desde el entrypoint ni el orden respecto a la
+lectura posterior. Las direcciones son del mapa preferido del archivo.
+
+### Evidencia, preservación y límites de verificación
+
+Las capturas y sus bytes privados se conservan en `static/captured/`; el
+contrato, baseline fijo, gates, revisión independiente y recibos del director
+están en la carpeta nueva. Los gates de relaciones semánticas se acompañan
+de perturbaciones en memoria y controles que miden sus límites. Sus conteos
+son comprobaciones estáticas parciales y solapadas, nunca pruebas funcionales
+de Productor ni porcentajes de paridad. El gate documental recorre el árbol
+Markdown real y comprueba enlaces, anchors e instrucciones agotadas.
+
+Se preservan los diez árboles completos **429/59/92/146/140/77/127/374/189/198**,
+1.831 archivos, incluidos sellos y recibos posteriores. Los cuatro índices
+428/56/91/145 no se regeneran. Se cotejan seis PE, vendor, checkout original
+y los 1.099 versionados ajenos a los ocho documentos. Python siempre `-B`,
+sin ejecutar/importar scripts históricos, cargar DLL objetivo o ejecutar legado.
+Las pruebas de producto anteriores conservan su fecha; no se presentan como
+reproducidas en esta entrega documental. Nuevo sello y recibos posteriores
+registran el HEAD de cierre y el inventario final de esta unidad privada.
+
+**Ahora:** procedencia inmediata del **DWORD leído en `0x1015b9b1` (`[EAX+8]`)**,
+con puntero tomado en **`0x1015b9a8` (`[ESI+0x10]`)** y ESI de `FS:[0x30]` en
+`0x1015b8bc`. Acreditar identidad/origen inmediato del campo, deteniéndose
+ante otra frontera. No repetir selector, dos celdas, WCTMB, ApiSet o predicados;
+no NLS global. **Después:** campo `FS:[0x30]+0x228`, resultados del helper,
+resolución/carga, conversión efectiva, equivalencia, escalas, agregados y persistencia.
+E1 sigue `in_progress`, cargo desactivado y A–F/G1–G5/G6-incidencia preservados.

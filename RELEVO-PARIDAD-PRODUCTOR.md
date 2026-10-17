@@ -16,8 +16,10 @@ Los [predicados internos de rellena](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2
 ya tienen declaraciones, cuerpos, argumentos y condiciones seguidos estáticamente.
 La [frontera WCTMB](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#frontera-widechartomultibyte)
 acredita contrato público y enlace candidato ApiSet. La [procedencia del estado](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-del-estado-de-kernelbase)
-acredita escrituras y fallback condicionados de las dos celdas. Siguiente:
-procedencia inmediata del byte `0x102838ce`, leído en `KernelBase.dll 0x1015c40e`.
+acredita escrituras y fallback condicionados de las dos celdas. La
+[procedencia del selector](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-del-byte-selector-de-kernelbase)
+acredita una escritura literal condicionada a `1`. Siguiente: procedencia del
+DWORD dinámico leído en `0x1015b9b1`, con puntero tomado en `0x1015b9a8`.
 Estado efectivo, campo `FS:[0x30]+0x228` y resultados del helper siguen abiertos.
 No repetir contrato/enlace WCTMB, predicados, cuerpos ni `xConfig`.
 Empates y
@@ -27,8 +29,8 @@ el roadmap mantiene los estados únicos. Comprobación local del 17/10:
 428, 56, 91 y 145 artefactos de los cuatro índices privados anteriores intactos,
 incluidos los dos `.pyc` antiguos conservados fuera del índice de formato;
 índice íntegro de 140 archivos conservado; evidencia nueva en
-`output/e1-kernelbase-state-20261017/`; nueve árboles históricos completos
-429/59/92/146/140/77/127/374/189 preservados, sin repetir suites de producto.
+`output/e1-kernelbase-selector-20261017/`; diez árboles históricos completos
+429/59/92/146/140/77/127/374/189/198 preservados, sin repetir suites de producto.
 Capturas, revisión y recibos nuevos permanecen privados; commit local sin push.
 
 Investigación REA del **16/10**, en worktree separado
