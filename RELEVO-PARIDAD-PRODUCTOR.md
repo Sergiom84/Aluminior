@@ -10,8 +10,10 @@ máscaras/Variant/helpers/650 ni proveedor/argumento `2`. La [unidad del índice
 sigue configuración/construcción, ordenación y búsqueda sin acreditar prioridad
 primera/última o equivalencia de claves. La [continuación de claves](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#comparación-y-normalización-de-claves)
 sigue inicializador del comparador y bifurcación del normalizador; no repetirlos.
-Siguiente: atribuir cuerpo de `_gaLstItem.x_Clave +0x38` (TypeLib `0xabcd8`)
-y transformaciones `0x1107094a / +0x3c`, `0x110709d2 / +0x44`; no repetir `xConfig`.
+La [unidad de fila y delegados](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#clave-de-fila-y-transformaciones-del-índice)
+atribuye `_gaLstItem.x_Clave +0x38` a `0x11074c00` y sigue las transformaciones.
+Siguiente: predicados `gaVarios +0x48` (`0x1100d1ae / 0x1100d38a`) y `+0x4c`
+(`0x1100d17b`), con equivalencia aún abierta. No repetir cuerpos ni `xConfig`.
 Empates y
 localización efectiva siguen sin ensayo; cargo desactivado y G6 protegido.
 Reúne rutas, trabajo realizado, evidencias comprobadas, límites y continuación;
@@ -19,7 +21,8 @@ el roadmap mantiene los estados únicos. Comprobación local del 17/10:
 428, 56, 91 y 145 artefactos de los cuatro índices privados anteriores intactos,
 incluidos los dos `.pyc` antiguos conservados fuera del índice de formato;
 índice íntegro de 140 archivos conservado; evidencia nueva en
-`output/e1-keys-20261017/`, sin repetir suites de producto.
+`output/e1-rowkeys-20261017/`, preservando también los 77 archivos completos
+de `output/e1-keys-20261017/`, sin repetir suites de producto.
 
 Investigación REA del **16/10**, en worktree separado
 `C:\Users\sergi\.codex\worktrees\rea-productor-20261016\Aluminior`, rama

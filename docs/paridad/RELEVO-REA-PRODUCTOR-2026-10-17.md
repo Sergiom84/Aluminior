@@ -16,13 +16,16 @@ sigue configuración/construcción, partición/intercambio y selección de posic
 ante igualdad; no demuestra prioridad primera/última ni equivalencia de claves.
 La [continuación de claves](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#comparación-y-normalización-de-claves)
 sigue inicializador del comparador y bifurcación del normalizador; no repetirlos.
-Próxima unidad: atribuir cuerpo de `_gaLstItem.x_Clave +0x38` (registro TypeLib
-`0xabcd8`) y transformaciones `0x1107094a / +0x3c`, `0x110709d2 / +0x44`.
+La [unidad de fila y delegados](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#clave-de-fila-y-transformaciones-del-índice)
+atribuye `_gaLstItem.x_Clave +0x38` al cuerpo `0x11074c00` por metadata propia
+y sigue proveedor/slots/cuerpos de transformación. Próxima unidad: predicados
+`gaVarios +0x48` (`0x1100d1ae / 0x1100d38a`) y `+0x4c` (`0x1100d17b`).
+Equivalencia, colación y valores efectivos permanecen abiertos; no repetir cuerpos.
 No repetir `xConfig`,
 construcción, ordenación, búsqueda,
 AbreRS/carga, proveedor/argumento `2` ni máscaras/helpers/650. Evidencias nuevas en
 `output/e1-config-origin-20261017/`, `output/e1-index-20261017/` y
-`output/e1-keys-20261017/`; los cuatro índices
+`output/e1-keys-20261017/` y `output/e1-rowkeys-20261017/`; los cuatro índices
 anteriores, 428, 56, 91 y 145 artefactos, conservan tamaño y SHA-256.
 El alcance estático, cargo desactivado y protección de G6 siguen vigentes.
 
@@ -229,6 +232,26 @@ commit no entrega los 428 archivos ni las evidencias anteriores. Si faltan,
 identificar la ruta exacta y resolver su transporte autorizado; no inventar
 resultados, recrear datos empresariales o ejecutar una extracción masiva a ciegas.
 
+**Recibo de fila y delegados, 17/10:** `output/e1-rowkeys-20261017/` conserva
+atribución propia de `x_Clave`, rutas/proveedor/slots de transformación y capturas
+nuevas; `row/captured-final/` y `transforms/captured-final/` son canónicas.
+Gates del director: fila 223/223 y 49 perturbaciones; transformaciones 111/111
+y 35 perturbaciones. Revisión independiente 917/917, 53 perturbaciones propias,
+sin defectos reproducibles de candidato. Todos estáticos/parciales/solapados,
+sin suma de coberturas ni pruebas funcionales. Se conservan límites medidos e
+intentos previos de arneses, incluido 108/109 del transformador.
+Los seis árboles anteriores 429/59/92/146/140/77 permanecen completos por
+tamaño/SHA-256, incluidos índices, sellos, recibos y dos pyc históricos.
+Usar el `preserve.py` de esta carpeta nueva con `--out <salida nueva>` y
+`--baseline preflight/preservation.json`; no ejecutar verificadores anteriores
+con salida en ninguno de esos árboles protegidos.
+Ocho documentos activos actualizados; 1.099 versionados restantes intactos.
+Mismo E1 July con historia e `in_progress`, sin sincronizar. Cierre local tras
+congelación de los tres agentes, gate final e identidad Git; sin push.
+Siguiente: `gaVarios +0x48` en `0x1100d1ae / 0x1100d38a` y `+0x4c` en
+`0x1100d17b`. No repetir atribución/cuerpo de fila ni proveedor/slots ya seguidos.
+El recibo siguiente es histórico; sus instrucciones se subordinan a éste.
+
 **Recibo de la continuación de claves, 17/10:** `output/e1-keys-20261017/`
 conserva capturas nuevas, revisión independiente y gate del director. Comparador
 68/68 y 17 perturbaciones; normalizador 68/68 y 22 perturbaciones; revisión
@@ -243,8 +266,9 @@ claves. El siguiente párrafo y su verificador son historia de la unidad del
 El mismo E1 July conserva historia y `in_progress`, sin sincronización.
 Ocho documentos activos actualizados, evidencia histórica preservada, sin
 retirar documentos únicos. Cierre local tras congelación de los tres agentes,
-gate final e identidad Git; sin push. El siguiente anclaje es el cuerpo de
-`_gaLstItem.x_Clave +0x38` / TypeLib `0xabcd8` y las transformaciones ya indicadas.
+gate final e identidad Git; sin push. Su siguiente anclaje entonces era el cuerpo
+de `_gaLstItem.x_Clave +0x38` / TypeLib `0xabcd8` y las transformaciones,
+continuados en la unidad de fila/delegados enlazada arriba; ese paso es histórico.
 
 La unidad del índice comprueba **428/428, 56/56, 91/91 y 145/145** artefactos
 antes de investigar, incluidos los índices sin regenerar; conserva además los
@@ -271,10 +295,10 @@ No repetir esas unidades. Elegir una pregunta pendiente y cerrar una sola unidad
 2. Proveedor y argumento `2`, AbreRS, carga de lista y configuración/construcción,
    ordenación y búsqueda del índice seguidos estáticamente. No repetirlos.
    Inicializador del comparador y bifurcación del normalizador seguidos en la
-   continuación de claves enlazada arriba; no repetirlos. Seguir cuerpo de
-   `_gaLstItem.x_Clave +0x38`, registro TypeLib `0xabcd8`, y transformaciones
-   `0x110708ff / 0x1107099f`, delegados `0x1107094a / +0x3c` y
-   `0x110709d2 / +0x44`. Comparación externa exacta y selección runtime siguen
+   continuación de claves enlazada arriba; no repetirlos. Cuerpo de fila y
+   proveedor/slots de transformación seguidos en la unidad posterior; no repetirlos.
+   Seguir `gaVarios +0x48` en `0x1100d1ae / 0x1100d38a` y `+0x4c` en
+   `0x1100d17b`. Comparación externa exacta y selección runtime siguen
    abiertas. No atribuir colación, prioridad primera/última ni equivalencia
    de claves antes de cerrar esos cuerpos y sus premisas.
    Las cuatro RED efectivas siguen sin demostrar. El BSTR `2` no certifica escala

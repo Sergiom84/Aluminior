@@ -4,7 +4,7 @@
 La identidad y el estado global siguen en [E1 del roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md).
 El cargo de cabecera continúa abierto. Este contrato no acredita fabricación,
 aceptación Productor, publicación ni producción.
-La continuación vigente del 17/10 está en [Comparación y normalización de claves](#comparación-y-normalización-de-claves);
+La continuación vigente del 17/10 está en [Clave de fila y transformaciones del índice](#clave-de-fila-y-transformaciones-del-índice);
 las unidades del 13/10 y 14/10 siguientes conservan su evidencia y fecha.
 
 ## Base y contrato
@@ -1356,9 +1356,10 @@ La conversión de entrada `0x660387fc`, el helper de errores `0x6603852c` y
 la reserva auxiliar `0x6601170c` quedan sin expandir. No se atribuye una
 normalización exacta a partir del nombre `rtcUpperCaseVar` o de las IAT.
 
-### Siguiente unidad y límites conservados
+### Frontera registrada al cerrar comparación y normalización
 
-**Ahora:** atribuir el cuerpo de `_gaLstItem.x_Clave +0x38`, registro TypeLib
+**Anclajes de aquel cierre**, continuados en la unidad siguiente: atribuir el
+cuerpo de `_gaLstItem.x_Clave +0x38`, registro TypeLib
 `0xabcd8`, mediante su propia metadata/slot y anclajes de bytes. La declaración
 está cotejada; no hay todavía atribución de cuerpo aceptada. Seguir después
 las rutas `0x110708ff / 0x1107099f` de `xic_dimeClave`, llamadas delegadas
@@ -1433,3 +1434,186 @@ congelaron escrituras antes del commit. July conserva el mismo E1 `aluminior`
 por sync_uid, historia e `in_progress`, sin sincronizar. El cierre es un commit
 local con identidad de Sergio verificada; sin push. El sellado nuevo y recibos
 postcommit están bajo `output/e1-keys-20261017/`, fuera de árboles protegidos.
+
+## Clave de fila y transformaciones del índice
+
+Unidad estática/documental del **17/10/2026**, desde
+`c0c77447f35e313754f9fce3bc94a38ac88e956d`, rama
+`codex/rea-productor-20261016` y árbol limpio comprobados. Contrato previo en
+`output/e1-rowkeys-20261017/CONTRATO.md`. Dos ejecutores con carpetas separadas;
+sin código de producto, ejecución legacy, COM, Automation, SQL o bases.
+Se reutilizan las atribuciones del índice, comparador, normalizador y `just`
+bajo hashes actuales, sin repetir las unidades cerradas.
+
+### Identidad, declaración y atribución del cuerpo
+
+| PE leído como bytes | Bytes | SHA-256 |
+|---|---:|---|
+| `gaBBDD.dll` | 794.624 | `dc1f4be67fc7b25f8464a686bf890ca7a1bdf15bf267928bbb35fd62169efb95` |
+| `gaCodigoBase.dll` | 176.128 | `2a030e756ac804631e56324065561b4b8e4ac422e3c28406a59d4eb9190f2e8c` |
+| `msvbvm60.dll` | 1.436.032 | `898288bd3b21d0e7d5f406df2e0b69a5bbfa4f241baf29a2cdf8a3cf4d4619f2` |
+
+La declaración `_gaLstItem.x_Clave +0x38`, registro TypeLib **`0xabcd8`**, se
+coteja con sus tipos de parámetro/retorno. La cadena propia nueva es:
+
+| Enlace | Anclaje |
+|---|---|
+| Descriptor → ObjectInfo | `0x1100e738` → `0x1100a8b4` |
+| CLSID | puntero `ObjectInfo+0x3c` → `0x11019038`; `b1089baf-e4d0-4444-bdff-8272912c2fbd` |
+| IID propio | celda `ObjectInfo+0x7c = 0x1100a930` → `0x11018be8`; `cc78c427-db0b-4009-a97a-010272032482`, igual a TypeLib |
+| Coclass → interfaz | TypeInfo 35 → referencia `0xa1e10`, HREF `0xd48` y flags `0x1` → TypeInfo 34 `_gaLstItem` |
+| Tabla → slot → thunk → cuerpo | `0x1100a95c` → celda `0x1100a978` (`+0x38`) → `0x1100aa0b` → **`0x11074c00`** |
+
+El cuerpo capturado termina en el límite exclusivo **`0x1107515d`**.
+Diez entradas públicas concuerdan en nombres y slots con TypeLib; la undécima,
+slot nativo `+0x44`, permanece sin nombre ni atribución de método público.
+
+La guarda antigua `native('gaLstItem')` sigue rechazando este layout: asumía
+un IID en CLSID+16, donde aquí ya hay texto de nombres. No se modifica ni se
+suprime. La vía alternativa acredita el IID mediante su celda propia y la
+referencia de coclass. No se identifica el receptor desde un IID de diagnóstico
+HRESULT ni se generaliza este offset a otras clases.
+
+### Clave de fila: entradas, ramas y resultado estático
+
+`x_Clave` recibe índice por referencia y salida BSTR. Pide `xnCampos +0x40`
+en `0x11074c93`; el bucle de contador de 16 bits usa `xCampoIdx +0x44`
+en `0x11074d53`. Sobre `[this+0x34]` solicita ancho (`+0x58`, llamada
+`0x11074d75`) y tipo (`+0x54`, `0x11074dc4`) para el campo seleccionado.
+El valor procede de `[this+0x38]`, con acceso a datos/límites de array y paso
+de 16 bytes por Variant. Eso no demuestra qué valores contiene una fila real.
+
+| Condición observada en el cuerpo | Ruta |
+|---|---|
+| Tipo igual a `1` o `2` | Convierte el valor a string y llama al proveedor `+0x44` en `0x11075013`, con ancho por referencia y salida BSTR |
+| Otro tipo, ancho cero | Conversión a string y concatenación directa, sin pasar por los dos slots de transformación |
+| Otro tipo, ancho distinto de cero | Proveedor `+0x3c` en `0x11074f31`, valor string, ancho por referencia y BSTR literal `I` por referencia |
+
+Las salidas se concatenan mediante la IAT de `__vbaStrCat`. El acumulador se
+pasa como Variant BSTR por referencia `0x4008` al ordinal 528 (`0x11074cdf`),
+y la salida se transfiere a `[ebp+0x10]` en `0x11075139`. Existen rutas de
+límites/overflow y tratamiento de error: no se declara éxito universal.
+Los códigos `1/2`, ancho, orden y valores efectivos no reciben un significado
+de negocio supuesto ni se deducen desde los nombres de métodos.
+
+### Proveedor y transformaciones delegadas
+
+Las rutas de consulta `0x110708ff / 0x1107099f` utilizan la celda de receptor
+relativa a `0x1109d538`. La petición de creación desde descriptor **`0x110109c4`**
+incluye CLSID **`9da39243-bd3d-4f82-bba3-33c1dec7571e`** e IID
+**`ac3c4874-c3a9-4bec-8637-3b79ceb84063`**. Coinciden con coclass/referencia
+de interfaz propia en `gaCodigoBase.dll`. La creación efectiva no se ha observado.
+
+En ese PE, ObjectInfo `0x11003e54` tiene el IID propio en celda
+**`+0x80 = 0x11003ed4`**, que apunta a `0x11004814`; la celda adyacente
+`+0x7c` contiene otro GUID y se conserva separada. El IID propio concuerda
+con CLSID+16 y con la referencia de interfaz marcada `0x1` en TypeLib.
+Esto se acredita para esa clase concreta; no contradice el layout distinto de
+`gaLstItem` anterior ni permite imponer un offset universal.
+
+| Declaración acreditada | Celda → thunk → cuerpo | Entrada de consulta |
+|---|---|---|
+| `_gaVarios.just +0x3c`, registro `0x252b0` | `0x11003f20` → `0x11004020` → `0x1100c780` | llamada `0x1107094a`: string, ancho WORD por referencia, BSTR `I` por referencia, salida BSTR |
+| `_gaVarios.rellena +0x44`, registro `0x25344` | `0x11003f28` → `0x1100403a` → `0x1100cfc0` | llamada `0x110709d2`: string, ancho WORD por referencia, salida BSTR |
+
+`just` se reutiliza desde la captura protegida existente, SHA-256
+`bfd9f426d9f47470e940642834f2f25d28d45612008467134696846a6509ccc6`,
+con cotejo contra el PE y anclajes seleccionados. Sus 398 instrucciones son
+**reutilizadas**, no una extracción o cobertura nueva. No se reabre export 650.
+
+La captura nueva de `rellena`, `0x1100cfc0–0x1100d750` exclusivo, acredita
+copia inicial, comprobación de ancho cero, comparaciones de longitud, recorridos
+condicionados de caracteres y comprobaciones contra los literales `*` y `-`.
+Invoca otros predicados mediante `+0x48` y `+0x4c`, cuyo cuerpo sigue abierto.
+Hay una ruta condicionada de construcción de máscara/formato y una llamada
+al ordinal 528 en `0x1100d60b`; no se atribuyen esos pasos a todas las ramas.
+No se equipara `rellena` con una operación genérica de padding ni se afirma
+conversión sin pérdidas, semántica numérica exacta o formato efectivo.
+
+La consulta también concatena los componentes y después llama al ordinal 528
+en `0x11070a59`. Fila y consulta comparten las formas de transformación
+acreditadas, pero difieren en el origen de los valores. **No se ha demostrado
+equivalencia universal entre clave de fila, construcción, ordenación y búsqueda.**
+
+Declaración y cuerpo quedan ahora vinculados. Inicialización efectiva,
+configuración de campos/ancho/tipo y valores de fila siguen sin observarse.
+La construcción/selección conserva la evidencia anterior; comparación externa
+y normalización efectiva siguen abiertas. No se infiere primera/última fila,
+colación, valores RED o backend efectivo.
+
+### Verificación de la unidad y siguiente anclaje
+
+Gates reproducidos por el director, con Python `-B` y carpetas de salida nuevas:
+
+- `row/verify.py`: **223/223**, **49/49 perturbaciones en memoria rechazadas**,
+  23 capturas: dos de código (480 instrucciones) y 21 de metadata/datos.
+  El cuerpo abarca 1.373 bytes y el thunk cinco; los 2.384 bytes capturados
+  totales incluyen metadata y solapes, no son una cobertura de código única.
+- `transforms/verify.py`: **111/111**, **33 predicados / 142 anclajes** y
+  **35/35 perturbaciones semánticas rechazadas**, dos rangos / 1.023 instrucciones
+  (389 de la ruta de consulta y 634 de `rellena`). La consulta se solapa con
+  capturas anteriores; no sumar conjuntos ni añadir las 398 instrucciones de `just`.
+
+Los controles miden límites: el prólogo de `x_Clave` y un NOP de `rellena`
+pueden pasar los predicados seleccionados y fallar el cotejo completo de captura.
+Cambiar el bit 0 del campo de slot `0x25350` no altera el slot tras `&~3`;
+esa aceptación queda registrada. El ataque semántico final cambia el bit 2.
+Se conserva el intento inicial 108/109 y 34/35 de ese arnés, sin ocultarlo ni
+debilitar aserciones. Ningún resultado es una prueba funcional o cobertura
+causal exhaustiva; no hay arreglo de producto que revertir.
+
+Evidencia canónica privada: `output/e1-rowkeys-20261017/row/captured-final/`
+y `transforms/captured-final/`; los intentos/capturas preliminares se conservan
+separados. Director inicial: `row/director-initial/`, `transforms/director-initial/`.
+La preservación comprueba índices 428/56/91/145 y seis árboles completos
+429/59/92/146/140/77 por tamaño y SHA-256, con índices/sellos/recibos y los dos
+pyc históricos intactos. No se ejecutan verificadores ni colectores antiguos.
+
+**Ahora:** seguir los predicados de `gaVarios +0x48`, llamados en
+`0x1100d1ae / 0x1100d38a`, y `+0x4c` en `0x1100d17b`, dentro de `rellena`.
+Acreditar cuerpo y argumentos antes de fijar su transformación exacta.
+Después quedan las premisas de equivalencia, conversiones/runtime y valores
+efectivos; agregados y persistencia mantienen su frontera propia.
+No repetir la atribución/cuerpo de `x_Clave`, rutas de consulta o proveedor/slots
+ya seguidos para alcanzar esos anclajes. E1 continúa `in_progress`, cargo
+desactivado y A–F/G1–G5/G6-incidencia preservados. Completar contrato/implementación,
+comparar con Aluminior y probar el software aislado siguen siendo fases posteriores.
+
+### Revisión independiente y cierre de fila y delegados
+
+Revisión descontaminada mediante artefacto + contrato + evidencia cruda,
+sin informes/razonamiento de autores ni campos narrativos de sus manifiestos.
+`output/e1-rowkeys-20261017/review/REPORT.md`: ningún defecto reproducible de
+candidato en el alcance estático/documental; ninguna corrección de candidato.
+El gate propio pasa **917/917** con **51 predicados seleccionados** y
+**53/53 perturbaciones propias rechazadas sin consultar el hash global**.
+Lector PE/TypeLib/VB independiente, cotejo de capturas y herramienta de
+desensamblado identificada por 58 hashes; no se ejecutan gates candidatos
+desde la revisión. Los intentos fallidos de construcción del arnés se conservan.
+
+El director reproduce los cinco comandos mediante
+`python -B output/e1-rowkeys-20261017/director_gate.py --out director-final
+--review-additive-receipts`. `director-final/gate.json` conserva comandos,
+códigos y stdout/stderr literales. El gate independiente acepta únicamente
+inserciones de recibos al final de esta sección y notas en el relevo autorizado,
+preservando íntegro el texto revisado y registrando el delta literal. Comprueba
+la base inicial como antepasado y el diff contra ella, para permitir también
+reproducción postcommit sin forzar Git ni modificar las comprobaciones de fuentes.
+
+Preservación final antes/después: índices **428/56/91/145** y seis árboles
+completos **429/59/92/146/140/77** intactos por tamaño/SHA-256. Se conservan
+sellos, recibos posteriores, los dos pyc históricos y capturas preliminares;
+ningún índice previo regenerado ni verificador anterior ejecutado.
+Barrido de 1.107 versionados: ocho Markdown cambiados y 1.099 intactos;
+299 enlaces locales y 57 anclas válidos; `git diff --check` correcto.
+El barrido de 119 Markdown para las frases de siguiente paso agotadas está
+en `active-pointer-scan-corrected.json`, con su alcance limitado explícito.
+La documentación activa apunta ahora a `gaVarios +0x48 / +0x4c`; los anclajes
+anteriores quedan marcados como historia. No se retira evidencia única.
+
+Los tres agentes terminaron y congelaron escrituras antes del commit.
+July conserva el mismo E1 `aluminior` por sync_uid, historia e `in_progress`,
+sin sincronización. Commit local tras gate e identidad de Sergio; sin push.
+Sellado nuevo y recibos postcommit en `output/e1-rowkeys-20261017/`;
+la evidencia privada no viaja por Git/July. Son verificaciones estáticas
+parciales y solapadas, sin pruebas funcionales ni aceptación económica.

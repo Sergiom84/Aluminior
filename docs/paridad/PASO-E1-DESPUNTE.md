@@ -14,9 +14,11 @@ sigue AbreRS y la carga de lista con índice NombreDato. La [unidad del índice]
 sigue configuración/construcción, ordenación y selección de posición; no prueba
 prioridad primera/última ni equivalencia de claves. La [continuación de claves](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#comparación-y-normalización-de-claves)
 sigue inicializador del comparador y bifurcación del normalizador; no repetirlos.
-Siguiente unidad estática: cuerpo de `_gaLstItem.x_Clave +0x38` (TypeLib
-`0xabcd8`) y transformaciones `0x1107094a / +0x3c`, `0x110709d2 / +0x44`;
-después valores efectivos y entrada de agregados. No repetir `xConfig`,
+La [unidad de fila y delegados](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#clave-de-fila-y-transformaciones-del-índice)
+atribuye el cuerpo propio de `x_Clave` y sigue proveedor/slots de transformación.
+Siguiente unidad estática: predicados `gaVarios +0x48` (`0x1100d1ae / 0x1100d38a`)
+y `+0x4c` (`0x1100d17b`), sin equivalencia universal acreditada; después valores
+efectivos y entrada de agregados. No repetir estos cuerpos ni `xConfig`,
 construcción/búsqueda, AbreRS/carga de lista ni
 inventarios/literales/preparación pura/declaraciones ni proveedor/argumento `2`. El procedimiento
 de observación siguiente es una vía separada y necesita autorización propia.
