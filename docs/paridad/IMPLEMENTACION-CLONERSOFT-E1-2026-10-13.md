@@ -2059,10 +2059,95 @@ Las pruebas de producto anteriores conservan su fecha; no se presentan como
 reproducidas en esta entrega documental. Nuevo sello y recibos posteriores
 registran el HEAD de cierre y el inventario final de esta unidad privada.
 
-**Ahora:** procedencia inmediata del **DWORD leído en `0x1015b9b1` (`[EAX+8]`)**,
+**Continuación histórica del 17/10, atendida en la unidad siguiente:** procedencia inmediata del **DWORD leído en `0x1015b9b1` (`[EAX+8]`)**,
 con puntero tomado en **`0x1015b9a8` (`[ESI+0x10]`)** y ESI de `FS:[0x30]` en
 `0x1015b8bc`. Acreditar identidad/origen inmediato del campo, deteniéndose
 ante otra frontera. No repetir selector, dos celdas, WCTMB, ApiSet o predicados;
 no NLS global. **Después:** campo `FS:[0x30]+0x228`, resultados del helper,
 resolución/carga, conversión efectiva, equivalencia, escalas, agregados y persistencia.
+E1 sigue `in_progress`, cargo desactivado y A–F/G1–G5/G6-incidencia preservados.
+
+## Procedencia inmediata del DWORD de KernelBase
+
+Unidad estática del **18/10/2026**, base `897226b7c71710ea3642e24e04e3829339c4ab8f`,
+rama `codex/rea-productor-20261016`, árbol inicial limpio. Evidencia privada:
+`output/e1-kernelbase-field-20261018/`. Continúa sólo la identidad y el origen
+inmediato del DWORD de `0x1015b9b1`; no reabre el selector ni las unidades previas.
+
+### Identidad acreditada y procedencia inmediata
+
+El DWORD corresponde, en el layout x86 acreditado, al campo
+**`_RTL_USER_PROCESS_PARAMETERS.Flags` en `+0x8`**, tipo `unsigned long`
+(CodeView `T_ULONG`, `0x22`, 32 bits). Su origen inmediato es el bloque de
+parámetros apuntado por `ProcessParameters` del PEB; no es una constante
+leída del archivo de KernelBase ni un valor efectivo observado.
+
+| Lectura en KernelBase | Identidad del layout x86 acreditado |
+|---|---|
+| `0x1015b8bc`: ESI recibe `FS:[0x30]` | `_TEB.ProcessEnvironmentBlock`, offset `0x30`, puntero de 32 bits a `_PEB` |
+| `0x1015b9a8`: EAX recibe `[ESI+0x10]` | `_PEB.ProcessParameters`, offset `0x10`, puntero de 32 bits a `_RTL_USER_PROCESS_PARAMETERS` |
+| `0x1015b9b1`: lee el DWORD de `[EAX+8]` | `_RTL_USER_PROCESS_PARAMETERS.Flags`, offset `0x8`, `T_ULONG` |
+
+Los bytes y su mapa PE se cotejan de nuevo sólo para estas relaciones. El
+vínculo x86 entre las lecturas FS y el TEB se apoya además en el header primario
+Microsoft `winnt.h`, donde `NtReadCurrentTebUlong` usa `__readfsdword`.
+La atribución combina esa convención con los registros de tipos y los operandos
+capturados; no se deduce del parecido entre offsets o de nombres encontrados
+como cadenas sueltas.
+
+### Fuentes e identidad de símbolos
+
+KernelBase es el mismo PE32/x86 de 3.007.824 bytes y SHA-256
+`5be784046dc9731d1c36e872a8022065ed4a733707b1e467b30a96588714b137`.
+Su versión de archivo es `10.0.26100.9711`. El PDB oficial `wkernelbase.pdb`,
+identificado mediante RSDS, tiene el flujo TPI sin registros de tipos: **no
+se le atribuyen las definiciones de las estructuras anteriores**.
+
+Se lee como fuente auxiliar `C:\Windows\SysWOW64\ntdll.dll`, PE32/x86 de la
+misma versión, 1.850.232 bytes, SHA-256
+`23d7772221e7a763ccf3f3fe39592086eb3091603554c4981f0ab430fa2ca686`.
+Su `wntdll.pdb` oficial contiene las definiciones completas y los enlaces de
+tipo de la tabla. Se verifican GUID, edades y arquitectura de cada par PE/PDB,
+por separado; la igualdad de versión por sí sola no sustituye ese vínculo.
+
+| Par PE/PDB | GUID RSDS e Info coincidente | Edad PE / Info / DBI |
+|---|---|---|
+| KernelBase / wkernelbase | `9990A4CB-5207-9BA4-860B-1CB6584BC572` | `1 / 2 / 1` |
+| ntdll / wntdll | `DBC4B305-3C0F-3189-895B-2BE009A0D2A4` | `1 / 4 / 1` |
+
+La diferencia de edad Info se conserva expresamente. El [validador primario
+de Microsoft](https://github.com/microsoft/microsoft-pdb/blob/805655a28bd8198004be2ac27e6e0290121a5e89/PDB/dbi/pdb.cpp#L848-L878)
+permite Info mayor o igual que la edad de imagen y exige DBI igual a ella
+salvo el caso histórico DBI cero; aquí DBI es `1` en ambos pares. No se cambia
+una edad para hacer coincidir los símbolos. PDB, fuentes públicas, URLs,
+hashes, registros CodeView y resultados quedan en la carpeta privada nueva.
+
+El [contrato público de RTL_USER_PROCESS_PARAMETERS](https://learn.microsoft.com/en-us/windows/win32/api/winternl/ns-winternl-rtl_user_process_parameters)
+reserva sus primeros 16 bytes y no publica ahí `Flags`; no sería suficiente
+para atribuir ese nombre. El nombre y tipo se obtienen del PDB identificado.
+La aplicación del layout a la lectura es una atribución estática de esta
+arquitectura y versión, no una observación del proceso de Productor.
+
+### Verificación y siguiente frontera
+
+Gates propios, revisión independiente y reproducciones del director se guardan
+en la unidad nueva. Las perturbaciones en memoria miden relaciones concretas
+de bytes, tipos e identidad, con controles de sus límites; sus recuentos son
+parciales y solapados, no pruebas funcionales ni porcentajes de paridad.
+Se preservan once árboles históricos completos, **1.982 archivos** con conteos
+429/59/92/146/140/77/127/374/189/198/151, incluidos sellos y recibos posteriores.
+Cuatro índices, seis PE, vendor, checkout original y 1.099 versionados ajenos
+a los ocho documentos permanecen protegidos; el PE auxiliar se coteja aparte.
+Python siempre `-B`; no se ejecutan/importan scripts históricos. Las suites
+anteriores de producto conservan su fecha y no se presentan como repetidas.
+
+**Ahora:** acreditar el **escritor o inicialización de
+`_RTL_USER_PROCESS_PARAMETERS.Flags` (`+0x8`), en concreto el bit 31, antes
+de la lectura en `KernelBase.dll 0x1015b9b1`**. Detenerse ante la siguiente
+frontera. Esta unidad no acredita quién lo escribió, cuándo, su significado
+semántico, valor efectivo ni ejecución de la ruta; no atribuye al bit una
+política de idioma o página de códigos. No repetir identidad del campo,
+selector, dos celdas, WCTMB, ApiSet o predicados; no ampliar a NLS global.
+**Después:** campo `FS:[0x30]+0x228`, resultados del helper, resolución/carga,
+conversión efectiva, equivalencia, escalas, agregados y persistencia.
 E1 sigue `in_progress`, cargo desactivado y A–F/G1–G5/G6-incidencia preservados.

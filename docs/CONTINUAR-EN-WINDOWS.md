@@ -168,9 +168,12 @@ ya tienen condiciones y efecto en ramas acreditados estáticamente. La [frontera
 acredita contrato público y enlace candidato ApiSet. La [procedencia del estado](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-del-estado-de-kernelbase)
 acredita escrituras y fallback condicionados de las dos celdas. La
 [procedencia del selector](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-del-byte-selector-de-kernelbase)
-acredita una escritura literal condicionada a `1`. Siguiente: procedencia del
-DWORD dinámico leído en `0x1015b9b1`, con puntero tomado en `0x1015b9a8`.
-Estado efectivo, campo `FS:[0x30]+0x228` y resultados del helper siguen abiertos.
+acredita una escritura literal condicionada a `1`. La [identidad del DWORD, 18/10](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-inmediata-del-dword-de-kernelbase)
+queda atribuida por bytes y tipos x86 a `_RTL_USER_PROCESS_PARAMETERS.Flags`
+en `+0x8`, mediante `TEB → PEB → ProcessParameters`. **Siguiente:** escritor
+o inicialización de ese campo antes de `0x1015b9b1`, en concreto su **bit 31**.
+No se atribuyen significado del bit, valor efectivo ni ejecución. Campo
+`FS:[0x30]+0x228` y resultados del helper siguen abiertos por separado.
 No repetir escrituras de las dos celdas, contrato/enlace ni predicados;
 después equivalencia, valores efectivos, agregados y persistencia.
 No repetir `x_Clave`/proveedor/delegados ya seguidos, inicializador/normalizador,

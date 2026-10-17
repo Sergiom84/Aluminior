@@ -23,9 +23,12 @@ acredita `+0x48/+0x4c`, sus condiciones y efecto en ramas. La [frontera WCTMB](I
 acredita contrato público y enlace candidato ApiSet. La [procedencia del estado](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-del-estado-de-kernelbase)
 acredita escrituras y fallback condicionados de las dos celdas. La
 [procedencia del selector](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-del-byte-selector-de-kernelbase)
-acredita una escritura literal condicionada a `1`. Siguiente: procedencia del
-DWORD dinámico leído en `0x1015b9b1`, con puntero tomado en `0x1015b9a8`.
-Estado efectivo, campo `FS:[0x30]+0x228` y resultados del helper siguen abiertos.
+acredita una escritura literal condicionada a `1`. La [identidad del DWORD, 18/10](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-inmediata-del-dword-de-kernelbase)
+queda atribuida por bytes y tipos x86 a `_RTL_USER_PROCESS_PARAMETERS.Flags`
+en `+0x8`, mediante `TEB → PEB → ProcessParameters`. **Siguiente:** escritor
+o inicialización de ese campo antes de `0x1015b9b1`, en concreto su **bit 31**.
+No se atribuyen significado del bit, valor efectivo ni ejecución. Campo
+`FS:[0x30]+0x228` y resultados del helper siguen abiertos por separado.
 No repetir escrituras de las dos celdas, contrato/enlace ni predicados.
 Equivalencia, colación y valores efectivos permanecen abiertos; no repetir cuerpos.
 No repetir `xConfig`,
@@ -36,7 +39,60 @@ AbreRS/carga, proveedor/argumento `2` ni máscaras/helpers/650. Evidencias nueva
 anteriores, 428, 56, 91 y 145 artefactos, conservan tamaño y SHA-256.
 El alcance estático, cargo desactivado y protección de G6 siguen vigentes.
 
-## Última unidad estática: procedencia del byte selector de KernelBase, 17/10
+## Última unidad estática: identidad del DWORD de KernelBase, 18/10
+
+Base comprobada `897226b7c71710ea3642e24e04e3829339c4ab8f`, misma rama exclusiva,
+árbol inicial limpio e identidad Git de Sergio. Ocho documentos existentes y
+evidencia privada nueva en `output/e1-kernelbase-field-20261018/`. La [unidad del DWORD](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-inmediata-del-dword-de-kernelbase)
+atribuye la lectura a `_RTL_USER_PROCESS_PARAMETERS.Flags` `+0x8`, mediante
+`_TEB.ProcessEnvironmentBlock +0x30 → _PEB.ProcessParameters +0x10`.
+Bytes KernelBase, header x86 Microsoft y tipos del PDB oficial de ntdll
+identificado sustentan la atribución. Ambos PE son x86 `10.0.26100.9711`;
+el PDB KernelBase no contiene tipos. Las edades Info/PE/DBI y sus diferencias
+están explícitas y se validan según el código primario Microsoft.
+No acredita valor del campo, escritor, significado del bit 31 ni ejecución.
+
+Siguiente unidad única: **escritor o inicialización de
+`_RTL_USER_PROCESS_PARAMETERS.Flags` (`+0x8`), en concreto el bit 31, antes
+de la lectura `KernelBase.dll 0x1015b9b1`**. Detenerse ante otra frontera.
+No repetir identidad del campo, selector, dos celdas, WCTMB, ApiSet o predicados;
+no NLS global. Campo `FS:[0x30]+0x228`, helper y estado efectivo siguen aparte.
+
+Para continuar:
+
+1. Usar exclusivamente `C:\Users\sergi\.codex\worktrees\rea-productor-20261016\Aluminior`.
+   Verificar raíz, rama `codex/rea-productor-20261016`, HEAD, estado e identidad
+   en sólo lectura. HEAD de cierre en el nuevo `postcommit-receipt.json`.
+   Inspeccionar diferencias; nunca reset/checkout/stash para hacerlas encajar.
+2. Leer AGENTS, estado, roadmap, este relevo y la sección del DWORD enlazada.
+   Leer `CONTRATO.md`, capturas `static/captured/`, fuentes `public/`,
+   `review/REPORT.md`, gates del director, sello y recibo postcommit nuevos.
+3. Proteger los once árboles anteriores **429/59/92/146/140/77/127/374/189/198/151**
+   y toda esta nueva unidad con sus recibos posteriores; el recibo final recoge
+   su inventario. Crear otra carpeta. No ejecutar/importar scripts históricos
+   ni regenerar los cuatro índices. Python siempre `-B`, también por stdin.
+4. Cotejar los seis PE históricos y el auxiliar ntdll por sus identidades,
+   y preservar PDB/fuentes como datos. ApiSet está en System32, los otros seis
+   PE en SysWOW64. Vendor y checkout original protegidos. No cargar DLL
+   objetivo, ejecutar legado, COM, SQL o datos de negocio.
+5. Máximo dos subagentes, sin subdelegación; propietario único de helpers.
+   Revisión descontaminada, máximo revisión y una corrección, gates reproducidos.
+   Congelar ejecutores antes de staging/commit; identidad Sergio y gates
+   antes/después. Generar sello y recibo postcommit con inventario final.
+6. Actualizar estos mismos ocho documentos y el mismo E1 July por proyecto
+   `aluminior`, sync_uid `398049fbd618069e36bb84bab37913ed`, historia íntegra
+   e `in_progress`, lectura posterior exacta, sin sincronizar. ID local no transferible.
+
+Investigación/documentación y commit local; sin push ni sincronización.
+E1 abierto, cargo desactivado y A–F/G1–G5/G6-incidencia preservados.
+No cambia producto ni ejecuta pruebas funcionales. Las evidencias privadas
+no viajan con Git ni July. No se retira ningún documento de evidencia única;
+la unidad del selector pasa a antecedente y sus punteros activos se actualizan.
+
+## Antecedente histórico: procedencia del byte selector de KernelBase, 17/10
+
+Histórico; no ejecutar como lista de tareas. La identidad del DWORD se acredita
+en la unidad del 18/10 anterior; su siguiente frontera sustituye la de este recibo.
 
 Base comprobada `3dff26755b70a8d72e10fc2aaffbe23b1f94ced9`, misma rama exclusiva,
 árbol inicial limpio. Ocho documentos propios y evidencia privada nueva en
@@ -476,8 +532,10 @@ No repetir esas unidades. Elegir una pregunta pendiente y cerrar una sola unidad
    Predicados `+0x48/+0x4c` seguidos en la unidad nueva enlazada arriba;
    no repetirlos. Contrato WCTMB y enlace candidato seguidos en la unidad nueva.
    Escrituras de las dos celdas y escritura literal del selector ya seguidas.
-   Continuar sólo por la procedencia del DWORD leído en `0x1015b9b1`, con puntero
-   tomado en `0x1015b9a8`; resolución y valores efectivos aún abiertos. No atribuir colación, prioridad primera/última ni
+   Identidad del DWORD acreditada en la unidad del 18/10. Continuar sólo por el
+   escritor/inicialización de `_RTL_USER_PROCESS_PARAMETERS.Flags` `+0x8`,
+   en concreto su bit 31 antes de `0x1015b9b1`; valores efectivos aún abiertos.
+   No atribuir colación, prioridad primera/última ni
    equivalencia de claves desde condiciones parciales.
    Las cuatro RED efectivas siguen sin demostrar. El BSTR `2` no certifica escala
    dos; el selector BDtipo tampoco prueba backend ni configuración efectiva.

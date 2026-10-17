@@ -18,19 +18,22 @@ La [frontera WCTMB](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#fron
 acredita contrato público y enlace candidato ApiSet. La [procedencia del estado](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-del-estado-de-kernelbase)
 acredita escrituras y fallback condicionados de las dos celdas. La
 [procedencia del selector](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-del-byte-selector-de-kernelbase)
-acredita una escritura literal condicionada a `1`. Siguiente: procedencia del
-DWORD dinámico leído en `0x1015b9b1`, con puntero tomado en `0x1015b9a8`.
-Estado efectivo, campo `FS:[0x30]+0x228` y resultados del helper siguen abiertos.
+acredita una escritura literal condicionada a `1`. La [identidad del DWORD, 18/10](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-inmediata-del-dword-de-kernelbase)
+queda atribuida por bytes y tipos x86 a `_RTL_USER_PROCESS_PARAMETERS.Flags`
+en `+0x8`, mediante `TEB → PEB → ProcessParameters`. **Siguiente:** escritor
+o inicialización de ese campo antes de `0x1015b9b1`, en concreto su **bit 31**.
+No se atribuyen significado del bit, valor efectivo ni ejecución. Campo
+`FS:[0x30]+0x228` y resultados del helper siguen abiertos por separado.
 No repetir contrato/enlace WCTMB, predicados, cuerpos ni `xConfig`.
 Empates y
 localización efectiva siguen sin ensayo; cargo desactivado y G6 protegido.
 Reúne rutas, trabajo realizado, evidencias comprobadas, límites y continuación;
-el roadmap mantiene los estados únicos. Comprobación local del 17/10:
+el roadmap mantiene los estados únicos. Comprobación local del 18/10:
 428, 56, 91 y 145 artefactos de los cuatro índices privados anteriores intactos,
 incluidos los dos `.pyc` antiguos conservados fuera del índice de formato;
 índice íntegro de 140 archivos conservado; evidencia nueva en
-`output/e1-kernelbase-selector-20261017/`; diez árboles históricos completos
-429/59/92/146/140/77/127/374/189/198 preservados, sin repetir suites de producto.
+`output/e1-kernelbase-field-20261018/`; once árboles históricos completos
+429/59/92/146/140/77/127/374/189/198/151 preservados, sin repetir suites de producto.
 Capturas, revisión y recibos nuevos permanecen privados; commit local sin push.
 
 Investigación REA del **16/10**, en worktree separado
