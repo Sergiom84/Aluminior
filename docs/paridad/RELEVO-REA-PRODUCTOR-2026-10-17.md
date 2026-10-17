@@ -8,9 +8,12 @@ El siguiente trabajo de producto sigue siendo E1 económico según el roadmap.
 **Continuación del 17/10, posterior a este relevo inicial:** la
 [unidad de formato](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#contrato-de-formato-varformat)
 acredita máscaras/Variant/cadena de conversión y contrato público, con límites
-de empates y localización efectiva aún abiertos. Próxima unidad estática:
-proveedor de configuración y significado del argumento `2`; no repetir
-máscaras/helpers/650. Evidencia nueva en `output/e1-varformat-20261017/`.
+de empates y localización efectiva aún abiertos. La [unidad posterior de configuración](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#proveedor-de-configuración-y-argumento-2)
+identifica `gaConfigDAL.Carga` y prueba el fallback condicionado del BSTR `2`;
+no demuestra escalas efectivas iguales a dos. Próxima unidad estática: procedencia
+y precedencia de los valores que pueblan su índice. No repetir proveedor/argumento
+`2` ni máscaras/helpers/650. Evidencias nuevas en `output/e1-varformat-20261017/`
+y `output/e1-config-20261017/`; ambos índices previos, 428 y 56 archivos, íntegros.
 El alcance estático, cargo desactivado y protección de G6 siguen vigentes.
 
 ## Encargo para la nueva conversación
@@ -49,6 +52,10 @@ original seguía en `307bf54` y el worktree en `06b4673`. Este relevo añade
 documentación en un commit posterior; comprobar que `06b4673` es antepasado,
 no exigir que siga siendo HEAD. No hacer reset, stash, checkout ni merge para
 forzar esos valores si han aparecido cambios nuevos. No se hizo push ni despliegue.
+
+La unidad posterior de configuración empezó en `1bb9b29`, misma rama y árbol
+limpio, comprobados directamente. Su documentación y evidencias nuevas se
+conservan en este worktree; los commits y resultados anteriores mantienen su fecha.
 
 `C:\Productor\Aluminio` es una junction al árbol MIX anterior: no son dos
 instalaciones ni dos muestras independientes. Todas las escrituras de la nueva
@@ -166,6 +173,13 @@ cero ausencias o diferencias. Resultado nuevo en
 permanece intacta. Esta comprobación cubre los artefactos locales generados,
 no vuelve a certificar los originales Productor ni producción.
 
+La unidad posterior de configuración revalida los **428** artefactos anteriores,
+los **56** del índice de formato y los **19** antecedentes E1 referenciados:
+tamaños/SHA-256 coincidentes e índices intactos. Salidas nuevas en
+`output/e1-config-20261017/preflight/`; proveedor y verificación en `provider/`.
+No ejecutar los scripts de captura para repetir una comprobación: reutilizar
+las capturas y usar el verificador con una carpeta de salida nueva.
+
 En el checkout original se ejecutaron el 16/10 las tres comprobaciones de
 aplicación: 964/964 tests core en 71 archivos, typecheck core y arquitectura
 con 859 archivos/414 módulos/cero infracciones. La identidad textual LF se
@@ -206,9 +220,11 @@ No repetir esas unidades. Elegir una pregunta pendiente y cerrar una sola unidad
    máscaras/Variant, flags y contrato público de localización. No repetir esa
    extracción; conservar formato → conversión → escritura. Empates y localización
    efectiva siguen pendientes de un ensayo aislado autorizado, sin redondeo supuesto.
-2. Resolver proveedor de configuración y valores efectivos
-   `REDprecio/REDlinea/REDbase/REDtotal`. El literal `2` enviado al proveedor
-   no prueba escala efectiva ni fallback.
+2. Proveedor y argumento `2` resueltos estáticamente en la unidad posterior:
+   `gaConfigDAL.Carga`, retorno condicionado del fallback, petición/conversión
+   y destinos RED. No repetirlos. Seguir procedencia y precedencia de los valores
+   que pueblan el índice consultado; `REDprecio/REDlinea/REDbase/REDtotal`
+   efectivos siguen sin demostrar. El BSTR `2` no certifica escala dos.
 3. Acreditar formación de agregados comerciales, cantidades, descuentos y
    exclusiones del cargo previo para cada modo aplicable.
 4. Separar escrituras estáticas de atomicidad, rollback, idempotencia y guardado

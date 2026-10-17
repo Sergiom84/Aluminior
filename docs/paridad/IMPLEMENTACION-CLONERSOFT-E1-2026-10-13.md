@@ -4,7 +4,7 @@
 La identidad y el estado global siguen en [E1 del roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md).
 El cargo de cabecera continúa abierto. Este contrato no acredita fabricación,
 aceptación Productor, publicación ni producción.
-La continuación vigente del 17/10 está en [Contrato de formato VarFormat](#contrato-de-formato-varformat);
+La continuación vigente del 17/10 está en [Proveedor de configuración y argumento 2](#proveedor-de-configuración-y-argumento-2);
 las unidades del 13/10 y 14/10 siguientes conservan su evidencia y fecha.
 
 ## Base y contrato
@@ -822,7 +822,7 @@ Son comprobaciones estáticas, no tests de producto ni salidas de `VarFormat`.
 de construcción separada está en `architect-mask-replay.jsonl`. No hay corrección
 funcional que revertir ni se atribuyen suites antiguas a esta unidad.
 
-**Siguiente unidad estática:** proveedor de configuración y significado del
+**Siguiente unidad al cerrar formato, antecedente histórico:** proveedor de configuración y significado del
 argumento `2`; después acreditar valores efectivos de `REDprecio/REDlinea/
 REDbase/REDtotal` sin leer bases activas. No repetir máscaras/helpers/650 ni
 las unidades cerradas. La aceptación matemática de Automation exige un ensayo
@@ -839,11 +839,159 @@ también ese verificador propio con salida 0. Informe y artefacto revisado en
 `review/REVISION-INDEPENDIENTE.md` y `review/reviewed-artifact.json`; reproducción
 del director en `architect-review/reproduced/independent.json`.
 
-Cierre documental: 119 Markdown encontrados por barrido real, ocho documentos
-actualizados, 264 enlaces locales y 22 anclas válidos; seis referencias oficiales
-íntegras y diff correcto. Estado, roadmap, contrato, índice, relevo de raíz,
-guía Windows, procedimiento y relevo REA apuntan a la misma siguiente unidad.
-No se retiró documentación, evidencia única ni discrepancias. Sin cambios en
-paquetes o fronteras del producto, no se repiten suites de aplicación ni SQL.
+Cierre documental de la unidad de formato: 119 Markdown encontrados por barrido
+real, ocho documentos actualizados, 264 enlaces locales y 22 anclas válidos;
+seis referencias oficiales íntegras y diff correcto. Estado, roadmap, contrato,
+índice, relevo de raíz, guía Windows, procedimiento y relevo REA apuntaban a la
+siguiente unidad de configuración, desarrollada a continuación. No se retiró
+documentación, evidencia única ni discrepancias. Sin cambios en paquetes o
+fronteras del producto, no se repitieron suites de aplicación ni SQL.
 July: mismo pendiente local 181 y sync_uid `398049fbd618069e36bb84bab37913ed`,
-actualizado y comprobado por lectura posterior; continúa `in_progress`, sin sync.
+actualizado y comprobado por lectura posterior; continuaba `in_progress`, sin sync.
+
+## Proveedor de configuración y argumento 2
+
+Unidad estática/documental del **17/10/2026**, desde `1bb9b29`, en el mismo
+worktree y rama `codex/rea-productor-20261016`. Resuelve el proveedor de la
+petición de configuración; no observa una instancia Productor ni sus valores
+efectivos. El contrato completo se conserva en
+`output/e1-config-20261017/CONTRATO.md`; las fuentes/capturas son privadas.
+
+- **Resultado exacto:** identificar proveedor, argumentos y rutas de retorno,
+  y separar declaración, carga, valor solicitado y valor efectivo de las cuatro RED.
+- **Éxito medible:** identidades y anclajes contra bytes, integridad antes/después,
+  verificadores ejecutados, sensibilidad y revisión independiente.
+- **Alcance:** investigación dirigida y documentación propia. Checkout original,
+  originales, evidencias anteriores, A–F, G1–G5 y G6-incidencia protegidos.
+- **Exclusiones:** ejecución Productor/DLL/COM/Automation/SQL, bases de negocio,
+  cambios de producto, migraciones, publicación, sincronización y despliegue.
+  No se repiten formato, export 650 ni las unidades estáticas cerradas.
+
+### Declaración y proveedor
+
+La creación local del proveedor pasa a `__vbaNew2` el ObjectInfo `0x11007cb0`
+de `gaConfigDAL`, en `alAppFramework.dll`. Descriptor `0x1100c068`, coclase
+`eb80593b-fbd3-401c-809c-2d35bd971ef0` e interfaz propia
+`fbc67c05-86ba-4d8c-8476-0e2a8729b6ae` enlazan la clase; no se deduce su
+identidad de un IID de diagnóstico o del registro de Windows.
+
+El slot `+0x20` declara `Carga`, con `sNombreDato` y `sValorSiNulo` de tipo
+BSTR y salida BSTR. Su celda `0x11007d5c` lleva al thunk `0x11007dcd` y cuerpo
+`0x110619b0`. Delega al helper propio `+0x4c`, cuerpo `0x11061cb0`, pasando
+el nombre solicitado, el campo `Valor` y `sValorSiNulo`.
+
+### Qué acredita el argumento 2
+
+La rutina de carga de RED convierte el entero `2` mediante `__vbaStrI2` y
+lo pasa como BSTR al segundo argumento de `Carga`. El nombre del parámetro
+no basta para interpretar su función. El cuerpo delegado sí contiene una
+prueba mediante el import runtime `#560`, identificado por su export como
+`rtcIsNull`: tras resultado no cero, copia el tercer argumento del helper
+(`sValorSiNulo`) al retorno, en `0x11062199–0x110621a5`.
+
+Esto acredita un fallback **condicionado a esa rama**. No demuestra que una
+petición concreta la recorriese ni que las escalas efectivas sean dos. Tampoco
+equivale a corregir cualquier dato inválido, vacío o error con dos decimales.
+
+Hay una segunda rama de retorno del mismo fallback: el resultado declarado
+Long de `_gaLstIndice.dimeIdxClave`, slot `+0x2c`, se convierte mediante
+`__vbaI2I4` y se compara con `-1` en `0x110620a7`. Si coincide, se devuelve
+`sValorSiNulo`. Se acredita ese retorno del buscador, sin generalizarlo a
+«cualquier ausencia» ni atribuirle un cuerpo por un IID compatible sin resolver.
+En la otra ruta se obtiene `_gaLstItem.campo`, slot `+0x20`, con nombre `Valor`
+y salida Variant; si no toma la rama `rtcIsNull`, se convierte a BSTR para
+el retorno. La secuencia contiene tratamiento de errores; no se afirma que
+todo error desemboque en el fallback.
+
+Además, el helper puede devolver cadena vacía cuando la bandera propia del
+proveedor `this+0x34` es cero o falla la guarda de longitud del nombre. Ese
+campo pertenece a `gaConfigDAL`, una instancia distinta de la que contiene
+`REDprecio` también en `+0x34`. No extender la reserva `2` a estas rutas.
+
+### Las cuatro propiedades RED
+
+La interfaz propia `_alConfigRedondeo`, GUID
+`3437a004-d736-4b48-b8e1-7756a4fae5ba`, declara los getters siguientes.
+La carga privada `+0x54`, cuerpo `0x110297d0`, pide cada clave con el BSTR
+`2` en `sValorSiNulo`. El BSTR devuelto se entrega como Variant BSTR a
+`ValorDbl`; su Double pasa a `__vbaFpI2` y después al WORD de instancia.
+La conversión y la escritura son estáticas: no se ha observado el valor recibido.
+
+| Propiedad / slot declarado | WORD leído por getter | Clave solicitada | Escritura de la rutina de carga | Valor efectivo demostrado |
+|---|---|---|---|---|
+| `REDprecio / +0x1c` | `this+0x34`, cuerpo `0x110291b0` | `RedondeoPrecio` | `0x110298dd` | Ningún valor de instancia observado |
+| `REDlinea / +0x20` | `this+0x36`, cuerpo `0x11029220` | `RedondeoLinea` | `0x11029997` | Ningún valor de instancia observado |
+| `REDbase / +0x24` | `this+0x38`, cuerpo `0x11029290` | `RedondeoBase` | `0x11029a51` | Ningún valor de instancia observado |
+| `REDtotal / +0x2c` | `this+0x3c`, cuerpo `0x11029370` | `RedondeoTotal` | `0x11029bc5` | Ningún valor de instancia observado |
+
+**Inicialización:** una rutina privada `+0x5c`, cuerpo `0x1102a850`, llama
+a `+0x54` y después a `+0x58` en `0x1102a8b7/0x1102a8bd`. Esto fija el orden
+de esas llamadas en ese cuerpo; no acredita que sea un constructor/evento
+automático ni que una sesión comercial lo ejecutase. No se atribuye un valor
+inicial cero o dos a los WORD desde la mera creación del objeto. Las cuatro
+propiedades, la petición de reserva y los valores efectivos quedan separados.
+
+### Estado de aceptación y continuidad
+
+Extraído y especificado el proveedor de la petición. No se implementa el cargo
+económico ni se certifican empates, localización efectiva, conservación de
+importes, agregados comerciales o persistencia durable. E1 permanece
+`in_progress`, cargo desactivado y G6 protegido.
+
+**Siguiente unidad estática:** procedencia y precedencia de la configuración
+que puebla la lista/índice consultado. Entrada acotada:
+`gaConfigDAL.AbreRS`, slot `+0x1c`, celda `0x11007d58` → thunk `0x11007dc0`
+→ cuerpo `0x110615d0`. El cuerpo del buscador `dimeIdxClave` conserva una
+frontera de compatibilidad nativa/TypeLib antes de asignarlo. No reabrir
+`Carga`, el argumento `2`, máscaras/helpers/650 o las unidades previas.
+Demostrar valores efectivos exige además procedencia y estado de configuración;
+esta unidad no autoriza leer bases de negocio. Agregados y persistencia conservan
+su unidad propia. El ensayo matemático de Automation requiere autorización aislada.
+
+### Evidencia ejecutada
+
+Evidencia nueva privada en `output/e1-config-20261017/`. El director reprodujo
+la integridad inicial de los dos índices: **428/428** artefactos y
+100.492.633 bytes, **56/56** y 836.521 bytes; cero ausencias o diferencias de
+tamaño/SHA-256. Los índices y los **19/19** antecedentes referenciados permanecen
+intactos. Esto acredita disponibilidad local, no semántica de todas las fuentes.
+
+Gate del proveedor reproducido por el director sobre el verificador congelado:
+`python -B output/e1-config-20261017/provider/verify-provider.py --output-dir
+output/e1-config-20261017/director-static-frozen`, salida 0, **148/148**.
+Nueve capturas, cuatro reutilizadas de la evidencia anterior, con **1.589**
+instrucciones cotejadas contra bytes y decodificación. Las **14** mutaciones sólo
+en memoria provocan **un fallo cada una**; cuatro fuentes intactas antes/después.
+El gate inicial 140 queda como antecedente privado; el final añade el cotejo de
+artefactos guardados con sus fuentes. No son pruebas de producto o salidas reales
+del proveedor; no existe arreglo funcional de Aluminior que revertir.
+
+Se actualizan los ocho documentos existentes de estado, roadmap, contrato,
+índice, relevos, guía y procedimiento. Se preservan evidencias y discrepancias;
+las instrucciones agotadas de proveedor/argumento `2` quedan como historia o se
+sustituyen por la procedencia del índice. No se modifica ningún paquete, script
+de producto o migración, ni se repiten suites que ejecutan SQL.
+
+### Cierre de revisión y entrega
+
+Revisión independiente conforme, sin defecto reproducible ni corrección
+solicitada. Verificador propio **135/135**, salida 0, reproducido por el director
+con `python -B output/e1-config-20261017/review/independent_verify.py --out
+output/e1-config-20261017/review/director-reproduced`. Seis mutaciones hacen
+fallar sus predicados locales. Sus 18 capturas suman 4.441 instrucciones con
+solapamientos; no representan instrucciones únicas ni cobertura funcional.
+Informe y recibo privados: `review/REVISION-INDEPENDIENTE.md` y
+`review/review-receipt.json`. Una revisión completa; no hubo corrección funcional.
+
+Gate documental del director: barrido real de 119 Markdown, ocho modificados,
+268 enlaces locales y 26 anclas válidos. El extractor independiente cuenta
+269 enlaces; ambos verifican todos sus destinos. Se preserva por hash el
+artefacto revisado; sólo se añade este recibo de cierre. Integridad anterior
+revalidada al final sin diferencias. No se retira evidencia o documentación única.
+
+July: mismo E1 localizado en `aluminior` por
+`398049fbd618069e36bb84bab37913ed`, actualización local y lectura posterior
+coincidentes; historia conservada, estado `in_progress`, sin sincronización.
+El commit local se guarda tras comprobar identidad Git y detener escrituras
+de todos los agentes. No hay push, publicación o despliegue. E1 económico sigue
+abierto; cargo desactivado, A-F/G1-G5 y G6-incidencia preservados.

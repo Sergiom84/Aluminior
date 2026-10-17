@@ -7,9 +7,11 @@ consumidor DEScalcula, declaraciones COM y receptores/selector de alBDADO.
 Los cuerpos de control/reparto/totales también están seguidos. La
 [unidad del 17/10](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#contrato-de-formato-varformat)
 amplía máscaras/Variant y contrato público de formato, sin cerrar empates ni
-localización efectiva. Siguiente unidad estática: proveedor de configuración y
-significado del argumento `2`; después escalas efectivas y entrada de agregados. No repetir
-inventarios/literales/preparación pura/declaraciones. El procedimiento
+localización efectiva. La [unidad posterior de configuración](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#proveedor-de-configuración-y-argumento-2)
+identifica `gaConfigDAL.Carga` y acredita el fallback condicionado del BSTR `2`,
+sin demostrar las cuatro escalas efectivas. Siguiente unidad estática: procedencia
+y precedencia de los valores que pueblan su índice; después entrada de agregados. No repetir
+inventarios/literales/preparación pura/declaraciones ni proveedor/argumento `2`. El procedimiento
 de observación siguiente es una vía separada y necesita autorización propia.
 Ya se entregó la
 [investigación documental y contraste guardado](EVIDENCIA-E1-DESPUNTE-2026-10-04.md);
