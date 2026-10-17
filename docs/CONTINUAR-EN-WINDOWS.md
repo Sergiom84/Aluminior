@@ -164,9 +164,10 @@ sigue inicialización del comparador y las dos rutas del normalizador, sin
 acreditar sus valores efectivos. La [unidad de fila y delegados](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#clave-de-fila-y-transformaciones-del-índice)
 atribuye cuerpo propio de `x_Clave` y proveedor/slots de transformación.
 Los [predicados internos de rellena](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#predicados-internos-de-rellena)
-ya tienen condiciones y efecto en ramas acreditados estáticamente. Siguiente:
-`msvbvm60.dll 0x6601d79a` → IAT `0x660011ac`, `KERNEL32!WideCharToMultiByte`,
-con contrato externo y conversión efectiva abiertos. No repetir predicados;
+ya tienen condiciones y efecto en ramas acreditados estáticamente. La [frontera WCTMB](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#frontera-widechartomultibyte)
+acredita contrato público y enlace candidato ApiSet. Siguiente: procedencia del
+estado en `KernelBase.dll 0x10148768 / 0x1014876e`, celdas `0x10282d08 / 0x10284990`.
+Inicialización y conversión efectiva abiertas. No repetir contrato/enlace ni predicados;
 después equivalencia, valores efectivos, agregados y persistencia.
 No repetir `x_Clave`/proveedor/delegados ya seguidos, inicializador/normalizador,
 `xConfig`, construcción/búsqueda,

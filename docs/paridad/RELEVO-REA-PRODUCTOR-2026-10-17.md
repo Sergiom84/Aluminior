@@ -19,9 +19,10 @@ sigue inicializador del comparador y bifurcación del normalizador; no repetirlo
 La [unidad de fila y delegados](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#clave-de-fila-y-transformaciones-del-índice)
 atribuye `_gaLstItem.x_Clave +0x38` al cuerpo `0x11074c00` por metadata propia
 y sigue proveedor/slots/cuerpos de transformación. La [unidad de predicados](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#predicados-internos-de-rellena)
-acredita `+0x48/+0x4c`, sus condiciones y efecto en ramas. Próxima frontera:
-`msvbvm60.dll 0x6601d79a` → IAT `0x660011ac`, `KERNEL32!WideCharToMultiByte`;
-contrato externo y conversión efectiva pendientes. No repetir los predicados.
+acredita `+0x48/+0x4c`, sus condiciones y efecto en ramas. La [frontera WCTMB](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#frontera-widechartomultibyte)
+acredita contrato público y enlace candidato ApiSet. Próximo anclaje:
+`KernelBase.dll 0x10148768 / 0x1014876e`, celdas `0x10282d08 / 0x10284990`;
+procedencia, inicialización y conversión efectiva pendientes. No repetir contrato/enlace ni predicados.
 Equivalencia, colación y valores efectivos permanecen abiertos; no repetir cuerpos.
 No repetir `xConfig`,
 construcción, ordenación, búsqueda,
@@ -31,7 +32,52 @@ AbreRS/carga, proveedor/argumento `2` ni máscaras/helpers/650. Evidencias nueva
 anteriores, 428, 56, 91 y 145 artefactos, conservan tamaño y SHA-256.
 El alcance estático, cargo desactivado y protección de G6 siguen vigentes.
 
-## Última unidad estática: predicados de rellena, 17/10
+## Última unidad estática: frontera WCTMB, 17/10
+
+Base comprobada `700c9136186583debf22e2f47ab5537af764ef2b`, rama exclusiva
+`codex/rea-productor-20261016`, árbol inicial limpio. La entrega sólo cambia
+ocho documentos y evidencia privada en `output/e1-widechar-frontier-20261017/`.
+Contrato público, enlace candidato kernel32 → ApiSet → KernelBase y selección
+acotada para argumento cero acreditados. Un valor de archivo `65001` no
+demuestra ACP efectivo; la otra celda carece de bytes raw. No ejecutar legado.
+
+Siguiente unidad única: **procedencia e inicialización del estado leído en
+KernelBase.dll `0x10148768 / 0x1014876e`, celdas `0x10282d08 / 0x10284990`**.
+Acreditar primero escrituras/inicializadores concretos; mantener pendiente
+resolución y carga efectiva y detenerse ante otra frontera. No análisis global
+NLS ni repetición del contrato WCTMB, enlace ApiSet o predicados.
+
+Para continuar en otra conversación:
+
+1. Usar explícitamente el workdir `C:\Users\sergi\.codex\worktrees\rea-productor-20261016\Aluminior`
+   en cada comando. Verificar status, rama y HEAD de sólo lectura; el HEAD de
+   cierre consta en `output/e1-widechar-frontier-20261017/postcommit-receipt.json`.
+   Una diferencia exige inspección, nunca reset/checkout/stash para encajarla.
+2. Leer AGENTS, ESTADO-ACTUAL, roadmap, esta entrega y la sección
+   [Frontera WideCharToMultiByte](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#frontera-widechartomultibyte).
+   Leer contrato, `static/captured-final/evidence.json`, `public/published/sources.json`,
+   `review/REPORT.md`, gates finales, sello y recibo postcommit de la unidad.
+3. Preservar los ocho árboles anteriores **429/59/92/146/140/77/127/374** y
+   también el árbol completo de esta entrega, incluidos recibos posteriores al
+   sello. Su inventario final consta en el recibo. No ejecutar scripts históricos,
+   regenerar índices ni escribir allí. Crear otra carpeta de salida nueva.
+4. Verificar tamaño/SHA-256 de los seis PE contra los manifiestos. El esquema
+   ApiSet está en System32, los otros cinco en SysWOW64; no confundir módulos,
+   bases preferidas ni mapa de archivo con estado cargado. Python siempre `-B`;
+   vendor existente sólo leído, checkout original protegido.
+5. Declarar contrato; máximo dos subagentes, propietario único de helpers,
+   revisión descontaminada, una corrección máxima y gates realmente reproducidos.
+   Congelar ejecutores antes de staging/commit y verificar identidad Sergio.
+6. Actualizar los mismos ocho documentos y el E1 July por proyecto `aluminior`
+   y sync_uid `398049fbd618069e36bb84bab37913ed`, único, con historia e `in_progress`.
+   ID local no transferible. Lectura posterior exacta, sin sincronizar.
+
+Sólo investigación estática/documentación y commit local sin push. No producto,
+COM, DLL cargadas, SQL, bases de negocio, licencias, migraciones o despliegues.
+E1 abierto, cargo desactivado y A–F/G1–G5/G6-incidencia preservados. Después:
+completar contrato/implementación, comparar Aluminior y probar aislado, por ese orden.
+
+## Antecedente histórico: predicados de rellena, 17/10
 
 Base inicial comprobada `5acc947f8a318abed614f79e3551bbaf4aad8c0b`, misma
 rama y árbol limpio. Evidencia nueva exclusivamente en
@@ -45,8 +91,9 @@ Declaraciones `+0x48/+0x4c`, thunks y cuerpos enlazados; I2 `-1/0` condicionado
 por intervalos sobre la conversión signed16 del primer segmento. La segunda
 fase de `rellena` conserva una comparación con `*` de la cadena original y
 las otras condiciones de la filtrada; no asumir posiciones equivalentes.
-Siguiente **`msvbvm60.dll 0x6601d79a` → IAT `0x660011ac` →
-`KERNEL32!WideCharToMultiByte`**: contrato externo y conversión efectiva.
+En aquella entrega, el siguiente paso era WCTMB desde `msvbvm60.dll 0x6601d79a`, agotado
+en la [unidad posterior](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#frontera-widechartomultibyte).
+La continuación vigente son las dos lecturas de estado de KernelBase indicadas arriba.
 No repetir predicados ni proclamar transformación exacta, equivalencia,
 colación, RED, backend o persistencia.
 
@@ -327,9 +374,9 @@ No repetir esas unidades. Elegir una pregunta pendiente y cerrar una sola unidad
    continuación de claves enlazada arriba; no repetirlos. Cuerpo de fila y
    proveedor/slots de transformación seguidos en la unidad posterior; no repetirlos.
    Predicados `+0x48/+0x4c` seguidos en la unidad nueva enlazada arriba;
-   no repetirlos. Seguir frontera externa `msvbvm60.dll 0x6601d79a` →
-   IAT `0x660011ac`, `KERNEL32!WideCharToMultiByte`, con contrato y conversión
-   efectiva aún abiertos. No atribuir colación, prioridad primera/última ni
+   no repetirlos. Contrato WCTMB y enlace candidato seguidos en la unidad nueva.
+   Seguir procedencia e inicialización de `KernelBase.dll 0x10148768 / 0x1014876e`,
+   celdas `0x10282d08 / 0x10284990`; resolución y valores efectivos aún abiertos. No atribuir colación, prioridad primera/última ni
    equivalencia de claves desde condiciones parciales.
    Las cuatro RED efectivas siguen sin demostrar. El BSTR `2` no certifica escala
    dos; el selector BDtipo tampoco prueba backend ni configuración efectiva.

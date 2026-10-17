@@ -1674,8 +1674,9 @@ a `KERNEL32!WideCharToMultiByte`, con argumentos efectivos
 `(0, 0, BSTR, 1, buffer, 2, 0, 0)`. Cuando el resultado es dos bytes,
 el tramo `0x6608e50b` combina `(b0 << 8) + b1`; la otra ruta carga `b0`.
 Ese camino no acredita que la conversión haya tenido éxito si retorna cero.
-Se cierra aquí el seguimiento: contrato externo, página de códigos y retorno
-efectivos siguen sin demostrar. No se carga ni ejecuta ninguna DLL legacy.
+En aquella entrega el seguimiento quedó en esa frontera. Su contrato público y
+enlace candidato se continúan en la [unidad WCTMB](#frontera-widechartomultibyte);
+página de códigos y retorno efectivos siguen sin demostrar. No se ejecuta legado.
 
 ### Argumentos y efecto en rellena
 
@@ -1738,12 +1739,151 @@ Revisión independiente, reproducción final y cierre se registran en
 de la carpeta nueva. Los recibos posteriores al sello se enumeran sin
 sobrescribirlo. La evidencia privada no viaja por Git ni July.
 
-**Ahora:** frontera externa de conversión desde `msvbvm60.dll`
-**`0x6601d79a` → IAT `0x660011ac` → `KERNEL32!WideCharToMultiByte`**:
-acreditar su contrato y premisas efectivas antes de fijar el conjunto exacto
-de caracteres o la transformación completa. No repetir los predicados,
-sus slots/cuerpos, proveedor, `just`, `x_Clave` ni unidades previas.
+**Siguiente histórico de aquella entrega, agotado:** frontera WCTMB desde
+`msvbvm60.dll 0x6601d79a`, continuada en la [unidad siguiente](#frontera-widechartomultibyte).
+La nueva frontera son las lecturas `KernelBase.dll 0x10148768 / 0x1014876e`.
+No repetir contrato/enlace, predicados, sus slots/cuerpos, proveedor, `just`,
+`x_Clave` ni unidades previas.
 **Después:** valores efectivos, equivalencia, agregados y persistencia.
 E1 permanece `in_progress`, cargo desactivado; A–F/G1–G5/G6-incidencia
 preservados. Completar contrato/implementación, comparar Aluminior y probar
 software aislado siguen siendo fases posteriores, fuera de esta unidad.
+
+## Frontera WideCharToMultiByte
+
+Unidad estática/documental del **17/10/2026**, desde commit
+`700c9136186583debf22e2f47ab5537af764ef2b`, rama `codex/rea-productor-20261016`,
+árbol inicial limpio. Evidencia nueva en `output/e1-widechar-frontier-20261017/`.
+Se reutilizan los predicados y la atribución del ordinal 516; no se repiten
+proveedor, `just`, `x_Clave` ni las unidades anteriores.
+
+### Contrato público y argumentos ya acreditados
+
+La llamada de **msvbvm60.dll** en `0x6601d79a`, por IAT `0x660011ac`, declara
+`KERNEL32!WideCharToMultiByte`. Sus ocho argumentos efectivos son
+`(0, 0, BSTR, 1, ebp+0xa, 2, 0, 0)`, en el orden de la API.
+La [constante oficial](https://learn.microsoft.com/en-us/windows/win32/intl/locale-idefault-constants)
+vincula `0` con `CP_ACP`. No es una página numérica fija acreditada para Productor.
+
+Según el [contrato de la API](https://learn.microsoft.com/en-us/windows/win32/api/stringapiset/nf-stringapiset-widechartomultibyte),
+la longitud positiva procesa exactamente la entrada indicada, sin buscar su
+terminador. Aquí se solicita una unidad UTF-16; no un grafema completo ni
+un par de sustitutos. El tamaño de salida está en bytes; aquí hay capacidad dos y no
+consulta previa de tamaño. Los flags cero no solicitan `WC_NO_BEST_FIT_CHARS`.
+El carácter de sustitución nulo selecciona el predeterminado del sistema;
+el último puntero nulo impide recibir el indicador de sustitución. Por ello
+no queda acreditado que la conversión conserve el carácter original.
+Éxito devuelve bytes escritos; fallo devuelve cero, incluido buffer insuficiente.
+No se deduce contenido válido del buffer cuando falla.
+
+Microsoft documenta también la posibilidad de [página UTF-8 por proceso](https://learn.microsoft.com/en-us/windows/apps/design/globalizing/use-utf8-code-page)
+desde Windows 1903 mediante `activeCodePage`. Esta posibilidad contractual
+no prueba manifiesto, versión, ACP ni entorno efectivo de Productor.
+No se consultó el registro ni se ejecutó `GetACP` o una conversión.
+
+### Enlace candidato en disco, con identidad por módulo
+
+Además de las tres identidades PE anteriores, se fijan estas fuentes nuevas:
+
+| Fuente | Bytes | SHA-256 |
+|---|---:|---|
+| `SysWOW64/kernel32.dll` | 707744 | `7f04765684de5ecb702afb5c4cfbfde12a4e61a125389ee23166aa66430e62f0` |
+| `SysWOW64/KernelBase.dll` | 3007824 | `5be784046dc9731d1c36e872a8022065ed4a733707b1e467b30a96588714b137` |
+| `System32/apisetschema.dll` | 204152 | `568c72f6216d83a716d6fa9bec59ae8d93e6728062d969ac362013f3910c0007` |
+
+| Enlace seguido por bytes | Resultado estático |
+|---|---|
+| `kernel32.dll`, export 1603, RVA `0x1b310` | Thunk `0x1001b310–0x1001b31c`, límite exclusivo; salto por IAT `0x10081ad8` |
+| Import de esa IAT | `api-ms-win-core-string-l1-1-0.dll!WideCharToMultiByte` |
+| Entrada exacta del contrato en `.apiset`, esquema versión 6 | Un único valor de host: `kernelbase.dll` |
+| `KernelBase.dll`, export 1971 | RVA `0x1486b0`, VA preferida `0x101486b0` |
+
+Los dos PE de SysWOW64 son PE32/x86 y comparten base **preferida** `0x10000000`;
+no se mezclan sus direcciones. El esquema de System32 es PE32+/AMD64 y sólo
+se lee su metadata del contrato exacto. No se asume un archivo físico con
+el nombre ApiSet ni un enlace directo a KernelBase por coincidencia de nombre.
+Un [ApiSet identifica un contrato que resuelve el cargador](https://learn.microsoft.com/en-us/windows/win32/apiindex/windows-apisets).
+El mapa conservado en disco acredita un candidato, **no el mapa ni los módulos
+efectivamente cargados por un proceso Productor**.
+
+### Selección acotada de CodePage cero y nueva frontera
+
+En el candidato **KernelBase.dll**, los saltos seleccionados para argumento
+`CodePage=0` alcanzan `0x10148764`. Después de la prueba de cero, se siguen:
+
+| Instrucción | Dependencia leída |
+|---|---|
+| `0x10148768` | Carga ESI desde DWORD `0x10282d08`, RVA `0x282d08` |
+| `0x1014876e` | Carga EDI desde DWORD `0x10284990`, RVA `0x284990` |
+| `0x10148774` | Salta a `0x101487ef`; el seguimiento se detiene antes de su continuación |
+
+La primera celda contiene el entero DWORD `65001` en el archivo.
+La segunda cae dentro del tamaño virtual de `.data`, fuera de sus bytes raw.
+No se fabrica una lectura de archivo para esa cola virtual. Ninguno de estos
+hechos demuestra los valores después de carga e inicialización; tampoco
+demuestran la página o tabla efectiva de Productor. No se siguen inicializadores,
+tablas NLS, otras páginas ni otras ramas del selector en esta unidad.
+
+### Consecuencia condicionada para el valor consumido
+
+El código VB compara el retorno con dos. Si coincide, forma
+`(b0 << 8) + b1`; en otro caso carga `b0`, también cuando la API retorna cero.
+Ese tramo no consulta `GetLastError` ni separa fallo de éxito de un byte.
+El buffer `ebp+0xa` se solapa con los dos bytes altos del argumento BSTR
+almacenado en `ebp+8`; no hay inicialización independiente en la ruta capturada.
+Esto no demuestra qué bytes deja una conversión fallida ni un resultado cero.
+
+**Inferencia condicionada:** con éxito de un byte, los predicados reciben ese
+byte; con éxito de dos, reciben la combinación anterior interpretada como I2
+con signo. Sus extremos `A/Z/a/z/0/9` pasan por el mismo convertidor ya seguido.
+Con fallo no puede fijarse su resultado desde el contrato público. La posible
+aproximación o sustitución impide equiparar las bandas con una clasificación
+del carácter Unicode original. Se conserva también la diferencia de fuentes
+en la segunda fase de `rellena`, acreditada en la unidad anterior.
+
+### Verificación, límites y continuidad
+
+Capturas canónicas: `static/captured-final/evidence.json`; cinco rangos de
+código, **204 bytes y 62 instrucciones**, dentro de 37 capturas que incluyen
+metadata. No se suma este contexto reutilizado a la cobertura anterior.
+Fuentes oficiales publicadas congeladas con URL, fecha, tamaño/SHA-256 y
+HTML/texto derivado en `public/published/`; cuatro fuentes y 16 anclajes
+literales. Su gate de **34/34** verifica procedencia e integridad, no semántica
+de una implementación. Las descargas raw previas y el 404 del header quedan
+como antecedentes; el HTML publicado es la fuente canónica de este cotejo.
+
+El director reproduce `static/verify.py` en `static/director-initial/`: **206/206**,
+**72 predicados** (45 instrucciones y 27 invariantes de metadata), **72/72
+perturbaciones rechazadas**. Los tres controles de límite son los prólogos VB y
+kernel32 y el factor hash ApiSet; pasan la selección parcial y cambian la captura
+completa. No se acredita por ello toda la ruta del cargador.
+
+Revisión independiente y reproducción final se registran en `review/` y
+`director-final/gate.json`; la repetición
+postcommit y el cierre en `director-postcommit/gate.json` y
+`postcommit-receipt.json`. No se ejecuta código legacy ni pruebas funcionales.
+Las perturbaciones se hacen sólo en memoria y su rechazo semántico no utiliza
+el hash global. Los controles que pasan una selección parcial se cotejan
+además contra la captura completa. No sumar filas de aserciones a cobertura.
+
+Los intentos previos permanecen: preservación inicial **1149/1157**, por cotejar
+blobs Git LF contra documentos sellados CRLF, corregida acreditando la conversión
+de checkout; gate documental **1686/1687**, por reconocimiento léxico insuficiente
+de una frase histórica, aclarada en el texto. No son fallos de Productor ni se
+debilitan los verificadores para aceptarlos.
+
+Los ocho árboles históricos completos conservan **429/59/92/146/140/77/127/374**
+archivos y los cuatro índices **428/56/91/145**, incluidos pyc, sellos y recibos
+posteriores. Se preservan los seis PE, el vendor original y los 1.099 archivos
+versionados ajenos a esta documentación. Nuevo sello y recibos posteriores
+en la carpeta nueva; ninguna evidencia privada se incorpora a Git o July.
+
+**Ahora:** procedencia e inicialización del estado leído en **KernelBase.dll
+`0x10148768 / 0x1014876e`**, celdas **`0x10282d08 / 0x10284990`**.
+Primero acreditar sus escrituras/inicializadores por bytes, manteniendo la
+premisa pendiente de resolución/carga efectiva; detenerse ante la siguiente
+frontera. No repetir contrato WCTMB, enlace ApiSet, predicados ni unidades cerradas.
+**Después:** valores efectivos, equivalencia, agregados y persistencia.
+E1 sigue `in_progress`, cargo desactivado y A–F/G1–G5/G6-incidencia preservados.
+Completar contrato/implementación, comparar Aluminior y probar en entorno
+aislado mantienen su orden como fases posteriores fuera de esta unidad.

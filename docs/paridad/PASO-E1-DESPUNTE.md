@@ -17,9 +17,10 @@ sigue inicializador del comparador y bifurcación del normalizador; no repetirlo
 La [unidad de fila y delegados](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#clave-de-fila-y-transformaciones-del-índice)
 atribuye el cuerpo propio de `x_Clave` y sigue proveedor/slots de transformación.
 Los [predicados internos de rellena](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#predicados-internos-de-rellena)
-ya tienen condiciones y ramas seguidas estáticamente. Siguiente anclaje:
-`msvbvm60.dll 0x6601d79a` → IAT `0x660011ac`, `KERNEL32!WideCharToMultiByte`;
-contrato externo y conversión efectiva pendientes. No repetir los predicados.
+ya tienen condiciones y ramas seguidas estáticamente. La [frontera WCTMB](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#frontera-widechartomultibyte)
+acredita contrato público y enlace candidato ApiSet. Siguiente: procedencia del
+estado en `KernelBase.dll 0x10148768 / 0x1014876e`, celdas `0x10282d08 / 0x10284990`.
+Inicialización y conversión efectiva pendientes; no repetir contrato/enlace ni predicados.
 Después valores efectivos, equivalencia y entrada de agregados. No repetir estos cuerpos ni `xConfig`,
 construcción/búsqueda, AbreRS/carga de lista ni
 inventarios/literales/preparación pura/declaraciones ni proveedor/argumento `2`. El procedimiento

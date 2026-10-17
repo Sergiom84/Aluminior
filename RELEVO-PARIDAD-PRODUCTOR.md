@@ -14,9 +14,11 @@ La [unidad de fila y delegados](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-1
 atribuye `_gaLstItem.x_Clave +0x38` a `0x11074c00` y sigue las transformaciones.
 Los [predicados internos de rellena](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#predicados-internos-de-rellena)
 ya tienen declaraciones, cuerpos, argumentos y condiciones seguidos estáticamente.
-Siguiente: conversión externa desde `msvbvm60.dll` en `0x6601d79a` por
-IAT `0x660011ac`, `KERNEL32!WideCharToMultiByte`; página de códigos y resultados
-efectivos pendientes. No repetir predicados, cuerpos ni `xConfig`.
+La [frontera WCTMB](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#frontera-widechartomultibyte)
+acredita contrato público y enlace candidato por ApiSet. Siguiente: procedencia
+del estado leído en `KernelBase.dll 0x10148768 / 0x1014876e`, celdas
+`0x10282d08 / 0x10284990`; inicialización y valores efectivos pendientes.
+No repetir contrato/enlace WCTMB, predicados, cuerpos ni `xConfig`.
 Empates y
 localización efectiva siguen sin ensayo; cargo desactivado y G6 protegido.
 Reúne rutas, trabajo realizado, evidencias comprobadas, límites y continuación;
@@ -24,8 +26,8 @@ el roadmap mantiene los estados únicos. Comprobación local del 17/10:
 428, 56, 91 y 145 artefactos de los cuatro índices privados anteriores intactos,
 incluidos los dos `.pyc` antiguos conservados fuera del índice de formato;
 índice íntegro de 140 archivos conservado; evidencia nueva en
-`output/e1-rellena-predicates-20261017/`; siete árboles históricos completos
-429/59/92/146/140/77/127 preservados, sin repetir suites de producto.
+`output/e1-widechar-frontier-20261017/`; ocho árboles históricos completos
+429/59/92/146/140/77/127/374 preservados, sin repetir suites de producto.
 Capturas, revisión y recibos nuevos permanecen privados; commit local sin push.
 
 Investigación REA del **16/10**, en worktree separado
