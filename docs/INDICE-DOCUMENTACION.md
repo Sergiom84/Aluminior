@@ -12,6 +12,7 @@ propuesta entonces exclusiva del main local (integrada como herramienta el 13/10
 
 | Documento | Uso |
 |---|---|
+| [Relevo REA 17/10 para otra conversación](paridad/RELEVO-REA-PRODUCTOR-2026-10-17.md) | Arranque autónomo, trabajo realizado, rutas/evidencias, siguiente unidad y límites; no sustituye los estados del roadmap |
 | [Investigación REA 16/10](paridad/INVESTIGACION-REA-PRODUCTOR-2026-10-16.md) | Inventario ampliado, metadatos/contratos managed y pseudocódigo nativo dirigido; evidencia privada, límites e integridad |
 | [Comparación REA 16/10](paridad/COMPARACION-REA-PRODUCTOR-2026-10-16.md) | Capacidades Productor frente al código actual; implementado, parcial y sin módulo localizado; prioridades sin porcentaje de paridad |
 | [Contrato y lote E1 ClonerSoft 13/10, continuación 14/10](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md) | Físico/condicional, layout, consumidor/COM, receptores y control/reparto/totales acreditados estáticamente; matriz de ocho preguntas, VarFormat/configuración/agregados y persistencia pendientes |

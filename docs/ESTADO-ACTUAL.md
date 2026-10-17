@@ -18,6 +18,10 @@ estado único de las tareas de paridad, con mantenimiento documental obligatorio
 
 ## Investigación REA — 16/10/2026, worktree separado
 
+[Relevo completo del 17/10 para otra conversación](paridad/RELEVO-REA-PRODUCTOR-2026-10-17.md):
+428 artefactos privados comprobados por tamaño y SHA-256; resultados de producto
+del 16/10 conservados con su fecha, sin nueva ejecución de suites.
+
 [Informe REA](paridad/INVESTIGACION-REA-PRODUCTOR-2026-10-16.md) y
 [comparación por capacidades](paridad/COMPARACION-REA-PRODUCTOR-2026-10-16.md),
 en `codex/rea-productor-20261016`, desde `307bf54`. Inventario ampliado,

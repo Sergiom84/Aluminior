@@ -1,5 +1,10 @@
 # Relevo: paridad y fuentes de Productor
 
+Para continuar en otra conversación: [relevo completo del 17/10](docs/paridad/RELEVO-REA-PRODUCTOR-2026-10-17.md).
+Reúne rutas, trabajo realizado, evidencias comprobadas, límites y continuación;
+el roadmap mantiene los estados únicos. Comprobación local del 17/10:
+428 artefactos privados del índice intactos, sin repetir suites de producto.
+
 Investigación REA del **16/10**, en worktree separado
 `C:\Users\sergi\.codex\worktrees\rea-productor-20261016\Aluminior`, rama
 `codex/rea-productor-20261016`, base `307bf54`:
