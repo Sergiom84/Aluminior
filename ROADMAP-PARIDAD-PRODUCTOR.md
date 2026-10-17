@@ -1,6 +1,6 @@
 # Roadmap operativo de paridad con Productor
 
-Actualizado: 17/10/2026 (formato y proveedor de configuración E1 seguidos estáticamente; valores efectivos y aceptación monetaria pendientes; C1 y P.6/P.7 conservan su etapa del 12/10). Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
+Actualizado: 17/10/2026 (formato, proveedor y procedencia de carga E1 seguidos estáticamente; valores efectivos y aceptación monetaria pendientes; C1 y P.6/P.7 conservan su etapa del 12/10). Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
 Este archivo es el registro único del orden y estado de estas tareas.
 Los documentos de ensayo explican cómo realizarlas; los informes fechados
 conservan evidencia. Sus antiguas listas de pendientes no sustituyen este registro.
@@ -16,8 +16,11 @@ política exacta de empates ni la localización efectiva de una ejecución Produ
 La [unidad posterior de configuración](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#proveedor-de-configuración-y-argumento-2)
 identifica `gaConfigDAL.Carga` y prueba el fallback condicionado del BSTR `2`.
 No demuestra que `REDprecio/REDlinea/REDbase/REDtotal` valgan dos.
-Siguiente unidad estática: procedencia y precedencia de los valores que pueblan
-el índice del proveedor. Después siguen agregados y persistencia. E1 permanece en curso,
+La [unidad de procedencia](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-y-precedencia-del-índice-de-configuración)
+sigue AbreRS y la recarga de lista con índice NombreDato. No repetir esa carga.
+Siguiente unidad estática: orden y duplicados del índice, desde
+`gaLst.xcfg_IDX_addIndice +0x64` → `gaLstIndice.xConfig +0x3c`.
+Después siguen valores efectivos, agregados y persistencia. E1 permanece en curso,
 sin cargo activo ni operación sobre G6; el ensayo matemático necesita alcance aislado propio.
 
 **Investigación REA 16/10 cerrada en su alcance estático:**
@@ -124,7 +127,7 @@ Sin aplicación al presupuesto web ni nueva medición del banco.
 | ID | Trabajo | Estado actual | Prueba necesaria para avanzar o cerrar |
 |---|---|---|---|
 | M0 | Matriz por modelo/serie/regla y ensayos mínimos | Cerrado 03/10/2026 | [Matriz](docs/paridad/MATRIZ-COBERTURA-PRODUCTOR-2026-10-03.md), 97 pares, 47 pruebas, typechecks y arquitectura; no volver a crearla, regenerar si cambian las fuentes |
-| E1 | Despunte de cabecera: base, momento y reparto | En curso; físico/condicional 13/10, consumidor/COM, receptores y control/reparto/totales 14/10; formato y proveedor/argumento `2` estáticos 17/10; G1–G5 y G6-incidencia preservados | [Entrega y continuación](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#proveedor-de-configuración-y-argumento-2): procedencia/precedencia del índice del proveedor, valores efectivos, empates/localización, agregados y persistencia pendientes. No repetir unidades estáticas cerradas. Sin activar cabecera, adaptar snapshots u operar G6 |
+| E1 | Despunte de cabecera: base, momento y reparto | En curso; físico/condicional 13/10, consumidor/COM, receptores y control/reparto/totales 14/10; formato, proveedor/argumento `2` y procedencia de carga estáticos 17/10; G1–G5 y G6-incidencia preservados | [Entrega y continuación](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-y-precedencia-del-índice-de-configuración): carga desde gaConfig e índice NombreDato seguidos; orden/duplicados del índice, valores efectivos, empates/localización, agregados y persistencia pendientes. No repetir unidades estáticas cerradas. Sin activar cabecera, adaptar snapshots u operar G6 |
 | E2 | Unión material de otra serie en GRUPO | Pendiente | Selección desde diagnóstico privado de los ocho casos de iteración 13; código/serie/acabado y geometría demostrados, sin extrapolar U |
 | E3 | Comisión: orden de redondeo y edición de líneas guardadas | Pendiente | Caso 0/−10/+10, suma de filas y momento de aplicación; separar cantidades/horas; seis residuos comunicados |
 | E4 | Tapajuntas de puerta con inferior SI/NO | Pendiente | GMT004, 1P 867×2098 con serie/ala/cajón reales; comparación lateral y travesaño |
@@ -165,7 +168,7 @@ antes de construir. Extraído no equivale a implementado o verificado.
 | Datos y maestros, catálogo, cabecera/GRUPO, materiales, cortes, herrajes, vidrio, MO, compacto, tapajuntas, metraje, PVP, comisión, uniones y fracciones | Reutilizado, con los límites de E1–E11 y M0 | No repetir inventario/carga ni convertir disponibilidad en aceptación; 204 CSV y 33 diferencias de instantánea preservados |
 | Precio dimensional y acabado del artículo | Reutilizado: C1 técnico publicado/verificado | Coste dimensional sigue separado; 0031/0032/carga no se repiten |
 | Despunte físico/condicional | Ahora — E1, implementado y verificado localmente | [Contrato/entrega](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md); 67 pruebas y revisión independiente; sin adaptar snapshots ni activar cabecera |
-| Despunte monetario | Ahora — E1, control/reparto/totales, formato y proveedor/fallback condicionado seguidos; cargo desactivado | Ocho preguntas con evidencia parcial; índice de configuración y escalas efectivas, empates/localización observados, agregados y persistencia pendientes. G6 conserva autorización propia |
+| Despunte monetario | Ahora — E1, control/reparto/totales, formato y proveedor/fallback condicionado seguidos; cargo desactivado | Ocho preguntas con evidencia parcial; carga de lista e índice NombreDato seguidos; orden/duplicados del índice y escalas efectivas, empates/localización observados, agregados y persistencia pendientes. G6 conserva autorización propia |
 | Coste dimensional | Ahora — pendiente de evidencia | Proveedor, medidas, divisa, gastos y precedencias; no reutilizar selector PVP |
 | Coste calculado | Ahora — pendiente de evidencia/configuración | Material por peso + acabado por superficie; unidades y activación sin confirmar |
 | Tarifa dinámica | Ahora — selección de registro implementada/verificada localmente 14/10; precio y activación pendientes | [Contrato y gate](docs/paridad/IMPLEMENTACION-CLONERSOFT-TARIFA-DINAMICA-2026-10-14.md): cuatro búsquedas, decimales exactos y bloqueo de empate; 47 pruebas. Sin precios ni activar motor; grupo, habilitación, fórmula, redondeo y caso positivo pendientes |

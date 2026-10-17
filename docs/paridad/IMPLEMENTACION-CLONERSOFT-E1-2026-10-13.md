@@ -4,7 +4,7 @@
 La identidad y el estado global siguen en [E1 del roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md).
 El cargo de cabecera continúa abierto. Este contrato no acredita fabricación,
 aceptación Productor, publicación ni producción.
-La continuación vigente del 17/10 está en [Proveedor de configuración y argumento 2](#proveedor-de-configuración-y-argumento-2);
+La continuación vigente del 17/10 está en [Procedencia y precedencia del índice de configuración](#procedencia-y-precedencia-del-índice-de-configuración);
 las unidades del 13/10 y 14/10 siguientes conservan su evidencia y fecha.
 
 ## Base y contrato
@@ -938,15 +938,15 @@ económico ni se certifican empates, localización efectiva, conservación de
 importes, agregados comerciales o persistencia durable. E1 permanece
 `in_progress`, cargo desactivado y G6 protegido.
 
-**Siguiente unidad estática:** procedencia y precedencia de la configuración
-que puebla la lista/índice consultado. Entrada acotada:
+**Frontera histórica de esta unidad, seguida en la continuación inferior:**
 `gaConfigDAL.AbreRS`, slot `+0x1c`, celda `0x11007d58` → thunk `0x11007dc0`
-→ cuerpo `0x110615d0`. El cuerpo del buscador `dimeIdxClave` conserva una
-frontera de compatibilidad nativa/TypeLib antes de asignarlo. No reabrir
-`Carga`, el argumento `2`, máscaras/helpers/650 o las unidades previas.
-Demostrar valores efectivos exige además procedencia y estado de configuración;
-esta unidad no autoriza leer bases de negocio. Agregados y persistencia conservan
-su unidad propia. El ensayo matemático de Automation requiere autorización aislada.
+→ cuerpo `0x110615d0`. La [unidad de procedencia](#procedencia-y-precedencia-del-índice-de-configuración)
+acredita su consulta y carga dirigida; no volver a seleccionar AbreRS como tarea
+nueva. La resolución de orden/duplicados del índice y los valores efectivos
+siguen los límites y el siguiente anclaje de esa unidad. No reabrir `Carga`, el
+argumento `2`, máscaras/helpers/650 o las unidades previas. No se autoriza leer
+bases de negocio. Agregados, persistencia y ensayo matemático aislado conservan
+sus alcances propios.
 
 ### Evidencia ejecutada
 
@@ -995,3 +995,137 @@ coincidentes; historia conservada, estado `in_progress`, sin sincronización.
 El commit local se guarda tras comprobar identidad Git y detener escrituras
 de todos los agentes. No hay push, publicación o despliegue. E1 económico sigue
 abierto; cargo desactivado, A-F/G1-G5 y G6-incidencia preservados.
+
+## Procedencia y precedencia del índice de configuración
+
+Unidad estática/documental del **17/10/2026**, desde `18accbc`, con rama
+`codex/rea-productor-20261016` y árbol limpio comprobados. Mismo worktree;
+contrato completo privado en `output/e1-config-origin-20261017/CONTRATO.md`.
+Se sigue la entrada AbreRS sin repetir Carga, argumento `2`, formato o las
+unidades anteriores. No cambia producto ni se ejecuta software legado, COM,
+Automation o SQL; no se abre ninguna base de negocio.
+
+### Declaración, inicialización, carga y valores efectivos
+
+| Etapa | Evidencia estática | Límite |
+|---|---|---|
+| Declaración | `_gaConfigDAL.AbreRS +0x1c`, celda `0x11007d58` → thunk `0x11007dc0` → cuerpo `0x110615d0` | La declaración no prueba invocación |
+| Preparación de estado | AbreRS escribe `0xffff` en el WORD propio `this+0x34`, `0x1106165e`; su ruta de error escribe cero, `0x1106193a` | La bandera se prepara antes de cargar; no certifica éxito |
+| Otra inicialización estática | Método privado `+0x58`, cuerpo `0x11064200`, escribe cero en ese WORD en `0x1106425e` | No se ha demostrado que sea evento automático ni que se ejecutase |
+| Fuente textual | Consulta a `gaConfig`, con sufijo `WITH (NOLOCK)` sólo en la condición de tipo indicada abajo | No identifica base, empresa, sesión ni filas efectivas |
+| Carga de lista | Receptor `gaLstRSado` creado si falta en `this+0x38`; se llama `cargaDatos +0x28`, cuerpo `0x11076ea0` | Carga estática, sin ejecutar la consulta |
+| Índice pedido | `gaLstRSado.lst +0x1c`, cuerpo `0x11076530`, devuelve la lista; `gaLst.xcfg_IDX_addIndice +0x64` recibe `NombreDato, 0, 0, 0` | No demuestra unicidad, orden, comparación textual o prioridad de duplicados |
+| Valores efectivos | Ninguna observación de filas ni de las cuatro RED | No se atribuyen ceros, dos decimales u otros valores a una instancia |
+
+### Origen del selector y procedencia de la carga
+
+El global de apartamento usado por AbreRS en `base+0x1106d034` se crea
+condicionalmente mediante descriptor externo `0x11010530`. Su coclase e
+interfaz coinciden con `gaConexion`/`_gaConexion` de `gaBBDD.dll`. El slot
+`+0x24` declara `BDtipo`: celda `0x1100c188` → thunk `0x1100c216` → cuerpo
+`0x110374e0`. El enum público declara `Access=0` y `SQLServer=1`; AbreRS
+compara el resultado con `1` en `0x110616e1` y selecciona el sufijo de la
+consulta. Esto acredita el selector estático; no el backend efectivo.
+
+El getter delega al slot `+0x2c` de un objeto creado con ObjectInfo
+`0x1100bd00`. Su asociación nativa con la declaración `_gaConexionBD.BDtipo`
+no está cerrada: no asignar un cuerpo por nombre, slot o IID de diagnóstico.
+Esta compatibilidad es una frontera secundaria antes de seguir el estado del
+selector; no se necesita resolverla para identificar el origen textual de la
+consulta de AbreRS.
+
+La creación del receptor de carga se acredita mediante descriptor externo
+`0x1101c73c`, coclase/interfaz propias de `gaLstRSado`, TypeLib y tabla nativa.
+`cargaDatos` guarda el nombre y el SQL de la consulta en campos propios,
+solicita vaciar la lista antes de delegar la consulta y contiene la transferencia
+de filas/campos a la lista. El getter `lst` y la petición posterior de índice
+se siguen por slots y bytes. La identidad de `gaLst` se coteja mediante la
+referencia default de la coclase en TypeLib, separada de su interfaz de eventos;
+no se modifica el lector ni la evidencia anterior para forzar una coincidencia.
+La evidencia privada conserva esas llamadas y
+sus límites; no constituye lectura de los resultados del recordset.
+
+### Precedencia acreditada y pendiente
+
+En esta ruta se observa **recarga antes de pedir el índice**, desde una sola
+consulta textual a `gaConfig`. El texto no contiene `ORDER BY` ni selección
+por empresa/usuario; el cuerpo de AbreRS no acredita superposición de INI,
+registro u otra fuente sobre esas filas. Esta ausencia se limita al cuerpo
+inspeccionado y no demuestra que todo Productor carezca de otras fuentes.
+
+No se afirma «gana el primero» ni «gana el último». El orden de los registros,
+la comparación de claves, la gestión de duplicados, los fallos de recarga y
+la selección efectiva de conexión conservan sus fronteras. Tampoco se atribuye
+validez a la bandera preparada, ni atomicidad o persistencia a esta secuencia.
+
+### Continuidad y aceptación
+
+**Siguiente unidad estática:** seguir orden y duplicados dentro del índice.
+Entrada: `gaLst.xcfg_IDX_addIndice +0x64`, cuerpo `0x110691d0`, que delega en
+`gaLstIndice.xConfig +0x3c`, celda `0x1100d600` → thunk `0x1100d81d` →
+cuerpo `0x11072920`. La metadata ya cotejada enlaza también `dimeIdxClave +0x2c`,
+celda `0x1100d5f0` → thunk `0x1100d781` → cuerpo `0x1106ff20`; su cuerpo no se
+ha leído en esta unidad. Reutilizar esos enlaces y seguir el comportamiento,
+sin reabrir Carga ni el argumento `2`. Valores efectivos requieren evidencia propia sin abrir negocio bajo este
+alcance. Agregados, aceptación matemática y persistencia siguen en unidades
+posteriores; la comparación funcional y las pruebas con software se reservan
+para una fase posterior autorizada y aislada.
+
+Queda extraída la procedencia de carga y especificada su secuencia estática;
+la precedencia interna y los valores efectivos permanecen abiertos. No se
+implementa el cargo económico. E1 sigue `in_progress`, cargo desactivado,
+A–F/G1–G5 y G6-incidencia preservados.
+
+### Evidencia ejecutada de esta unidad
+
+El director reproduce los gates sobre capturas guardadas, con salida nueva:
+
+- `python -B output/e1-config-origin-20261017/abre-rs/verify.py --out output/e1-config-origin-20261017/director-abre-rs`:
+  salida 0, **1.425 instrucciones**, **12 predicados** y **12 mutaciones** de
+  datos de prueba en memoria rechazadas. Cuatro capturas, una previa reutilizada.
+- `python -B output/e1-config-origin-20261017/origin/verify-origin.py --out output/e1-config-origin-20261017/director-origin`:
+  salida 0, **37/37 comprobaciones**, **552 instrucciones** y **siete mutaciones**
+  de bytes sólo en memoria rechazadas. Tres capturas, una previa reutilizada.
+
+Ambos recorridos comparten las 325 instrucciones de AbreRS; sus conteos no son
+cobertura única sumable. Las fuentes seleccionadas permanecen intactas por hash.
+Se coteja además el import usado para la selección condicional con su entrada
+en las exportaciones del runtime, sin cargarlo. Son comprobaciones estáticas,
+**cero pruebas funcionales**; no hay arreglo de producto que revertir.
+
+Integridad inicial ejecutada: **428/428**, **56/56** y **91/91** artefactos de
+los tres índices anteriores; respectivamente 100.492.633, 836.521 y 2.139.830
+bytes, cero diferencias de tamaño/SHA-256. Los índices no se regeneran ni se
+sobrescriben. Los recibos y verificadores nuevos están en
+`output/e1-config-origin-20261017/`; esa carpeta privada no viaja por Git o July.
+
+Se actualizan los ocho documentos existentes de estado, roadmap, contrato,
+índice, relevos, guía y procedimiento. Se preservan historia y discrepancias;
+los punteros activos pasan de AbreRS al orden/duplicados de su índice. No se
+retira evidencia ni se repiten suites de paquetes o SQL para esta documentación.
+
+### Cierre independiente de la unidad de carga
+
+Una revisión independiente, sin razonamiento ni conclusiones de los autores,
+no encuentra defectos accionables dentro del alcance. No se solicita corrección.
+El director reproduce `python -B output/e1-config-origin-20261017/review/verify_review.py
+--out output/e1-config-origin-20261017/review/director-reproduced`, salida 0:
+**664 comprobaciones**, **seis capturas / 1.652 instrucciones únicas** y
+**16 perturbaciones** de anclajes rechazadas en memoria. Informe/recibo privados:
+`review/REVISION-INDEPENDIENTE.md` y `review/final-gate/receipt.json`.
+Los límites de precedencia interna, valores efectivos y aceptación se conservan.
+
+El barrido adicional encuentra dos cachés `.pyc` fuera del índice de formato:
+58 archivos frente a 56 indexados, sin ausencias; sus metadatos muestran 07:32 UTC,
+anterior a esta unidad. Se registran en `unindexed-files-observed.json` y se
+conservan. Esto no cambia los 56 artefactos indexados acreditados ni regenera
+su índice. El conjunto documental revisado se congela por hash; después de la
+revisión sólo se añade este recibo de cierre.
+
+July: mismo E1 localizado por proyecto `aluminior` y sync_uid
+`398049fbd618069e36bb84bab37913ed`, actualizado localmente con historia conservada
+y lectura posterior coincidente; sigue `in_progress`, sin sincronización.
+Los tres agentes han confirmado el fin de sus escrituras. El commit local se
+realiza tras el gate final del director y la comprobación de identidad Git;
+sin push, publicación o despliegue. E1 económico sigue abierto, cargo desactivado
+y G6-incidencia protegido.

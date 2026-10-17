@@ -10,10 +10,12 @@ El siguiente trabajo de producto sigue siendo E1 económico según el roadmap.
 acredita máscaras/Variant/cadena de conversión y contrato público, con límites
 de empates y localización efectiva aún abiertos. La [unidad posterior de configuración](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#proveedor-de-configuración-y-argumento-2)
 identifica `gaConfigDAL.Carga` y prueba el fallback condicionado del BSTR `2`;
-no demuestra escalas efectivas iguales a dos. Próxima unidad estática: procedencia
-y precedencia de los valores que pueblan su índice. No repetir proveedor/argumento
-`2` ni máscaras/helpers/650. Evidencias nuevas en `output/e1-varformat-20261017/`
-y `output/e1-config-20261017/`; ambos índices previos, 428 y 56 archivos, íntegros.
+no demuestra escalas efectivas iguales a dos. La [unidad de procedencia](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-y-precedencia-del-índice-de-configuración)
+sigue AbreRS, consulta y carga de lista con índice NombreDato. Próxima unidad:
+orden y duplicados internos del índice desde gaLstIndice.xConfig +0x3c. No repetir
+AbreRS/carga, proveedor/argumento `2` ni máscaras/helpers/650. Evidencias nuevas en
+`output/e1-config-origin-20261017/`; los tres índices anteriores, 428, 56 y 91
+artefactos, conservan tamaño y SHA-256.
 El alcance estático, cargo desactivado y protección de G6 siguen vigentes.
 
 ## Encargo para la nueva conversación
@@ -54,7 +56,8 @@ no exigir que siga siendo HEAD. No hacer reset, stash, checkout ni merge para
 forzar esos valores si han aparecido cambios nuevos. No se hizo push ni despliegue.
 
 La unidad posterior de configuración empezó en `1bb9b29`, misma rama y árbol
-limpio, comprobados directamente. Su documentación y evidencias nuevas se
+limpio, comprobados directamente. La unidad de procedencia parte de `18accbc`,
+misma rama y árbol limpio comprobados el 17/10, sin forzar ningún valor Git. Su documentación y evidencias nuevas se
 conservan en este worktree; los commits y resultados anteriores mantienen su fecha.
 
 `C:\Productor\Aluminio` es una junction al árbol MIX anterior: no son dos
@@ -203,6 +206,11 @@ de Dudas. Antes de repetirlos, leer sus argumentos y preservar salidas fechadas:
 algunos reescriben JSON derivados. Registrar una ejecución nueva en su carpeta
 propia, sin sustituir silenciosamente el índice y los resultados del 16/10.
 
+La unidad de procedencia revalida los tres índices anteriores: **428/428**,
+**56/56** y **91/91**, sin diferencias ni regeneración. Recibo inicial nuevo en
+`output/e1-config-origin-20261017/preflight/integrity.json`; el gate final debe
+usar otra carpeta de salida, conservando ese recibo inicial.
+
 Estos artefactos no viajan con Git ni July. En otro equipo, un clone/pull del
 commit no entrega los 428 archivos ni las evidencias anteriores. Si faltan,
 identificar la ruta exacta y resolver su transporte autorizado; no inventar
@@ -220,11 +228,11 @@ No repetir esas unidades. Elegir una pregunta pendiente y cerrar una sola unidad
    máscaras/Variant, flags y contrato público de localización. No repetir esa
    extracción; conservar formato → conversión → escritura. Empates y localización
    efectiva siguen pendientes de un ensayo aislado autorizado, sin redondeo supuesto.
-2. Proveedor y argumento `2` resueltos estáticamente en la unidad posterior:
-   `gaConfigDAL.Carga`, retorno condicionado del fallback, petición/conversión
-   y destinos RED. No repetirlos. Seguir procedencia y precedencia de los valores
-   que pueblan el índice consultado; `REDprecio/REDlinea/REDbase/REDtotal`
-   efectivos siguen sin demostrar. El BSTR `2` no certifica escala dos.
+2. Proveedor y argumento `2`, AbreRS y carga de lista/índice NombreDato seguidos
+   estáticamente. No repetirlos. Seguir orden y duplicados internos del índice:
+   `gaLst.xcfg_IDX_addIndice +0x64` → `gaLstIndice.xConfig +0x3c`.
+   Las cuatro RED efectivas siguen sin demostrar. El BSTR `2` no certifica escala
+   dos; el selector BDtipo tampoco prueba backend ni configuración efectiva.
 3. Acreditar formación de agregados comerciales, cantidades, descuentos y
    exclusiones del cargo previo para cada modo aplicable.
 4. Separar escrituras estáticas de atomicidad, rollback, idempotencia y guardado

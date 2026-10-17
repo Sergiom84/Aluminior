@@ -4,12 +4,14 @@ Para continuar en otra conversación: [relevo completo del 17/10](docs/paridad/R
 Continuación posterior: [proveedor de configuración E1](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#proveedor-de-configuración-y-argumento-2),
 después de la unidad de formato. `gaConfigDAL.Carga` y el fallback condicionado
 del BSTR `2` están seguidos; no demuestran escalas efectivas iguales a dos.
-No repetir máscaras/Variant/helpers/650 ni proveedor/argumento `2`. Siguiente
-análisis estático: procedencia y precedencia de los valores que pueblan su índice. Empates y
+La [unidad de procedencia](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-y-precedencia-del-índice-de-configuración)
+sigue AbreRS y carga de lista con índice NombreDato. No repetir esa carga,
+máscaras/Variant/helpers/650 ni proveedor/argumento `2`. Siguiente análisis:
+orden/duplicados del índice desde gaLstIndice.xConfig +0x3c. Empates y
 localización efectiva siguen sin ensayo; cargo desactivado y G6 protegido.
 Reúne rutas, trabajo realizado, evidencias comprobadas, límites y continuación;
 el roadmap mantiene los estados únicos. Comprobación local del 17/10:
-428 y 56 artefactos de los dos índices privados intactos, sin repetir suites de producto.
+428, 56 y 91 artefactos de los tres índices privados anteriores intactos, sin repetir suites de producto.
 
 Investigación REA del **16/10**, en worktree separado
 `C:\Users\sergi\.codex\worktrees\rea-productor-20261016\Aluminior`, rama
