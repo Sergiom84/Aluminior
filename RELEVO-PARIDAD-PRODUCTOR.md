@@ -1,5 +1,7 @@
 # Relevo: paridad y fuentes de Productor
 
+> **Dirección vigente — 18/10:** [cerrar fases y aplicarlas a Aluminior](docs/paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). La rama Windows/NtCreateUserProcess queda detenida como referencia histórica. Las instrucciones anteriores que ordenan seguirla no están activas. Siguiente entrega: evaluar las ocho preguntas E1 contra evidencia y código y pasar al menor cambio funcional acreditado; si falta evidencia, fijar una prueba o bloqueo concreto, sin otra cadena de investigación.
+
 Para continuar en otra conversación: [relevo completo del 17/10](docs/paridad/RELEVO-REA-PRODUCTOR-2026-10-17.md).
 Continuación posterior: [proveedor de configuración E1](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#proveedor-de-configuración-y-argumento-2),
 después de la unidad de formato. `gaConfigDAL.Carga` y el fallback condicionado
@@ -31,7 +33,7 @@ acredita una llamada en `ncryptprov.dll`, `0x1003da6a`, desde el símbolo
 `[EBP-0x64]`. Su lectura posterior y escritura en `+0x29c` están capturadas;
 no se atribuye nombre ni valor efectivo a ese offset. El mismo slot vuelve
 a leerse para el noveno argumento de una llamada importada a `NtCreateUserProcess`.
-**Siguiente:** frontera externa de esa llamada en `0x1003db34`
+**Frontera técnica archivada (no continuar):** esa llamada en `0x1003db34`
 (IAT `0x10068438`, lectura del slot en `0x1003dadf`), sin seguir su cuerpo.
 El helper intermedio `0x1003da93` no está seguido: no se demuestra conservación
 del contenido del slot a través de sus posibles efectos o alias.

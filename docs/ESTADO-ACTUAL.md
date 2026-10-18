@@ -1,5 +1,7 @@
 # Estado actual de Aluminior
 
+> **Dirección vigente — 18/10:** [cerrar fases y aplicarlas a Aluminior](paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). La rama Windows/NtCreateUserProcess queda detenida como referencia histórica. Las instrucciones anteriores que ordenan seguirla no están activas. Siguiente entrega: evaluar las ocho preguntas E1 contra evidencia y código y pasar al menor cambio funcional acreditado; si falta evidencia, fijar una prueba o bloqueo concreto, sin otra cadena de investigación.
+
 Revisión documental y producción: 12/10/2026. Código `40cedd1` live en Render,
 deploy `dep-db6hi2navr4c739d2e4g`, terminado a las 19:31:21 Europe/Madrid
 (17:31:21 UTC). Supabase: 33 migraciones, 0031/0032 y carga dirigida aplicadas;
@@ -51,7 +53,7 @@ acredita una llamada en `ncryptprov.dll`, `0x1003da6a`, desde el símbolo
 `[EBP-0x64]`. Su lectura posterior y escritura en `+0x29c` están capturadas;
 no se atribuye nombre ni valor efectivo a ese offset. El mismo slot vuelve
 a leerse para el noveno argumento de una llamada importada a `NtCreateUserProcess`.
-**Siguiente:** frontera externa de esa llamada en `0x1003db34`
+**Frontera técnica archivada (no continuar):** esa llamada en `0x1003db34`
 (IAT `0x10068438`, lectura del slot en `0x1003dadf`), sin seguir su cuerpo.
 El helper intermedio `0x1003da93` no está seguido: no se demuestra conservación
 del contenido del slot a través de sus posibles efectos o alias.
@@ -371,8 +373,8 @@ ya están seguidas en su alcance condicionado. La escritura literal del selector
 también queda seguida. El DWORD queda atribuido a `_RTL_USER_PROCESS_PARAMETERS.Flags`
 `+0x8` mediante tipos x86 identificados. Inicialización local a 1 acreditada en
 `0x4b2aa8f8`; entrega `0x4b2aa9df` y wrappers seguidos. Llamador Ex en
-ncryptprov `0x1003da6a` y slot local `[EBP-0x64]` acreditados. Siguiente:
-frontera importada NtCreateUserProcess `0x1003db34`; no se acredita continuidad
+ncryptprov `0x1003da6a` y slot local `[EBP-0x64]` acreditados. Frontera archivada:
+llamada importada NtCreateUserProcess `0x1003db34`; no se acredita continuidad
 del contenido tras el helper intermedio ni conexión con el PEB consumidor.
 Conversión efectiva, equivalencia,
 prioridad de duplicados y valores runtime siguen abiertos.

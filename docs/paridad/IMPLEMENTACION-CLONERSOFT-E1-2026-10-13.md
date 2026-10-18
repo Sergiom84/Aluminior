@@ -1,5 +1,7 @@
 # E1: contrato físico y selección condicional
 
+> **Dirección vigente — 18/10:** [cerrar fases y aplicarlas a Aluminior](RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). La rama Windows/NtCreateUserProcess queda detenida como referencia histórica. Las instrucciones anteriores que ordenan seguirla no están activas. Siguiente entrega: evaluar las ocho preguntas E1 contra evidencia y código y pasar al menor cambio funcional acreditado; si falta evidencia, fijar una prueba o bloqueo concreto, sin otra cadena de investigación.
+
 13/10/2026. Entrega local parcial del [encargo ClonerSoft](ENCARGO-IMPLEMENTACION-CLONERSOFT-2026-10-13.md).
 La identidad y el estado global siguen en [E1 del roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md).
 El cargo de cabecera continúa abierto. Este contrato no acredita fabricación,
@@ -2319,7 +2321,7 @@ se cotejan en sus gates; el PDB y las capturas entran en el inventario final.
 Ocho documentos existentes reciben el siguiente
 paso; no se repiten ni se redatan las suites de producto anteriores.
 
-**Ahora, frontera única:** la llamada importada a **`NtCreateUserProcess` en
+**Frontera técnica archivada (no continuar):** la llamada importada a **`NtCreateUserProcess` en
 `0x1003db34`**, IAT `0x10068438`, y el alcance del noveno argumento preparado
 desde `[EBP-0x64]` en `0x1003dadf`. Su cuerpo y destino externo no se siguen
 en esta unidad. La continuidad del contenido tras el helper intermedio sigue

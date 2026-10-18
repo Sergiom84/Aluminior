@@ -1,5 +1,7 @@
 # Relevo de investigación Productor y comparación con Aluminior
 
+> **Dirección vigente — 18/10:** [cerrar fases y aplicarlas a Aluminior](RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). La rama Windows/NtCreateUserProcess queda detenida como referencia histórica. Las instrucciones anteriores que ordenan seguirla no están activas. Siguiente entrega: evaluar las ocho preguntas E1 contra evidencia y código y pasar al menor cambio funcional acreditado; si falta evidencia, fijar una prueba o bloqueo concreto, sin otra cadena de investigación.
+
 Preparado el 17/10/2026 para continuar en otra conversación sin repetir la
 investigación del 16/10. El trabajo entregado es investigación estática y
 documentación; las brechas encontradas todavía no son nuevas funcionalidades.
@@ -36,7 +38,7 @@ acredita una llamada en `ncryptprov.dll`, `0x1003da6a`, desde el símbolo
 `[EBP-0x64]`. Su lectura posterior y escritura en `+0x29c` están capturadas;
 no se atribuye nombre ni valor efectivo a ese offset. El mismo slot vuelve
 a leerse para el noveno argumento de una llamada importada a `NtCreateUserProcess`.
-**Siguiente:** frontera externa de esa llamada en `0x1003db34`
+**Frontera técnica archivada (no continuar):** esa llamada en `0x1003db34`
 (IAT `0x10068438`, lectura del slot en `0x1003dadf`), sin seguir su cuerpo.
 El helper intermedio `0x1003da93` no está seguido: no se demuestra conservación
 del contenido del slot a través de sus posibles efectos o alias.
@@ -67,7 +69,7 @@ El primer argumento es la dirección del slot `[EBP-0x64]`; la ruta local
 no negativa lee ese slot y escribe el offset `+0x29c` del bloque. No se
 atribuye nombre o valor a ese campo ni ejecución o conexión con Productor.
 
-**Siguiente unidad única:** frontera de la llamada importada
+**Frontera técnica archivada (no continuar):** llamada importada
 `NtCreateUserProcess` en **`0x1003db34`**, IAT `0x10068438`, cuyo noveno
 argumento se prepara leyendo `[EBP-0x64]` en `0x1003dadf`.
 No se ha seguido su cuerpo. El helper intermedio `0x1003da93` → `0x100292cc`
@@ -393,7 +395,11 @@ autoriza sólo documentación propia tras gates e identidad Git; sin push.
 El sello y los recibos posteriores se registran en la carpeta nueva, fuera
 de los siete árboles protegidos. E1 económico permanece abierto y G6 protegido.
 
-## Encargo para la nueva conversación
+## Encargo histórico sustituido
+
+Este encargo queda inactivo. El contrato vigente y el siguiente resultado exigible
+están en [el relevo de aplicación del 18/10](RELEVO-APLICACION-ALUMINIOR-2026-10-18.md).
+Se conserva el texto siguiente sólo como historia del alcance anterior.
 
 Actúa como arquitecto de Aluminior y continúa desde el estado descrito aquí.
 Trabaja en el worktree existente, conserva originales y cambios ajenos y usa
@@ -668,8 +674,8 @@ No repetir esas unidades. Elegir una pregunta pendiente y cerrar una sola unidad
    Escrituras de las dos celdas y escritura literal del selector ya seguidas.
    Identidad del DWORD e inicialización local a 1 acreditadas en las unidades del
    18/10; entrega `0x4b2aa9df` y wrappers también seguidos. Caller Ex en
-   ncryptprov `0x1003da6a` y slot local de salida acreditados. Continuar sólo
-   por la frontera importada NtCreateUserProcess `0x1003db34`, argumento nueve
+   ncryptprov `0x1003da6a` y slot local de salida acreditados. No continuar por
+   la frontera archivada NtCreateUserProcess `0x1003db34`, argumento nueve
    leído del slot en `0x1003dadf`. Continuidad tras el helper intermedio,
    pertinencia para Productor, conexión con el PEB y valores efectivos abiertos.
    No atribuir colación, prioridad primera/última ni
