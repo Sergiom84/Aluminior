@@ -1,6 +1,6 @@
 # Roadmap operativo de paridad con Productor
 
-> **Dirección vigente — 18/10:** [cerrar fases y aplicarlas a Aluminior](docs/paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). La rama Windows/NtCreateUserProcess queda detenida como referencia histórica. Las instrucciones anteriores que ordenan seguirla no están activas. Evaluación de las ocho preguntas realizada el 18/10; corrección local de costes técnicos decimales equivalentes, sin cargo. Siguiente: caso comercial que discrimine redondeo con configuración efectiva y autorización aislada; P.6/P.7 de los componentes de producción verificado localmente; quedan cabecera/configurador, comparación humana y aceptación. No repetir la matriz ni reabrir Windows.
+> **Dirección vigente — 18/10:** [cerrar fases y aplicarlas a Aluminior](docs/paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). La rama Windows/NtCreateUserProcess queda detenida como referencia histórica. Las instrucciones anteriores que ordenan seguirla no están activas. Evaluación de las ocho preguntas realizada el 18/10; corrección local de costes técnicos decimales equivalentes, sin cargo. Siguiente: caso comercial que discrimine redondeo con configuración efectiva y autorización aislada; P.6/P.7 de producción y errores de cabecera/configurador verificados localmente con fixtures. Siguiente local: foco tras alta aceptada; comparación humana y aceptación siguen abiertas. No repetir la matriz ni reabrir Windows.
 
 Actualizado: 18/10/2026 (formato, proveedor, carga, índice, comparador/normalizador, cuerpo de clave de fila y transformaciones delegadas E1 seguidos estáticamente en su alcance; condiciones de los predicados, contrato WCTMB y enlace candidato ApiSet seguidos estáticamente; escrituras condicionadas de las dos celdas KernelBase seguidas; escritura del selector e identidad del DWORD acreditadas; inicializador local de Flags y llamador Ex acreditados en su alcance; frontera NtCreateUserProcess, estado efectivo y equivalencia pendientes; C1 y P.6/P.7 conservan su etapa del 12/10). Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
 Este archivo es el registro único del orden y estado de estas tareas.
@@ -17,7 +17,9 @@ técnico en Producción; sin cargo al presupuesto. Siguiente E1: configuración
 efectiva y caso comercial que separe políticas de redondeo, con autorización
 y aislamiento propios. Tramo P.6/P.7 de componentes de producción verificado
 localmente: referencias largas, teclado, anchuras, movimiento reducido y zoom
-nativo 200%. Siguiente local: cabecera/configurador con fixtures sin persistencia.
+nativo 200%. Cabecera/configurador: seis rechazos/selecciones discriminados,
+foco, borrador y atajos con fixtures sin persistencia a cuatro anchuras.
+Siguiente local: retorno de foco tras alta aceptada simulada; se observa body.
 [Alcance y límites](docs/paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#resultado-local-del-1810-y-siguiente-entrega).
 
 ### Antecedentes estáticos conservados (no instrucciones de continuidad)
@@ -206,7 +208,7 @@ el total de todos los módulos pendientes del producto.
 | A5 | Recorrido sintético de navegador en CI | Verificado local y CI 09/10 | Seis recorridos escritorio/móvil: postcommit, medidas, latencia/fallo de catálogo y teclado; GitHub Actions run 37971854995 correcto |
 | S3 | Validación completa de paquetes en CI | Verificado local y CI 09/10 | 9bf9a64/36a47f4: 1.448 tests correctos/uno condicionado a CSV privado; tipos, arquitectura y build, run 37978474635. Seis recorridos, run 37978474739. Corrige test ETL obsoleto y contrato de fixture PDF; no toca producción |
 | C1 | PVP por medidas y contención de precio plano | Publicado/verificado técnico 12/10; alcance acotado | [Publicación](docs/paridad/PUBLICACION-CLONERSOFT-2026-10-12.md): `40cedd1` live, 0031/0032 y carga dirigida, CI y QA remoto/preservación correctos. Dos precios dimensionales corroborados; coste/fabricación fuera del cierre y banco 400/523 conservado |
-| P.6/P.7 | Teclado, foco y adaptación responsive | Parcialmente publicado 12/10; componentes de producción verificados localmente 18/10; aceptación integral abierta | [Resultado local](docs/paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#resultado-local-p6p7-de-producción--1810): dos ajustes de texto, diez combinaciones 1280/768/375/320/640, teclado/foco, reduced motion, zoom nativo 200%. Sin BD ni Shell/recorrido autenticado. Siguiente: cabecera/configurador con fixtures, comparación humana y aceptación. F7/F9 del 12/10 son de presupuesto. Ítem local redescubierto 195; no crear otro |
+| P.6/P.7 | Teclado, foco y adaptación responsive | Parcialmente publicado 12/10; producción y errores de cabecera/configurador verificados localmente 18/10; aceptación integral abierta | [Resultado local y límites](docs/paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#resultado-local-p6p7-de-cabecera-y-configurador--1810): selección por Tab/Enter, cinco rechazos, borrador conservado y F7/F9/Escape a 1280/768/375/320; seis controles negativos y control aislado de la corrección de opciones. Sin BD ni Shell/recorrido autenticado. Siguiente: foco tras alta aceptada simulada (body), comparación humana y aceptación. Zoom visual integral pendiente. Ítem local redescubierto 195; no crear otro |
 | D1 | Reconciliar ficha de acceso de July | Cerrado local 09/10 | Ficha actualizada con comprobación directa A4, Render live 487feb1 y 31 migraciones; historial fechado preservado. Sin sync/recepción acreditados |
 
 Detalles E2–E11: [ensayos mínimos](docs/paridad/ENSAYOS-MINIMOS-PRODUCTOR-2026-10-03.md).

@@ -5,7 +5,7 @@ export function MensajeError({ campo, errores }: { campo: string; errores: Error
   const mensajes = mensajesDe(campo, errores)
   if (!mensajes.length) return null
   return (
-    <p id={idMensajeError(campo)} role="alert" className="mt-1 text-xs"
+    <p id={idMensajeError(campo)} role="alert" tabIndex={-1} className="mt-1 text-xs"
       style={{ color: 'var(--al-error)' }}>
       {mensajes.join('. ')}
     </p>

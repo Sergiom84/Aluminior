@@ -127,11 +127,82 @@ Shift+Tab, flechas y foco son accesibilidad propia de Aluminior; F7/F9 del
 contrato de presupuesto del 12/10 no se extienden a producción.
 
 Estado: tramo técnico de estos componentes verificado localmente; P.6/P.7
-integral sigue abierto, sin publicación ni aceptación real. Siguiente unidad
-independiente: matriz local de cabecera/configurador del presupuesto, estados
-de error y retorno de foco con fixtures sin BD. Sigue pendiente comparación
+integral sigue abierto, sin publicación ni aceptación real. La siguiente unidad
+de cabecera/configurador está realizada en el apartado posterior.
+Sigue pendiente comparación
 humana con Productor y recorrido autenticado autorizado. E1 económico conserva
 su bloqueo y la prueba mínima ya fijada, sin repetir su evaluación.
+
+## Resultado local P.6/P.7 de cabecera y configurador — 18/10
+
+Función disponible en la cabecera del presupuesto y su configurador:
+
+- Cliente elegido con Tab/Enter conserva el código canónico, cierra la lista y
+  devuelve foco a Cliente. F9 vuelve a alcanzar la cabecera activa.
+- Rechazo de alta: foco al primer campo inválido; si no existe, a la primera
+  alerta del formulario. Artículo, serie, composición, fallo general y opciones
+  de herraje/acristalamiento mantienen los valores y configuración del borrador.
+
+Sólo cambian SelectorCliente, AnyadirLinea y la capacidad de enfocar
+MensajeError/ErroresSeleccion. Se reutiliza enfocarEdicion sin editarlo. Sin cambios económicos,
+de diseño, cálculo, estado de documento o persistencia.
+
+| Evidencia ejecutada | Resultado y alcance |
+|---|---|
+| Control con fuente c2abcc8b cargada sólo en memoria | Seis casos fallan antes: cliente Tab/Enter/F9 y rechazos de artículo, serie, composición, fallo general y opciones de estructura. Los seis pasan con el cambio. Control adicional: sólo ErroresSeleccion anterior, manteniendo los otros tres cambios, vuelve a perder foco en opciones |
+| Matriz Chromium 1280/768/375/320 | Los seis casos por anchura; envío de alta mediante Enter. Foco visible y dentro de viewport, borrador idéntico y una llamada sintética por envío. Sin desbordamiento de página, movimiento reducido activo |
+| F7/F9/Escape | F7 no saca foco del modal; Escape vuelve al disparador; F7 fuera enfoca el configurador. F9 no envía una línea ni una cabecera con lista abierta. Cancelar cabecera devuelve foco al botón. Quince alternancias Tab/Shift+Tab dentro del diálogo por anchura, sin acreditar barrido de todos sus controles |
+| Respuesta de alta aceptada simulada | Reinicio existente conservado: desaparece la configuración y reaparece Añadir primera ventana; una llamada. El foco termina en body: siguiente defecto acotado, sin corregir en esta unidad |
+| Regresión | 35/35 pruebas puras existentes, sin globalSetup SQL; tipos de cuatro paquetes y arquitectura sin infracciones |
+
+Evidencia privada: output/playwright/p67-cabecera-20261018/; contrato,
+fuentes del harness actual, inputs de compilación sin módulos DB/servidor,
+navegador-final.log/navegador-final.json, capturas 1280/320 y recibos de preservación.
+La primera pasada con ratón se conserva en navegador.log; la matriz final
+usa Enter y comprueba :focus-visible. Se inspeccionaron ambas capturas.
+El primer fixture de ESTRUCTURA esperaba Ubicación, inexistente en ese modo;
+se conserva su timeout en navegador-localizador-fallido.log. El gate corregido
+elige Perfiles en el formulario real, sin cambiar ni debilitar sus aserciones.
+El harness monta los componentes reales y CSS de Aluminior en 127.0.0.1,
+sustituye únicamente acciones servidor por respuestas sintéticas y no persiste.
+No es Shell, ruta autenticada, guardado ni aceptación real. No se ha comprobado
+zoom nativo en esta unidad; el límite visual 200% de la entrega anterior sigue
+abierto. No ejecutar la configuración web estándar/E2E habitual: migra SQL.
+
+Una revisión independiente reprodujo las 35 pruebas, tipos, arquitectura y
+diffcheck; detectó la alerta de opciones no enfocable y un puntero documental
+agotado. Única corrección: hacer enfocable ErroresSeleccion y actualizar el
+puntero. Después se ejecutaron los gates finales, incluido el control aislado
+de esa alerta; no se abrió otra ronda ni otro frente.
+
+Mapa de evidencia: INVESTIGACION-CLONERSOFT-2026-10-12.md:114–123 conserva
+F7/F9 y selección canónica. El foco de rechazo es accesibilidad propia de
+Aluminior, no observación del foco exacto de Productor. El cargo E1 sigue
+desactivado y conserva su prueba comercial pendiente.
+
+Siguiente entrega local concreta: corregir el foco después de una alta
+aceptada simulada. Reproducir body, fijar destino dentro del configurador y
+verificar éxito, rechazo, reintento y borrador con componentes reales y sin BD.
+No ampliar a guardado/reapertura hasta concretar y autorizar BD efímera aislada.
+Mantener P.6/P.7 en curso; publicación y aceptación requieren autorización.
+
+## Continuar en otra conversación
+
+Usar exclusivamente la raíz y rama del inicio de este relevo. Verificar en
+solo lectura raíz, rama, HEAD, estado e identidad; no encajar diferencias con
+reset/checkout/stash. Leer AGENTS.md, ESTADO-ACTUAL, roadmap y este relevo.
+Consultar el último commit local, sin retroceder al cierre documental antiguo.
+Continuar el retorno de foco tras alta aceptada descrito arriba, con acciones
+sintéticas y sin persistencia. No repetir la matriz E1 ni producción/errores ya
+verificados ni reabrir Windows. Conservar pruebas anteriores y sus límites.
+Máximo dos subagentes, sin subdelegación; revisión independiente de artefacto,
+contrato y evidencia, una corrección y gates; congelar antes de commit Sergio.
+Actualizar los mismos items July, E1 sync_uid 398049fbd618069e36bb84bab37913ed
+y P.6/P.7 local 195 (redescubrir ambos), historia íntegra e in_progress, lectura
+exacta, sin sync. Sin SQL/BD, datos reales, migraciones, legado/DLL/COM,
+licencias, cargo, push, sincronización ni despliegue. Preservar 14 árboles y
+2.861 archivos, índices, PE/PDB, vendor, originales, A–F/G1–G5/G6-incidencia;
+no ejecutar/importar scripts históricos ni regenerar índices. Python siempre -B.
 
 ## Contrato de la evaluación del 18/10 (ejecutado)
 
