@@ -25,9 +25,18 @@ acredita escrituras y fallback condicionados de las dos celdas. La
 [procedencia del selector](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-del-byte-selector-de-kernelbase)
 acredita una escritura literal condicionada a `1`. La [identidad del DWORD, 18/10](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-inmediata-del-dword-de-kernelbase)
 queda atribuida por bytes y tipos x86 a `_RTL_USER_PROCESS_PARAMETERS.Flags`
-en `+0x8`, mediante `TEB → PEB → ProcessParameters`. **Siguiente:** escritor
-o inicialización de ese campo antes de `0x1015b9b1`, en concreto su **bit 31**.
-No se atribuyen significado del bit, valor efectivo ni ejecución. Campo
+en `+0x8`, mediante `TEB → PEB → ProcessParameters`. La [inicialización local de Flags, 18/10](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#inicialización-local-de-flags)
+acredita en ntdll `_RtlCreateProcessParametersInternal@48` la escritura de `1`
+en `0x4b2aa8f8`: bit 31 a cero en ese instante del bloque construido.
+No demuestra que sea el bloque del PEB leído ni que se ejecute antes del consumidor.
+La entrega interna `0x4b2aa9df` y los wrappers Ex/WithTemplate están seguidos.
+**Siguiente:** llamador externo y destinatario del primer argumento de
+`_RtlCreateProcessParametersEx@44` (`0x4b39baf0`): `[EBP+8]` pasa a ECX en
+`0x4b39bb00` antes de la llamada interna `0x4b39bb18`. Su conexión con el
+`PEB.ProcessParameters` del consumidor sigue sin acreditar; detenerse en la
+siguiente dependencia. No repetir los wrappers ni seleccionar uno como ruta efectiva.
+No se acredita
+escritura del bit 31 a uno, significado del bit, valor efectivo ni ejecución. Campo
 `FS:[0x30]+0x228` y resultados del helper siguen abiertos por separado.
 No repetir escrituras de las dos celdas, contrato/enlace ni predicados.
 Equivalencia, colación y valores efectivos permanecen abiertos; no repetir cuerpos.
@@ -39,7 +48,64 @@ AbreRS/carga, proveedor/argumento `2` ni máscaras/helpers/650. Evidencias nueva
 anteriores, 428, 56, 91 y 145 artefactos, conservan tamaño y SHA-256.
 El alcance estático, cargo desactivado y protección de G6 siguen vigentes.
 
-## Última unidad estática: identidad del DWORD de KernelBase, 18/10
+## Última unidad estática: inicialización local de Flags, 18/10
+
+Base comprobada `2b2158168da90185a7c1b1bd48a17f14b54d4ad7`, misma raíz/rama,
+árbol inicial limpio e identidad Git de Sergio. Ocho documentos existentes y
+evidencia privada nueva en `output/e1-flags-writer-20261018/`.
+La [inicialización local de Flags](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#inicialización-local-de-flags)
+acredita en ntdll `_RtlCreateProcessParametersInternal@48` la escritura de `1`
+en `0x4b2aa8f8`, con bit 31 a cero en ese instante. ESI procede del resultado
+de la llamada `_RtlAllocateHeap@12`; la entrega del puntero al slot de salida
+se observa en `0x4b2aa9df`. No demuestra que ese objeto sea el leído por
+KernelBase, que la escritura preceda a su lectura ni un escritor de bit 31 a uno.
+
+Siguiente unidad única: **llamador externo y destinatario del primer
+argumento de `_RtlCreateProcessParametersEx@44`, entrada `0x4b39baf0`**.
+Los wrappers ya muestran `[EBP+8] → ECX`: Ex en `0x4b39bb00`, llamada al interno
+`0x4b39bb18`; WithTemplate en `0x4b2aa676`, llamada `0x4b2aa679`.
+El interno entrega ESI al slot en `0x4b2aa9df`. Continuar fuera del wrapper Ex,
+por el origen/uso de ese slot; conexión con el PEB del consumidor aún abierta.
+Detenerse en la siguiente dependencia. No repetir inicializador ni wrappers,
+no seleccionar ruta efectiva ni asumir identidad entre objetos. No repetir
+identidad del campo, selector, celdas, WCTMB, ApiSet o predicados; no NLS global.
+
+Para continuar:
+
+1. Raíz exclusiva `C:\Users\sergi\.codex\worktrees\rea-productor-20261016\Aluminior`.
+   Verificar raíz, rama `codex/rea-productor-20261016`, HEAD, estado e identidad
+   en sólo lectura. HEAD de cierre en el nuevo `postcommit-receipt.json`.
+   Inspeccionar diferencias; nunca reset/checkout/stash para hacerlas encajar.
+2. Leer AGENTS, estado, roadmap, este relevo y la sección nueva enlazada;
+   `CONTRATO.md`, capturas, fuentes, revisión independiente, gates del director,
+   sello y recibo postcommit de `output/e1-flags-writer-20261018/`.
+3. Proteger los doce árboles históricos completos
+   **429/59/92/146/140/77/127/374/189/198/151/223**, y también esta unidad con
+   todos sus recibos posteriores según el inventario final. Crear otra carpeta.
+   No ejecutar/importar scripts históricos ni regenerar los cuatro índices.
+   Python siempre `-B`, también por stdin.
+4. Cotejar seis PE históricos y ntdll auxiliar, PDB/fuentes como datos,
+   vendor, checkout original y trabajo ajeno. ApiSet está en System32;
+   los otros seis PE están en SysWOW64. Sin carga de DLL objetivo, legado,
+   COM, SQL, datos de negocio, producto, licencias, migraciones o despliegues.
+5. Máximo dos subagentes, sin subdelegación; propietario único por helper.
+   Revisión descontaminada, máximo revisión y una corrección, gates reproducidos.
+   Congelar ejecutores antes de staging/commit; identidad Sergio y gates
+   antes/después. Nuevo sello y recibo postcommit con inventario final.
+6. Actualizar estos mismos ocho documentos y el mismo E1 July, proyecto
+   `aluminior`, sync_uid `398049fbd618069e36bb84bab37913ed`, historia íntegra
+   e `in_progress`, lectura posterior exacta. ID local no transferible; sin sync.
+
+Sólo investigación/documentación, July local y commit local. Sin push.
+E1 abierto, cargo desactivado y A–F/G1–G5/G6-incidencia protegidos.
+La unidad del DWORD pasa a antecedente; se actualizan punteros activos y
+se conserva toda evidencia única. Los artefactos privados no viajan con Git ni July.
+
+## Antecedente histórico: identidad del DWORD de KernelBase, 18/10
+
+Histórico; sus instrucciones se subordinan a la unidad de inicialización local
+anterior. No ejecutar como lista de tareas.
+
 
 Base comprobada `897226b7c71710ea3642e24e04e3829339c4ab8f`, misma rama exclusiva,
 árbol inicial limpio e identidad Git de Sergio. Ocho documentos existentes y
@@ -532,9 +598,11 @@ No repetir esas unidades. Elegir una pregunta pendiente y cerrar una sola unidad
    Predicados `+0x48/+0x4c` seguidos en la unidad nueva enlazada arriba;
    no repetirlos. Contrato WCTMB y enlace candidato seguidos en la unidad nueva.
    Escrituras de las dos celdas y escritura literal del selector ya seguidas.
-   Identidad del DWORD acreditada en la unidad del 18/10. Continuar sólo por el
-   escritor/inicialización de `_RTL_USER_PROCESS_PARAMETERS.Flags` `+0x8`,
-   en concreto su bit 31 antes de `0x1015b9b1`; valores efectivos aún abiertos.
+   Identidad del DWORD e inicialización local a 1 acreditadas en las unidades del
+   18/10; entrega `0x4b2aa9df` y wrappers también seguidos. Continuar sólo por
+   el llamador externo y destinatario del primer argumento de Ex, entrada
+   `0x4b39baf0`, transferencia `0x4b39bb00`; conexión con el PEB y valores
+   efectivos aún abiertos.
    No atribuir colación, prioridad primera/última ni
    equivalencia de claves desde condiciones parciales.
    Las cuatro RED efectivas siguen sin demostrar. El BSTR `2` no certifica escala

@@ -2141,7 +2141,7 @@ a los ocho documentos permanecen protegidos; el PE auxiliar se coteja aparte.
 Python siempre `-B`; no se ejecutan/importan scripts históricos. Las suites
 anteriores de producto conservan su fecha y no se presentan como repetidas.
 
-**Ahora:** acreditar el **escritor o inicialización de
+**Frontera histórica de esta unidad, continuada en [inicialización local de Flags](#inicialización-local-de-flags):** acreditar el **escritor o inicialización de
 `_RTL_USER_PROCESS_PARAMETERS.Flags` (`+0x8`), en concreto el bit 31, antes
 de la lectura en `KernelBase.dll 0x1015b9b1`**. Detenerse ante la siguiente
 frontera. Esta unidad no acredita quién lo escribió, cuándo, su significado
@@ -2151,3 +2151,85 @@ selector, dos celdas, WCTMB, ApiSet o predicados; no ampliar a NLS global.
 **Después:** campo `FS:[0x30]+0x228`, resultados del helper, resolución/carga,
 conversión efectiva, equivalencia, escalas, agregados y persistencia.
 E1 sigue `in_progress`, cargo desactivado y A–F/G1–G5/G6-incidencia preservados.
+
+
+## Inicialización local de Flags
+
+Unidad estática del **18/10/2026**, base `2b2158168da90185a7c1b1bd48a17f14b54d4ad7`,
+rama `codex/rea-productor-20261016`, árbol inicial limpio. Evidencia nueva en
+`output/e1-flags-writer-20261018/`. Continúa la búsqueda del escritor del campo;
+no vuelve a atribuir su identidad ni reabre selector, celdas, WCTMB o predicados.
+
+### Escritura local acreditada
+
+En el ntdll x86 identificado, el símbolo público
+**`_RtlCreateProcessParametersInternal@48`** identifica la entrada del candidato. En
+**`0x4b2aa8f8`**, la instrucción escribe el DWORD de ECX en `[ESI+8]`.
+En esa ventana, `0x4b2aa8de` pone ECX a cero y `0x4b2aa8e3` lo incrementa a
+uno; no hay otra escritura intermedia a ECX. Por tanto, el valor escrito en
+ese punto es **`1` y su bit 31 es `0`**. No es evidencia de un bit 31 a uno.
+
+| Anclaje | Relación observada y límite |
+|---|---|
+| `0x4b2aa865` → `0x4b2aa86a` | Resultado EAX de la llamada identificada como `_RtlAllocateHeap@12` pasa a ESI; `test` y salto en `0x4b2aa86c/0x4b2aa86e` separan el retorno nulo |
+| `0x4b2aa8c5`–`0x4b2aa8cd` | Se prepara una llamada identificada como `_memset` con ESI, cero y `0x2c8`; no se siguió el cuerpo del helper |
+| `0x4b2aa8de` → `0x4b2aa8f8` | Cero, incremento y escritura DWORD en el offset `+0x8` del bloque construido; el layout Flags ya fue acreditado en la unidad anterior |
+| `0x4b2aa69c` y `0x4b2aa9dc`–`0x4b2aa9df` | ECX de entrada se guarda en `[EBP-0x30]`; en la entrega local se recupera en EAX y se escribe ESI en `[EAX]` |
+| Wrappers Ex y WithTemplate | `[EBP+8]` pasa a ECX en `0x4b39bb00` y `0x4b2aa676`, respectivamente; llamadas al interno en `0x4b39bb18` y `0x4b2aa679`. Sólo queda seguida esta transferencia, no un llamador externo efectivo |
+
+La procedencia de ESI a través de llamadas se interpreta bajo el
+[ABI x86 documentado por Microsoft](https://learn.microsoft.com/en-us/cpp/cpp/argument-passing-and-naming-conventions?view=msvc-170),
+que preserva ESI en las convenciones ordinarias consideradas. Se separa esa
+convención de los bytes observados; no se certifican cuerpos de helpers ni
+todos sus efectos. El nombre decorado no se usa para inventar la posición de
+un parámetro ni una convención concreta: se informa ECX de entrada porque
+así se observa en el cuerpo.
+
+### Identidad, alcance y límites
+
+Se reutiliza como dato el PDB oficial ya preservado y se vuelve a cotejar el
+par con ntdll: PE32/x86 `10.0.26100.9711`, 1.850.232 bytes, SHA-256
+`23d7772221e7a763ccf3f3fe39592086eb3091603554c4981f0ab430fa2ca686`.
+GUID `DBC4B305-3C0F-3189-895B-2BE009A0D2A4`, edades PE/Info/DBI `1/4/1`.
+Las direcciones son del mapa estático de ese PE; no direcciones de un proceso
+observado. Capturas, símbolos con posición, mapa de archivo y fuentes quedan
+en la unidad nueva; no se ejecuta/importa ningún script histórico.
+
+La búsqueda de patrones de escritura es dirigida y sus candidatos requieren
+confirmación por instrucciones y flujo local. No encontrar una máscara directa
+no descarta escrituras por registros, alias, llamadas, copias, otros módulos o
+ramas no seguidas. No se afirma unicidad ni ausencia global de otros escritores.
+
+**No está demostrada la conexión entre este bloque construido y el
+`PEB.ProcessParameters` leído por KernelBase en `0x1015b9b1`.** Tampoco se
+demuestra que esta inicialización ocurra antes de aquella lectura en una
+ejecución concreta. El valor `1` corresponde sólo al instante de la escritura
+acreditada, no al retorno, a modificaciones posteriores ni al estado efectivo
+de Productor. El origen de un eventual bit 31 a uno sigue sin explicar.
+
+### Verificación y siguiente frontera
+
+Los gates nuevos cotejan identidades, bytes, relaciones locales y mutaciones
+semánticas en memoria, con revisión independiente y reproducciones del director
+antes/después del commit. Sus recuentos son parciales y solapados; no son
+pruebas funcionales ni una medida de paridad. Se conservan los doce árboles
+históricos completos: **2.205 archivos**, con conteos
+429/59/92/146/140/77/127/374/189/198/151/223. Se cotejan cuatro índices, seis PE
+históricos y ntdll auxiliar, vendor, checkout original y 1.099 versionados ajenos.
+No se repiten ni se redatan las suites de producto anteriores.
+
+**Ahora:** acreditar el **llamador externo y el destinatario del primer
+argumento de `_RtlCreateProcessParametersEx@44`, entrada `0x4b39baf0`**.
+El wrapper ya muestra `[EBP+8] → ECX` en `0x4b39bb00` y la llamada interna
+`0x4b39bb18`; el interno entrega el puntero en `0x4b2aa9df`. La frontera es
+el origen y uso de ese slot fuera del wrapper, para conectar, si la evidencia
+lo permite, el bloque construido con `PEB.ProcessParameters` del consumidor.
+Detenerse ante la siguiente dependencia. No repetir inicializador ni wrappers
+Ex/WithTemplate, no seleccionar uno como ruta efectiva y no asumir identidad
+entre el bloque construido y el objeto del PEB.
+
+**Después:** valores efectivos y escritura de un eventual bit 31 a uno,
+significado del bit, campo `FS:[0x30]+0x228`, resultados del helper, resolución,
+conversión, equivalencia, escalas, agregados y persistencia. No ampliar a NLS global.
+E1 permanece `in_progress`, cargo desactivado y A–F/G1–G5/G6-incidencia protegidos.
+Sólo investigación/documentación, July local y commit local; sin push ni sincronización.

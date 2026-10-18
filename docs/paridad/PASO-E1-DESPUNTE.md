@@ -23,9 +23,18 @@ acredita escrituras y fallback condicionados de las dos celdas. La
 [procedencia del selector](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-del-byte-selector-de-kernelbase)
 acredita una escritura literal condicionada a `1`. La [identidad del DWORD, 18/10](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-inmediata-del-dword-de-kernelbase)
 queda atribuida por bytes y tipos x86 a `_RTL_USER_PROCESS_PARAMETERS.Flags`
-en `+0x8`, mediante `TEB → PEB → ProcessParameters`. **Siguiente:** escritor
-o inicialización de ese campo antes de `0x1015b9b1`, en concreto su **bit 31**.
-No se atribuyen significado del bit, valor efectivo ni ejecución. Campo
+en `+0x8`, mediante `TEB → PEB → ProcessParameters`. La [inicialización local de Flags, 18/10](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#inicialización-local-de-flags)
+acredita en ntdll `_RtlCreateProcessParametersInternal@48` la escritura de `1`
+en `0x4b2aa8f8`: bit 31 a cero en ese instante del bloque construido.
+No demuestra que sea el bloque del PEB leído ni que se ejecute antes del consumidor.
+La entrega interna `0x4b2aa9df` y los wrappers Ex/WithTemplate están seguidos.
+**Siguiente:** llamador externo y destinatario del primer argumento de
+`_RtlCreateProcessParametersEx@44` (`0x4b39baf0`): `[EBP+8]` pasa a ECX en
+`0x4b39bb00` antes de la llamada interna `0x4b39bb18`. Su conexión con el
+`PEB.ProcessParameters` del consumidor sigue sin acreditar; detenerse en la
+siguiente dependencia. No repetir los wrappers ni seleccionar uno como ruta efectiva.
+No se acredita
+escritura del bit 31 a uno, significado del bit, valor efectivo ni ejecución. Campo
 `FS:[0x30]+0x228` y resultados del helper siguen abiertos por separado.
 No repetir escrituras de las dos celdas, contrato/enlace ni predicados.
 Después valores efectivos, equivalencia y entrada de agregados. No repetir estos cuerpos ni `xConfig`,
