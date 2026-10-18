@@ -2155,6 +2155,8 @@ E1 sigue `in_progress`, cargo desactivado y A–F/G1–G5/G6-incidencia preserva
 
 ## Inicialización local de Flags
 
+Unidad histórica: la continuación vigente está en [llamador externo y destinatario de Ex](#llamador-externo-y-destinatario-de-ex). Sus instrucciones siguientes se conservan como antecedente.
+
 Unidad estática del **18/10/2026**, base `2b2158168da90185a7c1b1bd48a17f14b54d4ad7`,
 rama `codex/rea-productor-20261016`, árbol inicial limpio. Evidencia nueva en
 `output/e1-flags-writer-20261018/`. Continúa la búsqueda del escritor del campo;
@@ -2218,8 +2220,9 @@ históricos completos: **2.205 archivos**, con conteos
 históricos y ntdll auxiliar, vendor, checkout original y 1.099 versionados ajenos.
 No se repiten ni se redatan las suites de producto anteriores.
 
-**Ahora:** acreditar el **llamador externo y el destinatario del primer
-argumento de `_RtlCreateProcessParametersEx@44`, entrada `0x4b39baf0`**.
+**Frontera histórica, sustituida por la [unidad del llamador Ex](#llamador-externo-y-destinatario-de-ex):**
+llamador externo y destinatario del primer argumento de
+`_RtlCreateProcessParametersEx@44`, entrada `0x4b39baf0`.
 El wrapper ya muestra `[EBP+8] → ECX` en `0x4b39bb00` y la llamada interna
 `0x4b39bb18`; el interno entrega el puntero en `0x4b2aa9df`. La frontera es
 el origen y uso de ese slot fuera del wrapper, para conectar, si la evidencia
@@ -2233,3 +2236,99 @@ significado del bit, campo `FS:[0x30]+0x228`, resultados del helper, resolución
 conversión, equivalencia, escalas, agregados y persistencia. No ampliar a NLS global.
 E1 permanece `in_progress`, cargo desactivado y A–F/G1–G5/G6-incidencia protegidos.
 Sólo investigación/documentación, July local y commit local; sin push ni sincronización.
+
+
+## Llamador externo y destinatario de Ex
+
+Unidad estática del **18/10/2026**, base `d2dbe9bc92a64b061f1085e75d253883e8b24d9f`,
+rama `codex/rea-productor-20261016`, árbol inicial limpio. Evidencia privada nueva
+en `output/e1-processparameters-caller-20261018/`. Se continúa fuera del wrapper
+Ex sin repetir inicialización de Flags, entrega interna, identidad del campo,
+selector, celdas, WCTMB, ApiSet ni predicados.
+
+### Llamador y destinatario local acreditados
+
+En `ncryptprov.dll` x86, el símbolo público **`_CreateSecureProcessEx@28`**
+identifica la entrada `0x1003d949`. La importación normal de `ntdll.dll`
+identifica `RtlCreateProcessParametersEx` en la IAT `0x10068430`; el cuerpo
+contiene la llamada indirecta a esa celda en **`0x1003da6a`**.
+Es una referencia estática por importación: no prueba el contenido efectivo
+de la IAT en una ejecución ni que esta función sea usada por Productor.
+
+| Anclaje | Relación local observada |
+|---|---|
+| `0x1003da66` / `0x1003da69` | `lea eax,[ebp-0x64]` seguido de `push eax`: el primer argumento apunta a un slot local de salida |
+| `0x1003da6a` | Llamada por IAT `0x10068430`, importación exacta `RtlCreateProcessParametersEx`; no confundir con WithTemplate |
+| `0x1003da70` / `0x1003da72` | Prueba de EAX y salto por signo negativo a `0x1003d9f0`; la continuación local considerada es la no negativa, no una ejecución observada |
+| `0x1003da78` / `0x1003da7e` / `0x1003da85` | Lee `[ESI+0x29c]`, recupera el puntero del slot `[EBP-0x64]` y escribe ECX en `[EAX+0x29c]`; no se atribuye nombre de campo ni valor efectivo a `+0x29c` |
+| `0x1003dadf` / `0x1003db34` | Vuelve a leer `[EBP-0x64]` para un argumento de pila de una llamada por IAT `0x10068438`, importación `NtCreateUserProcess`; el orden de preparación lo sitúa en la posición novena |
+
+La entrada del wrapper Ex y la entrega del interno se conservan como evidencia
+de la unidad anterior. Esta unidad acredita el slot que proporciona este
+llamador concreto. No demuestra que sea un llamador único, principal, efectivo
+o perteneciente a la cadena de Productor que motivó E1.
+
+Antes de Ex se observa la lectura `FS:[0x30]` y `[EAX+0x10]` en
+`0x1003da4a/0x1003da56`; tras el retorno no negativo se copia el DWORD de
+`+0x29c` hacia el bloque leído del slot. Esa dirección de copia no demuestra
+que el bloque construido sustituya `PEB.ProcessParameters`.
+
+### Procedencia y límites de la prueba
+
+PE adicional: `C:\Windows\SysWOW64\ncryptprov.dll`, PE32/x86, 446.976 bytes,
+SHA-256 `aa6ad34237d26a251aa3af2f906ebcee1e7b782cf0c606f0dad7ff0e9592d2bc`.
+PDB oficial nuevo `ncryptprov.pdb`, SHA-256
+`ca03f0f009c81a8e7f8a4b263575b6e236ea12f39856f9918d4680cc8d09d14e`,
+GUID `E3588125-D07C-76B9-E4D6-27CC82EA8F04`, edades PE/Info/DBI **1/2/1**.
+La diferencia de edad Info se declara; no se presenta una igualdad inexistente.
+URL, respuesta y bytes descargados, mapa PE, importaciones y registros de
+símbolos quedan en la evidencia privada. Las direcciones son del mapa estático,
+no direcciones de un proceso observado.
+
+La localización emplea un sondeo no recursivo del nombre exacto en DLL/EXE de
+SysWOW64, con inventario de los archivos realmente recorridos y sus hashes.
+Una coincidencia literal sólo sirve para seleccionar un candidato: la llamada
+se acredita aparte mediante importación, instrucciones alineadas y símbolo.
+El alcance excluye otros árboles, resolución dinámica y otras arquitecturas;
+los negativos no prueban ausencia global. La llamada de KernelBase localizada
+en el sondeo importa WithTemplate, por lo que no se usa como prueba de Ex.
+Se conservan las sondas y errores previos del parser como evidencia no canónica.
+
+Entre el uso local de salida y la lectura para la llamada siguiente hay un
+helper en **`0x1003da93` → `0x100292cc`**, cuyo cuerpo no se sigue.
+La prueba demuestra que se vuelve a leer el mismo slot, **no que su contenido
+permanezca inalterado a través de llamadas o alias**. Tampoco acredita efectos
+de helpers, éxito de la operación siguiente, identidad con el PEB consumidor,
+orden anterior a `KernelBase 0x1015b9b1`, estado efectivo o escritura del bit 31
+a uno. No asigna significado a ese bit ni implementa comportamiento económico.
+
+### Verificación y siguiente frontera
+
+Gates propios y revisión independiente contrastan identidades, importaciones,
+bytes, posiciones de pila y relaciones locales; las mutaciones se aplican sólo
+en memoria. Sus recuentos son parciales y solapados, no tests funcionales ni
+porcentaje de paridad. El director reproduce los gates antes y después del
+commit, con BASE fija. Los registros de cada ejecución conservan resultados
+y límites; los intentos fallidos no se borran.
+
+Se preservan trece árboles históricos completos, **2.474 archivos**:
+429/59/92/146/140/77/127/374/189/198/151/223/269. Se cotejan inventarios,
+cuatro índices, sellos y recibos posteriores, seis PE históricos, ntdll,
+vendor, checkout original y trabajo ajeno. Las identidades del PE/PDB nuevo
+se cotejan en sus gates; el PDB y las capturas entran en el inventario final.
+Ocho documentos existentes reciben el siguiente
+paso; no se repiten ni se redatan las suites de producto anteriores.
+
+**Ahora, frontera única:** la llamada importada a **`NtCreateUserProcess` en
+`0x1003db34`**, IAT `0x10068438`, y el alcance del noveno argumento preparado
+desde `[EBP-0x64]` en `0x1003dadf`. Su cuerpo y destino externo no se siguen
+en esta unidad. La continuidad del contenido tras el helper intermedio sigue
+siendo un límite explícito, y cualquier conexión con el PEB leído por KernelBase
+requiere evidencia propia. No seleccionar este llamador como ruta de Productor.
+No repetir la búsqueda de Ex, su caller, el uso local de salida ni los wrappers.
+
+**Después:** pertinencia para el consumidor, continuidad entre objetos, estado
+efectivo, eventual bit 31 a uno, campo `FS:[0x30]+0x228`, helpers, equivalencia,
+escalas, agregados y persistencia. No ampliar a NLS global ni lógica criptográfica.
+E1 abierto, cargo desactivado y A–F/G1–G5/G6-incidencia protegidos. Sólo
+investigación/documentación, July local y commit local, sin push ni sincronización.

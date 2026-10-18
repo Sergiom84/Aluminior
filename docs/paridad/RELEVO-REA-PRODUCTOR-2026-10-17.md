@@ -30,11 +30,19 @@ acredita en ntdll `_RtlCreateProcessParametersInternal@48` la escritura de `1`
 en `0x4b2aa8f8`: bit 31 a cero en ese instante del bloque construido.
 No demuestra que sea el bloque del PEB leído ni que se ejecute antes del consumidor.
 La entrega interna `0x4b2aa9df` y los wrappers Ex/WithTemplate están seguidos.
-**Siguiente:** llamador externo y destinatario del primer argumento de
-`_RtlCreateProcessParametersEx@44` (`0x4b39baf0`): `[EBP+8]` pasa a ECX en
-`0x4b39bb00` antes de la llamada interna `0x4b39bb18`. Su conexión con el
-`PEB.ProcessParameters` del consumidor sigue sin acreditar; detenerse en la
-siguiente dependencia. No repetir los wrappers ni seleccionar uno como ruta efectiva.
+La [unidad del llamador Ex](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#llamador-externo-y-destinatario-de-ex)
+acredita una llamada en `ncryptprov.dll`, `0x1003da6a`, desde el símbolo
+`_CreateSecureProcessEx@28`: el primer argumento es la dirección del slot local
+`[EBP-0x64]`. Su lectura posterior y escritura en `+0x29c` están capturadas;
+no se atribuye nombre ni valor efectivo a ese offset. El mismo slot vuelve
+a leerse para el noveno argumento de una llamada importada a `NtCreateUserProcess`.
+**Siguiente:** frontera externa de esa llamada en `0x1003db34`
+(IAT `0x10068438`, lectura del slot en `0x1003dadf`), sin seguir su cuerpo.
+El helper intermedio `0x1003da93` no está seguido: no se demuestra conservación
+del contenido del slot a través de sus posibles efectos o alias.
+No se acredita que este llamador participe en Productor, que el bloque sea el
+del PEB leído por KernelBase ni orden previo a su lectura. No repetir la
+localización del llamador Ex ni sustituirla por la variante WithTemplate.
 No se acredita
 escritura del bit 31 a uno, significado del bit, valor efectivo ni ejecución. Campo
 `FS:[0x30]+0x228` y resultados del helper siguen abiertos por separado.
@@ -48,7 +56,67 @@ AbreRS/carga, proveedor/argumento `2` ni máscaras/helpers/650. Evidencias nueva
 anteriores, 428, 56, 91 y 145 artefactos, conservan tamaño y SHA-256.
 El alcance estático, cargo desactivado y protección de G6 siguen vigentes.
 
-## Última unidad estática: inicialización local de Flags, 18/10
+## Última unidad estática: llamador externo y destinatario de Ex, 18/10
+
+Base comprobada `d2dbe9bc92a64b061f1085e75d253883e8b24d9f`, misma raíz/rama,
+árbol inicial limpio e identidad Sergio. Nueva evidencia privada:
+`output/e1-processparameters-caller-20261018/`. El [informe vigente](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#llamador-externo-y-destinatario-de-ex)
+acredita en ncryptprov x86 el caller `_CreateSecureProcessEx@28`, entrada
+`0x1003d949`, y call Ex `0x1003da6a` por importación IAT `0x10068430`.
+El primer argumento es la dirección del slot `[EBP-0x64]`; la ruta local
+no negativa lee ese slot y escribe el offset `+0x29c` del bloque. No se
+atribuye nombre o valor a ese campo ni ejecución o conexión con Productor.
+
+**Siguiente unidad única:** frontera de la llamada importada
+`NtCreateUserProcess` en **`0x1003db34`**, IAT `0x10068438`, cuyo noveno
+argumento se prepara leyendo `[EBP-0x64]` en `0x1003dadf`.
+No se ha seguido su cuerpo. El helper intermedio `0x1003da93` → `0x100292cc`
+no está seguido y limita cualquier afirmación de conservación del contenido
+del slot. La lectura del mismo slot no prueba identidad efectiva del objeto.
+No seleccionar este llamador como ruta Productor ni conectar por suposición
+el bloque con `PEB.ProcessParameters` del consumidor `0x1015b9b1`.
+Detenerse ante la siguiente dependencia; no repetir búsqueda Ex, caller,
+uso local, wrappers, inicializador, identidad Flags, selector, celdas,
+WCTMB, ApiSet o predicados; no NLS global ni lógica criptográfica.
+
+Para continuar:
+
+1. Raíz exclusiva `C:\Users\sergi\.codex\worktrees\rea-productor-20261016\Aluminior`.
+   Verificar en sólo lectura raíz, rama `codex/rea-productor-20261016`, HEAD,
+   estado e identidad. HEAD de cierre en el nuevo `postcommit-receipt.json`.
+   No reset/checkout/stash para resolver diferencias.
+2. Leer AGENTS, estado, roadmap, esta unidad y sección enlazada; contrato,
+   capturas canónicas, fuentes, revisión, gates del director, sello y recibo
+   final de `output/e1-processparameters-caller-20261018/`.
+3. Proteger trece árboles previos **429/59/92/146/140/77/127/374/189/198/151/223/269**
+   (**2.474 archivos**) y toda esta unidad con recibos posteriores según su
+   inventario final. Crear carpeta nueva; no ejecutar/importar scripts
+   históricos ni regenerar los cuatro índices. Python siempre `-B`, incluido stdin.
+4. Preservar seis PE históricos, ntdll auxiliar y ahora ncryptprov, sus PDB,
+   fuentes, vendor, checkout original y trabajo ajeno. ApiSet está en System32;
+   los otros PE, en SysWOW64. Cotejar identidades, inventarios, sellos y recibos.
+   No cargar DLL objetivo ni ejecutar legado, COM, SQL o datos de negocio.
+5. Máximo dos subagentes simultáneos, sin subdelegación, dueño único por helper.
+   Revisión descontaminada, una revisión y una corrección máxima. Congelar
+   ejecutores antes de staging/commit; identidad Sergio y gates reproducidos
+   antes/después. Nuevo sello y recibo postcommit con inventario final.
+6. Actualizar los mismos ocho documentos y sus punteros activos; mismo item
+   July, proyecto `aluminior`, sync_uid `398049fbd618069e36bb84bab37913ed`.
+   Descubrir ID local, conservar historia íntegra e `in_progress`, lectura
+   posterior exacta, sin sincronizar. La evidencia privada no viaja con Git/July.
+
+Autorizado: investigación estática/documentación, July local y commit local.
+Sin push, sincronización, ejecución/carga del legado o DLL objetivo, COM, SQL,
+datos de negocio, producto, licencias, migraciones ni despliegues. E1 abierto,
+cargo desactivado y A–F/G1–G5/G6-incidencia protegidos. Permanecen los cuatro
+bloques prácticos E1 y los once frentes económicos E1–E11; no son una cuenta
+de sesiones ni el total de brechas de integración.
+
+## Antecedente histórico: inicialización local de Flags, 18/10
+
+Histórico; sus instrucciones quedan sustituidas por la unidad anterior.
+No ejecutar como lista de tareas.
+
 
 Base comprobada `2b2158168da90185a7c1b1bd48a17f14b54d4ad7`, misma raíz/rama,
 árbol inicial limpio e identidad Git de Sergio. Ocho documentos existentes y
@@ -599,10 +667,11 @@ No repetir esas unidades. Elegir una pregunta pendiente y cerrar una sola unidad
    no repetirlos. Contrato WCTMB y enlace candidato seguidos en la unidad nueva.
    Escrituras de las dos celdas y escritura literal del selector ya seguidas.
    Identidad del DWORD e inicialización local a 1 acreditadas en las unidades del
-   18/10; entrega `0x4b2aa9df` y wrappers también seguidos. Continuar sólo por
-   el llamador externo y destinatario del primer argumento de Ex, entrada
-   `0x4b39baf0`, transferencia `0x4b39bb00`; conexión con el PEB y valores
-   efectivos aún abiertos.
+   18/10; entrega `0x4b2aa9df` y wrappers también seguidos. Caller Ex en
+   ncryptprov `0x1003da6a` y slot local de salida acreditados. Continuar sólo
+   por la frontera importada NtCreateUserProcess `0x1003db34`, argumento nueve
+   leído del slot en `0x1003dadf`. Continuidad tras el helper intermedio,
+   pertinencia para Productor, conexión con el PEB y valores efectivos abiertos.
    No atribuir colación, prioridad primera/última ni
    equivalencia de claves desde condiciones parciales.
    Las cuatro RED efectivas siguen sin demostrar. El BSTR `2` no certifica escala

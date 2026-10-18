@@ -25,11 +25,19 @@ acredita en ntdll `_RtlCreateProcessParametersInternal@48` la escritura de `1`
 en `0x4b2aa8f8`: bit 31 a cero en ese instante del bloque construido.
 No demuestra que sea el bloque del PEB leído ni que se ejecute antes del consumidor.
 La entrega interna `0x4b2aa9df` y los wrappers Ex/WithTemplate están seguidos.
-**Siguiente:** llamador externo y destinatario del primer argumento de
-`_RtlCreateProcessParametersEx@44` (`0x4b39baf0`): `[EBP+8]` pasa a ECX en
-`0x4b39bb00` antes de la llamada interna `0x4b39bb18`. Su conexión con el
-`PEB.ProcessParameters` del consumidor sigue sin acreditar; detenerse en la
-siguiente dependencia. No repetir los wrappers ni seleccionar uno como ruta efectiva.
+La [unidad del llamador Ex](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#llamador-externo-y-destinatario-de-ex)
+acredita una llamada en `ncryptprov.dll`, `0x1003da6a`, desde el símbolo
+`_CreateSecureProcessEx@28`: el primer argumento es la dirección del slot local
+`[EBP-0x64]`. Su lectura posterior y escritura en `+0x29c` están capturadas;
+no se atribuye nombre ni valor efectivo a ese offset. El mismo slot vuelve
+a leerse para el noveno argumento de una llamada importada a `NtCreateUserProcess`.
+**Siguiente:** frontera externa de esa llamada en `0x1003db34`
+(IAT `0x10068438`, lectura del slot en `0x1003dadf`), sin seguir su cuerpo.
+El helper intermedio `0x1003da93` no está seguido: no se demuestra conservación
+del contenido del slot a través de sus posibles efectos o alias.
+No se acredita que este llamador participe en Productor, que el bloque sea el
+del PEB leído por KernelBase ni orden previo a su lectura. No repetir la
+localización del llamador Ex ni sustituirla por la variante WithTemplate.
 No se acredita
 escritura del bit 31 a uno, significado del bit, valor efectivo ni ejecución. Campo
 `FS:[0x30]+0x228` y resultados del helper siguen abiertos por separado.
@@ -41,8 +49,8 @@ el roadmap mantiene los estados únicos. Comprobación local del 18/10:
 428, 56, 91 y 145 artefactos de los cuatro índices privados anteriores intactos,
 incluidos los dos `.pyc` antiguos conservados fuera del índice de formato;
 índice íntegro de 140 archivos conservado; evidencia nueva en
-`output/e1-flags-writer-20261018/`; doce árboles históricos completos
-429/59/92/146/140/77/127/374/189/198/151/223 (2.205 archivos) preservados,
+`output/e1-processparameters-caller-20261018/`; trece árboles históricos completos
+429/59/92/146/140/77/127/374/189/198/151/223/269 (2.474 archivos) preservados,
 sin repetir suites de producto. La identidad del DWORD conserva su unidad anterior.
 Capturas, revisión y recibos nuevos permanecen privados; commit local sin push.
 
