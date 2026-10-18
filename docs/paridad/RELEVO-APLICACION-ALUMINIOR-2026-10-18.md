@@ -220,9 +220,10 @@ INVESTIGACION-CLONERSOFT-2026-10-12.md:114–123. No hay cargos económicos.
 Revisión independiente única: reprodujo el navegador y diffcheck, inspeccionó
 ambas capturas y revisó código, harness y documentación; sin bloqueantes.
 No repitió las 35 pruebas puras ni los tipos; sus salidas ejecutadas por el
-arquitecto se conservan como evidencia. No fue necesaria una corrección.
+arquitecto se conservan como evidencia. No fue necesaria corrección de producto.
 
-Se actualizan estado, roadmap, índice y este relevo; la observación de BODY
+Se actualizan estado, roadmap, índice, este relevo y avisos de continuidad
+del relevo raíz, guía Windows, relevo REA y matriz E1; la observación de BODY
 se conserva identificada como histórica. Los mismos ítems July E1 y P.6/P.7
 mantienen historia íntegra e in_progress, con lectura posterior y sin sync.
 14 árboles/2.861 archivos y siete binarios protegidos se verifican por hash.

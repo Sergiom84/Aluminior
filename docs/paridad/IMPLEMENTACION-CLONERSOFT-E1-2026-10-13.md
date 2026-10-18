@@ -1,6 +1,6 @@
 # E1: contrato físico y selección condicional
 
-> **Dirección vigente — 18/10:** [cerrar fases y aplicarlas a Aluminior](RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). La rama Windows/NtCreateUserProcess queda detenida como referencia histórica. Las instrucciones anteriores que ordenan seguirla no están activas. Evaluación de las ocho preguntas realizada el 18/10; corrección local de costes técnicos decimales equivalentes, sin cargo. Siguiente: caso comercial que discrimine redondeo con configuración efectiva y autorización aislada; P.6/P.7 de producción y errores de cabecera/configurador verificados localmente con fixtures. Siguiente local: foco tras alta aceptada; comparación humana y aceptación siguen abiertas. No repetir la matriz ni reabrir Windows.
+> **Dirección vigente — 18/10:** [cerrar fases y aplicarlas a Aluminior](RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). Windows queda archivado. E1 ya contrastado; cargo económico desactivado y prueba comercial aislada pendiente. Producción, errores y retorno de foco tras alta aceptada verificados localmente con componentes reales y respuestas sintéticas. Siguiente local: verificación visual del configurador con zoom nativo 200% y capturas válidas. Comparación humana, recorrido autenticado y aceptación integral abiertos. No repetir las unidades anteriores.
 
 13/10/2026. Entrega local parcial del [encargo ClonerSoft](ENCARGO-IMPLEMENTACION-CLONERSOFT-2026-10-13.md).
 La identidad y el estado global siguen en [E1 del roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md).
@@ -689,7 +689,8 @@ esos datos. E1 económico sigue `in_progress`. El tramo independiente P.6/P.7
 de componentes de producción se verificó localmente después de esta matriz:
 [resultado y límites](RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#resultado-local-p6p7-de-producción--1810).
 No repetir ese tramo ni los errores de cabecera/configurador ya verificados
-con fixtures. Siguiente local: foco tras alta aceptada simulada; la aceptación
+con fixtures; retorno tras alta aceptada ya verificado en el relevo vigente.
+Siguiente local: zoom nativo 200% del configurador con capturas válidas; la aceptación
 comparativa humana sigue pendiente. E2 conserva su lugar como siguiente frente
 económico y necesita el caso positivo de unión material, sin extrapolar U.
 
