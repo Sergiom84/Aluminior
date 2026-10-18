@@ -70,11 +70,68 @@ La integración posterior en Aluminior requiere además BD efímera con URL,
 puerto, nombre y ausencia de datos reales verificados antes de toda escritura;
 su creación/uso y migraciones necesitan alcance autorizado. Una rama no basta.
 
-Frente independiente disponible dentro de trabajo local sin persistencia:
-P.6/P.7 de producción, teclado/overflow a 1280/768/375/320, zoom 200% y reduced
-motion con fixtures sintéticas. E2 sigue siendo el siguiente frente económico
-del roadmap; necesita su caso positivo de unión material.
+El frente independiente de componentes de producción se ha verificado
+localmente en la entrega P.6/P.7 siguiente. E2 sigue siendo el siguiente frente
+económico del roadmap; necesita su caso positivo de unión material.
 Esta entrega queda local; publicación y aceptación real siguen pendientes.
+
+## Resultado local P.6/P.7 de producción — 18/10
+
+Corrección mínima: `break-words` en el título de artículo/acabado de
+`produccion/_components/hoja-corte.tsx` y el aviso de coste incompleto de
+`despunte.tsx`. Código sintético largo: la página medía 587 px a 375/320 de
+viewport; ahora mide 360/305, exactamente el ancho útil tras la barra vertical.
+Se conserva todo el texto y las tablas mantienen desplazamiento interior.
+No cambia cálculo, formulario, precios, cargos, tipografía ni tokens.
+
+| Comprobación ejecutada en Chromium | Alcance y resultado |
+|---|---|
+| 1280/768/375/320 y control 640 | Dos casos: fixture J04 normal y perfil largo con costes ausentes coherentes. Diez combinaciones sin desbordamiento de página; títulos, avisos y controles contenidos |
+| Tab/Shift+Tab y flechas | Barra → kerf → saneamientos → Recalcular → resumen. Foco visible; resumen al extremo derecho y vuelta al izquierdo por teclado, retorno al botón. No se recorren individualmente las otras nueve regiones de tabla |
+| Zoom nativo 200 % | Perfil temporal propio de Chrome, ajuste visible «Zoom de la página: 200%». Ventana 1280, `innerWidth=640`, DPR 2, `visualViewport.scale=1`, zoom CSS 1; controles/foco/tabla accesibles, ancho útil y scroll 632 |
+| Movimiento reducido | Preferencia activa en las diez combinaciones; cero animaciones/transiciones activas y mismo contenido entre anchuras |
+| Recalcular por teclado | Barra 6400 + Enter: navegación GET con cuatro parámetros, valor conservado y bloque técnico presente; sin escritura |
+| Regresión de componentes | 40/40 pruebas puras existentes; tipos de cuatro paquetes y arquitectura sin infracciones |
+
+El gate inicial de foco suponía que el ancho computado sería literalmente
+`2px`; Chromium devolvió `1.6px` también para una referencia aislada declarada
+de 2px. Se conserva ese fallo y la calibración en los logs. El gate final
+exige `:focus-visible` y el mismo ancho computado que esa referencia de 2px,
+sin cambiar CSS ni aceptar un contorno menor que la referencia.
+Las dos pruebas auxiliares que sólo exigían clases se conservan en privado;
+no se versionan ni se usan para acreditar layout.
+La matriz final automatizada se ejecutó en Chromium sin interfaz y con
+preferencia de movimiento reducido: contorno de 2px y flechas correctos.
+Se conservan las ejecuciones visibles donde el desplazamiento por flechas no
+avanzó; no se atribuye una causa no demostrada. El zoom nativo 200% y su
+teclado hasta el resumen y su desplazamiento a la derecha sí se comprobaron
+en el perfil temporal visible, por separado. La vuelta izquierda y Shift+Tab
+corresponden a la matriz automatizada. La captura `zoom-nativo-200.png` salió
+vacía, comprobado también por el revisor: no sirve como aceptación visual.
+El 200% queda acreditado por métricas DOM y snapshot del ajuste de Chrome;
+su verificación visual permanece abierta.
+
+Revisión independiente: una ronda, sin defectos bloqueantes en las dos líneas;
+reprodujo 40 pruebas, tipos y arquitectura. Una corrección documental delimita
+las tablas recorridas y la captura vacía, sin cambiar el código ni los gates.
+
+Evidencia privada: `output/playwright/p67-produccion-20261018/`, métricas antes/
+después, diez escenarios, zoom nativo, capturas y salidas crudas. Harness HTTP
+en 127.0.0.1, componentes reales y CSS compilado de la aplicación; sin BD,
+Shell, cabecera autenticada ni recorrido servidor completo. No ejecutar el
+servidor E2E habitual: aplica migraciones y queda fuera de esta autorización.
+
+Mapa de evidencia: `EVIDENCIA-VIDEO-PRESUPUESTO.md:299–353` conserva las dos
+hojas y sus campos. El vídeo de ratón no acredita atajos (`402–403`). Tab,
+Shift+Tab, flechas y foco son accesibilidad propia de Aluminior; F7/F9 del
+contrato de presupuesto del 12/10 no se extienden a producción.
+
+Estado: tramo técnico de estos componentes verificado localmente; P.6/P.7
+integral sigue abierto, sin publicación ni aceptación real. Siguiente unidad
+independiente: matriz local de cabecera/configurador del presupuesto, estados
+de error y retorno de foco con fixtures sin BD. Sigue pendiente comparación
+humana con Productor y recorrido autenticado autorizado. E1 económico conserva
+su bloqueo y la prueba mínima ya fijada, sin repetir su evaluación.
 
 ## Contrato de la evaluación del 18/10 (ejecutado)
 
