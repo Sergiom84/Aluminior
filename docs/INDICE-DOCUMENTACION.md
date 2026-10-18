@@ -1,6 +1,6 @@
 # Índice de documentación
 
-> **Dirección vigente — 18/10:** [cerrar fases y aplicarlas a Aluminior](paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). La rama Windows/NtCreateUserProcess queda detenida como referencia histórica. Las instrucciones anteriores que ordenan seguirla no están activas. Siguiente entrega: evaluar las ocho preguntas E1 contra evidencia y código y pasar al menor cambio funcional acreditado; si falta evidencia, fijar una prueba o bloqueo concreto, sin otra cadena de investigación.
+> **Dirección vigente — 18/10:** [cerrar fases y aplicarlas a Aluminior](paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). La rama Windows/NtCreateUserProcess queda detenida como referencia histórica. Las instrucciones anteriores que ordenan seguirla no están activas. Evaluación de las ocho preguntas realizada el 18/10; corrección local de costes técnicos decimales equivalentes, sin cargo. Siguiente: caso comercial que discrimine redondeo con configuración efectiva y autorización aislada; mientras tanto puede avanzar P.6/P.7 con fixtures sintéticas. No repetir la matriz ni reabrir Windows.
 
 Entrada de trabajo: [ESTADO-ACTUAL.md](ESTADO-ACTUAL.md).
 Clasificación documental inicial sobre `9bc879e` y comprobación local del 02/10.

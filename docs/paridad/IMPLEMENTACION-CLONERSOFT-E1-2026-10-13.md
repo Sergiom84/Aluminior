@@ -1,13 +1,13 @@
 # E1: contrato físico y selección condicional
 
-> **Dirección vigente — 18/10:** [cerrar fases y aplicarlas a Aluminior](RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). La rama Windows/NtCreateUserProcess queda detenida como referencia histórica. Las instrucciones anteriores que ordenan seguirla no están activas. Siguiente entrega: evaluar las ocho preguntas E1 contra evidencia y código y pasar al menor cambio funcional acreditado; si falta evidencia, fijar una prueba o bloqueo concreto, sin otra cadena de investigación.
+> **Dirección vigente — 18/10:** [cerrar fases y aplicarlas a Aluminior](RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). La rama Windows/NtCreateUserProcess queda detenida como referencia histórica. Las instrucciones anteriores que ordenan seguirla no están activas. Evaluación de las ocho preguntas realizada el 18/10; corrección local de costes técnicos decimales equivalentes, sin cargo. Siguiente: caso comercial que discrimine redondeo con configuración efectiva y autorización aislada; mientras tanto puede avanzar P.6/P.7 con fixtures sintéticas. No repetir la matriz ni reabrir Windows.
 
 13/10/2026. Entrega local parcial del [encargo ClonerSoft](ENCARGO-IMPLEMENTACION-CLONERSOFT-2026-10-13.md).
 La identidad y el estado global siguen en [E1 del roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md).
 El cargo de cabecera continúa abierto. Este contrato no acredita fabricación,
 aceptación Productor, publicación ni producción.
-La continuación vigente del 17/10 está en [Clave de fila y transformaciones del índice](#clave-de-fila-y-transformaciones-del-índice);
-las unidades del 13/10 y 14/10 siguientes conservan su evidencia y fecha.
+La continuación vigente es [la matriz reevaluada el 18/10](#contraste-de-las-ocho-preguntas).
+Las unidades estáticas del 13/10–18/10 conservan su evidencia y fecha como historia.
 
 ## Base y contrato
 
@@ -646,16 +646,81 @@ flags y estado de localización, además de los valores configurados efectivos.
 
 ### Contraste de las ocho preguntas
 
-| Requisito | Acreditado estáticamente | Pendiente para aceptación monetaria |
-|---|---|---|
-| Filas comerciales | Reparto por documento, contenedores a cero, metraje distinto de cero y `GastosIndSN` verdadero; saltos específicos de compacto/mosquitera | El filtro booleano no significa «es GI»; faltan filas efectivas y contrato completo de agregados |
-| Base bruta/neta | `VPRES` usa `Subtotal`; el denominador suma subtotales con exclusiones y resta dos descuentos documentales calculados por separado | No reducir todas las rutas a una etiqueta bruto/neto; conservar configuración y formato de cada operación |
-| Cantidades | Reparto sobre importes valorados; precio reconstruido dividiendo por `Metraje`; GI propio con cantidad y metraje uno | La formación de los agregados comerciales y cantidades incorporadas no queda certificada; el censo directo no excluye lecturas indirectas |
-| Descuentos | Dos descuentos sucesivos de línea bajo su bandera; descuento de cliente de despunte precargado en una ruta propia; totales con `DtoPPsNeto` | Valores efectivos, extremos y enlace de todos los descuentos con los importes de entrada |
-| Sustitución anterior | Lee cargo anterior, reconstruye desde subtotal más cargo nuevo y reemplaza `GastosIndirectos`; procesa también nuevo ratio cero cuando había cargo | Idempotencia con la política real de formato, duplicados preexistentes y rutas de error |
-| Doble cómputo | En INS/CST resta venta GI del numerador; REP marca el GI oculto con `nEstr=-1`, excluido por el filtro de contenedores cero, bajo retorno ordinario válido | Exclusión integral de componentes/agregados, todos los modos/errores y representación de Aluminior |
-| Redondeo | Escalas diferenciadas de precio, línea, base y total; flujo configuración → formato → conversión → escritura | Valores configurados y contrato exacto de formato/empates/localización; no asumir céntimos ni mayor resto |
-| Escritura | Setters de importes, precio, descuentos y gasto indirecto; reutilización/alta del GI y llamadas `update/edUpdate` | Resultado efectivo, atomicidad, rollback y persistencia durable no observados |
+Reevaluación acotada del **18/10/2026** contra código, pruebas y evidencia ya
+conservada. Esta matriz sustituye su versión estática del 14/10. Fuentes:
+[control, reparto y totales](#control-reparto-y-totales), [formato](#contrato-de-formato-varformat),
+[fallback de configuración](#proveedor-de-configuración-y-argumento-2) y
+[A–F/G1–G5, manual y límites](EVIDENCIA-E1-DESPUNTE-2026-10-04.md).
+No se ha ejecutado nuevamente Productor ni leído datos comerciales.
+
+Rutas de código/pruebas de la matriz, relativas a la raíz:
+
+- **Físico:** `packages/core/src/produccion/despunte-catalogo/preparar.ts`
+  y `preparar.test.ts`; `condicional.ts` y `condicional.test.ts`.
+- **Técnico:** `packages/core/src/produccion/despunte.ts`, `despunte.test.ts`
+  y `despunte-barra-comprada.test.ts`.
+- **Adaptador puro web:** `packages/web/app/dashboard/produccion/_lib/preparar-produccion.ts`,
+  `preparar-produccion.test.ts` y `despunte-costes-equivalentes.test.tsx`; vista existente
+  `../_components/despunte.tsx`.
+
+| Pregunta / necesidad | Acreditado y límite de evidencia | Implementado y prueba | Falta / caso discriminante mínimo | Decisión, responsable y cierre |
+|---|---|---|---|---|
+| Filas comerciales: seleccionar quién recibe cargo | Estática: contenedores cero, metraje no cero y `GastosIndSN`; exclusiones por modo. A–F/G1–G5 distinguen GRUPO, componentes y GID; no certifican todas las filas | Físico agrupa artículo/acabado/tonalidad y conserva origen (`preparar.test.ts`). Web selecciona piezas verificadas para corte, no receptores comerciales E1 | Documento sintético con GRUPO, componente, GID y fila excluida: registrar receptores y agregados efectivos. La salida comercial no está fijada | Bloquea cargo, no corte técnico. Codex prepara contrato; QA autorizada cierra con filas efectivas y exclusiones observadas |
+| Base bruta/neta: reconstruir peso sin cargo anterior | `VPRES` parte de subtotal con exclusiones y descuentos documentales. G4 acredita reparto por bases sin cargo anterior frente a reparto igual/precio cargado, solo con descuentos cero | Técnico recibe `LineaDespunte.base` explícita; test «reparte en proporción a la base de cada línea» verifica pesos sintéticos, no reconstrucción comercial | Dos líneas de bases distintas con un descuento no cero y configuración conocida. Registrar subtotal, descuentos y cargo anterior; no hay importe E1 completo esperado aún | Bloquea cargo. Codex/QA autorizada cierran al poder reproducir numerador y denominador sin incógnitas |
+| Cantidades: aplicar cada factor una vez | Físico: metraje × principal y cortes × principal × detalle. Estática comercial divide precio por metraje; A–F/G1–G5 tienen cantidad uno | Físico: 2,4 m × 3 = 7,2 m y seis cortes (`preparar.test.ts`). Web J04 cantidad dos: siete barras, 42 m comprados, 29,28 m físicos (`preparar-produccion.test.ts`) | Comercial cantidad uno/dos con mismo detalle, descuentos y configuración. Falta formación de agregados comerciales; no inferirla de cortes | Físico aplicable ahora, comercial bloqueante. Codex mantiene pruebas; QA autorizada cierra la cantidad comercial |
+| Descuentos: orden y base de cada uno | Dos descuentos sucesivos bajo bandera; descuento de cliente de despunte separado y `DtoPPsNeto`. Los ensayos observados no discriminan esas ramas | Técnico no aplica descuentos E1; el reparto sintético no demuestra descuentos comerciales | Una línea con descuentos distintos de cero; variar una bandera cada vez conservando entradas y escalas. Falta salida esperada comercial hasta fijar configuración | Bloquea cargo. Codex/QA autorizada cierran orden, bases y extremos sin extrapolar el caso cero |
+| Sustitución: recalcular sin acumular | D/E y G4/G5 acreditan reemplazo, repetición y reapertura en casos observados. Estática contempla nuevo ratio cero cuando había cargo | Funciones puras recalculan sin mutar (`preparar.test.ts` y `despunte-costes-equivalentes.test.tsx`). No hay adaptador monetario ni actualización de presupuesto E1 | Cargo previo → nuevo cargo cero, repetir, guardar y reabrir; falta observación de esa variante y contrato de error | Bloquea escritura económica. Codex/QA cierran con persistencia aislada autorizada y cargo retirado, sin duplicados |
+| Doble cómputo: excluir niveles y GI previo | Estática: resta GI en INS/CST; REP oculta con `nEstr=-1`, exclusión parcial. No acredita todos los modos/errores | Técnico usa piezas verificadas, no suma importes de GRUPO/GID; prueba J04 distingue siete barras y consumos. No existe receptor comercial | Documento sintético con GI previo, GRUPO y detalle: comprobar cada modo habilitado y su conjunto de filas. Resultado completo pendiente | Bloquea cargo, no producción técnica. Codex/QA cierran exclusión integral del adaptador comercial |
+| Redondeo: escalas y empates efectivos | Máscaras/Variant/formato y fallback BSTR `2` acreditados. No se conocen valores efectivos RED ni locale. Tres políticas coinciden en G4; G6 es incidencia, no resultado | Técnico usa céntimos y mayor resto, con pruebas sintéticas; no demuestra política Productor. Comparación de costes iguales no redondea (`despunte-costes-equivalentes.test.tsx`) | Registrar cuatro RED y locale efectivos; elegir antes del cálculo entradas con predicciones divergentes. Sin ello no fijar salida E1 ni usar `2` como escala observada | Bloquea cargo. Codex fija predicciones; QA autorizada cierra con un caso que separe políticas |
+| Escritura: aplicación coherente y durable | Setters/update estáticos; F y G5 acreditan reapertura de esos casos. No se acredita atomicidad ni rollback de todos los errores | Adaptador web puro y vista «Sin cargo al presupuesto». Prueba de repetición/inmutabilidad no acredita persistencia | Tras autorización y aislamiento real de BD: aplicar, repetir, guardar, reabrir e inducir fallo; comprobar ausencia de escritura parcial. Sin ese entorno no ejecutar | Bloquea aplicación económica. Codex propone aislamiento y QA; Sergio autoriza alcance y aceptación real |
+
+**Salida de esta evaluación:** corregir únicamente la igualdad decimal de los
+costes del despunte técnico en producción. `Set<string|null>` confundía `4`
+con `4.0000` como costes distintos para el mismo artículo/acabado. El contrato
+decimal existente (`compararDecimal`, también usado por `verificar-despiece.ts`)
+permite corregirlo sin escoger proveedor, descuento, precio o cargo nuevos.
+Los costes realmente distintos y los ausentes siguen sin valorarse; cero
+explícito sigue siendo un coste válido. La prueba compara el resultado y la
+vista del caso mixto contra la fixture uniforme, sin tocar datos persistidos.
+
+No conectar aún el contrato físico de catálogo al snapshot: faltan tonalidad,
+largo de artículo y metraje valorado separado. Un valor por defecto no suple
+esos datos. E1 económico sigue `in_progress`. Frente independiente que puede
+avanzar: P.6/P.7, matriz de teclado/overflow de producción con fixtures
+sintéticas a 1280/768/375/320, zoom 200% y reduced motion; su aceptación
+comparativa permanece separada. E2 conserva su lugar como siguiente frente
+económico y necesita el caso positivo de unión material, sin extrapolar U.
+
+Verificación ejecutada del cambio local, 18/10: nueve casos nuevos; antes del
+arreglo fallaban cinco y pasaban cuatro, después pasan nueve. El director
+reprodujo esos cinco fallos cargando la versión anterior solo en memoria,
+sin revertir el árbol. Gate del director:
+40/40 pruebas puras de producción (cinco archivos), 964/964 de core,
+`npm run typecheck` correcto en los cuatro paquetes y
+`npm run check:architecture`: 861 archivos, 413 módulos, cero infracciones.
+Enlaces de los ocho documentos modificados: 359 destinos y 116 anchors sin
+errores. El primer typecheck detectó un `push` sobre un array readonly en la
+fixture nueva; se corrigió construyendo otro array, sin supresiones.
+
+Las pruebas web se ejecutaron con configuración pura en
+`output/e1-aplicacion-20261018/vitest.puro.config.mts`: incluye los tests de
+producción y excluye integración. No carga `pruebas/migrar.ts`, cuyo setup
+ejecuta SQL. No se ha ejecutado el gate de integración/BD, por estar fuera del
+alcance autorizado. Logs rojo/verde, gates y preservación en esa misma carpeta
+privada; no viajan por Git. No cambia la interfaz: la prueba renderiza el
+bloque React existente con los importes calculados, sin certificar navegador,
+persistencia, aceptación Productor ni uso real.
+Preservación antes/después: catorce árboles, 2.861 archivos y siete binarios
+externos comprobados por tamaño/SHA-256, sin diferencias. PE/PDB, índices y
+vendor dentro de esos árboles permanecen intactos; originales y evidencia
+A–F/G1–G5/G6 no se han operado ni modificado.
+Revisión independiente, una ronda sin hallazgos bloqueantes: reprodujo 40/40,
+tipos y arquitectura; inspeccionó matriz, diff y salidas de core/control causal/
+preservación. No reprodujo esos tres últimos gates ni observó navegador o BD.
+Ejecutores congelados antes del commit local; no publicación ni sincronización.
+
+Los párrafos y gates que siguen conservan **la evidencia histórica del 14/10**;
+no son instrucciones para retomar Windows ni verificaciones de esta corrección.
 
 La secuencia ordinaria de total parte de la suma de importes de líneas,
 resta la deducción anterior, calcula descuento y pronto pago, y obtiene base

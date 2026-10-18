@@ -44,7 +44,39 @@ Los catorce árboles de evidencia existentes se conservan completos:
 Las evidencias privadas no viajan con Git ni July. Una fuente ausente se declara
 ausente; no se reconstruye ni se ejecuta el legado para suplirla sin autorización.
 
-## Primera entrega de la siguiente conversación
+## Resultado local del 18/10 y siguiente entrega
+
+La evaluación de las ocho preguntas está realizada en la
+[misma matriz E1](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#contraste-de-las-ocho-preguntas):
+evidencia, código/pruebas, incertidumbre, caso mínimo y responsable/condición
+de cierre. No repetirla como siguiente tarea ni retomar Windows.
+
+Función corregida localmente: en Producción → documento → «Coste técnico de
+despunte», costes iguales como `4` y `4.0000` ya no se consideran incompatibles.
+Se usa comparación decimal exacta en el adaptador puro; costes distintos,
+ausentes y cero explícito conservan su significado. No se cambia el cargo,
+la interfaz, el optimizador ni el presupuesto guardado.
+
+Pruebas sintéticas y renderizado React del bloque existente; no se ha abierto
+el recorrido autenticado con BD ni certificado navegador, guardado o uso real.
+El contrato monetario sigue bloqueado por filas/agregados efectivos,
+descuentos/cantidades, escalas y empate/localización, y atomicidad/persistencia.
+
+Siguiente entrega E1 concreta: con nueva autorización para empresa sintética
+aislada de Productor, registrar `REDprecio/REDlinea/REDbase/REDtotal` y locale,
+fijar predicciones divergentes y observar un caso que discrimine redondeo.
+G6 no se modifica y no se necesita continuar ninguna dependencia de Windows.
+La integración posterior en Aluminior requiere además BD efímera con URL,
+puerto, nombre y ausencia de datos reales verificados antes de toda escritura;
+su creación/uso y migraciones necesitan alcance autorizado. Una rama no basta.
+
+Frente independiente disponible dentro de trabajo local sin persistencia:
+P.6/P.7 de producción, teclado/overflow a 1280/768/375/320, zoom 200% y reduced
+motion con fixtures sintéticas. E2 sigue siendo el siguiente frente económico
+del roadmap; necesita su caso positivo de unión material.
+Esta entrega queda local; publicación y aceptación real siguen pendientes.
+
+## Contrato de la evaluación del 18/10 (ejecutado)
 
 Realizar **una única unidad acotada de evaluación de E1**, reutilizando las ocho
 preguntas de [la matriz existente](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#contraste-de-las-ocho-preguntas).

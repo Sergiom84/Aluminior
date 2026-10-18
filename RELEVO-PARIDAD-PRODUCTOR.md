@@ -1,6 +1,6 @@
 # Relevo: paridad y fuentes de Productor
 
-> **Dirección vigente — 18/10:** [cerrar fases y aplicarlas a Aluminior](docs/paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). La rama Windows/NtCreateUserProcess queda detenida como referencia histórica. Las instrucciones anteriores que ordenan seguirla no están activas. Siguiente entrega: evaluar las ocho preguntas E1 contra evidencia y código y pasar al menor cambio funcional acreditado; si falta evidencia, fijar una prueba o bloqueo concreto, sin otra cadena de investigación.
+> **Dirección vigente — 18/10:** [cerrar fases y aplicarlas a Aluminior](docs/paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). La rama Windows/NtCreateUserProcess queda detenida como referencia histórica. Las instrucciones anteriores que ordenan seguirla no están activas. Evaluación de las ocho preguntas realizada el 18/10; corrección local de costes técnicos decimales equivalentes, sin cargo. Siguiente: caso comercial que discrimine redondeo con configuración efectiva y autorización aislada; mientras tanto puede avanzar P.6/P.7 con fixtures sintéticas. No repetir la matriz ni reabrir Windows.
 
 Para continuar en otra conversación: [relevo completo del 17/10](docs/paridad/RELEVO-REA-PRODUCTOR-2026-10-17.md).
 Continuación posterior: [proveedor de configuración E1](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#proveedor-de-configuración-y-argumento-2),

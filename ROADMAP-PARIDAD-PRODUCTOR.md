@@ -1,6 +1,6 @@
 # Roadmap operativo de paridad con Productor
 
-> **Dirección vigente — 18/10:** [cerrar fases y aplicarlas a Aluminior](docs/paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). La rama Windows/NtCreateUserProcess queda detenida como referencia histórica. Las instrucciones anteriores que ordenan seguirla no están activas. Siguiente entrega: evaluar las ocho preguntas E1 contra evidencia y código y pasar al menor cambio funcional acreditado; si falta evidencia, fijar una prueba o bloqueo concreto, sin otra cadena de investigación.
+> **Dirección vigente — 18/10:** [cerrar fases y aplicarlas a Aluminior](docs/paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). La rama Windows/NtCreateUserProcess queda detenida como referencia histórica. Las instrucciones anteriores que ordenan seguirla no están activas. Evaluación de las ocho preguntas realizada el 18/10; corrección local de costes técnicos decimales equivalentes, sin cargo. Siguiente: caso comercial que discrimine redondeo con configuración efectiva y autorización aislada; mientras tanto puede avanzar P.6/P.7 con fixtures sintéticas. No repetir la matriz ni reabrir Windows.
 
 Actualizado: 18/10/2026 (formato, proveedor, carga, índice, comparador/normalizador, cuerpo de clave de fila y transformaciones delegadas E1 seguidos estáticamente en su alcance; condiciones de los predicados, contrato WCTMB y enlace candidato ApiSet seguidos estáticamente; escrituras condicionadas de las dos celdas KernelBase seguidas; escritura del selector e identidad del DWORD acreditadas; inicializador local de Flags y llamador Ex acreditados en su alcance; frontera NtCreateUserProcess, estado efectivo y equivalencia pendientes; C1 y P.6/P.7 conservan su etapa del 12/10). Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
 Este archivo es el registro único del orden y estado de estas tareas.
@@ -9,6 +9,16 @@ conservan evidencia. Sus antiguas listas de pendientes no sustituyen este regist
 
 
 ## Siguiente paso
+
+La evaluación de las ocho preguntas del 18/10 está
+[realizada en su matriz existente](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#contraste-de-las-ocho-preguntas).
+Corrección local: costes decimales equivalentes ya permiten mostrar el coste
+técnico en Producción; sin cargo al presupuesto. Siguiente E1: configuración
+efectiva y caso comercial que separe políticas de redondeo, con autorización
+y aislamiento propios. P.6/P.7 puede avanzar con fixtures sin persistencia.
+[Alcance y límites](docs/paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#resultado-local-del-1810-y-siguiente-entrega).
+
+### Antecedentes estáticos conservados (no instrucciones de continuidad)
 
 **Unidades E1 de formato y configuración, 17/10:** máscaras, tipos Variant y cadena de conversión
 acreditados estáticamente; flags y localización contrastados con contrato público.
@@ -173,7 +183,7 @@ el total de todos los módulos pendientes del producto.
 | ID | Trabajo | Estado actual | Prueba necesaria para avanzar o cerrar |
 |---|---|---|---|
 | M0 | Matriz por modelo/serie/regla y ensayos mínimos | Cerrado 03/10/2026 | [Matriz](docs/paridad/MATRIZ-COBERTURA-PRODUCTOR-2026-10-03.md), 97 pares, 47 pruebas, typechecks y arquitectura; no volver a crearla, regenerar si cambian las fuentes |
-| E1 | Despunte de cabecera: base, momento y reparto | En curso; físico/condicional 13/10, consumidor/COM, receptores y control/reparto/totales 14/10; formato, proveedor/argumento `2`, carga, índice, comparador/normalizador y cuerpo de fila/transformaciones estáticos 17/10; G1–G5 y G6-incidencia preservados | [Entrega y continuación](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#llamador-externo-y-destinatario-de-ex): escrituras condicionadas de las celdas y escritura literal del selector acreditadas; identidad del DWORD atribuida a `_RTL_USER_PROCESS_PARAMETERS.Flags` `+0x8`; inicialización local a 1 acreditada en `0x4b2aa8f8`; entrega `0x4b2aa9df` y wrappers seguidos; llamador Ex en ncryptprov `0x1003da6a` y slot de salida `[EBP-0x64]` acreditados; frontera archivada de llamada importada a NtCreateUserProcess `0x1003db34`. No se acredita conservación del contenido a través del helper intermedio ni conexión con el PEB del consumidor. Equivalencia, primera/última, comparación externa exacta, valores efectivos, empates/localización, agregados y persistencia pendientes. No repetir unidades estáticas cerradas. Sin activar cabecera, adaptar snapshots u operar G6 |
+| E1 | Despunte de cabecera: base, momento y reparto | En curso; matriz de ocho preguntas evaluada 18/10. Corrección técnica local: costes decimales iguales mantienen valoración. Físico/condicional previo y A–F/G1–G5/G6-incidencia conservados | [Matriz y salida funcional](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#contraste-de-las-ocho-preguntas). Cargo bloqueado por filas/agregados efectivos, cantidades/descuentos, precisión/configuración y escritura. Caso de redondeo con predicciones divergentes y configuración efectiva; necesita autorización aislada. Sin activar cabecera, adaptar snapshots ni operar G6. Windows archivado; no repetir evaluación |
 | E2 | Unión material de otra serie en GRUPO | Pendiente | Selección desde diagnóstico privado de los ocho casos de iteración 13; código/serie/acabado y geometría demostrados, sin extrapolar U |
 | E3 | Comisión: orden de redondeo y edición de líneas guardadas | Pendiente | Caso 0/−10/+10, suma de filas y momento de aplicación; separar cantidades/horas; seis residuos comunicados |
 | E4 | Tapajuntas de puerta con inferior SI/NO | Pendiente | GMT004, 1P 867×2098 con serie/ala/cajón reales; comparación lateral y travesaño |
@@ -326,6 +336,11 @@ sigue abierta tras G6-incidencia, sin recálculo nuevo. No confundir
 ese corpus con el banco vigente ni cerrar por la coincidencia de costes.
 
 ## Instrucción breve para continuar
+
+> Vigente al 18/10: evaluación E1 realizada y corrección técnica local entregada.
+> Seguir únicamente resultado/siguiente entrega del relevo 18/10 enlazado al inicio.
+> Las instrucciones anteriores siguientes son históricas y no autorizan pull,
+> sincronización, G6, SQL, publicación ni continuar Windows en esta sesión.
 
 > Lee AGENTS.md, docs/ESTADO-ACTUAL.md y ROADMAP-PARIDAD-PRODUCTOR.md.
 > S1/A2 publicados y verificados; lee docs/paridad/MANTENIMIENTO-Y-MINIATURAS-2026-10-09.md.

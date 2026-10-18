@@ -1,6 +1,6 @@
 # Estado actual de Aluminior
 
-> **Dirección vigente — 18/10:** [cerrar fases y aplicarlas a Aluminior](paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). La rama Windows/NtCreateUserProcess queda detenida como referencia histórica. Las instrucciones anteriores que ordenan seguirla no están activas. Siguiente entrega: evaluar las ocho preguntas E1 contra evidencia y código y pasar al menor cambio funcional acreditado; si falta evidencia, fijar una prueba o bloqueo concreto, sin otra cadena de investigación.
+> **Dirección vigente — 18/10:** [cerrar fases y aplicarlas a Aluminior](paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). La rama Windows/NtCreateUserProcess queda detenida como referencia histórica. Las instrucciones anteriores que ordenan seguirla no están activas. Evaluación de las ocho preguntas realizada el 18/10; corrección local de costes técnicos decimales equivalentes, sin cargo. Siguiente: caso comercial que discrimine redondeo con configuración efectiva y autorización aislada; mientras tanto puede avanzar P.6/P.7 con fixtures sintéticas. No repetir la matriz ni reabrir Windows.
 
 Revisión documental y producción: 12/10/2026. Código `40cedd1` live en Render,
 deploy `dep-db6hi2navr4c739d2e4g`, terminado a las 19:31:21 Europe/Madrid
@@ -18,7 +18,16 @@ El [roadmap operativo](../ROADMAP-PARIDAD-PRODUCTOR.md) conserva el orden y
 estado único de las tareas de paridad, con mantenimiento documental obligatorio.
 
 
-## Investigación REA — 16/10/2026, worktree separado
+## Corrección funcional local — 18/10/2026
+
+[Ocho preguntas E1 contrastadas](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#contraste-de-las-ocho-preguntas).
+En Producción → documento → «Coste técnico de despunte», costes iguales con
+distinta escala (`4`/`4.0000`) conservan su valoración. Costes distintos o
+ausentes siguen sin valorarse. Adaptador puro y vista existente, sin cargo,
+SQL ni cambios de presupuesto. Ver [resultado y siguiente entrega](paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#resultado-local-del-1810-y-siguiente-entrega).
+Estado local; no publicado ni aceptado en uso real. E1 económico sigue abierto.
+
+## Investigación REA — 16/10/2026, worktree separado (histórico)
 
 Continuación E1 del **17/10**: [contrato de formato](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#contrato-de-formato-varformat)
 con máscaras/Variant y conversión acreditados estáticamente, referencias oficiales
@@ -352,7 +361,11 @@ Los nueve documentos anteriores y tres líneas conservan sus huellas.
 
 ## Siguiente paso
 
-**ClonerSoft/E1 local:** preparación física/condicional, layout/getters,
+El resultado y siguiente entrega vigentes son los del relevo del 18/10 y su
+matriz reevaluada, enlazados al inicio. Los párrafos siguientes conservan
+antecedentes fechados; no ordenan seguir dependencias estáticas de Windows.
+
+**Antecedente ClonerSoft/E1 local:** preparación física/condicional, layout/getters,
 consumidor, declaraciones COM, receptores y cuerpos de control/reparto/totales
 entregados en su alcance estático. Máscaras, tipos y contrato público de formato
 ampliados el 17/10; empates/localización efectiva permanecen sin ensayo.
