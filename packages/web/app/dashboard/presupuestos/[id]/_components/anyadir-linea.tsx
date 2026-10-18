@@ -34,6 +34,7 @@ export function AnyadirLinea({
   const [plantilla, setPlantilla] = useState<PlantillaDiseno | null>(null)
   const { estado, enviar, enviando } = useEnvioFormulario<Estado>(anyadirLinea, true)
   const formulario = useRef<HTMLFormElement>(null)
+  const focoTrasAlta = useRef(false)
   const [serie, setSerie] = useState('')
   const [vidrio, setVidrio] = useState('')
   const [acabado, setAcabado] = useState(() => acabadoPorDefecto(acabados))
@@ -61,8 +62,15 @@ export function AnyadirLinea({
   }, [])
 
   useEffect(() => {
+    focoTrasAlta.current = Boolean(estado?.ok)
     if (estado?.ok) resetTrasAlta()
   }, [estado, resetTrasAlta])
+
+  useEffect(() => {
+    if (!focoTrasAlta.current) return
+    focoTrasAlta.current = false
+    formulario.current?.querySelector<HTMLButtonElement>('[data-foco-configurador-vacio]')?.focus()
+  }, [edicion])
 
   useEffect(() => {
     if (estado && !estado.ok) enfocarEdicion(estado, formulario.current)

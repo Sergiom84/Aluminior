@@ -1,6 +1,6 @@
 # Estado actual de Aluminior
 
-> **Dirección vigente — 18/10:** [cerrar fases y aplicarlas a Aluminior](paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). La rama Windows/NtCreateUserProcess queda detenida como referencia histórica. Las instrucciones anteriores que ordenan seguirla no están activas. Evaluación de las ocho preguntas realizada el 18/10; corrección local de costes técnicos decimales equivalentes, sin cargo. Siguiente: caso comercial que discrimine redondeo con configuración efectiva y autorización aislada; P.6/P.7 de producción y errores de cabecera/configurador verificados localmente con fixtures. Siguiente local: foco tras alta aceptada; comparación humana y aceptación siguen abiertas. No repetir la matriz ni reabrir Windows.
+> **Dirección vigente — 18/10:** [cerrar fases y aplicarlas a Aluminior](paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). Windows queda archivado. E1 ya contrastado; cargo económico desactivado y prueba comercial aislada pendiente. Producción, errores y retorno de foco tras alta aceptada verificados localmente con componentes reales y respuestas sintéticas. Siguiente local: verificación visual del configurador con zoom nativo 200% y capturas válidas. Comparación humana, recorrido autenticado y aceptación integral abiertos. No repetir las unidades anteriores.
 
 Revisión documental y producción: 12/10/2026. Código `40cedd1` live en Render,
 deploy `dep-db6hi2navr4c739d2e4g`, terminado a las 19:31:21 Europe/Madrid
@@ -18,6 +18,18 @@ El [roadmap operativo](../ROADMAP-PARIDAD-PRODUCTOR.md) conserva el orden y
 estado único de las tareas de paridad, con mantenimiento documental obligatorio.
 
 
+## Retorno de foco P.6/P.7 local — 18/10/2026
+
+Tras un alta aceptada simulada de cerramiento, el diseñador se reinicia y el
+foco llega a «Añadir primera ventana»; Enter permite continuar. Rechazo de
+campo, rechazo general y respuesta perdida conservan el borrador y permiten
+reintentar. Segunda alta comprobada sin reutilizar la identidad confirmada.
+16 escenarios actuales a 1280/768/375/320 y ocho comprobaciones de foco que
+fallan con el código anterior; 35 pruebas puras, tipos y arquitectura correctos.
+[Resultado, prueba reproducible y límites](paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#resultado-local-p6p7-de-retorno-tras-alta--1810).
+Siguiente local: zoom nativo 200% del configurador, foco y capturas válidas.
+P.6/P.7 integral continúa en curso. Sin BD, guardado real ni publicación.
+
 ## Cabecera y configurador P.6/P.7 local — 18/10/2026
 
 Elegir cliente con Tab/Enter devuelve el foco a Cliente y permite F9 sobre la
@@ -26,8 +38,8 @@ foco; el borrador se conserva. Seis casos discriminantes fallan con el código
 anterior y pasan con el actual. Matriz a 1280/768/375/320, componentes reales,
 acciones sintéticas sin persistencia; 35 pruebas puras, tipos y arquitectura.
 [Detalle y siguiente unidad](paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#resultado-local-p6p7-de-cabecera-y-configurador--1810).
-Siguiente local: retorno de foco tras alta aceptada simulada, actualmente en
-body. No se acredita guardado real ni recorrido autenticado; sin publicación.
+El defecto de foco en body observado en esta entrega se corrige en el apartado
+superior. No se acredita guardado real ni recorrido autenticado; sin publicación.
 
 ## Producción P.6/P.7 local — 18/10/2026
 

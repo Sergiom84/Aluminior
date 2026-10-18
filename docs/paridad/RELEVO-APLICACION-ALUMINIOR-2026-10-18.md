@@ -152,7 +152,7 @@ de diseño, cálculo, estado de documento o persistencia.
 | Control con fuente c2abcc8b cargada sólo en memoria | Seis casos fallan antes: cliente Tab/Enter/F9 y rechazos de artículo, serie, composición, fallo general y opciones de estructura. Los seis pasan con el cambio. Control adicional: sólo ErroresSeleccion anterior, manteniendo los otros tres cambios, vuelve a perder foco en opciones |
 | Matriz Chromium 1280/768/375/320 | Los seis casos por anchura; envío de alta mediante Enter. Foco visible y dentro de viewport, borrador idéntico y una llamada sintética por envío. Sin desbordamiento de página, movimiento reducido activo |
 | F7/F9/Escape | F7 no saca foco del modal; Escape vuelve al disparador; F7 fuera enfoca el configurador. F9 no envía una línea ni una cabecera con lista abierta. Cancelar cabecera devuelve foco al botón. Quince alternancias Tab/Shift+Tab dentro del diálogo por anchura, sin acreditar barrido de todos sus controles |
-| Respuesta de alta aceptada simulada | Reinicio existente conservado: desaparece la configuración y reaparece Añadir primera ventana; una llamada. El foco termina en body: siguiente defecto acotado, sin corregir en esta unidad |
+| Respuesta de alta aceptada simulada | Observación histórica de esta entrega: reinicio conservado y foco en body. Corregido posteriormente en la unidad de retorno tras alta que figura más abajo |
 | Regresión | 35/35 pruebas puras existentes, sin globalSetup SQL; tipos de cuatro paquetes y arquitectura sin infracciones |
 
 Evidencia privada: output/playwright/p67-cabecera-20261018/; contrato,
@@ -180,11 +180,59 @@ F7/F9 y selección canónica. El foco de rechazo es accesibilidad propia de
 Aluminior, no observación del foco exacto de Productor. El cargo E1 sigue
 desactivado y conserva su prueba comercial pendiente.
 
-Siguiente entrega local concreta: corregir el foco después de una alta
-aceptada simulada. Reproducir body, fijar destino dentro del configurador y
-verificar éxito, rechazo, reintento y borrador con componentes reales y sin BD.
-No ampliar a guardado/reapertura hasta concretar y autorizar BD efímera aislada.
-Mantener P.6/P.7 en curso; publicación y aceptación requieren autorización.
+El siguiente defecto identificado en esta entrega queda atendido por la unidad
+posterior. No ampliar a guardado/reapertura hasta concretar y autorizar BD
+efímera aislada. P.6/P.7 sigue en curso; no se acredita aceptación real.
+
+## Resultado local P.6/P.7 de retorno tras alta — 18/10
+
+Función disponible localmente: tras una respuesta aceptada de alta de
+CERRAMIENTO, se conserva el reinicio existente y el foco pasa al botón
+«Añadir primera ventana», una vez remontado el diseñador. Enter abre el
+selector real y Escape vuelve a ese botón. No cambia el destino inicial de
+foco ni al alternar Artículos/Cerramiento. Los modos ARTICULO/ESTRUCTURA no
+reciben este retorno; su comportamiento no se amplía en esta unidad.
+
+| Evidencia ejecutada | Resultado y alcance |
+|---|---|
+| Control con fuente d0e4b29 cargada sólo en memoria | Cuatro escenarios, dos altas por escenario: ocho comprobaciones de retorno fallan antes y pasan después; el control conserva el fallo BODY sin restaurar archivos ni índice |
+| Chromium 1280/768/375/320 | 16 escenarios actuales: alta directa y reintento tras campo inválido, rechazo general o respuesta perdida; segunda alta en cada escenario. Foco visible con contorno y dentro de viewport, sin overflow de página y movimiento reducido activo |
+| Borrador y envío | FormData completo y configuración idénticos durante el envío y tras rechazo. Reintento conserva datos y solicitudId; nueva alta posterior a éxito recibe otra identidad. Botón bloqueado mientras la respuesta sintética está retenida; Enter adicional no duplica la llamada |
+| Regresión | 35/35 pruebas puras, tipos de cuatro paquetes y arquitectura sin infracciones; sin cargar el globalSetup SQL de web |
+
+Prueba reproducible versionada: `node scripts/pruebas-ui/alta-foco/verificar.mjs`;
+instrucciones y suite pura en el README del mismo directorio. Bundle con
+AnyadirLinea/diseñador y CSS reales; acciones servidor sintéticas, listener
+127.0.0.1 de puerto libre y peticiones limitadas a GET de ese origen. Todos
+los inputs de compilación se inspeccionan para excluir BD/acciones reales y
+exigir componentes reales. No ejecuta/importa scripts históricos ni configuración
+web/E2E habitual. Navegador y listener se cierran al terminar o fallar.
+
+Evidencia privada: `output/playwright/p67-alta-foco-20261018/`, métricas,
+inputs de ambos bundles y capturas 1280/320 inspeccionadas. Los campos de
+ubicación, serie, cantidad y horas conservan su comportamiento previo tras
+éxito; sólo se reinicia la composición existente. No es una prueba de
+persistencia, autenticación o guardado real. No se verifica zoom nativo en
+esta unidad ni el foco exacto de Productor: el destino es una decisión de
+accesibilidad propia de Aluminior para continuar el flujo observado en
+INVESTIGACION-CLONERSOFT-2026-10-12.md:114–123. No hay cargos económicos.
+
+Revisión independiente única: reprodujo el navegador y diffcheck, inspeccionó
+ambas capturas y revisó código, harness y documentación; sin bloqueantes.
+No repitió las 35 pruebas puras ni los tipos; sus salidas ejecutadas por el
+arquitecto se conservan como evidencia. No fue necesaria una corrección.
+
+Se actualizan estado, roadmap, índice y este relevo; la observación de BODY
+se conserva identificada como histórica. Los mismos ítems July E1 y P.6/P.7
+mantienen historia íntegra e in_progress, con lectura posterior y sin sync.
+14 árboles/2.861 archivos y siete binarios protegidos se verifican por hash.
+Entrega local: publicación, comparación humana y aceptación integral abiertas.
+
+Siguiente unidad local concreta: verificar visualmente el configurador y sus
+estados de aceptación/rechazo al 200% de zoom nativo, con capturas válidas y
+recorrido de teclado. Componentes reales y respuestas sintéticas sin BD;
+no repetir el retorno de foco ni reabrir Windows. El recorrido autenticado y
+guardado/reapertura siguen condicionados a aislamiento efectivo y autorización.
 
 ## Continuar en otra conversación
 
@@ -192,9 +240,10 @@ Usar exclusivamente la raíz y rama del inicio de este relevo. Verificar en
 solo lectura raíz, rama, HEAD, estado e identidad; no encajar diferencias con
 reset/checkout/stash. Leer AGENTS.md, ESTADO-ACTUAL, roadmap y este relevo.
 Consultar el último commit local, sin retroceder al cierre documental antiguo.
-Continuar el retorno de foco tras alta aceptada descrito arriba, con acciones
-sintéticas y sin persistencia. No repetir la matriz E1 ni producción/errores ya
-verificados ni reabrir Windows. Conservar pruebas anteriores y sus límites.
+Continuar la verificación visual del configurador al 200% de zoom nativo,
+con capturas válidas, respuestas sintéticas y sin persistencia. El retorno
+tras alta está verificado localmente; no repetir matriz E1, producción,
+errores ni foco entregados ni reabrir Windows. Conservar pruebas y límites.
 Máximo dos subagentes, sin subdelegación; revisión independiente de artefacto,
 contrato y evidencia, una corrección y gates; congelar antes de commit Sergio.
 Actualizar los mismos items July, E1 sync_uid 398049fbd618069e36bb84bab37913ed

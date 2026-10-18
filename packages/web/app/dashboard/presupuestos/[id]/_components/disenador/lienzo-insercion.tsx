@@ -15,7 +15,8 @@ export function LienzoVacio({ preparada, onColocar, onAbrir }: {
       const plantilla = plantillaDiseno(evento.dataTransfer.getData(TIPO_ARRASTRE_ESTRUCTURA))
       if (plantilla) onColocar(plantilla)
     }}>
-    <button type="button" className="al-insertar-ventana" aria-label="Añadir primera ventana" onClick={onAbrir}>+</button>
+    <button type="button" className="al-insertar-ventana" data-foco-configurador-vacio
+      aria-label="Añadir primera ventana" onClick={onAbrir}>+</button>
     {preparada && <button type="button" className="al-command-primary" onClick={() => onColocar(preparada)}>
       Colocar {preparada.codigo}
     </button>}
