@@ -1,6 +1,6 @@
 # Estado actual de Aluminior
 
-> **Dirección vigente — 18/10:** [cerrar fases y aplicarlas a Aluminior](paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). Windows queda archivado. E1 ya contrastado; cargo económico desactivado y prueba comercial aislada pendiente. Producción, errores y retorno de foco tras alta aceptada verificados localmente con componentes reales y respuestas sintéticas. Siguiente local: verificación visual del configurador con zoom nativo 200% y capturas válidas. Comparación humana, recorrido autenticado y aceptación integral abiertos. No repetir las unidades anteriores.
+> **Dirección vigente — 19/10:** [cerrar fases y aplicarlas a Aluminior](paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). Windows queda archivado. E1 ya contrastado; cargo económico desactivado y prueba comercial aislada pendiente. Producción, errores, retorno de foco y configurador al 200% nativo verificados localmente con componentes reales y respuestas sintéticas. Etiqueta Acristalamiento corregida; capturas completas válidas. Siguiente P.6/P.7: comparación humana del mismo recorrido con Productor y recorrido autenticado aislado, con autorización propia. Aceptación integral abierta. No repetir las unidades anteriores.
 
 Revisión documental y producción: 12/10/2026. Código `40cedd1` live en Render,
 deploy `dep-db6hi2navr4c739d2e4g`, terminado a las 19:31:21 Europe/Madrid
@@ -18,6 +18,17 @@ El [roadmap operativo](../ROADMAP-PARIDAD-PRODUCTOR.md) conserva el orden y
 estado único de las tareas de paridad, con mantenimiento documental obligatorio.
 
 
+## Configurador al 200% nativo — 19/10/2026
+
+La etiqueta Acristalamiento se parte dentro de su campo, sin invadir Acabado.
+Control con fuente anterior sólo en memoria: cuatro escenarios fallan; con
+la corrección pasan los doce. Chrome visible, tres anchos de ventana,
+aceptación/rechazo/reintento, teclado y 58 capturas completas válidas.
+35 pruebas puras, tipos de cuatro paquetes y arquitectura correctos.
+[Resultado, prueba y límites](paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#resultado-local-p6p7-de-zoom-nativo--1910).
+Sólo entrega local sin BD ni persistencia. Siguiente: comparación humana con
+Productor y recorrido autenticado con BD efímera autorizada. P.6/P.7 sigue abierto.
+
 ## Retorno de foco P.6/P.7 local — 18/10/2026
 
 Tras un alta aceptada simulada de cerramiento, el diseñador se reinicia y el
@@ -27,7 +38,7 @@ reintentar. Segunda alta comprobada sin reutilizar la identidad confirmada.
 16 escenarios actuales a 1280/768/375/320 y ocho comprobaciones de foco que
 fallan con el código anterior; 35 pruebas puras, tipos y arquitectura correctos.
 [Resultado, prueba reproducible y límites](paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#resultado-local-p6p7-de-retorno-tras-alta--1810).
-Siguiente local: zoom nativo 200% del configurador, foco y capturas válidas.
+La verificación visual 200% del configurador se completa en la unidad del 19/10 superior.
 P.6/P.7 integral continúa en curso. Sin BD, guardado real ni publicación.
 
 ## Cabecera y configurador P.6/P.7 local — 18/10/2026
@@ -437,8 +448,10 @@ titular; investigación económica E1 desde G6-incidencia y E7 tras A4, según
 
 S3 verificado localmente y en GitHub Actions (`36a47f4`): 1.448 pruebas correctas,
 una condicionada a CSV privado, seis recorridos, tipos, arquitectura y build; ver [evidencia y ejecuciones](paridad/MEDIDAS-Y-CI-2026-10-09.md#s3-validación-completa-de-los-paquetes-en-ci--09102026).
-Siguiente desde Mac: matriz restante de P.6/P.7 — otras anchuras, zoom 200%,
-reduced motion y recorrido humano comparativo. C1/0031/0032/carga/publicación
+Pendiente registrado el 12/10 (histórico): matriz de P.6/P.7 — anchuras, zoom
+200%, reduced motion y comparación humana. Los tramos locales del 18–19/10
+figuran arriba; la continuidad vigente es comparación humana y recorrido
+autenticado aislado autorizado. C1/0031/0032/carga/publicación
 y QA remoto completados el 12/10; no repetirlos. Teclado/búsqueda/foco de este
 tramo están parcialmente publicados; su aceptación integral sigue abierta.
 

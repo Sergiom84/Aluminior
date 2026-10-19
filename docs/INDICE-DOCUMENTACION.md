@@ -1,6 +1,6 @@
 # Índice de documentación
 
-> **Dirección vigente — 18/10:** [cerrar fases y aplicarlas a Aluminior](paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). Windows queda archivado. E1 ya contrastado; cargo económico desactivado y prueba comercial aislada pendiente. Producción, errores y retorno de foco tras alta aceptada verificados localmente con componentes reales y respuestas sintéticas. Siguiente local: verificación visual del configurador con zoom nativo 200% y capturas válidas. Comparación humana, recorrido autenticado y aceptación integral abiertos. No repetir las unidades anteriores.
+> **Dirección vigente — 19/10:** [cerrar fases y aplicarlas a Aluminior](paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). Windows queda archivado. E1 ya contrastado; cargo económico desactivado y prueba comercial aislada pendiente. Producción, errores, retorno de foco y configurador al 200% nativo verificados localmente con componentes reales y respuestas sintéticas. Etiqueta Acristalamiento corregida; capturas completas válidas. Siguiente P.6/P.7: comparación humana del mismo recorrido con Productor y recorrido autenticado aislado, con autorización propia. Aceptación integral abierta. No repetir las unidades anteriores.
 
 Entrada de trabajo: [ESTADO-ACTUAL.md](ESTADO-ACTUAL.md).
 Clasificación documental inicial sobre `9bc879e` y comprobación local del 02/10.
@@ -14,7 +14,7 @@ propuesta entonces exclusiva del main local (integrada como herramienta el 13/10
 
 | Documento | Uso |
 |---|---|
-| [Relevo vigente de aplicación 18/10](paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#continuar-en-otra-conversación) | Arranque en otra conversación, entregas locales, siguiente unidad y límites; gobierna la continuidad con estado y roadmap |
+| [Relevo vigente de aplicación 18/10](paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#continuar-en-otra-conversación) | Actualizado el 19/10: zoom nativo del configurador, corrección de etiqueta y prueba reproducible; arranque, siguiente unidad y límites; gobierna la continuidad con estado y roadmap |
 | [Relevo REA 17/10, histórico](paridad/RELEVO-REA-PRODUCTOR-2026-10-17.md) | Rutas y evidencia conservadas; sus instrucciones de seguir Windows están archivadas por el relevo del 18/10 |
 | [Investigación REA 16/10](paridad/INVESTIGACION-REA-PRODUCTOR-2026-10-16.md) | Inventario ampliado, metadatos/contratos managed y pseudocódigo nativo dirigido; evidencia privada, límites e integridad |
 | [Comparación REA 16/10](paridad/COMPARACION-REA-PRODUCTOR-2026-10-16.md) | Capacidades Productor frente al código actual; implementado, parcial y sin módulo localizado; prioridades sin porcentaje de paridad |

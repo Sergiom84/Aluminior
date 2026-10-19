@@ -51,7 +51,7 @@ export function CamposCerramiento({
         <MensajeError campo="vidrioCodigo" errores={err} />
       </div>
       <div className="col-span-2">
-        <label htmlFor="varianteAcristalamiento">Acristalamiento</label>
+        <label htmlFor="varianteAcristalamiento" className="break-words">Acristalamiento</label>
         <select id="varianteAcristalamiento" name="varianteAcristalamiento" defaultValue="2"
           className={entrada} style={estilo}>
           <option value="2">Doble cristal</option>

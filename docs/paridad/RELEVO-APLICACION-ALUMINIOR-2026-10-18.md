@@ -229,11 +229,67 @@ mantienen historia íntegra e in_progress, con lectura posterior y sin sync.
 14 árboles/2.861 archivos y siete binarios protegidos se verifican por hash.
 Entrega local: publicación, comparación humana y aceptación integral abiertas.
 
-Siguiente unidad local concreta: verificar visualmente el configurador y sus
-estados de aceptación/rechazo al 200% de zoom nativo, con capturas válidas y
-recorrido de teclado. Componentes reales y respuestas sintéticas sin BD;
-no repetir el retorno de foco ni reabrir Windows. El recorrido autenticado y
-guardado/reapertura siguen condicionados a aislamiento efectivo y autorización.
+La siguiente unidad de zoom nativo se ha completado en el apartado posterior.
+El recorrido autenticado y guardado/reapertura siguen condicionados a
+aislamiento efectivo y autorización; no repetir el retorno de foco.
+
+## Resultado local P.6/P.7 de zoom nativo — 19/10
+
+Corrección mínima en CamposCerramiento: la etiqueta Acristalamiento permite
+partir la palabra dentro de su campo. Al 200% nativo, el área CSS de 632 px
+quedaba sobre el corte móvil de 620 y el texto invadía Acabado. No se alteran
+campos, orden, tokens, tipografía, precios, diseño del documento ni persistencia.
+
+| Evidencia ejecutada | Alcance y resultado |
+|---|---|
+| Chrome visible 155.0.8059.80, perfil temporal propio | Ajuste de apariencia 100% → 200%, capturado; ventanas 1280/768/640, área CSS 632/376/312, DPR 1 → 2, visualViewport.scale 1 y zoom CSS 1. Sin emular viewport |
+| Doce escenarios al 200% | Aceptación directa y rechazo de campo/general/respuesta perdida por ancho; reintento con borrador e identidad conservados, bloqueo pendiente y retorno operativo tras aceptar. Sin overflow de página; movimiento reducido |
+| Etiquetas y control negativo | Ocho etiquetas reales por escenario medidas por rectángulos de caracteres. Fuente c46e6c5 de campos-alta.tsx cargada sólo en memoria: cuatro escenarios con Acristalamiento fuera del campo. Actual: cero; no se restauran archivos ni índice |
+| Teclado del selector inicial | 28 botones visibles habilitados de su página inicial, recorrido completo interior por Tab y regreso por Shift+Tab, foco visible en viewport. Enter elige C2, Enter tras alta abre selector, Escape retorna. No acredita todas las familias/páginas |
+| Capturas | 58 PNG completos de viewport, dimensiones físicas contrastadas con CSS × DPR. Selector, configuración, pendiente, rechazo y aceptación; inspección visual representativa a tres anchos. Las capturas anteriores recortadas/vacías se conservan como fallo, sin usarlas para aceptación |
+| Regresión | 35/35 pruebas puras sin globalSetup SQL, tipos de cuatro paquetes y arquitectura sin infracciones |
+
+Prueba reproducible: node scripts/pruebas-ui/zoom-nativo/verificar.mjs;
+control negativo e instrucciones en su README. El montaje y gateway sintéticos
+vigentes de alta-foco se reutilizan sin ejecutar su verificador ni sobrescribir
+sus artefactos. Inputs del bundle inspeccionados: formulario/diseñador reales,
+sin BD/acciones servidor reales. Listener 127.0.0.1, puerto libre, sólo GET del
+origen; navegador y listener cerrados al terminar o fallar. Sin Shell ni ruta
+autenticada, guardado, publicación o aceptación real. Perfiles temporales conservados.
+
+Calibración del teclado: un diálogo HTML mínimo reproduce el paso del último
+botón a la barra de Chrome (BODY y document.hasFocus false), seguido del retorno
+al primero. El gate inicial suponía un ciclo sin ese paso; se conserva el fallo.
+El gate final verifica todos los controles interiores en ambos sentidos desde
+Cerrar; no promete impedir el acceso a la barra del navegador. El foco inicial
+en familia seleccionada se mide por separado.
+
+Captura nativa: el screenshot ordinario de Playwright recortaba usando el área
+CSS a este zoom; sus PNG de configuración salían vacíos. Se conserva la pasada
+automatizada previa como evidencia insuficiente. La captura final CDP, sin clip,
+toma la superficie completa y comprueba cabecera PNG/dimensiones antes de
+guardarla; no se modifica CSS para obtener la imagen.
+
+Evidencia privada final: output/playwright/p67-zoom-nativo-2026-10-19T05-03-08-695Z/.
+Control negativo y pasadas fallidas en carpetas hermanas fechadas; logs y recibos
+en output/zoom-*. Se preservan por hash 14 árboles/2.861 archivos y siete binarios.
+Revisión independiente única: reprodujo 12/12 escenarios y la preservación,
+inspeccionó 14 capturas representativas de sus tres anchos/estados y contrastó
+el control negativo, fuentes, inputs y salidas; sin bloqueantes. No repitió las
+35 pruebas, tipos ni arquitectura: contrastó los logs del arquitecto. Informe
+privado output/revision-zoom-20261019.md. Corrección documental final: rotular
+como históricos tres punteros genéricos del 12/10; gate posterior sobre todos
+los Markdown y diffcheck, sin otra ronda ni cambio de producto.
+Mapa de evidencia: INVESTIGACION-CLONERSOFT-2026-10-12.md:110–125 conserva F7/F9
+y el flujo de introducción. Teclado/foco/zoom son accesibilidad de Aluminior;
+no se ha repetido Productor ni acreditado su foco exacto o su zoom.
+
+Siguiente P.6/P.7: comparar el mismo recorrido humano con Productor y verificar
+la ruta autenticada con guardado/reapertura en una BD efímera verdaderamente
+aislada, con autorización propia y destinos comprobados. No repetir los gates
+sintéticos entregados. La captura visual 200% de producción mantiene su límite
+histórico; esta unidad sólo cierra configurador. P.6/P.7 integral y E1 siguen
+en curso; el cargo económico permanece desactivado.
 
 ## Continuar en otra conversación
 
@@ -241,10 +297,12 @@ Usar exclusivamente la raíz y rama del inicio de este relevo. Verificar en
 solo lectura raíz, rama, HEAD, estado e identidad; no encajar diferencias con
 reset/checkout/stash. Leer AGENTS.md, ESTADO-ACTUAL, roadmap y este relevo.
 Consultar el último commit local, sin retroceder al cierre documental antiguo.
-Continuar la verificación visual del configurador al 200% de zoom nativo,
-con capturas válidas, respuestas sintéticas y sin persistencia. El retorno
-tras alta está verificado localmente; no repetir matriz E1, producción,
-errores ni foco entregados ni reabrir Windows. Conservar pruebas y límites.
+Zoom nativo del configurador verificado localmente el 19/10, con corrección
+de etiqueta y capturas completas. Siguiente P.6/P.7: comparación humana del
+mismo recorrido con Productor y ruta autenticada/guardado con BD efímera
+aislada, previa autorización específica. No repetir matriz E1, producción,
+errores, foco ni zoom sintético entregados; no reabrir Windows. Conservar
+pruebas y límites. Sin esa autorización, detenerse en esta frontera concreta.
 Máximo dos subagentes, sin subdelegación; revisión independiente de artefacto,
 contrato y evidencia, una corrección y gates; congelar antes de commit Sergio.
 Actualizar los mismos items July, E1 sync_uid 398049fbd618069e36bb84bab37913ed

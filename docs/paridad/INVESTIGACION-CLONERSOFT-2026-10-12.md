@@ -179,8 +179,11 @@ restaurar sólo los metadatos/PVP afectados. Volver sólo a código antiguo
 puede perder acabados en copias y eludir la contención de precio plano.
 
 
-Siguiente abierto: matriz pendiente de P.6/P.7 (otras anchuras, zoom 200%,
-reduced motion y recorrido humano comparativo). C1 está publicado y verificado
+Pendiente registrado el 12/10 (histórico): matriz de P.6/P.7 (anchuras, zoom
+200%, reduced motion y comparación humana). Los tramos locales del 18–19/10
+están documentados en el [relevo vigente](RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#continuar-en-otra-conversación);
+no repetir el zoom sintético del configurador. Siguen comparación humana y
+recorrido autenticado aislado autorizado. C1 está publicado y verificado
 técnicamente en su alcance acotado; no repetir extracción, 0031/0032, carga,
 publicación ni gates local/remoto entregados. E1 conserva su procedimiento
 Windows; E2/E6 y aceptación comercial no se cierran por esta entrega.

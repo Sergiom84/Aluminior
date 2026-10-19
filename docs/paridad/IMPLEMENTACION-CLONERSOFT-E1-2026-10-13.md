@@ -1,6 +1,6 @@
 # E1: contrato físico y selección condicional
 
-> **Dirección vigente — 18/10:** [cerrar fases y aplicarlas a Aluminior](RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). Windows queda archivado. E1 ya contrastado; cargo económico desactivado y prueba comercial aislada pendiente. Producción, errores y retorno de foco tras alta aceptada verificados localmente con componentes reales y respuestas sintéticas. Siguiente local: verificación visual del configurador con zoom nativo 200% y capturas válidas. Comparación humana, recorrido autenticado y aceptación integral abiertos. No repetir las unidades anteriores.
+> **Dirección vigente — 19/10:** [cerrar fases y aplicarlas a Aluminior](RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). Windows queda archivado. E1 ya contrastado; cargo económico desactivado y prueba comercial aislada pendiente. Producción, errores, retorno de foco y configurador al 200% nativo verificados localmente con componentes reales y respuestas sintéticas. Etiqueta Acristalamiento corregida; capturas completas válidas. Siguiente P.6/P.7: comparación humana del mismo recorrido con Productor y recorrido autenticado aislado, con autorización propia. Aceptación integral abierta. No repetir las unidades anteriores.
 
 13/10/2026. Entrega local parcial del [encargo ClonerSoft](ENCARGO-IMPLEMENTACION-CLONERSOFT-2026-10-13.md).
 La identidad y el estado global siguen en [E1 del roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md).
@@ -690,8 +690,9 @@ de componentes de producción se verificó localmente después de esta matriz:
 [resultado y límites](RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#resultado-local-p6p7-de-producción--1810).
 No repetir ese tramo ni los errores de cabecera/configurador ya verificados
 con fixtures; retorno tras alta aceptada ya verificado en el relevo vigente.
-Siguiente local: zoom nativo 200% del configurador con capturas válidas; la aceptación
-comparativa humana sigue pendiente. E2 conserva su lugar como siguiente frente
+Zoom nativo 200% del configurador y capturas completas verificados el 19/10
+en el relevo vigente. Siguiente P.6/P.7: comparación humana del mismo recorrido
+y recorrido autenticado en BD efímera autorizada; aceptación integral pendiente. E2 conserva su lugar como siguiente frente
 económico y necesita el caso positivo de unión material, sin extrapolar U.
 
 Verificación ejecutada del cambio local, 18/10: nueve casos nuevos; antes del

@@ -1,8 +1,8 @@
 # Roadmap operativo de paridad con Productor
 
-> **Dirección vigente — 18/10:** [cerrar fases y aplicarlas a Aluminior](docs/paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). Windows queda archivado. E1 ya contrastado; cargo económico desactivado y prueba comercial aislada pendiente. Producción, errores y retorno de foco tras alta aceptada verificados localmente con componentes reales y respuestas sintéticas. Siguiente local: verificación visual del configurador con zoom nativo 200% y capturas válidas. Comparación humana, recorrido autenticado y aceptación integral abiertos. No repetir las unidades anteriores.
+> **Dirección vigente — 19/10:** [cerrar fases y aplicarlas a Aluminior](docs/paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). Windows queda archivado. E1 ya contrastado; cargo económico desactivado y prueba comercial aislada pendiente. Producción, errores, retorno de foco y configurador al 200% nativo verificados localmente con componentes reales y respuestas sintéticas. Etiqueta Acristalamiento corregida; capturas completas válidas. Siguiente P.6/P.7: comparación humana del mismo recorrido con Productor y recorrido autenticado aislado, con autorización propia. Aceptación integral abierta. No repetir las unidades anteriores.
 
-Actualizado: 18/10/2026 (formato, proveedor, carga, índice, comparador/normalizador, cuerpo de clave de fila y transformaciones delegadas E1 seguidos estáticamente en su alcance; condiciones de los predicados, contrato WCTMB y enlace candidato ApiSet seguidos estáticamente; escrituras condicionadas de las dos celdas KernelBase seguidas; escritura del selector e identidad del DWORD acreditadas; inicializador local de Flags y llamador Ex acreditados en su alcance; frontera NtCreateUserProcess, estado efectivo y equivalencia pendientes; C1 y P.6/P.7 conservan su etapa del 12/10). Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
+Actualizado: 19/10/2026 (zoom nativo 200% del configurador y etiquetas verificados localmente; formato, proveedor, carga, índice, comparador/normalizador, cuerpo de clave de fila y transformaciones delegadas E1 seguidos estáticamente en su alcance; condiciones de los predicados, contrato WCTMB y enlace candidato ApiSet seguidos estáticamente; escrituras condicionadas de las dos celdas KernelBase seguidas; escritura del selector e identidad del DWORD acreditadas; inicializador local de Flags y llamador Ex acreditados en su alcance; frontera NtCreateUserProcess, estado efectivo y equivalencia pendientes; C1 y P.6/P.7 conservan su etapa del 12/10). Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
 Este archivo es el registro único del orden y estado de estas tareas.
 Los documentos de ensayo explican cómo realizarlas; los informes fechados
 conservan evidencia. Sus antiguas listas de pendientes no sustituyen este registro.
@@ -20,8 +20,10 @@ localmente: referencias largas, teclado, anchuras, movimiento reducido y zoom
 nativo 200%. Cabecera/configurador: seis rechazos/selecciones discriminados,
 foco, borrador y atajos con fixtures sin persistencia a cuatro anchuras.
 Retorno de foco tras alta aceptada simulado ya corregido: Añadir primera
-ventana, rechazo/reintento/borrador y segunda alta. Siguiente local: completar
-verificación visual del configurador con zoom nativo 200% y capturas válidas.
+ventana, rechazo/reintento/borrador y segunda alta. Zoom nativo 200% del
+configurador verificado el 19/10, con etiqueta contenida y capturas completas.
+Siguiente P.6/P.7: comparación humana del mismo recorrido con Productor y
+recorrido autenticado/guardado en BD efímera aislada, previa autorización.
 [Alcance y límites](docs/paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#resultado-local-del-1810-y-siguiente-entrega).
 
 ### Antecedentes estáticos conservados (no instrucciones de continuidad)
@@ -130,8 +132,10 @@ esta integración ni reconsultado producción.
 `40cedd1`, con 0031/0032, carga dirigida y QA remoto verificados; ambos CI
 correctos. [Recibo de publicación](docs/paridad/PUBLICACION-CLONERSOFT-2026-10-12.md).
 No repetir extracción, investigación MO cero, migraciones, carga, despliegue
-ni gates entregados. Siguiente Mac: matriz restante de P.6/P.7 — otras anchuras,
-zoom 200%, reduced motion y recorrido humano comparativo. C1 conserva su alcance
+ni gates entregados. Pendiente registrado el 12/10 (histórico): matriz de
+P.6/P.7 — anchuras, zoom 200%, reduced motion y comparación humana. Los tramos
+locales del 18–19/10 y el siguiente paso vigente figuran al inicio; no repetirlos.
+C1 conserva su alcance
 acotado; E1–E11 y su evidencia permanecen.
 
 
@@ -210,7 +214,7 @@ el total de todos los módulos pendientes del producto.
 | A5 | Recorrido sintético de navegador en CI | Verificado local y CI 09/10 | Seis recorridos escritorio/móvil: postcommit, medidas, latencia/fallo de catálogo y teclado; GitHub Actions run 37971854995 correcto |
 | S3 | Validación completa de paquetes en CI | Verificado local y CI 09/10 | 9bf9a64/36a47f4: 1.448 tests correctos/uno condicionado a CSV privado; tipos, arquitectura y build, run 37978474635. Seis recorridos, run 37978474739. Corrige test ETL obsoleto y contrato de fixture PDF; no toca producción |
 | C1 | PVP por medidas y contención de precio plano | Publicado/verificado técnico 12/10; alcance acotado | [Publicación](docs/paridad/PUBLICACION-CLONERSOFT-2026-10-12.md): `40cedd1` live, 0031/0032 y carga dirigida, CI y QA remoto/preservación correctos. Dos precios dimensionales corroborados; coste/fabricación fuera del cierre y banco 400/523 conservado |
-| P.6/P.7 | Teclado, foco y adaptación responsive | Parcialmente publicado 12/10; producción, errores y retorno tras alta verificados localmente 18/10; aceptación integral abierta | [Resultado local y límites](docs/paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#resultado-local-p6p7-de-retorno-tras-alta--1810): foco en Añadir primera ventana tras aceptación sintética, rechazo/reintento/borrador y segunda alta; 16 escenarios a 1280/768/375/320, ocho fallos de foco con fuente anterior. Se conservan selección de cliente y rechazos anteriores. Sin BD ni Shell/recorrido autenticado. Siguiente: zoom nativo 200% del configurador con capturas válidas; comparación humana y aceptación pendientes. Ítem local redescubierto 195; no crear otro |
+| P.6/P.7 | Teclado, foco y adaptación responsive | Parcialmente publicado 12/10; componentes y foco verificados localmente 18/10; zoom del configurador verificado localmente 19/10; aceptación integral abierta | [Resultado local y límites](docs/paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#resultado-local-p6p7-de-zoom-nativo--1910): Acristalamiento contenido; doce escenarios a 200% nativo, 58 capturas completas, 28 botones del selector en ambos sentidos. Cuatro escenarios fallan con la etiqueta anterior. Sin BD ni Shell/ruta autenticada. Siguiente: comparación humana con Productor y recorrido autenticado/guardado en BD efímera autorizada. La captura visual 200% de producción conserva su límite histórico. Ítem local 195; no crear otro |
 | D1 | Reconciliar ficha de acceso de July | Cerrado local 09/10 | Ficha actualizada con comprobación directa A4, Render live 487feb1 y 31 migraciones; historial fechado preservado. Sin sync/recepción acreditados |
 
 Detalles E2–E11: [ensayos mínimos](docs/paridad/ENSAYOS-MINIMOS-PRODUCTOR-2026-10-03.md).

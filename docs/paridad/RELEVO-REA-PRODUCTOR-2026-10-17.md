@@ -1,6 +1,6 @@
 # Relevo de investigación Productor y comparación con Aluminior
 
-> **Dirección vigente — 18/10:** [cerrar fases y aplicarlas a Aluminior](RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). Windows queda archivado. E1 ya contrastado; cargo económico desactivado y prueba comercial aislada pendiente. Producción, errores y retorno de foco tras alta aceptada verificados localmente con componentes reales y respuestas sintéticas. Siguiente local: verificación visual del configurador con zoom nativo 200% y capturas válidas. Comparación humana, recorrido autenticado y aceptación integral abiertos. No repetir las unidades anteriores.
+> **Dirección vigente — 19/10:** [cerrar fases y aplicarlas a Aluminior](RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). Windows queda archivado. E1 ya contrastado; cargo económico desactivado y prueba comercial aislada pendiente. Producción, errores, retorno de foco y configurador al 200% nativo verificados localmente con componentes reales y respuestas sintéticas. Etiqueta Acristalamiento corregida; capturas completas válidas. Siguiente P.6/P.7: comparación humana del mismo recorrido con Productor y recorrido autenticado aislado, con autorización propia. Aceptación integral abierta. No repetir las unidades anteriores.
 
 Preparado el 17/10/2026 para continuar en otra conversación sin repetir la
 investigación del 16/10. El trabajo entregado es investigación estática y
