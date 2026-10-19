@@ -1,6 +1,6 @@
 # Siguiente paso E1: cálculo y reparto del despunte
 
-> **Dirección vigente — 19/10:** ensayo aislado autorizado por Sergio tras la auditoría. [Preparación y bloqueo actual](#ensayo-autorizado-del-1910-configuración-y-redondeo): falta un destino Windows accesible y verificable; la comprobación administrativa sólo lee inventario. Las ocho preguntas ya están evaluadas. Cargo comercial desactivado, G6 y producción intocables. Windows interno archivado; no seguir NtCreateUserProcess.
+> **Dirección vigente — 19/10, reinicio pendiente:** ensayo aislado autorizado por Sergio. [Preparación y siguiente acción](#ensayo-autorizado-del-1910-configuración-y-redondeo): copia instalada sin empresas/MDB preparada y revisada; Sandbox habilitado, Windows exige reinicio. No repetir activador/inventario ni exigir instalador/demo. Tras el reinicio, verificar destino y primer arranque de la copia. Cargo comercial desactivado, G6 y producción intocables. Windows interno archivado; no seguir NtCreateUserProcess.
 
 Procedimiento preparado el 03/10/2026 y actualizado el 04/10. Estado vigente:
 [roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md). La [continuación estática del 14/10](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#control-reparto-y-totales)
@@ -76,20 +76,70 @@ en Aluminior sólo lo demostrado, usando subagentes y sin tocar G6 ni producció
 La autorización para ese alcance ya está recibida; no volver a pedirla por los
 antiguos avisos de esta documentación. El ensayo **todavía no está ejecutado**.
 
-Preflight actual: Windows 11 Pro tiene Hyper-V, pero `Get-VM -ComputerName
-localhost` rechaza el inventario por permisos. No se puede identificar ni
-verificar un invitado desde esta sesión; no se afirma que no existan VMs.
-Sandbox está deshabilitado y no se encontró otra instalación en las rutas
-conocidas. Docker usa Linux: no sustituye el runtime Windows de Productor.
-Los servicios de licencia activos del host no demuestran licencia en un invitado.
+**Inventario administrativo completado por Sergio:** recibo del 19/10 a las
+06:32:45 UTC, script/hash/destino verificados. `Get-VM -ComputerName localhost`
+responde correctamente y devuelve **cero VMs registradas**. Windows 11 Pro tiene
+Hyper-V instalado y Sandbox deshabilitado. El bloqueo inicial de consulta por
+permisos queda superado; no pedir repetir
+`output/e1-ensayo-config-20261019/preparacion/Comprobar-entorno-E1.ps1`.
+La sesión del agente sigue sin elevar: este recibo no le concede administración.
+Docker usa Linux; los servicios de licencia activos del host no demuestran
+licencia utilizable dentro de un invitado.
 
-Siguiente paso concreto: ejecutar como administrador la comprobación de sólo
-lectura `output/e1-ensayo-config-20261019/preparacion/Comprobar-entorno-E1.ps1`.
-No habilita componentes, arranca VMs, cambia grupos/permisos ni abre Productor.
-Escribe un recibo nuevo de inventario; con él se decide el destino de ensayo.
-Sergio no necesita conocer previamente el nombre o configuración de una VM.
-Antes de ejecutar Productor siguen siendo obligatorios copia/destino efectivos,
-aislamiento de discos/red/carpetas y runtime/licencia legítimos comprobados.
+**Vía elegida por Sergio: aprovechar la instalación existente** en
+`C:/Users/sergi/Desktop/MIX/Productor/Aluminio`. No se ha demostrado que requiera
+un instalador completo para probar su copia. Se preparan **341 archivos,
+220.429.241 bytes**, con manifiesto y hashes de origen/copia verificados:
+ejecutables actuales, bibliotecas, configuración neutra de runtime y paquete
+de componentes GAIA. La aplicación de referencia conserva **46.30.0006**.
+No se copian MDB, empresas `EMP*`, índices/configuración de Empresas, correo,
+credenciales, logs, backups, estado de licencia ni enlaces/junctions.
+La caché histórica `43.35/43.35` contiene otra versión, **42.35.0002**;
+no se usa como sustituto ni se ejecuta su actualizador.
+
+**Activación completada, reinicio pendiente:** el activador revisado se ejecutó
+elevado el 19/10 a las 06:56 UTC. Recibo: `Disabled → Enabled`, `restartNeeded=true`,
+sin error; CIM confirma `InstallState=1`. Windows requiere reinicio y el ejecutable
+Sandbox aún no está disponible. No se ha reiniciado, abierto el perfil ni
+ejecutado Productor. No repetir el activador ni el inventario administrativo.
+Sergio guarda su trabajo y reinicia Windows cuando le convenga; después el agente
+comprueba disponibilidad y abre el perfil `Arranque-E1.wsb` revisado.
+[Microsoft documenta](https://learn.microsoft.com/en-us/windows/security/application-security/application-isolation/windows-sandbox/windows-sandbox-configure-using-wsb-file)
+el control de red/carpetas y el descarte al cerrar. El perfil desactiva red,
+portapapeles, audio, vídeo, impresora y vGPU. Sólo comparte el paquete preparado
+como lectura y una salida nueva acotada; no comparte instalación original,
+empresas ni repositorio completo. Copia de trabajo dentro del disco invitado.
+El preparador invitado rechaza ejecutarse en el host y no lanza Productor.
+El arranque invitado aún está pendiente. Revisión independiente: preparación
+PASS tras un único lote de corrección (lectura UTF-8 explícita y política
+RemoteSigned sólo del proceso invitado). Sin Bypass ni política persistente.
+Con lectura anterior faltaban dos archivos con «ñ»; con UTF-8 se resuelven los
+341. Guardas del host y del activador, hashes, perfil y enlaces verificados.
+
+**Contrato del primer arranque:** verificar invitado, paquete y destino;
+abrir sólo la copia y registrar la primera pantalla o fallo de dependencia,
+licencia o base ausente. No se garantiza portabilidad ni creación de empresa
+sin bases; no fabricar/renombrar una MDB ni reparar el host para pasar el gate.
+Sólo si aparece naturalmente Nueva Empresa se comprobará destino/código
+sintético antes de usarla. Esa observación de arranque no es el ensayo
+económico R1 ni prueba RED, redondeo o persistencia comercial.
+
+Preparación privada y contrato detallado:
+`output/e1-ensayo-config-20261019/continuacion-admin/copia-instalada/`.
+Recibo de activación conservado allí:
+`sandbox-feature-20261019T065658248Z-510aaa62d052454ca2c8f055220ad53b.json`.
+La [demo oficial](https://landing.gaia-soft.com/pc-productor-aluminio-prueba/)
+queda como alternativa si un impedimento observado justifica usarla, no como
+requisito actual. No se ha solicitado ni enviado formulario alguno. El acceso
+de la licencia al invitado sigue sin observar; no se copia ni sustituye una llave.
+Antes de R1 siguen siendo obligatorios runtime/licencia legítimos, configuración
+efectiva RED/locale, empresa sintética y capacidad de despunte/guardado verificadas.
+
+Recibo privado de entrada:
+`output/e1-ensayo-config-20261019/preparacion/entorno-E1-20261019T063245234Z-7697d2a51ffe4737a0ac372a2998c986.json`
+(SHA256 `9634d0515bf10a66f4b6081ba473c14b2d8ff0885e6088a152a50930e0374cea`).
+Validación con cinco controles negativos e inventario de medios:
+`output/e1-ensayo-config-20261019/continuacion-admin/`.
 
 **Caso preparado R1, condicionado y no observado:** tres líneas con bases
 40/60/400 €, perfil ML sintético, barra 6.000 mm y cortes 400/600/4.000 mm.

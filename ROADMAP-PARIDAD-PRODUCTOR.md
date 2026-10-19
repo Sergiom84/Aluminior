@@ -15,9 +15,13 @@ La evaluación de las ocho preguntas del 18/10 está
 Corrección local: costes decimales equivalentes ya permiten mostrar el coste
 técnico en Producción; sin cargo al presupuesto. Sergio ya autoriza el ensayo
 aislado de configuración/redondeo el 19/10. R1 y sus cuatro predicciones están
-preparados; falta un invitado Windows accesible/verificable (Hyper-V rechaza
-inventario por permisos). Siguiente: comprobación administrativa sólo lectura
-y después destino/runtime/licencia aislados. [Procedimiento E1](docs/paridad/PASO-E1-DESPUNTE.md#ensayo-autorizado-del-1910-configuración-y-redondeo).
+preparados. Inventario administrativo recibido y verificado: Hyper-V responde,
+cero VMs registradas, Sandbox deshabilitado; no repetir el comando. Sergio
+elige aprovechar la instalación existente: copia sin MDB/empresas preparada
+con hashes verificados. Sandbox ya habilitado sin error, Windows exige reinicio;
+no repetir activador/inventario. Siguiente: reinicio manual tras guardar el trabajo,
+verificar el invitado y registrar el primer arranque o fallo concreto. No exigir
+instalador/demo antes de esa prueba ni llamar R1 al arranque. [Procedimiento E1](docs/paridad/PASO-E1-DESPUNTE.md#ensayo-autorizado-del-1910-configuración-y-redondeo).
 No pedir de nuevo autorización para el alcance concedido ni ejecutar en host.
 Tramo P.6/P.7 de componentes de producción verificado
 localmente: referencias largas, teclado, anchuras, movimiento reducido y zoom
@@ -201,7 +205,7 @@ el total de todos los módulos pendientes del producto.
 | ID | Trabajo | Estado actual | Prueba necesaria para avanzar o cerrar |
 |---|---|---|---|
 | M0 | Matriz por modelo/serie/regla y ensayos mínimos | Cerrado 03/10/2026 | [Matriz](docs/paridad/MATRIZ-COBERTURA-PRODUCTOR-2026-10-03.md), 97 pares, 47 pruebas, typechecks y arquitectura; no volver a crearla, regenerar si cambian las fuentes |
-| E1 | Despunte de cabecera: base, momento y reparto | En curso; matriz evaluada y corrección técnica local entregadas. Ensayo aislado autorizado 19/10, preparación R1 verificada; ejecución pendiente de entorno Windows accesible | [Ensayo y bloqueo](docs/paridad/PASO-E1-DESPUNTE.md#ensayo-autorizado-del-1910-configuración-y-redondeo). Cuatro predicciones sintéticas distintas, sin observación de RED/locale o Productor. Hyper-V rechaza inventario por permisos; siguiente comprobación administrativa sólo lectura y verificación de destino/licencia. Cargo sigue bloqueado por filas/agregados, cantidades/descuentos, precisión/configuración y escritura. G6 y producción intactos; no activar cabecera por simulaciones ni repetir matriz/Windows interno |
+| E1 | Despunte de cabecera: base, momento y reparto | En curso; matriz evaluada y corrección técnica local entregadas. Ensayo aislado autorizado 19/10, R1 preparado; copia sin datos revisada y Sandbox habilitado, reinicio manual pendiente | [Ensayo y siguiente acción](docs/paridad/PASO-E1-DESPUNTE.md#ensayo-autorizado-del-1910-configuración-y-redondeo). Cuatro predicciones sintéticas distintas, sin RED/locale ni Productor observados. Copia instalada: 341 archivos con hashes, sin MDB/empresas; no exigir demo. Windows exige reinicio, no automático; después verificar primer arranque/fallo concreto, sin equipararlo a R1. No repetir activador/inventario. Cargo sigue bloqueado por filas/agregados, cantidades/descuentos, precisión/configuración y escritura. G6 y producción intactos; no activar cabecera por simulaciones ni repetir matriz/Windows interno |
 | E2 | Unión material de otra serie en GRUPO | Pendiente | Selección desde diagnóstico privado de los ocho casos de iteración 13; código/serie/acabado y geometría demostrados, sin extrapolar U |
 | E3 | Comisión: orden de redondeo y edición de líneas guardadas | Pendiente | Caso 0/−10/+10, suma de filas y momento de aplicación; separar cantidades/horas; seis residuos comunicados |
 | E4 | Tapajuntas de puerta con inferior SI/NO | Pendiente | GMT004, 1P 867×2098 con serie/ala/cajón reales; comparación lateral y travesaño |

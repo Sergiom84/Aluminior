@@ -24,9 +24,18 @@ Sergio autoriza el ensayo aislado de configuración/redondeo y la aplicación
 de lo demostrado, manteniendo G6 y producción intactos. Caso sintético R1
 preparado: cuatro predicciones distintas, reproducidas por cálculo racional
 y Decimal independiente. No es una observación de Productor ni cambia dinero.
-Bloqueo actual: Hyper-V rechaza el inventario por permisos; no hay un invitado
-Windows verificable desde esta sesión. Comprobación administrativa de sólo
-lectura preparada; no requiere que Sergio identifique previamente una VM.
+Inventario administrativo ejecutado por Sergio y verificado: Hyper-V responde,
+cero VMs registradas, Sandbox deshabilitado. La consulta por permisos queda
+resuelta; no repetir el comando. Sergio indica aprovechar la instalación
+existente: copia preparada de 341 archivos/220.429.241 bytes, sin MDB, empresas,
+credenciales o enlaces, con hashes de origen/copia verificados. No exigir una
+demo antes de probarla. Sandbox habilitado por el activador revisado:
+`Disabled → Enabled`, sin error, Windows exige reinicio. No se ha reiniciado ni
+ejecutado Productor; no repetir activador/inventario. Siguiente: Sergio guarda
+su trabajo y reinicia; después verificar el invitado y primer arranque sin datos. Puede mostrar
+un fallo de componentes/licencia/archivo; no se garantiza portabilidad ni es R1.
+Referencia 46.30.0006; la caché 42.35 queda fuera. Preparación revisada PASS;
+runtime/licencia aún sin verificar. No se han cambiado cálculos de Aluminior.
 [Procedimiento vigente y límites](paridad/PASO-E1-DESPUNTE.md#ensayo-autorizado-del-1910-configuración-y-redondeo).
 RED/locale siguen sin capturar; no se ejecuta el original en el host ni se
 activa el cargo. No repetir la auditoría o la investigación interna de Windows.
