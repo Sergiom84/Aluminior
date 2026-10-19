@@ -12,7 +12,7 @@ existente. No prueba Supabase Auth ni modifica su gate de producción. No admite
 reutilizar un servidor ya abierto. No ejecutar `next build` simultáneamente:
 ambos utilizan `.next`. `npm run typecheck:e2e` verifica también el harness.
 
-Tres recorridos, escritorio 1440×900 y móvil 390×844:
+Cinco recorridos por proyecto (diez en total), escritorio 1440×900 y móvil 390×844:
 
 - Alta y copia en los dos destinos tras perder la respuesta completa del POST;
   recarga/Enter en alta y Enter en copia, igualdad de IDs y conteos en Postgres.
@@ -21,6 +21,10 @@ Tres recorridos, escritorio 1440×900 y móvil 390×844:
   integración comprueba además las medidas suministradas al modelo PDF.
 - Catálogo de estructura: consulta retenida (latencia), fallo de transporte,
   guardado bloqueado y reintento por teclado; alta individual decimal.
+- Cliente por teclado: error y reintento con Tab/Enter, consulta por prefijo
+  de código y selección del código canónico en el formulario.
+- Cliente con consulta retenida: no seleccionar el resultado anterior mientras
+  una búsqueda nueva está pendiente.
 
 `route.fetch()` ejecuta el servidor y consume la respuesta antes de cortarla
 para probar el caso postcommit. No se falsea un éxito ni se escribe por un
@@ -33,3 +37,9 @@ Los registros sintéticos se conservan en la base E2E local; los nombres incluye
 fecha y proyecto, no se mezclan con suites transaccionales ni datos comerciales.
 
 Primera ejecución alojada verificada el 09/10/2026: [37971854995](https://github.com/Sergiom84/Aluminior/actions/runs/37971854995), seis recorridos correctos en e7aed24.
+
+Reejecución local del 19/10/2026: diez de diez, con contenedor PostgreSQL nuevo,
+base y destino comprobados antes de migrar; servidor QA local sin Auth Supabase.
+El caso decimal conserva precio nulo: no certifica valoración comercial.
+[Aislamiento, recibos y límites](../docs/paridad/AUDITORIA-INTEGRACION-REA-2026-10-19.md#pruebas-ejecutadas-en-aislamiento).
+No sustituye la evidencia CI fechada ni acredita una publicación nueva.

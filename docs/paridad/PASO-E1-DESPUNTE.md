@@ -1,6 +1,6 @@
 # Siguiente paso E1: cálculo y reparto del despunte
 
-> **Dirección vigente — 18/10:** [cerrar fases y aplicarlas a Aluminior](RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). La rama Windows/NtCreateUserProcess queda detenida como referencia histórica. Las instrucciones anteriores que ordenan seguirla no están activas. Siguiente entrega: evaluar las ocho preguntas E1 contra evidencia y código y pasar al menor cambio funcional acreditado; si falta evidencia, fijar una prueba o bloqueo concreto, sin otra cadena de investigación.
+> **Dirección vigente — 19/10:** [auditoría de integración](AUDITORIA-INTEGRACION-REA-2026-10-19.md) y [relevo](RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#resultado-local-del-1810-y-siguiente-entrega). Las ocho preguntas E1 ya están evaluadas; no repetirlas. Cargo comercial desactivado. Siguiente observación: nueva empresa sintética aislada, RED/locale y predicciones que discriminen redondeo, con autorización propia para el original. G6 no se modifica. Windows archivado; no seguir NtCreateUserProcess.
 
 Procedimiento preparado el 03/10/2026 y actualizado el 04/10. Estado vigente:
 [roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md). La [continuación estática del 14/10](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#control-reparto-y-totales)
@@ -56,14 +56,17 @@ Ya se entregó la
 no repetirla. G1–G5 demuestran alta independiente, reparto por bases distintas
 y persistencia. La variante 1207×1150 produjo error de opciones/SessionFactory
 y un tercer GRUPO; se conserva como G6-incidencia, sin nuevo despunte.
-Siguiente: retirar solo ese tercer GRUPO tras autorización y verificar edición
-de segunda línea sin alta, antes del ensayo discriminante de precisión.
+La propuesta del 04/10 de retirar el tercer GRUPO queda histórica e inactiva.
+El siguiente ensayo vigente usa una nueva empresa sintética aislada con
+RED/locale efectivos y predicciones discriminantes; no operar G6.
 No repetir A–F ni G1–G5 ni atribuir G6-incidencia a un recálculo válido.
 
 Continuidad entre equipos: [guía Windows](../CONTINUAR-EN-WINDOWS.md).
 Item E1 por proyecto `aluminior` + sync_uid
-`398049fbd618069e36bb84bab37913ed`: Windows del ensayo 180, Mac 192.
-No editar el 180 del Mac, que trata descuentos. Las fuentes privadas no
+`398049fbd618069e36bb84bab37913ed`: los números Windows 180/Mac 192 son
+referencias históricas del ensayo, no identidad vigente. Redescubrir el ítem
+por sync_uid/proyecto antes de editarlo; el 180 del Mac trataba descuentos.
+Las fuentes privadas no
 viajan por Git/July; comprobar copias y autorización antes de operar.
 
 ## Antes de abrir un ensayo
@@ -121,7 +124,11 @@ No hubo G7 ni recálculo. G6-incidencia conserva error, copia estable y proyecci
 las dos líneas anteriores son idénticas a G4/G5. No asumir configuración de
 opciones completa por haber generado un precio.
 
-1. Pendiente autorización de borrar **solo el tercer GRUPO de 1207×1150 de la
+**Procedimiento propuesto el 04/10, inactivo:** se conserva para explicar
+la incidencia y sus precauciones. No constituye el siguiente paso ni un
+permiso de borrado. Gobierna la dirección del inicio: empresa nueva y G6 intacto.
+
+1. Se propuso solicitar autorización de borrar **solo el tercer GRUPO de 1207×1150 de la
    incidencia**, con evidencia ya conservada; nunca retirar las dos líneas
    previas. Verificar estado restaurado mediante copia estable y proyección.
 2. Confirmar recorrido de edición de segunda línea sin alta nueva (se consultó

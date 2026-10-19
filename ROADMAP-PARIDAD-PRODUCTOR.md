@@ -1,6 +1,6 @@
 # Roadmap operativo de paridad con Productor
 
-> **Dirección vigente — 19/10:** [cerrar fases y aplicarlas a Aluminior](docs/paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). Windows queda archivado. E1 ya contrastado; cargo económico desactivado y prueba comercial aislada pendiente. Producción, errores, retorno de foco y configurador al 200% nativo verificados localmente con componentes reales y respuestas sintéticas. Etiqueta Acristalamiento corregida; capturas completas válidas. Siguiente P.6/P.7: comparación humana del mismo recorrido con Productor y recorrido autenticado aislado, con autorización propia. Aceptación integral abierta. No repetir las unidades anteriores.
+> **Dirección vigente — 19/10:** [auditoría de integración](docs/paridad/AUDITORIA-INTEGRACION-REA-2026-10-19.md). Integración parcial; Render sigue en `40cedd1` del 12/10. Diez E2E con PostgreSQL Docker aislado y QA local pasan; Auth real y comparación humana pendientes. E1 comercial y tarifa dinámica sin activar; G6 protegido y Windows archivado. [Continuidad](docs/paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#continuar-en-otra-conversación).
 
 Actualizado: 19/10/2026 (zoom nativo 200% del configurador y etiquetas verificados localmente; formato, proveedor, carga, índice, comparador/normalizador, cuerpo de clave de fila y transformaciones delegadas E1 seguidos estáticamente en su alcance; condiciones de los predicados, contrato WCTMB y enlace candidato ApiSet seguidos estáticamente; escrituras condicionadas de las dos celdas KernelBase seguidas; escritura del selector e identidad del DWORD acreditadas; inicializador local de Flags y llamador Ex acreditados en su alcance; frontera NtCreateUserProcess, estado efectivo y equivalencia pendientes; C1 y P.6/P.7 conservan su etapa del 12/10). Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
 Este archivo es el registro único del orden y estado de estas tareas.
@@ -22,8 +22,11 @@ foco, borrador y atajos con fixtures sin persistencia a cuatro anchuras.
 Retorno de foco tras alta aceptada simulado ya corregido: Añadir primera
 ventana, rechazo/reintento/borrador y segunda alta. Zoom nativo 200% del
 configurador verificado el 19/10, con etiqueta contenida y capturas completas.
-Siguiente P.6/P.7: comparación humana del mismo recorrido con Productor y
-recorrido autenticado/guardado en BD efímera aislada, previa autorización.
+Auditoría del 19/10: diez E2E ya prueban guardado/copia/reapertura en PostgreSQL
+Docker nuevo con acceso QA local; no prueban Auth Supabase ni precio aceptado.
+Siguiente P.6/P.7: Auth real en aislamiento y comparación humana del mismo
+recorrido con Productor, con alcance propio. No repetir los diez casos sin
+cambios o un fallo nuevo que lo justifique.
 [Alcance y límites](docs/paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#resultado-local-del-1810-y-siguiente-entrega).
 
 ### Antecedentes estáticos conservados (no instrucciones de continuidad)
@@ -141,8 +144,8 @@ acotado; E1–E11 y su evidencia permanecen.
 
 **Continuidad Windows:** seguir [la guía](docs/CONTINUAR-EN-WINDOWS.md),
 recibir código/documentación y localizar fuentes privadas. P.2: aceptación
-comercial con el titular. E1: recuperar el ensayo tras G6-incidencia con la
-autorización de borrado aún pendiente; después discriminar precisión. E7:
+comercial con el titular. E1: conservar G6 y preparar nueva empresa sintética
+aislada con RED/locale y caso discriminante, previa autorización del original. E7:
 contraste Productor de fracciones, con A4 ya publicado. Esta entrega no
 reabre tareas técnicas cerradas ni cambia el orden E1–E11.
 
@@ -174,9 +177,10 @@ la proyección técnica de G4 tras F9/reapertura. Copias privadas por estado.
 No repetir A–F ni G1–G5. Tres políticas de redondeo coinciden en G4. Variante
 1207×1150 verificada produjo error de opciones/SessionFactory y añadió tercer
 GRUPO; G6-incidencia conservada, sin recálculo y con previos intactos.
-Vía de observación, solo con autorización: retirar tercer GRUPO y comprobar
-edición de segunda línea sin crear otra. Después comparación discriminante
-con bases reales y predicciones previas; no certificar opciones tras el error.
+La vía propuesta el 04/10 de retirar el tercer GRUPO queda histórica e inactiva.
+La siguiente observación exige nueva empresa sintética aislada, RED/locale
+efectivos y predicciones divergentes; no modificar G6 ni certificar opciones
+tras el error. La ejecución del original necesita autorización propia.
 Descuentos cero/cantidad 1 no discriminan base bruta/neta ni otras cantidades.
 Sin aplicación al presupuesto web ni nueva medición del banco.
 
@@ -206,7 +210,7 @@ el total de todos los módulos pendientes del producto.
 | E11 | Mínimos, múltiplos e intervalos restantes | Condicionado | Usar límites reales de catálogo y entradas compatibles a ambos lados de cada frontera |
 | A1 | Aceptación en web publicada | Cerrado el recorrido auditado 09/10 | [Auditoría](docs/paridad/AUDITORIA-FUNCIONAL-2026-10-09.md): Render live f6d5bcd, 260009 guardado/recargado y PDF válido 805,65 €. Visor IAB gris, archivo comprobado aparte. No certifica todas las familias, fabricación ni precio |
 | S1 | Mantenimiento de dependencias | Publicado/verificado 09/10 | b1682a3 incluido en Render live 7ad0ee2; audit 11→0 / producción 4→0; ci, 1.431 tests, tipos, arquitectura y build correctos. Guardado/recarga/PDF 260009; no cubre el anuncio futuro S2 |
-| S2 | Revisar anuncio de seguridad Next.js del 08/10 | Pendiente de publicación prevista 14/10 | Consultar advisory y versiones cuando estén publicados; alcance aún desconocido. No darlo por corregido porque el audit actual quede limpio. Fuente en informe de mantenimiento; sin automatización creada |
+| S2 | Revisar anuncio de seguridad Next.js del 08/10 | Pendiente de revalidación; fecha anunciada 14/10 ya transcurrida | Revalidar advisory/versiones en su unidad propia; esta auditoría de integración no ejecuta esa revisión ni lo da por corregido. Fuente en informe de mantenimiento; sin automatización creada |
 | A2 | Miniatura del GRUPO completo | Publicado/verificado 09/10 | 7ad0ee2; tres módulos desiguales con dos uniones guardados/reabiertos en QA, SVG/PDF completos; teclado y escritorio/móvil. Basado en RECON-CERRAMIENTOS §4 quater; sin cambios de valoración |
 | A3 | Idempotencia de nueva cabecera y copia | Publicado/verificado 09/10 | a06cd4f live; 0029 aplicada, RLS y documentos previos conservados. Alta/copia/revisión sintéticas y tres reintentos READ ONLY remotos con mismos IDs; pérdida HTTP física local. Ver informe A3 |
 | P.2 | Aceptación PDF multipágina | Paginación publicada/verificada 09/10; formato comercial pendiente | [Informe](docs/paridad/PDF-MULTIPAGINA-2026-10-09.md): 6 escenarios, 21 páginas, 628 marcadores, 28 bloques; endpoint local 12 líneas/4 páginas. 741 tests web, tipos/build/arquitectura. Render live 46c613d, endpoint 260009 verificado (1 página, 805,65 €); formato comercial Productor/titular pendiente. July 205 |
@@ -214,7 +218,7 @@ el total de todos los módulos pendientes del producto.
 | A5 | Recorrido sintético de navegador en CI | Verificado local y CI 09/10 | Seis recorridos escritorio/móvil: postcommit, medidas, latencia/fallo de catálogo y teclado; GitHub Actions run 37971854995 correcto |
 | S3 | Validación completa de paquetes en CI | Verificado local y CI 09/10 | 9bf9a64/36a47f4: 1.448 tests correctos/uno condicionado a CSV privado; tipos, arquitectura y build, run 37978474635. Seis recorridos, run 37978474739. Corrige test ETL obsoleto y contrato de fixture PDF; no toca producción |
 | C1 | PVP por medidas y contención de precio plano | Publicado/verificado técnico 12/10; alcance acotado | [Publicación](docs/paridad/PUBLICACION-CLONERSOFT-2026-10-12.md): `40cedd1` live, 0031/0032 y carga dirigida, CI y QA remoto/preservación correctos. Dos precios dimensionales corroborados; coste/fabricación fuera del cierre y banco 400/523 conservado |
-| P.6/P.7 | Teclado, foco y adaptación responsive | Parcialmente publicado 12/10; componentes y foco verificados localmente 18/10; zoom del configurador verificado localmente 19/10; aceptación integral abierta | [Resultado local y límites](docs/paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#resultado-local-p6p7-de-zoom-nativo--1910): Acristalamiento contenido; doce escenarios a 200% nativo, 58 capturas completas, 28 botones del selector en ambos sentidos. Cuatro escenarios fallan con la etiqueta anterior. Sin BD ni Shell/ruta autenticada. Siguiente: comparación humana con Productor y recorrido autenticado/guardado en BD efímera autorizada. La captura visual 200% de producción conserva su límite histórico. Ítem local 195; no crear otro |
+| P.6/P.7 | Teclado, foco y adaptación responsive | Parcialmente publicado 12/10; componentes/foco y zoom locales 18–19/10; diez E2E Docker locales 19/10; aceptación integral abierta | [Auditoría actual](docs/paridad/AUDITORIA-INTEGRACION-REA-2026-10-19.md#pruebas-ejecutadas-en-aislamiento) y [zoom](docs/paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#resultado-local-p6p7-de-zoom-nativo--1910): doce escenarios a 200% nativo y 58 capturas; control anterior falla en cuatro. Los diez E2E prueban guardado/copia/decimales/cliente con QA local y BD nueva; no Auth Supabase, precio comercial ni toda la matriz visual. Siguiente: Auth real aislado, comparación humana con Productor y aceptación. Captura visual 200% de producción conserva su límite histórico. Ítem local 195; no crear otro |
 | D1 | Reconciliar ficha de acceso de July | Cerrado local 09/10 | Ficha actualizada con comprobación directa A4, Render live 487feb1 y 31 migraciones; historial fechado preservado. Sin sync/recepción acreditados |
 
 Detalles E2–E11: [ensayos mínimos](docs/paridad/ENSAYOS-MINIMOS-PRODUCTOR-2026-10-03.md).
@@ -329,6 +333,12 @@ Tres operaciones sintéticas y sus recibos comprobados; documentos anteriores in
 
 ## Cierres registrados
 
+Auditoría sin cierre de fases, 19/10: documentación/código contrastados,
+Render `40cedd1` y BD sólo lectura verificados; 56 DB, 881 web y diez E2E en
+Docker nuevo, 964 core y 68 ETL seleccionados correctos. QA local no acredita
+Auth real ni precio comercial. [Informe](docs/paridad/AUDITORIA-INTEGRACION-REA-2026-10-19.md).
+Se actualizan los mismos punteros e ítems; G6 protegido, sin publicación.
+
 | Fecha | Tarea | Evidencia / mantenimiento realizado |
 |---|---|---|
 | 13/10/2026 | Reconciliación del main Mac | Cambios locales integrados con `4fb54b3`; se conservan A3/A4/C1/CI y evidencia anterior. Herramienta de propuesta de acristalamiento incluida, con bloqueo de modelo incompatible; tarifas sin aplicar. Continuidad Windows, estado, índice y relevo actualizados; P.6/P.7 y E1 siguen abiertos |
@@ -363,7 +373,7 @@ ese corpus con el banco vigente ni cerrar por la coincidencia de costes.
 > La siguiente investigación económica sigue siendo E1 mediante
 > docs/paridad/PASO-E1-DESPUNTE.md, tras leer EVIDENCIA-E1-DESPUNTE-2026-10-04.md.
 > Usa copia F y resultados A–F; el residuo B/D ya está explicado por margen GID.
-> G1–G5 entregados. Conserva G6-incidencia: quitar solo tercer GRUPO requiere autorización solicitada; verificar edición de segunda línea antes de precisión. No repitas A–F, G1–G5 ni contraste histórico.
+> G1–G5 entregados y G6-incidencia protegido. La propuesta de limpieza del 04/10 está inactiva: no operar G6. La observación vigente usa empresa sintética nueva y RED/locale/predicciones divergentes, con autorización del original. No repetir A–F ni G1–G5.
 > Comprueba evidencia posterior de visión. En cada entrega, actualiza el estado y elimina,
 > actualiza o marca como históricos sus documentos obsoletos; repara enlaces y
 > deja el siguiente paso concreto. No repitas M0 ni las correcciones ya verificadas.

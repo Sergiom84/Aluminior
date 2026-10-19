@@ -1,6 +1,6 @@
 # Relevo: paridad y fuentes de Productor
 
-> **Dirección vigente — 19/10:** [cerrar fases y aplicarlas a Aluminior](docs/paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). Windows queda archivado. E1 ya contrastado; cargo económico desactivado y prueba comercial aislada pendiente. Producción, errores, retorno de foco y configurador al 200% nativo verificados localmente con componentes reales y respuestas sintéticas. Etiqueta Acristalamiento corregida; capturas completas válidas. Siguiente P.6/P.7: comparación humana del mismo recorrido con Productor y recorrido autenticado aislado, con autorización propia. Aceptación integral abierta. No repetir las unidades anteriores.
+> **Dirección vigente — 19/10:** [auditoría de integración](docs/paridad/AUDITORIA-INTEGRACION-REA-2026-10-19.md). Integración parcial; Render `40cedd1` del 12/10 y últimos arreglos locales. Diez E2E con BD Docker nueva y QA local pasan; Auth real y comparación humana pendientes. E1 comercial y tarifa dinámica sin activar, G6 protegido y Windows archivado. La continuidad está en el [relevo existente](docs/paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#continuar-en-otra-conversación).
 
 Para continuar en otra conversación: [relevo vigente del 18/10](docs/paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#continuar-en-otra-conversación).
 Continuación posterior: [proveedor de configuración E1](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#proveedor-de-configuración-y-argumento-2),
@@ -135,8 +135,9 @@ Publicación técnica 12/10 desde worktree `productor-clonersoft/Aluminior`:
 [recibo remoto](docs/paridad/PUBLICACION-CLONERSOFT-2026-10-12.md).
 Render live `40cedd1`, 0031/0032/carga dirigida y ambos CI comprobados; QA remoto
 y preservación final correctos. Main Mac reconciliado el 13/10; no repetir extracción,
-MO cero, migraciones, carga o gates entregados. Siguiente: matriz restante de
-P.6/P.7 y E1 Windows; E2/E6 conservan sus etapas. La publicación no acredita
+MO cero, migraciones, carga o gates entregados. Pendiente anotado el 12/10:
+P.6/P.7 y observación E1 del original; los avances locales y el siguiente paso
+del 19/10 están en la auditoría del inicio. E2/E6 conservan sus etapas. La publicación no acredita
 recepción en otro equipo ni fabricación. Fuentes/respaldo/recibos privados
 permanecen ignorados; no viajan por Git o July.
 
@@ -161,6 +162,10 @@ de tareas agotados, preservando la evidencia según AGENTS. No repetir M0.
 
 
 ## Objetivo y siguiente trabajo
+
+Antecedente de coordinación del 03–09/10, inactivo como instrucción de trabajo.
+Conserva contexto y observaciones; no autoriza limpiar G6 ni sustituye el
+siguiente paso vigente del relevo funcional y la auditoría enlazados arriba.
 
 Sergio quiere que su tío pueda presupuestar con Aluminior obteniendo resultados equivalentes a Productor Aluminio (GAIA): configuración, piezas, cortes, cantidades, metraje, mano de obra, precios, ajustes y documentos. Productor es la referencia funcional y de interacción; la presentación se moderniza conservando el modelo de trabajo demostrado.
 

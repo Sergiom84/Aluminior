@@ -1,6 +1,6 @@
 # Relevo de investigación Productor y comparación con Aluminior
 
-> **Dirección vigente — 19/10:** [cerrar fases y aplicarlas a Aluminior](RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). Windows queda archivado. E1 ya contrastado; cargo económico desactivado y prueba comercial aislada pendiente. Producción, errores, retorno de foco y configurador al 200% nativo verificados localmente con componentes reales y respuestas sintéticas. Etiqueta Acristalamiento corregida; capturas completas válidas. Siguiente P.6/P.7: comparación humana del mismo recorrido con Productor y recorrido autenticado aislado, con autorización propia. Aceptación integral abierta. No repetir las unidades anteriores.
+> **Dirección vigente — 19/10:** [auditoría de integración](AUDITORIA-INTEGRACION-REA-2026-10-19.md). Integración parcial; Render `40cedd1` del 12/10 y últimos arreglos locales. Diez E2E con BD Docker nueva y QA local pasan; Auth real y comparación humana pendientes. E1 comercial y tarifa dinámica sin activar, G6 protegido y Windows archivado. La continuidad está en el [relevo existente](RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#continuar-en-otra-conversación).
 
 Preparado el 17/10/2026 para continuar en otra conversación sin repetir la
 investigación del 16/10. El trabajo entregado es investigación estática y
@@ -81,7 +81,9 @@ Detenerse ante la siguiente dependencia; no repetir búsqueda Ex, caller,
 uso local, wrappers, inicializador, identidad Flags, selector, celdas,
 WCTMB, ApiSet o predicados; no NLS global ni lógica criptográfica.
 
-Para continuar:
+Continuidad histórica de esta unidad, sustituida por el relevo funcional del
+18/10 y la auditoría del 19/10. No ejecutar esta lista ni sus permisos como
+encargo actual; se conserva para explicar el cierre estático:
 
 1. Raíz exclusiva `C:\Users\sergi\.codex\worktrees\rea-productor-20261016\Aluminior`.
    Verificar en sólo lectura raíz, rama `codex/rea-productor-20261016`, HEAD,
@@ -652,7 +654,11 @@ el director reproduce 130 comprobaciones y 30 perturbaciones en memoria,
 con 15 capturas / 3.833 instrucciones únicas. El cotejo PE independiente del
 director cubre esas mismas capturas; los conteos no se suman como cobertura.
 
-## Lo que queda por hacer
+## Trabajo restante anotado en este relevo (histórico, no instrucciones vigentes)
+
+La dirección funcional del inicio sustituye este bloque. La matriz E1 ya se
+evaluó y hay corrección funcional local; no abrir otra unidad estática por
+esta lista. Evidencia e incertidumbres se conservan con su alcance original.
 
 ### Ahora
 

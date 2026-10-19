@@ -1,6 +1,6 @@
 # Índice de documentación
 
-> **Dirección vigente — 19/10:** [cerrar fases y aplicarlas a Aluminior](paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). Windows queda archivado. E1 ya contrastado; cargo económico desactivado y prueba comercial aislada pendiente. Producción, errores, retorno de foco y configurador al 200% nativo verificados localmente con componentes reales y respuestas sintéticas. Etiqueta Acristalamiento corregida; capturas completas válidas. Siguiente P.6/P.7: comparación humana del mismo recorrido con Productor y recorrido autenticado aislado, con autorización propia. Aceptación integral abierta. No repetir las unidades anteriores.
+> **Dirección vigente — 19/10:** [auditoría de integración](paridad/AUDITORIA-INTEGRACION-REA-2026-10-19.md). Render `40cedd1` del 12/10; últimas entregas locales. Diez recorridos con BD Docker aislada y QA local pasan; Auth real y comparación humana pendientes. E1 comercial y tarifa dinámica sin activar; G6 protegido, Windows archivado. El [relevo existente](paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#continuar-en-otra-conversación) conserva la continuidad.
 
 Entrada de trabajo: [ESTADO-ACTUAL.md](ESTADO-ACTUAL.md).
 Clasificación documental inicial sobre `9bc879e` y comprobación local del 02/10.
@@ -14,6 +14,7 @@ propuesta entonces exclusiva del main local (integrada como herramienta el 13/10
 
 | Documento | Uso |
 |---|---|
+| [Auditoría de integración REA 19/10](paridad/AUDITORIA-INTEGRACION-REA-2026-10-19.md) | Corpus documental, fases/contratos frente al código, Docker actual y producción sólo lectura; integración parcial, sin publicación ni cierre global |
 | [Relevo vigente de aplicación 18/10](paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#continuar-en-otra-conversación) | Actualizado el 19/10: zoom nativo del configurador, corrección de etiqueta y prueba reproducible; arranque, siguiente unidad y límites; gobierna la continuidad con estado y roadmap |
 | [Relevo REA 17/10, histórico](paridad/RELEVO-REA-PRODUCTOR-2026-10-17.md) | Rutas y evidencia conservadas; sus instrucciones de seguir Windows están archivadas por el relevo del 18/10 |
 | [Investigación REA 16/10](paridad/INVESTIGACION-REA-PRODUCTOR-2026-10-16.md) | Inventario ampliado, metadatos/contratos managed y pseudocódigo nativo dirigido; evidencia privada, límites e integridad |
@@ -36,7 +37,7 @@ propuesta entonces exclusiva del main local (integrada como herramienta el 13/10
 | [Auditoría funcional 09/10](paridad/AUDITORIA-FUNCIONAL-2026-10-09.md) | Fallos reproducidos, correcciones, aceptación y mejoras propuestas |
 | [Estado actual](ESTADO-ACTUAL.md) | Estado, riesgos y siguiente paso |
 | [Roadmap de paridad](../ROADMAP-PARIDAD-PRODUCTOR.md) | Registro único de etapas/orden de tareas e instrucciones para actualizar o retirar documentos obsoletos |
-| [Paso E1: despunte](paridad/PASO-E1-DESPUNTE.md) | G1–G5 entregados; G6-incidencia preservada. Recuperar dos líneas tras autorización para quitar solo tercer GRUPO y verificar edición antes de precisión |
+| [Paso E1: despunte](paridad/PASO-E1-DESPUNTE.md) | Matriz de ocho preguntas ya evaluada; G6 protegido. Nueva empresa sintética/RED/locale y redondeo discriminante con autorización propia; procedimiento de limpieza antiguo inactivo |
 | [AGENTS](../AGENTS.md) / [CLAUDE](../CLAUDE.md) | Contratos de trabajo |
 | [Arquitectura](../ARQUITECTURA.md) | Responsabilidades y fronteras |
 | [Paridad](paridad/PARIDAD-PRODUCTOR.md) | Mapa de evidencia y aceptación |

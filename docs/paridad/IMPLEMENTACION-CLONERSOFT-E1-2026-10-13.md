@@ -1,6 +1,6 @@
 # E1: contrato físico y selección condicional
 
-> **Dirección vigente — 19/10:** [cerrar fases y aplicarlas a Aluminior](RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). Windows queda archivado. E1 ya contrastado; cargo económico desactivado y prueba comercial aislada pendiente. Producción, errores, retorno de foco y configurador al 200% nativo verificados localmente con componentes reales y respuestas sintéticas. Etiqueta Acristalamiento corregida; capturas completas válidas. Siguiente P.6/P.7: comparación humana del mismo recorrido con Productor y recorrido autenticado aislado, con autorización propia. Aceptación integral abierta. No repetir las unidades anteriores.
+> **Dirección vigente — 19/10:** [auditoría de integración](AUDITORIA-INTEGRACION-REA-2026-10-19.md). Integración parcial; Render `40cedd1` del 12/10 y últimos arreglos locales. Diez E2E con BD Docker nueva y QA local pasan; Auth real y comparación humana pendientes. E1 comercial y tarifa dinámica sin activar, G6 protegido y Windows archivado. La continuidad está en el [relevo existente](RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#continuar-en-otra-conversación).
 
 13/10/2026. Entrega local parcial del [encargo ClonerSoft](ENCARGO-IMPLEMENTACION-CLONERSOFT-2026-10-13.md).
 La identidad y el estado global siguen en [E1 del roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md).

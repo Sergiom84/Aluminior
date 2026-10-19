@@ -1,5 +1,7 @@
 # Continuación orientada a entregas utilizables de Aluminior
 
+> **Actualización — 19/10:** [auditoría de integración](AUDITORIA-INTEGRACION-REA-2026-10-19.md). Render continúa en `40cedd1`; las últimas entregas son locales. Diez E2E con BD Docker nueva y QA local pasan. Auth Supabase, comparación humana y aceptación integral permanecen abiertos. Esta autorización de pruebas no incluye ejecutar Productor, activar cargos ni publicar.
+
 ## Decisión vigente
 
 Sergio pide cerrar fases y aplicarlas a Aluminior en la vida real. Esta instrucción
@@ -284,12 +286,37 @@ Mapa de evidencia: INVESTIGACION-CLONERSOFT-2026-10-12.md:110–125 conserva F7/
 y el flujo de introducción. Teclado/foco/zoom son accesibilidad de Aluminior;
 no se ha repetido Productor ni acreditado su foco exacto o su zoom.
 
-Siguiente P.6/P.7: comparar el mismo recorrido humano con Productor y verificar
-la ruta autenticada con guardado/reapertura en una BD efímera verdaderamente
-aislada, con autorización propia y destinos comprobados. No repetir los gates
-sintéticos entregados. La captura visual 200% de producción mantiene su límite
+Siguiente P.6/P.7 tras este lote de zoom: comparar el mismo recorrido humano
+con Productor y verificar Auth real en aislamiento. La auditoría posterior del
+19/10 ya ejecuta diez E2E de guardado/reapertura/copia con QA local y BD Docker
+nueva; no prueba Supabase Auth ni toda la matriz de foco/zoom. No repetir los
+gates entregados sin cambios o fallo nuevo. La captura visual 200% de producción mantiene su límite
 histórico; esta unidad sólo cierra configurador. P.6/P.7 integral y E1 siguen
 en curso; el cargo económico permanece desactivado.
+
+## Auditoría documental, persistencia aislada y producción — 19/10
+
+[Informe consolidado](AUDITORIA-INTEGRACION-REA-2026-10-19.md): no están completas
+todas las fases. Código base auditado `caefa3f`; Render reconsultado live
+`40cedd1` del 12/10, mismo proyecto efectivo de BD y 33 migraciones. Lectura
+remota con transacción READ ONLY, metadatos/agregados y documentos QA existentes;
+sin operaciones comerciales. Hoja QA con incidencias de fabricación y coste
+técnico de despunte explícitamente sin cargo al presupuesto.
+
+PostgreSQL Docker nuevo, red bridge exclusiva, sin montajes del host y puerto
+loopback: 56 DB, 881 web y diez E2E correctos; 964 core y 68 ETL seleccionados,
+tipos y arquitectura correctos. Primera web tuvo cuatro timeouts; los mismos
+casos y después toda la suite pasan con dos workers efectivos, sin ampliar
+tiempos ni cambiar aserciones. Se conservan ambos resultados. Los diez E2E
+usan QA local y precio decimal nulo; no autentican en Supabase ni certifican
+precio comercial. Contenedores propios detenidos; ningún contenedor ajeno tocado.
+
+Se reparan las instrucciones activas de repetir la matriz E1/limpiar G6 y el
+README E2E desfasado. Su evidencia fechada se conserva. La siguiente frontera
+E1 no cambia: nueva empresa sintética, RED/locale y caso discriminante, con
+autorización del original; G6 intacto. P.6/P.7: Auth real y comparación humana.
+Sin cambios de producto, push, sync, despliegue ni cierre de E1/P.6/P.7.
+Evidencia actual privada: `output/auditoria-integracion-rea-20261019/`.
 
 ## Continuar en otra conversación
 
@@ -297,17 +324,20 @@ Usar exclusivamente la raíz y rama del inicio de este relevo. Verificar en
 solo lectura raíz, rama, HEAD, estado e identidad; no encajar diferencias con
 reset/checkout/stash. Leer AGENTS.md, ESTADO-ACTUAL, roadmap y este relevo.
 Consultar el último commit local, sin retroceder al cierre documental antiguo.
-Zoom nativo del configurador verificado localmente el 19/10, con corrección
-de etiqueta y capturas completas. Siguiente P.6/P.7: comparación humana del
-mismo recorrido con Productor y ruta autenticada/guardado con BD efímera
-aislada, previa autorización específica. No repetir matriz E1, producción,
-errores, foco ni zoom sintético entregados; no reabrir Windows. Conservar
-pruebas y límites. Sin esa autorización, detenerse en esta frontera concreta.
+Zoom nativo verificado y diez E2E con persistencia en Docker ejecutados el
+19/10, con QA local; Auth real y comparación humana equivalente pendientes.
+E1 sigue requiriendo empresa sintética nueva y RED/locale/caso discriminante,
+con autorización del original. No operar G6. No repetir matriz E1, producción,
+errores, foco, zoom ni los diez casos Docker sin cambio/fallo nuevo; no reabrir
+Windows. Conservar pruebas y límites. La siguiente ejecución del original
+necesita autorización propia; esta auditoría no la concede.
 Máximo dos subagentes, sin subdelegación; revisión independiente de artefacto,
 contrato y evidencia, una corrección y gates; congelar antes de commit Sergio.
 Actualizar los mismos items July, E1 sync_uid 398049fbd618069e36bb84bab37913ed
 y P.6/P.7 local 195 (redescubrir ambos), historia íntegra e in_progress, lectura
-exacta, sin sync. Sin SQL/BD, datos reales, migraciones, legado/DLL/COM,
+exacta, sin sync. El permiso del 19/10 cubrió consultas READ ONLY y SQL/migraciones
+sólo en Docker nuevo sintético, ya ejecutados; no es permiso de operación real.
+Sin escrituras ni migraciones remotas, datos reales de prueba, legado/DLL/COM,
 licencias, cargo, push, sincronización ni despliegue. Preservar 14 árboles y
 2.861 archivos, índices, PE/PDB, vendor, originales, A–F/G1–G5/G6-incidencia;
 no ejecutar/importar scripts históricos ni regenerar índices. Python siempre -B.

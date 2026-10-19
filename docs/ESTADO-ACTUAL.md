@@ -1,14 +1,15 @@
 # Estado actual de Aluminior
 
-> **Dirección vigente — 19/10:** [cerrar fases y aplicarlas a Aluminior](paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md). Windows queda archivado. E1 ya contrastado; cargo económico desactivado y prueba comercial aislada pendiente. Producción, errores, retorno de foco y configurador al 200% nativo verificados localmente con componentes reales y respuestas sintéticas. Etiqueta Acristalamiento corregida; capturas completas válidas. Siguiente P.6/P.7: comparación humana del mismo recorrido con Productor y recorrido autenticado aislado, con autorización propia. Aceptación integral abierta. No repetir las unidades anteriores.
+> **Dirección vigente — 19/10:** [auditoría de integración](paridad/AUDITORIA-INTEGRACION-REA-2026-10-19.md). Integración parcial: Render sigue en `40cedd1` del 12/10; los últimos arreglos son locales. Diez recorridos de navegador con BD Docker aislada pasan mediante acceso QA local; Auth real y aceptación equivalente Productor siguen pendientes. E1 comercial y tarifa dinámica sin activar; G6 protegido y Windows archivado. Continuidad en el [relevo existente](paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#continuar-en-otra-conversación).
 
-Revisión documental y producción: 12/10/2026. Código `40cedd1` live en Render,
+Producción reconsultada en sólo lectura el 19/10/2026: código `40cedd1` live en Render,
 deploy `dep-db6hi2navr4c739d2e4g`, terminado a las 19:31:21 Europe/Madrid
 (17:31:21 UTC). Supabase: 33 migraciones, 0031/0032 y carga dirigida aplicadas;
-QA técnico remoto y preservación final correctos. Ver
+QA técnico remoto y preservación final correctos en la entrega del 12/10. Ver
 [publicación del 12/10](paridad/PUBLICACION-CLONERSOFT-2026-10-12.md).
 La revisión funcional del 09/10 en `487feb1` y la consulta Render del 10/10
-son antecedentes conservados; no sustituyen esta comprobación de producción.
+son antecedentes conservados. La auditoría del 19/10 confirma versión, destino
+y 33 migraciones; no repite las escrituras QA de aquella publicación.
 Se preservan la cobertura histórica del 03/10 y la investigación E1 del 04/10.
 [Auditoría documental](AUDITORIA-DOCUMENTAL-2026-10-10.md) y
 [continuación en Windows](CONTINUAR-EN-WINDOWS.md).
@@ -16,6 +17,22 @@ Consolidación documental inicial: `ee0dc16`, sobre `9bc879e`.
 Este es el único punto de entrada de estado y siguiente trabajo.
 El [roadmap operativo](../ROADMAP-PARIDAD-PRODUCTOR.md) conserva el orden y
 estado único de las tareas de paridad, con mantenimiento documental obligatorio.
+
+## Auditoría de integración REA — 19/10/2026
+
+No están completas todas las fases. Se contrastan documentos, consumidores del
+código, Render/BD en sólo lectura y recorridos QA existentes. En Docker nuevo:
+56 DB, 881 web y diez E2E correctos; 964 core y 68 ETL seleccionados, tipos y
+arquitectura correctos. Primera pasada web: cuatro timeouts; se conserva el
+fallo y la pasada completa con dos workers efectivos, sin cambiar aserciones
+ni tiempos. E2E usa acceso QA local y conserva precio decimal nulo: no acredita
+Supabase Auth ni precio comercial aceptado. La hoja QA publicada conserva
+incidencias de fabricación y despunte sin cargo.
+[Informe, fases abiertas y evidencia](paridad/AUDITORIA-INTEGRACION-REA-2026-10-19.md).
+Se retiran punteros que pedían repetir la matriz E1 o limpiar G6. Siguiente E1:
+empresa sintética nueva y RED/locale/caso discriminante, con autorización del
+original. P.6/P.7: Auth real y comparación humana equivalente; guardado aislado
+de los diez casos ya probado. Sin cambios de producto, publicación ni cierre global.
 
 
 ## Configurador al 200% nativo — 19/10/2026
@@ -455,7 +472,7 @@ autenticado aislado autorizado. C1/0031/0032/carga/publicación
 y QA remoto completados el 12/10; no repetirlos. Teclado/búsqueda/foco de este
 tramo están parcialmente publicados; su aceptación integral sigue abierta.
 
-**A3 publicado/verificado el 09/10 en `a06cd4f`, con 0029 aplicada.** A4 publicado/verificado en `487feb1`: 0030 aplicada, conexiones renovadas y alta/edición/recarga/copia/PDF decimales comprobados en producción. A5 verificado en GitHub Actions (run 37971854995, seis recorridos correctos). D1 reconciliado localmente. [Informe](paridad/MEDIDAS-Y-CI-2026-10-09.md). E1 depende de Windows; P.2 conserva aceptación comercial y S2 el anuncio del 14/10.
+**A3 publicado/verificado el 09/10 en `a06cd4f`, con 0029 aplicada.** A4 publicado/verificado en `487feb1`: 0030 aplicada, conexiones renovadas y alta/edición/recarga/copia/PDF decimales comprobados en producción. A5 verificado en GitHub Actions (run 37971854995, seis recorridos correctos). D1 reconciliado localmente. [Informe](paridad/MEDIDAS-Y-CI-2026-10-09.md). E1 requiere observación aislada del original con alcance propio; la investigación interna de Windows está archivada. P.2 conserva aceptación comercial y S2 revalidación tras la fecha anunciada del 14/10.
 
 Antecedente P.2: rama `codex/pdf-multipagina`, worktree `pdf-multipagina/Aluminior`, desde
 `7ad0ee2`. P.2 publicado en `46c613d`; endpoint PDF 260009 comprobado sin escritura, 1 página / 805,65 €. Ese main quedó reconciliado el 13/10 con `origin/main` del 12/10; se conservan
@@ -492,9 +509,10 @@ técnica completa. Datos privados en output/e1-despunte/complementario-20261004.
 Las tres políticas de redondeo coinciden en G4. Variante 1207×1150 con
 propiedades verificadas produjo error de opciones/SessionFactory y tercer
 GRUPO, sin sustituir segunda C2; G6-incidencia conservada, sin nuevo despunte.
-Siguiente: autorización solicitada para retirar solo tercer GRUPO y confirmar
-edición segura de segunda línea antes de comparación de precisión. Las dos
-líneas previas siguen idénticas a G4/G5. No repetir A–F, G1–G5 ni diagnóstico
+La propuesta del 04/10 de retirar el tercer GRUPO queda histórica e inactiva.
+Siguiente vigente: empresa sintética nueva con RED/locale y predicciones
+discriminantes; no modificar G6. Las dos líneas previas siguen idénticas a
+G4/G5. No repetir A–F, G1–G5 ni diagnóstico
 GID. Descuentos cero/cantidad 1 no discriminan base bruta/neta. E1 sigue En
 curso; cargo presupuestario y banco conservados. El subcontrato físico local
 del 13/10 se registra por separado arriba. Retirar instrucciones agotadas y preservar
