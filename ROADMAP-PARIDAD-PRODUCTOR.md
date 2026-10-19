@@ -20,9 +20,11 @@ cero VMs registradas, Sandbox deshabilitado; no repetir el comando. Sergio
 elige aprovechar la instalación existente: copia sin MDB/empresas preparada
 con hashes verificados. Reinicio y apertura de Sandbox completados: recibo
 invitado correcto, primer intento detenido por Crystal Reports 13.0.35.
-El MSI local es 13.0.0.99; paquete oficial descargado y firmado, pendiente de
-verificar propiedades y resolver ese requisito sólo en el invitado. No repetir
-reinicio/activador/inventario ni exigir demo ni llamar R1 al comprobador.
+El MSI local es 13.0.0.99; el oficial 13.0.35.4870 quedó instalado sólo en el
+invitado, con salida 0 y sin reinicio. Al reabrir la copia, Crystal ya no
+bloquea. Parada sin pulsar Aceptar: pide actualizar controles y librerías.
+No repetir reinicio/activador/inventario ni exigir demo ni llamar R1 al
+comprobador.
 [Procedimiento E1](docs/paridad/PASO-E1-DESPUNTE.md#ensayo-autorizado-del-1910-configuración-y-redondeo).
 No pedir de nuevo autorización para el alcance concedido ni ejecutar en host.
 Tramo P.6/P.7 de componentes de producción verificado
@@ -207,7 +209,7 @@ el total de todos los módulos pendientes del producto.
 | ID | Trabajo | Estado actual | Prueba necesaria para avanzar o cerrar |
 |---|---|---|---|
 | M0 | Matriz por modelo/serie/regla y ensayos mínimos | Cerrado 03/10/2026 | [Matriz](docs/paridad/MATRIZ-COBERTURA-PRODUCTOR-2026-10-03.md), 97 pares, 47 pruebas, typechecks y arquitectura; no volver a crearla, regenerar si cambian las fuentes |
-| E1 | Despunte de cabecera: base, momento y reparto | En curso; matriz y corrección técnica local entregadas. R1 preparado; Sandbox operativo, primer intento de la copia detenido por requisito Crystal Reports 13.0.35 | [Ensayo y siguiente dependencia](docs/paridad/PASO-E1-DESPUNTE.md#ensayo-autorizado-del-1910-configuración-y-redondeo). Recibo invitado verifica 341 archivos sin MDB/empresas y cero adaptadores activos. Comprobador de requisitos capturado/revisado; no acredita aplicación operativa ni licencia ni R1. MSI local 13.0.0.99; oficial 13.0.35 descargado y firmado, pendiente de propiedades y preparación sólo invitada. No repetir reinicio/activador/inventario ni exigir demo. Cargo sigue bloqueado por filas/agregados, cantidades/descuentos, precisión/configuración y escritura. G6 y producción intactos; no activar cabecera por simulaciones ni repetir matriz/Windows interno |
+| E1 | Despunte de cabecera: base, momento y reparto | En curso; matriz y corrección técnica local entregadas. R1 preparado; Crystal 13.0.35.4870 instalado sólo en el invitado. Siguiente parada: actualizar controles y librerías, sin aceptar | [Ensayo y siguiente dependencia](docs/paridad/PASO-E1-DESPUNTE.md#ensayo-autorizado-del-1910-configuración-y-redondeo). Recibo invitado verifica 341 archivos sin MDB/empresas y cero adaptadores activos. msiexec del invitado terminó en 0, sin reinicio, y el comprobador de Crystal desapareció al reabrir. No se pulsó Aceptar en el diálogo de controles/librerías. No acredita aplicación operativa ni licencia ni R1. No repetir reinicio/activador/inventario ni exigir demo. Cargo sigue bloqueado por filas/agregados, cantidades/descuentos, precisión/configuración y escritura. G6 y producción intactos; no activar cabecera por simulaciones ni repetir matriz/Windows interno |
 | E2 | Unión material de otra serie en GRUPO | Pendiente | Selección desde diagnóstico privado de los ocho casos de iteración 13; código/serie/acabado y geometría demostrados, sin extrapolar U |
 | E3 | Comisión: orden de redondeo y edición de líneas guardadas | Pendiente | Caso 0/−10/+10, suma de filas y momento de aplicación; separar cantidades/horas; seis residuos comunicados |
 | E4 | Tapajuntas de puerta con inferior SI/NO | Pendiente | GMT004, 1P 867×2098 con serie/ala/cajón reales; comparación lateral y travesaño |

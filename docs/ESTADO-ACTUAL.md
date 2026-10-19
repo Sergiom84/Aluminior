@@ -34,8 +34,13 @@ demo antes de probarla. Sandbox habilitado por el activador revisado:
 invitado verifica los 341 archivos y cero adaptadores de red activos. Al abrir
 «Productor copia E1», el comprobador exige Crystal Reports 13.0.35. Primera
 unidad detenida y revisada; no es Productor operativo ni R1. El MSI local
-declara 13.0.0.99; el paquete oficial 13.0.35 ya está descargado y firmado,
-pendiente de propiedades y una unidad de instalación sólo invitada. No repetir
+declara 13.0.0.99; el paquete oficial firmado declara 13.0.35.4870, coincidente
+con el requisito observado. Instalado sólo en el invitado
+`d8248510-bae0-4a2e-a208-93484eee479c` como SYSTEM: msiexec terminó en 0, sin
+reinicio, y el registro de 32 bits muestra esa versión y el ProductCode
+`{E43D7D73-C531-4EB3-ACC9-0EF11E1A84B0}`. El comprobador de Crystal ya no aparece
+al reabrir la copia. El siguiente diálogo, sin pulsar Aceptar, dice que es
+necesario actualizar los controles y librerías. No repetir
 reinicio/activador/inventario ni instalar componentes en el host.
 Referencia 46.30.0006; la caché 42.35 queda fuera. Licencia/configuración todavía
 sin observar. No se han cambiado cálculos de Aluminior.

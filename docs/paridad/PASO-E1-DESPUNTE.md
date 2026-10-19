@@ -134,9 +134,23 @@ tabla Property declara **13.0.0.99**: no asumir versión por su nombre genérico
 Lectura exclusivamente `MSIDBOPEN_READONLY`, sin instalar o reparar productos.
 GAIA publica un paquete explícito 13.0.35 de 32 bits en su
 [soporte oficial](https://www.gaia-soft.com/soporte). Se ha descargado al área
-privada de pruebas, con firma válida de SAP SE; comprobar sus propiedades y
-preparar una unidad separada de instalación exclusivamente invitada antes de
-reintentar. No instalar el MSI antiguo ni modificar el host para pasar el gate.
+privada de pruebas, con firma válida de SAP SE y propiedades leídas sin escritura:
+**13.0.35.4870**, ProductCode `{E43D7D73-C531-4EB3-ACC9-0EF11E1A84B0}`.
+
+**Instalación invitada completada y parada en la dependencia siguiente.**
+El mismo Sandbox, UUID `d8248510-bae0-4a2e-a208-93484eee479c`, recibió el MSI
+oficial por `wsb exec` como `NT AUTHORITY\SYSTEM`. Recibo
+`salida/crystal-13.0.35-20261019T113449349Z-09a9e4d0435e45739dd1c7d5559d73d7/recibo.json`:
+estado `installed-verified-stop`, salida 0, sin reinicio, una sola entrada
+Registry32 con DisplayVersion `13.0.35.4870`. Los 341 archivos del payload y
+su manifiesto no cambiaron. No se ejecutó msiexec en el host ni se usó el MSI
+13.0.0.99. Se cerró el comprobador que seguía abierto y se reabrió una vez
+`aluminio.exe`. Crystal Reports ya no figura como requisito incumplido. El
+diálogo nuevo, capturado y no aceptado, dice: «Es necesario actualizar los
+controles y librerías para el correcto funcionamiento del programa. Vuelva a
+ejecutar la aplicación Productor Aluminio al finalizar este proceso.» Esa
+actualización queda fuera de esta unidad: no se pulsó Aceptar ni se registraron
+componentes. Licencia, RED/locale y R1 siguen sin observar.
 
 Preparación privada y contrato detallado:
 `output/e1-ensayo-config-20261019/continuacion-admin/copia-instalada/`.
