@@ -1,4 +1,4 @@
-import { esConfiguracionCerramiento, esResultadoCerramiento, etapasVentaCerramiento, materialesEfectivos,
+import { esConfiguracionCerramiento, esResultadoCerramiento, etapasVentaCerramiento,
   unionConfigurada, resolverOrigenSinUnion,
   type ConfiguracionCerramiento, type RedondeoVentaCerramiento, type ResultadoCerramientoV1,
   type ResultadoOrigenCerramiento } from '@aluminior/core/estructuras'
@@ -8,6 +8,7 @@ import { valorarEstructura } from '../estructuras/valorar-estructura.ts'
 import { resolverMaterialesEstructura } from '../estructuras/materiales-estructura.ts'
 import { partidasValoracion } from '../estructuras/partidas-valoracion.ts'
 import { completarCostesOrigen } from './origen-valorado.ts'
+import { origenesGeometriaCerramiento } from './origenes-geometria.ts'
 import { catalogoDespieceCargado } from '../estructuras/catalogo-despiece/cargado.ts'
 import { valorarConCatalogo } from '../estructuras/catalogo-despiece/valorar-con-catalogo.ts'
 
@@ -35,12 +36,7 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
   // Con el catálogo de despiece completo cargado, cada origen se valora por filas
   // como Productor (FILA_CENTIMOS); sin él, la vía anterior y su protocolo.
   const redondeo: RedondeoVentaCerramiento = await catalogoDespieceCargado(cliente) ? 'FILA_CENTIMOS' : 'ESTRUCTURA_NUMBER_V1'
-  const geometria = [
-    ...entrada.configuracion.modulos.map(m => ({ tipo: 'MODULO' as const, id: m.id, materiales: materialesEfectivos(m, entrada),
-      codigo: m.estructuraCodigo, anchoMm: m.anchoMm, altoMm: m.altoMm })),
-    ...entrada.configuracion.uniones.map(u => ({ tipo: 'UNION' as const, id: u.id,
-      codigo: u.codigo, anchoMm: u.grosorMm, altoMm: u.longitudMm, materiales: null })),
-  ]
+  const geometria = origenesGeometriaCerramiento(entrada.configuracion, entrada)
   for (const g of geometria) {
     const origen: ResultadoOrigenCerramiento = {
       origen: { tipo: g.tipo, id: g.id }, codigo: g.codigo,

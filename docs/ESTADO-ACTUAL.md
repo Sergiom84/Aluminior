@@ -513,6 +513,10 @@ las mejoras publicadas y la herramienta de propuesta, sin aplicar tarifas.
 Pendientes del [banco local](paridad/BANCO-CONTRASTE-2026-10-03.md): de los 31 GRUPO
 de la iteración 13 quedan 8 con unión material de serie distinta, 1 con variantes
 de vidrio por elemento, 1 con PVP ausente/ambiguo y 1 con bloqueo de acristalamiento.
+E2 atiende los primeros: la unión ya guarda su propia serie y el banco la traslada
+([evidencia y límites](paridad/EVIDENCIA-E2-UNION-SERIE-2026-10-19.md), 19/10,
+local). Falta medir el banco con la base cargada; hasta entonces las ocho líneas
+siguen contadas como excluidas.
 También quedan despunte de cabecera (10) y las observaciones en Windows.
 La primera matriz está entregada; seguir la [lista de ensayos mínimos](paridad/ENSAYOS-MINIMOS-PRODUCTOR-2026-10-03.md):
 despunte, unión de otra serie, comisión, tapajuntas, compacto, acristalamiento y

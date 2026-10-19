@@ -34,7 +34,9 @@ export function configuracionGrupo(c: Caso): { configuracion: ConfiguracionCerra
     // Ancho de la línea de accesorio es 0; grosor físico explícito está en UGrosor.
     // Solo aceptar la longitud si coincide con la medida económica de la línea.
     if (numero(u.ULongitud) !== e?.dimensiones.alto) motivos.push('longitud-de-union-no-demostrada')
-    uniones.push({ id: `union-${texto(u.Orden)}`, codigo: texto(u.CodEstr), grosorMm: numero(u.UGrosor)!, longitudMm: e?.dimensiones.alto! })
+    // La serie de la unión se conserva aunque no sea la del primer módulo.
+    uniones.push({ id: `union-${texto(u.Orden)}`, codigo: texto(u.CodEstr), grosorMm: numero(u.UGrosor)!,
+      longitudMm: e?.dimensiones.alto!, ...(e?.serie ? { materiales: { serieCodigo: e.serie } } : {}) })
   }
   if (uniones.length !== modulos.length - 1) motivos.push('composicion-no-representable')
   return { configuracion: motivos.length ? null : { version: 3, modulos, uniones }, motivos: [...new Set(motivos)] }

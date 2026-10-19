@@ -89,7 +89,12 @@ export async function ejecutarServicio(cliente: ClienteEscritura, c: Caso): Prom
     const base = config[0]!
     const uniones = es.filter(e => si(c.geometria?.find(g => texto(g.nLinEstr) === texto(e.padre.nLinea))?.EsUnionSN))
     // U = SIN UNION, sin asociación a series ni piezas; el servicio exige su receta cero explícita.
-    if (uniones.some(e => e.modelo !== 'U' && e.serie !== base.serie)) return vacia(['serie-de-union-no-representable'])
+    // Una unión de otra serie se valora con la suya, guardada en su configuración;
+    // solo se excluye si esa serie no llegó a la configuración enviada al servicio.
+    if (uniones.some(e => e.modelo !== 'U' && e.serie !== base.serie &&
+      !g.configuracion!.uniones.some(u => u.codigo === e.modelo && u.materiales?.serieCodigo === e.serie))) {
+      return vacia(['serie-de-union-no-representable'])
+    }
     // GRUPO no tiene vidrio propio: la selección global pertenece a sus módulos.
     const variantes = new Map<string, '1' | '2'>()
     for (const codigo of new Set(config.map(e => e.vidrio).filter((v): v is string => !!v))) {

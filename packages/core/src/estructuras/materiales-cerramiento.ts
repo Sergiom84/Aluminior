@@ -15,6 +15,15 @@ export interface MaterialesModulo {
   vidrioCodigo?: string
 }
 
+/**
+ * La unión guarda su propia serie cuando difiere de la general: en EMP0016,
+ * 39 GRUPO de presupuesto unen módulos con una unión cuya serie no es la del
+ * primer módulo. La unión no tiene vidrio propio, así que solo admite serie.
+ */
+export interface MaterialesUnion {
+  serieCodigo?: string
+}
+
 export type CampoMaterial = keyof MaterialesModulo
 export const CAMPOS_MATERIAL: readonly CampoMaterial[] = ['serieCodigo', 'vidrioCodigo']
 
@@ -82,11 +91,19 @@ export function modelosIguales(configuracion: ConfiguracionCerramiento, id: stri
     .map((modulo) => modulo.id)
 }
 
-export function materialesModuloValidos(valor: unknown): boolean {
+function materialesValidos(valor: unknown, campos: readonly string[]): boolean {
   if (valor === undefined) return true
   if (!valor || typeof valor !== 'object' || Array.isArray(valor)) return false
   const entradas = Object.entries(valor)
   return entradas.length > 0 && entradas.every(([campo, texto]) =>
-    (CAMPOS_MATERIAL as readonly string[]).includes(campo) &&
+    campos.includes(campo) &&
     typeof texto === 'string' && texto.trim() !== '' && texto === texto.trim().toUpperCase())
+}
+
+export function materialesModuloValidos(valor: unknown): boolean {
+  return materialesValidos(valor, CAMPOS_MATERIAL)
+}
+
+export function materialesUnionValidos(valor: unknown): boolean {
+  return materialesValidos(valor, ['serieCodigo'])
 }

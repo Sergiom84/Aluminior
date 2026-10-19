@@ -4,6 +4,13 @@
 
 > **Petición posterior — 19/10, primer arranque observado:** Sergio autoriza E1 aislado y aplicación de lo demostrado, sin G6 ni producción. [Resultado y siguiente dependencia](PASO-E1-DESPUNTE.md#ensayo-autorizado-del-1910-configuración-y-redondeo): reinicio completado, Sandbox operativo y 341 copias verificadas. El comprobador de Productor exige Crystal Reports 13.0.35; primer intento detenido y revisado. MSI local 13.0.0.99; oficial 13.0.35.4870 instalado sólo en el invitado `d8248510-bae0-4a2e-a208-93484eee479c`, salida 0 y sin reinicio. Al reabrir la copia, Crystal ya no bloquea. Parada sin pulsar Aceptar: el programa pide actualizar controles y librerías. No repetir reinicio/activador/inventario ni exigir demo. Licencia, RED/locale y R1 siguen sin observar; ningún cambio monetario nuevo. El aviso anterior conserva el alcance de la auditoría, no revoca esta petición.
 
+> **Continuación — 19/10, tarde:** Sergio comunica que no tiene la mochila USB de
+> licencia; el ensayo E1 en el invitado queda parado tras instalar Crystal, registrar
+> MSCOMCTL.OCX sólo en el Sandbox y recorrer gaControlesReg (único error: falta
+> `C:\Windows\CRYSTAL\`). El frente elegido pasa a ser E2:
+> [serie propia de la unión](EVIDENCIA-E2-UNION-SERIE-2026-10-19.md), implementada y
+> verificada localmente. Siguiente medición: banco con base cargada, con autorización propia.
+
 ## Decisión vigente
 
 Sergio pide cerrar fases y aplicarlas a Aluminior en la vida real. Esta instrucción

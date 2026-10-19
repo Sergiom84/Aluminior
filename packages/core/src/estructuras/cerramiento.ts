@@ -18,7 +18,7 @@ import {
 import {
   VERSION_COMPOSICION_CERRAMIENTO, VERSION_CONFIGURACION_CERRAMIENTO,
 } from './versiones-cerramiento.ts'
-import type { MaterialesModulo } from './materiales-cerramiento.ts'
+import type { MaterialesModulo, MaterialesUnion } from './materiales-cerramiento.ts'
 
 export { VERSION_CONFIGURACION_CERRAMIENTO }
 export const FI_1OFI_NUEVA_ALTA_MM = 300 as const
@@ -41,6 +41,8 @@ export interface UnionCerramiento {
   codigo: string
   longitudMm: number
   grosorMm: number
+  /** Solo en v3: serie propia de la unión; ausente hereda la general. */
+  materiales?: MaterialesUnion
 }
 
 interface ConfiguracionCerramientoBase {
