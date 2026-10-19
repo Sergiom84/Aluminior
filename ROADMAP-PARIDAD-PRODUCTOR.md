@@ -18,10 +18,12 @@ aislado de configuración/redondeo el 19/10. R1 y sus cuatro predicciones están
 preparados. Inventario administrativo recibido y verificado: Hyper-V responde,
 cero VMs registradas, Sandbox deshabilitado; no repetir el comando. Sergio
 elige aprovechar la instalación existente: copia sin MDB/empresas preparada
-con hashes verificados. Sandbox ya habilitado sin error, Windows exige reinicio;
-no repetir activador/inventario. Siguiente: reinicio manual tras guardar el trabajo,
-verificar el invitado y registrar el primer arranque o fallo concreto. No exigir
-instalador/demo antes de esa prueba ni llamar R1 al arranque. [Procedimiento E1](docs/paridad/PASO-E1-DESPUNTE.md#ensayo-autorizado-del-1910-configuración-y-redondeo).
+con hashes verificados. Reinicio y apertura de Sandbox completados: recibo
+invitado correcto, primer intento detenido por Crystal Reports 13.0.35.
+El MSI local es 13.0.0.99; paquete oficial descargado y firmado, pendiente de
+verificar propiedades y resolver ese requisito sólo en el invitado. No repetir
+reinicio/activador/inventario ni exigir demo ni llamar R1 al comprobador.
+[Procedimiento E1](docs/paridad/PASO-E1-DESPUNTE.md#ensayo-autorizado-del-1910-configuración-y-redondeo).
 No pedir de nuevo autorización para el alcance concedido ni ejecutar en host.
 Tramo P.6/P.7 de componentes de producción verificado
 localmente: referencias largas, teclado, anchuras, movimiento reducido y zoom
@@ -205,7 +207,7 @@ el total de todos los módulos pendientes del producto.
 | ID | Trabajo | Estado actual | Prueba necesaria para avanzar o cerrar |
 |---|---|---|---|
 | M0 | Matriz por modelo/serie/regla y ensayos mínimos | Cerrado 03/10/2026 | [Matriz](docs/paridad/MATRIZ-COBERTURA-PRODUCTOR-2026-10-03.md), 97 pares, 47 pruebas, typechecks y arquitectura; no volver a crearla, regenerar si cambian las fuentes |
-| E1 | Despunte de cabecera: base, momento y reparto | En curso; matriz evaluada y corrección técnica local entregadas. Ensayo aislado autorizado 19/10, R1 preparado; copia sin datos revisada y Sandbox habilitado, reinicio manual pendiente | [Ensayo y siguiente acción](docs/paridad/PASO-E1-DESPUNTE.md#ensayo-autorizado-del-1910-configuración-y-redondeo). Cuatro predicciones sintéticas distintas, sin RED/locale ni Productor observados. Copia instalada: 341 archivos con hashes, sin MDB/empresas; no exigir demo. Windows exige reinicio, no automático; después verificar primer arranque/fallo concreto, sin equipararlo a R1. No repetir activador/inventario. Cargo sigue bloqueado por filas/agregados, cantidades/descuentos, precisión/configuración y escritura. G6 y producción intactos; no activar cabecera por simulaciones ni repetir matriz/Windows interno |
+| E1 | Despunte de cabecera: base, momento y reparto | En curso; matriz y corrección técnica local entregadas. R1 preparado; Sandbox operativo, primer intento de la copia detenido por requisito Crystal Reports 13.0.35 | [Ensayo y siguiente dependencia](docs/paridad/PASO-E1-DESPUNTE.md#ensayo-autorizado-del-1910-configuración-y-redondeo). Recibo invitado verifica 341 archivos sin MDB/empresas y cero adaptadores activos. Comprobador de requisitos capturado/revisado; no acredita aplicación operativa ni licencia ni R1. MSI local 13.0.0.99; oficial 13.0.35 descargado y firmado, pendiente de propiedades y preparación sólo invitada. No repetir reinicio/activador/inventario ni exigir demo. Cargo sigue bloqueado por filas/agregados, cantidades/descuentos, precisión/configuración y escritura. G6 y producción intactos; no activar cabecera por simulaciones ni repetir matriz/Windows interno |
 | E2 | Unión material de otra serie en GRUPO | Pendiente | Selección desde diagnóstico privado de los ocho casos de iteración 13; código/serie/acabado y geometría demostrados, sin extrapolar U |
 | E3 | Comisión: orden de redondeo y edición de líneas guardadas | Pendiente | Caso 0/−10/+10, suma de filas y momento de aplicación; separar cantidades/horas; seis residuos comunicados |
 | E4 | Tapajuntas de puerta con inferior SI/NO | Pendiente | GMT004, 1P 867×2098 con serie/ala/cajón reales; comparación lateral y travesaño |

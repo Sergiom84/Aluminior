@@ -30,12 +30,15 @@ resuelta; no repetir el comando. Sergio indica aprovechar la instalación
 existente: copia preparada de 341 archivos/220.429.241 bytes, sin MDB, empresas,
 credenciales o enlaces, con hashes de origen/copia verificados. No exigir una
 demo antes de probarla. Sandbox habilitado por el activador revisado:
-`Disabled → Enabled`, sin error, Windows exige reinicio. No se ha reiniciado ni
-ejecutado Productor; no repetir activador/inventario. Siguiente: Sergio guarda
-su trabajo y reinicia; después verificar el invitado y primer arranque sin datos. Puede mostrar
-un fallo de componentes/licencia/archivo; no se garantiza portabilidad ni es R1.
-Referencia 46.30.0006; la caché 42.35 queda fuera. Preparación revisada PASS;
-runtime/licencia aún sin verificar. No se han cambiado cálculos de Aluminior.
+`Disabled → Enabled`, sin error. Reinicio completado y perfil abierto; recibo
+invitado verifica los 341 archivos y cero adaptadores de red activos. Al abrir
+«Productor copia E1», el comprobador exige Crystal Reports 13.0.35. Primera
+unidad detenida y revisada; no es Productor operativo ni R1. El MSI local
+declara 13.0.0.99; el paquete oficial 13.0.35 ya está descargado y firmado,
+pendiente de propiedades y una unidad de instalación sólo invitada. No repetir
+reinicio/activador/inventario ni instalar componentes en el host.
+Referencia 46.30.0006; la caché 42.35 queda fuera. Licencia/configuración todavía
+sin observar. No se han cambiado cálculos de Aluminior.
 [Procedimiento vigente y límites](paridad/PASO-E1-DESPUNTE.md#ensayo-autorizado-del-1910-configuración-y-redondeo).
 RED/locale siguen sin capturar; no se ejecuta el original en el host ni se
 activa el cargo. No repetir la auditoría o la investigación interna de Windows.

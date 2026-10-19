@@ -1,6 +1,6 @@
 # Siguiente paso E1: cálculo y reparto del despunte
 
-> **Dirección vigente — 19/10, reinicio pendiente:** ensayo aislado autorizado por Sergio. [Preparación y siguiente acción](#ensayo-autorizado-del-1910-configuración-y-redondeo): copia instalada sin empresas/MDB preparada y revisada; Sandbox habilitado, Windows exige reinicio. No repetir activador/inventario ni exigir instalador/demo. Tras el reinicio, verificar destino y primer arranque de la copia. Cargo comercial desactivado, G6 y producción intocables. Windows interno archivado; no seguir NtCreateUserProcess.
+> **Dirección vigente — 19/10, primer arranque observado:** ensayo E1 aislado autorizado. [Resultado y siguiente dependencia](#ensayo-autorizado-del-1910-configuración-y-redondeo): Sandbox operativo tras el reinicio; el comprobador de Productor exige Crystal Reports 13.0.35. No repetir reinicio/activador/inventario ni exigir demo. Primera unidad de arranque detenida y revisada; resolver únicamente ese requisito dentro del invitado antes de reintentar. Cargo comercial desactivado, G6 y producción intocables. Windows interno archivado.
 
 Procedimiento preparado el 03/10/2026 y actualizado el 04/10. Estado vigente:
 [roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md). La [continuación estática del 14/10](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#control-reparto-y-totales)
@@ -97,37 +97,58 @@ credenciales, logs, backups, estado de licencia ni enlaces/junctions.
 La caché histórica `43.35/43.35` contiene otra versión, **42.35.0002**;
 no se usa como sustituto ni se ejecuta su actualizador.
 
-**Activación completada, reinicio pendiente:** el activador revisado se ejecutó
+**Activación y reinicio completados:** el activador revisado se ejecutó
 elevado el 19/10 a las 06:56 UTC. Recibo: `Disabled → Enabled`, `restartNeeded=true`,
-sin error; CIM confirma `InstallState=1`. Windows requiere reinicio y el ejecutable
-Sandbox aún no está disponible. No se ha reiniciado, abierto el perfil ni
-ejecutado Productor. No repetir el activador ni el inventario administrativo.
-Sergio guarda su trabajo y reinicia Windows cuando le convenga; después el agente
-comprueba disponibilidad y abre el perfil `Arranque-E1.wsb` revisado.
+sin error; CIM confirma `InstallState=1`. Sergio reinició Windows: arranque del
+host a las 10:51:42 UTC, posterior a la activación. `WindowsSandbox.exe` ya
+disponible. El perfil `Arranque-E1.wsb` se abrió a las 11:04:38 UTC; Windows
+completó su instalación de primer uso y abrió el invitado. No repetir el
+activador, el inventario ni solicitar otro reinicio por este paso.
 [Microsoft documenta](https://learn.microsoft.com/en-us/windows/security/application-security/application-isolation/windows-sandbox/windows-sandbox-configure-using-wsb-file)
 el control de red/carpetas y el descarte al cerrar. El perfil desactiva red,
 portapapeles, audio, vídeo, impresora y vGPU. Sólo comparte el paquete preparado
 como lectura y una salida nueva acotada; no comparte instalación original,
 empresas ni repositorio completo. Copia de trabajo dentro del disco invitado.
 El preparador invitado rechaza ejecutarse en el host y no lanza Productor.
-El arranque invitado aún está pendiente. Revisión independiente: preparación
-PASS tras un único lote de corrección (lectura UTF-8 explícita y política
+El recibo invitado del 19/10 a las 11:05:25 UTC confirma el modelo de máquina
+virtual, cuenta `WDAGUtilityAccount`, 341 archivos verificados en
+`C:/E1Guest/Aluminio` y cero adaptadores de red activos. No se copiaron MDB.
+Los campos `legacyExecuted=false` y `databasesCopied=false` pertenecen a esa
+preparación previa; no son una medición del intento posterior.
+Revisión independiente de preparación PASS tras un único lote de corrección
+(lectura UTF-8 explícita y política
 RemoteSigned sólo del proceso invitado). Sin Bypass ni política persistente.
 Con lectura anterior faltaban dos archivos con «ñ»; con UTF-8 se resuelven los
 341. Guardas del host y del activador, hashes, perfil y enlaces verificados.
 
-**Contrato del primer arranque:** verificar invitado, paquete y destino;
-abrir sólo la copia y registrar la primera pantalla o fallo de dependencia,
-licencia o base ausente. No se garantiza portabilidad ni creación de empresa
-sin bases; no fabricar/renombrar una MDB ni reparar el host para pasar el gate.
-Sólo si aparece naturalmente Nueva Empresa se comprobará destino/código
-sintético antes de usarla. Esa observación de arranque no es el ensayo
-económico R1 ni prueba RED, redondeo o persistencia comercial.
+**Resultado del primer arranque:** doble clic sobre «Productor copia E1» en el
+escritorio invitado. El comprobador muestra «No es posible ejecutar la
+aplicación Productor Aluminio» y el requisito visible incumplido **Crystal
+Reports para Visual Studio. Versión 13.0.35**. Se capturó la pantalla y se detuvo
+esa unidad, sin pulsar su enlace ni registrar componentes. El lanzador alcanza
+la comprobación de requisitos; no demuestra aplicación operativa, licencia,
+empresa nueva, RED/locale ni ensayo económico R1.
+
+El MSI que acompaña la instalación original está firmado por SAP, pero su
+tabla Property declara **13.0.0.99**: no asumir versión por su nombre genérico.
+Lectura exclusivamente `MSIDBOPEN_READONLY`, sin instalar o reparar productos.
+GAIA publica un paquete explícito 13.0.35 de 32 bits en su
+[soporte oficial](https://www.gaia-soft.com/soporte). Se ha descargado al área
+privada de pruebas, con firma válida de SAP SE; comprobar sus propiedades y
+preparar una unidad separada de instalación exclusivamente invitada antes de
+reintentar. No instalar el MSI antiguo ni modificar el host para pasar el gate.
 
 Preparación privada y contrato detallado:
 `output/e1-ensayo-config-20261019/continuacion-admin/copia-instalada/`.
 Recibo de activación conservado allí:
 `sandbox-feature-20261019T065658248Z-510aaa62d052454ca2c8f055220ad53b.json`.
+Evidencia posterior:
+`output/e1-ensayo-config-20261019/post-reinicio-20261019/primer-arranque.png`,
+recibo invitado en `salida/`, revisión independiente y propiedades MSI en
+`post-reinicio-20261019/`. La verificación paralela conserva 369/370 guardas:
+«salida vacía» falla porque el invitado escribió su recibo durante el barrido;
+integridad del paquete, perfil y preservación sí pasan. No debilitar esa guarda
+ni presentar la ejecución completa del verificador como verde.
 La [demo oficial](https://landing.gaia-soft.com/pc-productor-aluminio-prueba/)
 queda como alternativa si un impedimento observado justifica usarla, no como
 requisito actual. No se ha solicitado ni enviado formulario alguno. El acceso
