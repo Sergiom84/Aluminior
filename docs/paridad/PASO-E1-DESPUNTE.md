@@ -149,8 +149,27 @@ su manifiesto no cambiaron. No se ejecutó msiexec en el host ni se usó el MSI
 diálogo nuevo, capturado y no aceptado, dice: «Es necesario actualizar los
 controles y librerías para el correcto funcionamiento del programa. Vuelva a
 ejecutar la aplicación Productor Aluminio al finalizar este proceso.» Esa
-actualización queda fuera de esta unidad: no se pulsó Aceptar ni se registraron
+actualización queda fuera de esa unidad: no se pulsó Aceptar ni se registraron
 componentes. Licencia, RED/locale y R1 siguen sin observar.
+
+**Unidad de controles y librerías — 19/10, parada por falta de mochila.**
+En el mismo invitado `d8248510-bae0-4a2e-a208-93484eee479c` se aceptó el diálogo
+y se observó la cadena completa de dependencias, sin tocar el host:
+
+| Observación | Evidencia | Límite |
+|---|---|---|
+| Al aceptar, el registrador `gaControlesReg` arranca y cae con «Run-time error '339': Component 'MSCOMCTL.OCX' or one of its dependencies not correctly registered» | `salida/controles-estado-20261019T133625237Z/` | El invitado no trae MSCOMCTL.OCX ni su CLSID; el payload de 341 archivos tampoco |
+| MSCOMCTL.OCX 6.00.8862 del host, firma Microsoft válida, SHA256 `09f126e6…b9712`, copiado a `SysWOW64` del invitado y registrado con `regsvr32 /s` | `salida/mscomctl-registro-20261019T133936925Z/` y `salida/mscomctl-verificacion-20261019T134128454Z.json`: 26 CLSID y la TypeLib `{831FDD16-…}` | Registro sólo en el invitado; el host no se modificó. El primer recibo se marcó `failed` por consultar un CLSID equivocado, corregido en la verificación posterior |
+| Reabierto `aluminio.exe`, vuelve a pedir actualizar controles; aceptado, el registrador recorre los componentes con RegAsm | `salida/reapertura-controles-20261019T134208324Z/` y `salida/controles-aceptar-20261019T134245870Z/` | Sigue sin acreditar aplicación operativa |
+| Único error final del registrador: «Error CRUFLGaia.dll: Error copiando CRUFLGaia.dll. No existe destino: C:\Windows\CRYSTAL\» | `salida/registrador-textos-*.json` | Falta la carpeta UFL heredada de Crystal; no se creó en esta unidad |
+
+Parada: Sergio comunica que **no dispone ahora de la mochila USB** de licencia
+(HASP/UniKey). Sin ella la copia no puede llegar a licencia, empresas ni al
+ensayo económico, así que la cadena RED/locale y el caso discriminante quedan
+bloqueados por hardware, no por preparación. No se instaló nada en el host, no
+se tocaron licencias ni salvaguardas y G6 sigue intacto. El aviso de batería
+crítica del equipo anfitrión quedó encima del invitado durante los últimos
+intentos y bloqueó el teclado/ratón sintético: se conserva en las capturas.
 
 Preparación privada y contrato detallado:
 `output/e1-ensayo-config-20261019/continuacion-admin/copia-instalada/`.
