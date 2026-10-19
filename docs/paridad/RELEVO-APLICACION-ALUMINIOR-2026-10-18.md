@@ -2,6 +2,8 @@
 
 > **Actualización — 19/10:** [auditoría de integración](AUDITORIA-INTEGRACION-REA-2026-10-19.md). Render continúa en `40cedd1`; las últimas entregas son locales. Diez E2E con BD Docker nueva y QA local pasan. Auth Supabase, comparación humana y aceptación integral permanecen abiertos. Esta autorización de pruebas no incluye ejecutar Productor, activar cargos ni publicar.
 
+> **Petición posterior — 19/10:** Sergio autoriza continuar E1 mediante ensayo de configuración/redondeo en aislamiento y aplicar sólo lo demostrado, sin G6 ni producción. [Estado y siguiente acción](PASO-E1-DESPUNTE.md#ensayo-autorizado-del-1910-configuración-y-redondeo): R1 preparado y verificado matemáticamente, ejecución no realizada por falta de destino Windows accesible. Comprobación administrativa sólo lectura preparada; no confundir la autorización ya recibida con los medios técnicos aún pendientes. El aviso anterior conserva el alcance de la auditoría, no revoca esta petición.
+
 ## Decisión vigente
 
 Sergio pide cerrar fases y aplicarlas a Aluminior en la vida real. Esta instrucción

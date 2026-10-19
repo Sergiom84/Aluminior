@@ -18,6 +18,19 @@ Este es el único punto de entrada de estado y siguiente trabajo.
 El [roadmap operativo](../ROADMAP-PARIDAD-PRODUCTOR.md) conserva el orden y
 estado único de las tareas de paridad, con mantenimiento documental obligatorio.
 
+## E1: ensayo autorizado y preparación — 19/10/2026
+
+Sergio autoriza el ensayo aislado de configuración/redondeo y la aplicación
+de lo demostrado, manteniendo G6 y producción intactos. Caso sintético R1
+preparado: cuatro predicciones distintas, reproducidas por cálculo racional
+y Decimal independiente. No es una observación de Productor ni cambia dinero.
+Bloqueo actual: Hyper-V rechaza el inventario por permisos; no hay un invitado
+Windows verificable desde esta sesión. Comprobación administrativa de sólo
+lectura preparada; no requiere que Sergio identifique previamente una VM.
+[Procedimiento vigente y límites](paridad/PASO-E1-DESPUNTE.md#ensayo-autorizado-del-1910-configuración-y-redondeo).
+RED/locale siguen sin capturar; no se ejecuta el original en el host ni se
+activa el cargo. No repetir la auditoría o la investigación interna de Windows.
+
 ## Auditoría de integración REA — 19/10/2026
 
 No están completas todas las fases. Se contrastan documentos, consumidores del

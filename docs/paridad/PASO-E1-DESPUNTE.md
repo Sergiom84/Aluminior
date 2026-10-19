@@ -1,6 +1,6 @@
 # Siguiente paso E1: cálculo y reparto del despunte
 
-> **Dirección vigente — 19/10:** [auditoría de integración](AUDITORIA-INTEGRACION-REA-2026-10-19.md) y [relevo](RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#resultado-local-del-1810-y-siguiente-entrega). Las ocho preguntas E1 ya están evaluadas; no repetirlas. Cargo comercial desactivado. Siguiente observación: nueva empresa sintética aislada, RED/locale y predicciones que discriminen redondeo, con autorización propia para el original. G6 no se modifica. Windows archivado; no seguir NtCreateUserProcess.
+> **Dirección vigente — 19/10:** ensayo aislado autorizado por Sergio tras la auditoría. [Preparación y bloqueo actual](#ensayo-autorizado-del-1910-configuración-y-redondeo): falta un destino Windows accesible y verificable; la comprobación administrativa sólo lee inventario. Las ocho preguntas ya están evaluadas. Cargo comercial desactivado, G6 y producción intocables. Windows interno archivado; no seguir NtCreateUserProcess.
 
 Procedimiento preparado el 03/10/2026 y actualizado el 04/10. Estado vigente:
 [roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md). La [continuación estática del 14/10](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#control-reparto-y-totales)
@@ -68,6 +68,57 @@ referencias históricas del ensayo, no identidad vigente. Redescubrir el ítem
 por sync_uid/proyecto antes de editarlo; el 180 del Mac trataba descuentos.
 Las fuentes privadas no
 viajan por Git/July; comprobar copias y autorización antes de operar.
+
+## Ensayo autorizado del 19/10: configuración y redondeo
+
+Petición posterior a la auditoría: ejecutar el ensayo en aislamiento y aplicar
+en Aluminior sólo lo demostrado, usando subagentes y sin tocar G6 ni producción.
+La autorización para ese alcance ya está recibida; no volver a pedirla por los
+antiguos avisos de esta documentación. El ensayo **todavía no está ejecutado**.
+
+Preflight actual: Windows 11 Pro tiene Hyper-V, pero `Get-VM -ComputerName
+localhost` rechaza el inventario por permisos. No se puede identificar ni
+verificar un invitado desde esta sesión; no se afirma que no existan VMs.
+Sandbox está deshabilitado y no se encontró otra instalación en las rutas
+conocidas. Docker usa Linux: no sustituye el runtime Windows de Productor.
+Los servicios de licencia activos del host no demuestran licencia en un invitado.
+
+Siguiente paso concreto: ejecutar como administrador la comprobación de sólo
+lectura `output/e1-ensayo-config-20261019/preparacion/Comprobar-entorno-E1.ps1`.
+No habilita componentes, arranca VMs, cambia grupos/permisos ni abre Productor.
+Escribe un recibo nuevo de inventario; con él se decide el destino de ensayo.
+Sergio no necesita conocer previamente el nombre o configuración de una VM.
+Antes de ejecutar Productor siguen siendo obligatorios copia/destino efectivos,
+aislamiento de discos/red/carpetas y runtime/licencia legítimos comprobados.
+
+**Caso preparado R1, condicionado y no observado:** tres líneas con bases
+40/60/400 €, perfil ML sintético, barra 6.000 mm y cortes 400/600/4.000 mm.
+Coste candidato 16,68 €/m y PVP 100 €/m; sin descuentos, kerf, saneado o retales.
+El coste candidato de barras menos perfiles es 16,68 €. Con margen GID
+hipotético 0,01 % sobre coste resulta 16,681668 €. Las cuatro RED y el locale
+efectivos siguen sin capturar; las predicciones siguientes requieren escalas
+de dos decimales y las bases/agregados descritos. No son valores por defecto.
+
+| Hipótesis | Cargo L1 | Cargo L2 | Cargo L3 | Suma |
+|---|---:|---:|---:|---:|
+| A: GID fino y cuotas independientes | 1,33 | 2,00 | 13,35 | 16,68 |
+| B: GID a céntimos y cuotas independientes | 1,33 | 2,00 | 13,34 | 16,67 |
+| C: GID a céntimos y mayor resto | 1,34 | 2,00 | 13,34 | 16,68 |
+| D: precio unitario ML antes de importe | 1,34 | 2,00 | 13,36 | 16,70 |
+
+Los vectores distinguen las hipótesis por identidad, aunque A/C compartan suma.
+A/B/C no tienen empates monetarios ni de restos; la separación mínima de media
+unidad es 0,0003344 €. D advierte que el precio visible puede introducir otra
+etapa: registrar `GastosIndirectos` precisos, precio/unidad, metraje e importe.
+Un resultado fuera de las hipótesis exige corregirlas, no un ajuste de céntimos.
+No se clasifica nada si faltan RED/locale, entradas o formación de agregados.
+
+Preparación privada: `output/e1-ensayo-config-20261019/casos/PROTOCOLO.md`,
+`predecir.py`, `predicciones.json` y `captura-pendiente.json`. Generador racional
+independiente y contraste Decimal del arquitecto coinciden; ejecución sin
+conexiones. La captura mantiene configuración/observación/clasificación nulas.
+No se modifica `repartirDecimal`, el coste técnico ni un cargo comercial por
+estas simulaciones. No hay cambio funcional demostrado que aplicar todavía.
 
 ## Antes de abrir un ensayo
 
