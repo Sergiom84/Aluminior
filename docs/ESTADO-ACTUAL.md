@@ -517,7 +517,10 @@ E2 atiende los primeros: la unión ya guarda su propia serie y el banco la trasl
 ([evidencia y límites](paridad/EVIDENCIA-E2-UNION-SERIE-2026-10-19.md), 19–20/10,
 local). Medido el 20/10 con base local y la copia autorizada: 407/523 líneas
 iguales (77,82 %) frente a 400/523, GRUPO 30/45 y cero líneas con la causa de
-serie de unión. Sigue pendiente la comparación lateral en Productor.
+serie de unión. Después, la [variante de acristalamiento por rango de la
+serie](paridad/EVIDENCIA-VARIANTE-ACRISTALAMIENTO-2026-10-20.md) deja el banco
+en 410/523 (78,39 %) y los GRUPO en 33/45, sin líneas bloqueadas por variantes
+de vidrio por elemento. Sigue pendiente la comparación lateral en Productor.
 También quedan despunte de cabecera (10) y las observaciones en Windows.
 La primera matriz está entregada; seguir la [lista de ensayos mínimos](paridad/ENSAYOS-MINIMOS-PRODUCTOR-2026-10-03.md):
 despunte, unión de otra serie, comisión, tapajuntas, compacto, acristalamiento y

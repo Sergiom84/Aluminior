@@ -2,8 +2,8 @@
 
 > Referencia fechada; conservar evidencia y límites. No ejecutar sus pendientes o permisos como instrucciones actuales. Consultar el [roadmap vigente](../../ROADMAP-PARIDAD-PRODUCTOR.md).
 
-**77,82 % de las líneas elegibles salen al mismo precio efectivo que Productor: 407/523.**
-En 2026: **82,06 % (407/496)**.
+**78,39 % de las líneas elegibles salen al mismo precio efectivo que Productor: 410/523.**
+En 2026: **82,66 % (410/496)**.
 Se mide coincidencia numérica de la copia y del código actual, no aceptación comercial ni certificación de fabricación.
 
 ## Historial
@@ -28,6 +28,8 @@ publicadas en `main`; cada una conserva todas las igualdades anteriores.
 | 03/10/2026 | `9792c6d` | Opciones por defecto sin selección guardada | 380 | 81 | 5 | 57 | 0 |
 | 03/10/2026 | `e2b0232` | GRUPO: medidas fraccionarias, catálogo ESM y U SIN UNION | 400 | 81 | 5 | 37 | 0 |
 | 20/10/2026 | `2f0d452` | E2: serie propia de la unión del cerramiento | 407 | 82 | 5 | 29 | 0 |
+| 20/10/2026 | `pendiente` | Variante de acristalamiento por rango de la serie | 410 | 83 | 5 | 25 | 0 |
+
 
 
 
@@ -491,6 +493,7 @@ pendientes. Producción consta como verificada por Claude en el relevo recibido,
 con aceptación de valorar/guardar/recargar/PDF todavía pendiente.
 
 
+
 ## Avance E1 — 04/10/2026, fuera del corpus del banco
 
 [Evidencia y reproducción](EVIDENCIA-E1-DESPUNTE-2026-10-04.md). Manual y
@@ -548,8 +551,8 @@ La asignación por identidad queda en `resultados.json → diagnostico.bloqueos`
 ## Alcance, fuente y preparación
 
 Copia autorizada `EMP0016/Anterior.mdb`, solo lectura con `mdb-reader` y proyección de campos técnicos.
-SHA-256: `e8518386687cb459ebfa7906c010700f6838e64d36e1bec72ecdc038123721a0`. Ejecución: `2026-10-20T08:22:17.455Z`.
-Revisión Git anterior al cambio de trabajo medido: `2f0d4528b7e969ec3e2136525b7f6c23d18b6616`; el Historial identifica cada corrección posterior.
+SHA-256: `e8518386687cb459ebfa7906c010700f6838e64d36e1bec72ecdc038123721a0`. Ejecución: `2026-10-20T08:47:34.951Z`.
+Revisión Git anterior al cambio de trabajo medido: `49632c72760eb2669c44c3b248f5eb53a03e0052`; el Historial identifica cada corrección posterior.
 Confirmados 403 presupuestos (22 de 2025, 381 de 2026) y 105011 filas:
 790 estructuras independientes, 167 GRUPO y 1169 elementos internos
 (1068 con Precio > 0). Los 1169 elementos no se suman de nuevo al denominador del GRUPO.
@@ -619,7 +622,7 @@ La proximidad nunca cuenta como igualdad. Una igualdad de precio puede tener dif
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | 2O | 231 | 31 | 200 | 166 | 30 | 0 | 4 | 0 | 83,00 |
 | 1O | 140 | 33 | 107 | 89 | 14 | 2 | 2 | 0 | 83,18 |
-| GRUPO | 167 | 122 | 45 | 30 | 3 | 3 | 9 | 0 | 66,67 |
+| GRUPO | 167 | 122 | 45 | 33 | 4 | 3 | 5 | 0 | 73,33 |
 | PC2 | 33 | 2 | 31 | 22 | 8 | 0 | 1 | 0 | 70,97 |
 | C2 | 28 | 0 | 28 | 23 | 3 | 0 | 2 | 0 | 82,14 |
 | 0 | 31 | 10 | 21 | 18 | 3 | 0 | 0 | 0 | 85,71 |
@@ -664,7 +667,7 @@ La proximidad nunca cuenta como igualdad. Una igualdad de precio puede tener dif
 | PSM001 | 135 | 135 | 0 | 0 | 0 | 0 | 0 | 0 | — |
 | PSM002 | 11 | 11 | 0 | 0 | 0 | 0 | 0 | 0 | — |
 | PSM004 | 14 | 14 | 0 | 0 | 0 | 0 | 0 | 0 | — |
-| **TOTAL** | **957** | **434** | **523** | **407** | **82** | **5** | **29** | **0** | **77,82** |
+| **TOTAL** | **957** | **434** | **523** | **410** | **83** | **5** | **25** | **0** | **78,39** |
 
 ## Exclusiones
 
@@ -690,14 +693,14 @@ Actualización anterior no acredita por sí sola toda la historia de precios.
 
 | Año | Líneas | Igual | Cercano | Distinto | Sin valorar | Error | Igual % |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| 2026 | 496 | 407 | 56 | 4 | 29 | 0 | 82,06 |
+| 2026 | 496 | 410 | 57 | 4 | 25 | 0 | 82,66 |
 | 2025 | 27 | 0 | 26 | 1 | 0 | 0 | 0,00 |
 
 | Fecha de PVP respecto al presupuesto | Líneas | Igual | Cercano | Distinto | Sin valorar | Error |
 |---|---:|---:|---:|---:|---:|---:|
 | anterior-o-igual | 199 | 186 | 11 | 0 | 2 | 0 |
-| posterior | 72 | 5 | 61 | 3 | 3 | 0 |
-| desconocida | 252 | 216 | 10 | 2 | 24 | 0 |
+| posterior | 74 | 6 | 62 | 3 | 3 | 0 |
+| desconocida | 250 | 218 | 10 | 2 | 20 | 0 |
 
 Desconocida incluye cálculos no ejecutables y cualquier selección con fecha incompleta;
 no equivale a tarifa errónea. Los casos con PVP posterior permanecen separados y no demuestran

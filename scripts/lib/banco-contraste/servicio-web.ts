@@ -5,7 +5,7 @@ import { plantillaDiseno, UNIONES_VISUALES } from '@aluminior/core/estructuras'
 import { multiplicarDecimal, normalizarDecimal } from '@aluminior/core/precios'
 import { valorarEstructura, prepararManoObra, valorarCerramiento, importesLineaCerramiento, esConfiguracionCerramiento,
   type ClienteEscritura } from '@aluminior/web/banco-contraste'
-import { opcionAcristalamientoOrigen } from './acristalamiento.ts'
+import { opcionAcristalamientoOrigen, variantesPorElemento, type DatosVidrio } from './acristalamiento.ts'
 import { configuracionGrupo } from './geometria.ts'
 import { accesoriosDeCaso } from './accesorios.ts'
 import { cotasDeCaso } from './cotas.ts'
@@ -96,16 +96,28 @@ export async function ejecutarServicio(cliente: ClienteEscritura, c: Caso): Prom
       return vacia(['serie-de-union-no-representable'])
     }
     // GRUPO no tiene vidrio propio: la selección global pertenece a sus módulos.
-    const variantes = new Map<string, '1' | '2'>()
+    // La variante la decide el rango de grosor de la serie del elemento, igual
+    // que el motor; la marca de doble acristalamiento solo manda sin rango.
+    const vidrios = new Map<string, DatosVidrio | null>()
     for (const codigo of new Set(config.map(e => e.vidrio).filter((v): v is string => !!v))) {
-      const [articulo] = await cliente.select().from(schema.articulosDespiece).where(eq(schema.articulosDespiece.articuloCodigo, codigo)).limit(1)
-      variantes.set(codigo, articulo?.dobleAcristalamiento ? '2' : '1')
+      const [articulo] = await cliente.select().from(schema.articulosDespiece)
+        .where(eq(schema.articulosDespiece.articuloCodigo, codigo)).limit(1)
+      vidrios.set(codigo, articulo
+        ? { grosorAcristalar: Number(articulo.grosorAcristalar), dobleAcristalamiento: articulo.dobleAcristalamiento }
+        : null)
     }
+    const rangos = new Map<string, number>()
+    for (const serie of new Set(config.map(e => e.serie).filter((s): s is string => !!s))) {
+      const [parametros] = await cliente.select().from(schema.conjuntoParametrosDespiece)
+        .where(eq(schema.conjuntoParametrosDespiece.conjuntoCodigo, serie)).limit(1)
+      rangos.set(serie, Number(parametros?.grosorMaximoSimple ?? 0))
+    }
+    const variantes = variantesPorElemento(config, c => vidrios.get(c) ?? null, s => (s && rangos.get(s)) || 0)
     if (new Set(variantes.values()).size > 1) return vacia(['variantes-de-vidrio-por-elemento-no-representables'])
     const r = await valorarCerramiento(cliente, { ...general, serieCodigo: base.serie,
       vidrioCodigo: base.vidrio, acabadoCodigo: [...acabados][0] ?? acabado,
       acabadoAccesoriosCodigo: [...acabadosAccesorios][0],
-      varianteAcristalamiento: base.vidrio ? variantes.get(base.vidrio)! : '1',
+      varianteAcristalamiento: base.vidrio ? variantes.get(`${base.serie ?? ''}|${base.vidrio}`)! : '1',
       opcionesHerraje: [...selecciones].filter(([, s]) => s.has(true)).map(([k]) => k), configuracion: g.configuracion,
       // Ningún elemento guarda selección: Productor usa las opciones por defecto.
       opcionesPorDefecto: es.every(e => !e.opciones.length) })

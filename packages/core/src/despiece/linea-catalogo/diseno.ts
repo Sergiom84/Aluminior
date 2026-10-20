@@ -18,11 +18,23 @@ const COMPONENTE_VIDRIO = '1'
 /** Informativos y accesorios de diseño: describen, nunca son material propio. */
 const sinMaterial = (f: FilaPlantillaCatalogo) => /^(inf|Acc)/.test(f.funcion ?? '')
 
-/** Variante de perfil de hoja por el grosor del vidrio (CHM 5.1.2.12.3.2). */
-export function varianteAcristalamiento(serie: SerieCatalogo, vidrio: ArticuloCatalogo | null): VarianteAcristalamiento {
+/**
+ * Variante de perfil de hoja por el grosor del vidrio (CHM 5.1.2.12.3.2).
+ * La misma regla la necesitan quienes solo tienen las medidas, sin catálogo
+ * cargado, así que los datos van explícitos: el rango de la serie manda y la
+ * marca de doble acristalamiento solo decide cuando la serie no lo declara.
+ */
+export function varianteSegunGrosor(
+  serie: Pick<SerieCatalogo, 'grosorMaximoSimple'>,
+  vidrio: Pick<ArticuloCatalogo, 'grosorAcristalar' | 'dobleAcristalamiento'> | null,
+): VarianteAcristalamiento {
   if (!vidrio) return '2'
   if (serie.grosorMaximoSimple > 0) return vidrio.grosorAcristalar <= serie.grosorMaximoSimple ? '1' : '2'
   return vidrio.dobleAcristalamiento ? '2' : '1'
+}
+
+export function varianteAcristalamiento(serie: SerieCatalogo, vidrio: ArticuloCatalogo | null): VarianteAcristalamiento {
+  return varianteSegunGrosor(serie, vidrio)
 }
 
 export function despiezarDiseno(
