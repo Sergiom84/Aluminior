@@ -327,6 +327,33 @@ autorización del original; G6 intacto. P.6/P.7: Auth real y comparación humana
 Sin cambios de producto, push, sync, despliegue ni cierre de E1/P.6/P.7.
 Evidencia actual privada: `output/auditoria-integracion-rea-20261019/`.
 
+## Estado al cierre del 20/10 y siguiente unidad
+
+Último commit local: `9cbafdc`, rama `codex/rea-productor-20261016`, árbol limpio.
+Cuatro entregas locales encadenadas, todas sin publicar:
+
+| Commit | Qué dejó disponible | Límite |
+|---|---|---|
+| `aefd8af` | E1 en el invitado: Crystal 13.0.35.4870 instalado y MSCOMCTL.OCX registrado sólo en el Sandbox; `gaControlesReg` recorre los componentes | Parado: falta `C:\Windows\CRYSTAL\` y, sobre todo, la mochila USB de licencia. El Sandbox ya no existe |
+| `2f0d452` | E2: la unión guarda su propia serie en v3 y la valoración resuelve cada origen con la suya | Sin comparación lateral en Productor |
+| `49632c7` | Medición del banco: 407/523 iguales (77,82 %), GRUPO 30/45, cero casos de serie de unión | Base local efímera; se pierde al parar Docker |
+| `1b3d8f8` + `9cbafdc` | Variante de acristalamiento por rango de la serie: 410/523 (78,39 %), GRUPO 33/45 | Alternativas `nTAcris` 2–5 y mezcla real de variantes siguen bloqueadas |
+
+Herramientas de medición reconstruidas en `export_datos/herramientas`
+(`mdb-reader` y `exportar-csv.mjs`, ambos ignorados por Git). El flujo completo
+—extraer, catalogo, preparar, medir— está en BANCO-CONTRASTE y funciona en este
+equipo con la copia `C:\Users\sergi\Desktop\MIX\Productor\Aluminio\EMP0016\Anterior.mdb`.
+Al regenerar el informe con `--informe` hay que devolver a mano su nota de
+documento fechado y el apartado «Avance E1 — 04/10/2026», que el generador borra.
+
+Candidatos medibles para la siguiente unidad, por líneas bloqueadas en el banco
+actual: `resolucion-de-componentes-y-herrajes` (4 líneas, 14.953 €, todas sin
+importe), `pvp-o-tarifa`/`importe-de-fila` (12 líneas, 670,54 € de desviación
+medible) y `total-padre-no-reconciliado` (17 líneas). `despunte-de-documento-sin-regla`
+(10) es E1 y sigue bloqueado por la licencia. Elegir una causa, reconstruir su
+evidencia desde el volcado privado antes de tocar código y medir con el control
+negativo, como en las dos unidades anteriores.
+
 ## Continuar en otra conversación
 
 Usar exclusivamente la raíz y rama del inicio de este relevo. Verificar en
@@ -335,6 +362,10 @@ reset/checkout/stash. Leer AGENTS.md, ESTADO-ACTUAL, roadmap y este relevo.
 Consultar el último commit local, sin retroceder al cierre documental antiguo.
 Zoom nativo verificado y diez E2E con persistencia en Docker ejecutados el
 19/10, con QA local; Auth real y comparación humana equivalente pendientes.
+El 20/10 Sergio autorizó levantar el Postgres efímero local y medir el banco
+con la copia autorizada; esa autorización cubre repetir la medición local, no
+operar bases reales. No repetir E2 ni la variante de acristalamiento sin un
+fallo nuevo: sus controles negativos están ejecutados y documentados.
 E1 sigue requiriendo empresa sintética nueva y RED/locale/caso discriminante,
 con autorización del original. No operar G6. No repetir matriz E1, producción,
 errores, foco, zoom ni los diez casos Docker sin cambio/fallo nuevo; no reabrir
