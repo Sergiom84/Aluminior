@@ -37,8 +37,13 @@ describe('acristalarVidrio', () => {
     expect(r.incidencias).toEqual([])
     expect(r.avisos).toHaveLength(2)
   })
-  it('bloquea vidrio sin fila, tabla vacía, por posiciones o sin descuento de junquillo', () => {
-    expect(acristalarVidrio({ ...vidrio, grosorMm: 20 }, tabla, descuentos, existe).incidencias).toEqual(['sin junquillo para vidrio de 20 mm'])
+  it('omite junquillo y juntas si ninguna fila cubre el grosor, sin bloquear', () => {
+    const r = acristalarVidrio({ ...vidrio, grosorMm: 20 }, tabla, descuentos, existe)
+    expect(r.incidencias).toEqual([])
+    expect(r.piezas).toEqual([])
+    expect(r.avisos).toEqual(['vidrio de 20 mm sin fila de acristalamiento: se omiten junquillo y juntas como en Productor'])
+  })
+  it('bloquea tabla vacía, por posiciones o sin descuento de junquillo', () => {
     expect(acristalarVidrio(vidrio, [], descuentos, existe).incidencias).toEqual(['tabla de acristalamiento sin filas persistidas'])
     expect(acristalarVidrio(vidrio, [{ ...tabla[0]!, posicion: 'Sup' }], descuentos, existe).incidencias[0]).toMatch(/posiciones/)
     expect(acristalarVidrio(vidrio, tabla, descuentos.slice(0, 1), existe).incidencias[0]).toMatch(/descuento de junquillo/)

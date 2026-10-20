@@ -346,13 +346,30 @@ equipo con la copia `C:\Users\sergi\Desktop\MIX\Productor\Aluminio\EMP0016\Anter
 Al regenerar el informe con `--informe` hay que devolver a mano su nota de
 documento fechado y el apartado «Avance E1 — 04/10/2026», que el generador borra.
 
-Candidatos medibles para la siguiente unidad, por líneas bloqueadas en el banco
-actual: `resolucion-de-componentes-y-herrajes` (4 líneas, 14.953 €, todas sin
-importe), `pvp-o-tarifa`/`importe-de-fila` (12 líneas, 670,54 € de desviación
-medible) y `total-padre-no-reconciliado` (17 líneas). `despunte-de-documento-sin-regla`
-(10) es E1 y sigue bloqueado por la licencia. Elegir una causa, reconstruir su
-evidencia desde el volcado privado antes de tocar código y medir con el control
-negativo, como en las dos unidades anteriores.
+Candidatos que quedaban al cierre de `9cbafdc`, ya investigados el 20/10
+sin ejecutar Productor. No repetir la investigación ni ajustar la tarifa:
+
+- `pvp-o-tarifa` / `importe-de-fila`: la desviación de 670,54 € eran cuatro
+  líneas distintas, no doce. Dos tienen PVP posterior con el mismo acabado de
+  perfil; las otras no reconcilian el padre con las piezas. No cambiar el
+  catálogo para cuadrarlas.
+- `resolucion-de-componentes-y-herrajes`: cubo ruidoso. El aviso «sin artículo»
+  de V1000 no es un herraje. `caso-01332` (`asociación 84052`, `GM5568`) pide
+  la medida de la hoja, no el exterior. Sigue sin regla demostrada.
+- `total-padre-no-reconciliado`: diez de diecisiete son el despunte de
+  cabecera. Sigue siendo E1 y depende de la licencia.
+
+La causa medida está en [omisión de junquillo sin fila](EVIDENCIA-OMISION-JUNQUILLO-2026-10-20.md):
+410/523 se mantiene, sin valorar pasa de 25 a 21, y ninguna de las cuatro
+líneas desbloqueadas queda igual. Cambio local, sin commit. El control
+negativo devuelve 410/83/5/25; la guarda no nombra pérdidas porque no hubo
+igualdades nuevas.
+
+Siguiente causa aún no reconstruida, si se sigue en el banco: perfiles
+adicionales `GM487`/`GM492` (`caso-01618`, `caso-01698`), cuya suma histórica
+cuadra con el padre, o `accesorio-de-linea-no-representable` (3 líneas).
+Reconstruir desde el volcado antes de tocar código. No repetir E2, la variante
+ni esta omisión.
 
 ## Continuar en otra conversación
 
@@ -364,8 +381,9 @@ Zoom nativo verificado y diez E2E con persistencia en Docker ejecutados el
 19/10, con QA local; Auth real y comparación humana equivalente pendientes.
 El 20/10 Sergio autorizó levantar el Postgres efímero local y medir el banco
 con la copia autorizada; esa autorización cubre repetir la medición local, no
-operar bases reales. No repetir E2 ni la variante de acristalamiento sin un
-fallo nuevo: sus controles negativos están ejecutados y documentados.
+operar bases reales. No repetir E2, la variante de acristalamiento ni la omisión de junquillo
+sin fila sin un fallo nuevo: sus controles negativos están ejecutados y
+documentados. La omisión no está en `9b03f5c`; es el cambio local posterior.
 E1 sigue requiriendo empresa sintética nueva y RED/locale/caso discriminante,
 con autorización del original. No operar G6. No repetir matriz E1, producción,
 errores, foco, zoom ni los diez casos Docker sin cambio/fallo nuevo; no reabrir

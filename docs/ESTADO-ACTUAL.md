@@ -520,7 +520,10 @@ iguales (77,82 %) frente a 400/523, GRUPO 30/45 y cero líneas con la causa de
 serie de unión. Después, la [variante de acristalamiento por rango de la
 serie](paridad/EVIDENCIA-VARIANTE-ACRISTALAMIENTO-2026-10-20.md) deja el banco
 en 410/523 (78,39 %) y los GRUPO en 33/45, sin líneas bloqueadas por variantes
-de vidrio por elemento. Sigue pendiente la comparación lateral en Productor.
+de vidrio por elemento. Después, la [omisión de junquillo sin fila](paridad/EVIDENCIA-OMISION-JUNQUILLO-2026-10-20.md)
+deja las igualdades en 410/523 y baja sin valorar de 25 a 21: cuatro líneas
+pasan a valoradas y ninguna a igual. No repetirla ni ajustar la tarifa para
+cuadrarlas. Sigue pendiente la comparación lateral en Productor.
 También quedan despunte de cabecera (10) y las observaciones en Windows.
 La primera matriz está entregada; seguir la [lista de ensayos mínimos](paridad/ENSAYOS-MINIMOS-PRODUCTOR-2026-10-03.md):
 despunte, unión de otra serie, comisión, tapajuntas, compacto, acristalamiento y
