@@ -48,9 +48,44 @@ representable.
 | Controles negativos | Ignorando la serie de la unión caen las dos pruebas de valoración; sin trasladarla en el banco cae la de geometría |
 | Tipos y arquitectura | `npm run typecheck` en los cuatro paquetes, `tsc -p scripts/tsconfig.banco-contraste.json` y 0 infracciones de modularidad |
 
+## Medición del banco — 20/10/2026
+
+Sergio autoriza levantar la base local y medir. Postgres efímero en
+`127.0.0.1:55433/aluminior_real_test` (tmpfs, `packages/db/docker-compose.yml`),
+catálogo exportado de la copia autorizada `EMP0016/Anterior.mdb`, SHA-256
+`e8518386…23721a0`, con `mdb-reader` en solo lectura. Sin clientes, proveedores,
+obras ni documentos; ninguna escritura fuera de ese contenedor.
+
+| Medición | Antes (03/10, `e2b0232`) | Ahora (`2f0d452`) |
+|---|---:|---:|
+| Líneas elegibles iguales | 400/523 (76,48 %) | 407/523 (77,82 %) |
+| GRUPO iguales | 23/45 (51,11 %) | 30/45 (66,67 %) |
+| GRUPO sin valorar | 17 | 9 |
+| Líneas con `serie-de-union-no-representable` | 11 | 0 |
+
+Control determinista: con el cambio revertido, la misma base y el mismo catálogo,
+la guarda de no regresión del propio banco aborta la medición con
+«Regresión: 7 líneas antes iguales; identidades: caso-01989, caso-02023,
+caso-02046, caso-02048, caso-02071, caso-02106, caso-02110». Esas siete son las
+que el cambio gana; sus uniones son `GMU038`, `GMU040` y `PSU001` entre
+`GMC400`, `GMA350` y `GMA60RL`, y coinciden al céntimo salvo `caso-02106`, que
+queda en 1.217,85 frente a 1.217,86 esperados y entra como igual por el umbral
+del banco.
+
+El resto de GRUPO con unión de otra serie no cambia de estado: 37 de los 167
+GRUPO llevan al menos una, pero la mayoría ya estaba excluida antes del servicio
+por diseño específico o entradas incompletas, y dos siguen bloqueadas por
+variantes de vidrio y por resolución de componentes y herrajes.
+
+El informe del banco se ha regenerado con estas cifras; se conservan su nota de
+documento fechado y el apartado histórico «Avance E1 — 04/10/2026» que el
+generador no reescribe. La base local es efímera: se pierde al parar Docker.
+
 ## Límite
 
-Queda por medir: ejecutar el banco con la base cargada para confirmar que las
-líneas excluidas pasan a valorarse y con qué importe. Esa ejecución necesita
-base de datos local con el volcado real y autorización propia; no se ha hecho
-aquí. Tampoco se ha abierto Productor: sin la mochila USB no arranca.
+No se ha abierto Productor: sin la mochila USB no arranca, así que la
+comparación lateral del mismo GRUPO en el original sigue pendiente. La medición
+sólo acredita coincidencia numérica con el histórico de la copia, no aceptación
+comercial. Las causas `coste-de-articulo`, `acabado-de-articulo`,
+`pvp-o-tarifa` y `pieza-ausente` que acompañan a las siete líneas ganadas
+siguen abiertas y no las resuelve esta entrega.
