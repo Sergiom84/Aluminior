@@ -28,7 +28,7 @@ publicadas en `main`; cada una conserva todas las igualdades anteriores.
 | 03/10/2026 | `9792c6d` | Opciones por defecto sin selección guardada | 380 | 81 | 5 | 57 | 0 |
 | 03/10/2026 | `e2b0232` | GRUPO: medidas fraccionarias, catálogo ESM y U SIN UNION | 400 | 81 | 5 | 37 | 0 |
 | 20/10/2026 | `2f0d452` | E2: serie propia de la unión del cerramiento | 407 | 82 | 5 | 29 | 0 |
-| 20/10/2026 | `pendiente` | Variante de acristalamiento por rango de la serie | 410 | 83 | 5 | 25 | 0 |
+| 20/10/2026 | `1b3d8f8` | Variante de acristalamiento por rango de la serie | 410 | 83 | 5 | 25 | 0 |
 
 
 
