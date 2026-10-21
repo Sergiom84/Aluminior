@@ -526,7 +526,12 @@ pasan a valoradas y ninguna a igual. No repetirla ni ajustar la tarifa para
 cuadrarlas. Sigue pendiente la comparación lateral en Productor.
 Las causas ya cerradas sin regla y su condición de reapertura están en
 [CAUSAS-CERRADAS](paridad/CAUSAS-CERRADAS.md); consultarla antes de elegir
-unidad y calcular el techo con `scripts/techo-de-causa.mjs`.
+unidad y calcular el techo con `scripts/techo-de-causa.mjs`. El 21/10 se cerró
+sin regla [la familia 112 de accesorios](paridad/EVIDENCIA-TUBOS-FAMILIA-112-2026-10-21.md),
+tres líneas: la plantilla del tubo ofrece cuatro filas, el despiece guarda una y
+los tres casos guardan tres distintas sin dato que lo determine. De las 21 sin
+valorar, diez son el despunte de cabecera (E1, parado por la licencia) y solo
+`caso-01869` y `caso-01944` quedan como unidades de una línea sin veredicto.
 También quedan despunte de cabecera (10) y las observaciones en Windows.
 La primera matriz está entregada; seguir la [lista de ensayos mínimos](paridad/ENSAYOS-MINIMOS-PRODUCTOR-2026-10-03.md):
 despunte, unión de otra serie, comisión, tapajuntas, compacto, acristalamiento y

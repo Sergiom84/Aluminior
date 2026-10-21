@@ -365,11 +365,23 @@ líneas desbloqueadas queda igual. Cambio local, sin commit. El control
 negativo devuelve 410/83/5/25; la guarda no nombra pérdidas porque no hubo
 igualdades nuevas.
 
-Siguiente causa aún no reconstruida, si se sigue en el banco: perfiles
-adicionales `GM487`/`GM492` (`caso-01618`, `caso-01698`), cuya suma histórica
-cuadra con el padre, o `accesorio-de-linea-no-representable` (3 líneas).
-Reconstruir desde el volcado antes de tocar código. No repetir E2, la variante
-ni esta omisión.
+**Estado del 21/10.** Las dos candidatas que quedaban están cerradas sin regla y
+registradas en [CAUSAS-CERRADAS](CAUSAS-CERRADAS.md): los perfiles adicionales
+`GM487`/`GM492` ya lo estaban desde fase-8, y
+[`accesorio-de-linea-no-representable`](EVIDENCIA-TUBOS-FAMILIA-112-2026-10-21.md)
+se cerró hoy —familia 112, tubos: la plantilla ofrece cuatro filas, el despiece
+guarda una, y los tres casos guardan tres distintas sin que ningún dato extraído
+diga cuál. No ampliar la lista blanca de familias sin la evidencia que esa ficha
+exige. No repetir E2, la variante, la omisión de junquillo ni esta.
+
+Composición real de las 21 sin valorar, calculada con `techo-de-causa.mjs`:
+**diez son el despunte de cabecera, E1, parado por la licencia**, y el resto
+arrastra entre tres y nueve co-causas compartidas por todas sus líneas, salvo
+`caso-01869` (accesorios que piden el catálogo de despiece completo, 869,67 €) y
+`caso-01944` (`familia-adicional-no-representable`, 1.378,11 €), que son las dos
+únicas unidades de una línea sin veredicto previo. El banco se está acercando al
+límite de lo medible sin mochila: antes de abrir otra unidad conviene decidir si
+el siguiente paso es la licencia en vez de más causas de una línea.
 
 ## Continuar en otra conversación
 
