@@ -6,6 +6,10 @@ Actualizado: 20/10/2026 (omisión de junquillo sin fila medida en local, sin igu
 Este archivo es el registro único del orden y estado de estas tareas.
 Los documentos de ensayo explican cómo realizarlas; los informes fechados
 conservan evidencia. Sus antiguas listas de pendientes no sustituyen este registro.
+Antes de elegir una tarea del banco, consultar
+[CAUSAS-CERRADAS](docs/paridad/CAUSAS-CERRADAS.md): recoge las causas ya
+investigadas y cerradas sin regla, y qué evidencia nueva reabre cada una.
+El techo de una causa se calcula con `scripts/techo-de-causa.ts`, no se estima.
 
 
 ## Siguiente paso

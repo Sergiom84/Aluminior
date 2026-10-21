@@ -19,6 +19,12 @@ The backend architecture is stable by default. The current web design is not:
 do not preserve an existing UI decision merely because it already exists when
 verified Productor behavior contradicts it.
 
+If you are executing a bounded unit handed to you by an architect — Sergio or
+an agent acting as architect — you must also read `AGENTS-EJECUTOR.md` before
+touching anything. It is mandatory, not background reading: it owns the Git
+prohibitions, the scope and reporting protocol, the negative-control rule and
+the list of blocked work. It does not replace this file.
+
 ## Modular architecture
 
 - Build by vertical product modules and small files with one clear responsibility.
