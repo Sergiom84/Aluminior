@@ -55,6 +55,10 @@ if (accion === 'catalogo') {
     const firmasPrevias = join(salida, 'base-verificada.json')
     try {
       const previas = JSON.parse(readFileSync(firmasPrevias, 'utf8'))
+      if ((previas.firmaVersion ?? 1) !== verificacion.firmaVersion) throw new Error(
+        `base-verificada.json usa la fórmula de firma v${previas.firmaVersion ?? 1} y ahora es v${verificacion.firmaVersion}.\n` +
+        'No es deriva del catálogo: las firmas no son comparables entre fórmulas.\n' +
+        'Recalibra una vez aparta el fichero y repite con --base-nueva.')
       if (previas.fuenteHash !== manifiesto.sha256 || JSON.stringify(previas.firmas) !== JSON.stringify(verificacion.firmas)) throw new Error('El catálogo local cambió respecto a la medición anterior')
     } catch (e) {
       if ((e as NodeJS.ErrnoException).code !== 'ENOENT') throw e

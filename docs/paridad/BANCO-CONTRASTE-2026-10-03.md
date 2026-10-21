@@ -779,6 +779,34 @@ npx tsc -p scripts/tsconfig.banco-contraste.json --noEmit
 
 Para repetir sobre la misma copia y base basta `medir`. El script exige host local, puerto 55433 y base
 aluminior_real_test, no carga entorno ni admite parámetros de conexión alternativos.
+
+**Firma de base v2 — 21/10/2026.** `/var/lib/postgresql/data` del contenedor es
+`tmpfs`: la base muere al **parar** Docker, no solo al recrearlo, y
+`aluminior_real_test` hay que crearla otra vez. Hasta hoy la firma hasheaba la
+fila completa, así que los `id` uuid de `estructura_cotas` y
+`estructura_componentes` y el `creado_en` de `articulos` la cambiaban en cada
+reconstrucción con datos idénticos; el falso positivo se sorteaba apartando
+`base-verificada.json`, cuatro veces desde el 03/10. Ahora la firma excluye `id`
+y `creado_en`, comprobado sobre tablas temporales: regenerando solo los `id`, la
+firma v1 pasa de `6ecb9fcd…` a `825a7ae6…` y la v2 no se mueve.
+
+Consecuencia operativa: **no se borra `base-verificada.json`**. Una reconstrucción
+desde los mismos CSV debe reproducir sus firmas, así que una discrepancia ya
+significa algo real. `medir` distingue el cambio de fórmula de la deriva de
+catálogo y solo acepta la ausencia del fichero con `--base-nueva`, que queda
+registrado en el artefacto. La recalibración única de hoy dejó la firma anterior
+en `base-verificada-firma-v1.json`.
+
+Control negativo: `medir --contra <resultados.json>` no aborta, guarda en
+`resultados-control-negativo.json`, no toca `resultados.json` ni el informe y
+publica el delta en los dos sentidos, incluidos los importes que cambian sin
+cambiar de estado. `comprobarNoRegresion` sigue protegiendo las mediciones
+normales, pero solo ve igualdades perdidas: su silencio no es una confirmación.
+
+Reproducción del 21/10 sobre `f732338`, base reconstruida de cero desde los CSV
+y la misma copia: 410 iguales, 84 cercanas, 8 distintas, 21 sin valorar, cero
+errores. Idéntico a la medición del 20/10 hecha sobre el árbol de trabajo, y
+`--contra` sobre esa misma medición devuelve `sinCambio`.
 La exportación guarda huellas de cada CSV y la carga comprueba que banco y catálogo proceden de la misma copia.
 No usar el importador completo ni modificar el catálogo para elevar el porcentaje.
 

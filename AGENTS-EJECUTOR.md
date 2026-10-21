@@ -136,9 +136,16 @@ número esperado es el importe que querías reproducir no comprueba nada.
 - Mide siempre contra la misma base y la misma copia autorizada. Si la base
   cambió, la medición no es comparable y hay que decirlo.
 - **No borres `base-verificada.json`.** Esa firma detecta si el catálogo cambió
-  entre dos mediciones. `medir` ya aborta si falta; el único modo de aceptar su
-  ausencia es `--base-nueva`, que queda registrado en el artefacto. Si acabas
+  entre dos mediciones, y desde la v2 una reconstrucción desde los mismos CSV
+  **reproduce** sus firmas: una discrepancia ya significa algo real. `medir`
+  aborta si falta, distingue el cambio de fórmula de la deriva de catálogo, y
+  solo acepta su ausencia con `--base-nueva`, que queda registrado. Si acabas
   ahí sin haber perdido la base de verdad, te has equivocado de camino.
+- La base es `tmpfs`: muere al **parar** el contenedor, no solo al recrearlo, y
+  `aluminior_real_test` hay que crearla otra vez. Reconstruirla es
+  `createdb` más `preparar --origen export_datos/banco-contraste/catalogo`, sin
+  reextraer el MDB, y después `medir` sin borrar nada. Si el contenedor está
+  caído, pide al arquitecto que lo levante: tú no gestionas contenedores.
 - Nunca ajustes PVP, tarifa, catálogo ni redondeo para cuadrar un presupuesto
   antiguo. Si una línea queda distinta, se entrega distinta y se explica.
 - Nunca conviertas una valoración ausente en cero. La distinción entre
