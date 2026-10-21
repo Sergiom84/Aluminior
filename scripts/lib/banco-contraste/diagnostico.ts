@@ -23,6 +23,35 @@ export function diagnosticoBanco(mediciones: readonly Medicion[]) {
   return { distribucion, bloqueos, principales: [...agregados.values()] }
 }
 
+/**
+ * Diferencia por identidad en los dos sentidos, sin abortar.
+ *
+ * `comprobarNoRegresion` solo ve igualdades perdidas, así que calla cuando una
+ * unidad no gana ninguna: ese silencio se confunde con una confirmación. El
+ * control negativo necesita el delta completo, incluidos los importes que
+ * cambian sin cambiar de estado.
+ */
+export function delta(anteriores: readonly Medicion[], actuales: readonly Medicion[]) {
+  const antes = new Map(anteriores.map(m => [m.id, m]))
+  const ahora = new Map(actuales.map(m => [m.id, m]))
+  const estado = (m: Medicion | undefined) => m ? m.estado : 'ausente'
+  const cambios: { id: string; antes: string; ahora: string }[] = []
+  const importes: { id: string; antes: number | null; ahora: number | null }[] = []
+  for (const id of [...new Set([...antes.keys(), ...ahora.keys()])].sort()) {
+    const a = antes.get(id), b = ahora.get(id)
+    if (estado(a) !== estado(b)) { cambios.push({ id, antes: estado(a), ahora: estado(b) }); continue }
+    const ia = a?.obtenido ?? null, ib = b?.obtenido ?? null
+    if (ia !== ib) importes.push({ id, antes: ia, ahora: ib })
+  }
+  return {
+    igualdadesGanadas: cambios.filter(c => c.ahora === 'igual').map(c => c.id),
+    igualdadesPerdidas: cambios.filter(c => c.antes === 'igual').map(c => c.id),
+    cambiosDeEstado: cambios,
+    importesCambiados: importes,
+    sinCambio: cambios.length === 0 && importes.length === 0,
+  }
+}
+
 /** Igualdades protegidas por identidad, también si cambia la elegibilidad. */
 export function comprobarNoRegresion(anteriores: readonly Medicion[], actuales: readonly Medicion[]) {
   const iguales = new Set(actuales.filter(m => m.estado === 'igual').map(m => m.id))
