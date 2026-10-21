@@ -9,7 +9,7 @@ conservan evidencia. Sus antiguas listas de pendientes no sustituyen este regist
 Antes de elegir una tarea del banco, consultar
 [CAUSAS-CERRADAS](docs/paridad/CAUSAS-CERRADAS.md): recoge las causas ya
 investigadas y cerradas sin regla, y qué evidencia nueva reabre cada una.
-El techo de una causa se calcula con `scripts/techo-de-causa.ts`, no se estima.
+El techo de una causa se calcula con `scripts/techo-de-causa.mjs`, no se estima.
 
 
 ## Siguiente paso

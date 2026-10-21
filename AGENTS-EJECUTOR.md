@@ -46,13 +46,22 @@ son tuyas: tú no delegas en subagentes y no decides el orden del trabajo.
 **Primer comando de la sesión**, antes de leer o planificar nada:
 
 ```bash
-node --import tsx scripts/estado-entorno.ts
+node scripts/estado-entorno.mjs
 ```
 
 Da ruta, rama, HEAD, ficheros sucios, contenedor, puerto de la base, firmas de
 `base-verificada.json` y la última medición. Pega su salida en el informe. Si
 dice que la carpeta no es el worktree de la tarea, para: tu sesión puede estar
 anclada al checkout principal.
+
+Este script y `techo-de-causa.mjs` son **JavaScript plano a propósito**: nada de
+`tsx`, porque el worker de `esbuild` hace `spawn` con tuberías y muere con
+`EPERM` en sandboxes de Windows. Y degradan: si no puedes lanzar procesos hijos,
+`arbol` y `contenedor` salen con `consultado: false` y su motivo, y el resto
+—carpeta, rama, HEAD, puerto, firmas, última medición— sigue siendo válido.
+**No pidas permisos ampliados para ejecutar una herramienta de solo lectura.**
+Si una de estas dos no arranca, es un defecto de la herramienta: repórtalo con
+el error literal y para.
 
 **No infieras el estado del entorno desde un error de tu sesión.** Si un
 comando te da permiso denegado, eso es «no lo puedo comprobar», nunca «está
@@ -84,8 +93,8 @@ evidencia nueva que su última columna exige. Si no la tienes, para y dilo.
 **El techo se calcula, no se opina:**
 
 ```bash
-node --import tsx scripts/techo-de-causa.ts <patrón>
-node --import tsx scripts/techo-de-causa.ts --aviso "<texto del aviso>"
+node scripts/techo-de-causa.mjs <patrón>
+node scripts/techo-de-causa.mjs --aviso "<texto del aviso>"
 ```
 
 Pega su salida al proponer o aceptar una unidad. Mira `coCausasEnTodas`: una

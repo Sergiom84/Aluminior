@@ -526,7 +526,7 @@ pasan a valoradas y ninguna a igual. No repetirla ni ajustar la tarifa para
 cuadrarlas. Sigue pendiente la comparación lateral en Productor.
 Las causas ya cerradas sin regla y su condición de reapertura están en
 [CAUSAS-CERRADAS](paridad/CAUSAS-CERRADAS.md); consultarla antes de elegir
-unidad y calcular el techo con `scripts/techo-de-causa.ts`.
+unidad y calcular el techo con `scripts/techo-de-causa.mjs`.
 También quedan despunte de cabecera (10) y las observaciones en Windows.
 La primera matriz está entregada; seguir la [lista de ensayos mínimos](paridad/ENSAYOS-MINIMOS-PRODUCTOR-2026-10-03.md):
 despunte, unión de otra serie, comisión, tapajuntas, compacto, acristalamiento y
