@@ -355,3 +355,67 @@ Avance complementario: pendiente 180 de `aluminior`,
 conserva historia A–F, G1–G5 y G6-incidencia; estado `in_progress`.
 No se retiró evidencia ni se cerró E1. Las instrucciones operativas ya remiten
 a recuperar la incidencia antes de precisión y evitan repetir A–F y G1–G5.
+
+## Recuperación en Windows — 31/10/2026
+
+Con Productor y su mochila operativos (empresa 0017, presupuesto 260501).
+Estado observado antes de actuar: tres GRUPO, 1.500×1.150 (307,21), 1.200×1.150
+(270,28) y el tercero 1.207×1.150 (204,60), coincidente con G6-incidencia.
+Con autorización expresa de Sergio en chat para quitar **solo** el tercero, se
+eliminó esa línea con la X de «Operaciones sobre la Línea». Resultado: quedan
+las dos líneas válidas; base imponible 577,49 € (= 307,21 + 270,28), IVA 121,27,
+total 698,76 €. Los importes de las dos líneas no cambiaron.
+
+Edición segura (paso 3 de la guía): seleccionar la segunda línea y pulsar el
+lápiz abre el diseñador con la C2 de 1.200×1.150 dibujada (no vacío) y sin
+añadir línea; cerrar con la X de la ventana hija descarta y el documento sigue
+con dos GRUPO y los mismos totales. Falta elegir la variante discriminante y
+recalcular una vez (pasos 4–5); E1 sigue abierto.
+
+E7 (intento sin resultado): se creó el 260502 vacío y se colocó una C2 arrastrando
+su miniatura al lienzo (1.200×1.200 por defecto; los clics no la colocan). Los
+campos Ancho/Alto del diseñador no aceptaron teclado; falta confirmar con el
+operador cómo fijar 970×439,5. Se descartó el diseño; el 260502 queda sin líneas.
+
+### E7 en Productor — 31/10/2026 (presupuesto 260502, empresa 0017)
+
+Procedimiento acreditado por el operador: arrastrar la C2 al lienzo, activar el
+panel «Elemento selecc.» (segundo botón de la barra), seleccionar la C2 en el
+árbol, editar Ancho/Alto, Perfiles, Vidrio y Acabado (lupa de cada campo si el
+teclado no fija el código) y pulsar «Actualizar todos los elementos»; después
+Aceptar. Ctrl+A abre Artículos: no usarlo para seleccionar texto.
+
+Receta común: C2, perfiles GMC400 («SERIE 400 EUR»), vidrio VCG4 (CARGLASS 4 mm),
+acabado L (L. BLANCO), UNI/*, cantidad 1, tarifa 1.
+
+| Entrada | Descripción generada | Columna Alto | Precio línea |
+|---|---|---|---|
+| 970 × 439,5 | «970,0 x 439,5» | 440 | 150,60 |
+| 970 × 1999,5 | «970,0 x 1.999,5» | 2.000 | 267,77 |
+
+Documento: base 418,37, IVA 87,86, total 506,23. Hallazgo: Productor conserva la
+fracción en la descripción y en el diseñador (cotas 970 y 439,5), pero muestra el
+alto redondeado en la rejilla y en la barra del diseñador. Queda sin determinar si
+el precio usa 439,5 o 440; falta repetir en Aluminior con la misma receta y, para
+distinguir, un caso con entero adyacente. Copia estable/hash de la MDB no tomados.
+
+### E7 comparado con Aluminior — 31/10/2026
+
+Aluminior local (`aluminior_real_test`, catálogo EMP0016 importado: catálogo, cortes
+y despiece; sin cargas remotas), tarifa 1, C2, GMC400, VCG4, acabado L, cantidad 1.
+Medidas introducidas en el configurador y conservadas exactas en `lineas.alto_mm`.
+
+| Entrada | Aluminior | Productor 0017 |
+|---|---|---|
+| 970 × 439,5 (acristalamiento 1 y 2) | 150,60 | 150,60 |
+| 970 × 1999,5 (acristalamiento 1) | 267,77 | 267,77 |
+| 970 × 440 (control entero) | 150,61 | no medido |
+| 970 × 2000 (control entero) | 267,79 | no medido |
+
+Conclusión acotada: el precio de venta de materiales coincide al céntimo en las dos
+entradas fraccionarias y los enteros adyacentes difieren (+0,01 y +0,02). Por tanto
+Productor valora con la fracción real, no con el alto redondeado que muestra en
+la rejilla; A4/0030 la conserva. La variante de acristalamiento no cambia el precio
+en el caso 439,5. Límites: se compara solo precio; no cortes, despiece ni coste.
+Aluminior avisa «Faltan costes o materiales» del módulo en las líneas (no se
+investigó; la base local carece de tarifas y de las cargas dirigidas posteriores).
