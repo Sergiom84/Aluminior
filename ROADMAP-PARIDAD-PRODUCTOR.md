@@ -1,6 +1,6 @@
 # Roadmap operativo de paridad con Productor
 
-Actualizado: 14/10/2026 (E1: receptores, control/reparto/totales y frontera VarFormat; contrato monetario pendiente; C1 y P.6/P.7 conservan su etapa del 12/10). Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
+Actualizado: 31/10/2026 (E1: relevo al equipo del titular con mochila y visión, plan R1; 14/10: receptores, control/reparto/totales y frontera VarFormat, contrato monetario pendiente; C1 y P.6/P.7 conservan su etapa del 12/10). Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
 Este archivo es el registro único del orden y estado de estas tareas.
 Los documentos de ensayo explican cómo realizarlas; los informes fechados
 conservan evidencia. Sus antiguas listas de pendientes no sustituyen este registro.
@@ -98,7 +98,7 @@ Sin aplicación al presupuesto web ni nueva medición del banco.
 | ID | Trabajo | Estado actual | Prueba necesaria para avanzar o cerrar |
 |---|---|---|---|
 | M0 | Matriz por modelo/serie/regla y ensayos mínimos | Cerrado 03/10/2026 | [Matriz](docs/paridad/MATRIZ-COBERTURA-PRODUCTOR-2026-10-03.md), 97 pares, 47 pruebas, typechecks y arquitectura; no volver a crearla, regenerar si cambian las fuentes |
-| E1 | Despunte de cabecera: base, momento y reparto | En curso; físico/condicional 13/10, consumidor/COM, receptores y control/reparto/totales estáticos 14/10; G1–G5 y G6-incidencia preservados | [Entrega y continuación](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#control-reparto-y-totales): VarFormat/configuración, entrada de agregados y persistencia; contrato monetario incompleto. No repetir unidades estáticas cerradas. Sin activar cabecera, adaptar snapshots u operar G6 |
+| E1 | Despunte de cabecera: base, momento y reparto | En curso; físico/condicional 13/10, consumidor/COM, receptores y control/reparto/totales estáticos 14/10; G1–G5 y G6-incidencia preservados. 31/10: mochila verificada y E1V0 vacía en el portátil; Configuración bloqueada allí por `TODGUB8.DLL`; plan R1 listo, continuación en el equipo del titular con visión ([§0](docs/CONTINUAR-EN-WINDOWS.md#0-relevo-del-31102026-equipo-del-titular-con-visión), [plan R1](docs/paridad/PASO-E1-DESPUNTE.md#plan-r1-con-mochila-31102026)); RED/locale y R1 sin observar | [Entrega y continuación](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#control-reparto-y-totales): VarFormat/configuración, entrada de agregados y persistencia; contrato monetario incompleto. No repetir unidades estáticas cerradas. Sin activar cabecera, adaptar snapshots u operar G6 |
 | E2 | Unión material de otra serie en GRUPO | Pendiente | Selección desde diagnóstico privado de los ocho casos de iteración 13; código/serie/acabado y geometría demostrados, sin extrapolar U |
 | E3 | Comisión: orden de redondeo y edición de líneas guardadas | Pendiente | Caso 0/−10/+10, suma de filas y momento de aplicación; separar cantidades/horas; seis residuos comunicados |
 | E4 | Tapajuntas de puerta con inferior SI/NO | Pendiente | GMT004, 1P 867×2098 con serie/ala/cajón reales; comparación lateral y travesaño |

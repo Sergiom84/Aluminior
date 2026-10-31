@@ -16,6 +16,24 @@ El [roadmap operativo](../ROADMAP-PARIDAD-PRODUCTOR.md) conserva el orden y
 estado único de las tareas de paridad, con mantenimiento documental obligatorio.
 
 
+## Portátil con mochila y relevo al equipo del titular — 31/10/2026
+
+Con la mochila Sentinel conectada (licencia válida, `CLU Validado`) se preparó
+la observación E1 y se decidió continuarla en el equipo del tío de Sergio, que
+tiene Productor original sin fallos de componentes. En el portátil de Sergio,
+Configuración del Programa no abre: falta `TODGUB8.DLL` y el aviso de True DBGrid 8
+se repite sin fin. Se instaló solo esa DLL (build 2002 del paquete oficial de
+ComponentOne), sin probar todavía su efecto. **No hay valores RED/locale
+observados, ni R1 ejecutado, ni regla monetaria nueva.** El cargo sigue
+desactivado y E1 `in_progress`.
+
+La guía operativa, los pasos y los límites están en
+[CONTINUAR-EN-WINDOWS §0](CONTINUAR-EN-WINDOWS.md#0-relevo-del-31102026-equipo-del-titular-con-visión)
+y en el [plan R1 de PASO-E1](paridad/PASO-E1-DESPUNTE.md#plan-r1-con-mochila-31102026).
+Claude debe operar Productor con visión (Computer Use), no esperar que lo haga
+Sergio. Evidencia privada del portátil en `output/` (ignorada por Git): no viaja
+con el repositorio.
+
 ## ClonerSoft — continuación local, 14/10/2026
 
 [Selector de registros de tarifa dinámica](paridad/IMPLEMENTACION-CLONERSOFT-TARIFA-DINAMICA-2026-10-14.md)
@@ -282,6 +300,11 @@ configuración efectiva y entrada de agregados comerciales, según el
 No repetir integración `fa32fba`, preparación, wrappers/getters, declaraciones,
 WORD de tabla auxiliar, selector `rsTabla`, enlaces delegados o cuerpos ya seguidos.
 Sin activar cargo ni operar G6.
+
+**Equipo del titular, 31/10:** siguiente acción real. Claude opera Productor por
+visión según [CONTINUAR-EN-WINDOWS §0](CONTINUAR-EN-WINDOWS.md#0-relevo-del-31102026-equipo-del-titular-con-visión):
+F1 (leer RED y locale), después R1 del [plan](paridad/PASO-E1-DESPUNTE.md#plan-r1-con-mochila-31102026),
+y afinar Aluminior solo con regla demostrada.
 
 **Windows, observación pendiente:** recepción y fuentes privadas → aceptación comercial P.2 con el
 titular; investigación económica E1 desde G6-incidencia y E7 tras A4, según

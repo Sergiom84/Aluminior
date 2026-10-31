@@ -63,6 +63,60 @@ automáticamente. La visión solo debe resolver datos o comportamiento que falte
 Usar la skill Computer Use cuando se opere el original, observando pantalla y
 controles actuales; estas instrucciones no fijan coordenadas.
 
+## Plan R1 con mochila, 31/10/2026
+
+Estado: **plan; ninguna fase ejecutada con resultado.** Sustituye en la práctica
+a los pasos 1–5 de la sección siguiente mientras G6 no tenga autorización
+humana. Se ejecuta en el equipo del titular (§0 de
+[CONTINUAR-EN-WINDOWS](../CONTINUAR-EN-WINDOWS.md#0-relevo-del-31102026-equipo-del-titular-con-visión)),
+con Claude operando Productor por visión. En el portátil de Sergio solo se
+llegó a E1V0 vacía y Configuración del Programa no abre por falta de
+`TODGUB8.DLL`; RED y locale siguen sin observar.
+
+| Fase | Qué hace | Condición |
+|---|---|---|
+| F0 | Mochila, instalación y empresa de pruebas; hash previo de la MDB de producción y `Empresas.mdb` | Nunca aceptar ni operar 0016 |
+| F1 | Solo lectura: Ficheros > Otros > Configuración del Programa; anotar `REDprecio/REDlinea/REDbase/REDtotal`; locale de Windows (separadores) | Cerrar antes todas las ventanas; no guardar |
+| F2 | Comprobar si el modo restringido (copia de seguridad > 7 días) impide crear o calcular | Copia solo de la empresa de pruebas y con autorización |
+| F3 | Montar R1 por el recorrido normal en empresa de pruebas | Nada por SQL; si no se puede, registrar la limitación |
+| F4 | Congelar predicciones, calcular el despunte, repetir, guardar y reabrir | Decidir demostrada / refutada / no discriminante |
+| F5 | Contrastar con el contrato E1 y, solo con regla demostrada, afinar `core` | Fixture, control negativo, gates; cargo sigue desactivado |
+| F6 | Comparación lateral P.6/P.7 con Sergio presente | Tras E1 |
+
+**Caso R1** (sintético, tres líneas para separar políticas sin depender de un
+empate): perfil ML sintético, barra de 6000 mm, cortes 400/600/4000 mm para
+L1/L2/L3, cantidad 1, sin descuentos, kerf, saneado, stock ni retales; coste
+16,68 €/m y PVP 100 €/m; bases candidatas 40,00 / 60,00 / 400,00 €. Barras
+6 × 16,68 = 100,08 €; perfiles agrupados 5 × 16,68 = 83,40 €; cargo GID con
+margen 0,01 % sobre coste: 16,68 × 1,0001 = 16,681668 €. Solo son bases reales
+las que el documento previo al cálculo acredite.
+
+Predicciones previas (condicionadas a escalas de dos decimales, que **no** se
+atribuyen al runtime hasta F1):
+
+| Modelo | L1 | L2 | L3 | Suma |
+|---|---:|---:|---:|---:|
+| A: GID fino, cada cuota se redondea | 1,33 | 2,00 | 13,35 | 16,68 |
+| B: GID a céntimos, cada cuota se redondea | 1,33 | 2,00 | 13,34 | 16,67 |
+| C: GID a céntimos, mayor resto | 1,34 | 2,00 | 13,34 | 16,68 |
+| D: PVP unitario ML redondeado primero | 1,34 | 2,00 | 13,36 | 16,70 |
+
+Un resultado fuera de A–D significa hipótesis insuficientes: no se fuerza una
+regla ni se etiqueta como error de Productor. Sondas de empate (0,125 / 0,375 /
+0,625 y 1,005 / 2,675) separan mitad hacia afuera de mitad al par, pero solo
+valen si pasan por la misma ruta real con tipo y locale capturados.
+
+Frontera de aplicación: solo RED y locale → registrar, sin cambiar reglas. A o B
+con persistencia al reabrir → función pura E1 específica con escalas explícitas,
+sin tocar `repartirDecimal` global ni el coste técnico. C → ya existe esa
+aritmética; faltan adaptador, receptores y persistencia. D u otro → fijar antes
+la secuencia de precio y conversión. Ningún resultado cierra descuentos,
+cantidad ≠ 1, retirada a cero, errores ni atomicidad.
+
+Los artefactos privados del 19–31/10 (predicciones en JSON, protocolo completo,
+capturas, plan del portátil) están en `output/` del portátil y no viajan por Git;
+esta sección es lo que se conserva en el repositorio.
+
 ## Complementario G1–G5 entregado; recuperar variante de precisión
 
 La [evidencia E1](EVIDENCIA-E1-DESPUNTE-2026-10-04.md) conserva transiciones

@@ -1,5 +1,11 @@
 # Relevo: paridad y fuentes de Productor
 
+**Vigente desde el 31/10/2026:** la observación E1 continúa en el equipo del
+titular, con Claude operando Productor por visión. Leer primero
+[CONTINUAR-EN-WINDOWS §0](docs/CONTINUAR-EN-WINDOWS.md#0-relevo-del-31102026-equipo-del-titular-con-visión)
+y el [plan R1](docs/paridad/PASO-E1-DESPUNTE.md#plan-r1-con-mochila-31102026).
+Lo que sigue es el relevo anterior, conservado como historia.
+
 Continuación local Windows del 14/10, desde HEAD comprobado `a078975`, rama
 `codex/integracion-windows-mac-20261013`, árbol inicial limpio.
 E1: [control, reparto y totales](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#control-reparto-y-totales), después de U1 local `bc7c6ea`.
