@@ -419,3 +419,23 @@ la rejilla; A4/0030 la conserva. La variante de acristalamiento no cambia el pre
 en el caso 439,5. Límites: se compara solo precio; no cortes, despiece ni coste.
 Aluminior avisa «Faltan costes o materiales» del módulo en las líneas (no se
 investigó; la base local carece de tarifas y de las cargas dirigidas posteriores).
+
+### Coste del vidrio por m² — 31/10/2026
+
+Aviso observado en Aluminior: «MODULO modulo-1: Faltan costes o materiales necesarios
+para este origen». Causa: la ruta del catálogo dejaba sin coste total las piezas M2
+(los dos cristales VCG4 de la C2), de 33 piezas solo 31 con coste; el resto del
+despiece y el precio de venta estaban completos.
+
+Regla leída de la MDB 0017 en solo lectura (`VPresupuestosLin`, VCG4): `Coste` =
+coste unitario × `Metraje`, con el metraje ya ajustado a múltiplo de 6 cm y mínimo
+de 0,5 m² (p. ej. 24,30 × 0,55 = 13,365 con 1020,5 × 540,25 mm). Es el mismo
+`metraje` que la web ya usa para la venta; se pasa ahora al coste.
+
+Cambio: `prepararPiezasDespiece` acepta `metrajes` y costea M2 como coste × metraje;
+`valorar-con-catalogo.ts` lo aporta. La ruta antigua no cambia. Verificado en
+`aluminior_real_test`: línea C2 970 × 439,5 sin aviso, 33/33 piezas con coste, cada
+cristal 12,15 (24,30 × 0,5) y venta 150,60 intacta. 295 pruebas de estructuras y
+cerramientos (serie), tipos y arquitectura correctos. Límite: no se contrastó el coste
+total de línea de Productor para esta misma configuración (su VCG4/UNI del 260502 tiene
+coste 0 en esa tarifa); la regla se acredita con documentos 1305–1306 de la 0017.

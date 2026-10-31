@@ -110,7 +110,7 @@ export async function valorarConCatalogo(
   const piezas: PiezaDespiece[] = prepararPiezasDespiece({
     piezas: resultado.filas.map(f => ({ articuloCodigo: f.articulo, cantidad: f.cantidad, largoMm: f.largoMm, formula: null,
       tipoCorte: null, anguloIzquierdo: null, anguloDerecho: null, funcion: f.funcion, incidencia: null })),
-    mapa, costePorArticulo: costes,
+    mapa, costePorArticulo: costes, metrajes: resultado.filas.map(f => f.metraje),
   }).map((p, i) => ({ ...p, acabadoCodigo: resultado.filas[i]!.acabado,
     anchoCorteMm: resultado.filas[i]!.anchoMm === null ? null : String(resultado.filas[i]!.anchoMm) }))
 

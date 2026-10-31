@@ -28,6 +28,12 @@ export interface EntradaPiezasDespiece {
   /** Artículos YA leídos por la valoración. Aquí no se relee el catálogo. */
   mapa: ReadonlyMap<string, DatosArticuloPrecio>
   costePorArticulo: ReadonlyMap<string, number | null>
+  /**
+   * Metraje facturable de cada pieza, en el mismo orden. Solo lo aporta la ruta
+   * del catálogo: Productor costea un M2 como coste × Metraje (múltiplos y
+   * mínimo ya aplicados, cantidad incluida). Sin él, un M2 queda sin coste total.
+   */
+  metrajes?: readonly (number | null)[]
 }
 
 /**
@@ -39,11 +45,14 @@ export interface EntradaPiezasDespiece {
  * del corte—; aquí se persiste el detalle de cada corte.
  */
 export function prepararPiezasDespiece(entrada: EntradaPiezasDespiece): PiezaDespiece[] {
-  return entrada.piezas.map((pz) => {
+  return entrada.piezas.map((pz, i) => {
     const art = entrada.mapa.get(pz.articuloCodigo)
     const coste = entrada.costePorArticulo.get(pz.articuloCodigo) ?? null
     let costeTotal: number | null = null
-    if (coste !== null && art && art.tipoMetraje !== 'M2') {
+    const metraje = entrada.metrajes?.[i] ?? null
+    if (coste !== null && art?.tipoMetraje === 'M2') {
+      costeTotal = metraje !== null ? coste * metraje : null
+    } else if (coste !== null && art) {
       if (art?.tipoMetraje === 'ML') {
         // Sin largo no hay metros que cobrar: queda sin coste total, no en cero.
         costeTotal = pz.largoMm !== null ? coste * (pz.largoMm / 1000) * pz.cantidad : null

@@ -63,6 +63,28 @@ describe('piezas preparadas para persistir', () => {
     expect(preparadas.map((p) => p.costeTotal)).toEqual([null, '3.3'])
   })
 
+  // Productor 0017, VCG4 (24,30/m²): 1020,5 × 540,25 mm → 0,55 m² → 13,365;
+  // 306 × 402,25 mm sube al mínimo de 0,5 m² → 12,15.
+  it('M2 con metraje facturable cuesta coste × metraje', () => {
+    const preparadas = prepararPiezasDespiece({
+      piezas: [pieza('V', 1, 1016.5), pieza('V', 1, 306)],
+      mapa: mapaDe(articulo('V', 'M2')),
+      costePorArticulo: costesDe(['V', 24.3]),
+      metrajes: [0.55, 0.5],
+    })
+    expect(preparadas.map((p) => p.costeTotal)).toEqual(['13.365', '12.15'])
+  })
+
+  it('M2 con metraje desconocido o sin coste no inventa total', () => {
+    const preparadas = prepararPiezasDespiece({
+      piezas: [pieza('V', 1, 306), pieza('W', 1, 306)],
+      mapa: mapaDe(articulo('V', 'M2'), articulo('W', 'M2')),
+      costePorArticulo: costesDe(['V', 24.3], ['W', null]),
+      metrajes: [null, 0.5],
+    })
+    expect(preparadas.map((p) => p.costeTotal)).toEqual([null, null])
+  })
+
   it('ML sin largo queda sin coste total, no en cero', () => {
     const [p] = prepararPiezasDespiece({
       piezas: [pieza('A', 2, null)],
