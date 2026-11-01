@@ -6,7 +6,7 @@ import {
   cambiarEstructuraModuloCerramiento, crearConfiguracionCerramiento, dependientesModulo,
   eliminarModuloConDependientes, esConfiguracionCerramiento, esModuloRaiz, insertarModuloEnAnclaje,
   medidasCerramiento, moduloDesdePlantilla, plantillaDiseno, PLANTILLAS_DISENO, posicionesCerramiento,
-  anclajeLateral, medidasPrimeraVentana, modelosIguales, primerHueco, type AnclajeLibre, type ConfiguracionCerramiento,
+  anclajeInferior, anclajeLateral, medidasPrimeraVentana, modelosIguales, primerHueco, type AnclajeLibre, type ConfiguracionCerramiento,
   type MaterialesGenerales, type PlantillaDiseno,
 } from '@aluminior/core/estructuras'
 import { LienzoCerramiento, type ParteSeleccionada } from './lienzo-cerramiento.tsx'
@@ -18,6 +18,7 @@ import { PanelElemento } from './disenador/panel-elemento.tsx'
 import { BarraDisenador, type VistaDisenador } from './disenador/barra-disenador.tsx'
 import { useInsercionVentanas } from './disenador/use-insercion-ventanas.ts'
 import { LienzoVacio, LienzoConExtremos } from './disenador/lienzo-insercion.tsx'
+import { useMoverElemento } from './disenador/use-mover-elemento.ts'
 import { SelectorVentana, PreguntaMedidas, OpcionesMedidas } from './disenador/dialogos-insercion.tsx'
 import styles from '../presupuesto-movil.module.css'
 
@@ -103,15 +104,22 @@ export function DisenadorEstructura({
     terminarInsercion()
   }
   const insercion = useInsercionVentanas(configuracion, colocar)
-  /** Lienzo vacío: primer elemento; si no, a la derecha de la fila superior. */
-  const colocarLateral = (plantilla: PlantillaDiseno) => {
-    const anclaje = configuracion ? anclajeLateral(configuracion) : null
+  const mover = useMoverElemento({ configuracion, bloqueado: edicion.pendientes, onAviso: setAviso,
+    onMovido: (siguiente, id) => {
+      enfocar.current = id
+      setConfiguracion(siguiente)
+      setSeleccion(seleccionModulo(siguiente, id))
+    } })
+  /** Lienzo vacío: primer elemento; si no, en el anclaje dado, avisando si no hay sitio. */
+  const colocarEn = (plantilla: PlantillaDiseno, anclaje: AnclajeLibre | null, donde: string) => {
     if (configuracion && !anclaje) {
-      setAviso(`${plantilla.codigo} no cabe a la derecha sin solapar otro elemento.`)
+      setAviso(`${plantilla.codigo} no cabe ${donde} sin solapar otro elemento.`)
       return
     }
     if (!edicion.pendientes) insercion.solicitar(plantilla, anclaje)
   }
+  const colocarLateral = (plantilla: PlantillaDiseno) =>
+    colocarEn(plantilla, configuracion ? anclajeLateral(configuracion) : null, 'a la derecha')
 
   const seleccionar = (parte: ParteSeleccionada) => { setSeleccion(parte); setVista('propiedades') }
   const seleccionarEntrada = (entrada: Entrada) => seleccionar(entrada.tipo === 'modulo'
@@ -123,6 +131,7 @@ export function DisenadorEstructura({
   const union = configuracion && seleccion?.parte === 'union'
     ? configuracion.uniones.find((actual) => actual.id === seleccion.elemento) ?? null : null
   const medidas = configuracion ? medidasCerramiento(configuracion) : { anchoMm: 0, altoMm: 0 }
+  const inferior = configuracion ? anclajeInferior(configuracion, modulo?.id ?? null) : null
 
   /** Mejora autorizada (fase 4): aplicar el borrador a los modelos iguales, anunciando cuántos. */
   const aplicarAModelos = (id: string) => {
@@ -152,21 +161,29 @@ export function DisenadorEstructura({
 
   return (
     <section ref={region} className={`${styles.designer} al-designer`} aria-label="Diseñador de cerramientos"
-      onKeyDown={(evento) => { if (evento.key === 'Escape' && insertando) terminarInsercion() }}>
+      onKeyDown={(evento) => {
+        if (evento.key !== 'Escape') return
+        if (mover.moviendo) mover.cancelar()
+        else if (insertando) terminarInsercion()
+      }}>
       <BarraDisenador elementos={configuracion?.modulos.length ?? 0} vista={vista} onVista={setVista}
         medidas={medidas} preparada={preparada} onMedidas={insercion.abrirOpciones}
         onColocarDerecha={configuracion && preparada && !edicion.pendientes
-          ? () => colocarLateral(preparada) : null} />
+          ? () => colocarLateral(preparada) : null}
+        onColocarDebajo={configuracion && preparada && !edicion.pendientes
+          ? () => colocarEn(preparada, inferior, 'debajo') : null} />
 
       <div className="al-designer-canvas" data-testid="designer-canvas" data-insertando={Boolean(insertando) || undefined}>
         {configuracion
-          ? <LienzoConExtremos configuracion={configuracion} bloqueado={edicion.pendientes || insercion.preferencia.guardando}
+          ? <LienzoConExtremos configuracion={configuracion} inferior={inferior} bloqueado={edicion.pendientes || insercion.preferencia.guardando}
               onAbrir={insercion.abrirSelector}>
             <LienzoCerramiento configuracion={configuracion} moduloActivoId={modulo?.id ?? ''}
               seleccion={seleccion ?? { moduloId: '', elemento: '', parte: 'vidrio' }}
               onModuloActivo={() => undefined} onSeleccion={seleccionar}
               insercion={{ activa: Boolean(insertando) && !edicion.pendientes,
-                onInsertar: (anclaje) => insercion.solicitar(insertando!, anclaje) }} />
+                onInsertar: (anclaje) => insercion.solicitar(insertando!, anclaje) }}
+              movimiento={{ moduloId: mover.moviendo, anclajes: mover.anclajes, puedeMover: mover.puedeMover,
+                onIniciar: mover.iniciar, onMover: mover.mover, onCancelar: mover.cancelar }} />
             </LienzoConExtremos>
           : <LienzoVacio preparada={preparada} onColocar={(plantilla) => insercion.solicitar(plantilla, null)}
               onAbrir={() => insercion.abrirSelector(null)} />}
@@ -199,7 +216,8 @@ export function DisenadorEstructura({
                 onDescartar={() => edicion.descartar('modulos', modulo.id)}
                 onSustituir={() => preparada && setConfiguracion(
                   cambiarEstructuraModuloCerramiento(configuracion, modulo.id, preparada))}
-                onEliminar={eliminar} />
+                onEliminar={eliminar} moviendo={mover.moviendo === modulo.id}
+                onMover={() => mover.moviendo === modulo.id ? mover.cancelar() : mover.iniciar(modulo.id)} />
             : union && <div className="al-designer-union-editor">
                 <EditorUnion union={{ ...union, ...edicion.borradores.uniones[union.id] }}
                   indice={entradasCerramiento(configuracion).find((e) => e.id === union.id)!.indice}

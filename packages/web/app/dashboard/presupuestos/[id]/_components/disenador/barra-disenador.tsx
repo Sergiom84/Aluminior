@@ -7,10 +7,10 @@ export type VistaDisenador = 'catalogo' | 'propiedades'
 
 /**
  * Barra superior del configurador: recuento, vista de la barra inferior,
- * medidas globales y, con una miniatura preparada, su colocación lateral.
+ * medidas globales y, con una miniatura preparada, su colocación a la derecha o debajo.
  */
 export function BarraDisenador({
-  elementos, vista, onVista, medidas, preparada, onColocarDerecha, onMedidas,
+  elementos, vista, onVista, medidas, preparada, onColocarDerecha, onColocarDebajo, onMedidas,
 }: {
   onMedidas?: () => void
   elementos: number
@@ -19,6 +19,7 @@ export function BarraDisenador({
   medidas: { anchoMm: number; altoMm: number }
   preparada: PlantillaDiseno | null
   onColocarDerecha: (() => void) | null
+  onColocarDebajo: (() => void) | null
 }) {
   return (
     <header className="al-designer-toolbar">
@@ -31,6 +32,11 @@ export function BarraDisenador({
       {preparada && onColocarDerecha && (
         <button type="button" className="al-command-primary al-designer-colocar" onClick={onColocarDerecha}>
           Colocar {preparada.codigo} a la derecha
+        </button>
+      )}
+      {preparada && onColocarDebajo && (
+        <button type="button" className="al-command" onClick={onColocarDebajo}>
+          Colocar {preparada.codigo} debajo
         </button>
       )}
       {onMedidas && <button type="button" className="al-command" onClick={onMedidas}>Medidas de nuevas ventanas</button>}

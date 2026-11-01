@@ -15,6 +15,11 @@ No repetir extracción, investigación MO cero, migraciones, carga, despliegue
 ni gates entregados. Siguiente Mac: matriz restante de P.6/P.7 — otras anchuras,
 zoom 200%, reduced motion y recorrido humano comparativo. C1 conserva su alcance
 acotado; E1–E11 y su evidencia permanecen.
+Diseñador (01/11/2026): DS1–DS3 están en la secuencia, con la
+[guía](docs/paridad/GUIA-DISENADOR-PRODUCTOR.md) como referencia. En DS2 la
+inserción debajo es visible y las piezas colocadas se recolocan en anclajes
+(local, sin publicar). Siguiente: que Sergio lo pruebe, decidir sobre deshacer
+y publicarlo.
 
 
 **Continuidad Windows:** seguir [la guía](docs/CONTINUAR-EN-WINDOWS.md),
@@ -86,6 +91,9 @@ Sin aplicación al presupuesto web ni nueva medición del banco.
 | C1 | PVP por medidas y contención de precio plano | Publicado/verificado técnico 12/10; alcance acotado | [Publicación](docs/paridad/PUBLICACION-CLONERSOFT-2026-10-12.md): `40cedd1` live, 0031/0032 y carga dirigida, CI y QA remoto/preservación correctos. Dos precios dimensionales corroborados; coste/fabricación fuera del cierre y banco 400/523 conservado |
 | P.6/P.7 | Teclado, foco y adaptación responsive | Parcialmente publicado 12/10; matriz y aceptación integral abiertas | [Investigación](docs/paridad/INVESTIGACION-CLONERSOFT-2026-10-12.md) y [publicación](docs/paridad/PUBLICACION-CLONERSOFT-2026-10-12.md): selector vigente, F7/F9 de cabecera y foco/error; diez recorridos escritorio/móvil y CI correctos. July 206 conserva otras anchuras, zoom 200%, reduced motion y recorrido humano comparativo |
 | D1 | Reconciliar ficha de acceso de July | Cerrado local 09/10 | Ficha actualizada con comprobación directa A4, Render live 487feb1 y 31 migraciones; historial fechado preservado. Sin sync/recepción acreditados |
+| DS1 | Guía del diseñador de Productor | En curso 01/11/2026: documentación | [Guía](docs/paridad/GUIA-DISENADOR-PRODUCTOR.md) con barra, escaparate, Elemento seleccionado, Unión, compacto, recorrido de composición y elemento invisible. Diez preguntas abiertas para el operador; ampliar con cada botón explicado. July sin conexión: pendientes por pasar |
+| DS2 | Composición: inserción debajo visible y mover piezas libremente | Implementado y verificado en local 01/11/2026; sin commit ni publicación | Debajo: `anclajeInferior`, `+` inferior y «Colocar X debajo»; recorrido 2O/fijo/2O/fijo = 2420 × 2420. Mover (decisión de Sergio: anclajes; las colgadas se quedan fijas): `mover-modulo.ts`, arrastre con ajuste magnético y botón «Mover elemento» con destinos enfocables; 2O movida = 2420 × 3640 con el fijo en su sitio, guardada y recargada. Core 59 ficheros, componentes del diseñador, tipos y arquitectura correctos. Falta: deshacer, mover el primer elemento, prueba de Sergio y publicación. Desviación deliberada de Productor |
+| DS3 | Elemento invisible (viga o pared) por diseño específico | Pendiente de observación y respuestas del operador | Identificar el campo en la 0017 (no es `bInvisible` de divisiones) y resolver precio, ancho, uniones y dibujo en el documento (preguntas 6–8 de la guía) antes de implementar |
 
 Detalles E2–E11: [ensayos mínimos](docs/paridad/ENSAYOS-MINIMOS-PRODUCTOR-2026-10-03.md).
 A1 y D1: [estado operativo](docs/ESTADO-ACTUAL.md).

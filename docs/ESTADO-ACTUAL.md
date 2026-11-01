@@ -16,6 +16,41 @@ El [roadmap operativo](../ROADMAP-PARIDAD-PRODUCTOR.md) conserva el orden y
 estado único de las tareas de paridad, con mantenimiento documental obligatorio.
 
 
+## Guía del diseñador de Productor — 01/11/2026
+
+Sergio empieza a explicar botón a botón el diseñador de cerramientos.
+[GUIA-DISENADOR-PRODUCTOR](paridad/GUIA-DISENADOR-PRODUCTOR.md) recoge escaparate,
+`Elemento seleccionado` (perfiles, vidrio, acabado), `Unión` e insertar compacto,
+con su catálogo y su cobertura en Aluminior. Comprobado contra la exportación local:
+series, vidrios (familia 050), 18 acabados y los 17 compactos `COM…` ya están
+importados; el compacto sigue sin modelar (E5). Segunda entrega del mismo día:
+botón 4 (`Insertar tapajuntas cerramientos`), recorrido de composición en el lienzo,
+cartabón/`Diseño V3` y elemento invisible (viga o pared). Abiertas en el roadmap
+DS1 (guía, en curso), DS2 (inserción debajo visible y mover piezas libremente,
+requisito de Sergio) y DS3 (elemento invisible). Solo documentación: sin cambios de
+código. Las preguntas para el operador están en la guía. July no conectó en este
+equipo, así que hay que pasarlas a July desde el otro.
+
+DS2, primer paso, mismo día: en la web local con el catálogo real la inserción
+debajo funcionaba, pero solo se llegaba con dos puntos verdes diminutos al
+preparar una pieza. Ahora el lienzo tiene un `+` inferior y la barra
+«Colocar X debajo»: debajo del elemento seleccionado o, si está ocupado, del
+inferior libre más bajo. Verificado con el recorrido de las capturas de Sergio
+(2420 × 2420), en escritorio y a 375 px. Tests core 664 correctos, test del
+diseñador correcto, tipos y arquitectura limpios. La batería web completa dio
+17 timeouts de integración PostgreSQL con el servidor de desarrollo abierto;
+esos cuatro ficheros pasan al ejecutarlos en serie. Sin commit ni publicación.
+
+DS2, segundo paso, mismo día: Sergio elige recolocar en anclajes y que las piezas
+colgadas de la movida se queden fijas. Implementado en core (`mover-modulo.ts`, 6
+tests) y en la web (arrastre con ajuste magnético y botón «Mover elemento» con
+destinos enfocables). Verificado en local sobre el 2 × 2 de las capturas
+(2420 × 3640 y vuelta a 2420 × 2420), con guardado y recarga. Las uniones afectadas
+nacen sin configurar. La observación de Productor no se hizo: el acceso al
+escritorio no se concedió. Sin commit ni publicación. Siguiente: prueba de Sergio,
+deshacer y publicación. El orden económico E1–E11 no cambia.
+
+
 ## Reconciliación del main Mac — 13/10/2026
 
 Por petición de Sergio, se revisan todos los cambios pendientes y se integra

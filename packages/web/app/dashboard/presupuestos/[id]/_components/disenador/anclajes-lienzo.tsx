@@ -55,19 +55,24 @@ export function useSoltarEnLienzo({ svg, configuracion, activa, tamanoMm, onInse
   }
 }
 
-export function AnclajesLienzo({ configuracion, radioMm, resaltado, onInsertar }: {
+const DONDE = { derecha: 'a la derecha', abajo: 'debajo', izquierda: 'a la izquierda' } as const
+
+/** Puntos verdes: libres para insertar o, al mover, los destinos válidos del elemento. */
+export function AnclajesLienzo({ configuracion, radioMm, resaltado, onInsertar, anclajes, accion = 'Insertar' }: {
   configuracion: ConfiguracionCerramiento
   radioMm: number
   resaltado: string | null
   onInsertar: (anclaje: AnclajeLibre) => void
+  anclajes?: readonly AnclajeLibre[]
+  accion?: 'Insertar' | 'Mover'
 }) {
-  return <g className="al-anclajes">
-    {anclajesLibresCerramiento(configuracion).map((anclaje) => {
+  return <g className="al-anclajes" data-accion={accion}>
+    {(anclajes ?? anclajesLibresCerramiento(configuracion)).map((anclaje) => {
       const indice = configuracion.modulos.findIndex((modulo) => modulo.id === anclaje.moduloId)
       return (
         <g key={clave(anclaje)} role="button" tabIndex={0} className="al-anclaje"
           data-resaltado={resaltado === clave(anclaje) || undefined}
-          aria-label={`Insertar ${anclaje.lado === 'derecha' ? 'a la derecha' : 'debajo'} del elemento ${indice}`}
+          aria-label={`${accion} ${DONDE[anclaje.lado]} del elemento ${indice}`}
           onClick={(evento) => { evento.stopPropagation(); onInsertar(anclaje) }}
           onKeyDown={(evento) => {
             if (evento.key !== 'Enter' && evento.key !== ' ') return

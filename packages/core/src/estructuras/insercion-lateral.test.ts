@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { plantillaDiseno } from './diseno.ts'
 import { crearConfiguracionCerramiento, medidasCerramiento, moduloDesdePlantilla } from './cerramiento.ts'
 import { insertarModuloEnAnclaje } from './composicion-cerramiento.ts'
-import { anclajeLateral } from './insercion-lateral.ts'
+import { anclajeInferior, anclajeLateral } from './insercion-lateral.ts'
 
 const nuevo = (codigo: string) => moduloDesdePlantilla(plantillaDiseno(codigo)!)
 
@@ -26,5 +26,28 @@ describe('colocación lateral por defecto', () => {
     const inicial = crearConfiguracionCerramiento(plantillaDiseno('2')!)
     const conDebajo = insertarModuloEnAnclaje(inicial, nuevo('0'), { moduloId: 'modulo-1', lado: 'abajo' })
     expect(anclajeLateral(conDebajo)).toMatchObject({ moduloId: 'modulo-1', lado: 'derecha', y: 0 })
+  })
+})
+
+describe('colocación debajo', () => {
+  it('ofrece el inferior del elemento indicado, alineado a su izquierda', () => {
+    const inicial = crearConfiguracionCerramiento(plantillaDiseno('2O')!)
+    expect(anclajeInferior(inicial, 'modulo-1')).toMatchObject({ moduloId: 'modulo-1', lado: 'abajo', x: 0, y: 1200 })
+  })
+
+  it('reproduce el recorrido de Productor: 2O, fijo debajo, 2O a la derecha y fijo bajo esta', () => {
+    let c = crearConfiguracionCerramiento(plantillaDiseno('2O')!)
+    c = insertarModuloEnAnclaje(c, nuevo('0'), anclajeInferior(c, 'modulo-1')!)
+    c = insertarModuloEnAnclaje(c, nuevo('2O'), anclajeLateral(c)!)
+    expect(anclajeInferior(c, 'modulo-3')).toMatchObject({ moduloId: 'modulo-3', x: 1220, y: 1200 })
+    c = insertarModuloEnAnclaje(c, nuevo('0'), anclajeInferior(c, 'modulo-3')!)
+    expect(medidasCerramiento(c)).toEqual({ anchoMm: 2420, altoMm: 2420 })
+  })
+
+  it('si el inferior del elemento está ocupado, usa el libre más bajo y más a la izquierda', () => {
+    let c = crearConfiguracionCerramiento(plantillaDiseno('2')!)
+    c = insertarModuloEnAnclaje(c, nuevo('0'), anclajeInferior(c, 'modulo-1')!)
+    expect(anclajeInferior(c, 'modulo-1')).toMatchObject({ moduloId: 'modulo-2', y: 2420 })
+    expect(anclajeInferior(c)).toMatchObject({ moduloId: 'modulo-2', y: 2420 })
   })
 })

@@ -318,6 +318,7 @@
 .al-insertar-ventana:hover { background: var(--al-surface-muted); }
 .al-insertar-ventana:focus-visible { outline: 3px solid var(--al-accent); outline-offset: 3px; }
 .al-insertar-ventana:disabled { opacity: .4; cursor: default; }
+.al-insertar-debajo { grid-column: 2; justify-self: center; }
 .al-dialogo-disenador { width: min(900px, calc(100vw - 24px)); max-height: calc(100dvh - 32px); padding: 16px; margin: auto; overflow: auto; border: 1px solid var(--al-border-strong); border-radius: var(--al-radius-lg); background: var(--al-surface); color: var(--al-text); box-shadow: var(--al-shadow); }
 .al-dialogo-disenador::backdrop { background: rgb(0 0 0 / .35); }
 .al-dialogo-cabecera { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
@@ -334,4 +335,11 @@
   .al-dialogo-disenador .al-catalogo-familias { grid-auto-flow: row; max-height: 150px; overflow: auto; }
   .al-dialogo-disenador .al-designer-thumb { width: 100%; min-width: 0; }
   .al-dialogo-disenador .al-catalogo-miniaturas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.al-chain-module[data-movible] { cursor: grab; }
+.al-chain-drawing[data-moviendo] .al-chain-module[data-movible] { cursor: grabbing; }
+.al-chain-module[data-en-movimiento] { opacity: .45; }
+.al-anclajes[data-accion="Mover"] .al-anclaje { cursor: move; }
+@media (prefers-reduced-motion: no-preference) {
+  .al-chain-module[data-en-movimiento] { transition: opacity .12s ease-out; }
 }

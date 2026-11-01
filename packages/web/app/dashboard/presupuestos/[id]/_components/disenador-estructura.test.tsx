@@ -33,6 +33,7 @@ describe('configurador con la disposición de Productor', () => {
     expect(html).toContain('data-pendiente="true"')
     expect(html).toContain('aria-label="Añadir ventana a la izquierda"')
     expect(html).toContain('aria-label="Añadir ventana a la derecha"')
+    expect(html).toMatch(/<button type="button" class="al-insertar-ventana al-insertar-debajo" aria-label="Añadir ventana debajo">/)
     expect(html).toContain('Ancho <b class="cifra">1200</b> mm × Alto <b class="cifra">2420</b> mm')
   })
 })

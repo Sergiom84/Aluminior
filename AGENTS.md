@@ -89,6 +89,10 @@ verified Productor behavior contradicts it.
 - Do not copy or redistribute GAIA source code, proprietary assets or binaries. Reimplement behavior in original project code and create new visual assets where needed.
 - Run legacy executables and register old COM/OCX components only in an isolated VM or sandbox using copies. Never register them on the main workstation without explicit authorization and a rollback plan.
 - Treat `EMP0016\aluminio.mdb` as active. Use a verified copy such as `EMP0016\Anterior.mdb` for read-only investigation.
+- Before operating Productor's enclosure designer or changing Aluminior's configurator,
+  read `docs/paridad/GUIA-DISENADOR-PRODUCTOR.md`: what each toolbar button, tab and
+  dialog does, its catalog and its Aluminior equivalent. When the operator explains a
+  new button or an observation resolves a pending item, update that guide in the same delivery.
 
 ## Task tracking and document maintenance
 

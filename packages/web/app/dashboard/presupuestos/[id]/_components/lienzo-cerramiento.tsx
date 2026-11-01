@@ -6,12 +6,13 @@ import {
   type AnclajeLibre, type ConfiguracionCerramiento, type ElementoColocado, type RectVisual,
 } from '@aluminior/core/estructuras'
 import { AnclajesLienzo, useSoltarEnLienzo } from './disenador/anclajes-lienzo.tsx'
+import { useArrastreModulo, type MovimientoLienzo } from './disenador/use-arrastre-modulo.ts'
 
 export type ParteVisual = 'marco' | 'hoja' | 'vidrio' | 'travesano' | 'union'
 export type ParteSeleccionada = { moduloId: string; elemento: string; parte: ParteVisual }
 
 export function LienzoCerramiento({ configuracion, moduloActivoId, seleccion, onModuloActivo, onSeleccion,
-  insercion }: {
+  insercion, movimiento }: {
   configuracion: ConfiguracionCerramiento
   moduloActivoId: string
   seleccion: ParteSeleccionada
@@ -19,6 +20,8 @@ export function LienzoCerramiento({ configuracion, moduloActivoId, seleccion, on
   onSeleccion: (seleccion: ParteSeleccionada) => void
   /** Miniatura preparada o en arrastre: muestra los anclajes libres. */
   insercion?: { activa: boolean; onInsertar: (anclaje: AnclajeLibre) => void }
+  /** Recolocar un elemento ya colocado, arrastrándolo o eligiendo destino. */
+  movimiento?: MovimientoLienzo
 }) {
   const geometria = geometriaCerramiento(configuracion)
   const tamano = Math.max(geometria.anchoVisibleMm, geometria.altoVisibleMm)
@@ -26,8 +29,10 @@ export function LienzoCerramiento({ configuracion, moduloActivoId, seleccion, on
   const svg = useRef<SVGSVGElement>(null)
   const soltar = useSoltarEnLienzo({ svg, configuracion, activa: Boolean(insercion?.activa),
     tamanoMm: tamano, onInsertar: insercion?.onInsertar ?? (() => undefined) })
+  const arrastre = useArrastreModulo({ svg, movimiento, tamanoMm: tamano })
   return (
-    <svg ref={svg} className="al-chain-drawing" {...soltar.manejadores}
+    <svg ref={svg} className="al-chain-drawing" {...soltar.manejadores} {...arrastre.manejadores}
+      data-moviendo={movimiento?.moduloId ? true : undefined}
       viewBox={`${-margen} ${-margen} ${geometria.anchoVisibleMm + margen * 2} ${geometria.altoVisibleMm + margen * 2}`}
       preserveAspectRatio="xMidYMid meet" role="group" aria-label="Composición del cerramiento">
       {geometria.modulos.map((modulo, indice) => {
@@ -37,6 +42,9 @@ export function LienzoCerramiento({ configuracion, moduloActivoId, seleccion, on
           <g key={modulo.id} data-modulo-id={modulo.id} role="button" tabIndex={0}
             aria-label={`Elemento ${indice}: ${plantilla.descripcion}`}
             data-selected={activa} className="al-chain-module"
+            data-movible={movimiento?.puedeMover(modulo.id) || undefined}
+            data-en-movimiento={movimiento?.moduloId === modulo.id || undefined}
+            onPointerDown={(evento) => arrastre.alPulsarModulo(evento, modulo.id)}
             onClick={() => {
               onModuloActivo(modulo.id)
               const hueco = modulo.elementos.find((elemento) => elemento.tipo === 'hueco')
@@ -69,8 +77,10 @@ export function LienzoCerramiento({ configuracion, moduloActivoId, seleccion, on
           <title>{union.codigo || 'Unión sin configurar'}</title>
         </g>
       ))}
-      {insercion?.activa && <AnclajesLienzo configuracion={configuracion} radioMm={tamano * .014}
-        resaltado={soltar.resaltado} onInsertar={insercion.onInsertar} />}
+      {insercion?.activa && !movimiento?.moduloId && <AnclajesLienzo configuracion={configuracion}
+        radioMm={tamano * .014} resaltado={soltar.resaltado} onInsertar={insercion.onInsertar} />}
+      {movimiento?.moduloId && <AnclajesLienzo configuracion={configuracion} radioMm={tamano * .014}
+        resaltado={arrastre.resaltado} onInsertar={movimiento.onMover} anclajes={movimiento.anclajes} accion="Mover" />}
     </svg>
   )
 }

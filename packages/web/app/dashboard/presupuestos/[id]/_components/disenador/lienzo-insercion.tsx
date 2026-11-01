@@ -22,8 +22,9 @@ export function LienzoVacio({ preparada, onColocar, onAbrir }: {
   </div>
 }
 
-export function LienzoConExtremos({ configuracion, bloqueado, onAbrir, children }: {
-  configuracion: ConfiguracionCerramiento; bloqueado: boolean
+/** «+» a los extremos laterales y debajo (del elemento seleccionado, o el inferior libre). */
+export function LienzoConExtremos({ configuracion, inferior, bloqueado, onAbrir, children }: {
+  configuracion: ConfiguracionCerramiento; inferior: AnclajeLibre | null; bloqueado: boolean
   onAbrir: (anclaje: AnclajeLibre) => void; children: ReactNode
 }) {
   const extremos = anclajesExtremosCerramiento(configuracion)
@@ -34,5 +35,7 @@ export function LienzoConExtremos({ configuracion, bloqueado, onAbrir, children 
   }
   return <div className="al-lienzo-extremos">
     {boton('izquierda')}{children}{boton('derecha')}
+    <button type="button" className="al-insertar-ventana al-insertar-debajo" disabled={bloqueado || !inferior}
+      aria-label="Añadir ventana debajo" onClick={() => inferior && onAbrir(inferior)}>+</button>
   </div>
 }

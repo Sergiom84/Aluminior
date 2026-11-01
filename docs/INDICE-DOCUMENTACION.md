@@ -25,6 +25,7 @@ propuesta entonces exclusiva del main local (integrada como herramienta el 13/10
 | [Mantenimiento y miniaturas 09/10](paridad/MANTENIMIENTO-Y-MINIATURAS-2026-10-09.md) | S1 y A2: dependencias, evidencia de dibujo y verificación de la continuación |
 | [Auditoría funcional 09/10](paridad/AUDITORIA-FUNCIONAL-2026-10-09.md) | Fallos reproducidos, correcciones, aceptación y mejoras propuestas |
 | [Estado actual](ESTADO-ACTUAL.md) | Estado, riesgos y siguiente paso |
+| [Guía del diseñador de Productor](paridad/GUIA-DISENADOR-PRODUCTOR.md) | Referencia viva: qué hace cada botón, pestaña y diálogo del diseñador y su equivalente en Aluminior; leer antes de operar Productor o cambiar el configurador |
 | [Roadmap de paridad](../ROADMAP-PARIDAD-PRODUCTOR.md) | Registro único de etapas/orden de tareas e instrucciones para actualizar o retirar documentos obsoletos |
 | [Paso E1: despunte](paridad/PASO-E1-DESPUNTE.md) | G1–G5 entregados; G6-incidencia preservada. Recuperar dos líneas tras autorización para quitar solo tercer GRUPO y verificar edición antes de precisión |
 | [AGENTS](../AGENTS.md) / [CLAUDE](../CLAUDE.md) | Contratos de trabajo |

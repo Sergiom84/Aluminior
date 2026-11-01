@@ -13,6 +13,17 @@ export function anclajeLateral(configuracion: ConfiguracionCerramiento): Anclaje
     .sort((a, b) => a.y - b.y || b.x - a.x)[0] ?? null
 }
 
+/**
+ * Anclaje para colocar debajo, como el inferior izquierdo de Productor: el del
+ * elemento indicado si está libre; si no, el libre más bajo y, a igual altura,
+ * el más a la izquierda.
+ */
+export function anclajeInferior(configuracion: ConfiguracionCerramiento, moduloId: string | null = null): AnclajeLibre | null {
+  const libres = anclajesLibresCerramiento(configuracion).filter((anclaje) => anclaje.lado === 'abajo')
+  return libres.find((anclaje) => anclaje.moduloId === moduloId)
+    ?? libres.sort((a, b) => b.y - a.y || a.x - b.x)[0] ?? null
+}
+
 /** Dos extremos físicos del conjunto; el origen sigue siendo el primer módulo. */
 export function anclajesExtremosCerramiento(configuracion: ConfiguracionCerramiento): AnclajeLibre[] {
   const libres = anclajesLibresCerramiento(configuracion, true)

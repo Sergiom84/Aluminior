@@ -12,7 +12,7 @@ import { MaterialesElemento } from './materiales-elemento.tsx'
 /** Pestaña Elemento seleccionado: la posición se calcula, no se edita. */
 export function PanelElemento({
   modulo, borrador, indice, rect, pendiente, bloqueado, preparada, eliminable, generales, series, modelos,
-  onChange, onActualizar, onActualizarModelos, onDescartar, onSustituir, onEliminar,
+  moviendo, onChange, onActualizar, onActualizarModelos, onDescartar, onSustituir, onEliminar, onMover,
 }: {
   modulo: ModuloCerramiento
   borrador: BorradorModulo
@@ -32,6 +32,9 @@ export function PanelElemento({
   onDescartar: () => void
   onSustituir: () => void
   onEliminar: () => void
+  /** Elige destino en el lienzo; el primer elemento (eliminable false) no se mueve. */
+  moviendo: boolean
+  onMover: () => void
 }) {
   const plantilla = plantillaDiseno(modulo.estructuraCodigo)
   const { serieCodigo: _s, vidrioCodigo: _v, ...medidas } = borrador
@@ -68,6 +71,10 @@ export function PanelElemento({
             Sustituir por {preparada.codigo}
           </button>
         )}
+        <button type="button" className="al-command" aria-pressed={moviendo}
+          disabled={bloqueado || !eliminable} onClick={onMover}>
+          {moviendo ? 'Cancelar mover' : 'Mover elemento'}
+        </button>
         <button type="button" className="al-command al-command-danger"
           disabled={bloqueado || !eliminable} onClick={onEliminar}>
           Eliminar elemento
