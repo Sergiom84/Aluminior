@@ -51,6 +51,21 @@ escritorio no se concedió. Sin commit ni publicación. Siguiente: prueba de Ser
 deshacer y publicación. El orden económico E1–E11 no cambia.
 
 
+## Comparativa de presupuestos Productor / Aluminior — 01–02/11/2026
+
+Cinco cerramientos presupuestados en Productor (0017, presupuesto 260503) y en
+Aluminior local (260002); ver
+[comparativa](paridad/COMPARATIVA-PRESUPUESTOS-2026-11-01.md). Coinciden al
+céntimo el 2O de 1200 (514,31), el 2 × 2 con uniones `U` (1.391,88) y la C2
+de E7 (267,77), con totales e IVA iguales. Diferencias principales: la
+descripción generada, el artículo `GRUPO` en conjuntos de una pieza, la
+medida guardada (Productor 2400 con `U`, Aluminior 2401), el formato decimal
+del PDF y la validación obligatoria de materiales y uniones. El elemento
+invisible quedó observado (precio 0, sin despiece, cuenta en el ancho), y
+`GMU038` resta su grosor de las piezas contiguas. Pendiente: la fila
+Aluminior del caso 3, porque la base local `tmpfs` se perdió al pararse
+Docker; el compacto sigue siendo E5. Solo documentación.
+
 ## Reconciliación del main Mac — 13/10/2026
 
 Por petición de Sergio, se revisan todos los cambios pendientes y se integra

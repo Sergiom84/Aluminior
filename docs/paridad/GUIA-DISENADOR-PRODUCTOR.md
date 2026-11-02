@@ -91,8 +91,9 @@ Para una estructura abatible lista las series GM abatibles y PVC, entre ellas:
 `GMA75C16`, `GMA350`, `GMA50`, `GMA5016`, `GMA50R`, `GMA6016`, `GMA60RL`,
 `GMA65`, `GMA76`, `GMA81`, `GMAP`, `GMAPF`, `ELEGANTPVC`.
 La descripción lleva prefijo de proveedor (`(GM) ALG 65 OPTIMA (RPT)`); la de
-ventas lo omite. Pendiente: confirmar que filtra por tipo de estructura
-(la captura solo contiene abatibles).
+ventas lo omite. **Observado el 01/11/2026:** filtra por tipo de estructura.
+Con una `C2` seleccionada solo lista series de corredera (`GMC…`, `GMPC…`).
+Con la `2O` lista las abatibles y `ELEGANTPVC`.
 
 **En Aluminior: catálogo importado, interacción distinta.** Las 57 series de
 `ConfigSeries` (incluidas todas las de la captura; la fila `*` es configuración,
@@ -145,6 +146,25 @@ botón selecciona la unión siguiente y muestra su pestaña:
 **Tipo de unión.** Dos tipos según Sergio: fija y variable. Pendiente: qué
 icono corresponde a cada uno y qué cambia en medida, despiece o precio.
 
+**Observado el 01–02/11/2026** (ver la
+[comparativa](COMPARATIVA-PRESUPUESTOS-2026-11-01.md)):
+
+- Productor no acepta el conjunto con uniones sin configurar. Pide artículo
+  **y** acabado: «Debe seleccionar el Perfil de Unión y su Acabado».
+- `U` SIN UNION tiene grosor 1. El 2 × 2 de 1200 mide 2401 × 2401 en el
+  diseñador, pero la línea se guarda con 2400 × 2400. La longitud de cada
+  unión es 1199,5.
+- `GMU038` (tubo 60 × 60) **resta** su grosor de las piezas contiguas.
+  2O + fijo 400 + 2O mide 2800, no 2920: cada 2O queda en 1160 y el fijo en
+  360. Cada unión se despieza como `GM60X60` de la longitud del lado común
+  (400) más mano de obra, y vale 4,12 €.
+- El código se puede teclear en la casilla `Unión`. El desplegable no
+  respondió bien al teclado. El acabado de unión se escribe a mano (`L`).
+
+En Aluminior, el desplegable de unión ofrece los mismos 14 códigos
+(`GMU038`–`GMU041`, `PSU001`–`PSU009`, `U`). Con `U` el grosor pasa a 1 y el
+2 × 2 mide 2401 × 2401, igual que en el diseñador de Productor.
+
 Catálogo observado: `GMU038` tubo 60×60, `GMU039` 40×40, `GMU040`/`GMU041`
 40×60 (Dto 40/60), `PSU001`–`PSU008` (H unión para compactos y esquineros) y
 `SIN UNION`. Efecto medido en el ancho total y reparto de grosor:
@@ -185,6 +205,14 @@ elegir `COM001` con alto 1200 rellena `Caj 155` solo; según el vídeo, alto
 1045) y el compacto se valora a la medida total. Aceptar sin guías avisa
 `Ha seleccionado Compacto o Registro, pero no ha seleccionado Guías de
 Persiana. ¿Desea Continuar?`.
+
+Observado el 01/11/2026 en el diseñador (2O de 1200, ELEGANTPVC, VCG4, L):
+`COM001` rellena `Cajón` 155 y acabado `L` `*`. Al aceptar sin guías **no**
+apareció el aviso. El cajón se dibuja sobre la ventana, cuya descripción
+sigue en 1.200,0 x 1.200,0. La línea vale 595,76 € (514,31 de la ventana más
+81,45 del compacto) y añade «CAJON DE PVC CON LAMA DE ALUMINIO TERMICA» a la
+descripción. Hipótesis: el aviso de guías y la resta del cajón dependen de
+entrar por la ficha de línea y no por el diseñador.
 
 **En Aluminior: catálogo importado, función sin modelar.** Los 17 `COM…`
 están en `estructuras` (familia 100) y como artículos, pero no hay botón,
@@ -291,11 +319,30 @@ catálogo y 143 en documentos. Aluminior ya los modela como
 `division-invisible`. Ese campo **no** es el elemento invisible completo, que
 no se encontró en la exportación. Hipótesis: se guarda en el diseño específico
 de la línea del cerramiento (`VCerramientosLin.DisEspecificoSN` u otro campo).
-Para confirmarlo hay que observarlo en la 0017.
+Sigue sin identificarse el campo.
+
+**Observado el 02/11/2026** en la 0017. Sergio montó 2O + fijo 400 × 400
+invisible + 2O con uniones `GMU038`; ver la
+[comparativa, caso 3](COMPARATIVA-PRESUPUESTOS-2026-11-01.md):
+
+- **Dibujo:** el hueco del fijo queda en blanco. Al seleccionarlo, solo se ve
+  un contorno azul fino. Las uniones a sus lados se dibujan como tubos de
+  400 mm, la altura del fijo.
+- **Precio y despiece:** la línea de estructura del fijo existe
+  (`FIJO DE 1 HUECO`, 400 × 360) con precio **0** y sin piezas de despiece.
+  Las uniones sí se valoran: 4,12 € cada una.
+- **Ancho y uniones:** cuenta en el ancho total (2800 = 1160 + 60 + 360 + 60
+  + 1160) y en las uniones, que se mantienen y restan su grosor.
+- **Documento:** la descripción del `GRUPO` incluye «FIJO DE 1 HUECO DE
+  MEDIDAS : 400,0 x 400,0» con color, serie y vidrio. El PDF de Productor no
+  se ha emitido todavía.
+- Al pasar al día siguiente, el conjunto salió sin serie, vidrio ni acabado,
+  y Productor no lo aceptó hasta rellenarlos («Datos incompletos para el
+  Elemento»).
 
 **En Aluminior: no existe.** No hay elemento invisible ni editor de diseño
-específico por elemento. Tarea `DS3` del roadmap; antes de implementar hay que
-resolver las preguntas 6–8 de la lista de abajo.
+específico por elemento. Tarea `DS3` del roadmap. Las preguntas 6 y 8 siguen
+siendo del operador; la 7 queda resuelta salvo el PDF.
 
 ## Cobertura en Aluminior
 
@@ -321,16 +368,18 @@ Registrado el 01/11/2026. July no estaba disponible en este equipo: pasar
 esta lista a July como pendientes desde el equipo donde está instalado.
 
 1. `Insertar tapajuntas cerramientos` (botón 4): qué hace y cuándo se habilita.
-2. Tipo de unión: icono de fija y de variable, y qué cambia (medida, despiece,
-   precio).
+2. Tipo de unión: icono de fija y de variable, y qué cambia. Ya observado el
+   efecto de `U` y `GMU038` en medida y precio (ver «Unión»); falta el icono
+   y el tipo variable.
 3. Registro de persiana frente a compacto y su `Cajón` de 300 mm.
-4. Lupa de perfiles: si filtra las series por tipo de estructura.
+4. ~~Lupa de perfiles: si filtra las series por tipo de estructura.~~
+   Resuelta el 01/11/2026: sí filtra.
 5. Guías de persiana (Sergio las explicará más adelante).
 6. Elemento invisible: qué se selecciona al «pulsar en la imagen» (el marco o
    el vidrio).
-7. Elemento invisible: si tiene precio o despiece, si cuenta en el ancho
-   total y en las uniones, y cómo sale dibujado en el presupuesto o la factura
-   (hueco en blanco, discontinuo, rotulado).
+7. Elemento invisible: resuelta el 02/11/2026 salvo el dibujo en el PDF
+   emitido. Precio 0, sin despiece, cuenta en el ancho y en las uniones,
+   aparece en la descripción y en el diseñador es un hueco en blanco.
 8. Elemento invisible: si los 400 × 400 son la medida real de la viga o pared.
 9. Pestañas `Módulo`, `Propiedades del Cerramiento` y `Tapajuntas`.
 10. Iconos de la derecha de `Elemento seleccionado` (además del cartabón) y
