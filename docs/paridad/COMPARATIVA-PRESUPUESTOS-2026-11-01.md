@@ -179,7 +179,7 @@ Verificado en Aluminior local (presupuesto 260001):
 Diferencias restantes en el caso 3: el fijo invisible (DS3) y el reparto
 asimétrico de Productor cuando las piezas tienen alturas distintas (40/20 en
 vez de 30/30). Todos los conjuntos históricos revisados reparten 30/30; ese
-caso queda abierto con una sola observación. La línea antigua del mismo
+caso queda abierto con una sola observación. El [contraste del 02/11](CONTRASTE-PRESUPUESTOS-2026-11-02.md) lo confirma: con alturas distintas el 89 % de las uniones reales reparte mitad y mitad; la hipótesis pasa a ser el elemento invisible. La línea antigua del mismo
 presupuesto conserva 2920 en el PDF.
 
 ## Cobertura del catálogo (02/11/2026)

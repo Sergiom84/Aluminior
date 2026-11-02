@@ -45,6 +45,7 @@ se conservan como fuentes inactivas, sin reactivar instrucciones ni permisos.
 | [AUDITORIA-FASE-0-CORRECCIONES-TERRA.md](paridad/AUDITORIA-FASE-0-CORRECCIONES-TERRA.md) | Evidencia o verificación fechada; conservar sus límites |
 | [BANCO-COMPARACION-PRECIOS.md](paridad/BANCO-COMPARACION-PRECIOS.md) | Banco diagnóstico; contexto económico pendiente |
 | [BANCO-CONTRASTE-2026-10-03.md](paridad/BANCO-CONTRASTE-2026-10-03.md) | Medición local de presupuestos reales, exclusiones, causas y propuestas |
+| [CONTRASTE-PRESUPUESTOS-2026-11-02.md](paridad/CONTRASTE-PRESUPUESTOS-2026-11-02.md) | Contraste de todos los GRUPO reales de 0016/0015: causas por importe, reparto de uniones y campo del invisible |
 | [MATRIZ-COBERTURA-PRODUCTOR-2026-10-03.md](paridad/MATRIZ-COBERTURA-PRODUCTOR-2026-10-03.md) | Fuentes, implementación, contraste y variantes por regla; enlaza el detalle por modelo/serie |
 | [COBERTURA-MODELO-SERIE-2026-10-03.md](paridad/COBERTURA-MODELO-SERIE-2026-10-03.md) | Informe reproducible de despieces guardados: 97 pares, campos, variantes y ausencias de contraste |
 | [ENSAYOS-MINIMOS-PRODUCTOR-2026-10-03.md](paridad/ENSAYOS-MINIMOS-PRODUCTOR-2026-10-03.md) | Comparaciones discriminantes priorizadas; estados y coordinación con visión |

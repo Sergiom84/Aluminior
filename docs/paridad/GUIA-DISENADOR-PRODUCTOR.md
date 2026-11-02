@@ -320,10 +320,19 @@ pared, pero que debe aparecer en el documento.
 Datos (exportación local de julio, solo lectura): `EstructurasDiseño.bInvisible`
 solo es `True` en nodos de tipo 6 (divisiones entre hojas): 683 nodos de
 catálogo y 143 en documentos. Aluminior ya los modela como
-`division-invisible`. Ese campo **no** es el elemento invisible completo, que
-no se encontró en la exportación. Hipótesis: se guarda en el diseño específico
-de la línea del cerramiento (`VCerramientosLin.DisEspecificoSN` u otro campo).
-Sigue sin identificarse el campo.
+`division-invisible`. Ese campo **no** es el elemento invisible completo.
+
+**Campo identificado el 02/11/2026** (lectura de copias, solo lectura; ver
+[contraste de presupuestos](CONTRASTE-PRESUPUESTOS-2026-11-02.md)): el
+elemento invisible es una línea de estructura con `DisEspecificoSN` (en
+`VDatosLinEstr` y en `VCerramientosLin`) cuyo diseño de documento
+(`EstructurasDiseño`, `TipoDoc = VPRES`, misma `nDoc`/`nLinEstr`) tiene **un
+único nodo de `Tipo = 19`** en lugar del árbol `Marco Normal` → `Vidrio`.
+`VDatosDiseño` conserva su `DisAncho`/`DisAlto` (400 × 400 en el caso 3) y la
+línea guarda `anchoHueco`/`largoHueco` nominales. Observado en 8 de 8: 2 en la
+0017, 3 en la 0016 y 3 en la 0015; todos con precio 0, sin despiece y dentro
+de un `GRUPO`. `DisEspecificoSN` solo no basta: marca también diseños
+específicos con precio (cartabones, divisiones).
 
 **Observado el 02/11/2026** en la 0017. Sergio montó 2O + fijo 400 × 400
 invisible + 2O con uniones `GMU038`; ver la
