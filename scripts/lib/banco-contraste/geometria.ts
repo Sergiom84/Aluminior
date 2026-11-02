@@ -1,7 +1,14 @@
 import type { ConfiguracionCerramientoV3, ModuloCerramiento, UnionCerramiento } from '@aluminior/core/estructuras'
 import { clave, numero, si, texto, type Caso } from './datos.ts'
+/**
+ * `linea`: medida económica guardada en cada elemento (Productor ya restó las uniones).
+ * `nominal`: hueco del dibujo (`AnchoHueco/AltoHueco`) con el reparto de uniones de
+ * Aluminior (`repartoUniones: 'PIEZAS'`), como si el operador dibujase el mismo conjunto.
+ */
+export type MedidasGrupo = 'linea' | 'nominal'
+const nominal = (hueco: unknown, dibujo: unknown) => numero(hueco)! > 0 ? numero(hueco)! : numero(dibujo)!
 /** UOrdenElem1/2 se resuelven por Orden, nunca por nLinea ni posición de array. */
-export function configuracionGrupo(c: Caso): { configuracion: ConfiguracionCerramientoV3 | null; motivos: string[] } {
+export function configuracionGrupo(c: Caso, medidas: MedidasGrupo = 'linea'): { configuracion: ConfiguracionCerramientoV3 | null; motivos: string[] } {
   const motivos: string[] = [], modulos: ModuloCerramiento[] = [], uniones: UnionCerramiento[] = []
   const gs = c.geometria ?? [], elementos = c.elementos ?? []
   const porLin = new Map(elementos.map(e => [texto(e.padre.nLinea), e]))
@@ -14,7 +21,8 @@ export function configuracionGrupo(c: Caso): { configuracion: ConfiguracionCerra
     // El dibujo guarda hueco/envolvente; la línea guarda la medida económica fabricada.
     // No sustituimos la medida de valoración por la de representación del cerramiento.
     const m: ModuloCerramiento = { id: `modulo-${texto(g.Orden)}`, estructuraCodigo: e.modelo,
-      anchoMm: e.dimensiones.ancho!, altoMm: e.dimensiones.alto!,
+      anchoMm: medidas === 'nominal' ? nominal(g.AnchoHueco, g.Ancho) : e.dimensiones.ancho!,
+      altoMm: medidas === 'nominal' ? nominal(g.AltoHueco, g.Alto) : e.dimensiones.alto!,
       materiales: { ...(e.serie ? { serieCodigo: e.serie } : {}), ...(e.vidrio ? { vidrioCodigo: e.vidrio } : {}) } }
     if (i > 0) {
       const candidatas = gs.filter(u => si(u.EsUnionSN) && texto(u.UOrdenElem2) === texto(g.Orden))
@@ -33,9 +41,12 @@ export function configuracionGrupo(c: Caso): { configuracion: ConfiguracionCerra
     if (!e || e.modelo !== texto(u.CodEstr) || clave(e.padre.nDoc, e.padre.nGrupo) !== clave(c.padre.nDoc, c.padre.nLinea)) motivos.push('union-no-enlazada')
     // Ancho de la línea de accesorio es 0; grosor físico explícito está en UGrosor.
     // Solo aceptar la longitud si coincide con la medida económica de la línea.
-    if (numero(u.ULongitud) !== e?.dimensiones.alto) motivos.push('longitud-de-union-no-demostrada')
-    uniones.push({ id: `union-${texto(u.Orden)}`, codigo: texto(u.CodEstr), grosorMm: numero(u.UGrosor)!, longitudMm: e?.dimensiones.alto! })
+    // En nominal, el motor recalcula la longitud como lado común.
+    if (medidas === 'linea' && numero(u.ULongitud) !== e?.dimensiones.alto) motivos.push('longitud-de-union-no-demostrada')
+    uniones.push({ id: `union-${texto(u.Orden)}`, codigo: texto(u.CodEstr), grosorMm: numero(u.UGrosor)!,
+      longitudMm: medidas === 'nominal' ? numero(u.ULongitud)! : e?.dimensiones.alto! })
   }
   if (uniones.length !== modulos.length - 1) motivos.push('composicion-no-representable')
-  return { configuracion: motivos.length ? null : { version: 3, modulos, uniones }, motivos: [...new Set(motivos)] }
+  return { configuracion: motivos.length ? null : { version: 3, modulos, uniones,
+    ...(medidas === 'nominal' ? { repartoUniones: 'PIEZAS' as const } : {}) }, motivos: [...new Set(motivos)] }
 }

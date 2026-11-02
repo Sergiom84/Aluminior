@@ -6,12 +6,14 @@ import { multiplicarDecimal, normalizarDecimal } from '@aluminior/core/precios'
 import { valorarEstructura, prepararManoObra, valorarCerramiento, importesLineaCerramiento, esConfiguracionCerramiento,
   type ClienteEscritura } from '@aluminior/web/banco-contraste'
 import { opcionAcristalamientoOrigen } from './acristalamiento.ts'
-import { configuracionGrupo } from './geometria.ts'
+import { configuracionGrupo, type MedidasGrupo } from './geometria.ts'
 import { accesoriosDeCaso } from './accesorios.ts'
 import { cotasDeCaso } from './cotas.ts'
 import { numero, si, texto, type Caso, type Pieza } from './datos.ts'
 
-export interface SalidaServicio { precio: number | null; total: number | null; piezas: Pieza[]; avisos: string[]; motivos: string[] }
+export interface SalidaServicio { precio: number | null; total: number | null; piezas: Pieza[]; avisos: string[]; motivos: string[]
+  /** Venta de cada módulo o unión del GRUPO, para atribuir diferencias a una pieza. */
+  origenes?: { id: string; codigo: string; importe: number | null }[] }
 const vacia = (motivos: string[], avisos: string[] = []): SalidaServicio => ({ precio: null, total: null, piezas: [], avisos, motivos })
 function restricciones(c: Caso) {
   const motivos: string[] = []
@@ -40,7 +42,7 @@ function proyectar(p: { articuloCodigo: string; funcion?: string | null; acabado
     importe: partida?.importeExacto == null ? null : Number(normalizarDecimal(partida.importeExacto, 2)),
     metraje: partida?.cantidadFacturable == null ? null : Number(partida.cantidadFacturable), unidad: partida?.unidad ?? '' }
 }
-export async function ejecutarServicio(cliente: ClienteEscritura, c: Caso): Promise<SalidaServicio> {
+export async function ejecutarServicio(cliente: ClienteEscritura, c: Caso, medidas: MedidasGrupo = 'linea'): Promise<SalidaServicio> {
   const motivos = restricciones(c)
   if (motivos.length) return vacia(motivos)
   const acabado = texto(c.padre.Acabado) || null
@@ -61,7 +63,7 @@ export async function ejecutarServicio(cliente: ClienteEscritura, c: Caso): Prom
       precio: f.precioMinuto == null ? null : Number(f.precioMinuto), importe: f.importe == null ? null : Number(f.importe),
       metraje: Number(f.minutos), unidad: 'UD' })) : []
     if ((c.elementos ?? []).some(e => !(c.geometria ?? []).some(g => texto(g.nLinEstr) === texto(e.padre.nLinea)))) return vacia(['elementos-adicionales-sin-geometria'])
-    const g = configuracionGrupo(c)
+    const g = configuracionGrupo(c, medidas)
     if (!g.configuracion) return vacia(g.motivos)
     const admite = (v: unknown): boolean => esConfiguracionCerramiento(v)
     if (!admite(g.configuracion)) {
@@ -114,7 +116,8 @@ export async function ejecutarServicio(cliente: ClienteEscritura, c: Caso): Prom
     const importes = importesLineaCerramiento(r, String(c.cantidad), manoObra, c.comision ?? null)
     return { precio: importes.total == null ? null : Number(importes.total) / c.cantidad!,
       total: importes.total == null ? null : Number(importes.total), piezas: [...piezas, ...manual],
-      avisos: r.origenes.flatMap(o => o.diagnosticos.map(d => d.detalle)), motivos }
+      avisos: r.origenes.flatMap(o => o.diagnosticos.map(d => d.detalle)), motivos,
+      origenes: r.origenes.map(o => ({ id: o.origen.id, codigo: o.codigo, importe: o.venta.importe == null ? null : Number(o.venta.importe) })) }
   }
   // Horas por unidad dentro del despiece, como Productor (MOCOL en el precio unitario).
   const { compacto, accesorios } = accesoriosDeCaso(c)

@@ -4,5 +4,5 @@
     "strict": true, "noEmit": true, "allowImportingTsExtensions": true,
     "allowJs": true, "skipLibCheck": true, "types": ["node"]
   },
-  "include": ["banco-contraste.ts", "lib/banco-contraste/**/*.ts", "cobertura-productor.ts", "lib/cobertura-productor/**/*.ts"]
+  "include": ["banco-contraste.ts", "lib/banco-contraste/**/*.ts", "contraste-presupuestos.ts", "contraste-presupuestos-agregado.ts", "lib/contraste-presupuestos/**/*.ts", "cobertura-productor.ts", "lib/cobertura-productor/**/*.ts"]
 }

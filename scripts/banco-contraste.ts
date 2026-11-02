@@ -20,7 +20,8 @@ const rel = relative(resolve('.'), salida).split(sep).join('/')
 if (!rel.startsWith('export_datos/') || rel.includes('..')) throw new Error('La salida debe estar dentro de export_datos/ ignorado')
 execFileSync('git', ['check-ignore', '--quiet', salida])
 mkdirSync(salida, { recursive: true })
-const guardar = (n: string, v: unknown) => writeFileSync(join(salida, `${n}.json`), JSON.stringify(v, null, 2))
+// Sin sangría para tablas y banco: los ejercicios grandes superan el límite de cadena de Node.
+const guardar = (n: string, v: unknown) => writeFileSync(join(salida, `${n}.json`), JSON.stringify(v, null, ['tablas', 'banco'].includes(n) ? 0 : 2))
 if (accion === 'catalogo') {
   if (!values.mdb) throw new Error('Falta --mdb <Anterior.mdb>')
   // Mismo guardado de copia que la extracción técnica antes de exportar catálogos.

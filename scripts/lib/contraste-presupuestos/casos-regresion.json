@@ -1,0 +1,4263 @@
+[
+ {
+  "descripcion": "Conjunto con uniones U que coincide",
+  "caso": {
+   "id": "regresion-01",
+   "tipo": "GRUPO",
+   "modelo": "GRUPO",
+   "fecha": "",
+   "tarifa": 1,
+   "comision": null,
+   "despunte": 0,
+   "padre": {
+    "nLinea": 1,
+    "nGrupo": 0,
+    "EstructuraSN": false,
+    "GrupoSN": true,
+    "Articulo": "GRUPO",
+    "Acabado": "UNI",
+    "Acabado2": null,
+    "Cdad": 1,
+    "Ancho": 982,
+    "Largo": 1745,
+    "nDoc": 1
+   },
+   "configuracion": {
+    "nTAcris": 0,
+    "HorasAdFabr": 7,
+    "HorasColoc": 6,
+    "Vidrio2": null,
+    "DisEspecificoSN": false,
+    "Familia1": null,
+    "Conjunto1": null,
+    "Familia2": null,
+    "Conjunto2": null,
+    "Familia3": null,
+    "Conjunto3": null,
+    "Familia4": null,
+    "Conjunto4": null
+   },
+   "opciones": [],
+   "piezas": [],
+   "dimensiones": {
+    "ancho": 982,
+    "alto": 1745
+   },
+   "cantidad": 1,
+   "serie": null,
+   "vidrio": null,
+   "familias": [
+    {
+     "familia": "",
+     "conjunto": ""
+    },
+    {
+     "familia": "",
+     "conjunto": ""
+    },
+    {
+     "familia": "",
+     "conjunto": ""
+    },
+    {
+     "familia": "",
+     "conjunto": ""
+    }
+   ],
+   "esperado": 705.21,
+   "totalEsperado": null,
+   "exclusiones": [],
+   "accesorios": [],
+   "opcionesAccesorio": [],
+   "variables": [],
+   "elementos": [
+    {
+     "id": "regresion-01-e1",
+     "tipo": "ELEMENTO",
+     "modelo": "0",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 2,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "0",
+      "Acabado": "L",
+      "Acabado2": "UNI",
+      "Cdad": 1,
+      "Ancho": 982,
+      "Largo": 799.5,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "GMA350",
+      "Familia2": "050",
+      "Conjunto2": "PAN16",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 982,
+      "alto": 799.5
+     },
+     "cantidad": 1,
+     "serie": "GMA350",
+     "vidrio": "PAN16",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "GMA350"
+      },
+      {
+       "familia": "050",
+       "conjunto": "PAN16"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 119.65999603271484,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    },
+    {
+     "id": "regresion-01-e2",
+     "tipo": "ELEMENTO",
+     "modelo": "C2",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 3,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "C2",
+      "Acabado": "L",
+      "Acabado2": "UNI",
+      "Cdad": 1,
+      "Ancho": 982,
+      "Largo": 944.5,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "GMC400",
+      "Familia2": "050",
+      "Conjunto2": "PAN16",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 982,
+      "alto": 944.5
+     },
+     "cantidad": 1,
+     "serie": "GMC400",
+     "vidrio": "PAN16",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "GMC400"
+      },
+      {
+       "familia": "050",
+       "conjunto": "PAN16"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 195.5500030517578,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    },
+    {
+     "id": "regresion-01-e3",
+     "tipo": "ELEMENTO",
+     "modelo": "U",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 4,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "U",
+      "Acabado": "L",
+      "Acabado2": "",
+      "Cdad": 1,
+      "Ancho": 0,
+      "Largo": 982,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "GMC400",
+      "Familia2": "050",
+      "Conjunto2": "PAN16",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 0,
+      "alto": 982
+     },
+     "cantidad": 1,
+     "serie": "GMC400",
+     "vidrio": "PAN16",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "GMC400"
+      },
+      {
+       "familia": "050",
+       "conjunto": "PAN16"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 0,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    }
+   ],
+   "geometria": [
+    {
+     "nLinEstr": 2,
+     "Orden": 1,
+     "CodEstr": "0",
+     "Ancho": 982,
+     "Alto": 800,
+     "AnchoHueco": 982,
+     "AltoHueco": 800,
+     "EsUnionSN": false,
+     "UnionVH": "",
+     "UOrdenElem1": 0,
+     "UOrdenElem2": 0,
+     "UGrosor": 0,
+     "ULongitud": 0,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    },
+    {
+     "nLinEstr": 3,
+     "Orden": 3,
+     "CodEstr": "C2",
+     "Ancho": 982,
+     "Alto": 945,
+     "AnchoHueco": 982,
+     "AltoHueco": 945,
+     "EsUnionSN": false,
+     "UnionVH": "",
+     "UOrdenElem1": 0,
+     "UOrdenElem2": 0,
+     "UGrosor": 0,
+     "ULongitud": 0,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    },
+    {
+     "nLinEstr": 4,
+     "Orden": 2,
+     "CodEstr": "U",
+     "Ancho": 982,
+     "Alto": 1,
+     "AnchoHueco": 0,
+     "AltoHueco": 0,
+     "EsUnionSN": true,
+     "UnionVH": "H",
+     "UOrdenElem1": 1,
+     "UOrdenElem2": 3,
+     "UGrosor": 1,
+     "ULongitud": 982,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    }
+   ]
+  },
+  "resultado": "coincide",
+  "causas": [],
+  "guardadas": 705.21
+ },
+ {
+  "descripcion": "Conjunto con uniones PSU001 que coincide",
+  "caso": {
+   "id": "regresion-02",
+   "tipo": "GRUPO",
+   "modelo": "GRUPO",
+   "fecha": "",
+   "tarifa": 1,
+   "comision": null,
+   "despunte": 0,
+   "padre": {
+    "nLinea": 1,
+    "nGrupo": 0,
+    "EstructuraSN": false,
+    "GrupoSN": true,
+    "Articulo": "GRUPO",
+    "Acabado": "UNI",
+    "Acabado2": null,
+    "Cdad": 1,
+    "Ancho": 1475,
+    "Largo": 2100,
+    "nDoc": 1
+   },
+   "configuracion": {
+    "nTAcris": 0,
+    "HorasAdFabr": 0,
+    "HorasColoc": 6,
+    "Vidrio2": null,
+    "DisEspecificoSN": false,
+    "Familia1": null,
+    "Conjunto1": null,
+    "Familia2": null,
+    "Conjunto2": null,
+    "Familia3": null,
+    "Conjunto3": null,
+    "Familia4": null,
+    "Conjunto4": null
+   },
+   "opciones": [],
+   "piezas": [],
+   "dimensiones": {
+    "ancho": 1475,
+    "alto": 2100
+   },
+   "cantidad": 1,
+   "serie": null,
+   "vidrio": null,
+   "familias": [
+    {
+     "familia": "",
+     "conjunto": ""
+    },
+    {
+     "familia": "",
+     "conjunto": ""
+    },
+    {
+     "familia": "",
+     "conjunto": ""
+    },
+    {
+     "familia": "",
+     "conjunto": ""
+    }
+   ],
+   "esperado": 863.35,
+   "totalEsperado": null,
+   "exclusiones": [],
+   "accesorios": [],
+   "opcionesAccesorio": [],
+   "variables": [],
+   "elementos": [
+    {
+     "id": "regresion-02-e1",
+     "tipo": "ELEMENTO",
+     "modelo": "1O",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 2,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "1O",
+      "Acabado": "L",
+      "Acabado2": "UNI",
+      "Cdad": 1,
+      "Ancho": 849,
+      "Largo": 2100,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "ELEGANTPVC",
+      "Familia2": "050",
+      "Conjunto2": "V420AGS4",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 849,
+      "alto": 2100
+     },
+     "cantidad": 1,
+     "serie": "ELEGANTPVC",
+     "vidrio": "V420AGS4",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "ELEGANTPVC"
+      },
+      {
+       "familia": "050",
+       "conjunto": "V420AGS4"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 494.3399963378906,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    },
+    {
+     "id": "regresion-02-e2",
+     "tipo": "ELEMENTO",
+     "modelo": "0",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 3,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "0",
+      "Acabado": "L",
+      "Acabado2": "UNI",
+      "Cdad": 1,
+      "Ancho": 624,
+      "Largo": 1100,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "ELEGANTPVC",
+      "Familia2": "050",
+      "Conjunto2": "V420AGS4",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 624,
+      "alto": 1100
+     },
+     "cantidad": 1,
+     "serie": "ELEGANTPVC",
+     "vidrio": "V420AGS4",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "ELEGANTPVC"
+      },
+      {
+       "familia": "050",
+       "conjunto": "V420AGS4"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 159.44000244140625,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    },
+    {
+     "id": "regresion-02-e3",
+     "tipo": "ELEMENTO",
+     "modelo": "PSU001",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 4,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "PSU001",
+      "Acabado": "L",
+      "Acabado2": "",
+      "Cdad": 1,
+      "Ancho": 0,
+      "Largo": 1100,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "ELEGANTPVC",
+      "Familia2": "050",
+      "Conjunto2": "V420AGS4",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 0,
+      "alto": 1100
+     },
+     "cantidad": 1,
+     "serie": "ELEGANTPVC",
+     "vidrio": "V420AGS4",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "ELEGANTPVC"
+      },
+      {
+       "familia": "050",
+       "conjunto": "V420AGS4"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 29.56999969482422,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    }
+   ],
+   "geometria": [
+    {
+     "nLinEstr": 2,
+     "Orden": 1,
+     "CodEstr": "1O",
+     "Ancho": 850,
+     "Alto": 2100,
+     "AnchoHueco": 850,
+     "AltoHueco": 2100,
+     "EsUnionSN": false,
+     "UnionVH": "",
+     "UOrdenElem1": 0,
+     "UOrdenElem2": 0,
+     "UGrosor": 0,
+     "ULongitud": 0,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    },
+    {
+     "nLinEstr": 3,
+     "Orden": 3,
+     "CodEstr": "0",
+     "Ancho": 625,
+     "Alto": 1100,
+     "AnchoHueco": 625,
+     "AltoHueco": 1100,
+     "EsUnionSN": false,
+     "UnionVH": "",
+     "UOrdenElem1": 0,
+     "UOrdenElem2": 0,
+     "UGrosor": 0,
+     "ULongitud": 0,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    },
+    {
+     "nLinEstr": 4,
+     "Orden": 2,
+     "CodEstr": "PSU001",
+     "Ancho": 2,
+     "Alto": 1100,
+     "AnchoHueco": 0,
+     "AltoHueco": 0,
+     "EsUnionSN": true,
+     "UnionVH": "V",
+     "UOrdenElem1": 1,
+     "UOrdenElem2": 3,
+     "UGrosor": 2,
+     "ULongitud": 1100,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    }
+   ]
+  },
+  "resultado": "coincide",
+  "causas": [],
+  "guardadas": 863.35
+ },
+ {
+  "descripcion": "Conjunto con uniones GMU038 que coincide",
+  "caso": {
+   "id": "regresion-03",
+   "tipo": "GRUPO",
+   "modelo": "GRUPO",
+   "fecha": "",
+   "tarifa": 1,
+   "comision": null,
+   "despunte": 0,
+   "padre": {
+    "nLinea": 1,
+    "nGrupo": 0,
+    "EstructuraSN": false,
+    "GrupoSN": true,
+    "Articulo": "GRUPO",
+    "Acabado": "UNI",
+    "Acabado2": null,
+    "Cdad": 1,
+    "Ancho": 1760,
+    "Largo": 1360,
+    "nDoc": 1
+   },
+   "configuracion": {
+    "nTAcris": 0,
+    "HorasAdFabr": 8,
+    "HorasColoc": 6,
+    "Vidrio2": null,
+    "DisEspecificoSN": false,
+    "Familia1": null,
+    "Conjunto1": null,
+    "Familia2": null,
+    "Conjunto2": null,
+    "Familia3": null,
+    "Conjunto3": null,
+    "Familia4": null,
+    "Conjunto4": null
+   },
+   "opciones": [],
+   "piezas": [],
+   "dimensiones": {
+    "ancho": 1760,
+    "alto": 1360
+   },
+   "cantidad": 1,
+   "serie": null,
+   "vidrio": null,
+   "familias": [
+    {
+     "familia": "",
+     "conjunto": ""
+    },
+    {
+     "familia": "",
+     "conjunto": ""
+    },
+    {
+     "familia": "",
+     "conjunto": ""
+    },
+    {
+     "familia": "",
+     "conjunto": ""
+    }
+   ],
+   "esperado": 846.51,
+   "totalEsperado": null,
+   "exclusiones": [],
+   "accesorios": [],
+   "opcionesAccesorio": [],
+   "variables": [],
+   "elementos": [
+    {
+     "id": "regresion-03-e1",
+     "tipo": "ELEMENTO",
+     "modelo": "0",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 2,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "0",
+      "Acabado": "L",
+      "Acabado2": "UNI",
+      "Cdad": 1,
+      "Ancho": 1360,
+      "Largo": 399.5,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "GMA350",
+      "Familia2": "050",
+      "Conjunto2": "PAN16",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 1360,
+      "alto": 399.5
+     },
+     "cantidad": 1,
+     "serie": "GMA350",
+     "vidrio": "PAN16",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "GMA350"
+      },
+      {
+       "familia": "050",
+       "conjunto": "PAN16"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 108.47000122070312,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    },
+    {
+     "id": "regresion-03-e2",
+     "tipo": "ELEMENTO",
+     "modelo": "C2",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 3,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "C2",
+      "Acabado": "L",
+      "Acabado2": "UNI",
+      "Cdad": 1,
+      "Ancho": 1330,
+      "Largo": 959.5,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "GMC400",
+      "Familia2": "050",
+      "Conjunto2": "PAN16",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 1330,
+      "alto": 959.5
+     },
+     "cantidad": 1,
+     "serie": "GMC400",
+     "vidrio": "PAN16",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "GMC400"
+      },
+      {
+       "familia": "050",
+       "conjunto": "PAN16"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 209.6199951171875,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    },
+    {
+     "id": "regresion-03-e3",
+     "tipo": "ELEMENTO",
+     "modelo": "0",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 4,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "0",
+      "Acabado": "L",
+      "Acabado2": "UNI",
+      "Cdad": 1,
+      "Ancho": 370,
+      "Largo": 959.5,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "GMA350",
+      "Familia2": "050",
+      "Conjunto2": "PAN16",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 370,
+      "alto": 959.5
+     },
+     "cantidad": 1,
+     "serie": "GMA350",
+     "vidrio": "PAN16",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "GMA350"
+      },
+      {
+       "familia": "050",
+       "conjunto": "PAN16"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 98.52999877929688,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    },
+    {
+     "id": "regresion-03-e4",
+     "tipo": "ELEMENTO",
+     "modelo": "GMU038",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 5,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "GMU038",
+      "Acabado": "L",
+      "Acabado2": "",
+      "Cdad": 1,
+      "Ancho": 0,
+      "Largo": 960,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "GMA350",
+      "Familia2": "050",
+      "Conjunto2": "PAN16",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 0,
+      "alto": 960
+     },
+     "cantidad": 1,
+     "serie": "GMA350",
+     "vidrio": "PAN16",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "GMA350"
+      },
+      {
+       "familia": "050",
+       "conjunto": "PAN16"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 9.890000343322754,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    },
+    {
+     "id": "regresion-03-e5",
+     "tipo": "ELEMENTO",
+     "modelo": "U",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 6,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "U",
+      "Acabado": "L",
+      "Acabado2": "",
+      "Cdad": 1,
+      "Ancho": 0,
+      "Largo": 1360,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "GMA350",
+      "Familia2": "050",
+      "Conjunto2": "PAN16",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 0,
+      "alto": 1360
+     },
+     "cantidad": 1,
+     "serie": "GMA350",
+     "vidrio": "PAN16",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "GMA350"
+      },
+      {
+       "familia": "050",
+       "conjunto": "PAN16"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 0,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    }
+   ],
+   "geometria": [
+    {
+     "nLinEstr": 2,
+     "Orden": 1,
+     "CodEstr": "0",
+     "Ancho": 1360,
+     "Alto": 400,
+     "AnchoHueco": 1360,
+     "AltoHueco": 400,
+     "EsUnionSN": false,
+     "UnionVH": "",
+     "UOrdenElem1": 0,
+     "UOrdenElem2": 0,
+     "UGrosor": 0,
+     "ULongitud": 0,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    },
+    {
+     "nLinEstr": 3,
+     "Orden": 3,
+     "CodEstr": "C2",
+     "Ancho": 1360,
+     "Alto": 960,
+     "AnchoHueco": 1360,
+     "AltoHueco": 960,
+     "EsUnionSN": false,
+     "UnionVH": "",
+     "UOrdenElem1": 0,
+     "UOrdenElem2": 0,
+     "UGrosor": 0,
+     "ULongitud": 0,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    },
+    {
+     "nLinEstr": 4,
+     "Orden": 5,
+     "CodEstr": "0",
+     "Ancho": 400,
+     "Alto": 960,
+     "AnchoHueco": 400,
+     "AltoHueco": 960,
+     "EsUnionSN": false,
+     "UnionVH": "",
+     "UOrdenElem1": 0,
+     "UOrdenElem2": 0,
+     "UGrosor": 0,
+     "ULongitud": 0,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    },
+    {
+     "nLinEstr": 5,
+     "Orden": 4,
+     "CodEstr": "GMU038",
+     "Ancho": 60,
+     "Alto": 960,
+     "AnchoHueco": 0,
+     "AltoHueco": 0,
+     "EsUnionSN": true,
+     "UnionVH": "V",
+     "UOrdenElem1": 3,
+     "UOrdenElem2": 5,
+     "UGrosor": 60,
+     "ULongitud": 960,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    },
+    {
+     "nLinEstr": 6,
+     "Orden": 2,
+     "CodEstr": "U",
+     "Ancho": 1360,
+     "Alto": 1,
+     "AnchoHueco": 0,
+     "AltoHueco": 0,
+     "EsUnionSN": true,
+     "UnionVH": "H",
+     "UOrdenElem1": 1,
+     "UOrdenElem2": 3,
+     "UGrosor": 1,
+     "ULongitud": 1360,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    }
+   ]
+  },
+  "resultado": "coincide",
+  "causas": [],
+  "guardadas": 846.51
+ },
+ {
+  "descripcion": "Conjunto con uniones PSU006 que coincide",
+  "caso": {
+   "id": "regresion-04",
+   "tipo": "GRUPO",
+   "modelo": "GRUPO",
+   "fecha": "",
+   "tarifa": 1,
+   "comision": null,
+   "despunte": 0,
+   "padre": {
+    "nLinea": 1,
+    "nGrupo": 0,
+    "EstructuraSN": false,
+    "GrupoSN": true,
+    "Articulo": "GRUPO",
+    "Acabado": "UNI",
+    "Acabado2": null,
+    "Cdad": 1,
+    "Ancho": 3200,
+    "Largo": 2290,
+    "nDoc": 1
+   },
+   "configuracion": {
+    "nTAcris": 0,
+    "HorasAdFabr": 0,
+    "HorasColoc": 10,
+    "Vidrio2": null,
+    "DisEspecificoSN": false,
+    "Familia1": null,
+    "Conjunto1": null,
+    "Familia2": null,
+    "Conjunto2": null,
+    "Familia3": null,
+    "Conjunto3": null,
+    "Familia4": null,
+    "Conjunto4": null
+   },
+   "opciones": [],
+   "piezas": [],
+   "dimensiones": {
+    "ancho": 3200,
+    "alto": 2290
+   },
+   "cantidad": 1,
+   "serie": null,
+   "vidrio": null,
+   "familias": [
+    {
+     "familia": "",
+     "conjunto": ""
+    },
+    {
+     "familia": "",
+     "conjunto": ""
+    },
+    {
+     "familia": "",
+     "conjunto": ""
+    },
+    {
+     "familia": "",
+     "conjunto": ""
+    }
+   ],
+   "esperado": 2352.29,
+   "totalEsperado": null,
+   "exclusiones": [],
+   "accesorios": [],
+   "opcionesAccesorio": [],
+   "variables": [],
+   "elementos": [
+    {
+     "id": "regresion-04-e1",
+     "tipo": "ELEMENTO",
+     "modelo": "2O",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 2,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "2O",
+      "Acabado": "B",
+      "Acabado2": "UNI",
+      "Cdad": 1,
+      "Ancho": 1099.699951171875,
+      "Largo": 1290,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "ELEGANTPVC",
+      "Familia2": "050",
+      "Conjunto2": "V420AGS4",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 1099.699951171875,
+      "alto": 1290
+     },
+     "cantidad": 1,
+     "serie": "ELEGANTPVC",
+     "vidrio": "V420AGS4",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "ELEGANTPVC"
+      },
+      {
+       "familia": "050",
+       "conjunto": "V420AGS4"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 634.4000244140625,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    },
+    {
+     "id": "regresion-04-e2",
+     "tipo": "ELEMENTO",
+     "modelo": "2O",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 3,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "2O",
+      "Acabado": "B",
+      "Acabado2": "UNI",
+      "Cdad": 1,
+      "Ancho": 1099.699951171875,
+      "Largo": 1290,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "ELEGANTPVC",
+      "Familia2": "050",
+      "Conjunto2": "V420AGS4",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 1099.699951171875,
+      "alto": 1290
+     },
+     "cantidad": 1,
+     "serie": "ELEGANTPVC",
+     "vidrio": "V420AGS4",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "ELEGANTPVC"
+      },
+      {
+       "familia": "050",
+       "conjunto": "V420AGS4"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 634.4000244140625,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    },
+    {
+     "id": "regresion-04-e3",
+     "tipo": "ELEMENTO",
+     "modelo": "1OD",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 4,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "1OD",
+      "Acabado": "B",
+      "Acabado2": "UNI",
+      "Cdad": 1,
+      "Ancho": 999.7000122070312,
+      "Largo": 2290,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "ELEGANTPVC",
+      "Familia2": "050",
+      "Conjunto2": "V420AGS4",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 999.7000122070312,
+      "alto": 2290
+     },
+     "cantidad": 1,
+     "serie": "ELEGANTPVC",
+     "vidrio": "V420AGS4",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "ELEGANTPVC"
+      },
+      {
+       "familia": "050",
+       "conjunto": "V420AGS4"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 605.22998046875,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    },
+    {
+     "id": "regresion-04-e4",
+     "tipo": "ELEMENTO",
+     "modelo": "PSU006",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 5,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "PSU006",
+      "Acabado": "B",
+      "Acabado2": "",
+      "Cdad": 1,
+      "Ancho": 0,
+      "Largo": 1290,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "ELEGANTPVC",
+      "Familia2": "050",
+      "Conjunto2": "V420AGS4",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 0,
+      "alto": 1290
+     },
+     "cantidad": 1,
+     "serie": "ELEGANTPVC",
+     "vidrio": "V420AGS4",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "ELEGANTPVC"
+      },
+      {
+       "familia": "050",
+       "conjunto": "V420AGS4"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 178.25999450683594,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    },
+    {
+     "id": "regresion-04-e5",
+     "tipo": "ELEMENTO",
+     "modelo": "U",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 6,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "U",
+      "Acabado": "B",
+      "Acabado2": "",
+      "Cdad": 1,
+      "Ancho": 0,
+      "Largo": 1290,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "ELEGANTPVC",
+      "Familia2": "050",
+      "Conjunto2": "V420AGS4",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 0,
+      "alto": 1290
+     },
+     "cantidad": 1,
+     "serie": "ELEGANTPVC",
+     "vidrio": "V420AGS4",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "ELEGANTPVC"
+      },
+      {
+       "familia": "050",
+       "conjunto": "V420AGS4"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 0,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    }
+   ],
+   "geometria": [
+    {
+     "nLinEstr": 2,
+     "Orden": 1,
+     "CodEstr": "2O",
+     "Ancho": 1100,
+     "Alto": 1290,
+     "AnchoHueco": 1100,
+     "AltoHueco": 1290,
+     "EsUnionSN": false,
+     "UnionVH": "",
+     "UOrdenElem1": 0,
+     "UOrdenElem2": 0,
+     "UGrosor": 0,
+     "ULongitud": 0,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    },
+    {
+     "nLinEstr": 3,
+     "Orden": 3,
+     "CodEstr": "2O",
+     "Ancho": 1100,
+     "Alto": 1290,
+     "AnchoHueco": 1100,
+     "AltoHueco": 1290,
+     "EsUnionSN": false,
+     "UnionVH": "",
+     "UOrdenElem1": 0,
+     "UOrdenElem2": 0,
+     "UGrosor": 0,
+     "ULongitud": 0,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    },
+    {
+     "nLinEstr": 4,
+     "Orden": 5,
+     "CodEstr": "1OD",
+     "Ancho": 1000,
+     "Alto": 2290,
+     "AnchoHueco": 1000,
+     "AltoHueco": 2290,
+     "EsUnionSN": false,
+     "UnionVH": "",
+     "UOrdenElem1": 0,
+     "UOrdenElem2": 0,
+     "UGrosor": 0,
+     "ULongitud": 0,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    },
+    {
+     "nLinEstr": 5,
+     "Orden": 4,
+     "CodEstr": "PSU006",
+     "Ancho": 0,
+     "Alto": 1290,
+     "AnchoHueco": 0,
+     "AltoHueco": 0,
+     "EsUnionSN": true,
+     "UnionVH": "V",
+     "UOrdenElem1": 3,
+     "UOrdenElem2": 5,
+     "UGrosor": 0,
+     "ULongitud": 1290,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    },
+    {
+     "nLinEstr": 6,
+     "Orden": 2,
+     "CodEstr": "U",
+     "Ancho": 1,
+     "Alto": 1290,
+     "AnchoHueco": 0,
+     "AltoHueco": 0,
+     "EsUnionSN": true,
+     "UnionVH": "V",
+     "UOrdenElem1": 1,
+     "UOrdenElem2": 3,
+     "UGrosor": 1,
+     "ULongitud": 1290,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    }
+   ]
+  },
+  "resultado": "coincide",
+  "causas": [],
+  "guardadas": 2352.29
+ },
+ {
+  "descripcion": "Conjunto con uniones GMU040 que coincide",
+  "caso": {
+   "id": "regresion-05",
+   "tipo": "GRUPO",
+   "modelo": "GRUPO",
+   "fecha": "",
+   "tarifa": 1,
+   "comision": null,
+   "despunte": 0,
+   "padre": {
+    "nLinea": 1,
+    "nGrupo": 0,
+    "EstructuraSN": false,
+    "GrupoSN": true,
+    "Articulo": "GRUPO",
+    "Acabado": "UNI",
+    "Acabado2": null,
+    "Cdad": 1,
+    "Ancho": 4970,
+    "Largo": 605,
+    "nDoc": 1
+   },
+   "configuracion": {
+    "nTAcris": 0,
+    "HorasAdFabr": 0,
+    "HorasColoc": 14,
+    "Vidrio2": null,
+    "DisEspecificoSN": false,
+    "Familia1": null,
+    "Conjunto1": null,
+    "Familia2": null,
+    "Conjunto2": null,
+    "Familia3": null,
+    "Conjunto3": null,
+    "Familia4": null,
+    "Conjunto4": null
+   },
+   "opciones": [],
+   "piezas": [],
+   "dimensiones": {
+    "ancho": 4970,
+    "alto": 605
+   },
+   "cantidad": 1,
+   "serie": null,
+   "vidrio": null,
+   "familias": [
+    {
+     "familia": "",
+     "conjunto": ""
+    },
+    {
+     "familia": "",
+     "conjunto": ""
+    },
+    {
+     "familia": "",
+     "conjunto": ""
+    },
+    {
+     "familia": "",
+     "conjunto": ""
+    }
+   ],
+   "esperado": 1369.03,
+   "totalEsperado": null,
+   "exclusiones": [],
+   "accesorios": [],
+   "opcionesAccesorio": [],
+   "variables": [],
+   "elementos": [
+    {
+     "id": "regresion-05-e1",
+     "tipo": "ELEMENTO",
+     "modelo": "C2",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 2,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "C2",
+      "Acabado": "L",
+      "Acabado2": "UNI",
+      "Cdad": 1,
+      "Ancho": 1030,
+      "Largo": 605,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "GMC400",
+      "Familia2": "050",
+      "Conjunto2": "V48AGS4",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 1030,
+      "alto": 605
+     },
+     "cantidad": 1,
+     "serie": "GMC400",
+     "vidrio": "V48AGS4",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "GMC400"
+      },
+      {
+       "familia": "050",
+       "conjunto": "V48AGS4"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 225.4199981689453,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    },
+    {
+     "id": "regresion-05-e2",
+     "tipo": "ELEMENTO",
+     "modelo": "C2",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 3,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "C2",
+      "Acabado": "L",
+      "Acabado2": "UNI",
+      "Cdad": 1,
+      "Ancho": 1375,
+      "Largo": 605,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "GMC400",
+      "Familia2": "050",
+      "Conjunto2": "V48AGS4",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 1375,
+      "alto": 605
+     },
+     "cantidad": 1,
+     "serie": "GMC400",
+     "vidrio": "V48AGS4",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "GMC400"
+      },
+      {
+       "familia": "050",
+       "conjunto": "V48AGS4"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 237.85000610351562,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    },
+    {
+     "id": "regresion-05-e3",
+     "tipo": "ELEMENTO",
+     "modelo": "C2",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 4,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "C2",
+      "Acabado": "L",
+      "Acabado2": "UNI",
+      "Cdad": 1,
+      "Ancho": 1375,
+      "Largo": 605,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "GMC400",
+      "Familia2": "050",
+      "Conjunto2": "V48AGS4",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 1375,
+      "alto": 605
+     },
+     "cantidad": 1,
+     "serie": "GMC400",
+     "vidrio": "V48AGS4",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "GMC400"
+      },
+      {
+       "familia": "050",
+       "conjunto": "V48AGS4"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 237.85000610351562,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    },
+    {
+     "id": "regresion-05-e4",
+     "tipo": "ELEMENTO",
+     "modelo": "C2",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 5,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "C2",
+      "Acabado": "L",
+      "Acabado2": "UNI",
+      "Cdad": 1,
+      "Ancho": 1030,
+      "Largo": 605,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "GMC400",
+      "Familia2": "050",
+      "Conjunto2": "V48AGS4",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 1030,
+      "alto": 605
+     },
+     "cantidad": 1,
+     "serie": "GMC400",
+     "vidrio": "V48AGS4",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "GMC400"
+      },
+      {
+       "familia": "050",
+       "conjunto": "V48AGS4"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 225.4199981689453,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    },
+    {
+     "id": "regresion-05-e5",
+     "tipo": "ELEMENTO",
+     "modelo": "GMU038",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 6,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "GMU038",
+      "Acabado": "L",
+      "Acabado2": "",
+      "Cdad": 1,
+      "Ancho": 0,
+      "Largo": 605,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "GMC400",
+      "Familia2": "050",
+      "Conjunto2": "V48AGS4",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 0,
+      "alto": 605
+     },
+     "cantidad": 1,
+     "serie": "GMC400",
+     "vidrio": "V48AGS4",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "GMC400"
+      },
+      {
+       "familia": "050",
+       "conjunto": "V48AGS4"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 6.28000020980835,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    },
+    {
+     "id": "regresion-05-e6",
+     "tipo": "ELEMENTO",
+     "modelo": "GMU038",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 7,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "GMU038",
+      "Acabado": "L",
+      "Acabado2": "",
+      "Cdad": 1,
+      "Ancho": 0,
+      "Largo": 605,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "GMC400",
+      "Familia2": "050",
+      "Conjunto2": "V48AGS4",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 0,
+      "alto": 605
+     },
+     "cantidad": 1,
+     "serie": "GMC400",
+     "vidrio": "V48AGS4",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "GMC400"
+      },
+      {
+       "familia": "050",
+       "conjunto": "V48AGS4"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 6.28000020980835,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    },
+    {
+     "id": "regresion-05-e7",
+     "tipo": "ELEMENTO",
+     "modelo": "GMU040",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 8,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "GMU040",
+      "Acabado": "L",
+      "Acabado2": "",
+      "Cdad": 1,
+      "Ancho": 0,
+      "Largo": 605,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "GMC400",
+      "Familia2": "050",
+      "Conjunto2": "V48AGS4",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 0,
+      "alto": 605
+     },
+     "cantidad": 1,
+     "serie": "GMC400",
+     "vidrio": "V48AGS4",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "GMC400"
+      },
+      {
+       "familia": "050",
+       "conjunto": "V48AGS4"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 9.930000305175781,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    }
+   ],
+   "geometria": [
+    {
+     "nLinEstr": 2,
+     "Orden": 1,
+     "CodEstr": "C2",
+     "Ancho": 1060,
+     "Alto": 605,
+     "AnchoHueco": 1060,
+     "AltoHueco": 605,
+     "EsUnionSN": false,
+     "UnionVH": "",
+     "UOrdenElem1": 0,
+     "UOrdenElem2": 0,
+     "UGrosor": 0,
+     "ULongitud": 0,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    },
+    {
+     "nLinEstr": 3,
+     "Orden": 3,
+     "CodEstr": "C2",
+     "Ancho": 1425,
+     "Alto": 605,
+     "AnchoHueco": 1425,
+     "AltoHueco": 605,
+     "EsUnionSN": false,
+     "UnionVH": "",
+     "UOrdenElem1": 0,
+     "UOrdenElem2": 0,
+     "UGrosor": 0,
+     "ULongitud": 0,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    },
+    {
+     "nLinEstr": 4,
+     "Orden": 5,
+     "CodEstr": "C2",
+     "Ancho": 1425,
+     "Alto": 605,
+     "AnchoHueco": 1425,
+     "AltoHueco": 605,
+     "EsUnionSN": false,
+     "UnionVH": "",
+     "UOrdenElem1": 0,
+     "UOrdenElem2": 0,
+     "UGrosor": 0,
+     "ULongitud": 0,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    },
+    {
+     "nLinEstr": 5,
+     "Orden": 7,
+     "CodEstr": "C2",
+     "Ancho": 1060,
+     "Alto": 605,
+     "AnchoHueco": 1060,
+     "AltoHueco": 605,
+     "EsUnionSN": false,
+     "UnionVH": "",
+     "UOrdenElem1": 0,
+     "UOrdenElem2": 0,
+     "UGrosor": 0,
+     "ULongitud": 0,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    },
+    {
+     "nLinEstr": 6,
+     "Orden": 6,
+     "CodEstr": "GMU038",
+     "Ancho": 60,
+     "Alto": 605,
+     "AnchoHueco": 0,
+     "AltoHueco": 0,
+     "EsUnionSN": true,
+     "UnionVH": "V",
+     "UOrdenElem1": 5,
+     "UOrdenElem2": 7,
+     "UGrosor": 60,
+     "ULongitud": 605,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    },
+    {
+     "nLinEstr": 7,
+     "Orden": 2,
+     "CodEstr": "GMU038",
+     "Ancho": 60,
+     "Alto": 605,
+     "AnchoHueco": 0,
+     "AltoHueco": 0,
+     "EsUnionSN": true,
+     "UnionVH": "V",
+     "UOrdenElem1": 1,
+     "UOrdenElem2": 3,
+     "UGrosor": 60,
+     "ULongitud": 605,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    },
+    {
+     "nLinEstr": 8,
+     "Orden": 4,
+     "CodEstr": "GMU040",
+     "Ancho": 40,
+     "Alto": 605,
+     "AnchoHueco": 0,
+     "AltoHueco": 0,
+     "EsUnionSN": true,
+     "UnionVH": "V",
+     "UOrdenElem1": 3,
+     "UOrdenElem2": 5,
+     "UGrosor": 40,
+     "ULongitud": 605,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    }
+   ]
+  },
+  "resultado": "coincide",
+  "causas": [],
+  "guardadas": 1369.03
+ },
+ {
+  "descripcion": "Compacto: el resto coincide",
+  "caso": {
+   "id": "regresion-06",
+   "tipo": "GRUPO",
+   "modelo": "GRUPO",
+   "fecha": "",
+   "tarifa": 1,
+   "comision": null,
+   "despunte": 0,
+   "padre": {
+    "nLinea": 1,
+    "nGrupo": 0,
+    "EstructuraSN": false,
+    "GrupoSN": true,
+    "Articulo": "GRUPO",
+    "Acabado": "UNI",
+    "Acabado2": null,
+    "Cdad": 1,
+    "Ancho": 1480,
+    "Largo": 1550,
+    "nDoc": 1
+   },
+   "configuracion": {
+    "nTAcris": 0,
+    "HorasAdFabr": 5,
+    "HorasColoc": 8,
+    "Vidrio2": null,
+    "DisEspecificoSN": false,
+    "Familia1": null,
+    "Conjunto1": null,
+    "Familia2": null,
+    "Conjunto2": null,
+    "Familia3": null,
+    "Conjunto3": null,
+    "Familia4": null,
+    "Conjunto4": null
+   },
+   "opciones": [],
+   "piezas": [],
+   "dimensiones": {
+    "ancho": 1480,
+    "alto": 1550
+   },
+   "cantidad": 1,
+   "serie": null,
+   "vidrio": null,
+   "familias": [
+    {
+     "familia": "",
+     "conjunto": ""
+    },
+    {
+     "familia": "",
+     "conjunto": ""
+    },
+    {
+     "familia": "",
+     "conjunto": ""
+    },
+    {
+     "familia": "",
+     "conjunto": ""
+    }
+   ],
+   "esperado": 1410.08,
+   "totalEsperado": null,
+   "exclusiones": [
+    "entradas-incompletas"
+   ],
+   "accesorios": [
+    {
+     "FamiliaAcc": "100",
+     "Accesorio": "COM009",
+     "Acabado": "VS",
+     "AltoCajon": 155
+    }
+   ],
+   "opcionesAccesorio": [],
+   "variables": [],
+   "elementos": [
+    {
+     "id": "regresion-06-e1",
+     "tipo": "ELEMENTO",
+     "modelo": "PC2",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 2,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "PC2",
+      "Acabado": "VS",
+      "Acabado2": "UNI",
+      "Cdad": 1,
+      "Ancho": 1480,
+      "Largo": 994.5,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "GMPC65",
+      "Familia2": "050",
+      "Conjunto2": "V48AGS4",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 1480,
+      "alto": 994.5
+     },
+     "cantidad": 1,
+     "serie": "GMPC65",
+     "vidrio": "V48AGS4",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "GMPC65"
+      },
+      {
+       "familia": "050",
+       "conjunto": "V48AGS4"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 486.44000244140625,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    },
+    {
+     "id": "regresion-06-e2",
+     "tipo": "ELEMENTO",
+     "modelo": "0",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 3,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "0",
+      "Acabado": "VS",
+      "Acabado2": "UNI",
+      "Cdad": 1,
+      "Ancho": 1480,
+      "Largo": 399.5,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "GMA60RL",
+      "Familia2": "050",
+      "Conjunto2": "V48AGS4",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 1480,
+      "alto": 399.5
+     },
+     "cantidad": 1,
+     "serie": "GMA60RL",
+     "vidrio": "V48AGS4",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "GMA60RL"
+      },
+      {
+       "familia": "050",
+       "conjunto": "V48AGS4"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 177.99000549316406,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    },
+    {
+     "id": "regresion-06-e3",
+     "tipo": "ELEMENTO",
+     "modelo": "U",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 4,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "U",
+      "Acabado": "VS",
+      "Acabado2": "",
+      "Cdad": 1,
+      "Ancho": 0,
+      "Largo": 1480,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "GMA60RL",
+      "Familia2": "050",
+      "Conjunto2": "V48AGS4",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 0,
+      "alto": 1480
+     },
+     "cantidad": 1,
+     "serie": "GMA60RL",
+     "vidrio": "V48AGS4",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "GMA60RL"
+      },
+      {
+       "familia": "050",
+       "conjunto": "V48AGS4"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 0,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    },
+    {
+     "id": "regresion-06-e4",
+     "tipo": "ELEMENTO",
+     "modelo": "COM009",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 5,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "COM009",
+      "Acabado": "VS",
+      "Acabado2": null,
+      "Cdad": 1,
+      "Ancho": 1480,
+      "Largo": 1550,
+      "nDoc": 1
+     },
+     "configuracion": null,
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 1480,
+      "alto": 1550
+     },
+     "cantidad": 1,
+     "serie": null,
+     "vidrio": null,
+     "familias": [
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 355.6499938964844,
+     "totalEsperado": null,
+     "exclusiones": [
+      "entradas-incompletas"
+     ],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    }
+   ],
+   "geometria": [
+    {
+     "nLinEstr": 2,
+     "Orden": 1,
+     "CodEstr": "PC2",
+     "Ancho": 1480,
+     "Alto": 1150,
+     "AnchoHueco": 1480,
+     "AltoHueco": 1150,
+     "EsUnionSN": false,
+     "UnionVH": "",
+     "UOrdenElem1": 0,
+     "UOrdenElem2": 0,
+     "UGrosor": 0,
+     "ULongitud": 0,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    },
+    {
+     "nLinEstr": 3,
+     "Orden": 3,
+     "CodEstr": "0",
+     "Ancho": 1480,
+     "Alto": 400,
+     "AnchoHueco": 1480,
+     "AltoHueco": 400,
+     "EsUnionSN": false,
+     "UnionVH": "",
+     "UOrdenElem1": 0,
+     "UOrdenElem2": 0,
+     "UGrosor": 0,
+     "ULongitud": 0,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    },
+    {
+     "nLinEstr": 4,
+     "Orden": 2,
+     "CodEstr": "U",
+     "Ancho": 1480,
+     "Alto": 1,
+     "AnchoHueco": 0,
+     "AltoHueco": 0,
+     "EsUnionSN": true,
+     "UnionVH": "H",
+     "UOrdenElem1": 1,
+     "UOrdenElem2": 3,
+     "UGrosor": 1,
+     "ULongitud": 1480,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    }
+   ]
+  },
+  "resultado": "difiere",
+  "causas": [
+   "compacto"
+  ],
+  "guardadas": 1054.43
+ },
+ {
+  "descripcion": "Reparto de uniones: coincide con medidas guardadas, no desde el hueco",
+  "caso": {
+   "id": "regresion-07",
+   "tipo": "GRUPO",
+   "modelo": "GRUPO",
+   "fecha": "",
+   "tarifa": 1,
+   "comision": null,
+   "despunte": 0,
+   "padre": {
+    "nLinea": 1,
+    "nGrupo": 0,
+    "EstructuraSN": false,
+    "GrupoSN": true,
+    "Articulo": "GRUPO",
+    "Acabado": "UNI",
+    "Acabado2": null,
+    "Cdad": 1,
+    "Ancho": 1500,
+    "Largo": 2600,
+    "nDoc": 1
+   },
+   "configuracion": {
+    "nTAcris": 0,
+    "HorasAdFabr": 12,
+    "HorasColoc": 10,
+    "Vidrio2": null,
+    "DisEspecificoSN": false,
+    "Familia1": null,
+    "Conjunto1": null,
+    "Familia2": null,
+    "Conjunto2": null,
+    "Familia3": null,
+    "Conjunto3": null,
+    "Familia4": null,
+    "Conjunto4": null
+   },
+   "opciones": [],
+   "piezas": [],
+   "dimensiones": {
+    "ancho": 1500,
+    "alto": 2600
+   },
+   "cantidad": 1,
+   "serie": null,
+   "vidrio": null,
+   "familias": [
+    {
+     "familia": "",
+     "conjunto": ""
+    },
+    {
+     "familia": "",
+     "conjunto": ""
+    },
+    {
+     "familia": "",
+     "conjunto": ""
+    },
+    {
+     "familia": "",
+     "conjunto": ""
+    }
+   ],
+   "esperado": 1854.01,
+   "totalEsperado": null,
+   "exclusiones": [],
+   "accesorios": [],
+   "opcionesAccesorio": [],
+   "variables": [],
+   "elementos": [
+    {
+     "id": "regresion-07-e1",
+     "tipo": "ELEMENTO",
+     "modelo": "1",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 2,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "1",
+      "Acabado": "P",
+      "Acabado2": "UNI",
+      "Cdad": 1,
+      "Ancho": 730,
+      "Largo": 599.5,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "GMA350",
+      "Familia2": "050",
+      "Conjunto2": "PAN16",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 730,
+      "alto": 599.5
+     },
+     "cantidad": 1,
+     "serie": "GMA350",
+     "vidrio": "PAN16",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "GMA350"
+      },
+      {
+       "familia": "050",
+       "conjunto": "PAN16"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 297.8699951171875,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    },
+    {
+     "id": "regresion-07-e2",
+     "tipo": "ELEMENTO",
+     "modelo": "1",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 3,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "1",
+      "Acabado": "P",
+      "Acabado2": "UNI",
+      "Cdad": 1,
+      "Ancho": 730,
+      "Largo": 1999.5,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "GMA350",
+      "Familia2": "050",
+      "Conjunto2": "PAN16",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 730,
+      "alto": 1999.5
+     },
+     "cantidad": 1,
+     "serie": "GMA350",
+     "vidrio": "PAN16",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "GMA350"
+      },
+      {
+       "familia": "050",
+       "conjunto": "PAN16"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 480.7900085449219,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    },
+    {
+     "id": "regresion-07-e3",
+     "tipo": "ELEMENTO",
+     "modelo": "02H",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 4,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "02H",
+      "Acabado": "P",
+      "Acabado2": "UNI",
+      "Cdad": 1,
+      "Ancho": 730,
+      "Largo": 2600,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "GMA350",
+      "Familia2": "050",
+      "Conjunto2": "PAN16",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 730,
+      "alto": 2600
+     },
+     "cantidad": 1,
+     "serie": "GMA350",
+     "vidrio": "PAN16",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "GMA350"
+      },
+      {
+       "familia": "050",
+       "conjunto": "PAN16"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 391.6300048828125,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    },
+    {
+     "id": "regresion-07-e4",
+     "tipo": "ELEMENTO",
+     "modelo": "GMU039",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 5,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "GMU039",
+      "Acabado": "P",
+      "Acabado2": "",
+      "Cdad": 1,
+      "Ancho": 0,
+      "Largo": 2600,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "GMA350",
+      "Familia2": "050",
+      "Conjunto2": "PAN16",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 0,
+      "alto": 2600
+     },
+     "cantidad": 1,
+     "serie": "GMA350",
+     "vidrio": "PAN16",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "GMA350"
+      },
+      {
+       "familia": "050",
+       "conjunto": "PAN16"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 23.719999313354492,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    },
+    {
+     "id": "regresion-07-e5",
+     "tipo": "ELEMENTO",
+     "modelo": "U",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 6,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "U",
+      "Acabado": "P",
+      "Acabado2": "",
+      "Cdad": 1,
+      "Ancho": 0,
+      "Largo": 730,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "GMA350",
+      "Familia2": "050",
+      "Conjunto2": "PAN16",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 0,
+      "alto": 730
+     },
+     "cantidad": 1,
+     "serie": "GMA350",
+     "vidrio": "PAN16",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "GMA350"
+      },
+      {
+       "familia": "050",
+       "conjunto": "PAN16"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 0,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    }
+   ],
+   "geometria": [
+    {
+     "nLinEstr": 2,
+     "Orden": 1,
+     "CodEstr": "1",
+     "Ancho": 750,
+     "Alto": 600,
+     "AnchoHueco": 750,
+     "AltoHueco": 600,
+     "EsUnionSN": false,
+     "UnionVH": "",
+     "UOrdenElem1": 0,
+     "UOrdenElem2": 0,
+     "UGrosor": 0,
+     "ULongitud": 0,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    },
+    {
+     "nLinEstr": 3,
+     "Orden": 3,
+     "CodEstr": "1",
+     "Ancho": 750,
+     "Alto": 2000,
+     "AnchoHueco": 750,
+     "AltoHueco": 2000,
+     "EsUnionSN": false,
+     "UnionVH": "",
+     "UOrdenElem1": 0,
+     "UOrdenElem2": 0,
+     "UGrosor": 0,
+     "ULongitud": 0,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    },
+    {
+     "nLinEstr": 4,
+     "Orden": 5,
+     "CodEstr": "02H",
+     "Ancho": 750,
+     "Alto": 2600,
+     "AnchoHueco": 750,
+     "AltoHueco": 2600,
+     "EsUnionSN": false,
+     "UnionVH": "",
+     "UOrdenElem1": 0,
+     "UOrdenElem2": 0,
+     "UGrosor": 0,
+     "ULongitud": 0,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    },
+    {
+     "nLinEstr": 5,
+     "Orden": 4,
+     "CodEstr": "GMU039",
+     "Ancho": 40,
+     "Alto": 2600,
+     "AnchoHueco": 0,
+     "AltoHueco": 0,
+     "EsUnionSN": true,
+     "UnionVH": "V",
+     "UOrdenElem1": 1,
+     "UOrdenElem2": 5,
+     "UGrosor": 40,
+     "ULongitud": 2600,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    },
+    {
+     "nLinEstr": 6,
+     "Orden": 2,
+     "CodEstr": "U",
+     "Ancho": 730,
+     "Alto": 1,
+     "AnchoHueco": 0,
+     "AltoHueco": 0,
+     "EsUnionSN": true,
+     "UnionVH": "H",
+     "UOrdenElem1": 1,
+     "UOrdenElem2": 3,
+     "UGrosor": 1,
+     "ULongitud": 730,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    }
+   ]
+  },
+  "resultado": "difiere",
+  "causas": [
+   "reparto-uniones"
+  ],
+  "guardadas": 1854.01
+ },
+ {
+  "descripcion": "Elemento invisible",
+  "caso": {
+   "id": "regresion-08",
+   "tipo": "GRUPO",
+   "modelo": "GRUPO",
+   "fecha": "",
+   "tarifa": 1,
+   "comision": null,
+   "despunte": 0,
+   "padre": {
+    "nLinea": 1,
+    "nGrupo": 0,
+    "EstructuraSN": false,
+    "GrupoSN": true,
+    "Articulo": "GRUPO",
+    "Acabado": "UNI",
+    "Acabado2": null,
+    "Cdad": 1,
+    "Ancho": 1625,
+    "Largo": 2330,
+    "nDoc": 1
+   },
+   "configuracion": {
+    "nTAcris": 0,
+    "HorasAdFabr": 0,
+    "HorasColoc": 8,
+    "Vidrio2": null,
+    "DisEspecificoSN": false,
+    "Familia1": null,
+    "Conjunto1": null,
+    "Familia2": null,
+    "Conjunto2": null,
+    "Familia3": null,
+    "Conjunto3": null,
+    "Familia4": null,
+    "Conjunto4": null
+   },
+   "opciones": [],
+   "piezas": [],
+   "dimensiones": {
+    "ancho": 1625,
+    "alto": 2330
+   },
+   "cantidad": 1,
+   "serie": null,
+   "vidrio": null,
+   "familias": [
+    {
+     "familia": "",
+     "conjunto": ""
+    },
+    {
+     "familia": "",
+     "conjunto": ""
+    },
+    {
+     "familia": "",
+     "conjunto": ""
+    },
+    {
+     "familia": "",
+     "conjunto": ""
+    }
+   ],
+   "esperado": 1512.15,
+   "totalEsperado": null,
+   "exclusiones": [
+    "diseno-especifico-no-reproducible",
+    "despiece-no-enlazado",
+    "entradas-incompletas"
+   ],
+   "accesorios": [],
+   "opcionesAccesorio": [],
+   "variables": [],
+   "elementos": [
+    {
+     "id": "regresion-08-e1",
+     "tipo": "ELEMENTO",
+     "modelo": "2O",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 2,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "2O",
+      "Acabado": "VS",
+      "Acabado2": "UNI",
+      "Cdad": 1,
+      "Ancho": 1625,
+      "Largo": 824.5,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "ELEGANTPVC",
+      "Familia2": "050",
+      "Conjunto2": "V420AGS4",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 1625,
+      "alto": 824.5
+     },
+     "cantidad": 1,
+     "serie": "ELEGANTPVC",
+     "vidrio": "V420AGS4",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "ELEGANTPVC"
+      },
+      {
+       "familia": "050",
+       "conjunto": "V420AGS4"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 587.9199829101562,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    },
+    {
+     "id": "regresion-08-e2",
+     "tipo": "ELEMENTO",
+     "modelo": "0",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 3,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "0",
+      "Acabado": "VS",
+      "Acabado2": "UNI",
+      "Cdad": 1,
+      "Ancho": 371.5,
+      "Largo": 1504.5,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": true,
+      "Familia1": "001",
+      "Conjunto1": "ELEGANTPVC",
+      "Familia2": "050",
+      "Conjunto2": "V420AGS4",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 371.5,
+      "alto": 1504.5
+     },
+     "cantidad": 1,
+     "serie": "ELEGANTPVC",
+     "vidrio": "V420AGS4",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "ELEGANTPVC"
+      },
+      {
+       "familia": "050",
+       "conjunto": "V420AGS4"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 0,
+     "totalEsperado": null,
+     "exclusiones": [
+      "diseno-especifico-no-reproducible",
+      "despiece-no-enlazado"
+     ],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    },
+    {
+     "id": "regresion-08-e3",
+     "tipo": "ELEMENTO",
+     "modelo": "2O",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 4,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "2O",
+      "Acabado": "VS",
+      "Acabado2": "UNI",
+      "Cdad": 1,
+      "Ancho": 879.5,
+      "Largo": 1504.5,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "ELEGANTPVC",
+      "Familia2": "050",
+      "Conjunto2": "V420AGS4",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 879.5,
+      "alto": 1504.5
+     },
+     "cantidad": 1,
+     "serie": "ELEGANTPVC",
+     "vidrio": "V420AGS4",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "ELEGANTPVC"
+      },
+      {
+       "familia": "050",
+       "conjunto": "V420AGS4"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 646.9500122070312,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    },
+    {
+     "id": "regresion-08-e4",
+     "tipo": "ELEMENTO",
+     "modelo": "U",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 5,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "U",
+      "Acabado": "VS",
+      "Acabado2": "",
+      "Cdad": 1,
+      "Ancho": 0,
+      "Largo": 1504.5,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "ELEGANTPVC",
+      "Familia2": "050",
+      "Conjunto2": "V420AGS4",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 0,
+      "alto": 1504.5
+     },
+     "cantidad": 1,
+     "serie": "ELEGANTPVC",
+     "vidrio": "V420AGS4",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "ELEGANTPVC"
+      },
+      {
+       "familia": "050",
+       "conjunto": "V420AGS4"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 0,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    },
+    {
+     "id": "regresion-08-e5",
+     "tipo": "ELEMENTO",
+     "modelo": "U",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 6,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "U",
+      "Acabado": "VS",
+      "Acabado2": "",
+      "Cdad": 1,
+      "Ancho": 0,
+      "Largo": 1252,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "ELEGANTPVC",
+      "Familia2": "050",
+      "Conjunto2": "V420AGS4",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 0,
+      "alto": 1252
+     },
+     "cantidad": 1,
+     "serie": "ELEGANTPVC",
+     "vidrio": "V420AGS4",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "ELEGANTPVC"
+      },
+      {
+       "familia": "050",
+       "conjunto": "V420AGS4"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 0,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    },
+    {
+     "id": "regresion-08-e6",
+     "tipo": "ELEMENTO",
+     "modelo": "GMT004",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 7,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "GMT004",
+      "Acabado": "VS",
+      "Acabado2": null,
+      "Cdad": 1,
+      "Ancho": 1625,
+      "Largo": 2330,
+      "nDoc": 1
+     },
+     "configuracion": null,
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 1625,
+      "alto": 2330
+     },
+     "cantidad": 1,
+     "serie": null,
+     "vidrio": null,
+     "familias": [
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 37.279998779296875,
+     "totalEsperado": null,
+     "exclusiones": [
+      "entradas-incompletas"
+     ],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    }
+   ],
+   "geometria": [
+    {
+     "nLinEstr": 2,
+     "Orden": 1,
+     "CodEstr": "2O",
+     "Ancho": 1625,
+     "Alto": 825,
+     "AnchoHueco": 1625,
+     "AltoHueco": 825,
+     "EsUnionSN": false,
+     "UnionVH": "",
+     "UOrdenElem1": 0,
+     "UOrdenElem2": 0,
+     "UGrosor": 0,
+     "ULongitud": 0,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    },
+    {
+     "nLinEstr": 3,
+     "Orden": 3,
+     "CodEstr": "0",
+     "Ancho": 372,
+     "Alto": 1505,
+     "AnchoHueco": 372,
+     "AltoHueco": 1505,
+     "EsUnionSN": false,
+     "UnionVH": "",
+     "UOrdenElem1": 0,
+     "UOrdenElem2": 0,
+     "UGrosor": 0,
+     "ULongitud": 0,
+     "DisEspecificoSN": true,
+     "DisAltoCaj": 0
+    },
+    {
+     "nLinEstr": 4,
+     "Orden": 5,
+     "CodEstr": "2O",
+     "Ancho": 880,
+     "Alto": 1505,
+     "AnchoHueco": 880,
+     "AltoHueco": 1505,
+     "EsUnionSN": false,
+     "UnionVH": "",
+     "UOrdenElem1": 0,
+     "UOrdenElem2": 0,
+     "UGrosor": 0,
+     "ULongitud": 0,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    },
+    {
+     "nLinEstr": 5,
+     "Orden": 4,
+     "CodEstr": "U",
+     "Ancho": 1,
+     "Alto": 1504.5,
+     "AnchoHueco": 0,
+     "AltoHueco": 0,
+     "EsUnionSN": true,
+     "UnionVH": "V",
+     "UOrdenElem1": 3,
+     "UOrdenElem2": 5,
+     "UGrosor": 1,
+     "ULongitud": 1504.5,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    },
+    {
+     "nLinEstr": 6,
+     "Orden": 2,
+     "CodEstr": "U",
+     "Ancho": 1252,
+     "Alto": 1,
+     "AnchoHueco": 0,
+     "AltoHueco": 0,
+     "EsUnionSN": true,
+     "UnionVH": "H",
+     "UOrdenElem1": 1,
+     "UOrdenElem2": 3,
+     "UGrosor": 1,
+     "ULongitud": 1252,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    }
+   ]
+  },
+  "resultado": "difiere",
+  "causas": [
+   "tapajuntas",
+   "invisible",
+   "reparto-uniones"
+  ],
+  "guardadas": 1650.57
+ },
+ {
+  "descripcion": "Cota FI/FS sin transmitir",
+  "caso": {
+   "id": "regresion-09",
+   "tipo": "GRUPO",
+   "modelo": "GRUPO",
+   "fecha": "",
+   "tarifa": 1,
+   "comision": null,
+   "despunte": 0,
+   "padre": {
+    "nLinea": 1,
+    "nGrupo": 0,
+    "EstructuraSN": false,
+    "GrupoSN": true,
+    "Articulo": "GRUPO",
+    "Acabado": "UNI",
+    "Acabado2": null,
+    "Cdad": 1,
+    "Ancho": 1950,
+    "Largo": 2600,
+    "nDoc": 1
+   },
+   "configuracion": {
+    "nTAcris": 0,
+    "HorasAdFabr": 6,
+    "HorasColoc": 15,
+    "Vidrio2": null,
+    "DisEspecificoSN": false,
+    "Familia1": null,
+    "Conjunto1": null,
+    "Familia2": null,
+    "Conjunto2": null,
+    "Familia3": null,
+    "Conjunto3": null,
+    "Familia4": null,
+    "Conjunto4": null
+   },
+   "opciones": [],
+   "piezas": [],
+   "dimensiones": {
+    "ancho": 1950,
+    "alto": 2600
+   },
+   "cantidad": 1,
+   "serie": null,
+   "vidrio": null,
+   "familias": [
+    {
+     "familia": "",
+     "conjunto": ""
+    },
+    {
+     "familia": "",
+     "conjunto": ""
+    },
+    {
+     "familia": "",
+     "conjunto": ""
+    },
+    {
+     "familia": "",
+     "conjunto": ""
+    }
+   ],
+   "esperado": 1619.95,
+   "totalEsperado": null,
+   "exclusiones": [
+    "diseno-especifico-no-reproducible"
+   ],
+   "accesorios": [],
+   "opcionesAccesorio": [],
+   "variables": [],
+   "elementos": [
+    {
+     "id": "regresion-09-e1",
+     "tipo": "ELEMENTO",
+     "modelo": "0",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 2,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "0",
+      "Acabado": "L",
+      "Acabado2": "UNI",
+      "Cdad": 1,
+      "Ancho": 820,
+      "Largo": 2600,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": true,
+      "Familia1": "001",
+      "Conjunto1": "GMA350",
+      "Familia2": "050",
+      "Conjunto2": "V484",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 820,
+      "alto": 2600
+     },
+     "cantidad": 1,
+     "serie": "GMA350",
+     "vidrio": "V484",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "GMA350"
+      },
+      {
+       "familia": "050",
+       "conjunto": "V484"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 322.989990234375,
+     "totalEsperado": null,
+     "exclusiones": [
+      "diseno-especifico-no-reproducible"
+     ],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    },
+    {
+     "id": "regresion-09-e2",
+     "tipo": "ELEMENTO",
+     "modelo": "1PFS",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 3,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "1PFS",
+      "Acabado": "L",
+      "Acabado2": "UNI",
+      "Cdad": 1,
+      "Ancho": 1070,
+      "Largo": 2600,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": true,
+      "Familia1": "001",
+      "Conjunto1": "GMA350",
+      "Familia2": "050",
+      "Conjunto2": "V484",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 1070,
+      "alto": 2600
+     },
+     "cantidad": 1,
+     "serie": "GMA350",
+     "vidrio": "V484",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "GMA350"
+      },
+      {
+       "familia": "050",
+       "conjunto": "V484"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 640.8800048828125,
+     "totalEsperado": null,
+     "exclusiones": [
+      "diseno-especifico-no-reproducible"
+     ],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    },
+    {
+     "id": "regresion-09-e3",
+     "tipo": "ELEMENTO",
+     "modelo": "GMU038",
+     "fecha": "",
+     "tarifa": 1,
+     "comision": null,
+     "despunte": 0,
+     "padre": {
+      "nLinea": 4,
+      "nGrupo": 1,
+      "EstructuraSN": true,
+      "GrupoSN": false,
+      "Articulo": "GMU038",
+      "Acabado": "L",
+      "Acabado2": "",
+      "Cdad": 1,
+      "Ancho": 0,
+      "Largo": 2600,
+      "nDoc": 1
+     },
+     "configuracion": {
+      "nTAcris": 0,
+      "HorasAdFabr": 0,
+      "HorasColoc": 0,
+      "Vidrio2": null,
+      "DisEspecificoSN": false,
+      "Familia1": "001",
+      "Conjunto1": "GMA350",
+      "Familia2": "050",
+      "Conjunto2": "V484",
+      "Familia3": null,
+      "Conjunto3": null,
+      "Familia4": null,
+      "Conjunto4": null
+     },
+     "opciones": [],
+     "piezas": [],
+     "dimensiones": {
+      "ancho": 0,
+      "alto": 2600
+     },
+     "cantidad": 1,
+     "serie": "GMA350",
+     "vidrio": "V484",
+     "familias": [
+      {
+       "familia": "001",
+       "conjunto": "GMA350"
+      },
+      {
+       "familia": "050",
+       "conjunto": "V484"
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      },
+      {
+       "familia": "",
+       "conjunto": ""
+      }
+     ],
+     "esperado": 26.079999923706055,
+     "totalEsperado": null,
+     "exclusiones": [],
+     "accesorios": [],
+     "opcionesAccesorio": [],
+     "variables": []
+    }
+   ],
+   "geometria": [
+    {
+     "nLinEstr": 2,
+     "Orden": 1,
+     "CodEstr": "0",
+     "Ancho": 820,
+     "Alto": 2600,
+     "AnchoHueco": 850,
+     "AltoHueco": 2600,
+     "EsUnionSN": false,
+     "UnionVH": "",
+     "UOrdenElem1": 0,
+     "UOrdenElem2": 0,
+     "UGrosor": 0,
+     "ULongitud": 0,
+     "DisEspecificoSN": true,
+     "DisAltoCaj": 0
+    },
+    {
+     "nLinEstr": 3,
+     "Orden": 3,
+     "CodEstr": "1PFS",
+     "Ancho": 1070,
+     "Alto": 2600,
+     "AnchoHueco": 1100,
+     "AltoHueco": 2600,
+     "EsUnionSN": false,
+     "UnionVH": "",
+     "UOrdenElem1": 0,
+     "UOrdenElem2": 0,
+     "UGrosor": 0,
+     "ULongitud": 0,
+     "DisEspecificoSN": true,
+     "DisAltoCaj": 0
+    },
+    {
+     "nLinEstr": 4,
+     "Orden": 2,
+     "CodEstr": "GMU038",
+     "Ancho": 60,
+     "Alto": 2600,
+     "AnchoHueco": 0,
+     "AltoHueco": 0,
+     "EsUnionSN": true,
+     "UnionVH": "V",
+     "UOrdenElem1": 1,
+     "UOrdenElem2": 3,
+     "UGrosor": 60,
+     "ULongitud": 2600,
+     "DisEspecificoSN": false,
+     "DisAltoCaj": 0
+    }
+   ]
+  },
+  "resultado": "sin-valorar",
+  "causas": [
+   "cota-fi-fs"
+  ],
+  "guardadas": null
+ }
+]

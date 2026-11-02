@@ -16,6 +16,30 @@ El [roadmap operativo](../ROADMAP-PARIDAD-PRODUCTOR.md) conserva el orden y
 estado único de las tareas de paridad, con mantenimiento documental obligatorio.
 
 
+## Contraste masivo de GRUPO reales — 02/11/2026
+
+Todos los GRUPO de la 0016 (225, copia del 31/10) y de la 0015 (230),
+valorados con el motor sobre el catálogo real local; ver
+[contraste](paridad/CONTRASTE-PRESUPUESTOS-2026-11-02.md). Desde julio hay
+188 documentos y 59 GRUPO nuevos en la 0016; los PVP no han cambiado. 0016:
+23 coinciden al céntimo, 66 difieren con causa identificada, 123 sin valorar
+y 13 no se dibujan. Por importe pesan la cota `FI`/`FS` de los fijos sin
+transmitir (31 GRUPO), los conjuntos de varias series (E2, 40), el compacto
+(E5, 43; en 24 el resto coincide al céntimo) y el vidrio por elemento (E6,
+24). El reparto de uniones cambia 44 GRUPO por solo 749 € en total; su
+patrón principal es la unión que recorre varias piezas. Las alturas
+distintas no explican la asimetría: el 89 % reparte mitad y mitad; el caso
+3 sigue siendo una sola observación, ligada al invisible (hipótesis). Campo
+del invisible identificado: diseño de un nodo `Tipo = 19` (DS3). La 0015 no
+es comparable en precio (tarifa de 2023). Nueve GRUPO reales anonimizados
+quedan como regresión local. Ampliado el mismo día a los 17 ejercicios
+(2010–2026, 4.107 GRUPO): hasta 2022 no son reproducibles con el catálogo
+actual (uniones `CMU…` y series retiradas); en 2023–2026 el 70 % de los
+valorados tiene la misma receta que Productor y el compacto es la causa más
+frecuente (235). La asimetría del reparto se concentra en las uniones de
+guías de compacto. Orden: GR1, E5, E2, E6, GR2. Sin cambios en el motor ni
+publicación.
+
 ## Guía del diseñador de Productor — 01/11/2026
 
 Sergio empieza a explicar botón a botón el diseñador de cerramientos.
