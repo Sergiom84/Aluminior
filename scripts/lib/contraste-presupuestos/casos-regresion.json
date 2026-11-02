@@ -2401,7 +2401,7 @@
   "guardadas": 1369.03
  },
  {
-  "descripcion": "Compacto sin opciones guardadas en el GRUPO: se aparta y el resto coincide con medidas guardadas",
+  "descripcion": "Compacto de GRUPO sin VOpciones con las predeterminadas del catálogo: coincide al céntimo (E5b)",
   "caso": {
    "id": "regresion-06",
    "tipo": "GRUPO",
@@ -2807,12 +2807,9 @@
     }
    ]
   },
-  "resultado": "difiere",
-  "causas": [
-   "compacto",
-   "reparto-uniones"
-  ],
-  "guardadas": 1054.43
+  "resultado": "coincide",
+  "causas": [],
+  "guardadas": 1410.08
  },
  {
   "descripcion": "Reparto de uniones: coincide con medidas guardadas, no desde el hueco",

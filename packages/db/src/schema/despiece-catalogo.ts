@@ -157,3 +157,17 @@ export const conjuntoRanurasVacias = pgTable('conjunto_ranuras_vacias', {
   conjuntoCodigo: text('conjunto_codigo').notNull(),
   componente: text('componente').notNull(),
 }, t => ({ pk: primaryKey({ columns: [t.conjuntoCodigo, t.componente] }) })).enableRLS()
+
+/**
+ * `EstructurasOpcOpciones`: opciones de los grupos `G{grupo}O{opcion}` de una
+ * estructura accesoria (compacto, tapajuntas, tubo) y su predeterminada
+ * (`OPCpredetSN`). Productor la aplica cuando la línea no guarda `VOpciones`,
+ * como los compactos de los módulos de GRUPO.
+ */
+export const estructuraOpcionesAccesorio = pgTable('estructura_opciones_accesorio', {
+  estructuraCodigo: text('estructura_codigo').notNull().references(() => estructuras.codigo, { onDelete: 'cascade' }),
+  grupo: integer('grupo').notNull(),
+  opcion: integer('opcion').notNull(),
+  predeterminada: boolean('predeterminada').notNull(),
+  descripcion: text('descripcion').notNull().default(''),
+}, t => ({ pk: primaryKey({ columns: [t.estructuraCodigo, t.grupo, t.opcion] }) })).enableRLS()

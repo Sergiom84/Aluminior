@@ -40,6 +40,12 @@ function despiezarAccesorio(catalogo: CatalogoLinea, accesorio: AccesorioLineaCa
     if (!t || t.length !== 1) { r.incidencias.push(`accesorio ${codigo}: opción ${o} ilegible`); return r }
     marcadas.set(t[0]!.grupo, (marcadas.get(t[0]!.grupo) ?? new Set()).add(t[0]!.opcion))
   }
+  // Un grupo sin opción guardada toma la predeterminada del catálogo, como Productor
+  // en los compactos de GRUPO, que no guardan `VOpciones`.
+  for (const o of catalogo.opcionesPredeterminadas?.(codigo) ?? []) {
+    const t = terminosSeleccion(o)?.[0]
+    if (t && !marcadas.has(t.grupo)) marcadas.set(t.grupo, new Set([t.opcion]))
+  }
   const medir = (formula: string | null) => {
     if (!formula?.trim()) return null
     try { return evaluar(formula, contexto) } catch (e) { r.incidencias.push((e as Error).message); return null }

@@ -16,7 +16,7 @@ export const TABLAS_MOTOR = [
   'estructura_referencias_corte', 'conjunto_descuentos_corte', 'estructura_plantilla_catalogo',
   'conjunto_asociaciones', 'grupos_asociacion', 'tipos_hoja_catalogo', 'mano_obra_conceptos',
   'articulos_incrementos_precio', 'articulos_despiece', 'conjunto_ranuras_vacias', 'conjunto_parametros_despiece',
-  'estructura_parametros_despiece',
+  'estructura_parametros_despiece', 'estructura_opciones_accesorio',
 ] as const
 
 /** Tablas que la carga nunca debe tocar; se verifica cantidad y contenido. */

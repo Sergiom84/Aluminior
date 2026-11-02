@@ -485,7 +485,42 @@ GRUPO sin opciones da en la 0016: 24 coinciden, y los que solo difieren por
 `reparto-uniones` (con medidas guardadas al céntimo) suben de 10 a 31. Es evidencia
 de que esos son los valores por defecto de Productor para COM001/005/009/013. Para que
 sea canónico hay que leerlos de `EstructurasOpcGrupos/Opciones`: carga ETL, migración y
-la entrada por defecto en el catálogo de despiece. Queda pendiente con aprobación.
+la entrada por defecto en el catálogo de despiece. Hecho en E5b, a continuación.
+
+### E5b — opciones predeterminadas del catálogo (02/11/2026, vigente)
+
+`EstructurasOpcOpciones` marca la predeterminada de cada grupo (`OPCpredetSN`). Para
+COM009 coincide con lo que guardan 519 de las 521 líneas sueltas: `G1O0` (sin guía
+central), `G2O2` y `G3O2` (sin recogedor de vuelo) y `G10O0` (recogedor). En las
+47 estructuras accesorias del catálogo, cada grupo tiene exactamente una
+predeterminada, y ningún grupo ni opción es condicional, escalar ni incompatible.
+
+- Migración `0033_estructura_opciones_accesorio` (local; no aplicada en Supabase) y
+  carga en `reemplazarCatalogoDespiece` (430 filas de la 0016). La importación
+  suplementaria la omite sin la tabla; la carga dirigida del motor la exige.
+- `CatalogoLinea.opcionesPredeterminadas`: `despiezarAccesorio` completa con la
+  predeterminada cada grupo sin opción guardada; las guardadas mandan.
+  `leer-catalogo.ts` la lee con `opciones-accesorio.ts` si la tabla existe.
+- El banco ya no exige `VOpciones` en el compacto de GRUPO.
+- `regresion-06` (documento 946, sin `VOpciones`) **coincide al céntimo** con datos
+  reales: 1.410,08 € con medidas guardadas y desde el hueco.
+
+| Ejercicio | Coincide | Difiere | Sin valorar | No reproducible | Receta igual | `compacto` |
+|---|---:|---:|---:|---:|---:|---:|
+| 0016 antes de E5b | 23 | 92 | 97 | 13 | 79 | 53 |
+| 0016 con E5b | **24** | 91 | 97 | 13 | 76 | **8** |
+| 0015 antes de E5b | 0 | 137 | 72 | 19 | 87 | 55 |
+| 0015 con E5b | 0 | 137 | 72 | 19 | 86 | 9 |
+
+- En la 0016, los GRUPO cuya única diferencia es el reparto desde el hueco (con
+  medidas guardadas al céntimo) pasan de 10 a **31** como causa principal.
+- Los 8 `compacto` restantes de la 0016 se apartan con motivo: 7 por
+  `acabados-de-accesorio-distintos` (lamas o guías en otro acabado) y 1 por
+  `compacto-sin-modulo` (tres compactos en un GRUPO de dos módulos).
+- La receta igual baja de 79 a 76 porque ahora se comparan también las piezas del
+  compacto. Sin diseño específico, 4 GRUPO valorados con compacto difieren en longitud
+  de corte o metraje (documentos 881, 1019, 1020 y 1249): es lo siguiente a revisar.
+- En la 0015 manda la tarifa (PVP de 2026 frente a documentos de 2025).
 
 ### Resultado de la primera entrega (retirado; ver corrección)
 

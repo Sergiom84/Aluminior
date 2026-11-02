@@ -18,6 +18,7 @@ import { incidenciaPrecioEnTabla, resolverPvpCatalogo } from '@aluminior/core/pr
 import type { ClienteEscritura } from '../../cliente-db.ts'
 import { tablasMotorCatalogo } from './disponible.ts'
 import { leerCatalogoPreciosTabla, seleccionarDesdeCatalogo } from '../../precios-tabla/index.ts'
+import { leerOpcionesPredeterminadas } from './opciones-accesorio.ts'
 
 const n = (v: string | null | undefined) => v === null || v === undefined ? 0 : Number(v)
 const vacioANull = (v: string | null) => v && v.trim() ? v : null
@@ -54,6 +55,7 @@ export async function leerCatalogoLinea(cliente: ClienteEscritura, e: EntradaCat
   }])
   const plantilla = plantillas.get(e.estructura)!
 
+  const predeterminadas = await leerOpcionesPredeterminadas(cliente, e.adicionales ?? [])
   const tiposHoja = new Map((await cliente.select().from(schema.tiposHojaCatalogo)).map(t => [t.id, t.tipo]))
   const herrajes = parametros.herrajes as Record<string, string>
   const conjuntosHerraje = [...new Set(plantilla.map(f => f.tipoHoja).filter(t => !esTipoHojaMarco(t))
@@ -140,6 +142,7 @@ export async function leerCatalogoLinea(cliente: ClienteEscritura, e: EntradaCat
     })),
     opciones: conjunto => opcionesFilas.filter(o => o.conjuntoCodigo === conjunto)
       .map(o => ({ conjunto, opcion: String(Number(o.opcionCodigo)), porDefecto: o.porDefecto })),
+    opcionesPredeterminadas: codigo => predeterminadas.get(codigo) ?? [],
     gruposAsociacion: () => grupos,
     tablaAcristalamiento: codigo => tacris.filter(t => t.tabla === codigo).map(t => ({
       posicion: t.posicion, junquillo: t.junquillo, juntaExterior: t.juntaExterior, juntaInterior: t.juntaInterior, grosor: n(t.grosor),

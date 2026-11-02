@@ -75,6 +75,13 @@ export function filaManoObra(f: Fila, r: Resultado) {
   }
 }
 
+export function filaOpcionAccesorio(f: Fila, r: Resultado, estructuras: ReadonlySet<string> | null) {
+  const estructura = txt(f.Estructura), grupo = ent(f.OPCnGrupo), opcion = ent(f.OPCnOpcion)
+  if (!estructura || grupo === null || opcion === null) { descartar(r, 'opción de accesorio sin clave'); return null }
+  if (estructuras && !estructuras.has(estructura)) { excluir(r, 'estructura no importada'); return null }
+  return { estructura_codigo: estructura, grupo, opcion, predeterminada: bool(f.OPCpredetSN), descripcion: txt(f.OPCtexto) ?? '' }
+}
+
 export function parametrosSerie(f: Fila) {
   const codigo = txt(f.Codigo)
   if (!codigo) return null
@@ -175,11 +182,15 @@ export function comprobarOrigenDespiece(origen: string) {
 
 /** Sustituye las tablas del despiece completo dentro de la transacción del llamante. */
 export async function reemplazarCatalogoDespiece(tx: Sql, origen: string) {
-  for (const tabla of TABLAS) await tx`DELETE FROM ${tx(tabla)}`
+  // 0033 es opcional: una base sin la tabla conserva la carga anterior sin opciones de accesorio.
+  const [{ opciones }] = await tx<{ opciones: boolean }[]>`SELECT to_regclass('public.estructura_opciones_accesorio') IS NOT NULL AS opciones`
+  for (const tabla of [...TABLAS, ...opciones ? ['estructura_opciones_accesorio'] : []]) await tx`DELETE FROM ${tx(tabla)}`
   const estructuras = new Set((await tx`SELECT codigo FROM estructuras`).map(f => String(f.codigo)))
+  const cargar = crearCargadorEstricto(tx, origen)
   const resultados = [
-    ...await cargarCatalogoDespiece(crearCargadorEstricto(tx, origen), estructuras),
+    ...await cargarCatalogoDespiece(cargar, estructuras),
     await cargarParametrosSerie(tx, origen),
+    ...opciones ? [await cargar('EstructurasOpcOpciones', 'estructura_opciones_accesorio', (f, r) => filaOpcionAccesorio(f, r, estructuras))] : [],
   ]
   const fallidas = resultados.filter(r => r.descartadas > 0 || r.insertadas === 0)
   if (fallidas.length) {

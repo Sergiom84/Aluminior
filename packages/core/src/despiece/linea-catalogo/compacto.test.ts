@@ -35,6 +35,16 @@ describe('despiezarCompacto', () => {
     ])
   })
 
+  it('sin opciones guardadas toma las predeterminadas del catálogo y respeta las guardadas', () => {
+    const conDefectos = { ...catalogo, opcionesPredeterminadas: (e: string) => e === 'CX' ? ['G1O0', 'G10O0'] : [] } as CatalogoLinea
+    const sin = despiezarCompacto(conDefectos, { ...compacto, opciones: [] }, { anchoMm: 1050, altoMm: 1200 })
+    expect(sin.incidencias).toEqual([])
+    expect(sin.filas.map(f => f.articulo)).toEqual(['LAMA', 'MOX'])
+    const guardada = despiezarCompacto(conDefectos, { ...compacto, opciones: ['G1O1', 'G10O2'] }, { anchoMm: 1050, altoMm: 1200 })
+    expect(guardada.filas.map(f => f.articulo)).toEqual(['GUIA', 'LAMA', 'LAMA', 'MOX', 'MOTOR'])
+    expect(resumen({ ...compacto, opciones: [] }).incidencias).toContain('accesorio CX: grupo G1 sin una opción marcada')
+  })
+
   it('usa alturaTotalMm cuando se especifica en lugar de ventana + cajón', () => {
     const r = resumen({ ...compacto, alturaTotalMm: 1550 })
     expect(r.incidencias).toEqual([])

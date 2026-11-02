@@ -34,6 +34,7 @@ const csv: Record<string, string> = {
   ConjuntosLin: 'Conjunto,Componente,Articulo\nQA-S,25,0\nQA-S,12,QA-P\n',
   Conjuntos: 'Codigo,herr2HC,mo2HC,CorrGrosorVid,CorrGrosorVidDA\nQA-S,QA-H,QA-MO,6,24\n',
   Estructuras: 'Codigo,TipoPerf\nQA-MOTOR,A\nQA-AUSENTE,C\n',
+  EstructurasOpcOpciones: 'Estructura,OPCnGrupo,OPCnOpcion,OPCpredetSN,OPCtexto\nQA-MOTOR,1,0,True,NO\nQA-MOTOR,1,1,False,SI\n',
 }
 
 const contar = async (tabla: string) => (await sql`SELECT count(*)::int AS n FROM ${sql(tabla)}`)[0]!.n as number

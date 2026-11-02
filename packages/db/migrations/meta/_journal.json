@@ -232,6 +232,13 @@
       "when": 1791820605843,
       "tag": "0032_articulo_acabado",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1793638378260,
+      "tag": "0033_estructura_opciones_accesorio",
+      "breakpoints": true
     }
   ]
 }

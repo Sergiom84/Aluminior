@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import type { Cargar } from './cargar.ts'
 import type { Resultado } from './resultado.ts'
 import type { Fila } from '../csv.ts'
-import { cargarCatalogoDespiece, parametrosSerie } from './catalogo-despiece.ts'
+import { cargarCatalogoDespiece, filaOpcionAccesorio, parametrosSerie } from './catalogo-despiece.ts'
 
 // Filas sintéticas; nunca datos de la empresa.
 async function mapear(tablas: Record<string, Fila[]>, estructuras: Set<string> | null = null) {
@@ -58,5 +58,13 @@ describe('catálogo suplementario de despiece', () => {
   it('extrae claves de herraje, mano de obra y rangos de grosor de la serie', () => {
     expect(parametrosSerie({ Codigo: 'S', herr2HC: 'HU1', herr2HCP: '', mo2HC: '001', moMCHF: 'X', Modulo: 'NO', CorrGrosorVid: '10', CorrGrosorVidDA: '18' }))
       .toEqual({ conjunto_codigo: 'S', herrajes: { '2HC': 'HU1' }, mano_obra: { '2HC': '001', MCHF: 'X' }, grosor_maximo_simple: '10', grosor_maximo_doble: '18' })
+  })
+  it('lee opciones de accesorio con su predeterminada y descarta las de estructuras no importadas', () => {
+    const r: Resultado = { tabla: 't', leidas: 0, insertadas: 0, descartadas: 0, excluidas: 0, motivos: new Map() }
+    expect(filaOpcionAccesorio({ Estructura: 'COMX', OPCnGrupo: '10', OPCnOpcion: '0', OPCpredetSN: 'True', OPCtexto: 'Recogedor' }, r, new Set(['COMX'])))
+      .toEqual({ estructura_codigo: 'COMX', grupo: 10, opcion: 0, predeterminada: true, descripcion: 'Recogedor' })
+    expect(filaOpcionAccesorio({ Estructura: 'OTRA', OPCnGrupo: '1', OPCnOpcion: '1', OPCpredetSN: 'False' }, r, new Set(['COMX']))).toBeNull()
+    expect(filaOpcionAccesorio({ Estructura: 'COMX', OPCnGrupo: '', OPCnOpcion: '1' }, r, null)).toBeNull()
+    expect([r.excluidas, r.descartadas]).toEqual([1, 1])
   })
 })

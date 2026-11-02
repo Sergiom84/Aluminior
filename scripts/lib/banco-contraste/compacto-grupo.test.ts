@@ -21,28 +21,28 @@ test('asigna cada compacto a su módulo por nModulo con sus opciones guardadas',
   assert.deepEqual(compactosDeGrupo(con([{ ...compacto, nModulo: 0 }]), 1).porModulo.has(0), true)
 })
 
-test('sin módulo, repetido, no COM o sin opciones guardadas no se transmite', () => {
+test('sin módulo, repetido, no COM o con guías no se transmite', () => {
   const motivos = (accesorios: Caso['accesorios'], ops: Caso['opcionesAccesorio'] = opciones) => compactosDeGrupo(con(accesorios, ops), 2).motivos
   assert.deepEqual(motivos([{ ...compacto, nModulo: 0 }]), ['compacto-sin-modulo'])
   assert.deepEqual(motivos([{ ...compacto, nModulo: 3 }]), ['compacto-sin-modulo'])
   assert.deepEqual(motivos([compacto, compacto]), ['compacto-repetido-en-modulo'])
   assert.deepEqual(motivos([{ ...compacto, Accesorio: 'PERX' }]), ['compacto-no-representable'])
-  assert.deepEqual(motivos([compacto], []), ['opciones-de-compacto-ausentes'])
-  assert.deepEqual(motivos([compacto], [opcion(1, 0, 1)]), ['opciones-de-compacto-ausentes'])
+  // Sin VOpciones el motor aplica las predeterminadas del catálogo: no bloquea.
+  assert.deepEqual(motivos([compacto], []), [])
   assert.deepEqual(motivos([{ ...compacto, CerrCodGuiaI: 'G1' }]), ['accesorio-con-guias-o-medidas-manuales'])
 })
 
-test('el módulo del GRUPO recibe el compacto; sin opciones guardadas la configuración se bloquea', () => {
+test('el módulo del GRUPO recibe el compacto; sin módulo identificable la configuración se bloquea', () => {
   const r = configuracionGrupo(con([compacto]))
   assert.deepEqual(r.motivos, [])
   assert.deepEqual(r.configuracion!.modulos.map(m => m.compacto?.opciones ?? null), [null, ['G1O0', 'G10O0']])
-  assert.deepEqual(configuracionGrupo(con([compacto], [])), { configuracion: null, motivos: ['opciones-de-compacto-ausentes'] })
+  assert.deepEqual(configuracionGrupo(con([{ ...compacto, nModulo: 0 }])), { configuracion: null, motivos: ['compacto-sin-modulo'] })
 })
 
 test('la variante valora el compacto con evidencia completa y si no lo aparta con su importe', () => {
   const valorado = prepararVariante(con([compacto]))
   assert.deepEqual([valorado.compactos.elementos, valorado.variante.accesorios!.length], [0, 1])
   assert.equal(valorado.variante.compactosElementos!.length, 1)
-  const apartado = prepararVariante(con([compacto], []))
+  const apartado = prepararVariante(con([{ ...compacto, nModulo: 0 }]))
   assert.deepEqual([apartado.compactos.elementos, apartado.compactos.importe, apartado.variante.accesorios!.length], [1, 81.45, 0])
 })

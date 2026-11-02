@@ -1,6 +1,6 @@
 # Roadmap operativo de paridad con Productor
 
-Actualizado: 02/11/2026 (GR1 verificado; E5 parcial: compacto por módulo solo con opciones guardadas; siguiente E5b opciones por defecto o E2). Anterior: 13/10/2026. Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
+Actualizado: 02/11/2026 (GR1 verificado; E5 y E5b verificados en local: compacto por módulo con opciones predeterminadas del catálogo; siguiente E2). Anterior: 13/10/2026. Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
 Este archivo es el registro único del orden y estado de estas tareas.
 Los documentos de ensayo explican cómo realizarlas; los informes fechados
 conservan evidencia. Sus antiguas listas de pendientes no sustituyen este registro.
@@ -11,12 +11,13 @@ conservan evidencia. Sus antiguas listas de pendientes no sustituyen este regist
 **Contraste de GRUPO reales (02/11/2026):** [informe](docs/paridad/CONTRASTE-PRESUPUESTOS-2026-11-02.md).
 Medidos los 17 ejercicios (2010–2026, 4.107 GRUPO); con el catálogo actual
 solo son reproducibles 2023–2026. Orden por importe en 2026 y frecuencia en
-2023–2026 tras GR1: E5 (compacto, 53 en la 0016), E2 (varias series, 40 / 140), E6
-(vidrio por elemento, 24 / 117), GR2 (unión que recorre varias piezas, 44 / 221, pero
-749 € en 2026).
+2023–2026 tras GR1 y E5b: E2 (varias series, 40 en la 0016 / 140), E6 (vidrio por
+elemento, 24 / 117), GR2 (unión que recorre varias piezas, 44 / 221, pero 749 € en
+2026); el reparto desde el hueco es ya la causa principal de 31 GRUPO de la 0016.
 - GR1 verificado en local el 02/11: `cota-fi-fs` bajó de 31 a 0 en la 0016; 26 pasaron a valorarse.
 - E5 parcial el 02/11 ([corrección](docs/paridad/CONTRASTE-PRESUPUESTOS-2026-11-02.md#corrección-del-mismo-02112026-vigente)): el compacto se valora en su módulo solo con opciones guardadas y evidencia completa; si no, se aparta. La 0016 queda en 23 / 92 / 97 / 13, igual que tras GR1. La primera entrega retrocedía (53 GRUPO sin valorar) y su `regresion-06` usaba opciones de otra línea; ambas cosas están corregidas.
-Siguiente: **E5b**, cargar las opciones por defecto de `EstructurasOpcGrupos/Opciones` (272 de 276 compactos de GRUPO de la 0016 no guardan opciones; el experimento con `G1O0, G2O2, G3O2, G10O0` lleva de 10 a 31 los GRUPO al céntimo con medidas guardadas). Requiere migración y ETL con aprobación. Alternativa sin migración: E2. Repetir `scripts/contraste-presupuestos.ts` tras cada arreglo; no rehacer la extracción.
+- E5b verificado en local el 02/11 ([informe](docs/paridad/CONTRASTE-PRESUPUESTOS-2026-11-02.md#e5b--opciones-predeterminadas-del-catálogo-02112026-vigente)): migración 0033 y carga de `EstructurasOpcOpciones`. El despiece aplica la predeterminada al grupo sin opción guardada. En la 0016, 24 coinciden (+1), `compacto` baja de 53 a 8 y `regresion-06` coincide al céntimo con datos reales. **0033 no está aplicada en Supabase**: hay que aplicarla antes de la próxima carga dirigida del motor.
+Siguiente: E2 (varias series en GRUPO, 40 en la 0016). Pendiente menor de E5: cortes del compacto en los documentos 881, 1019, 1020 y 1249, y acabados distintos de lamas o guías (7). Repetir `scripts/contraste-presupuestos.ts` tras cada arreglo; no rehacer la extracción.
 
 **Publicación técnica 12/10:** C1 y el tramo de P.6/P.7 están en Render live
 `40cedd1`, con 0031/0032, carga dirigida y QA remoto verificados; ambos CI
@@ -82,7 +83,7 @@ Sin aplicación al presupuesto web ni nueva medición del banco.
 | E2 | Unión material de otra serie en GRUPO | Pendiente; prioridad 3 tras el contraste del 02/11/2026 (140 GRUPO en 2023–2026): 40 GRUPO de la 0016 (37 con módulos de varias series, 3 con unión de serie ajena) | Selección desde diagnóstico privado de los ocho casos de iteración 13; código/serie/acabado y geometría demostrados, sin extrapolar U |
 | E3 | Comisión: orden de redondeo y edición de líneas guardadas | Pendiente | Caso 0/−10/+10, suma de filas y momento de aplicación; separar cantidades/horas; seis residuos comunicados |
 | E4 | Tapajuntas de puerta con inferior SI/NO | Pendiente | GMT004, 1P 867×2098 con serie/ala/cajón reales; comparación lateral y travesaño |
-| E5 | Compacto y metraje COMPVAL | Parcial, verificado 02/11/2026 | `CompactoModulo` en cerramiento v3, `valorarCerramiento` lo propaga y el banco lo transmite solo con opciones guardadas y evidencia completa (`compacto-grupo.ts`); si no, lo aparta. En la 0016: 53 GRUPO con causa `compacto` (31.208,80 € atribuibles); 11 reetiquetados como `otro-accesorio`. Pendiente **E5b**: opciones por defecto de `EstructurasOpcGrupos/Opciones` (migración, ETL y catálogo), luego UI de persiana por módulo. `alturaTotalMm` sin regla demostrada: solo en el banco. |
+| E5 | Compacto y metraje COMPVAL | Motor verificado en local 02/11/2026 (E5 + E5b) | `CompactoModulo` en cerramiento v3; el banco lo transmite con evidencia completa (`compacto-grupo.ts`) y el despiece completa los grupos sin opción con las predeterminadas de `EstructurasOpcOpciones` (0033, solo en local). En la 0016, `compacto` baja de 53 a 8 (7 por acabados de lamas o guías distintos, 1 sin módulo); 11 reetiquetados como `otro-accesorio`. Pendiente: cortes del compacto en los documentos 881, 1019, 1020 y 1249; aplicar 0033 en Supabase; UI de persiana por módulo. `alturaTotalMm` sin regla demostrada: solo en el banco. |
 | E6 | Acristalamiento alternativo y vidrio por elemento | Contención publicada 09/10; paridad pendiente. Contraste 02/11: 23 GRUPO de la 0016 mezclan vidrio simple y doble por elemento (117 por vidrio en 2023–2026), prioridad 4 | Motor catálogo rechaza precio falso de opción 1 para opción alternativa y guarda incompleto.  Mapeo observado de opción/nTAcris/tablas/junquillos/juntas; iniciar con 1/2/3 y mismo vidrio |
 | E7 | Conservación de medidas fraccionarias | 31/10: precios C2 970×439,5 y 970×1999,5 coinciden Productor-Aluminior (150,60 y 267,77); pendientes cortes y despiece; A4 web verificado 09/10 | C2 970×439,5 y 970×1999,5 con configuración real fijada: entrada, cortes, guardar/reabrir. 0030 y persistencia web ya entregados; no repetir migración ni equiparar el fijo sintético A4 con esta receta |
 | E8 | Tramos y opciones de herraje | Condicionado | Solo si falta cobertura tras catálogo/CHM/diagnóstico; límite real del corte de hoja, no dimensión exterior supuesta |
