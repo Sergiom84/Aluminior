@@ -62,9 +62,10 @@ descripción generada, el artículo `GRUPO` en conjuntos de una pieza, la
 medida guardada (Productor 2400 con `U`, Aluminior 2401), el formato decimal
 del PDF y la validación obligatoria de materiales y uniones. El elemento
 invisible quedó observado (precio 0, sin despiece, cuenta en el ancho), y
-`GMU038` resta su grosor de las piezas contiguas. Pendiente: la fila
-Aluminior del caso 3, porque la base local `tmpfs` se perdió al pararse
-Docker; el compacto sigue siendo E5. Solo documentación.
+`GMU038` resta su grosor de las piezas contiguas en Productor (2800, 1.031,10 €),
+mientras Aluminior lo suma (2920, 1.140,28 €): es la siguiente diferencia de
+valoración a corregir. Cobertura: 541 estructuras importadas, 160 dibujables.
+El compacto sigue siendo E5. Solo documentación.
 
 ## Reconciliación del main Mac — 13/10/2026
 

@@ -70,16 +70,22 @@ entraron ese día). Uniones: `GMU038` tubo 60 × 60, acabado L.
 
 | Campo | Productor (observado) | Aluminior | Diferencia |
 |---|---|---|---|
-| Dibujo en el diseñador | Hueco del fijo en blanco; al seleccionarlo, contorno azul fino. Las dos uniones se dibujan como tubos de 400 mm (altura del fijo) | Sin elemento invisible: el fijo se dibuja (DS3) | Sí |
-| Posición del fijo | X 1220, Y 0 | — | — |
-| Ancho total | 2800 = 1160 + 60 + 360 + 60 + 1160 | — | — |
-| Medidas guardadas por pieza | 2O: 1200 × 1160; fijo: 400 × 360; tubos de 400 | — | — |
-| Precio 2O | 511,43 cada una (ancho 1160) | — | — |
-| Precio fijo invisible | **0**: línea de estructura sin despiece | Se valoraría como fijo normal | Sí |
-| Precio uniones | 4,12 cada una (GM60X60 de 400 + MO) | — | — |
-| Precio de la línea | 1.031,10 = 2 × 511,43 + 2 × 4,12 | Pendiente | — |
-| Descripción | Lista las tres piezas, **incluido** «FIJO DE 1 HUECO DE MEDIDAS : 400,0 x 400,0» | — | — |
-| Medidas de la línea | 2800 × 1200 | — | — |
+| Dibujo | Diseñador: hueco del fijo en blanco; al seleccionarlo, contorno azul fino. Uniones dibujadas como tubos de 400 mm (altura del fijo) | PDF: fijo dibujado con vidrio; uniones como tubos de 1200 (toda la altura) | Sí |
+| Uniones | `GMU038` con acabado L; también existen en Aluminior, con el mismo despiece (`GM60X60` + MO) | `GMU038`, grosor 60 | No |
+| Ancho total | 2800 = 1160 + 60 + 360 + 60 + 1160 | 2920 = 1200 + 60 + 400 + 60 + 1200 | **Sí**: Productor resta el grosor y Aluminior lo suma |
+| Medidas guardadas por pieza | 2O: 1200 × 1160; fijo: 400 × 360 | 2O: 1200 × 1200; fijo: 400 × 400 | Sí |
+| Longitud de la unión | 400 (lado común) | 1200 | Sí |
+| Precio 2O | 511,43 cada una (ancho 1160) | 514,31 cada una (hipótesis: su medida sin restar) | Sí |
+| Precio fijo invisible | **0**: línea de estructura sin despiece | Fijo normal valorado (sin invisible, DS3) | Sí |
+| Precio uniones | 4,12 cada una (`GM60X60` 400 mm × 10,30 €/m) | Hipótesis: 12,36 cada una (1,2 m × 10,30) | Sí |
+| Precio de la línea | 1.031,10 = 2 × 511,43 + 2 × 4,12 | 1.140,28 | **+109,18** |
+| Descripción | Lista las tres piezas, **incluido** «FIJO DE 1 HUECO DE MEDIDAS : 400,0 x 400,0» | «CERRAMIENTO SEGÚN DIBUJO · 2O + 0 + 2O» | Sí |
+| Medidas de la línea | 2800 × 1200 | 2920 × 1200 | Sí |
+
+Aluminior: presupuesto 260001 de la base recreada el 02/11, guardado, PDF de
+una página. El desglose de los 1.140,28 por pieza en Aluminior no se ha leído:
+los 12,36 de cada unión son un cálculo a partir de la tarifa y quedan como
+hipótesis.
 
 Observado: con un artículo de unión, Productor **resta** su grosor de las
 piezas contiguas en lugar de sumarlo (2800 en vez de 2920). Con 60 mm, cada
@@ -87,8 +93,11 @@ piezas contiguas en lugar de sumarlo (2800 en vez de 2920). Con 60 mm, cada
 unión sin artículo de 20 mm, que suma (caso 2 y guía). Hipótesis: el reparto
 40/20 depende del perfil de cada pieza; hay que contrastarlo con otra serie.
 
-La fila de Aluminior queda pendiente: la base local de pruebas es `tmpfs` y
-se perdió al pararse Docker la noche del 01/11. Se completa al recrearla.
+La base local de pruebas es `tmpfs` y se perdió al pararse Docker la noche
+del 01/11. Se recreó el 02/11 con las tres cargas: catálogo, despiece
+(`etl:catalogo-despiece:local`) y cortes (`etl:cortes:local`). Sin la de
+cortes, la 2O sale «sin valorar» por descuentos ausentes, nunca a cero. Con
+las tres, el caso 1 vuelve a dar 514,31.
 
 ## Caso 4 — Corredera C2 970 × 1999,5, GMC400, VCG4, L (control E7)
 
@@ -131,11 +140,58 @@ cajón solo se aplica en la ficha de línea.
 2. Descripción generada: es la mayor diferencia visible. Productor lista cada
    pieza con medidas, color, serie y vidrio; Aluminior pone un texto genérico.
 3. Medida de la línea con uniones: Productor guarda 2400 con `U` y resta el
-   grosor de uniones con artículo. Aluminior suma el grosor de la unión sin
-   artículo (observado, 2420); que también sume con `GMU038` es hipótesis
-   hasta completar el caso 3. Hay que revisarlo antes de valorar conjuntos
-   con `GMU…`.
+   grosor de las uniones con artículo, que miden lo que el lado común.
+   Aluminior suma el grosor y da a la unión la altura entera (observado en el
+   caso 3: +109,18 €). Es la siguiente diferencia de valoración que corregir
+   en conjuntos con `GMU…`.
 4. Elemento invisible: tiene precio 0 y no tiene despiece, cuenta en el ancho
    y en las uniones y aparece en la descripción. En el dibujo es un hueco en
    blanco. Datos para DS3.
 5. Validación: Productor obliga a dar materiales y uniones antes de aceptar.
+
+## Cobertura del catálogo (02/11/2026)
+
+Pregunta de Sergio: si están guardadas todas las estructuras de cada
+categoría del escaparate y si se pueden hacer todas las combinaciones.
+
+- **Guardado:** todo el catálogo está importado: 541 estructuras con sus
+  componentes, cotas, árboles de diseño y parámetros de despiece, más los
+  artículos con PVP por acabado y tarifa.
+- **Uniones:** 52 estructuras de la familia 103; el desplegable ofrece las
+  mismas 14 que Productor. 51 tienen todos sus artículos con precio en
+  tarifa 1. `GMU038` = `GM60X60` (10,30 €/m en L) + MO, como en Productor.
+- **Dibujables en la web:** 160 de 541, contadas en el escaparate local:
+
+| Categoría | En el catálogo | Dibujables en Aluminior |
+|---|---:|---:|
+| VENTANAS CORREDERAS 90º | 20 | 19 |
+| PUERTAS CORREDERAS 90º | 15 | 11 |
+| VENTANAS ABATIBLES | 42 | 33 |
+| PUERTAS BALCONERAS PRACTICABLE | 31 | 20 |
+| FIJOS ABATIBLES | 8 | 7 |
+| MALLORQUINAS | 42 | 0 |
+| PUERTAS PLEGABLES | 75 | 0 |
+| FIJOS CORREDERA | 6 | 5 |
+| FORMAS CURVAS-INCLINADAS | 25 | 0 |
+| CORREDERAS PERIMETRALES 45º | 11 | 8 |
+| CORREDERAS ELEVABLES 45º | 11 | 11 |
+| CORREDERAS MONOCARRILES | 21 | 1 |
+| OSCILOPARALELAS | 12 | 0 |
+| PIVOTANTES | 2 | 0 |
+| VAIVEN | 6 | 0 |
+| CORREDERAS MINIMALISTAS | 6 | 6 |
+| CORTINA CRISTAL | 6 | 6 |
+| TECHOS MOVILES | 4 | 0 |
+| OSCILOBATIENTES | 40 | 33 |
+| PUERTAS DE CALLE | 12 | 0 |
+| COMPACTOS | 17 | 0 (función E5) |
+| MOSQUITERAS | 4 | 0 |
+| PREMARCOS DE OBRA | 0 | 0 |
+
+Las que faltan necesitan dibujo propio: lamas (mallorquinas), plegables,
+curvas, zócalos, oscilantes y proyectantes, entre otras
+([catálogo real](CATALOGO-REAL-2026-10-02.md)). Que una estructura se dibuje
+**no** garantiza que se valore con cualquier serie: el precio depende de la
+combinación de estructura, serie, vidrio y acabado. Aquí solo se han
+comprobado las cinco de esta comparativa. Las 160 cubrían 728 de los 737
+elementos usados en cerramientos reales (medición del 02/10).
