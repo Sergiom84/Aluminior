@@ -319,21 +319,23 @@ tarea no corrige el motor.
 
 ## GR1 — 02/11/2026
 
-Transmisión de las cotas `FI` y `FS` de cada elemento a su módulo del GRUPO en
-`packages/core` (`cotas?: CotasModulo` en `ModuloCerramiento` v3, rango
-`0 < valor < altoMm`, compatible hacia atrás con snapshots v1–v3 sin `cotas` y
-con `fiMm` de `1OFI`), `packages/web` (`valorarCerramiento` pasa
-`cotasEfectivasModulo(m)` a `valorarEstructura` en vez de `cotas: null`) y el
-banco (`configuracionGrupo` lee `FI`/`FS` desde `cotasDeCaso(e)` y
-`anonimizarGrupo` conserva `variables`).
+Transmisión de las cotas de fijo y travesaño de cada elemento (`FI`, `FS`, `VS`
+acotadas por `altoMm`; `TD`, `F`, `FD`, `FZ` acotadas por `anchoMm`, según el
+catálogo `estructura_cotas` / `estructura_diseno_nodos`) a su módulo del GRUPO
+en `packages/core` (`cotas?: CotasModulo` en `ModuloCerramiento` v3, compatible
+hacia atrás con snapshots v1–v3 sin `cotas` y con `fiMm` de `1OFI`),
+`packages/web` (`valorarCerramiento` pasa `cotasEfectivasModulo(m)` a
+`valorarEstructura` en vez de `cotas: null`) y el banco (`configuracionGrupo`
+lee las cotas de instancia desde `cotasDeCaso(e)` y `anonimizarGrupo` conserva
+`variables`).
 
 ### Resultado 0016 tras GR1
 
 | Resultado | Antes de GR1 | Tras GR1 | Documentos | Importe de las líneas |
 |---|---:|---:|---:|---:|
 | Coincide al céntimo | 23 | 23 | 20 | 38.778,46 |
-| Difiere, causa identificada | 66 | 91 | 78 | 263.084,48 |
-| Sin valorar | 123 | 98 | 91 | 296.438,61 |
+| Difiere, causa identificada | 66 | 92 | 79 | 269.832,71 |
+| Sin valorar | 123 | 97 | 90 | 289.690,38 |
 | No reproducible (no se dibuja) | 13 | 13 | 13 | 40.327,66 |
 | **Total** | **225** | **225** | **186** | **638.629,21** |
 
@@ -343,40 +345,39 @@ banco (`configuracionGrupo` lee `FI`/`FS` desde `cotasDeCaso(e)` y
   En los 59 nuevos desde julio: 6 coinciden, 29 difieren (+10), 21 sin valorar
   (−10) y 3 no reproducibles.
 - La causa `cota-fi-fs` baja de **31 GRUPO (28 documentos, 140.530,91 €) a 0**
-  en la 0016: ningún origen avisa ya `Variable "FI"/"FS" sin valor`.
-- De los 31 GRUPO antes bloqueados por `cota-fi-fs`, **25 pasan a valorarse**
-  (`difiere`, 110.127,48 € en líneas):
+  en la 0016: ningún origen de la 0016 avisa ya de variable de cota sin valor
+  (`FI`, `FS` ni `TD`).
+- De los 31 GRUPO antes bloqueados por `cota-fi-fs`, **26 pasan a valorarse**
+  (`difiere`, 116.875,71 € en líneas):
   - **10 tienen `receta: igual`** (el total de receta igual en la 0016 sube de
     69 a **79**): en **5** el resto del conjunto coincide al céntimo y la única
     diferencia frente a Productor es el compacto (el recuento de compacto con
     resto exacto sube de 24 a **29**, y el total con causa `compacto` sube de
-    43 a **64** GRUPO, con 30.351,41 € atribuibles en 53 medidos); los otros 5
+    43 a **65** GRUPO, con 31.975,72 € atribuibles en 54 medidos); los otros 5
     difieren por `importe-de-fila` (4) o `acabado` (1) junto con compacto y
     reparto de uniones.
-  - **15 llevan `DisEspecificoSN`** con precio (`diseno-especifico` sube de 19
-    a **34** GRUPO, 9.841,56 € atribuibles).
-- Los **6 GRUPO restantes** (30.403,43 € en líneas) siguen **sin valorar** por
-  causas posteriores que quedaban ocultas tras `FI`/`FS`:
-  - **4 GRUPO** contienen la estructura `2O+1OFI`, cuya receta exige además la
-    variable `TD` (`VEstructurasVariables` guarda `FI = 300` y `TD = 700`; el
-    motor avisa `Variable "TD" sin valor en el contexto — en "TD"` y
-    `"(REF-TD)/2"`). Tres de esos cuatro usan además la unión `PSU006`, cuyo
-    artículo `PSESQCOM` carece de PVP en la tarifa.
-  - **2 GRUPO** (`1OFI+2OFI+1OFI` y `1OFI+2OFI`) usan la unión `PSU006` y
-    quedan sin valorar por `PSESQCOM: sin PVP en la tarifa` (causa `tarifa`,
-    cuya frecuencia como causa principal sube de 7 a 12).
-- **0015 (2025)**: `difiere` sube de 119 a **135** (+16), `sin-valorar` baja de
-  90 a **74** (−16), `cota-fi-fs` baja de 21 a **3** (tres GRUPO cuyos
-  elementos `1OFI`/`2OFI` no tienen fila en `VEstructurasVariables`) y `receta:
-  igual` sube de 87 a **89**.
-- **0017**: `coincide` se mantiene en **28**, `difiere` sube de 62 a **85**
-  (+23), `sin-valorar` baja de 116 a **93** (−23), `cota-fi-fs` queda en **0**
+  - **16 llevan `DisEspecificoSN`** con precio (`diseno-especifico` sube de 19
+    a **35** GRUPO, 9.938,13 € atribuibles), incluido el conjunto
+    `1OFI+1OFI+2O+1OFI+1OFI` con `GMU038` tras transmitir `TD = 700` junto con
+    `FI = 300`.
+- Los **5 GRUPO restantes** de los 31 (23.655,20 € en líneas: tres
+  `2O+1OFI+2O+1OFI` y dos `1OFI+2OFI`) usan la unión `PSU006`: sus módulos
+  `2O+1OFI`, `1OFI` y `2OFI` ya se valoran completos y el conjunto queda **sin
+  valorar** únicamente por `PSESQCOM: sin PVP en la tarifa` (causa `tarifa`,
+  cuya frecuencia como causa principal sube de 7 a **12**, 21 GRUPO en total).
+- **0015 (2025)**: `difiere` sube de 119 a **138** (+19, incluidos tres
+  conjuntos con fijos laterales `1O1FL` [`F = 300`], `2OFLFI` y `2OP2FL`
+  [`FD = 300`]), `sin-valorar` baja de 90 a **71** (−19), `cota-fi-fs` baja de
+  21 a **3** (tres GRUPO cuyos elementos `1OFI`/`2OFI`/`1PFS` no tienen fila en
+  `VEstructurasVariables`) y `receta: igual` sube de 87 a **89**.
+- **0017**: `coincide` se mantiene en **28**, `difiere` sube de 62 a **86**
+  (+24), `sin-valorar` baja de 116 a **92** (−24), `cota-fi-fs` queda en **0**
   y `receta: igual` sube a **79**.
 - **Agregado 2023–2026 (1.023 GRUPO)**: los GRUPO valorados suben de 482 a
-  **523** y los de `receta: igual` de 338 a **350**. `cota-fi-fs` baja de 96 a
-  **47**: 44 pertenecen a 2023–2024 (`EMP0013` y `EMP0014`, cuyas copias `.mdb`
-  no contienen la tabla `VEstructurasVariables`) y 3 a `EMP0015` sin fila en
-  esa tabla.
+  **527** (23 coinciden + 504 difieren) y los de `receta: igual` de 338 a
+  **350**. `cota-fi-fs` baja de 96 a **47**: 44 pertenecen a 2023–2024
+  (`EMP0013` y `EMP0014`, donde la tabla `VEstructurasVariables` tiene 0 filas)
+  y 3 a `EMP0015` sin fila en esa tabla.
 - **Regresión local (`casos-regresion.json`)**: `regresion-01` a `regresion-08`
   no cambian; `regresion-09` (`0 + 1PFS` con `GMU038` y `FS = 300`) pasa de
   `sin-valorar` (`cota-fi-fs`) a `difiere` (1.440,26 €, causas
@@ -384,11 +385,14 @@ banco (`configuracionGrupo` lee `FI`/`FS` desde `cotasDeCaso(e)` y
 
 **Pendiente y límites:**
 
-- **Observado:** en la interfaz del configurador web hoy solo `1OFI` expone un
-  campo para editar `fiMm`; falta exponer la entrada de `FI`/`FS` en el
-  configurador para las demás estructuras con fijo inferior o superior (`2OFI`,
-  `1FS`, `1PFS`, `2OPFS`).
-- **Hipótesis:** la variable `TD` observada en `VEstructurasVariables` para
-  `2O+1OFI` (`TD = 700` junto a `FI = 300`) corresponde a la cota horizontal de
-  la división entre el cuerpo `2O` y la columna `1OFI`; requiere observar su
-  diálogo en Productor antes de añadir `TD` al modelo del configurador.
+- **Observado:** en la interfaz del configurador web (`MedidasElemento`) hoy
+  solo `1OFI` expone un campo directo para editar `fiMm`. En Productor, la
+  pestaña `Elemento seleccionado` solo muestra `Ancho × Alto` y las cotas de
+  división se editan desde el icono de cartabón (`Diseño V3`); falta definir y
+  exponer en la interfaz web los controles visibles para que el operador edite
+  las cotas (`FI`, `FS`, `TD`, `F`, `FD`…) de las demás estructuras.
+- **Hipótesis:** en los ejercicios 2023–2024 (`EMP0013` y `EMP0014`, donde
+  `VEstructurasVariables` está vacía) y en los 3 casos de `EMP0015` sin fila en
+  `VEstructurasVariables`, Productor guardaba las cotas de instancia en
+  `EstructurasDiseño` (`TipoDoc = 'VPRES'`) o en `VMedidasDA`, tablas que la
+  proyección actual de `scripts/lib/banco-contraste/fuente.ts` no extrae.

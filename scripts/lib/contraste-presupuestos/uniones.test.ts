@@ -38,10 +38,10 @@ test('el ajuste a un total con decimales se separa de la asimetría', () => {
   assert.deepEqual(analizarReparto(grupo(AJUSTE_DECIMAL)).patrones, ['ajuste-decimal-al-total'])
 })
 
-test('configuracionGrupo transmite cotas FI y FS de VEstructurasVariables a cada módulo del GRUPO', () => {
+test('configuracionGrupo transmite cotas FI, FS y TD de VEstructurasVariables a cada módulo del GRUPO', () => {
   const c = grupo({
     modulos: [
-      { codigo: '2OFI', hueco: [1200, 2100], guardada: [1199, 2100], cotas: { FI: 300 } },
+      { codigo: '2O+1OFI', hueco: [2000, 2100], guardada: [1999, 2100], cotas: { FI: 300, TD: 700 } },
       { codigo: '1PFS', hueco: [900, 2100], guardada: [899, 2100], cotas: { FS: 400, FI: 0 } },
       { codigo: '0', hueco: [600, 2100], guardada: [600, 2100] },
     ],
@@ -52,5 +52,5 @@ test('configuracionGrupo transmite cotas FI y FS de VEstructurasVariables a cada
   })
   const { configuracion, motivos } = configuracionGrupo(c, 'linea')
   assert.deepEqual(motivos, [])
-  assert.deepEqual(configuracion?.modulos.map(m => m.cotas ?? null), [{ FI: 300 }, { FS: 400 }, null])
+  assert.deepEqual(configuracion?.modulos.map(m => m.cotas ?? null), [{ FI: 300, TD: 700 }, { FS: 400 }, null])
 })

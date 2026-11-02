@@ -20,17 +20,20 @@ function plantillaSintetica(codigo: string) {
 describe('cotas FI/FS por módulo de cerramiento', () => {
   afterEach(() => registrarCatalogoDiseno([]))
 
-  it('admite cotas FI/FS en módulos v3 de estructuras como 2OFI o 1FS y conserva validez sin ellas', () => {
-    registrarCatalogoDiseno([plantillaSintetica('2OFI'), plantillaSintetica('1FS')])
+  it('admite cotas FI/FS/TD/F/FD en módulos v3 y conserva validez sin ellas', () => {
+    registrarCatalogoDiseno([plantillaSintetica('2OFI'), plantillaSintetica('1FS'), plantillaSintetica('2O+1OFI')])
     const base = { ...crearConfiguracionCerramiento(plantillaDiseno('2OFI')!), version: 3 as const }
     const conFi = { ...base, modulos: [{ ...base.modulos[0], cotas: { FI: 300 } }] }
     const conFs = { ...base, modulos: [{ ...base.modulos[0], estructuraCodigo: '1FS', cotas: { FS: 400 } }] }
+    const conTd = { ...base, modulos: [{ ...base.modulos[0], estructuraCodigo: '2O+1OFI', anchoMm: 2000, cotas: { FI: 300, TD: 700 } }] }
     expect(esConfiguracionCerramiento(base)).toBe(true)
     expect(esConfiguracionCerramiento(conFi)).toBe(true)
     expect(esConfiguracionCerramiento(conFs)).toBe(true)
+    expect(esConfiguracionCerramiento(conTd)).toBe(true)
     expect(cotasEfectivasModulo(base.modulos[0])).toBeNull()
     expect(cotasEfectivasModulo(conFi.modulos[0])).toEqual({ FI: 300 })
     expect(cotasEfectivasModulo(conFs.modulos[0])).toEqual({ FS: 400 })
+    expect(cotasEfectivasModulo(conTd.modulos[0])).toEqual({ FI: 300, TD: 700 })
   })
 
   it('expone fiMm de 1OFI como cota FI y limpia cotas al cambiar de estructura', () => {
@@ -54,11 +57,12 @@ describe('cotas FI/FS por módulo de cerramiento', () => {
     { FI: -10 },
     { FI: 1200 },
     { FS: 1500 },
+    { TD: 1200 },
     { FI: Number.NaN },
-    { TD: 700 },
-  ])('rechaza cotas inválidas o fuera del rango (0, altoMm): %o', cotas => {
+    { CAJ: 155 },
+  ])('rechaza cotas inválidas o fuera de rango: %o', cotas => {
     const base = { ...crearConfiguracionCerramiento(plantillaDiseno('0')!), version: 3 as const }
     expect(esConfiguracionCerramiento({ ...base,
-      modulos: [{ ...base.modulos[0], altoMm: 1200, cotas: cotas as never }] })).toBe(false)
+      modulos: [{ ...base.modulos[0], anchoMm: 1200, altoMm: 1200, cotas: cotas as never }] })).toBe(false)
   })
 })

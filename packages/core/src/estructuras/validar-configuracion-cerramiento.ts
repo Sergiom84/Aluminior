@@ -24,7 +24,7 @@ export function esConfiguracionCerramiento(valor: unknown): valor is Configuraci
       !Number.isFinite(modulo.altoMm) || modulo.altoMm <= 0) return false
     if (candidato.version !== VERSION_COMPOSICION_CERRAMIENTO &&
       (Object.hasOwn(modulo, 'anclaje') || Object.hasOwn(modulo, 'materiales') || Object.hasOwn(modulo, 'cotas'))) return false
-    if (!materialesModuloValidos(modulo.materiales) || !cotasModuloValidas(modulo.cotas, modulo.altoMm)) return false
+    if (!materialesModuloValidos(modulo.materiales) || !cotasModuloValidas(modulo.cotas, modulo.altoMm, modulo.anchoMm)) return false
     const plantilla = plantillaDiseno(modulo.estructuraCodigo)
     if (!plantilla) return false
     const tieneFi = Object.hasOwn(modulo, 'fiMm')

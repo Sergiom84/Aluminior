@@ -9,17 +9,21 @@
  */
 import type { ModuloCerramiento } from './cerramiento.ts'
 
-export const SIMBOLOS_COTA_MODULO = ['FI', 'FS'] as const
+export const SIMBOLOS_COTA_ALTO = ['FI', 'FS', 'VS'] as const
+export const SIMBOLOS_COTA_ANCHO = ['TD', 'F', 'FD', 'FZ'] as const
+export const SIMBOLOS_COTA_MODULO = [...SIMBOLOS_COTA_ALTO, ...SIMBOLOS_COTA_ANCHO] as const
 export type SimboloCotaModulo = (typeof SIMBOLOS_COTA_MODULO)[number]
 export type CotasModulo = Readonly<Partial<Record<SimboloCotaModulo, number>>>
 
-export function cotasModuloValidas(valor: unknown, altoMm: number): valor is CotasModulo | undefined {
+export function cotasModuloValidas(valor: unknown, altoMm: number, anchoMm = altoMm): valor is CotasModulo | undefined {
   if (valor === undefined) return true
   if (!valor || typeof valor !== 'object' || Array.isArray(valor)) return false
   const entradas = Object.entries(valor)
-  return entradas.length > 0 && entradas.every(([simbolo, cota]) =>
-    (SIMBOLOS_COTA_MODULO as readonly string[]).includes(simbolo) &&
-    typeof cota === 'number' && Number.isFinite(cota) && cota > 0 && cota < altoMm)
+  return entradas.length > 0 && entradas.every(([simbolo, cota]) => {
+    if (!(SIMBOLOS_COTA_MODULO as readonly string[]).includes(simbolo)) return false
+    const limite = (SIMBOLOS_COTA_ANCHO as readonly string[]).includes(simbolo) ? anchoMm : altoMm
+    return typeof cota === 'number' && Number.isFinite(cota) && cota > 0 && cota < limite
+  })
 }
 
 /**

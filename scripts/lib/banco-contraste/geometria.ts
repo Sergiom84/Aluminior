@@ -1,4 +1,4 @@
-import type { ConfiguracionCerramientoV3, CotasModulo, ModuloCerramiento, UnionCerramiento } from '@aluminior/core/estructuras'
+import { SIMBOLOS_COTA_MODULO, type ConfiguracionCerramientoV3, type CotasModulo, type ModuloCerramiento, type UnionCerramiento } from '@aluminior/core/estructuras'
 import { cotasDeCaso } from './cotas.ts'
 import { clave, numero, si, texto, type Caso } from './datos.ts'
 /**
@@ -21,10 +21,9 @@ export function configuracionGrupo(c: Caso, medidas: MedidasGrupo = 'linea'): { 
     if (!e) { motivos.push('elemento-no-enlazado'); continue }
     const { cotas: cotasElemento, motivos: motivosCotas } = cotasDeCaso(e)
     motivos.push(...motivosCotas)
-    const cotas: CotasModulo = {
-      ...(cotasElemento.FI !== undefined && cotasElemento.FI > 0 ? { FI: cotasElemento.FI } : {}),
-      ...(cotasElemento.FS !== undefined && cotasElemento.FS > 0 ? { FS: cotasElemento.FS } : {}),
-    }
+    const cotas = Object.fromEntries(
+      SIMBOLOS_COTA_MODULO.flatMap(s => cotasElemento[s] !== undefined && cotasElemento[s] > 0 ? [[s, cotasElemento[s]]] : []),
+    ) as CotasModulo
     // El dibujo guarda hueco/envolvente; la línea guarda la medida económica fabricada.
     // No sustituimos la medida de valoración por la de representación del cerramiento.
     const m: ModuloCerramiento = { id: `modulo-${texto(g.Orden)}`, estructuraCodigo: e.modelo,
