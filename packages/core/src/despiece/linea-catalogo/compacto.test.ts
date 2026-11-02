@@ -34,7 +34,14 @@ describe('despiezarCompacto', () => {
       ['compacto', 'LAMA', 'L', 1, 1355, 1050], ['compacto', 'MOX', 'L', 15, null, null],
     ])
   })
+
+  it('usa alturaTotalMm cuando se especifica en lugar de ventana + cajón', () => {
+    const r = resumen({ ...compacto, alturaTotalMm: 1550 })
+    expect(r.incidencias).toEqual([])
+    expect(r.filas[0]!.largoMm).toBe(1550)
+  })
   it('con guía central y motor cambia paños, guía y accesorio por la selección', () => {
+
     const r = resumen({ ...compacto, vueloIzquierdoMm: 40, vueloDerechoMm: 60, posicionGuiaCentralMm: 500, opciones: ['G1O1', 'G10O2'] })
     expect(r.filas.map(f => [f.articulo, f.largoMm, f.anchoMm])).toEqual([
       ['GUIA', 1200, null], ['LAMA', 1355, 590], ['LAMA', 1355, 560], ['MOX', null, null], ['MOTOR', null, null],

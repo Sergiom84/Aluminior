@@ -21,8 +21,8 @@ function restricciones(c: Caso) {
   if (opcionAcristalamientoOrigen(c.configuracion?.nTAcris) === null) motivos.push('acristalamiento-alternativo-sin-mapeo')
   // El despunte de cabecera se reparte en las líneas sin regla demostrada.
   if (c.despunte! > 0) motivos.push('despunte-de-documento-sin-regla')
-  if (c.tipo === 'GRUPO' && c.accesorios?.length) motivos.push('accesorios-de-grupo-no-representables')
-  else motivos.push(...accesoriosDeCaso(c).motivos, ...cotasDeCaso(c).motivos)
+  if (c.tipo === 'GRUPO' && (c.accesorios ?? []).some(a => texto(a.FamiliaAcc) !== '100')) motivos.push('accesorios-de-grupo-no-representables')
+  else if (c.tipo !== 'GRUPO') motivos.push(...accesoriosDeCaso(c).motivos, ...cotasDeCaso(c).motivos)
   if (texto(c.configuracion?.Vidrio2)) motivos.push('segundo-vidrio-no-representable')
   if (c.familias.some(f => f.familia !== '001' && f.familia !== '050' && f.conjunto)) motivos.push('familia-adicional-no-representable')
   if (c.opciones.some(o => numero(o.nOpcion) === null)) motivos.push('opcion-invalida')

@@ -1,5 +1,6 @@
 import { plantillaDiseno, UNIONES_VISUALES } from './diseno.ts'
 import { cotasModuloValidas } from './cotas-cerramiento.ts'
+import { compactoModuloValido } from './compacto-cerramiento.ts'
 import { resolverGeometriaFi1Ofi } from './geometria-1ofi.ts'
 import { materialesModuloValidos } from './materiales-cerramiento.ts'
 import {
@@ -23,8 +24,8 @@ export function esConfiguracionCerramiento(valor: unknown): valor is Configuraci
       !Number.isFinite(modulo.anchoMm) || modulo.anchoMm <= 0 ||
       !Number.isFinite(modulo.altoMm) || modulo.altoMm <= 0) return false
     if (candidato.version !== VERSION_COMPOSICION_CERRAMIENTO &&
-      (Object.hasOwn(modulo, 'anclaje') || Object.hasOwn(modulo, 'materiales') || Object.hasOwn(modulo, 'cotas'))) return false
-    if (!materialesModuloValidos(modulo.materiales) || !cotasModuloValidas(modulo.cotas, modulo.altoMm, modulo.anchoMm)) return false
+      (Object.hasOwn(modulo, 'anclaje') || Object.hasOwn(modulo, 'materiales') || Object.hasOwn(modulo, 'cotas') || Object.hasOwn(modulo, 'compacto'))) return false
+    if (!materialesModuloValidos(modulo.materiales) || !cotasModuloValidas(modulo.cotas, modulo.altoMm, modulo.anchoMm) || !compactoModuloValido(modulo.compacto)) return false
     const plantilla = plantillaDiseno(modulo.estructuraCodigo)
     if (!plantilla) return false
     const tieneFi = Object.hasOwn(modulo, 'fiMm')

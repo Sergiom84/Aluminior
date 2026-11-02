@@ -73,7 +73,8 @@ export function despiezarCompacto(
   if (compacto.descuentoVerticalMm) {
     return { ...parcialVacio(), incidencias: [`accesorio ${compacto.estructura}: descuento vertical adicional sin caso contrastado`] }
   }
-  return despiezarAccesorio(catalogo, compacto, { A: ventana.anchoMm, L: ventana.altoMm + compacto.altoCajonMm,
+  const largo = compacto.alturaTotalMm ?? (ventana.altoMm + compacto.altoCajonMm)
+  return despiezarAccesorio(catalogo, compacto, { A: ventana.anchoMm, L: largo,
     CAJ: compacto.altoCajonMm, CVI: compacto.vueloIzquierdoMm, CVD: compacto.vueloDerechoMm, CGC: compacto.posicionGuiaCentralMm })
 }
 

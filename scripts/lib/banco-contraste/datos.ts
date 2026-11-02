@@ -32,7 +32,7 @@ export interface Caso {
   dimensiones: { ancho: number | null; alto: number | null }; cantidad: number | null
   serie: string | null; vidrio: string | null; familias: { familia: string; conjunto: string }[]
   esperado: number | null; totalEsperado: number | null; exclusiones: string[]
-  elementos?: Caso[]; cerramiento?: Fila; geometria?: Fila[]
+  elementos?: Caso[]; compactosElementos?: Caso[]; cerramiento?: Fila; geometria?: Fila[]
   /** `VAccesorios` y `VOpciones` (VPRES) de la línea: compacto y otros accesorios. */
   accesorios?: Fila[]; opcionesAccesorio?: Fila[]
   /** `VEstructurasVariables` (VPRES) de la línea. */

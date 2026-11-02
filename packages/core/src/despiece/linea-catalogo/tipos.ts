@@ -112,6 +112,8 @@ export interface CompactoLineaCatalogo extends AccesorioLineaCatalogo {
   posicionGuiaCentralMm: number
   /** `DtoHuecoV`; solo 0 está contrastado. */
   descuentoVerticalMm: number
+  /** Altura total cuando difiere de altoMm + altoCajon (e.g. persiana que cubre fijos). */
+  alturaTotalMm?: number
 }
 
 export interface EntradaLineaCatalogo {

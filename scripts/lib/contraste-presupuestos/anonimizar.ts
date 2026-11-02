@@ -9,7 +9,9 @@ const CONFIG = ['nTAcris', 'HorasAdFabr', 'HorasColoc', 'Vidrio2', 'DisEspecific
 const GEOMETRIA = ['nLinEstr', 'Orden', 'CodEstr', 'Ancho', 'Alto', 'AnchoHueco', 'AltoHueco', 'EsUnionSN', 'UnionVH',
   'UOrdenElem1', 'UOrdenElem2', 'UGrosor', 'ULongitud', 'DisEspecificoSN', 'DisAltoCaj']
 const OPCION = ['Conjunto', 'nOpcion', 'SelecSN']
-const ACCESORIO = ['FamiliaAcc', 'Accesorio', 'Acabado', 'AltoCajon']
+const ACCESORIO = ['FamiliaAcc', 'Accesorio', 'Acabado', 'AltoCajon', 'nModulo',
+  'compDtoHuecoSN', 'VueloI', 'VueloD', 'PosGuiaCentral', 'DtoHuecoV']
+const OPCION_ACCESORIO = ['CodEstr', 'OPCgrupo', 'OPCnOpcion', 'nModulo', 'GrupoDesactivadoSN']
 const VARIABLE = ['Estructura', 'SimboloVariable', 'Valor', 'SubestructuraSN', 'NumeroInstancia']
 
 const elegir = (f: Fila | null | undefined, campos: readonly string[]) =>
@@ -27,7 +29,11 @@ export function anonimizarGrupo(c: Caso, id: string): Caso {
     variables: (e.variables ?? []).map(v => elegir(v, VARIABLE)!) })
   const grupo = caso(c, id)
   grupo.elementos = (c.elementos ?? []).map((e, i) => caso(e, `${id}-e${i + 1}`))
-  grupo.accesorios = (c.accesorios ?? []).map(a => elegir(a, ACCESORIO)!)
+  grupo.accesorios = (c.accesorios ?? []).map(a => ({
+    ...elegir(a, ACCESORIO)!,
+    ...(a.nLinEstrGrupo ? { nLinEstrGrupo: n(a.nLinEstrGrupo) } : {}),
+  }))
+  grupo.opcionesAccesorio = (c.opcionesAccesorio ?? []).map(o => elegir(o, OPCION_ACCESORIO)!)
   grupo.geometria = (c.geometria ?? []).map(g => ({ ...elegir(g, GEOMETRIA), nLinEstr: n(g.nLinEstr) }))
   return grupo
 }

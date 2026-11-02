@@ -47,9 +47,13 @@ export function prepararVariante(c: Caso): VarianteGrupo {
   const bloqueos = [...new Set([...c.exclusiones.filter(x => BLOQUEANTES.has(x)),
     ...conservados.flatMap(e => e.exclusiones), ...(otros.length ? ['elemento-adicional-desconocido'] : [])])]
   const suma = elementos.reduce((s, e) => s + (e.esperado ?? 0) * (e.cantidad ?? 0), 0)
+  const accesoriosCompacto = (c.accesorios ?? []).filter(a => texto(a.FamiliaAcc) === '100')
+  const compactosApartados = accesoriosCompacto.length > 0 ? { elementos: 0, importe: 0 } : importe(compactos, cantidad)
+  const piezasCompactos = accesoriosCompacto.length > 0 ? compactos.flatMap(e => e.piezas) : []
   return {
-    variante: { ...c, elementos: conservados, accesorios: [], exclusiones: [], piezas: conservados.flatMap(e => e.piezas) },
-    bloqueos, compactos: importe(compactos, cantidad), tapajuntas: importe(tapajuntas, cantidad), otros: importe(otros, cantidad),
+    variante: { ...c, elementos: conservados, accesorios: accesoriosCompacto, opcionesAccesorio: c.opcionesAccesorio ?? [],
+      compactosElementos: compactos, exclusiones: [], piezas: [...conservados.flatMap(e => e.piezas), ...piezasCompactos] },
+    bloqueos, compactos: compactosApartados, tapajuntas: importe(tapajuntas, cantidad), otros: importe(otros, cantidad),
     invisibles: invisibles.map(g => `modulo-${texto(g.Orden)}`), especificos: disenos.length - invisibles.length,
     reconciliado: c.esperado !== null && Math.abs(suma / cantidad - c.esperado) <= .01 + 1e-6,
   }

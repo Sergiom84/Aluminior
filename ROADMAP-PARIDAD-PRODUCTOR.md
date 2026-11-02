@@ -1,6 +1,6 @@
 # Roadmap operativo de paridad con Productor
 
-Actualizado: 02/11/2026 (GR1 verificado en banco y servicio web; prioridad E5, E2, E6, GR2). Anterior: 13/10/2026. Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
+Actualizado: 02/11/2026 (GR1 y E5 implementados y verificados en motor, banco y servicio web; prioridad E2, E6, GR2). Anterior: 13/10/2026. Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
 Este archivo es el registro único del orden y estado de estas tareas.
 Los documentos de ensayo explican cómo realizarlas; los informes fechados
 conservan evidencia. Sus antiguas listas de pendientes no sustituyen este registro.
@@ -11,10 +11,12 @@ conservan evidencia. Sus antiguas listas de pendientes no sustituyen este regist
 **Contraste de GRUPO reales (02/11/2026):** [informe](docs/paridad/CONTRASTE-PRESUPUESTOS-2026-11-02.md).
 Medidos los 17 ejercicios (2010–2026, 4.107 GRUPO); con el catálogo actual
 solo son reproducibles 2023–2026. Orden por importe en 2026 y frecuencia en
-2023–2026: GR1 (cota FI/FS, 31 / 96 GRUPO), E5 (compacto, 43 / 235), E2
-(varias series, 40 / 140), E6 (vidrio por elemento, 24 / 117), GR2 (unión que
-recorre varias piezas, 44 / 221, pero 749 € en 2026). GR1 implementado y verificado en local el 02/11 (en 0016 `cota-fi-fs` baja de 31 a 0: 25 pasan a `difiere`, 10 con receta igual, y 6 quedan sin valorar por `TD` en `2O+1OFI` o tarifa de `PSU006`; los 23 que coincidían siguen coincidiendo). Siguiente: E5 (compacto) o UI del configurador para `FI`/`FS` fuera de `1OFI`. Repetir
-`scripts/contraste-presupuestos.ts` tras cada arreglo; no rehacer la extracción.
+2023–2026 tras resolver GR1 y E5: E2 (varias series, 39 / 138), E6 (vidrio por elemento,
+23 / 115), GR2 (unión que recorre varias piezas, 44 / 221, pero 749 € en 2026).
+GR1 y E5 implementados y verificados en local el 02/11:
+- En GR1: `cota-fi-fs` bajó de 31 a 0 en la 0016; 26 pasaron a valorarse.
+- En E5: `compacto` bajó de 43 a 11 en la 0016 (más de 75.000 € resueltos; el 100 % de compactos `COM*` reales resueltos y los 11 restantes comprobados como tubos `GMTUB*` y mosquiteras `PSM001` en elementos); en la 0015 bajó a 2; `regresion-06` coincide al céntimo (1.410,08 €).
+Siguiente: E2 (varias series en GRUPO) o UI del configurador para edición de cotas (`FI`/`FS`/`TD`) y persianas en módulos. Repetir `scripts/contraste-presupuestos.ts` tras cada arreglo; no rehacer la extracción.
 
 **Publicación técnica 12/10:** C1 y el tramo de P.6/P.7 están en Render live
 `40cedd1`, con 0031/0032, carga dirigida y QA remoto verificados; ambos CI
@@ -80,7 +82,7 @@ Sin aplicación al presupuesto web ni nueva medición del banco.
 | E2 | Unión material de otra serie en GRUPO | Pendiente; prioridad 3 tras el contraste del 02/11/2026 (140 GRUPO en 2023–2026): 40 GRUPO de la 0016 (37 con módulos de varias series, 3 con unión de serie ajena) | Selección desde diagnóstico privado de los ocho casos de iteración 13; código/serie/acabado y geometría demostrados, sin extrapolar U |
 | E3 | Comisión: orden de redondeo y edición de líneas guardadas | Pendiente | Caso 0/−10/+10, suma de filas y momento de aplicación; separar cantidades/horas; seis residuos comunicados |
 | E4 | Tapajuntas de puerta con inferior SI/NO | Pendiente | GMT004, 1P 867×2098 con serie/ala/cajón reales; comparación lateral y travesaño |
-| E5 | Compacto y metraje COMPVAL | Pendiente; prioridad 2 tras el contraste del 02/11/2026: causa más frecuente en 2023–2026 (235 GRUPO); 43 en la 0016, en 24 el resto coincide al céntimo y la diferencia es el compacto. Las uniones de guía y esquineros de compacto antiguos reparten asimétrico (83/42, 109,5/68,5) | Identificar hueco/ventana/accesorio, COM009, cajón, vuelos y opciones; discriminar 4,93/4,94 con PVP vigente |
+| E5 | Compacto y metraje COMPVAL | Implementado y verificado 02/11/2026 | Modela `CompactoModulo` en cerramiento v3, `valorarCerramiento` propaga la persiana del módulo y despiece soporta `alturaTotalMm`. En la 0016 la causa `compacto` cae de 43 (103.672 €) a 11 (27.909,76 €), resolviendo >75.000 € y el 100 % de los compactos `COM*` reales (los 11 restantes son tubos/mosquiteras en elementos). En 0015 cae a 2; en el total a 171. `regresion-06` coincide al céntimo (1.410,08 €). |
 | E6 | Acristalamiento alternativo y vidrio por elemento | Contención publicada 09/10; paridad pendiente. Contraste 02/11: 23 GRUPO de la 0016 mezclan vidrio simple y doble por elemento (117 por vidrio en 2023–2026), prioridad 4 | Motor catálogo rechaza precio falso de opción 1 para opción alternativa y guarda incompleto.  Mapeo observado de opción/nTAcris/tablas/junquillos/juntas; iniciar con 1/2/3 y mismo vidrio |
 | E7 | Conservación de medidas fraccionarias | 31/10: precios C2 970×439,5 y 970×1999,5 coinciden Productor-Aluminior (150,60 y 267,77); pendientes cortes y despiece; A4 web verificado 09/10 | C2 970×439,5 y 970×1999,5 con configuración real fijada: entrada, cortes, guardar/reabrir. 0030 y persistencia web ya entregados; no repetir migración ni equiparar el fijo sintético A4 con esta receta |
 | E8 | Tramos y opciones de herraje | Condicionado | Solo si falta cobertura tras catálogo/CHM/diagnóstico; límite real del corte de hoja, no dimensión exterior supuesta |

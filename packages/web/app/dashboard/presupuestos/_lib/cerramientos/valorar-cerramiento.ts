@@ -1,4 +1,4 @@
-import { cotasEfectivasModulo, esConfiguracionCerramiento, esResultadoCerramiento, etapasVentaCerramiento, materialesEfectivos,
+import { compactoEfectivoModulo, cotasEfectivasModulo, esConfiguracionCerramiento, esResultadoCerramiento, etapasVentaCerramiento, materialesEfectivos,
   unionConfigurada, resolverOrigenSinUnion, medidasFabricacionCerramiento,
   type ConfiguracionCerramiento, type RedondeoVentaCerramiento, type ResultadoCerramientoV1,
   type ResultadoOrigenCerramiento } from '@aluminior/core/estructuras'
@@ -39,9 +39,9 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
   const fabricacion = medidasFabricacionCerramiento(entrada.configuracion)
   const geometria = [
     ...entrada.configuracion.modulos.map(m => ({ tipo: 'MODULO' as const, id: m.id, materiales: materialesEfectivos(m, entrada),
-      codigo: m.estructuraCodigo, cotas: cotasEfectivasModulo(m), ...fabricacion.modulos.get(m.id)! })),
+      codigo: m.estructuraCodigo, cotas: cotasEfectivasModulo(m), compacto: compactoEfectivoModulo(m, entrada), ...fabricacion.modulos.get(m.id)! })),
     ...entrada.configuracion.uniones.map(u => ({ tipo: 'UNION' as const, id: u.id,
-      codigo: u.codigo, anchoMm: u.grosorMm, altoMm: fabricacion.uniones.get(u.id)!.longitudMm, materiales: null, cotas: null })),
+      codigo: u.codigo, anchoMm: u.grosorMm, altoMm: fabricacion.uniones.get(u.id)!.longitudMm, materiales: null, cotas: null, compacto: null })),
   ]
   for (const g of geometria) {
     const origen: ResultadoOrigenCerramiento = {
@@ -59,7 +59,7 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
         ...(materialIncompleto ? [{ codigo: 'COBERTURA_INCOMPLETA', ambito: 'FABRICACION' as const, bloqueante: true, detalle }] : [])]
     }
     // Horas y comisión del cerramiento se aplican a la línea (importesLineaCerramiento), nunca por módulo.
-    const parametros = { ...entrada, horasFabricacion: null, horasColocacion: null, compacto: null, accesorios: null,
+    const parametros = { ...entrada, horasFabricacion: null, horasColocacion: null, compacto: g.compacto, accesorios: null,
       comisionPorc: null, cotas: g.cotas,
       trazabilidad: true, codigo: g.codigo, anchoMm: g.anchoMm, altoMm: g.altoMm,
       serieCodigo: origen.serieCodigo,

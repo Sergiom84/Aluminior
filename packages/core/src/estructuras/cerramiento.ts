@@ -20,6 +20,7 @@ import {
 } from './versiones-cerramiento.ts'
 import type { CotasModulo } from './cotas-cerramiento.ts'
 import type { MaterialesModulo } from './materiales-cerramiento.ts'
+import type { CompactoModulo } from './compacto-cerramiento.ts'
 
 export { VERSION_CONFIGURACION_CERRAMIENTO }
 export const FI_1OFI_NUEVA_ALTA_MM = 300 as const
@@ -36,6 +37,8 @@ export interface ModuloCerramiento {
   anclaje?: AnclajeModulo
   /** Solo en v3: excepciones de material; lo ausente hereda el general. */
   materiales?: MaterialesModulo
+  /** Solo en v3: compacto de persiana integrado en el módulo. */
+  compacto?: CompactoModulo
 }
 
 export interface UnionCerramiento {

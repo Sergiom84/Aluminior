@@ -396,3 +396,53 @@ lee las cotas de instancia desde `cotasDeCaso(e)` y `anonimizarGrupo` conserva
   `VEstructurasVariables`, Productor guardaba las cotas de instancia en
   `EstructurasDiseño` (`TipoDoc = 'VPRES'`) o en `VMedidasDA`, tablas que la
   proyección actual de `scripts/lib/banco-contraste/fuente.ts` no extrae.
+
+## E5 — 02/11/2026
+
+Modelado del cajón de persiana y despiece de compactos `COM001`–`COM017` por módulo
+en cerramientos `GRUPO`:
+
+1. **Modelo en `packages/core`**:
+   - `packages/core/src/estructuras/compacto-cerramiento.ts`: define `CompactoModulo`,
+     la guarda pura `compactoModuloValido` y el resolutor `compactoEfectivoModulo`
+     (hereda acabado de accesorios o general de la carpintería; opciones por defecto
+     `['G1O0']` sin guía central).
+   - `ModuloCerramiento.compacto?: CompactoModulo` opcional en v3 (`cerramiento.ts`),
+     100 % compatible hacia atrás con v1, v2 y v3 sin persiana.
+   - `CompactoLineaCatalogo.alturaTotalMm` opcional en `despiece/linea-catalogo/tipos.ts`
+     y `compacto.ts`: cuando el compacto cubre fijos además de la ventana (medida total
+     diferente de `altoMm + altoCajonMm`), la fórmula `L` de la persiana usa
+     `alturaTotalMm`.
+2. **Servicio web de valoración**:
+   - `packages/web/app/dashboard/presupuestos/_lib/cerramientos/valorar-cerramiento.ts`
+     transmite `compacto: compactoEfectivoModulo(m, entrada)` en geometría y en cada
+     módulo valorado en lugar de `compacto: null`.
+3. **Banco de contraste masivo**:
+   - `scripts/lib/banco-contraste/geometria.ts` (`compactoDeModulo`): mapea `VAccesorios`
+     con `FamiliaAcc === '100'` a su módulo mediante el campo `nModulo` (1-based en
+     los módulos de hueco), transmitiendo estructura, opciones, vuelos y altura total.
+   - `scripts/lib/contraste-presupuestos/variantes.ts`: transmite accesorios de persiana
+     y sus piezas en la variante, de modo que el motor valora el cerramiento íntegro
+     con compacto incluido.
+   - `scripts/lib/contraste-presupuestos/casos-regresion.json`: `regresion-06` (Doc 946)
+     pasa de discrepar por compacto a **coincidir al céntimo** (1.410,08 €).
+
+### Resultado tras E5
+
+- **0016 (2026)**:
+  - La causa `compacto` cae de **43 GRUPO (103.672 €)** a **11 GRUPO (27.909,76 €)**.
+  - **Más de 75.000 € y 32 GRUPO resueltos**.
+  - Comprobados los 11 GRUPO restantes con causa `compacto`: ninguno falla por persianas
+    `COM*` sin modelar. Todos ellos son casos donde un elemento individual contiene tubos
+    de remate (`FamiliaAcc: '112'`, `GMTUB*`) o mosquiteras (`FamiliaAcc: '101'`, `PSM001`),
+    que al no tener representación de línea devuelven `accesorio-de-linea-no-representable`
+    y son mapeados históricamente a `compacto`. El **100 % de los compactos `COM*` de la
+    0016** queda resuelto y valorado.
+- **0015 (2025)**:
+  - Los casos con causa `compacto` caen a solo **2 GRUPO** (2.311,30 €).
+- **Agregado 2023–2026**:
+  - Los GRUPO con causa `compacto` caen de 235 a **171**.
+- **Batería de tests**:
+  - `@aluminior/core`: 702 tests pasando (100 %).
+  - Regresión local (`regresion-local.test.ts`): 100 % pasando (todos los casos reales coinciden).
+  - Arquitectura: 0 infracciones, módulos limpios.
