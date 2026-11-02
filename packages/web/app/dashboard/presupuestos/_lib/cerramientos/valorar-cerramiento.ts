@@ -1,5 +1,5 @@
 import { esConfiguracionCerramiento, esResultadoCerramiento, etapasVentaCerramiento, materialesEfectivos,
-  unionConfigurada, resolverOrigenSinUnion,
+  unionConfigurada, resolverOrigenSinUnion, medidasFabricacionCerramiento,
   type ConfiguracionCerramiento, type RedondeoVentaCerramiento, type ResultadoCerramientoV1,
   type ResultadoOrigenCerramiento } from '@aluminior/core/estructuras'
 import { sumarDecimal } from '@aluminior/core/precios'
@@ -35,11 +35,13 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
   // Con el catálogo de despiece completo cargado, cada origen se valora por filas
   // como Productor (FILA_CENTIMOS); sin él, la vía anterior y su protocolo.
   const redondeo: RedondeoVentaCerramiento = await catalogoDespieceCargado(cliente) ? 'FILA_CENTIMOS' : 'ESTRUCTURA_NUMBER_V1'
+  // Las uniones configuradas restan su grosor a las piezas contiguas y miden el lado común.
+  const fabricacion = medidasFabricacionCerramiento(entrada.configuracion)
   const geometria = [
     ...entrada.configuracion.modulos.map(m => ({ tipo: 'MODULO' as const, id: m.id, materiales: materialesEfectivos(m, entrada),
-      codigo: m.estructuraCodigo, anchoMm: m.anchoMm, altoMm: m.altoMm })),
+      codigo: m.estructuraCodigo, ...fabricacion.modulos.get(m.id)! })),
     ...entrada.configuracion.uniones.map(u => ({ tipo: 'UNION' as const, id: u.id,
-      codigo: u.codigo, anchoMm: u.grosorMm, altoMm: u.longitudMm, materiales: null })),
+      codigo: u.codigo, anchoMm: u.grosorMm, altoMm: fabricacion.uniones.get(u.id)!.longitudMm, materiales: null })),
   ]
   for (const g of geometria) {
     const origen: ResultadoOrigenCerramiento = {

@@ -51,6 +51,26 @@ escritorio no se concedió. Sin commit ni publicación. Siguiente: prueba de Ser
 deshacer y publicación. El orden económico E1–E11 no cambia.
 
 
+## Comparativa de presupuestos Productor / Aluminior — 01–02/11/2026
+
+Cinco cerramientos presupuestados en Productor (0017, presupuesto 260503) y en
+Aluminior local (260002); ver
+[comparativa](paridad/COMPARATIVA-PRESUPUESTOS-2026-11-01.md). Coinciden al
+céntimo el 2O de 1200 (514,31), el 2 × 2 con uniones `U` (1.391,88) y la C2
+de E7 (267,77), con totales e IVA iguales. Diferencias principales: la
+descripción generada, el artículo `GRUPO` en conjuntos de una pieza, la
+medida guardada (Productor 2400 con `U`, Aluminior 2401), el formato decimal
+del PDF y la validación obligatoria de materiales y uniones. El elemento
+invisible quedó observado (precio 0, sin despiece, cuenta en el ancho), y
+Corregido el mismo día en código: las uniones configuradas restan la mitad de
+su grosor a cada pieza y miden el lado común, regla contrastada con 26
+conjuntos reales de la 0016. El 2 × 2 con `U` da 2400 × 2400 y 1.391,88 €, y
+el caso 3 da 2800 con uniones de 4,12 € (1.117,76 €; queda la diferencia del
+fijo invisible, DS3). Solo para configuraciones nuevas: las líneas guardadas
+conservan su geometría. Tests core 677, web 812 en serie; sin publicar.
+Cobertura: 541 estructuras importadas, 160 dibujables. El compacto sigue
+siendo E5.
+
 ## Reconciliación del main Mac — 13/10/2026
 
 Por petición de Sergio, se revisan todos los cambios pendientes y se integra

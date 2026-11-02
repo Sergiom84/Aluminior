@@ -15,7 +15,8 @@ export function esConfiguracionCerramiento(valor: unknown): valor is Configuraci
       candidato.version !== VERSION_COMPOSICION_CERRAMIENTO) ||
       !Array.isArray(candidato.modulos) || !Array.isArray(candidato.uniones) ||
       candidato.modulos.length === 0 ||
-      candidato.uniones.length !== candidato.modulos.length - 1) return false
+      candidato.uniones.length !== candidato.modulos.length - 1 ||
+      (Object.hasOwn(candidato, 'repartoUniones') && candidato.repartoUniones !== 'PIEZAS')) return false
   const modulosValidos = candidato.modulos.every((modulo) => {
     if (!modulo || typeof modulo.id !== 'string' || typeof modulo.estructuraCodigo !== 'string' ||
       !Number.isFinite(modulo.anchoMm) || modulo.anchoMm <= 0 ||

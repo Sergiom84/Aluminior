@@ -46,6 +46,12 @@ export interface UnionCerramiento {
 interface ConfiguracionCerramientoBase {
   modulos: readonly ModuloCerramiento[]
   uniones: readonly UnionCerramiento[]
+  /**
+   * `PIEZAS`: las uniones configuradas restan su grosor a las piezas contiguas
+   * (medidas-uniones.ts). Ausente en snapshots anteriores, que conservan la
+   * geometría con la que se guardaron.
+   */
+  repartoUniones?: 'PIEZAS'
 }
 
 export interface ConfiguracionCerramientoV1 extends ConfiguracionCerramientoBase {
@@ -89,6 +95,7 @@ export function crearConfiguracionCerramiento(
     version: plantilla.codigo === '1OFI' ? VERSION_CONFIGURACION_CERRAMIENTO : 1,
     modulos: [{ id: 'modulo-1', ...moduloDesdePlantilla(plantilla) }],
     uniones: [],
+    repartoUniones: 'PIEZAS',
   }
 }
 

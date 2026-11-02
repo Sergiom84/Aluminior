@@ -60,6 +60,7 @@ export function posicionesCerramiento(configuracion: ConfiguracionCerramiento): 
   const uniones = new Map(configuracion.uniones.map((union) => [union.id, union]))
   const rectModulos = new Map<string, RectVisual>()
   const rectUniones = new Map<string, RectVisual>()
+  const reparteEnPiezas = configuracion.repartoUniones === 'PIEZAS'
   for (const modulo of configuracion.modulos) {
     const anclaje = anclajes.get(modulo.id)
     const padre = anclaje && rectModulos.get(anclaje.moduloId)
@@ -68,20 +69,28 @@ export function posicionesCerramiento(configuracion: ConfiguracionCerramiento): 
       rectModulos.set(modulo.id, { x: 0, y: 0, ancho: modulo.anchoMm, alto: modulo.altoMm })
       continue
     }
+    // Con reparto en piezas, la unión configurada no separa: se dibuja centrada
+    // sobre el lado común (medidas-uniones.ts). Si no, separa su grosor.
+    const reparte = reparteEnPiezas && unionConfigurada(union)
+    const separacion = reparte ? 0 : union.grosorMm
+    const desfase = (union.grosorMm - separacion) / 2
+    const longitud = reparte
+      ? (anclaje.lado === 'abajo' ? Math.min(padre.ancho, modulo.anchoMm) : Math.min(padre.alto, modulo.altoMm))
+      : union.longitudMm
     if (anclaje.lado === 'derecha') {
-      rectUniones.set(union.id, { x: padre.x + padre.ancho, y: padre.y,
-        ancho: union.grosorMm, alto: union.longitudMm })
-      rectModulos.set(modulo.id, { x: padre.x + padre.ancho + union.grosorMm, y: padre.y,
+      rectUniones.set(union.id, { x: padre.x + padre.ancho - desfase, y: padre.y,
+        ancho: union.grosorMm, alto: longitud })
+      rectModulos.set(modulo.id, { x: padre.x + padre.ancho + separacion, y: padre.y,
         ancho: modulo.anchoMm, alto: modulo.altoMm })
     } else if (anclaje.lado === 'izquierda') {
-      rectUniones.set(union.id, { x: padre.x - union.grosorMm, y: padre.y,
-        ancho: union.grosorMm, alto: union.longitudMm })
-      rectModulos.set(modulo.id, { x: padre.x - union.grosorMm - modulo.anchoMm, y: padre.y,
+      rectUniones.set(union.id, { x: padre.x - separacion - desfase, y: padre.y,
+        ancho: union.grosorMm, alto: longitud })
+      rectModulos.set(modulo.id, { x: padre.x - separacion - modulo.anchoMm, y: padre.y,
         ancho: modulo.anchoMm, alto: modulo.altoMm })
     } else {
-      rectUniones.set(union.id, { x: padre.x, y: padre.y + padre.alto,
-        ancho: union.longitudMm, alto: union.grosorMm })
-      rectModulos.set(modulo.id, { x: padre.x, y: padre.y + padre.alto + union.grosorMm,
+      rectUniones.set(union.id, { x: padre.x, y: padre.y + padre.alto - desfase,
+        ancho: longitud, alto: union.grosorMm })
+      rectModulos.set(modulo.id, { x: padre.x, y: padre.y + padre.alto + separacion,
         ancho: modulo.anchoMm, alto: modulo.altoMm })
     }
   }
