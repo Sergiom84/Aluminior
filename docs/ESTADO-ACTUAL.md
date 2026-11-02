@@ -37,7 +37,9 @@ quedan como regresión local. Ampliado el mismo día a los 17 ejercicios
 actual (uniones `CMU…` y series retiradas); en 2023–2026 el 70 % de los
 valorados tiene la misma receta que Productor y el compacto es la causa más
 frecuente (235). La asimetría del reparto se concentra en las uniones de
-guías de compacto. Orden: GR1, E5, E2, E6, GR2. Sin cambios en el motor ni
+guías de compacto. Orden: GR1, E5, E2, E6, GR2.
+
+GR1 implementado y verificado en local el mismo 02/11/2026 ([contraste §GR1](paridad/CONTRASTE-PRESUPUESTOS-2026-11-02.md#gr1--02112026)): `ModuloCerramiento` v3 admite `cotas?: CotasModulo` (`FI`, `FS`), `valorarCerramiento` las pasa a `valorarEstructura` y `configuracionGrupo` las lee de `VEstructurasVariables`. En la 0016 los 23 GRUPO que coincidían al céntimo siguen coincidiendo, `cota-fi-fs` baja de 31 (140.530,91 €) a 0 y 25 de los 31 pasan a valorarse (`difiere` sube de 66 a 91 y `sin-valorar` baja de 123 a 98; 10 de los 25 nuevos valorados tienen `receta: igual` y en 5 el resto coincide al céntimo salvo el compacto). Los 6 restantes siguen sin valorar por `TD` sin valor en `2O+1OFI` (4) o `PSESQCOM` sin PVP en `PSU006` (2). En la 0015 `difiere` sube de 119 a 135 y `cota-fi-fs` baja de 21 a 3; en 2023–2026 los valorados suben de 482 a 523 (350 con receta igual). Falta exponer la edición de `FI`/`FS` en la UI del configurador para estructuras distintas de `1OFI` y observar `TD` en `2O+1OFI`. Sin cambios en el motor ni
 publicación.
 
 ## Guía del diseñador de Productor — 01/11/2026

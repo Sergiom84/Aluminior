@@ -1,6 +1,6 @@
 # Roadmap operativo de paridad con Productor
 
-Actualizado: 02/11/2026 (contraste de GRUPO reales 2010–2026; prioridad GR1, E5, E2, E6, GR2). Anterior: 13/10/2026. Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
+Actualizado: 02/11/2026 (GR1 verificado en banco y servicio web; prioridad E5, E2, E6, GR2). Anterior: 13/10/2026. Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
 Este archivo es el registro único del orden y estado de estas tareas.
 Los documentos de ensayo explican cómo realizarlas; los informes fechados
 conservan evidencia. Sus antiguas listas de pendientes no sustituyen este registro.
@@ -13,7 +13,7 @@ Medidos los 17 ejercicios (2010–2026, 4.107 GRUPO); con el catálogo actual
 solo son reproducibles 2023–2026. Orden por importe en 2026 y frecuencia en
 2023–2026: GR1 (cota FI/FS, 31 / 96 GRUPO), E5 (compacto, 43 / 235), E2
 (varias series, 40 / 140), E6 (vidrio por elemento, 24 / 117), GR2 (unión que
-recorre varias piezas, 44 / 221, pero 749 € en 2026). Siguiente: GR1. Repetir
+recorre varias piezas, 44 / 221, pero 749 € en 2026). GR1 implementado y verificado en local el 02/11 (en 0016 `cota-fi-fs` baja de 31 a 0: 25 pasan a `difiere`, 10 con receta igual, y 6 quedan sin valorar por `TD` en `2O+1OFI` o tarifa de `PSU006`; los 23 que coincidían siguen coincidiendo). Siguiente: E5 (compacto) o UI del configurador para `FI`/`FS` fuera de `1OFI`. Repetir
 `scripts/contraste-presupuestos.ts` tras cada arreglo; no rehacer la extracción.
 
 **Publicación técnica 12/10:** C1 y el tramo de P.6/P.7 están en Render live
@@ -102,7 +102,7 @@ Sin aplicación al presupuesto web ni nueva medición del banco.
 | DS1 | Guía del diseñador de Productor | En curso; observación 01–02/11/2026 en la 0017 | [Guía](docs/paridad/GUIA-DISENADOR-PRODUCTOR.md) con barra, escaparate, Elemento seleccionado, Unión, compacto, recorrido de composición y elemento invisible. Comparativa de presupuestos 01–02/11 ([doc](docs/paridad/COMPARATIVA-PRESUPUESTOS-2026-11-01.md)): resueltas la 4 (la lupa filtra series) y la 7 salvo el PDF emitido; uniones `U` y `GMU038` observadas. Quedan 1–3, 5, 6 y 8–10 para el operador; ampliar con cada botón explicado. July sin conexión: pendientes por pasar |
 | DS2 | Composición: inserción debajo visible y mover piezas libremente | Implementado y verificado en local 01/11/2026; sin commit ni publicación | Debajo: `anclajeInferior`, `+` inferior y «Colocar X debajo»; recorrido 2O/fijo/2O/fijo = 2420 × 2420. Mover (decisión de Sergio: anclajes; las colgadas se quedan fijas): `mover-modulo.ts`, arrastre con ajuste magnético y botón «Mover elemento» con destinos enfocables; 2O movida = 2420 × 3640 con el fijo en su sitio, guardada y recargada. Core 59 ficheros, componentes del diseñador, tipos y arquitectura correctos. Falta: deshacer, mover el primer elemento, prueba de Sergio y publicación. Desviación deliberada de Productor |
 | DS3 | Elemento invisible (viga o pared) por diseño específico | Observado 02/11/2026; campo identificado el mismo día; pendiente de implementar | Observado: precio 0 sin despiece, cuenta en el ancho y en las uniones, se describe en el GRUPO y se dibuja como hueco en blanco. Campo: diseño de documento con un único nodo `Tipo = 19` (8 de 8 en 0015–0017). Solo 2 GRUPO reales de la 0016 (328 €). Falta el dibujo en el PDF de Productor y las preguntas 6 y 8. El reparto 40/20 del caso 3 queda como hipótesis ligada al invisible |
-| GR1 | Cota del fijo FI/FS en módulos de GRUPO | Evidencia lista 02/11/2026; prioridad 1 | [Contraste](docs/paridad/CONTRASTE-PRESUPUESTOS-2026-11-02.md): 31 GRUPO de la 0016 (96 en 2023–2026) sin valorar (1OFI, 2OFI, 1FS, 2OPFS…) por `Variable "FI"/"FS" sin valor`. Llevar la cota del elemento (`VEstructurasVariables`) al módulo en banco y web (hoy solo `fiMm` en 1OFI) y repetir el contraste |
+| GR1 | Cota del fijo FI/FS en módulos de GRUPO | Implementado y verificado en motor/banco 02/11/2026; UI configurador pendiente para no-1OFI | [Contraste §GR1](docs/paridad/CONTRASTE-PRESUPUESTOS-2026-11-02.md#gr1--02112026): `cotas?: CotasModulo` en `ModuloCerramiento` v3, `valorarCerramiento` y `configuracionGrupo`. En 0016 `cota-fi-fs` pasa de 31 a 0 (23 coinciden, 91 difieren [+25, 10 con receta igual], 98 sin valorar [−25; 6 quedan por `TD` en `2O+1OFI` o PVP de `PSU006`]). Falta exponer `FI`/`FS` en la UI del configurador para `2OFI`/`1FS`/`1PFS`/`2OPFS` y observar `TD` en `2O+1OFI` |
 | GR2 | Unión que recorre varias piezas | Evidencia lista 02/11/2026; prioridad 5 | 47 GRUPO de la 0016 y 35 de la 0015: Productor recorta todas las piezas que toca una unión larga y Aluminior solo el par anclado. 221 GRUPO en 2023–2026. Uniones aisladas de perfil 2010–2026: 89–95 % mitad y mitad, también con alturas distintas, salvo las de compacto (37–54 %). Impacto medido 749 € en 44 GRUPO de 2026 |
 
 Detalles E2–E11: [ensayos mínimos](docs/paridad/ENSAYOS-MINIMOS-PRODUCTOR-2026-10-03.md).

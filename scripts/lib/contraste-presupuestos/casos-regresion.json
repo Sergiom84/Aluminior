@@ -3912,7 +3912,7 @@
   "guardadas": 1650.57
  },
  {
-  "descripcion": "Cota FI/FS sin transmitir",
+  "descripcion": "Cota FI/FS transmitida al módulo (1PFS con FS=300)",
   "caso": {
    "id": "regresion-09",
    "tipo": "GRUPO",
@@ -4127,7 +4127,15 @@
      ],
      "accesorios": [],
      "opcionesAccesorio": [],
-     "variables": []
+     "variables": [
+      {
+       "Estructura": "1PFS",
+       "SimboloVariable": "FS",
+       "Valor": 300,
+       "SubestructuraSN": false,
+       "NumeroInstancia": 1
+      }
+     ]
     },
     {
      "id": "regresion-09-e3",
@@ -4254,10 +4262,12 @@
     }
    ]
   },
-  "resultado": "sin-valorar",
+  "resultado": "difiere",
   "causas": [
-   "cota-fi-fs"
+   "diseno-especifico",
+   "herraje-o-componentes",
+   "mano-de-obra"
   ],
-  "guardadas": null
+  "guardadas": 1440.26
  }
 ]

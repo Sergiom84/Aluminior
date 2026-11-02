@@ -18,6 +18,7 @@ import {
 import {
   VERSION_COMPOSICION_CERRAMIENTO, VERSION_CONFIGURACION_CERRAMIENTO,
 } from './versiones-cerramiento.ts'
+import type { CotasModulo } from './cotas-cerramiento.ts'
 import type { MaterialesModulo } from './materiales-cerramiento.ts'
 
 export { VERSION_CONFIGURACION_CERRAMIENTO }
@@ -29,6 +30,8 @@ export interface ModuloCerramiento {
   anchoMm: number
   altoMm: number
   fiMm?: number
+  /** Solo en v3: cotas de instancia del fijo inferior o superior (FI, FS). */
+  cotas?: CotasModulo
   /** Solo en v3: elemento del que cuelga, lado y unión que los separa. */
   anclaje?: AnclajeModulo
   /** Solo en v3: excepciones de material; lo ausente hereda el general. */
@@ -187,7 +190,7 @@ export function cambiarEstructuraModuloCerramiento(
   if (!existe) return configuracion
   const modulos = configuracion.modulos.map((modulo) => {
     if (modulo.id !== id) return modulo
-    const { fiMm: _fiAnterior, ...base } = modulo
+    const { fiMm: _fiAnterior, cotas: _cotasAnteriores, ...base } = modulo
     return {
       ...base,
       estructuraCodigo: plantilla.codigo,

@@ -1,5 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
+import { configuracionGrupo } from '../banco-contraste/geometria.ts'
 import { analizarReparto } from './uniones.ts'
 import { AJUSTE_DECIMAL, CASO_3, CON_COMPACTO, MITAD_Y_MITAD, UNION_LARGA, grupo } from './fixtures.ts'
 
@@ -35,4 +36,21 @@ test('el cajón del compacto se reconoce por su resta y no cuenta como diferenci
 
 test('el ajuste a un total con decimales se separa de la asimetría', () => {
   assert.deepEqual(analizarReparto(grupo(AJUSTE_DECIMAL)).patrones, ['ajuste-decimal-al-total'])
+})
+
+test('configuracionGrupo transmite cotas FI y FS de VEstructurasVariables a cada módulo del GRUPO', () => {
+  const c = grupo({
+    modulos: [
+      { codigo: '2OFI', hueco: [1200, 2100], guardada: [1199, 2100], cotas: { FI: 300 } },
+      { codigo: '1PFS', hueco: [900, 2100], guardada: [899, 2100], cotas: { FS: 400, FI: 0 } },
+      { codigo: '0', hueco: [600, 2100], guardada: [600, 2100] },
+    ],
+    uniones: [
+      { codigo: 'PSU001', vh: 'V', de: 0, a: 1, grosor: 2, longitud: 2100 },
+      { codigo: 'PSU001', vh: 'V', de: 1, a: 2, grosor: 2, longitud: 2100 },
+    ],
+  })
+  const { configuracion, motivos } = configuracionGrupo(c, 'linea')
+  assert.deepEqual(motivos, [])
+  assert.deepEqual(configuracion?.modulos.map(m => m.cotas ?? null), [{ FI: 300 }, { FS: 400 }, null])
 })

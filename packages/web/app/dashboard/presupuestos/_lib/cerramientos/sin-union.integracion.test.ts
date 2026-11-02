@@ -72,4 +72,18 @@ describe('SIN UNION con catálogo sintético: servicio y lectura del snapshot', 
     expect(r.origenes[2].venta).toEqual({ completo: false, importe: null })
     expect(r.origenes[2].diagnosticos.some(d => d.detalle === 'Receta material vacía')).toBe(true)
   }))
+
+  it('transmite cotas FI/FS del módulo a valorarEstructura y deja sin valorar cuando faltan', () => caso(async tx => {
+    await tx.update(schema.estructuraPlantillaCatalogo).set({ formulaLargo: 'L-FI' })
+      .where(eq(schema.estructuraPlantillaCatalogo.estructuraCodigo, '0'))
+    const base = { ...entrada(), configuracion: { version: 3 as const, modulos: [entrada().configuracion.modulos[0]], uniones: [] } }
+    const sinCota = await valorarCerramiento(tx, base)
+    expect(sinCota.ventaMateriales).toEqual({ completo: false, importe: null })
+    expect(sinCota.origenes[0].diagnosticos.some(d => d.detalle.includes('Variable "FI" sin valor'))).toBe(true)
+
+    const conCota = await valorarCerramiento(tx, { ...base, configuracion: { ...base.configuracion,
+      modulos: base.configuracion.modulos.map(m => ({ ...m, cotas: { FI: 250 } })) } })
+    expect(conCota.ventaMateriales).toEqual({ completo: true, importe: '10.00' })
+    expect(conCota.costeMateriales).toEqual({ completo: true, importe: '4.0000' })
+  }))
 })

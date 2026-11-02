@@ -6,13 +6,13 @@
 import type { Tablas } from '../banco-contraste/datos.ts'
 import { construirContraste } from '../banco-contraste/extraer.ts'
 
-export interface ModuloFixture { codigo: string; hueco: [number, number]; guardada: [number, number]; precio?: number; especifico?: boolean }
+export interface ModuloFixture { codigo: string; hueco: [number, number]; guardada: [number, number]; precio?: number; especifico?: boolean; cotas?: Record<string, number> }
 export interface UnionFixture { codigo: string; vh: 'V' | 'H'; de: number; a: number; grosor: number; longitud: number; precio?: number }
 export interface GrupoFixture { modulos: ModuloFixture[]; uniones: UnionFixture[]; cajon?: number; compacto?: number; precio?: number }
 
 /** Orden 1, 3, 5… para módulos y 2, 4… para uniones, como guarda Productor. */
 export function tablasGrupo(f: GrupoFixture): Tablas {
-  const lineas: Tablas[string] = [], geo: Tablas[string] = [], cfg: Tablas[string] = []
+  const lineas: Tablas[string] = [], geo: Tablas[string] = [], cfg: Tablas[string] = [], variables: Tablas[string] = []
   let n = 100
   const ordenModulo = (i: number) => 2 * i + 1
   const precioGrupo = f.precio ?? 100
@@ -29,6 +29,8 @@ export function tablasGrupo(f: GrupoFixture): Tablas {
     const nLinea = elemento(m.codigo, m.guardada[0], m.guardada[1], m.precio ?? 10, { Familia1: '001', Conjunto1: 'SERIE', Familia2: '050', Conjunto2: 'VIDRIO' })
     geo.push({ nCerr: 7, nLinEstr: nLinea, Orden: ordenModulo(i), CodEstr: m.codigo, Ancho: m.guardada[0], Alto: m.guardada[1],
       AnchoHueco: m.hueco[0], AltoHueco: m.hueco[1], EsUnionSN: false, DisEspecificoSN: !!m.especifico, DisAltoCaj: 0 })
+    for (const [SimboloVariable, Valor] of Object.entries(m.cotas ?? {}))
+      variables.push({ TipoDoc: 'VPRES', nDoc: 1, nLinEstr: nLinea, Estructura: m.codigo, SimboloVariable, Valor, SubestructuraSN: false, NumeroInstancia: 1 })
   })
   f.uniones.forEach((u, i) => {
     const nLinea = elemento(u.codigo, 0, u.longitud, u.precio ?? 1, { Familia1: '001', Conjunto1: 'SERIE' })
@@ -38,7 +40,8 @@ export function tablasGrupo(f: GrupoFixture): Tablas {
   if (f.compacto !== undefined) elemento('COM009', 1000, 155, f.compacto, { Familia1: '100', Conjunto1: 'COM009' })
   return { VPresupuestos: [{ Id: 1, Fecha: '2026-10-01T00:00:00.000Z', Tarifa: 1 }], VPresupuestosLin: lineas, VDatosLinEstr: cfg,
     VOpcionesHerraje: [], VDatosLinDetDis: [], VCerramientos: [{ id: 7, TipoDoc: 'VPRES', nDoc: 1, nLinGrupo: 1 }], VCerramientosLin: geo,
-    VAccesorios: f.cajon ? [{ TipoDoc: 'VPRES', nDoc: 1, nLinEstr: 1, nModulo: 1, Accesorio: 'COM009', AltoCajon: f.cajon }] : [] }
+    VAccesorios: f.cajon ? [{ TipoDoc: 'VPRES', nDoc: 1, nLinEstr: 1, nModulo: 1, Accesorio: 'COM009', AltoCajon: f.cajon }] : [],
+    VEstructurasVariables: variables }
 }
 export const grupo = (f: GrupoFixture) => construirContraste(tablasGrupo(f)).casos.find(c => c.tipo === 'GRUPO')!
 

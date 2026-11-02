@@ -70,6 +70,7 @@ export async function resolverMaterialesEstructura(cliente: ClienteEscritura, en
     .where(eq(schema.estructuraCotas.estructuraCodigo, entrada.codigo))
   const cotas: Record<string, number> = {}
   for (const c of cotasFilas) cotas[c.simbolo] ??= Number(c.valor ?? 0)
+  for (const [simbolo, valor] of Object.entries(entrada.cotas ?? {})) cotas[simbolo] = valor
 
   const rebajesFilas = await cliente.select().from(schema.hojaRebajes)
     .where(eq(schema.hojaRebajes.serieCodigo, entrada.serieCodigo))

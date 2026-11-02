@@ -1,4 +1,5 @@
-import type { ConfiguracionCerramientoV3, ModuloCerramiento, UnionCerramiento } from '@aluminior/core/estructuras'
+import type { ConfiguracionCerramientoV3, CotasModulo, ModuloCerramiento, UnionCerramiento } from '@aluminior/core/estructuras'
+import { cotasDeCaso } from './cotas.ts'
 import { clave, numero, si, texto, type Caso } from './datos.ts'
 /**
  * `linea`: medida económica guardada en cada elemento (Productor ya restó las uniones).
@@ -18,11 +19,18 @@ export function configuracionGrupo(c: Caso, medidas: MedidasGrupo = 'linea'): { 
   for (let i = 0; i < mods.length; i++) {
     const g = mods[i]!, e = porLin.get(texto(g.nLinEstr))
     if (!e) { motivos.push('elemento-no-enlazado'); continue }
+    const { cotas: cotasElemento, motivos: motivosCotas } = cotasDeCaso(e)
+    motivos.push(...motivosCotas)
+    const cotas: CotasModulo = {
+      ...(cotasElemento.FI !== undefined && cotasElemento.FI > 0 ? { FI: cotasElemento.FI } : {}),
+      ...(cotasElemento.FS !== undefined && cotasElemento.FS > 0 ? { FS: cotasElemento.FS } : {}),
+    }
     // El dibujo guarda hueco/envolvente; la línea guarda la medida económica fabricada.
     // No sustituimos la medida de valoración por la de representación del cerramiento.
     const m: ModuloCerramiento = { id: `modulo-${texto(g.Orden)}`, estructuraCodigo: e.modelo,
       anchoMm: medidas === 'nominal' ? nominal(g.AnchoHueco, g.Ancho) : e.dimensiones.ancho!,
       altoMm: medidas === 'nominal' ? nominal(g.AltoHueco, g.Alto) : e.dimensiones.alto!,
+      ...(Object.keys(cotas).length ? { cotas } : {}),
       materiales: { ...(e.serie ? { serieCodigo: e.serie } : {}), ...(e.vidrio ? { vidrioCodigo: e.vidrio } : {}) } }
     if (i > 0) {
       const candidatas = gs.filter(u => si(u.EsUnionSN) && texto(u.UOrdenElem2) === texto(g.Orden))
