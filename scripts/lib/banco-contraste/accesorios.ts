@@ -17,8 +17,8 @@ export function accesoriosDeCaso(c: Caso): { compacto: CompactoLineaCatalogo | n
   const vacio = (motivos: string[]) => ({ compacto: null, accesorios: [], motivos })
   if (!filas.length) return vacio([])
   const tipos = filas.map(a => FAMILIAS[texto(a.FamiliaAcc)])
-  if (tipos.some(t => !t) || new Set(tipos).size !== tipos.length ||
-    filas.some((a, i) => tipos[i] === 'compacto' && !/^COM/.test(texto(a.Accesorio)))) return vacio(['accesorio-de-linea-no-representable'])
+  if (tipos.some(t => !t) || new Set(tipos).size !== tipos.length) return vacio(['accesorio-de-linea-no-representable'])
+  if (filas.some((a, i) => tipos[i] === 'compacto' && !/^COM/.test(texto(a.Accesorio)))) return vacio(['compacto-no-representable'])
   const motivos: string[] = []
   const opciones = (a: Fila) => (c.opcionesAccesorio ?? []).filter(o => texto(o.CodEstr) === texto(a.Accesorio) && !si(o.GrupoDesactivadoSN))
     .map(o => `G${numero(o.OPCgrupo)}O${numero(o.OPCnOpcion)}`)

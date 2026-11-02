@@ -53,3 +53,11 @@ test('con otra tarifa la receta puede coincidir: cortes, metrajes y cantidades i
   assert.equal(corte.receta, 'distinta')
   assert.equal(clasificarGrupo(base({ bloqueos: ['precio-manual'] })).receta, null)
 })
+
+test('tubos y accesorios repetidos no se cuentan como compacto; el compacto sin opciones sí', () => {
+  const sin = (m: string) => clasificarGrupo(base({ guardadas: { precio: null, causas: [], motivos: [m], avisos: [] } })).causas
+  assert.deepEqual(sin('accesorio-de-linea-no-representable'), ['otro-accesorio'])
+  assert.deepEqual(sin('accesorios-de-grupo-no-representables'), ['otro-accesorio'])
+  assert.deepEqual(sin('opciones-de-compacto-ausentes'), ['compacto'])
+  assert.deepEqual(sin('compacto-sin-modulo'), ['compacto'])
+})

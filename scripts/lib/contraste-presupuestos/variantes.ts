@@ -4,6 +4,7 @@
  * Puro: nunca ajusta un precio con el importe esperado.
  */
 import { numero, si, texto, type Caso } from '../banco-contraste/datos.ts'
+import { compactosDeGrupo } from '../banco-contraste/compacto-grupo.ts'
 
 /** Exclusiones que impiden reproducir el GRUPO aunque se aparten sus elementos adicionales. */
 const BLOQUEANTES = new Set(['precio-manual', 'medidas-o-cantidad-no-positivas', 'cerramiento-ausente-o-ambiguo',
@@ -47,13 +48,18 @@ export function prepararVariante(c: Caso): VarianteGrupo {
   const bloqueos = [...new Set([...c.exclusiones.filter(x => BLOQUEANTES.has(x)),
     ...conservados.flatMap(e => e.exclusiones), ...(otros.length ? ['elemento-adicional-desconocido'] : [])])]
   const suma = elementos.reduce((s, e) => s + (e.esperado ?? 0) * (e.cantidad ?? 0), 0)
+  // El compacto se valora en su módulo solo con evidencia completa; si no, se aparta con su importe.
   const accesoriosCompacto = (c.accesorios ?? []).filter(a => texto(a.FamiliaAcc) === '100')
-  const compactosApartados = accesoriosCompacto.length > 0 ? { elementos: 0, importe: 0 } : importe(compactos, cantidad)
-  const piezasCompactos = accesoriosCompacto.length > 0 ? compactos.flatMap(e => e.piezas) : []
+  const modulos = geometria.filter(g => !si(g.EsUnionSN)).length
+  const transmitir = accesoriosCompacto.length > 0 && !compactosDeGrupo(c, modulos).motivos.length
   return {
-    variante: { ...c, elementos: conservados, accesorios: accesoriosCompacto, opcionesAccesorio: c.opcionesAccesorio ?? [],
-      compactosElementos: compactos, exclusiones: [], piezas: [...conservados.flatMap(e => e.piezas), ...piezasCompactos] },
-    bloqueos, compactos: compactosApartados, tapajuntas: importe(tapajuntas, cantidad), otros: importe(otros, cantidad),
+    variante: { ...c, elementos: conservados, exclusiones: [],
+      ...(transmitir
+        ? { accesorios: accesoriosCompacto, compactosElementos: compactos,
+            piezas: [...conservados.flatMap(e => e.piezas), ...compactos.flatMap(e => e.piezas)] }
+        : { accesorios: [], piezas: conservados.flatMap(e => e.piezas) }) },
+    bloqueos, compactos: transmitir ? { elementos: 0, importe: 0 } : importe(compactos, cantidad),
+    tapajuntas: importe(tapajuntas, cantidad), otros: importe(otros, cantidad),
     invisibles: invisibles.map(g => `modulo-${texto(g.Orden)}`), especificos: disenos.length - invisibles.length,
     reconciliado: c.esperado !== null && Math.abs(suma / cantidad - c.esperado) <= .01 + 1e-6,
   }

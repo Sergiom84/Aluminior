@@ -1,5 +1,6 @@
 import { SIMBOLOS_COTA_MODULO, type ConfiguracionCerramientoV3, type CotasModulo, type ModuloCerramiento, type UnionCerramiento } from '@aluminior/core/estructuras'
 import { cotasDeCaso } from './cotas.ts'
+import { compactosDeGrupo, type CompactoGrupo } from './compacto-grupo.ts'
 import { clave, numero, si, texto, type Caso } from './datos.ts'
 /**
  * `linea`: medida económica guardada en cada elemento (Productor ya restó las uniones).
@@ -9,37 +10,28 @@ import { clave, numero, si, texto, type Caso } from './datos.ts'
 export type MedidasGrupo = 'linea' | 'nominal'
 const nominal = (hueco: unknown, dibujo: unknown) => numero(hueco)! > 0 ? numero(hueco)! : numero(dibujo)!
 
-function compactoDeModulo(
-  c: Caso, i: number, mods: NonNullable<Caso['geometria']>, g: NonNullable<Caso['geometria']>[number],
-  e: Caso, porLin: Map<string, Caso>, porOrden: Map<string, unknown>, medidas: MedidasGrupo,
-): { compacto?: ModuloCerramiento['compacto']; motivos: string[] } {
-  const motivos: string[] = []
-  const accs = (c.accesorios ?? []).filter(a => texto(a.FamiliaAcc) === '100')
-  if (!accs.length) return { motivos }
-  const comp = accs.find(a => numero(a.nModulo) === i + 1 || (accs.length === 1 && mods.length === 1 && numero(a.nModulo) === 0))
-  if (!comp) return { motivos }
-  if (!si(comp.compDtoHuecoSN)) motivos.push('compacto-sobre-hueco-no-contrastado')
-  if (numero(comp.DtoHuecoH)) motivos.push('accesorio-con-guias-o-medidas-manuales')
-  if (!(numero(comp.AltoCajon)! > 0)) motivos.push('compacto-sin-alto-de-cajon')
-  const acabado = texto(comp.Acabado)
-  if ([comp.CompAccAcaLamas, comp.CompAccAcaGuias, comp.CompAccAcaAcc].some(x => texto(x) && texto(x) !== acabado)) motivos.push('acabados-de-accesorio-distintos')
-  if (texto(comp.CerrCodGuiaI) || texto(comp.CerrCodGuiaD) || numero(comp.CerrAltoManual)) motivos.push('accesorio-con-guias-o-medidas-manuales')
-  const opts = (c.opcionesAccesorio ?? []).filter(o => texto(o.CodEstr) === texto(comp.Accesorio) && !si(o.GrupoDesactivadoSN) &&
-    (numero(o.nModulo) === 0 || numero(o.nModulo) === numero(comp.nModulo))).map(o => `G${numero(o.OPCgrupo)}O${numero(o.OPCnOpcion)}`)
+/**
+ * Compacto del módulo. `alturaTotalMm` solo cuando el alto del elemento COM de
+ * Productor difiere de ventana + cajón (persiana que cubre fijos): medida observada
+ * en el resultado, sin regla de cálculo demostrada ni equivalente en la web.
+ */
+function compactoDeModulo(c: Caso, compacto: CompactoGrupo | undefined, g: NonNullable<Caso['geometria']>[number],
+  e: Caso, porLin: Map<string, Caso>, medidas: MedidasGrupo): ModuloCerramiento['compacto'] {
+  if (!compacto) return undefined
+  const { fila: comp, opciones } = compacto, acabado = texto(comp.Acabado)
   const porLinCom = new Map((c.compactosElementos ?? []).map(el => [texto(el.padre.nLinea), el]))
   const elemCom = (comp.nLinEstrGrupo ? (porLin.get(texto(comp.nLinEstrGrupo)) ?? porLinCom.get(texto(comp.nLinEstrGrupo))) : null) ??
     (c.compactosElementos ?? c.elementos ?? []).find(el => el.modelo === texto(comp.Accesorio))
   const altoCom = elemCom?.dimensiones.alto
   const altoPrevisto = (medidas === 'nominal' ? nominal(g.AltoHueco, g.Alto) : e.dimensiones.alto!) + numero(comp.AltoCajon)!
   const alturaTotalMm = altoCom && Math.abs(altoCom - altoPrevisto) > 1 ? altoCom : undefined
-  const compacto = { estructuraCodigo: texto(comp.Accesorio), altoCajonMm: numero(comp.AltoCajon)!,
-    ...(acabado ? { acabadoCodigo: acabado } : {}), ...(opts.length ? { opciones: opts } : {}),
+  return { estructuraCodigo: texto(comp.Accesorio), altoCajonMm: numero(comp.AltoCajon)!,
+    ...(acabado ? { acabadoCodigo: acabado } : {}), opciones,
     ...(numero(comp.VueloI) ? { vueloIzquierdoMm: numero(comp.VueloI)! } : {}),
     ...(numero(comp.VueloD) ? { vueloDerechoMm: numero(comp.VueloD)! } : {}),
     ...(numero(comp.PosGuiaCentral) ? { posicionGuiaCentralMm: numero(comp.PosGuiaCentral)! } : {}),
     ...(numero(comp.DtoHuecoV) ? { descuentoVerticalMm: numero(comp.DtoHuecoV)! } : {}),
     ...(alturaTotalMm ? { alturaTotalMm } : {}) }
-  return { compacto, motivos }
 }
 /** UOrdenElem1/2 se resuelven por Orden, nunca por nLinea ni posición de array. */
 export function configuracionGrupo(c: Caso, medidas: MedidasGrupo = 'linea'): { configuracion: ConfiguracionCerramientoV3 | null; motivos: string[] } {
@@ -49,12 +41,14 @@ export function configuracionGrupo(c: Caso, medidas: MedidasGrupo = 'linea'): { 
   const mods = gs.filter(g => !si(g.EsUnionSN)).sort((a, b) => numero(a.Orden)! - numero(b.Orden)!)
   const porOrden = new Map(mods.map(g => [texto(g.Orden), g]))
   if (porOrden.size !== mods.length) return { configuracion: null, motivos: ['orden-geometrico-ambiguo'] }
+  const compactos = compactosDeGrupo(c, mods.length)
+  motivos.push(...compactos.motivos)
   for (let i = 0; i < mods.length; i++) {
     const g = mods[i]!, e = porLin.get(texto(g.nLinEstr))
     if (!e) { motivos.push('elemento-no-enlazado'); continue }
     const { cotas: cotasElemento, motivos: motivosCotas } = cotasDeCaso(e)
-    const { compacto, motivos: motivosComp } = compactoDeModulo(c, i, mods, g, e, porLin, porOrden, medidas)
-    motivos.push(...motivosCotas, ...motivosComp)
+    const compacto = compactoDeModulo(c, compactos.porModulo.get(i), g, e, porLin, medidas)
+    motivos.push(...motivosCotas)
     const cotas = Object.fromEntries(
       SIMBOLOS_COTA_MODULO.flatMap(s => cotasElemento[s] !== undefined && cotasElemento[s] > 0 ? [[s, cotasElemento[s]]] : []),
     ) as CotasModulo

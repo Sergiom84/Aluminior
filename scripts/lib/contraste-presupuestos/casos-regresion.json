@@ -2401,7 +2401,7 @@
   "guardadas": 1369.03
  },
  {
-  "descripcion": "Compacto integrado en el módulo: coincide al céntimo (E5)",
+  "descripcion": "Compacto sin opciones guardadas en el GRUPO: se aparta y el resto coincide con medidas guardadas",
   "caso": {
    "id": "regresion-06",
    "tipo": "GRUPO",
@@ -2481,36 +2481,7 @@
      "nLinEstrGrupo": 5
     }
    ],
-   "opcionesAccesorio": [
-    {
-     "CodEstr": "COM009",
-     "OPCgrupo": 1,
-     "OPCnOpcion": 0,
-     "nModulo": 0,
-     "GrupoDesactivadoSN": false
-    },
-    {
-     "CodEstr": "COM009",
-     "OPCgrupo": 2,
-     "OPCnOpcion": 2,
-     "nModulo": 0,
-     "GrupoDesactivadoSN": false
-    },
-    {
-     "CodEstr": "COM009",
-     "OPCgrupo": 3,
-     "OPCnOpcion": 2,
-     "nModulo": 0,
-     "GrupoDesactivadoSN": false
-    },
-    {
-     "CodEstr": "COM009",
-     "OPCgrupo": 10,
-     "OPCnOpcion": 0,
-     "nModulo": 0,
-     "GrupoDesactivadoSN": false
-    }
-   ],
+   "opcionesAccesorio": [],
    "variables": [],
    "elementos": [
     {
@@ -2836,9 +2807,12 @@
     }
    ]
   },
-  "resultado": "coincide",
-  "causas": [],
-  "guardadas": 1410.08
+  "resultado": "difiere",
+  "causas": [
+   "compacto",
+   "reparto-uniones"
+  ],
+  "guardadas": 1054.43
  },
  {
   "descripcion": "Reparto de uniones: coincide con medidas guardadas, no desde el hueco",

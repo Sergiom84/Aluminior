@@ -39,6 +39,8 @@ export function compactoModuloValido(valor: unknown): valor is CompactoModulo | 
 /**
  * Compacto efectivo que recibe el motor de despiece para el módulo.
  * Hereda el acabado de accesorios o general de la línea cuando no tiene propio.
+ * Sin opciones guardadas no se suponen: los valores por defecto de Productor
+ * (`EstructurasOpcGrupos/Opciones`) no están cargados y el despiece lo declara incompleto.
  */
 export function compactoEfectivoModulo(
   modulo: Pick<ModuloCerramiento, 'compacto'>,
@@ -53,7 +55,7 @@ export function compactoEfectivoModulo(
   return {
     estructura: c.estructuraCodigo.trim().toUpperCase(),
     acabado,
-    opciones: c.opciones && c.opciones.length > 0 ? c.opciones : ['G1O0'],
+    opciones: c.opciones ?? [],
     altoCajonMm: c.altoCajonMm,
     vueloIzquierdoMm: c.vueloIzquierdoMm ?? 0,
     vueloDerechoMm: c.vueloDerechoMm ?? 0,

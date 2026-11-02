@@ -405,8 +405,8 @@ en cerramientos `GRUPO`:
 1. **Modelo en `packages/core`**:
    - `packages/core/src/estructuras/compacto-cerramiento.ts`: define `CompactoModulo`,
      la guarda pura `compactoModuloValido` y el resolutor `compactoEfectivoModulo`
-     (hereda acabado de accesorios o general de la carpintería; opciones por defecto
-     `['G1O0']` sin guía central).
+     (hereda acabado de accesorios o general de la carpintería). La primera entrega
+     suponía `['G1O0']` sin opciones guardadas; retirado en la corrección de abajo.
    - `ModuloCerramiento.compacto?: CompactoModulo` opcional en v3 (`cerramiento.ts`),
      100 % compatible hacia atrás con v1, v2 y v3 sin persiana.
    - `CompactoLineaCatalogo.alturaTotalMm` opcional en `despiece/linea-catalogo/tipos.ts`
@@ -424,10 +424,70 @@ en cerramientos `GRUPO`:
    - `scripts/lib/contraste-presupuestos/variantes.ts`: transmite accesorios de persiana
      y sus piezas en la variante, de modo que el motor valora el cerramiento íntegro
      con compacto incluido.
-   - `scripts/lib/contraste-presupuestos/casos-regresion.json`: `regresion-06` (Doc 946)
-     pasa de discrepar por compacto a **coincidir al céntimo** (1.410,08 €).
+   - `scripts/lib/contraste-presupuestos/casos-regresion.json`: la primera entrega
+     marcó `regresion-06` como coincidente con opciones que no son de ese GRUPO
+     (ver corrección).
 
-### Resultado tras E5
+### Corrección del mismo 02/11/2026 (vigente)
+
+Revisión de la primera entrega con el contraste repetido sobre la misma extracción
+(`931b6ee` y luego con el endurecimiento):
+
+- **Retrocedía en vez de resolver.** La primera entrega dejaba en la 0016 23 / 39 /
+  150 / 13 (coincide / difiere / sin valorar / no reproducible) frente a 23 / 92 / 97 /
+  13 tras GR1: 53 GRUPO dejaron de valorarse. 51 avisaban «accesorio COM009 (o COM005,
+  COM016): grupo G10 sin una opción marcada». El descenso de la causa `compacto` de 43
+  a 11 fue porque esos GRUPO pasaron a `sin-valorar` (`otra`), no porque se resolvieran.
+  En la 0015, `difiere` bajó de 138 a 82.
+- **Causa.** En la 0016, **272 de 276** compactos de GRUPO no guardan ninguna fila en
+  `VOpciones`; los 521 compactos de línea suelta sí, y 519 llevan
+  `G1O0, G2O2, G3O2, G10O0`. Productor aplica a los de GRUPO las opciones por defecto
+  de `EstructurasOpcGrupos/Opciones`, que Aluminior no carga. El `['G1O0']` supuesto
+  no decide el grupo G10.
+- **`regresion-06` (documento 946) no reflejaba los datos.** La línea GRUPO 344723 no
+  tiene `VOpciones`. Sus cuatro opciones se copiaron de la línea suelta 344924 (un 2O)
+  del mismo documento. En el contraste real ese GRUPO estaba `sin-valorar`.
+- **11 restantes mal etiquetados.** Eran `accesorio-de-linea-no-representable` y
+  `accesorios-de-grupo-no-representables` (tubos 112, accesorios repetidos), contados
+  como `compacto`.
+
+Endurecimiento:
+
+- `scripts/lib/banco-contraste/compacto-grupo.ts` decide qué compactos de GRUPO se
+  transmiten: COM*, `nModulo` de 1 al número de módulos (0 solo con uno), uno por
+  módulo, opciones guardadas, `compDtoHuecoSN`, cajón, sin guías ni medidas manuales y
+  un acabado. Si falta algo, `variantes.ts` aparta el compacto con su importe, como
+  antes de E5, y `configuracionGrupo` lo declara con su motivo.
+- `compactoEfectivoModulo` ya no supone opciones: sin ellas el despiece queda incompleto.
+- El clasificador separa la causa `otro-accesorio`. Un compacto no COM produce
+  `compacto-no-representable`.
+- `regresion-06` vuelve a los datos reales: `difiere` por `compacto` y
+  `reparto-uniones`, 1.054,43 € con medidas guardadas (igual que el contraste real).
+- `alturaTotalMm` se mantiene solo en el banco: se toma del alto del elemento COM de
+  Productor, que es un resultado, no una regla. No tiene equivalente en la web.
+
+Resultado tras el endurecimiento:
+
+| Ejercicio | Coincide | Difiere | Sin valorar | No reproducible | Receta igual |
+|---|---:|---:|---:|---:|---:|
+| 0016 | 23 | 92 | 97 | 13 | 79 |
+| 0015 | 0 | 137 | 72 | 19 (+2 excluidos) | 87 |
+
+En la 0016, `compacto` queda en **53 GRUPO** (28 como causa principal; 31.208,80 €
+atribuibles en 53 medidos) y `otro-accesorio` en 11 (27.909,76 € en líneas). Solo el
+documento 919 tiene compacto con opciones y evidencia completa: se valora en su
+módulo y coincide con medidas guardadas (la diferencia es `reparto-uniones`). El
+agregado 2023–2026 no se ha vuelto a medir; la cifra de 171 de la primera entrega
+queda retirada.
+
+**Experimento, sin commit.** Aplicar `G1O0, G2O2, G3O2, G10O0` a los compactos de
+GRUPO sin opciones da en la 0016: 24 coinciden, y los que solo difieren por
+`reparto-uniones` (con medidas guardadas al céntimo) suben de 10 a 31. Es evidencia
+de que esos son los valores por defecto de Productor para COM001/005/009/013. Para que
+sea canónico hay que leerlos de `EstructurasOpcGrupos/Opciones`: carga ETL, migración y
+la entrada por defecto en el catálogo de despiece. Queda pendiente con aprobación.
+
+### Resultado de la primera entrega (retirado; ver corrección)
 
 - **0016 (2026)**:
   - La causa `compacto` cae de **43 GRUPO (103.672 €)** a **11 GRUPO (27.909,76 €)**.

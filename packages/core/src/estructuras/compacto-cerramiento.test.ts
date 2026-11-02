@@ -71,7 +71,7 @@ describe('compactoEfectivoModulo', () => {
     expect(c1).toEqual({
       estructura: 'COM009',
       acabado: 'NEGRO',
-      opciones: ['G1O0'],
+      opciones: [],
       altoCajonMm: 155,
       vueloIzquierdoMm: 0,
       vueloDerechoMm: 0,

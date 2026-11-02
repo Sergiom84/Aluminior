@@ -8,7 +8,7 @@ import { clasificar as estadoPrecio, causasAviso } from '../banco-contraste/comp
 export type Resultado = 'coincide' | 'difiere' | 'sin-valorar' | 'no-reproducible' | 'excluido'
 export type Causa = 'reparto-uniones' | 'compacto' | 'invisible' | 'diseno-especifico' | 'tapajuntas' | 'herraje-o-componentes'
   | 'vidrio' | 'acabado' | 'tarifa' | 'mano-de-obra' | 'cortes' | 'despunte' | 'union-otra-serie' | 'no-dibujable'
-  | 'precio-manual' | 'entrada-no-enlazada' | 'importe-de-fila' | 'cota-fi-fs' | 'otra'
+  | 'precio-manual' | 'entrada-no-enlazada' | 'importe-de-fila' | 'cota-fi-fs' | 'otro-accesorio' | 'otra'
 
 const NO_DIBUJABLE = new Set(['modelo-sin-plantilla-visual', 'union-fuera-del-configurador', 'configuracion-no-admitida-por-web',
   'anclaje-no-representable', 'anclaje-no-demostrado', 'composicion-no-representable', 'orden-geometrico-ambiguo',
@@ -23,9 +23,13 @@ const MAPA: Record<string, Causa> = {
   'mano-de-obra': 'mano-de-obra', 'reglas-de-mano-de-obra': 'mano-de-obra', 'horas-por-elemento-no-representables': 'mano-de-obra',
   'horas-no-representables': 'mano-de-obra', 'longitud-de-corte': 'cortes', 'reglas-de-corte-o-division': 'cortes',
   'metraje-facturable': 'importe-de-fila', 'importe-de-fila': 'importe-de-fila', 'coste-de-articulo': 'importe-de-fila',
-  'compactos-y-accesorios-adicionales': 'compacto', 'accesorios-de-grupo-no-representables': 'compacto',
+  'compactos-y-accesorios-adicionales': 'compacto', 'compacto-no-representable': 'compacto', 'compacto-sin-modulo': 'compacto',
+  'compacto-repetido-en-modulo': 'compacto', 'opciones-de-compacto-ausentes': 'compacto',
+  'compacto-sobre-hueco-no-contrastado': 'compacto', 'compacto-sin-alto-de-cajon': 'compacto',
+  // Tubos (112), accesorios repetidos o de familia desconocida: no son compactos.
+  'accesorios-de-grupo-no-representables': 'otro-accesorio', 'accesorio-de-linea-no-representable': 'otro-accesorio',
   'despunte-de-documento-sin-regla': 'despunte', 'serie-de-union-no-representable': 'union-otra-serie',
-  'precio-manual': 'precio-manual', 'accesorio-de-linea-no-representable': 'compacto',
+  'precio-manual': 'precio-manual',
 }
 const causa = (m: string): Causa => NO_DIBUJABLE.has(m) ? 'no-dibujable' : MAPA[m] ?? (m.endsWith('-no-enlazado') || m === 'entradas-incompletas' ||
   m.startsWith('cerramiento-') || m === 'elemento-adicional-desconocido' ? 'entrada-no-enlazada' : 'otra')

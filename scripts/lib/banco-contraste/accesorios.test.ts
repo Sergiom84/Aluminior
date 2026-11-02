@@ -26,6 +26,7 @@ test('no representa tubos, repetidos, guías, acabados mixtos ni tapas sin tapaj
   const motivos = (c: Partial<Caso>) => accesoriosDeCaso(caso(c)).motivos
   assert.deepEqual(motivos({ accesorios: [{ ...base, FamiliaAcc: '112', Accesorio: 'TUBX' }] }), ['accesorio-de-linea-no-representable'])
   assert.deepEqual(motivos({ accesorios: [compacto, compacto] }), ['accesorio-de-linea-no-representable'])
+  assert.deepEqual(motivos({ accesorios: [{ ...compacto, Accesorio: 'PERX' }] }), ['compacto-no-representable'])
   assert.deepEqual(motivos({ accesorios: [{ ...compacto, CerrCodGuiaI: 'G1' }] }), ['accesorio-con-guias-o-medidas-manuales'])
   assert.deepEqual(motivos({ accesorios: [{ ...compacto, compDtoTapH: 3 }] }), ['accesorio-con-guias-o-medidas-manuales'])
   assert.deepEqual(motivos({ accesorios: [{ ...compacto, CompAccAcaGuias: 'VS' }] }), ['acabados-de-accesorio-distintos'])
