@@ -12,7 +12,8 @@ describe('configuración del cerramiento', () => {
     const ampliado = anadirModuloCerramiento(inicial, plantillaDiseno('0')!)
     expect(ampliado.modulos).toHaveLength(2)
     expect(ampliado.uniones).toHaveLength(1)
-    expect(medidasCerramiento(ampliado)).toEqual({ anchoMm: 2460, altoMm: 1200 })
+    // La unión configurada por defecto resta su grosor a las piezas: 1200 + 1200.
+    expect(medidasCerramiento(ampliado)).toEqual({ anchoMm: 2400, altoMm: 1200 })
     expect(esConfiguracionCerramiento(ampliado)).toBe(true)
 
     const reducido = eliminarModuloCerramiento(ampliado, 'modulo-1')

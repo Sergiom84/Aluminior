@@ -55,7 +55,7 @@ describe('alta de cerramiento', () => {
     const resultado = prepararAltaCerramiento({ ...datos, configuracionSerializada: JSON.stringify(entrada) })
     expect(resultado.ok).toBe(true)
     if (!resultado.ok) throw new Error('Fracciones internas válidas rechazadas')
-    expect(resultado.alta.anchoMm).toBe(881)
+    expect(resultado.alta.anchoMm).toBe(879) // PSU001 resta 1 mm a cada pieza (reparto en piezas)
     expect(resultado.alta.configuracion.modulos.map(m => m.anchoMm)).toEqual([439.5, 439.5])
   })
 
@@ -73,7 +73,7 @@ describe('alta de cerramiento', () => {
     const entrada = { ...configuracion, uniones: [{ ...configuracion.uniones[0], grosorMm: 100 }] }
     const resultado = prepararAltaCerramiento({ ...datos, configuracionSerializada: JSON.stringify(entrada) })
     expect(resultado.ok).toBe(true)
-    if (resultado.ok) expect(resultado.alta.anchoMm).toBe(2402)
+    if (resultado.ok) expect(resultado.alta.anchoMm).toBe(2400)
     expect(entrada.uniones[0].grosorMm).toBe(100)
   })
 
@@ -93,7 +93,7 @@ describe('alta de cerramiento', () => {
     expect(resultado.ok).toBe(true)
     if (!resultado.ok) return
     expect(resultado.alta.descripcion).toBe('CERRAMIENTO SEGÚN DIBUJO · 2O + 2O')
-    expect(resultado.alta.anchoMm).toBe(2402) // 1200 + PSU001 (2 mm, E08) + 1200
+    expect(resultado.alta.anchoMm).toBe(2400) // PSU001 (2 mm, E08) resta 1 mm a cada 2O
     expect(resultado.alta.altoMm).toBe(1200)
     expect(resultado.alta.precioUnitario).toBeNull()
     expect(resultado.alta.aviso).toBe(AVISO_VALORACION_PENDIENTE)

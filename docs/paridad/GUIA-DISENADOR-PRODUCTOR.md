@@ -162,8 +162,12 @@ icono corresponde a cada uno y qué cambia en medida, despiece o precio.
   respondió bien al teclado. El acabado de unión se escribe a mano (`L`).
 
 En Aluminior, el desplegable de unión ofrece los mismos 14 códigos
-(`GMU038`–`GMU041`, `PSU001`–`PSU009`, `U`). Con `U` el grosor pasa a 1 y el
-2 × 2 mide 2401 × 2401, igual que en el diseñador de Productor.
+(`GMU038`–`GMU041`, `PSU001`–`PSU009`, `U`). Desde el 02/11/2026 las uniones
+configuradas restan la mitad de su grosor a cada pieza contigua y miden el
+lado común, como en los documentos reales: el 2 × 2 con `U` mide 2400 × 2400
+y 2O + fijo 400 + 2O con `GMU038` mide 2800. Las líneas anteriores conservan
+su geometría (ver
+[comparativa](COMPARATIVA-PRESUPUESTOS-2026-11-01.md#reparto-de-uniones-corrección-del-02112026)).
 
 Catálogo observado: `GMU038` tubo 60×60, `GMU039` 40×40, `GMU040`/`GMU041`
 40×60 (Dto 40/60), `PSU001`–`PSU008` (H unión para compactos y esquineros) y

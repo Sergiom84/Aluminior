@@ -141,13 +141,46 @@ cajón solo se aplica en la ficha de línea.
    pieza con medidas, color, serie y vidrio; Aluminior pone un texto genérico.
 3. Medida de la línea con uniones: Productor guarda 2400 con `U` y resta el
    grosor de las uniones con artículo, que miden lo que el lado común.
-   Aluminior suma el grosor y da a la unión la altura entera (observado en el
-   caso 3: +109,18 €). Es la siguiente diferencia de valoración que corregir
-   en conjuntos con `GMU…`.
+   Aluminior sumaba el grosor y daba a la unión la altura entera (caso 3:
+   +109,18 €). **Corregido el 02/11/2026** (ver «Reparto de uniones»).
 4. Elemento invisible: tiene precio 0 y no tiene despiece, cuenta en el ancho
    y en las uniones y aparece en la descripción. En el dibujo es un hueco en
    blanco. Datos para DS3.
 5. Validación: Productor obliga a dar materiales y uniones antes de aceptar.
+
+## Reparto de uniones: corrección del 02/11/2026
+
+Regla, contrastada con los conjuntos reales de la 0016 (`VPresupuestosLin`,
+lectura local; 26 grupos revisados): una unión configurada no añade ancho.
+Resta la mitad de su grosor a cada pieza contigua y mide lo que el lado
+común. Ejemplos: 960 + `GMU038` + 850 = 1810, con piezas de 930 y 820;
+1000 + 700 + 1000 = 2700, con el fijo central en 640; con `GMU039`, 500 → 480;
+con `U`, cada pieza pierde 0,5; con `PSU001`, pierde 1. El documento
+histórico de seis módulos medía 6300, la suma de piezas.
+
+Implementación (core `medidas-uniones.ts`, posiciones en
+`composicion-cerramiento.ts`, valoración en `valorar-cerramiento.ts`). Se
+aplica solo a configuraciones con `repartoUniones: 'PIEZAS'`, que pone
+`crearConfiguracionCerramiento`. Las líneas guardadas antes, también al
+editarlas, conservan su geometría. Así producción no rechaza documentos
+existentes por «Dimensiones de línea distintas del snapshot». La unión sin
+configurar sigue separando 20 mm y dejando la línea sin valorar.
+
+Verificado en Aluminior local (presupuesto 260001):
+
+| Caso | Antes | Ahora | Productor |
+|---|---|---|---|
+| 2 × 2 con `U` | 2401 × 2401 · 1.391,88 | **2400 × 2400 · 1.391,88** | 2400 × 2400 · 1.391,88 |
+| 2O + fijo 400 + 2O, `GMU038` | 2920 · 1.140,28 | **2800 · 1.117,76** | 2800 · 1.031,10 |
+| Cada `GMU038` | — | **4,12** | 4,12 |
+| Cada 2O del caso 3 | 514,31 | 512,41 (1170) | 511,43 (1160) |
+| Fijo del caso 3 | — | 84,70 | 0 (invisible) |
+
+Diferencias restantes en el caso 3: el fijo invisible (DS3) y el reparto
+asimétrico de Productor cuando las piezas tienen alturas distintas (40/20 en
+vez de 30/30). Todos los conjuntos históricos revisados reparten 30/30; ese
+caso queda abierto con una sola observación. La línea antigua del mismo
+presupuesto conserva 2920 en el PDF.
 
 ## Cobertura del catálogo (02/11/2026)
 

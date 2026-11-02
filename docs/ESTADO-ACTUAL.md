@@ -62,10 +62,14 @@ descripción generada, el artículo `GRUPO` en conjuntos de una pieza, la
 medida guardada (Productor 2400 con `U`, Aluminior 2401), el formato decimal
 del PDF y la validación obligatoria de materiales y uniones. El elemento
 invisible quedó observado (precio 0, sin despiece, cuenta en el ancho), y
-`GMU038` resta su grosor de las piezas contiguas en Productor (2800, 1.031,10 €),
-mientras Aluminior lo suma (2920, 1.140,28 €): es la siguiente diferencia de
-valoración a corregir. Cobertura: 541 estructuras importadas, 160 dibujables.
-El compacto sigue siendo E5. Solo documentación.
+Corregido el mismo día en código: las uniones configuradas restan la mitad de
+su grosor a cada pieza y miden el lado común, regla contrastada con 26
+conjuntos reales de la 0016. El 2 × 2 con `U` da 2400 × 2400 y 1.391,88 €, y
+el caso 3 da 2800 con uniones de 4,12 € (1.117,76 €; queda la diferencia del
+fijo invisible, DS3). Solo para configuraciones nuevas: las líneas guardadas
+conservan su geometría. Tests core 677, web 812 en serie; sin publicar.
+Cobertura: 541 estructuras importadas, 160 dibujables. El compacto sigue
+siendo E5.
 
 ## Reconciliación del main Mac — 13/10/2026
 
