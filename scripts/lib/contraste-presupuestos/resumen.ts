@@ -37,6 +37,19 @@ export function resumirContraste(gs: readonly ContrasteGrupo[]) {
       .sort((x, y) => y.importeLineas - x.importeLineas),
     reparto, patrones, uniones: Object.fromEntries(Object.entries(uniones).sort()),
     sinReconciliar: gs.filter(g => !g.reconciliado).length,
+    receta: { igual: gs.filter(g => g.clasificacion.receta === 'igual').length, distinta: gs.filter(g => g.clasificacion.receta === 'distinta').length },
+    porMes: porMes(gs, resultados),
     nota: 'Causas solapadas: un GRUPO puede tener varias. Importe de líneas = precio de Productor × cantidad; atribuible = parte medida de la causa.',
   }
+}
+
+/** Mes del documento: separa tarifas y periodos dentro de un ejercicio. */
+function porMes(gs: readonly ContrasteGrupo[], resultados: readonly Resultado[]) {
+  const meses = [...new Set(gs.map(g => g.fecha.slice(0, 7)))].sort()
+  return meses.map(mes => {
+    const xs = gs.filter(g => g.fecha.startsWith(mes))
+    return { mes, grupos: xs.length, importeLineas: r2(xs.reduce((s, g) => s + linea(g), 0)),
+      ...Object.fromEntries(resultados.map(r => [r, xs.filter(g => g.clasificacion.resultado === r).length])),
+      recetaIgual: xs.filter(g => g.clasificacion.receta === 'igual').length }
+  })
 }

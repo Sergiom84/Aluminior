@@ -40,11 +40,19 @@ export interface Clasificacion {
   resultado: Resultado; causas: Causa[]; principal: Causa | null
   /** Importe unitario atribuible a cada causa cuando se puede medir. */
   importes: Partial<Record<Causa, number>>; desviacion: number | null
+  /**
+   * Con medidas guardadas: `igual` si cortes, metrajes y cantidades coinciden aunque cambie
+   * el PVP (otra tarifa). Comparable entre ejercicios. Coste, MO, acabado y pieza ausente
+   * no cuentan: el diagnóstico de GRUPO los marca también en los que coinciden al céntimo.
+   */
+  receta: 'igual' | 'distinta' | null
 }
+/** Diferencias de pieza que distinguen la receta (observado el 02/11/2026 en la 0016). */
+const DISTINGUEN_RECETA = new Set(['longitud-de-corte', 'metraje-facturable', 'cantidad-de-piezas', 'pieza-de-mas'])
 
 const unicas = (cs: Causa[]) => [...new Set(cs)]
 export function clasificarGrupo(e: EntradaClasificacion): Clasificacion {
-  const vacio = (resultado: Resultado, causas: Causa[]): Clasificacion => ({ resultado, causas: unicas(causas), principal: causas[0] ?? null, importes: {}, desviacion: null })
+  const vacio = (resultado: Resultado, causas: Causa[]): Clasificacion => ({ resultado, causas: unicas(causas), principal: causas[0] ?? null, importes: {}, desviacion: null, receta: null })
   if (e.bloqueos.includes('precio-manual')) return vacio('excluido', ['precio-manual'])
   if (e.bloqueos.length) return vacio('no-reproducible', e.bloqueos.map(causa))
   const a = e.guardadas
@@ -69,7 +77,8 @@ export function clasificarGrupo(e: EntradaClasificacion): Clasificacion {
     causas.push('reparto-uniones'); importes['reparto-uniones'] = Math.abs(e.nominales.precio - a.precio)
   }
   const desviacion = (e.nominales?.precio ?? a.precio) - e.esperado
-  return { resultado: causas.length ? 'difiere' : 'coincide', causas: unicas(causas), principal: causas[0] ?? null, importes, desviacion }
+  const receta = !a.causas.some(c => DISTINGUEN_RECETA.has(c)) ? 'igual' : 'distinta'
+  return { resultado: causas.length ? 'difiere' : 'coincide', causas: unicas(causas), principal: causas[0] ?? null, importes, desviacion, receta }
 }
 
 /** La cota del fijo inferior o superior (1OFI, 2OFI…) no llega al módulo del GRUPO: causa propia. */

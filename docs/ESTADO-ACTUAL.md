@@ -32,7 +32,13 @@ distintas no explican la asimetría: el 89 % reparte mitad y mitad; el caso
 3 sigue siendo una sola observación, ligada al invisible (hipótesis). Campo
 del invisible identificado: diseño de un nodo `Tipo = 19` (DS3). La 0015 no
 es comparable en precio (tarifa de 2023). Nueve GRUPO reales anonimizados
-quedan como regresión local. Sin cambios en el motor ni publicación.
+quedan como regresión local. Ampliado el mismo día a los 17 ejercicios
+(2010–2026, 4.107 GRUPO): hasta 2022 no son reproducibles con el catálogo
+actual (uniones `CMU…` y series retiradas); en 2023–2026 el 70 % de los
+valorados tiene la misma receta que Productor y el compacto es la causa más
+frecuente (235). La asimetría del reparto se concentra en las uniones de
+guías de compacto. Orden: GR1, E5, E2, E6, GR2. Sin cambios en el motor ni
+publicación.
 
 ## Guía del diseñador de Productor — 01/11/2026
 

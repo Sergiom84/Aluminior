@@ -7,7 +7,7 @@ const base = (e: Partial<EntradaClasificacion> = {}): EntradaClasificacion => ({
   guardadas: { precio: 100, causas: [], motivos: [], avisos: [] }, nominales: { precio: 100, causas: [], motivos: [], avisos: [] }, ...e })
 
 test('coincide al céntimo con medidas guardadas y nominales', () => {
-  assert.deepEqual(clasificarGrupo(base()), { resultado: 'coincide', causas: [], principal: null, importes: {}, desviacion: 0 })
+  assert.deepEqual(clasificarGrupo(base()), { resultado: 'coincide', causas: [], principal: null, importes: {}, desviacion: 0, receta: 'igual' })
 })
 
 test('compacto: el resto coincide y la diferencia es el importe del compacto', () => {
@@ -44,4 +44,12 @@ test('la cota FI/FS sin valor en un módulo del GRUPO es causa propia, no un cor
   const r = clasificarGrupo(base({ guardadas: { precio: null, causas: [], motivos: [], avisos: [
     'Faltan costes o materiales necesarios para este origen', 'Importe incompleto: P (HV): pieza 1: Variable "FI" sin valor en el contexto — en "REF-FI"'] } }))
   assert.deepEqual([r.resultado, r.causas], ['sin-valorar', ['cota-fi-fs']])
+})
+
+test('con otra tarifa la receta puede coincidir: cortes, metrajes y cantidades iguales y solo cambia el PVP', () => {
+  const tarifa = clasificarGrupo(base({ guardadas: { precio: 90, causas: ['pvp-o-tarifa', 'importe-de-fila', 'mano-de-obra', 'acabado-de-articulo'], motivos: [], avisos: [] }, nominales: null }))
+  assert.deepEqual([tarifa.resultado, tarifa.receta], ['difiere', 'igual'])
+  const corte = clasificarGrupo(base({ guardadas: { precio: 90, causas: ['pvp-o-tarifa', 'longitud-de-corte'], motivos: [], avisos: [] }, nominales: null }))
+  assert.equal(corte.receta, 'distinta')
+  assert.equal(clasificarGrupo(base({ bloqueos: ['precio-manual'] })).receta, null)
 })

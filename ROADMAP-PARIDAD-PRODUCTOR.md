@@ -1,6 +1,6 @@
 # Roadmap operativo de paridad con Productor
 
-Actualizado: 02/11/2026 (contraste masivo de GRUPO reales; prioridad GR1, E2, E5, E6, GR2). Anterior: 13/10/2026. Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
+Actualizado: 02/11/2026 (contraste de GRUPO reales 2010–2026; prioridad GR1, E5, E2, E6, GR2). Anterior: 13/10/2026. Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
 Este archivo es el registro único del orden y estado de estas tareas.
 Los documentos de ensayo explican cómo realizarlas; los informes fechados
 conservan evidencia. Sus antiguas listas de pendientes no sustituyen este registro.
@@ -9,9 +9,11 @@ conservan evidencia. Sus antiguas listas de pendientes no sustituyen este regist
 ## Siguiente paso
 
 **Contraste de GRUPO reales (02/11/2026):** [informe](docs/paridad/CONTRASTE-PRESUPUESTOS-2026-11-02.md).
-Orden por importe en juego de la 0016: GR1 (cota FI/FS, 31 GRUPO), E2 (varias
-series, 40), E5 (compacto, 43), E6 (vidrio por elemento, 24), GR2 (unión que
-recorre varias piezas, 44 GRUPO pero 749 €). Siguiente: GR1. Repetir
+Medidos los 17 ejercicios (2010–2026, 4.107 GRUPO); con el catálogo actual
+solo son reproducibles 2023–2026. Orden por importe en 2026 y frecuencia en
+2023–2026: GR1 (cota FI/FS, 31 / 96 GRUPO), E5 (compacto, 43 / 235), E2
+(varias series, 40 / 140), E6 (vidrio por elemento, 24 / 117), GR2 (unión que
+recorre varias piezas, 44 / 221, pero 749 € en 2026). Siguiente: GR1. Repetir
 `scripts/contraste-presupuestos.ts` tras cada arreglo; no rehacer la extracción.
 
 **Publicación técnica 12/10:** C1 y el tramo de P.6/P.7 están en Render live
@@ -75,11 +77,11 @@ Sin aplicación al presupuesto web ni nueva medición del banco.
 |---|---|---|---|
 | M0 | Matriz por modelo/serie/regla y ensayos mínimos | Cerrado 03/10/2026 | [Matriz](docs/paridad/MATRIZ-COBERTURA-PRODUCTOR-2026-10-03.md), 97 pares, 47 pruebas, typechecks y arquitectura; no volver a crearla, regenerar si cambian las fuentes |
 | E1 | Despunte de cabecera: base, momento y reparto | En curso 04/10/2026; G1–G5 verificados, G6-incidencia preservada | [Evidencia](docs/paridad/EVIDENCIA-E1-DESPUNTE-2026-10-04.md): alta independiente/reparto por bases/persistencia demostrados. 31/10: tercer GRUPO retirado con autorización (260501 queda en 2 líneas, base 577,49) y edición sin alta verificada; falta variante discriminante y un recálculo. Sin aplicación web ni nueva medición |
-| E2 | Unión material de otra serie en GRUPO | Pendiente; prioridad 2 tras el contraste del 02/11/2026: 40 GRUPO de la 0016 (37 con módulos de varias series, 3 con unión de serie ajena) | Selección desde diagnóstico privado de los ocho casos de iteración 13; código/serie/acabado y geometría demostrados, sin extrapolar U |
+| E2 | Unión material de otra serie en GRUPO | Pendiente; prioridad 3 tras el contraste del 02/11/2026 (140 GRUPO en 2023–2026): 40 GRUPO de la 0016 (37 con módulos de varias series, 3 con unión de serie ajena) | Selección desde diagnóstico privado de los ocho casos de iteración 13; código/serie/acabado y geometría demostrados, sin extrapolar U |
 | E3 | Comisión: orden de redondeo y edición de líneas guardadas | Pendiente | Caso 0/−10/+10, suma de filas y momento de aplicación; separar cantidades/horas; seis residuos comunicados |
 | E4 | Tapajuntas de puerta con inferior SI/NO | Pendiente | GMT004, 1P 867×2098 con serie/ala/cajón reales; comparación lateral y travesaño |
-| E5 | Compacto y metraje COMPVAL | Pendiente; prioridad 3 tras el contraste del 02/11/2026: 43 GRUPO de la 0016, en 24 el resto coincide al céntimo y la diferencia es el compacto | Identificar hueco/ventana/accesorio, COM009, cajón, vuelos y opciones; discriminar 4,93/4,94 con PVP vigente |
-| E6 | Acristalamiento alternativo y vidrio por elemento | Contención publicada 09/10; paridad pendiente. Contraste 02/11: 23 GRUPO mezclan vidrio simple y doble por elemento, prioridad 4 | Motor catálogo rechaza precio falso de opción 1 para opción alternativa y guarda incompleto.  Mapeo observado de opción/nTAcris/tablas/junquillos/juntas; iniciar con 1/2/3 y mismo vidrio |
+| E5 | Compacto y metraje COMPVAL | Pendiente; prioridad 2 tras el contraste del 02/11/2026: causa más frecuente en 2023–2026 (235 GRUPO); 43 en la 0016, en 24 el resto coincide al céntimo y la diferencia es el compacto. Las uniones de guía y esquineros de compacto antiguos reparten asimétrico (83/42, 109,5/68,5) | Identificar hueco/ventana/accesorio, COM009, cajón, vuelos y opciones; discriminar 4,93/4,94 con PVP vigente |
+| E6 | Acristalamiento alternativo y vidrio por elemento | Contención publicada 09/10; paridad pendiente. Contraste 02/11: 23 GRUPO de la 0016 mezclan vidrio simple y doble por elemento (117 por vidrio en 2023–2026), prioridad 4 | Motor catálogo rechaza precio falso de opción 1 para opción alternativa y guarda incompleto.  Mapeo observado de opción/nTAcris/tablas/junquillos/juntas; iniciar con 1/2/3 y mismo vidrio |
 | E7 | Conservación de medidas fraccionarias | 31/10: precios C2 970×439,5 y 970×1999,5 coinciden Productor-Aluminior (150,60 y 267,77); pendientes cortes y despiece; A4 web verificado 09/10 | C2 970×439,5 y 970×1999,5 con configuración real fijada: entrada, cortes, guardar/reabrir. 0030 y persistencia web ya entregados; no repetir migración ni equiparar el fijo sintético A4 con esta receta |
 | E8 | Tramos y opciones de herraje | Condicionado | Solo si falta cobertura tras catálogo/CHM/diagnóstico; límite real del corte de hoja, no dimensión exterior supuesta |
 | E9 | Referencias, cotas y divisiones restantes | Condicionado | Aislar cadena en los cortes discrepantes; predicción independiente de la instancia |
@@ -100,8 +102,8 @@ Sin aplicación al presupuesto web ni nueva medición del banco.
 | DS1 | Guía del diseñador de Productor | En curso; observación 01–02/11/2026 en la 0017 | [Guía](docs/paridad/GUIA-DISENADOR-PRODUCTOR.md) con barra, escaparate, Elemento seleccionado, Unión, compacto, recorrido de composición y elemento invisible. Comparativa de presupuestos 01–02/11 ([doc](docs/paridad/COMPARATIVA-PRESUPUESTOS-2026-11-01.md)): resueltas la 4 (la lupa filtra series) y la 7 salvo el PDF emitido; uniones `U` y `GMU038` observadas. Quedan 1–3, 5, 6 y 8–10 para el operador; ampliar con cada botón explicado. July sin conexión: pendientes por pasar |
 | DS2 | Composición: inserción debajo visible y mover piezas libremente | Implementado y verificado en local 01/11/2026; sin commit ni publicación | Debajo: `anclajeInferior`, `+` inferior y «Colocar X debajo»; recorrido 2O/fijo/2O/fijo = 2420 × 2420. Mover (decisión de Sergio: anclajes; las colgadas se quedan fijas): `mover-modulo.ts`, arrastre con ajuste magnético y botón «Mover elemento» con destinos enfocables; 2O movida = 2420 × 3640 con el fijo en su sitio, guardada y recargada. Core 59 ficheros, componentes del diseñador, tipos y arquitectura correctos. Falta: deshacer, mover el primer elemento, prueba de Sergio y publicación. Desviación deliberada de Productor |
 | DS3 | Elemento invisible (viga o pared) por diseño específico | Observado 02/11/2026; campo identificado el mismo día; pendiente de implementar | Observado: precio 0 sin despiece, cuenta en el ancho y en las uniones, se describe en el GRUPO y se dibuja como hueco en blanco. Campo: diseño de documento con un único nodo `Tipo = 19` (8 de 8 en 0015–0017). Solo 2 GRUPO reales de la 0016 (328 €). Falta el dibujo en el PDF de Productor y las preguntas 6 y 8. El reparto 40/20 del caso 3 queda como hipótesis ligada al invisible |
-| GR1 | Cota del fijo FI/FS en módulos de GRUPO | Evidencia lista 02/11/2026; prioridad 1 | [Contraste](docs/paridad/CONTRASTE-PRESUPUESTOS-2026-11-02.md): 31 GRUPO de la 0016 sin valorar (1OFI, 2OFI, 1FS, 2OPFS…) por `Variable "FI"/"FS" sin valor`. Llevar la cota del elemento (`VEstructurasVariables`) al módulo en banco y web (hoy solo `fiMm` en 1OFI) y repetir el contraste |
-| GR2 | Unión que recorre varias piezas | Evidencia lista 02/11/2026; prioridad 5 | 47 GRUPO de la 0016 y 35 de la 0015: Productor recorta todas las piezas que toca una unión larga y Aluminior solo el par anclado. Uniones aisladas: 90 % mitad y mitad, también con alturas distintas. Impacto medido 749 € en 44 GRUPO |
+| GR1 | Cota del fijo FI/FS en módulos de GRUPO | Evidencia lista 02/11/2026; prioridad 1 | [Contraste](docs/paridad/CONTRASTE-PRESUPUESTOS-2026-11-02.md): 31 GRUPO de la 0016 (96 en 2023–2026) sin valorar (1OFI, 2OFI, 1FS, 2OPFS…) por `Variable "FI"/"FS" sin valor`. Llevar la cota del elemento (`VEstructurasVariables`) al módulo en banco y web (hoy solo `fiMm` en 1OFI) y repetir el contraste |
+| GR2 | Unión que recorre varias piezas | Evidencia lista 02/11/2026; prioridad 5 | 47 GRUPO de la 0016 y 35 de la 0015: Productor recorta todas las piezas que toca una unión larga y Aluminior solo el par anclado. 221 GRUPO en 2023–2026. Uniones aisladas de perfil 2010–2026: 89–95 % mitad y mitad, también con alturas distintas, salvo las de compacto (37–54 %). Impacto medido 749 € en 44 GRUPO de 2026 |
 
 Detalles E2–E11: [ensayos mínimos](docs/paridad/ENSAYOS-MINIMOS-PRODUCTOR-2026-10-03.md).
 A1 y D1: [estado operativo](docs/ESTADO-ACTUAL.md).
