@@ -18,6 +18,7 @@
  * conceptos del tipo de apertura con tiempo y categorías de mallorquina o
  * plegable. Si alguno aportaría minutos, se informa y no se inventa.
  */
+import { minutosTravesanosTmp, type ContextoManoObraTmp } from './mano-obra-tmp.ts'
 
 /** Categoría `MOCategorias` de cada `TipoPerf` contrastado y la común a todos. */
 const CATEGORIA_POR_TIPO_PERFIL: Readonly<Record<string, string>> = { A: '00001', C: '00002' }
@@ -36,6 +37,10 @@ export interface ConceptoManoObraCatalogo {
   conIncrementos: boolean
   /** `MOConceptos.Categoria` (00001 abatibles, 00002 correderas, 00010 comunes…). */
   categoria?: string | null
+  /** Metadatos originales necesarios para TMP/16; ausencia conserva el bloqueo. */
+  familiaAsociada?: string | null
+  serieAsociada?: string | null
+  asociado?: boolean | null
 }
 
 export interface ElementoManoObra {
@@ -61,11 +66,16 @@ export function minutosFabricacion(entrada: {
   conceptosApertura: readonly string[]
   /** `Estructuras.TipoPerf` (A abatible, C corredera…); null si se desconoce. */
   tipoPerfil?: string | null
+  /** Solo lo aporta un consumidor con cobertura documental explícita. */
+  contextoTmp?: ContextoManoObraTmp
 }): { lineas: MinutosFabricacion[]; incidencias: string[] } {
   const categoriaEstructura = entrada.tipoPerfil ? CATEGORIA_POR_TIPO_PERFIL[entrada.tipoPerfil] ?? null : null
   const lineas: MinutosFabricacion[] = []
   const incidencias: string[] = []
   const porCodigo = new Map(entrada.conceptos.map(c => [c.codigo, c]))
+  const tmp = entrada.contextoTmp ? minutosTravesanosTmp({ ...entrada, contexto: entrada.contextoTmp }) : null
+  const tratadosTmp = new Set(tmp?.conceptosTratados ?? [])
+  if (tmp) { lineas.push(...tmp.lineas); incidencias.push(...tmp.incidencias) }
   const emitir = (c: ConceptoManoObraCatalogo, cantidad: number) => {
     if (c.conIncrementos) { incidencias.push(`mano de obra ${c.codigo}: incrementos por medida sin contrastar`); return }
     if (c.minutos > 0 && cantidad > 0) lineas.push({ articulo: c.articulo, minutos: c.minutos * cantidad, concepto: c.codigo })
@@ -77,9 +87,15 @@ export function minutosFabricacion(entrada: {
       if (c) emitir(c, e.cantidad)
     }
     for (const c of entrada.conceptos) {
+      if (tratadosTmp.has(c.codigo)) continue
       if (c.articuloAsociado && c.articuloAsociado === e.articuloPlantilla) emitir(c, e.cantidad)
       const porComponente = c.componenteAsociado && c.componenteAsociado !== '!' && c.componenteAsociado === e.componente
       const porGrupo = c.grupoAsociado && c.grupoAsociado !== '!' && c.grupoAsociado === e.grupo
+      const soloGrupo = !c.modulo && !c.articuloAsociado && (!c.componenteAsociado || c.componenteAsociado === '!')
+      if (porGrupo && c.grupoAsociado === 'TMG' && soloGrupo && c.categoria == null) {
+        emitir(c, e.cantidad)
+        continue
+      }
       if ((porComponente || porGrupo) && c.minutos > 0) {
         const contrastada = Object.values(CATEGORIA_POR_TIPO_PERFIL).includes(c.categoria ?? '')
         if (c.categoria === CATEGORIA_COMUN || (categoriaEstructura && c.categoria === categoriaEstructura)) emitir(c, e.cantidad)

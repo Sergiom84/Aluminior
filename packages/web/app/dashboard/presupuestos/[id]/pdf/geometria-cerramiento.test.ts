@@ -84,6 +84,16 @@ describe('adaptador geométrico PDF', () => {
 describe('símbolos con coordenadas declaradas y sentido del diseñador', () => {
   const rect = { x: 10, y: 20, ancho: 100, alto: 200 }
   it('fijo sin símbolo', () => expect(trazosAperturaPdf('fijo', rect)).toEqual([]))
+  it('C2 conserva flechas horizontales y no fabrica bisagras gráficas', () => {
+    const dibujo = geometriaCerramientoPdf({ version: 1, modulos: [
+      { id: 'corredera', estructuraCodigo: 'C2', anchoMm: 1200, altoMm: 1200 },
+    ], uniones: [] })
+    const hojas = dibujo.modulos[0].elementos.filter(e => e.tipo === 'hueco')
+    expect(hojas.map(h => h.apertura)).toEqual(['corredera', 'corredera'])
+    expect(trazosAperturaPdf('corredera', rect))
+      .toEqual(['M 30 120 L 90 120', 'M 38 112 L 30 120 L 38 128', 'M 82 112 L 90 120 L 82 128'])
+    for (const hoja of hojas) expect(geometriaHerrajesPdf(hoja.apertura, true, hoja)).toBeNull()
+  })
   it('abatible derecha', () => expect(trazosAperturaPdf('abatible-derecha', rect))
     .toEqual(['M 110 20 L 10 120 L 110 220']))
   it('abatible izquierda', () => expect(trazosAperturaPdf('abatible-izquierda', rect))

@@ -15,6 +15,7 @@ import { mkdirSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { despiezarLineaCatalogo } from '../packages/core/src/despiece/linea-catalogo/despiezar.ts'
 import { catalogoDesdeCsv, leerCsv, numero } from './lib/catalogo-csv.ts'
+import { crearResolvedorCotasInstancia } from './lib/cotas-instancia.ts'
 import {
   clasificarHija, diferenciasPiezas, importeConPreciosFactura, type HijaFactura,
 } from './lib/contraste-despiece-facturas.ts'
@@ -22,6 +23,7 @@ import {
 const [origen, facturas, salida] = process.argv.slice(2)
 if (!origen || !facturas) throw new Error('Indica la carpeta del catálogo CSV y la de facturas exportadas')
 const catalogo = catalogoDesdeCsv(origen)
+const resolverCotas = crearResolvedorCotasInstancia(leerCsv(origen, 'VMedidasDA'), leerCsv(origen, 'EstructurasDA'))
 const lineas = leerCsv(facturas, 'lineas')
 const configuraciones = new Map(leerCsv(facturas, 'configuraciones').map(c => [`${c.nVDoc}|${c.nVLinea}`, c]))
 const opciones = leerCsv(facturas, 'opciones_herraje')
@@ -58,13 +60,19 @@ for (const p of lineas.filter(l => l.EstructuraSN === 'True')) {
   if (clases.includes('aviso')) r.avisos++
   const oraculo = Math.round(material.reduce((s, h) => s + h.importe, 0) * 100) / 100
 
+  const cotas = resolverCotas({ tipoDoc: 'VFAC', documento: p.nDoc!, linea: p.nLinea!, estructura: p.Articulo! })
   const resultado = despiezarLineaCatalogo(catalogo, {
     estructura: p.Articulo!.trim(), serie, anchoMm: numero(p.Ancho), altoMm: numero(p.Largo),
     vidrio: c!.Conjunto2?.trim() || null, acabado: p.Acabado!.trim(), acabadoAccesorios: 'UNI',
     opcionesGuardadas: opciones.filter(o => o.nDoc === p.nDoc && o.nLinEstr === p.nLinea)
       .map(o => ({ conjunto: o.Conjunto!.trim(), opcion: String(numero(o.nOpcion)), marcada: o.SelecSN === 'True' })),
-    minutosFabricacionAdicionales: Math.round(numero(c!.HorasAdFabr) * 60),
+    minutosFabricacionAdicionales: numero(c!.HorasAdFabr) * 60,
+    cotas: cotas.cotas,
   })
+  if (cotas.incidencias.length) {
+    resultado.importe = null
+    resultado.incidencias.push(...cotas.incidencias)
+  }
   const filasMaterial = resultado.filas.filter(f => f.importe !== 0 || f.metraje === null)
   const dif = diferenciasPiezas(filasMaterial, material, porMetro)
   let estado: Estado
@@ -74,10 +82,10 @@ for (const p of lineas.filter(l => l.EstructuraSN === 'True')) {
       const causa = i.replace(/\d+(\.\d+)?/g, 'n')
       r.causas.set(causa, (r.causas.get(causa) ?? 0) + 1)
     }
-  } else if (!dif.length && Math.abs(resultado.importe - oraculo) < 0.015) estado = 'exacta'
+  } else if (!dif.length && Math.round(resultado.importe * 100) === Math.round(oraculo * 100)) estado = 'exacta'
   else if (!dif.length) {
-    const conFactura = importeConPreciosFactura(filasMaterial, material)
-    estado = conFactura !== null && Math.abs(conFactura - oraculo) < 0.015 ? 'piezas-exactas-tarifa' : 'piezas-exactas-importe'
+    const conFactura = importeConPreciosFactura(filasMaterial, material, porMetro)
+    estado = conFactura !== null && Math.round(conFactura * 100) === Math.round(oraculo * 100) ? 'piezas-exactas-tarifa' : 'piezas-exactas-importe'
   } else {
     estado = 'diferente'
     for (const d of dif.slice(0, 6)) {
@@ -87,7 +95,8 @@ for (const p of lineas.filter(l => l.EstructuraSN === 'True')) {
   }
   r.estados[estado]++
   detalle.push({ documento: p.nDoc, linea: p.nLinea, familia, estado, importe: resultado.importe, oraculo,
-    incidencias: resultado.incidencias, avisos: resultado.avisos, diferencias: dif })
+    incidencias: resultado.incidencias, avisos: resultado.avisos, diferencias: dif,
+    estadoCotas: cotas.estado, cotas: cotas.cotas, trazasCotas: cotas.trazas })
 }
 
 const total = { lineas: 0, especificas: 0, exacta: 0, 'piezas-exactas-tarifa': 0, 'piezas-exactas-importe': 0, bloqueada: 0, diferente: 0 }

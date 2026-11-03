@@ -19,6 +19,12 @@ The backend architecture is stable by default. The current web design is not:
 do not preserve an existing UI decision merely because it already exists when
 verified Productor behavior contradicts it.
 
+If you are executing a bounded unit handed to you by an architect — Sergio or
+an agent acting as architect — you must also read `AGENTS-EJECUTOR.md` before
+touching anything. It is mandatory, not background reading: it owns the Git
+prohibitions, the scope and reporting protocol, the negative-control rule and
+the list of blocked work. It does not replace this file.
+
 ## Modular architecture
 
 - Build by vertical product modules and small files with one clear responsibility.
@@ -93,6 +99,7 @@ verified Productor behavior contradicts it.
   read `docs/paridad/GUIA-DISENADOR-PRODUCTOR.md`: what each toolbar button, tab and
   dialog does, its catalog and its Aluminior equivalent. When the operator explains a
   new button or an observation resolves a pending item, update that guide in the same delivery.
+- On a machine that has Productor with its legitimate USB key (the owner's relative's PC for E1), the architect session operates the original itself through vision (Computer Use): request access for `aluminioApp.exe`, one action per screenshot, never `0016`, no saving in Configuración, no Utilidades tools that write (SQL, backup, compact, price updates). Read `docs/CONTINUAR-EN-WINDOWS.md` §0 first. Executors still never run Productor. If a missing-component dialog loops (True DBGrid 8 / `TODGUB8.DLL`), stop and report; do not install or register components without explicit authorization and a rollback plan.
 
 ## Task tracking and document maintenance
 

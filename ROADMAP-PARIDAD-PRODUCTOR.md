@@ -1,6 +1,6 @@
 # Roadmap operativo de paridad con Productor
 
-Actualizado: 03/11/2026 (M1 implementado en rama, sin Supabase ni contraste de la 0016; siguiente de paridad sigue siendo E2). Anterior: 02/11/2026. Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
+Actualizado: 03/11/2026 (M1 implementado en rama, sin Supabase ni contraste de la 0016; siguiente de paridad sigue siendo E2). Integra la línea E1 de Windows (31/10). Anterior: 02/11/2026. Entrada del proyecto: [ESTADO-ACTUAL](docs/ESTADO-ACTUAL.md).
 Este archivo es el registro único del orden y estado de estas tareas.
 Los documentos de ensayo explican cómo realizarlas; los informes fechados
 conservan evidencia. Sus antiguas listas de pendientes no sustituyen este registro.
@@ -18,6 +18,41 @@ elemento, 24 / 117), GR2 (unión que recorre varias piezas, 44 / 221, pero 749 �
 - E5 parcial el 02/11 ([corrección](docs/paridad/CONTRASTE-PRESUPUESTOS-2026-11-02.md#corrección-del-mismo-02112026-vigente)): el compacto se valora en su módulo solo con opciones guardadas y evidencia completa; si no, se aparta. La 0016 queda en 23 / 92 / 97 / 13, igual que tras GR1. La primera entrega retrocedía (53 GRUPO sin valorar) y su `regresion-06` usaba opciones de otra línea; ambas cosas están corregidas.
 - E5b verificado en local el 02/11 ([informe](docs/paridad/CONTRASTE-PRESUPUESTOS-2026-11-02.md#e5b--opciones-predeterminadas-del-catálogo-02112026-vigente)): migración 0033 y carga de `EstructurasOpcOpciones`. El despiece aplica la predeterminada al grupo sin opción guardada. En la 0016, 24 coinciden (+1), `compacto` baja de 53 a 8 y `regresion-06` coincide al céntimo con datos reales. **0033 no está aplicada en Supabase**: hay que aplicarla antes de la próxima carga dirigida del motor.
 Siguiente: E2 (varias series en GRUPO, 40 en la 0016). M1 está implementado en `feat/m1-mantenimiento-uniones` y no está verificado contra la 0016 ni aplicado en Supabase ([plan](docs/paridad/PLAN-M1-MANTENIMIENTO-UNIONES-2026-11-02.md)). Pendiente menor de E5: cortes del compacto en los documentos 881, 1019, 1020 y 1249, y acabados distintos de lamas o guías (7). Repetir `scripts/contraste-presupuestos.ts` tras cada arreglo; no rehacer la extracción.
+
+**Continuación local 14/10:** E1 ya tiene layout estático `+0x7ac`, getters
+y consumidor nativo `alVDocumentoDespunte.DEScalcula` con receptor demostrado.
+Las TypeLib acreditan las declaraciones COM; `alBDADO` reenvía la edición.
+Creación estática de receptores `alRecordset`, WORD de tabla auxiliar, selector
+`rsTabla` y cuerpos delegados acreditados. Control/reparto/totales seguidos:
+selección de filas, descuentos, sustitución y defensa parcial de doble cómputo.
+Siguiente frontera: `VarFormat` y configuración efectiva de escalas, contrato
+de agregados comerciales y persistencia, según la
+[continuación E1](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#control-reparto-y-totales).
+No repetir receptores/selector, declaraciones verificadas, wrappers/getters,
+literales, inventarios, preparación física/condicional o cuerpos ya seguidos.
+El cargo monetario permanece bloqueado: la matriz de ocho preguntas distingue
+lo acreditado de configuración, agregados, formato y persistencia sin contrato completo.
+Ghidra agotó 300 segundos y su sesión está cerrada; el parsing dirigido sí produjo
+anclajes de código. En paralelo se entregó el [selector puro de registros](docs/paridad/IMPLEMENTACION-CLONERSOFT-TARIFA-DINAMICA-2026-10-14.md),
+47 pruebas nuevas, sin activar tarifa ni producir precios. Grupo, habilitación,
+fórmula, redondeo y caso positivo siguen pendientes. Gate local actual: 2.004
+pruebas correctas y la omisión previa por CSV privado; tipos/arquitectura correctos
+en `2a2dc57`. La segunda unidad E1 entrega análisis estático/documentación,
+sin cambiar el código de paquetes.
+G6 mantiene su protección. Sin publicación, aceptación Productor ni despliegue.
+
+**Investigación incremental 13/10, antecedente:** consultar la
+[extracción diferencial](docs/paridad/EXTRACCION-DIFERENCIAL-CLONERSOFT-2026-10-13.md)
+antes de volver a inventariar fuentes. Las 204 tablas pobladas de la copia
+e851 ya tienen CSV/cabeceras completas; 33 difieren en recuento y no se mezclan.
+Se recuperan contratos físicos/condicionales de E1, tarifa dinámica, almacén,
+compras, cobros, listados y recargo. El [subcontrato físico de E1](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md)
+se implementó como una unidad pura local; la aplicación monetaria conserva su
+bloqueo. La continuación del llamador monetario es la del 14/10 anterior;
+G6 conserva sus límites de autorización.
+El merge Windows–Mac quedó cerrado, revisado y verificado localmente en
+`fa32fba`, con cero conflictos. No repetir su resolución. No se ha publicado
+esta integración ni reconsultado producción.
 
 **Publicación técnica 12/10:** C1 y el tramo de P.6/P.7 están en Render live
 `40cedd1`, con 0031/0032, carga dirigida y QA remoto verificados; ambos CI
@@ -68,7 +103,7 @@ la proyección técnica de G4 tras F9/reapertura. Copias privadas por estado.
 No repetir A–F ni G1–G5. Tres políticas de redondeo coinciden en G4. Variante
 1207×1150 verificada produjo error de opciones/SessionFactory y añadió tercer
 GRUPO; G6-incidencia conservada, sin recálculo y con previos intactos.
-Siguiente: retirar solo tercer GRUPO tras autorización solicitada y comprobar
+Vía de observación, solo con autorización: retirar tercer GRUPO y comprobar
 edición de segunda línea sin crear otra. Después comparación discriminante
 con bases reales y predicciones previas; no certificar opciones tras el error.
 Descuentos cero/cantidad 1 no discriminan base bruta/neta ni otras cantidades.
@@ -81,6 +116,9 @@ Sin aplicación al presupuesto web ni nueva medición del banco.
 | M0 | Matriz por modelo/serie/regla y ensayos mínimos | Cerrado 03/10/2026 | [Matriz](docs/paridad/MATRIZ-COBERTURA-PRODUCTOR-2026-10-03.md), 97 pares, 47 pruebas, typechecks y arquitectura; no volver a crearla, regenerar si cambian las fuentes |
 | E1 | Despunte de cabecera: base, momento y reparto | En curso 04/10/2026; G1–G5 verificados, G6-incidencia preservada | [Evidencia](docs/paridad/EVIDENCIA-E1-DESPUNTE-2026-10-04.md): alta independiente/reparto por bases/persistencia demostrados. 31/10: tercer GRUPO retirado con autorización (260501 queda en 2 líneas, base 577,49) y edición sin alta verificada; falta variante discriminante y un recálculo. Sin aplicación web ni nueva medición |
 | E2 | Unión material de otra serie en GRUPO | Pendiente; prioridad 3 tras el contraste del 02/11/2026 (140 GRUPO en 2023–2026): 40 GRUPO de la 0016 (37 con módulos de varias series, 3 con unión de serie ajena) | Selección desde diagnóstico privado de los ocho casos de iteración 13; código/serie/acabado y geometría demostrados, sin extrapolar U |
+
+| E1 | Despunte de cabecera: base, momento y reparto | En curso; físico/condicional 13/10, consumidor/COM, receptores y control/reparto/totales estáticos 14/10; G1–G5 y G6-incidencia preservados. 31/10: mochila verificada y E1V0 vacía en el portátil; Configuración bloqueada allí por `TODGUB8.DLL`; plan R1 listo, continuación en el equipo del titular con visión ([§0](docs/CONTINUAR-EN-WINDOWS.md#0-relevo-del-31102026-equipo-del-titular-con-visión), [plan R1](docs/paridad/PASO-E1-DESPUNTE.md#plan-r1-con-mochila-31102026)); RED/locale y R1 sin observar | [Entrega y continuación](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#control-reparto-y-totales): VarFormat/configuración, entrada de agregados y persistencia; contrato monetario incompleto. No repetir unidades estáticas cerradas. Sin activar cabecera, adaptar snapshots u operar G6 |
+| E2 | Unión material de otra serie en GRUPO | Pendiente | Selección desde diagnóstico privado de los ocho casos de iteración 13; código/serie/acabado y geometría demostrados, sin extrapolar U |
 | E3 | Comisión: orden de redondeo y edición de líneas guardadas | Pendiente | Caso 0/−10/+10, suma de filas y momento de aplicación; separar cantidades/horas; seis residuos comunicados |
 | E4 | Tapajuntas de puerta con inferior SI/NO | Pendiente | GMT004, 1P 867×2098 con serie/ala/cajón reales; comparación lateral y travesaño |
 | M1 | Mantenimiento de uniones (Asistente de Configuración, CHM 5.1.2.13.6) | Implementado y corregido tras revisión 03/11/2026 en `feat/m1-mantenimiento-uniones`; sin 0034 en Supabase y sin contraste 0016 | [Plan](docs/paridad/PLAN-M1-MANTENIMIENTO-UNIONES-2026-11-02.md). Pantalla en Artículos → Uniones. Validación de escritura con el catálogo de la base, receta de Productor protegida e imágenes en `dibujo_catalogo` ([corrección](docs/paridad/PLAN-M1-MANTENIMIENTO-UNIONES-2026-11-02.md#corrección-tras-la-revisión--03112026)). 0033–0035 aplicadas en Supabase y 52 uniones cargadas (03/11). Falta importar `EstructurasSeriesAsoc` (pares de series, con E2) y confirmar `UnionTipo` en Productor |
@@ -114,6 +152,43 @@ A1 y D1: [estado operativo](docs/ESTADO-ACTUAL.md).
 Los recuentos se solapan: no sumarlos como previsión de líneas recuperadas.
 El orden es una prioridad, no una obligación de detenerse si una fuente concreta
 falta: registrar qué falta y avanzar con otra tarea autorizada e independiente.
+
+## Reconciliación de hallazgos ClonerSoft — 13/10
+
+Registro de cobertura del encargo dentro de este roadmap; no crea otro orden
+ni IDs paralelos. «Implementación pendiente» requiere contrato y aceptación
+antes de construir. Extraído no equivale a implementado o verificado.
+
+| Hallazgo | Prioridad / etapa | Frontera o siguiente condición |
+|---|---|---|
+| Datos y maestros, catálogo, cabecera/GRUPO, materiales, cortes, herrajes, vidrio, MO, compacto, tapajuntas, metraje, PVP, comisión, uniones y fracciones | Reutilizado, con los límites de E1–E11 y M0 | No repetir inventario/carga ni convertir disponibilidad en aceptación; 204 CSV y 33 diferencias de instantánea preservados |
+| Precio dimensional y acabado del artículo | Reutilizado: C1 técnico publicado/verificado | Coste dimensional sigue separado; 0031/0032/carga no se repiten |
+| Despunte físico/condicional | Ahora — E1, implementado y verificado localmente | [Contrato/entrega](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md); 67 pruebas y revisión independiente; sin adaptar snapshots ni activar cabecera |
+| Despunte monetario | Ahora — E1, control/reparto/totales seguidos con verificadores privados; cargo desactivado | Ocho preguntas con evidencia parcial; VarFormat, escalas efectivas, agregados y persistencia pendientes. G6 conserva autorización propia |
+| Coste dimensional | Ahora — pendiente de evidencia | Proveedor, medidas, divisa, gastos y precedencias; no reutilizar selector PVP |
+| Coste calculado | Ahora — pendiente de evidencia/configuración | Material por peso + acabado por superficie; unidades y activación sin confirmar |
+| Tarifa dinámica | Ahora — selección de registro implementada/verificada localmente 14/10; precio y activación pendientes | [Contrato y gate](docs/paridad/IMPLEMENTACION-CLONERSOFT-TARIFA-DINAMICA-2026-10-14.md): cuatro búsquedas, decimales exactos y bloqueo de empate; 47 pruebas. Sin precios ni activar motor; grupo, habilitación, fórmula, redondeo y caso positivo pendientes |
+| Descuento máximo primero | Ahora — pendiente de evidencia | Límite independiente; falta efecto visible y al guardar; no recorte silencioso |
+| Descuento máximo segundo | Ahora — pendiente de evidencia | Límite independiente; falta precedencia y efecto al guardar |
+| Recargo energético y precios especiales | Ahora — pendiente de configuración | Familia/subfamilia, medida/corte, alternativa general y mínimo; excepción del artículo concreto; sin migración histórica |
+| Pedidos de compra | Reutilizado | Estado RECIBIDO no acredita recepción física |
+| Movimientos de almacén | Después — contrato/implementación pendientes | Artículo/acabado/dimensiones/almacén, proveedor y precio; cantidades/reintentos/concurrencia como decisiones técnicas |
+| Reservas, consumos y restos | Después — contrato/implementación pendientes | Separar existencias/reserva/consumo, parciales, estados y reversión con historial |
+| Recepciones completas/parciales | Después — implementación pendiente | Depende del contrato de movimientos; conciliación de entregas y pendientes |
+| Facturas de compra | Después — contrato/implementación pendientes | Agrupar albaranes del mismo proveedor; línea de origen opcional, trazabilidad persistente por especificar |
+| Producción y optimización 1D | Reutilizado | Ampliar tras contrato de almacén; no reconstruir hojas ni inferir fabricación aceptada |
+| Documentos de venta/facturas/vencimientos | Después — contrato pendiente | Demostrar relaciones antes de ampliar el ciclo comercial |
+| Cobros parciales, historial y reversión | Después — contrato/implementación pendientes, en serie | Depende de vencimientos; conciliación, idempotencia y permisos; fiscal/bancario requiere especificación propia |
+| PDF de presupuesto | Reutilizado: P.2 técnico | Aceptación comercial pendiente; no sustituye informes operativos |
+| Informes configurables | Después — contrato/implementación pendientes | Columnas, filtros, agrupaciones y totales sobre datos disponibles, con permisos |
+| Consultas rápidas | Después — extraídas | 91 plantillas / 59 nombres; no ejecutar o trasplantar SQL legado |
+| Exportación de tablas | Después — contrato/implementación pendientes | Filas/columnas autorizadas, filtros/selección y formato fiel |
+| Horas por trabajador/obra/tarea | Después — contrato/implementación pendientes | Distintas de horas manuales presupuestadas |
+| Agenda y asignaciones | Después — contrato/implementación pendientes | Tipos de tarea, usuarios y uso real |
+| Calidad e incidencias | Después — contrato/implementación pendientes | Orden, controles e historial; no certificación legal |
+| Planificación avanzada, CNC y mecanizados | Experimental — evidencia insuficiente | Entradas/salidas/aceptación antes de construir; páginas vacías no son contrato |
+| Integraciones sin documentación completa | Experimental — evidencia insuficiente | Especificación propia; ningún descarte de comportamiento se presume |
+| Bitmap propietario omitido de DisForTrazos | Fuera de alcance de copia | Omisión explícita conservada; no publicar o reutilizar recursos propietarios |
 
 ## Ciclo de cada regla
 

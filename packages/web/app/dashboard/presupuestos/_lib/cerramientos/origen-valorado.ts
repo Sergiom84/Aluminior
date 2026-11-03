@@ -18,18 +18,20 @@ export function completarCostesOrigen(
     Number.isFinite(Number(v)) && Number(v) >= 0 ? v : null
   // Un corte de 0 mm es una medida que el catálogo no pudo calcular, no una pieza nula.
   const medida = (v: string | null | undefined) => {
-    if (v === null || v === undefined || !Number.isFinite(Number(v)) || Number(v) <= 0) return null
+    if (v === null || v === undefined || !/^\d+(?:\.\d+)?$/.test(v) ||
+      !Number.isFinite(Number(v)) || Number(v) <= 0 || Number(v) >= 100000000) return null
     // El snapshot y numeric(10,2) guardan centésimas de mm. No recalcular
     // metraje, venta ni coste con esta representación del corte.
     if (/^(0|[1-9]\d*)(?:\.\d{1,2})?$/.test(v)) return v
     const normalizada = normalizarDecimal(v, 2)
-    return Number(normalizada) > 0 ? normalizada : null
+    return Number(normalizada) > 0 && Number(normalizada) < 100000000 ? normalizada : null
   }
   const sinMedida = piezas.filter(p => [p.largoCorteMm, p.anchoCorteMm]
     .some(v => v !== null && v !== undefined && medida(v) === null))
   if (sinMedida.length) origen.diagnosticos = [...origen.diagnosticos, {
     codigo: 'COBERTURA_INCOMPLETA', ambito: 'FABRICACION', bloqueante: true,
-    detalle: `Corte sin medida calculable: ${[...new Set(sinMedida.map(p => p.articuloCodigo))].join(', ')}`,
+    detalle: `Corte sin medida representable a 0,01 mm: ${[...new Set(sinMedida.map(p =>
+      `${p.articuloCodigo} (${p.largoCorteMm ?? '—'} × ${p.anchoCorteMm ?? '—'})`))].join(', ')}`,
   }]
   origen.piezas = piezas.map((p, ordinal) => ({
     ordinal, articuloCodigo: p.articuloCodigo, acabadoCodigo: origen.acabadoCodigo,

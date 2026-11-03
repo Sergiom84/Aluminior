@@ -3,6 +3,7 @@ import { unionAdmitida, type CatalogoAdmision } from './catalogo-uniones.ts'
 import { cotasModuloValidas } from './cotas-cerramiento.ts'
 import { compactoModuloValido } from './compacto-cerramiento.ts'
 import { resolverGeometriaFi1Ofi } from './geometria-1ofi.ts'
+import { resolverGeometriaComposicion } from './geometria-composicion.ts'
 import { materialesModuloValidos } from './materiales-cerramiento.ts'
 import { anclajesV3Validos, VERSION_COMPOSICION_CERRAMIENTO } from './composicion-cerramiento.ts'
 import type { ConfiguracionCerramiento } from './cerramiento.ts'
@@ -33,6 +34,7 @@ export function esConfiguracionCerramiento(
     if (!materialesModuloValidos(modulo.materiales) || !cotasModuloValidas(modulo.cotas, modulo.altoMm, modulo.anchoMm) || !compactoModuloValido(modulo.compacto)) return false
     const plantilla = plantillaDiseno(modulo.estructuraCodigo)
     if (!plantilla) return false
+    if (!resolverGeometriaComposicion(plantilla.composicion, modulo.anchoMm, modulo.altoMm).valido) return false
     const tieneFi = Object.hasOwn(modulo, 'fiMm')
     if (candidato.version === 1) return !tieneFi
     if (plantilla.codigo !== '1OFI') return !tieneFi

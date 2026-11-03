@@ -8,6 +8,19 @@ const crear = () => anadirModuloCerramiento(
 const vacios = (): Borradores => ({ modulos: {}, uniones: {} })
 
 describe('aplicación explícita del cerramiento', () => {
+  it.each([['C2FI', 300], ['C2FS', 300], ['C2FSFI', 600]] as const)(
+    '%s conserva el original al rechazar un alto incompatible con sus fijos', (codigo, altoMm) => {
+      const original = crearConfiguracionCerramiento(plantillaDiseno(codigo)!)
+      const guardado = JSON.stringify(original)
+      const borradores = vacios()
+      borradores.modulos['modulo-1'] = { altoMm }
+      expect(aplicarBorrador(original, borradores, 'modulos', 'modulo-1')).toBeNull()
+      expect(JSON.stringify(original)).toBe(guardado)
+      borradores.modulos['modulo-1'] = { altoMm: 1800 }
+      const resultado = aplicarBorrador(original, borradores, 'modulos', 'modulo-1')!
+      expect(resultado.modulos[0]).toMatchObject({ estructuraCodigo: codigo, altoMm: 1800 })
+      expect(esConfiguracionCerramiento(resultado)).toBe(true)
+    })
   it('aplica solo el módulo solicitado sin mutar el original ni otro borrador', () => {
     const original = crear()
     const borradores = vacios()

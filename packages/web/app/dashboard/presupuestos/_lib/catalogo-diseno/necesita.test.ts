@@ -16,10 +16,10 @@ describe('necesidad de leer el catálogo antes de validar', () => {
   })
 
   it('no la tiene una composición de plantillas verificadas', () => {
-    expect(necesitaCatalogoDiseno(con('2O', '0'))).toBe(false)
+    expect(necesitaCatalogoDiseno(con('2O', '0', 'C2', 'C2P', 'C2FI'))).toBe(false)
   })
 
   it('la tiene si usa una estructura aún no registrada', () => {
-    expect(necesitaCatalogoDiseno(con('2O', 'C2'))).toBe(true)
+    expect(necesitaCatalogoDiseno(con('2O', 'QA-SIN-PLANTILLA'))).toBe(true)
   })
 })

@@ -1,5 +1,68 @@
 # Relevo: paridad y fuentes de Productor
 
+**Vigente desde el 31/10/2026:** la observación E1 continúa en el equipo del
+titular, con Claude operando Productor por visión. Leer primero
+[CONTINUAR-EN-WINDOWS §0](docs/CONTINUAR-EN-WINDOWS.md#0-relevo-del-31102026-equipo-del-titular-con-visión)
+y el [plan R1](docs/paridad/PASO-E1-DESPUNTE.md#plan-r1-con-mochila-31102026).
+Lo que sigue es el relevo anterior, conservado como historia.
+
+Continuación local Windows del 14/10, desde HEAD comprobado `a078975`, rama
+`codex/integracion-windows-mac-20261013`, árbol inicial limpio.
+E1: [control, reparto y totales](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#control-reparto-y-totales), después de U1 local `bc7c6ea`.
+No repetir inventarios, literales, integración o preparación física/condicional.
+El layout `+0x7ac` conduce a `cargaDetalle` bajo el constructor inspeccionado;
+no se atribuye una ejecución viva ni todas las rutas de fábrica.
+Getters y consumidor `alVDocumentoDespunte.DEScalcula` ya localizados:
+receptor global `0x02ef4c04`, lecturas `0x01ad9e65/0x01ada0b2`, transferencia
+de cero a `DespuntePorc` y cuatro bytes recibidos a `Despunte`.
+Las TypeLib acreditan las declaraciones de esos receptores COM; `bdDoc`
+devuelve `alBDADO` de `gaBBDD.dll`. Creación de receptores `alRecordset`,
+WORD de tabla auxiliar, selector `rsTabla` y cuerpos delegados acreditados
+estáticamente. `marcaDespunteCalculado`, `calculaTotalDoc` y cuerpos de gastos,
+reparto/totales ya seguidos: la matriz distingue filtros, bases/descuentos,
+sustitución, cantidades valoradas y defensa parcial de doble cómputo.
+Continuar por `VarFormat`, configuración efectiva y entrada de agregados;
+no repetir receptores, WORD, selector o esos cuerpos.
+El reenvío no acredita guardado durable.
+Usar slots públicos TypeLib y constructor inspeccionado, sin nombres por índice.
+Falta contrato monetario completo de formato/configuración/agregados y persistencia.
+E1 y G6 siguen abiertos/protegidos; no activar cargo ni ejecutar el original.
+
+Entregado el [selector puro de registros de tarifa dinámica](docs/paridad/IMPLEMENTACION-CLONERSOFT-TARIFA-DINAMICA-2026-10-14.md):
+47 pruebas nuevas, cuatro búsquedas y bloqueo de ambigüedad. No entrega precio,
+grupo, habilitación, fórmula ni redondeo. Gate del arquitecto: 2.004 pruebas
+correctas y la omisión previa por CSV privado; tipos/arquitectura correctos;
+revisión independiente y reproducción de su oráculo. Sin nueva migración,
+datos reales, aceptación Productor, publicación o despliegue.
+Esta segunda unidad E1 entrega análisis/documentación sin cambiar paquetes;
+su verificación estática y revisiones están en el contrato. El gate de paquetes
+anterior es el de `2a2dc57`; no se atribuye una nueva aceptación Productor.
+Fuentes, reproducción y logs privados:
+`output/clonersoft-implementacion-20261013/e1-estatico-20261014/`,
+`e1-despacho-20261014/`, `e1-consumidor-20261014/`, `e1-com-20261014/`,
+`tarifa-dinamica-20261014/` y logs `aluminior-clonersoft-20261014-*` de esa raíz.
+No viajan por Git/July. El roadmap existente conserva el orden y estado únicos.
+
+Investigación Windows del 13/10:
+[extracción diferencial ClonerSoft](docs/paridad/EXTRACCION-DIFERENCIAL-CLONERSOFT-2026-10-13.md).
+Reutilizar su inventario, matriz de 30 dominios y contratos estáticos antes de
+repetir extracción. E1 recibe evidencia física/condicional, no cierre económico.
+Los 204 CSV ya contienen las cabeceras de todas las tablas pobladas de la copia;
+33 recuentos diferentes impiden mezclar instantáneas. Evidencia privada local en
+`output/clonersoft-20261013/`, sin publicación ni recepción acreditadas.
+El merge Windows–Mac quedó cerrado y verificado localmente en `fa32fba`:
+1.890 pruebas de paquetes y diez recorridos E2E correctos, tipos y arquitectura
+correctos, revisión independiente y corrección de sus dos hallazgos. Sin
+publicación ni nueva comprobación remota. No repetir esa integración.
+Entregado localmente: [contrato físico E1](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md),
+67 pruebas nuevas, 1.957 pruebas de paquetes correctas, tipos, arquitectura y
+revisión independiente. No repetir esta preparación pura. La búsqueda inicial
+de referencias estáticas quedó cubierta por la continuación del 14/10;
+el cargo monetario continúa bloqueado por evidencia. G6 conserva su autorización
+pendiente. El roadmap reconcilia todos los hallazgos del encargo sin cerrar
+los módulos pendientes ni publicar/desplegar esta entrega local.
+Siguiente acción económica y estados: [roadmap](ROADMAP-PARIDAD-PRODUCTOR.md).
+
 
 Publicación técnica 12/10 desde worktree `productor-clonersoft/Aluminior`:
 [investigación](docs/paridad/INVESTIGACION-CLONERSOFT-2026-10-12.md) y

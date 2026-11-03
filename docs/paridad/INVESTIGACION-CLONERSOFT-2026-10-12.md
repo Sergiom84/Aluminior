@@ -1,5 +1,11 @@
 # Productor: investigación con ClonerSoft y aplicación local
 
+Complemento del 13/10 en Windows:
+[extracción diferencial](EXTRACCION-DIFERENCIAL-CLONERSOFT-2026-10-13.md), con
+inventario ampliado y contratos nuevos. Reutiliza los cierres de este informe;
+no repite C1, MO cero, cargas o publicación. Evidencias privadas separadas por
+fecha y equipo; no atribuir al corpus nuevo los resultados de esta entrega.
+
 12/10/2026. Entrega desde `origin/main` `9ae7a6e`, en el worktree
 `productor-clonersoft/Aluminior`. Investigación y verificación local conservadas;
 publicación técnica posterior comprobada en `40cedd1`, con 0031/0032 y carga

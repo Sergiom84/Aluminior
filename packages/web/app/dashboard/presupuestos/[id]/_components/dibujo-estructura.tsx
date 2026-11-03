@@ -2,7 +2,7 @@
 
 import React from 'react'
 import {
-  distribuirComposicion, distribuirModuloCerramiento, geometriaAperturaVisual,
+  distribuirComposicionAcotada, distribuirModuloCerramiento, geometriaAperturaVisual,
   type AperturaVisual, type ClaseSeparador, type ModuloCerramiento, type PlantillaDiseno,
 } from '@aluminior/core/estructuras'
 
@@ -34,7 +34,9 @@ export function DibujoEstructura({
   }
   const elementos = modulo
     ? distribuirModuloCerramiento(modulo, rect, compacto ? 12 : 18)
-    : distribuirComposicion(plantilla.composicion, rect, compacto ? 12 : 18)
+    : distribuirComposicionAcotada(plantilla.composicion,
+      compacto ? { anchoMm: plantilla.anchoMm, altoMm: plantilla.altoMm } : { anchoMm, altoMm },
+      rect, compacto ? 12 : 18)
   const marco = compacto ? 13 : 20
 
   return (
@@ -132,7 +134,7 @@ function SimboloApertura({ apertura, x, y, w, h }: {
   return (
     <g pointerEvents="none">
       {geometria.trazos.map((trazo, indice) => <path key={indice} d={ruta(trazo)}
-        className={`al-opening-line${indice === 1 ? ' al-opening-tilt' : ''}`} />)}
+        className={`al-opening-line${indice === 1 && apertura.startsWith('oscilobatiente') ? ' al-opening-tilt' : ''}`} />)}
     </g>
   )
 }
@@ -156,7 +158,7 @@ function Bisagras({ apertura, x, y, w, h }: {
   apertura: AperturaVisual; x: number; y: number; w: number; h: number
 }) {
   const geometria = geometriaAperturaVisual(apertura, { x, y, ancho: w, alto: h })
-  if (!geometria?.bisagras) return null
+  if (!geometria?.bisagras || geometria.xBisagras === null) return null
   const bx = geometria.xBisagras - 3
   return (
     <g className="al-hinge" pointerEvents="none">

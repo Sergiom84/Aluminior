@@ -1,7 +1,8 @@
-import { distribuirComposicion, plantillaDiseno,
+import { plantillaDiseno,
   type ElementoColocado, type RectVisual } from './diseno.ts'
 import type { ModuloCerramiento } from './cerramiento.ts'
 import { resolverGeometriaFi1Ofi } from './geometria-1ofi.ts'
+import { distribuirComposicionAcotada } from './geometria-composicion.ts'
 
 /**
  * Adapta la geometría persistida a una caja de representación. El grosor del
@@ -15,7 +16,7 @@ export function distribuirModuloCerramiento(
   const plantilla = plantillaDiseno(modulo.estructuraCodigo)
   if (!plantilla) return []
   if (plantilla.codigo !== '1OFI' || !Object.hasOwn(modulo, 'fiMm')) {
-    return distribuirComposicion(plantilla.composicion, rect, grosorSeparador)
+    return distribuirComposicionAcotada(plantilla.composicion, modulo, rect, grosorSeparador)
   }
 
   const geometria = resolverGeometriaFi1Ofi(modulo.anchoMm, modulo.altoMm, modulo.fiMm)

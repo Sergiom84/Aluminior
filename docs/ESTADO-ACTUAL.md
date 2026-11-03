@@ -103,6 +103,111 @@ conservan su geometría. Tests core 677, web 812 en serie; sin publicar.
 Cobertura: 541 estructuras importadas, 160 dibujables. El compacto sigue
 siendo E5.
 
+## Portátil con mochila y relevo al equipo del titular — 31/10/2026
+
+Con la mochila Sentinel conectada (licencia válida, `CLU Validado`) se preparó
+la observación E1 y se decidió continuarla en el equipo del tío de Sergio, que
+tiene Productor original sin fallos de componentes. En el portátil de Sergio,
+Configuración del Programa no abre: falta `TODGUB8.DLL` y el aviso de True DBGrid 8
+se repite sin fin. Se instaló solo esa DLL (build 2002 del paquete oficial de
+ComponentOne), sin probar todavía su efecto. **No hay valores RED/locale
+observados, ni R1 ejecutado, ni regla monetaria nueva.** El cargo sigue
+desactivado y E1 `in_progress`.
+
+La guía operativa, los pasos y los límites están en
+[CONTINUAR-EN-WINDOWS §0](CONTINUAR-EN-WINDOWS.md#0-relevo-del-31102026-equipo-del-titular-con-visión)
+y en el [plan R1 de PASO-E1](paridad/PASO-E1-DESPUNTE.md#plan-r1-con-mochila-31102026).
+Claude debe operar Productor con visión (Computer Use), no esperar que lo haga
+Sergio. Evidencia privada del portátil en `output/` (ignorada por Git): no viaja
+con el repositorio.
+
+## ClonerSoft — continuación local, 14/10/2026
+
+[Selector de registros de tarifa dinámica](paridad/IMPLEMENTACION-CLONERSOFT-TARIFA-DINAMICA-2026-10-14.md)
+implementado en `core/precios/tarifa-dinamica/`: cuatro búsquedas ordenadas,
+intervalos decimales inclusivos y estados de ausencia, ambigüedad o bloqueo.
+Selecciona criterios e identidad; no calcula precio ni activa tarifa.
+47 pruebas nuevas; gate ejecutado: 2.004 correctas y la omisión previa por CSV
+privado (964 core, 56 DB, 112 ETL, 872 web), tipos y arquitectura correctos;
+revisión independiente sin hallazgos reproducibles en el contrato puro.
+La aceptación integral Productor y la publicación siguen separadas.
+
+E1, segunda unidad del 14/10: layout del despacho `+0x7ac` validado
+estáticamente bajo el constructor VB6 inspeccionado; destino `cargaDetalle`.
+Consumidor localizado: `alVDocumentoDespunte.DEScalcula`, con receptor del
+formulario demostrado, lectura de `pbAceptar/pDespunte` y transferencia a
+`DespuntePorc`/`Despunte`. No prueba reparto ni redondeo comercial.
+Las TypeLib de `alBLLvdoc.dll` y `gaBBDD.dll` acreditan las declaraciones
+COM del consumidor. La siguiente unidad acredita la creación estática de los
+receptores de `alBDADO` como `alRecordset`, WORD `+0x56` de tabla auxiliar,
+selector `rsTabla` y cuerpos delegados `rsEdit/rsCampo/rsUpdate`.
+Control, reparto y totales también seguidos: selección comercial, sustitución,
+descuentos y escrituras estáticas con límites explícitos. La frontera de formato
+pasa a `VarFormat` de Automation; configuración efectiva, entrada de agregados
+y persistencia durable siguen sin aceptación monetaria. No repetir receptores, selector,
+wrappers/getters, declaraciones ya verificadas o inventarios.
+[Evidencia y condiciones](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#control-reparto-y-totales).
+Fuentes conservadas, verificadores reproducidos y revisión independiente.
+Este lote es documental/estático; el gate de paquetes anterior corresponde a
+`2a2dc57`, sin cambio nuevo del motor ni aceptación económica.
+El timeout Ghidra anterior permanece como antecedente; no se reabrió la sesión.
+Sin ejecución Productor, modificación de G6, datos reales, migraciones nuevas,
+operación remota de negocio o despliegue. El navegador publicado no se usa
+como evidencia de estos cambios locales.
+
+## ClonerSoft E1 — implementación local parcial, 13/10/2026
+
+[Contrato y entrega](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md):
+`core/produccion/despunte-catalogo/` prepara grupos artículo/acabado/tonalidad,
+metraje decimal exacto, cantidades de cortes y largo de barra explícito.
+La selección condicional respeta filtros conjuntivos y prioridad; los empates
+y los datos insuficientes bloquean. Son funciones independientes, sin conectar
+presupuestos o producción ni escribir cargos. 67 pruebas nuevas y 1.957
+pruebas de paquetes correctas, una omisión previa por CSV privado; tipos y
+arquitectura correctos, revisión independiente y aserción de origen reforzada.
+La aceptación monetaria E1 permanece abierta.
+La investigación del 13/10 localizó nombres candidatos; su continuación
+estática del 14/10 figura arriba. Siguen sin demostrar base, cantidades
+económicas ni redondeo.
+Los detalles, fuentes, contenciones y continuidad están en el contrato y
+la [reconciliación del roadmap](../ROADMAP-PARIDAD-PRODUCTOR.md).
+
+## Reconciliación Windows — 13/10/2026 (cerrada localmente)
+
+Integración autorizada de `origin/main` `913dd43` con los siete commits
+locales de septiembre, hasta `97099bc`. El main posterior del Mac conserva
+el estado operativo vigente; las ampliaciones compatibles de catálogo,
+cotas, TMP, dibujo y PDF se recuperan sin convertir los ensayos de septiembre
+en aceptación económica o fabricación.
+Commit local `fa32fba`, con ambos padres y cero conflictos; todavía sin publicar.
+
+Se preservan los informes [fase 7/07–13](paridad/fase-7/13-cierre-cotas-c2.md)
+y [fase 8/00–13](paridad/fase-8/13-cotas-economicas-y-relevo.md) como evidencia
+fechada. Los recuentos 25 plantillas/14 uniones y los contrastes de 03V/C2FI
+pertenecen a aquella copia y fecha; no sustituyen el catálogo posterior de
+160 estructuras, el banco 400/523 ni las verificaciones de producción.
+EMP0015 (2025), EMP0016 (2026), tarifas y originales se mantienen separados;
+las copias `Anterior` no aportan muestras independientes.
+
+**Verificación local de la integración, 13/10:** `npm run test:ci`: 1.890
+pruebas correctas y una condicionada al CSV privado (850 core, 56 DB, 112 ETL,
+872 web). Scripts: 123 Vitest y 119 node:test correctos; tipos de paquetes,
+E2E y scripts correctos; arquitectura: 851 archivos, cero infracciones.
+Diez recorridos E2E en escritorio/móvil correctos con PostgreSQL sintético:
+alta, copia, decimales, PDF y teclado. Se corrigieron la fixture incompleta
+de acristalamiento, el TipoPerf omitido por el adaptador CSV, la validación
+visual de cotas explícitas y el campo del error de cota vertical. Antes del
+arreglo se midieron dos fallos de fixture, quince de CSV con la fixture
+completa y dos de cotas. Aserciones originales preservadas.
+Revisión independiente: dos hallazgos de cotas, una corrección y gate ejecutado.
+`packages/db` y sus migraciones coinciden con HEAD: sin SQL nuevo ni operación
+remota. El cierre Git se registra en el historial local; publicación, recepción
+y aceptación Productor siguen separadas. La verificación remota de 33/33 de
+la sesión anterior es un antecedente, no una reconsulta en esta sesión.
+La continuidad funcional sigue en el [roadmap](../ROADMAP-PARIDAD-PRODUCTOR.md)
+y [guía Windows](CONTINUAR-EN-WINDOWS.md): P.2, E1/E7 y matriz restante P.6/P.7;
+no repetir A3/A4 ni las cargas y migraciones ya documentadas.
+
 ## Reconciliación del main Mac — 13/10/2026
 
 Por petición de Sergio, se revisan todos los cambios pendientes y se integra
@@ -274,7 +379,21 @@ Los nueve documentos anteriores y tres líneas conservan sus huellas.
 
 ## Siguiente paso
 
-**Windows:** recepción y fuentes privadas → aceptación comercial P.2 con el
+**ClonerSoft/E1 local:** preparación física/condicional, layout/getters,
+consumidor, declaraciones COM, receptores y cuerpos de control/reparto/totales
+entregados en su alcance estático. Continuar por el contrato de `VarFormat`,
+configuración efectiva y entrada de agregados comerciales, según el
+[contrato y evidencia](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#control-reparto-y-totales).
+No repetir integración `fa32fba`, preparación, wrappers/getters, declaraciones,
+WORD de tabla auxiliar, selector `rsTabla`, enlaces delegados o cuerpos ya seguidos.
+Sin activar cargo ni operar G6.
+
+**Equipo del titular, 31/10:** siguiente acción real. Claude opera Productor por
+visión según [CONTINUAR-EN-WINDOWS §0](CONTINUAR-EN-WINDOWS.md#0-relevo-del-31102026-equipo-del-titular-con-visión):
+F1 (leer RED y locale), después R1 del [plan](paridad/PASO-E1-DESPUNTE.md#plan-r1-con-mochila-31102026),
+y afinar Aluminior solo con regla demostrada.
+
+**Windows, observación pendiente:** recepción y fuentes privadas → aceptación comercial P.2 con el
 titular; investigación económica E1 desde G6-incidencia y E7 tras A4, según
 [la guía](CONTINUAR-EN-WINDOWS.md). No repetir A3/A4 ni migraciones.
 
@@ -308,7 +427,7 @@ En curso: [manual y contraste guardado del 04/10](paridad/EVIDENCIA-E1-DESPUNTE-
 acreditan la resta de costes en 13 documentos positivos con detalle de otra
 copia Windows; ocho discrepancias y un cargo sin detalle se conservan.
 La huella difiere de la del banco; no sustituye su medición ni resuelve sus diez
-candidatas. Motor y UI sin cambios. No repetir esa investigación; comprobar
+candidatas. Motor y UI no cambiaron en aquella observación. No repetir esa investigación; comprobar
 evidencia posterior. A–F conservados: C2 GMC400 1500×1150, VCG4 y acabado L;
 segunda línea por duplicación. Recálculo sustituye el cargo; repetición y
 reapertura conservan resultado. Copia privada F de 0017 verificada y lector
@@ -326,7 +445,8 @@ Siguiente: autorización solicitada para retirar solo tercer GRUPO y confirmar
 edición segura de segunda línea antes de comparación de precisión. Las dos
 líneas previas siguen idénticas a G4/G5. No repetir A–F, G1–G5 ni diagnóstico
 GID. Descuentos cero/cantidad 1 no discriminan base bruta/neta. E1 sigue En
-curso; motor y banco sin cambios. Retirar instrucciones agotadas y preservar
+curso; cargo presupuestario y banco conservados. El subcontrato físico local
+del 13/10 se registra por separado arriba. Retirar instrucciones agotadas y preservar
 evidencia al completar cada etapa.
 
 Comisión sí está en Gastos. Los campos de horas de fabricación/colocación están

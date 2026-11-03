@@ -13,15 +13,29 @@ avances de las fases 3–7. Las numeraciones de PLAN y lotes J son distintas.
 | 0. Evidencia | Observaciones, CHM extraído, ocho MDB inspeccionadas, inventario y primer barrido de facturas | Agotar fuentes, variantes, reglas y combinaciones; aceptación original completa |
 | 1. Guardado | Reintento, idempotencia acotada, GRUPO, reapertura y PDF en QA | No acredita precio ni recuperación al cerrar pestaña |
 | 2. Geometría | Dominio compartido pantalla/PDF, teclado y tamaños locales | Comparación integral equivalente con Productor |
-| 3. Composición | v3 bidimensional, anclajes, arrastre/teclado, conservación v1/v2 | Catálogo completo: 14 plantillas manuales y 46/541 dibujables documentadas; módulos y reglas de interacción |
+| 3. Composición | v3 bidimensional, anclajes, arrastre/teclado, conservación v1/v2; 25 plantillas y cotas físicas de C2 con fijos | Catálogo completo: 54/541 candidatas; módulos y reglas de interacción por acreditar |
 | 4. Materiales | Excepciones de serie/vidrio por elemento, herencia y aplicación a modelos iguales | Otras familias y semántica completa de actualización colectiva |
 | 5. Vidrio | Buscador real, código canónico, integración y guardas de hojas incompletas | E11, D.A. económico completo, huecos/travesaños de Diseño V3 |
 | 6. Uniones | 14 códigos, grosor de catálogo, esquineros a cero y longitud valorada | Compatibilidades, variantes y contraste de todas las uniones/series |
-| 7. Valoración | Cortes C2/C3 GMC400, carga suplementaria 0022 local, diagnóstico y banco de facturas | Motor completo; vidrio/herrajes/Dif; reproducción independiente: 0 facturas acreditadas |
+| 7. Valoración | Motor de catálogo 0023 local; selección GM60 127/127; cinco 3HO completas; seis cotas directas; contraste 179 exactas y 118 con diferencia de precio unitario | 25 diferencias económicas, 18 bloqueadas, 8 despieces distintos; MO/B, dos cotas, diseños específicos, Dif y accesorios; ver fase 7/13 |
 | 8. Aceptación | Evidencias locales de PDF, teclado y móvil de cambios concretos | Recorrido integral, precio, fabricación y aceptación del taller |
 
-Fuentes: resúmenes de fases 1–7 y [relevo vigente](https://github.com/Sergiom84/Aluminior/blob/9bc879e1530b076c4e7c17dee8e0a076c76e7b4e/docs/paridad/INICIO-SIGUIENTE-CONVERSACION.md).
+Fuentes: resúmenes de fases 1–7 y [relevo histórico del 27/09](INICIO-SIGUIENTE-CONVERSACION-2026-09-27.md).
+Ampliación histórica conservada: [fase 8/13](../../paridad/fase-8/13-cotas-economicas-y-relevo.md).
 Ni un inventario ni las pruebas técnicas convierten una fase parcial en cerrada.
+
+Ampliación económica desde `b5dc16a`: [03V de la fuente anual 2025](../../paridad/fase-8/10-contraste-03v-2025.md).
+Tres originales estándar acreditan material y minutos para GMA350/GMA65OPT;
+dos valoraciones coinciden con el PVP anual y la tercera conserva diferencia
+de precio histórico de vidrio. No amplía diseños específicos ni otras series.
+La regla de dominio requiere metadatos que el consumidor web aún no conserva;
+su activación web, precio comercial completo y fabricación siguen pendientes.
+Los recuentos de facturas de fase 7 no se recalculan sumando estos presupuestos.
+
+Continuación desde `f321935`: recuperadas dos entradas FI de presupuestos
+C2FI/GMC400 de EMP0016 anual. 38/41 piezas coinciden por caso; tres perfiles
+adicionales y MO mantienen el importe nulo. Es investigación sin activación
+productiva ni extrapolación a C2FS/C2FSFI; ver fase 8/13.
 
 
 > Continuidad revisada el 27/09/2026: [punto de partida vigente](https://github.com/Sergiom84/Aluminior/blob/9bc879e1530b076c4e7c17dee8e0a076c76e7b4e/docs/paridad/INICIO-SIGUIENTE-CONVERSACION.md). Las comprobaciones fechadas conservan sus límites; consultar el relevo para el trabajo siguiente.

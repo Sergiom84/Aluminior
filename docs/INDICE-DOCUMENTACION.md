@@ -12,6 +12,10 @@ propuesta entonces exclusiva del main local (integrada como herramienta el 13/10
 
 | Documento | Uso |
 |---|---|
+| [Contrato y lote E1 ClonerSoft 13/10, continuación 14/10](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md) | Físico/condicional, layout, consumidor/COM, receptores y control/reparto/totales acreditados estáticamente; matriz de ocho preguntas, VarFormat/configuración/agregados y persistencia pendientes |
+| [Selector de registros de tarifa dinámica 14/10](paridad/IMPLEMENTACION-CLONERSOFT-TARIFA-DINAMICA-2026-10-14.md) | Cuatro búsquedas, intervalos decimales y ambigüedad; unidad pura local, sin precio ni activación |
+| [Encargo ClonerSoft 13/10](paridad/ENCARGO-IMPLEMENTACION-CLONERSOFT-2026-10-13.md) | Alcance de implementación local, fuentes y protecciones; el roadmap conserva etapas/orden |
+| [Extracción diferencial 13/10](paridad/EXTRACCION-DIFERENCIAL-CLONERSOFT-2026-10-13.md) | Evidencia estática/documental reutilizable, inventarios y límites; fotografía de integración abierta anterior a `fa32fba` |
 | [Publicación ClonerSoft 12/10](paridad/PUBLICACION-CLONERSOFT-2026-10-12.md) | `40cedd1` live, 0031/0032/carga, respaldo/restauración, CI y QA remoto/preservación; C1 técnico acotado y P.6/P.7 parcial |
 | [Investigación ClonerSoft 12/10](paridad/INVESTIGACION-CLONERSOFT-2026-10-12.md) | Fuentes/ejercicios, REA efectiva, contrato C1 dimensional, evidencia local y enlace a su publicación; E1/E2/E6 abiertos |
 | [Continuar en Windows](CONTINUAR-EN-WINDOWS.md) | Recepción, fuentes privadas, P.2, E1/E7 y prompt de continuación |
@@ -89,6 +93,28 @@ se conservan como fuentes inactivas, sin reactivar instrucciones ni permisos.
 | [fase-7/05-primer-barrido-facturas-2026.md](paridad/fase-7/05-primer-barrido-facturas-2026.md) | Evidencia o verificación fechada; conservar sus límites |
 | [fase-7/06-reglas-catalogo-despiece-completo.md](paridad/fase-7/06-reglas-catalogo-despiece-completo.md) | Evidencia o verificación fechada; conservar sus límites |
 
+| [07-acristalamiento-gm60.md](paridad/fase-7/07-acristalamiento-gm60.md) | Evidencia local de septiembre incorporada el 13/10; estados y pendientes fechados, sin aceptación general de precio/fabricación |
+| [08-cortes-tres-hojas.md](paridad/fase-7/08-cortes-tres-hojas.md) | Evidencia local de septiembre incorporada el 13/10; estados y pendientes fechados, sin aceptación general de precio/fabricación |
+| [09-continuacion-local.md](paridad/fase-7/09-continuacion-local.md) | Evidencia local de septiembre incorporada el 13/10; estados y pendientes fechados, sin aceptación general de precio/fabricación |
+| [10-cotas-instancia.md](paridad/fase-7/10-cotas-instancia.md) | Evidencia local de septiembre incorporada el 13/10; estados y pendientes fechados, sin aceptación general de precio/fabricación |
+| [11-discrepancias-investigadas.md](paridad/fase-7/11-discrepancias-investigadas.md) | Evidencia local de septiembre incorporada el 13/10; estados y pendientes fechados, sin aceptación general de precio/fabricación |
+| [12-catalogo-visual-c2.md](paridad/fase-7/12-catalogo-visual-c2.md) | Evidencia local de septiembre incorporada el 13/10; estados y pendientes fechados, sin aceptación general de precio/fabricación |
+| [13-cierre-cotas-c2.md](paridad/fase-7/13-cierre-cotas-c2.md) | Evidencia local de septiembre incorporada el 13/10; estados y pendientes fechados, sin aceptación general de precio/fabricación |
+| [00-contrato.md](paridad/fase-8/00-contrato.md) | Evidencia local de septiembre incorporada el 13/10; estados y pendientes fechados, sin aceptación general de precio/fabricación |
+| [01-inventario.md](paridad/fase-8/01-inventario.md) | Evidencia local de septiembre incorporada el 13/10; estados y pendientes fechados, sin aceptación general de precio/fabricación |
+| [02-traductor.md](paridad/fase-8/02-traductor.md) | Evidencia local de septiembre incorporada el 13/10; estados y pendientes fechados, sin aceptación general de precio/fabricación |
+| [03-fijos-operativos.md](paridad/fase-8/03-fijos-operativos.md) | Evidencia local de septiembre incorporada el 13/10; estados y pendientes fechados, sin aceptación general de precio/fabricación |
+| [04-contrato-puerta-corredera.md](paridad/fase-8/04-contrato-puerta-corredera.md) | Evidencia local de septiembre incorporada el 13/10; estados y pendientes fechados, sin aceptación general de precio/fabricación |
+| [05-puerta-corredera-y-relevo.md](paridad/fase-8/05-puerta-corredera-y-relevo.md) | Evidencia local de septiembre incorporada el 13/10; estados y pendientes fechados, sin aceptación general de precio/fabricación |
+| [06-contrato-cotas-absolutas.md](paridad/fase-8/06-contrato-cotas-absolutas.md) | Evidencia local de septiembre incorporada el 13/10; estados y pendientes fechados, sin aceptación general de precio/fabricación |
+| [07-mano-obra-fijos.md](paridad/fase-8/07-mano-obra-fijos.md) | Evidencia local de septiembre incorporada el 13/10; estados y pendientes fechados, sin aceptación general de precio/fabricación |
+| [08-cotas-absolutas-y-relevo.md](paridad/fase-8/08-cotas-absolutas-y-relevo.md) | Evidencia local de septiembre incorporada el 13/10; estados y pendientes fechados, sin aceptación general de precio/fabricación |
+| [09-contrato-03v-tmp.md](paridad/fase-8/09-contrato-03v-tmp.md) | Evidencia local de septiembre incorporada el 13/10; estados y pendientes fechados, sin aceptación general de precio/fabricación |
+| [10-contraste-03v-2025.md](paridad/fase-8/10-contraste-03v-2025.md) | Evidencia local de septiembre incorporada el 13/10; estados y pendientes fechados, sin aceptación general de precio/fabricación |
+| [11-tmp-03v-y-relevo.md](paridad/fase-8/11-tmp-03v-y-relevo.md) | Evidencia local de septiembre incorporada el 13/10; estados y pendientes fechados, sin aceptación general de precio/fabricación |
+| [12-contrato-cotas-economicas.md](paridad/fase-8/12-contrato-cotas-economicas.md) | Evidencia local de septiembre incorporada el 13/10; estados y pendientes fechados, sin aceptación general de precio/fabricación |
+| [13-cotas-economicas-y-relevo.md](paridad/fase-8/13-cotas-economicas-y-relevo.md) | Evidencia local de septiembre incorporada el 13/10; estados y pendientes fechados, sin aceptación general de precio/fabricación |
+
 ## Histórico
 
 Planes, entregas y propuestas cerradas. Contenido original conservado;
@@ -114,6 +140,7 @@ Los originales fusionados también se guardan aquí. PLAN alcanza A–T.68.
 | [SANEAMIENTO-MODULAR.md](historico/SANEAMIENTO-MODULAR.md) | Reglas vigentes fusionadas en ARQUITECTURA |
 | [TRAMO-1OFI-CONEXION.md](historico/TRAMO-1OFI-CONEXION.md) | Archivo histórico de TRAMO-1OFI-CONEXION.md |
 | [TRAMO-1OFI-GEOMETRIA.md](historico/TRAMO-1OFI-GEOMETRIA.md) | Archivo histórico de TRAMO-1OFI-GEOMETRIA.md |
+| [Relevo local 27/09](historico/paridad/INICIO-SIGUIENTE-CONVERSACION-2026-09-27.md) | Última revisión Windows preservada; instrucciones inactivas, continuidad en estado/roadmap |
 | [paridad/ESTADO-FASES.md](historico/paridad/ESTADO-FASES.md) | Cobertura fusionada en PARIDAD y estado en ESTADO-ACTUAL |
 | [paridad/IMPLEMENTACION-ACTUALIZAR-2026-09-20.md](historico/paridad/IMPLEMENTACION-ACTUALIZAR-2026-09-20.md) | Archivo histórico de docs/paridad/IMPLEMENTACION-ACTUALIZAR-2026-09-20.md |
 | [paridad/fase-1/04-auditoria-74e0c95.md](historico/paridad/fase-1/04-auditoria-74e0c95.md) | Archivo histórico de docs/paridad/fase-1/04-auditoria-74e0c95.md |

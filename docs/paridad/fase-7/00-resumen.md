@@ -1,16 +1,20 @@
 # Fase 7 — diagnóstico económico y salida comercial (parcial)
 
-Alcance del 27/09/2026, anterior al motor integrado en main `9bc879e`.
-El [motor posterior](../INTEGRACION-MOTOR-CATALOGO-2026-10-02.md) incorpora
-referencias, descuentos incluidos Dif, asociaciones y valoración por catálogo.
-La carga remota sigue pendiente según el cierre. Los diagnósticos siguientes
-son resultados fechados; no describen las capacidades actuales del código.
+Alcance del 27/09/2026, conservado como antecedente al integrar Windows
+el 13/10/2026. La [continuación local](09-continuacion-local.md) documenta
+GM60, cinco 3HO y selección de acristalamiento; el [cierre posterior de cotas
+y C2](13-cierre-cotas-c2.md) registra, sobre 348 líneas no específicas,
+179 exactas, 118 con diferencia de precio unitario, 25 diferencias económicas,
+18 bloqueadas y ocho despieces distintos. Son mediciones fechadas de aquella
+rama; no certifican los diseños específicos, extras ni fabricación.
 
-Actualización consolidada: [barrido de facturas 2026](05-primer-barrido-facturas-2026.md),
-180 documentos y 28.480 líneas. Ningún caso de ese banco está acreditado aún
-como calculable/contrastado. Alcance: todas las tipologías, series y uniones.
-Los apartados diagnósticos siguientes conservan el alcance del ensayo original.
-
+El [motor integrado posteriormente](../INTEGRACION-MOTOR-CATALOGO-2026-10-02.md)
+y el [banco del 03/10](../BANCO-CONTRASTE-2026-10-03.md) conservan su propio
+alcance. La carga remota ya figura entregada en el estado actual; no repetirla
+por instrucciones de este antecedente. La antigua numeración local 0022/0023
+no sustituye la numeración vigente de migraciones del main.
+Los apartados diagnósticos siguientes conservan el ensayo original anterior
+a esas ampliaciones y no describen el estado operativo presente.
 
 > Estado operativo: [ESTADO-ACTUAL.md](../../ESTADO-ACTUAL.md). Las observaciones y verificaciones de este documento conservan su fecha y sus límites. El orden y estado de tareas pertenece al [roadmap vigente](../../../ROADMAP-PARIDAD-PRODUCTOR.md); sus encargos, permisos y pendientes fechados no se reactivan.
 

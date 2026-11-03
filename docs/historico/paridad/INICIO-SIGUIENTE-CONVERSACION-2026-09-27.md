@@ -1,0 +1,300 @@
+# Punto de partida: extracción integral de Productor y paridad
+
+> Archivo histórico inactivo, preservado el 13/10/2026. Sus encargos, permisos y siguientes pasos pertenecen al 27/09 y no se reactivan. Entrada vigente: [estado actual](../../ESTADO-ACTUAL.md) y [roadmap](../../../ROADMAP-PARIDAD-PRODUCTOR.md).
+
+Actualizado el 27/09/2026. Este fue el relevo operativo de aquella fecha; hoy es un antecedente inactivo. El estado de
+implementación está en [ESTADO-ACTUAL](../../ESTADO-ACTUAL.md); el mapa histórico
+de fases, en [ESTADO-FASES](ESTADO-FASES.md). Los prompts antiguos son históricos.
+
+## Último lote: continuación en el equipo de Sergio
+
+Leer primero [13, cotas económicas y relevo](../../paridad/fase-8/13-cotas-economicas-y-relevo.md)
+y su [contrato 12](../../paridad/fase-8/12-contrato-cotas-economicas.md). Continuación desde
+`f321935`: dos entradas FI originales unívocas elevan la coincidencia a
+38/41 piezas por caso C2FI/GMC400, sin activar precio ni cambiar producto.
+Tres perfiles con `DisIdPerAd` y la MO mantienen importe nulo. Siguiente
+unidad: acreditar esa regla con sus entradas antes de modificar cortes.
+La ausencia de C2FS/C2FSFI de esta extracción solo abarca presupuestos.
+
+Cierre productivo anterior: [11, TMP/16 y relevo](../../paridad/fase-8/11-tmp-03v-y-relevo.md),
+[10, contraste 03V de 2025](../../paridad/fase-8/10-contraste-03v-2025.md) y su
+[contrato 09](../../paridad/fase-8/09-contrato-03v-tmp.md). Commit `f321935`, desde `b5dc16a`, cierra la
+regla de núcleo/CSV, limitada a 03V estándar GMA350/GMA65OPT. Tres despieces
+y minutos coincidentes; dos importes exactos y una diferencia histórica de
+precio de vidrio. La web aún carece de metadatos y sigue bloqueada.
+EMP0015 es 2025 y EMP0016 es 2026; preservar fechas documentales, tarifas y
+fuentes distintas. No contar Anterior como muestra nueva ni trasladar la
+evidencia posterior de facturas C2P a estas bases anuales.
+La secuencia de 08 sigue en los perfiles adicionales; no convertir
+los 300 mm del dibujo en entrada económica. La integración web de 03V es
+otra unidad, con metadatos, pruebas de carga/adaptador y recorrido local.
+
+### Lote previo: cotas absolutas
+
+La continuación vigente parte de `e50b06a`: leer primero
+[fase 8/08, cotas absolutas y relevo](../../paridad/fase-8/08-cotas-absolutas-y-relevo.md) y
+[fase 8/07, mano de obra](../../paridad/fase-8/07-mano-obra-fijos.md). 25 plantillas habilitadas;
+C2FI/C2FS/C2FSFI conservan fijos de 300 mm al redimensionar y rechazan medidas
+imposibles. Recorrido local/PDF comprobados; nueve casos económicos bloqueados.
+La investigación MO encuentra dos originales CF y 79 controles TMP/16 para
+categoría y agregación, sin cambio económico. Siguiente unidad en serie: reglas
+TMP/16, cotas económicas FI/FS y perfiles adicionales. Matriz reproducible con
+`output/fase-8/evidencias-lote3.json`; respetar las bases y documentos de QA.
+
+El lote anterior desde `b454919` se conserva en
+[fase 8/05](../../paridad/fase-8/05-puerta-corredera-y-relevo.md), [inventario](../../paridad/fase-8/01-inventario.md)
+y [traductor](../../paridad/fase-8/02-traductor.md). 541 registros íntegramente contabilizados;
+47→54 candidatas, 15→22 plantillas habilitadas, 14 uniones. Seis fijos nuevos
+probados en navegador y PDF, con valoración aún bloqueada; C2P añade una puerta
+con cuatro casos independientes de precio/material coincidentes y coste incompleto. La matriz local
+`output/catalogo-completo/matriz.json` conserva estados por fuente y por modelo;
+no debe publicarse. Contratos y protecciones en fase 8/00 y 04. Primer commit
+local `b5b79f4`; segundo lote identificable por `feat(catalogo): habilitar puerta corredera C2P`.
+Siguiente: cotas absolutas para C2 con fijos, mano de obra de los seis fijos y
+reglas de componentes pendientes; detalles y reproducción en fase 8/05.
+
+El bloque siguiente conserva el cierre anterior de fase 7.
+
+Leer primero [fase 7/13](../../paridad/fase-7/13-cierre-cotas-c2.md) y las unidades 10–12.
+Rama `feat/motor-catalogo-completo`, último lote desde `60d050b`; no se fusionó `main`
+ni se escribió en Supabase. Copias de Productor en
+`C:\Users\sergi\Desktop\MIX\Productor\Aluminio`, con años en
+`Base datos Anuales`; EMP0016 es 2026. `export_datos/` y `output/` están aquí.
+
+- GM60 ya estaba resuelto por sus 19 filas: selección 127/127. Se añadieron
+  guardas de integridad; no hace falta inventar generación automática.
+- Cerrados cortes TMG/MV+B y mano de obra TMG: cinco 3HO ya valorables.
+- Corregida la opción de acristalamiento ignorada por el adaptador nuevo.
+- Cotas: seis entradas directas incorporadas con procedencia y sin defaults.
+  Dos cadenas de presupuesto son candidatas no aplicadas. Los seis importes
+  siguen bloqueados por mano de obra; uno también por regla B.
+- Contraste riguroso: 179 exactas, 118 atribuibles al precio unitario,
+  25 con diferencia económica pendiente, 18 bloqueadas, 8 despieces distintos.
+  La cifra antigua «138 solo tarifa» no era correcta.
+- Un despiece era ruido Double del comparador. Las 25 diferencias económicas
+  están investigadas, sin cambiar la política de cálculo para forzar igualdad.
+- C2 dibujable, seleccionable y persistente. Misma entrada produce 292,59 €
+  y 33 piezas como estructura simple y GRUPO en QA. Conserva avisos y costes
+  incompletos; defaults de opciones corregidos. Ver límites en fase 7/12–13.
+- PostgreSQL: 310 importes coinciden, 16 bloqueos coinciden y una entrada
+  sin plantilla es rechazada; 21 con ajuste manual fuera de ese ensayo.
+- Siguiente: acreditar reglas MO/B, dos cotas sin entrada directa, incrementos
+  y redondeos antes de corregir las 25 diferencias económicas; cerrar las ocho
+  geométricas. Después, diseños específicos y otras tipologías/operaciones.
+
+Los apartados históricos siguientes conservan el recorrido del otro equipo.
+Las afirmaciones de «sin implementar» y los conteos anteriores quedan
+sustituidos por 06–13 y la verificación de 13.
+
+## Encargo y resultado esperado
+
+Continuar en `C:\Users\sergi\Desktop\Aplicaciones\Aluminior`, rama
+`feat/motor-catalogo-completo`, preservando los cambios existentes. Obtener
+el máximo de información útil y verificable de las copias locales para reproducir todas las tipologías,
+series, uniones, opciones y operaciones del taller en Aluminior. No limitar
+el producto a C2/C3 ni a las estructuras vendidas durante 2026.
+
+El objetivo es paridad funcional, de cálculo e interacción con uso moderno.
+No basta guardar una GRUPO o emitir PDF. Sergio requiere precio automático
+completo; no acepta sustituirlo por un importe manual provisional.
+
+La instalación NO se ha agotado. No confundir datos todavía no extraídos o
+relaciones no entendidas con información inexistente. Investigar primero
+catálogo, documentos de origen, configuración, CHM e informes; recurrir al
+usuario solo ante un bloqueo concreto que las fuentes disponibles no resuelvan.
+
+## Lectura inicial y comprobaciones
+
+1. Leer `AGENTS.md`, `ARQUITECTURA.md`, `docs/ESTADO-ACTUAL.md` y este relevo.
+2. Leer fase 7: `02-investigacion-fuentes-2026-09-27.md`,
+   `03-implementacion-cortes-referenciados.md`,
+   `04-cobertura-integral-y-facturas-2026.md` y
+   `05-primer-barrido-facturas-2026.md`.
+3. Consultar resúmenes de fases 1–6 y sus evidencias al abordar ese flujo.
+   PLAN anexos S y T contiene investigación extensa con hipótesis rectificadas;
+   leer conclusiones posteriores antes de reutilizar sus scripts.
+4. Inspeccionar `git status --short`, diff y procesos locales. Base recibida
+   de GitHub: `0ecdc9c`; comprobar los commits locales posteriores.
+5. Comprobar existencia de copias y artefactos locales. Las rutas ignoradas
+   no viajan con Git. July no estaba disponible; consultar si vuelve a estarlo.
+
+## Lo obtenido de la instalación
+
+Inventario ampliado: 68 MDB, 84 CSV, 31 INI, 28 TXT, 303 RPT, 6 PDF, 6 MHT,
+1 CHM. Los 26 `.db` encontrados eran Thumbs.db. No se localizaron hojas
+Excel ni otras bases en ese recorrido; revisar rutas externas referenciadas
+antes de concluir que no existen otras fuentes.
+
+Ocho MDB inspeccionadas sobre copias con SHA-256 verificado:
+
+| Fuente | Tablas / pobladas | Uso y límite |
+|---|---:|---|
+| ConfigDis | 71 / 26 | Configuración y descripciones |
+| AluSeries | 2 / 2 | Nombres de grupos y componentes |
+| aluMode | 995 / 126 | Plantilla; no acredita tarifa vigente del taller |
+| IDSeries | 1 / 1 | Identificadores, relaciones e incompatibilidades |
+| impexpES | 861 / 86 | Biblioteca; dos tablas no legibles, sin reparar |
+| ImpexpGM | 942 / 122 | Biblioteca de descuentos y acristalamiento |
+| InfoSeries | 9 / 9 | Bibliotecas, series y actuaciones |
+| EMP0016/Anterior | 995 / 205 | Catálogo y documentos propios; fuente principal |
+
+En Anterior: 35.723 descuentos, 5.984 diferencias, 2.488 filas de
+acristalamiento. Variantes de biblioteca con hashes distintos quedan por
+comparar. `Tarifa/GM` contiene 19 TXT/INI con fechas de 2022: no asumir vigencia.
+CHM extraído con 7-Zip; el índice y contenido permiten seguir investigando.
+
+Hallazgos concretos:
+
+- C2/C3 GMC400: dependencia de corte de hoja respecto al marco y descuentos
+  por extremos. Diagnóstico retrospectivo 498/498 HH usando el marco observado;
+  NO es una predicción independiente. Seis estructuras tienen el marco 53 mm
+  más corto; su causa sigue pendiente, no convertirla en una constante.
+- V410ACGP6: D.A. de 20 mm, DABASE + VLS4 + CAM10A + CGP6. V410ACGF no existe
+  en el catálogo examinado; no declarar equivalencia. Coste/PVP de D.A. tiene
+  modalidades propias y no equivale a sumar vidrios sueltos.
+- GMC400: TablaHojas GM01, TablaFijos GM08; junquillo `0`, junta `V1000`
+  sin artículo localizado. El marcador de biblioteca no autoriza omitir piezas.
+- Herrajes HU315/HU316: 7/9 asociaciones; opciones, condiciones y recuentos
+  pendientes. Ranuras 222–229 son herraje aunque lleven función HV/HH.
+- TAcristalamiento tiene auxiliares y configuración que el ETL parcial no
+  conserva. ConjuntosDescuentosDif y su precedencia siguen sin implementar.
+
+## Qué se implementó en esta conversación
+
+Motor puro de cortes referenciados, separación de medición, importación
+suplementaria y conexión a valoración SOLO para perfiles ordinarios de C2/C3
+GMC400. Los restantes modelos y series conservan su resolución anterior,
+sin acreditación universal. Falta precio completo de vidrio y asociados.
+
+Archivos de entrada: `packages/core/src/despiece/cortes-referenciados.ts`,
+`medir-pieza.ts`, `packages/etl/src/importacion/cortes-catalogo.ts` y
+`packages/web/app/dashboard/presupuestos/_lib/estructuras/cortes-catalogo.ts`.
+Migración aditiva 0022: referencias de corte y descuentos. Aplicada solo en
+QA local. Cargadas 14.039 referencias y 35.723 descuentos; presupuesto QA
+preservado. No se aplicó nada a Supabase ni se modificó Productor.
+
+Perfiles contrastados con catálogo: 12 de C2 y 16 de C3, incluidos cortes
+verticales/horizontales. Guardas ante ciclos, referencias ausentes, ambigüedad
+y descuentos ausentes. Un cero explícito no equivale a dato ausente.
+
+## Barrido de facturas aportado por otra conversación
+
+Fuente: copia verificada de EMP0016/Anterior, 180 facturas de 2026 entre
+13/01 y 16/09, 28.480 líneas. No acredita documentos posteriores a esa fecha.
+
+| Medición | Resultado y alcance |
+|---|---|
+| Líneas de estructura | 544 en 127 facturas; 543 códigos de catálogo y un `T` pendiente |
+| Enlaces a albarán | 854 de 868 exactos por claves; 14 pendientes |
+| Enlaces posteriores a presupuesto | 715; otros 139 no llegan a línea |
+| Artículos en enlaces resueltos | Sin diferencias de código; no prueba diseño ni precio |
+| Catálogo | 541 estructuras, 58 series, 2.134 asociaciones; 495 estructuras sin factura |
+| Cerramientos | 42 cabeceras / 240 filas; 35 facturas con unión |
+| Opciones de herraje | 5.524 filas técnicas |
+| Información incompleta | 123 estructuras sin Conjunto1 resuelto; 73 con dibujo en factura |
+| Modificaciones | 73 marcas de diseño específico; 32 líneas de estructura con precio/descuento manual |
+| Validación del motor | Cero casos acreditados como calculables o contrastados en este banco |
+
+Los 180 documentos indican tarifa 1; no demuestra precio constante ni vigencia
+actual. Cinco cabeceras tienen IVA 0, 175 tienen 21; no corregir por suposición.
+El despiece guardado sirve de resultado esperado, nunca de entrada al motor.
+
+Scripts: `scripts/exportar-facturas-2026.ps1`,
+`scripts/analizar-facturas-2026.mjs`, `scripts/lib/cobertura-facturas-2026.mjs`
+y prueba contigua. Resultados privados: `output/facturas-2026/`.
+
+Revisión pendiente del banco: exporta TipoOrigen/TipoDocOrig pero el analizador
+no valida esos discriminadores al enlazar presupuesto por número. Revisar
+también origen a nivel de línea frente a cabecera y diferencias Id/Numero.
+No elevar los 715 enlaces a trazabilidad definitiva sin esa comprobación.
+La reanudación del exportador controla hash de fuente y recuentos, pero no
+hash de cada CSV ni versión de consulta: endurecer antes de reutilizar tablas
+tras cambiar la extracción. Estos son límites detectados, no arreglos hechos.
+
+## Plan para la siguiente conversación
+
+| Paso | Trabajo | Entrega verificable |
+|---|---|---|
+| A. Fuentes | Reutilizar inventario; localizar variantes, archivos de configuración y rutas referenciadas; hashes y fecha de cada copia | Mapa fuente→versión→tablas→tema, distinguiendo inspeccionado de pendiente |
+| B. Relaciones | Resolver tipos y claves de factura→albarán→presupuesto; explicar 14/139; buscar diseño/configuración en cada origen | Casos con procedencia inequívoca, ambigüedades explícitas y pruebas sintéticas |
+| C. Catálogo integral | Investigar 541 estructuras, 58 series y asociaciones; campos FamiliaN/ConjuntoN, herencia, tipos de hoja, uniones y diseño | Matriz de combinaciones válidas/evidencia; ausencia de factura no significa incompatibilidad |
+| D. Reglas completas | Cortes y descuentos/Dif, perfiles alternativos, cotas, herrajes/condiciones, vidrio D.A., juntas, junquillos, auxiliares, uniones, consumo, mano de obra y tarifas | Diccionario de reglas con tabla/campo/clave, unidades, precedencia, fórmula y contraejemplo |
+| E. Extracción y motor | Comparar cada dato con esquema/ETL/core; importar lo ausente y reimplementar reglas comprobadas por módulos | Cambios acotados, pruebas por responsabilidad, sin reglas por coincidencia histórica |
+| F. Contraste independiente | Reproducir casos recuperables de cada familia, serie y unión; separar diseños/precios manuales; comparar por etapas | Diferencias por material, cantidad, corte, consumo, coste y venta; no solo un total |
+| G. Cobertura ausente | Casos controlados para combinaciones válidas no facturadas, medidas límite y opciones | Cobertura ampliada y límites pendientes; finalmente flujo, teclado, PDF y responsive |
+
+No esperar a resolver todos los enlaces para calcular los casos con entradas
+fiables. No detenerse tras inventariar: profundizar hasta obtener reglas
+implementables y contrastes nuevos. Priorizar diversidad de familias y causas
+de bloqueo, no repetir C2/C3 ni procesar miles de filas sin nueva información.
+Los pasos son líneas de trabajo de investigación, no reemplazan las fases 0–8.
+
+Cada hallazgo debe indicar fuente/hash, consulta o sección de manual, claves,
+unidades, alcance, excepciones, grado de certeza y módulo destino. Agotar
+fuentes legibles antes de afirmar que una regla solo está en el ejecutable.
+Preferir observación autorizada y entrada/salida controlada al análisis nativo.
+
+## Entorno, seguridad y verificación
+
+- EMP0016/aluminio.mdb es activo: trabajar con copia verificada de Anterior;
+  no reparar ni escribir originales. No consultar EMP0015 como tarifa vigente.
+- EMP0017-copia.mdb quedó sin verificar por uso; no emplearla como evidencia.
+  No reutilizar 260497, dañado. 260499 tiene total observado, falta desglose.
+  Estos casos no bloquean la investigación de 0016 y sus bibliotecas.
+- No tocar licencia ni registrar COM/OCX; no ejecutar legacy fuera del entorno
+  aislado permitido por AGENTS. No copiar código o activos propietarios al producto.
+- Sin push; sin escribir Supabase; no versionar `env.example`, datos reales,
+  CSV, MDB ni secretos. Credenciales solo en memoria si son necesarias.
+- Supabase devolvía tenant/user no encontrado; no es impedimento para investigar
+  fuentes locales. No asumir que sigue fallando sin comprobar si fuera necesario.
+- PostgreSQL QA localhost:55433, contenedor `aluminior_pg_test`, base
+  `aluminior_real_test`, tmpfs. Comprobar antes de arrancar/recrear. Web QA :3002.
+  No repetir ETL completo: vacía documentos. Para las dos tablas nuevas usar
+  `npm run etl:cortes:local -- --origen export_datos/EMP0016 --base aluminior_real_test`
+  únicamente si la base y la migración ya están verificadas y hace falta cargar.
+- Scripts exploratorios previos bajo `output/` pueden cargar .env: leer antes
+  de ejecutar. `output/investigacion-fuentes/consultar.ps1` limita a SELECT
+  sobre copias locales con Mode=Read. No volcar datos de clientes al chat.
+- Verificación de cortes documentada: core 505 antes de última guarda y 31
+  dirigidas después; ETL transformación/integración/rollback; web 41 dirigidas;
+  typecheck y arquitectura pasan. Otra conversación comunica core 506 y nuevas
+  pruebas de cobertura, typecheck/arquitectura; suite completa db/web no arrancó
+  por acceso denegado. No confundir ese fallo de entorno con fallo de cálculo,
+  ni afirmar suite completa verde. Resolver entorno al necesitar esas pruebas.
+
+Cerrar cada avance actualizando el estado, el mapa de fases y el informe
+técnico correspondiente. Publicar solo agregados y pruebas sintéticas;
+mantener casos reales y resultados identificables en output ignorado.
+
+## Mensaje para iniciar la próxima conversación
+
+«Lee y ejecuta docs/paridad/INICIO-SIGUIENTE-CONVERSACION.md. Continúa desde el
+barrido de facturas existente y extrae el máximo de reglas y datos verificables
+de C:\Productor\Aluminio. Investiga las fuentes locales antes de pedirme datos;
+avanza en reconstrucción de entradas, cobertura integral e implementación
+cuando exista evidencia suficiente. Conserva los cambios locales y todas las
+restricciones. No declares paridad por un inventario o un total coincidente.»
+
+## Avance del 27/09/2026 (tarde): motor de catálogo completo
+
+Ver [fase-7/06](../../paridad/fase-7/06-reglas-catalogo-despiece-completo.md). Asociados,
+cortes con división de huecos, vidrio 2D, junquillos, MO por módulos e importe
+por fila derivados del catálogo. Contraste versionado
+(`scripts/contrastar-despiece-facturas.ts`): el primer relevo comunicó 178
+exactas y agrupó otras 138 como tarifa. Al reproducirlo se separaron 115
+atribuibles al precio unitario y 23 diferencias económicas pendientes.
+La cifra vigente tras endurecer el contraste y resolver 3HO está en 09.
+La antigua igualdad web/CSV 327/327 incluía importes nulos: no eran 327
+líneas valoradas.
+
+Código: `core/despiece/{asociaciones,linea-catalogo}`, `medidas-plantilla`,
+`acristalamiento-catalogo`, `mano-obra-fabricacion`, `precios/importe-fila`;
+migración aditiva 0023 + `npm run etl:catalogo-despiece:local`; web
+`_lib/estructuras/catalogo-despiece/` conectado en `valorarEstructura` y
+cerramientos (snapshot `FILA_CENTIMOS`). 0023 NO aplicada en Supabase.
+
+Pendiente actualizado: cotas de instancia (FI/TD/F), divisiones B3 no
+contrastadas, diseños específicos (73),
+compactos/mosquiteras/tapajuntas, marco −53 en 6 C2, catálogo visual del
+configurador (C2 no dibujable) y verificación en navegador. GM60, TMG/3HO
+y la suite completa se revisaron en [fase 7/09](../../paridad/fase-7/09-continuacion-local.md).

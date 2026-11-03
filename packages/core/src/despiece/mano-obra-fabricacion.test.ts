@@ -64,4 +64,52 @@ describe('minutosFabricacion', () => {
       'concepto de mano de obra NO-EXISTE ausente',
     ])
   })
+  it('añade el tiempo de catálogo por cada elemento TMG y su cantidad', () => {
+    const r = minutosFabricacion({
+      elementos: [elemento({ grupo: 'TMG', cantidad: 2 }), elemento({ grupo: 'TMG', cantidad: 1 }), elemento({ grupo: 'TMP' })],
+      conceptos: [concepto({ codigo: 'TRAV-MARCO', minutos: 7, grupoAsociado: 'TMG' })], conceptosApertura: [],
+    })
+    expect(r).toEqual({ lineas: [
+      { articulo: 'MO', minutos: 14, concepto: 'TRAV-MARCO' },
+      { articulo: 'MO', minutos: 7, concepto: 'TRAV-MARCO' },
+    ], incidencias: [] })
+  })
+  it('el grupo TMG conserva la categoría del perfil y la común cuando están presentes', () => {
+    const r = minutosFabricacion({ elementos: [elemento({ grupo: 'TMG' })], tipoPerfil: 'A',
+      conceptos: [concepto({ codigo: 'CORREDERA', minutos: 20, grupoAsociado: 'TMG', categoria: '00002' }),
+        concepto({ codigo: 'ABATIBLE', minutos: 10, grupoAsociado: 'TMG', categoria: '00001' }),
+        concepto({ codigo: 'COMUN', minutos: 3, grupoAsociado: 'TMG', categoria: '00010' })], conceptosApertura: [],
+    })
+    expect(r).toEqual({ incidencias: [], lineas: [
+      { articulo: 'MO', minutos: 10, concepto: 'ABATIBLE' }, { articulo: 'MO', minutos: 3, concepto: 'COMUN' },
+    ] })
+  })
+  it('coexiste con los módulos sin duplicar el adicional ni emitir por cantidad cero', () => {
+    const r = minutosFabricacion({
+      elementos: [elemento({ modulo: '8' }), elemento({ grupo: 'TMG' }), elemento({ grupo: 'TMG', cantidad: 0 })],
+      conceptos: [...conceptos, concepto({ codigo: 'TRAV-MARCO', minutos: 7, grupoAsociado: 'TMG', componenteAsociado: '!' })],
+      conceptosApertura: [],
+    })
+    expect(r).toEqual({ lineas: [
+      { articulo: 'MO', minutos: 12, concepto: 'M8' },
+      { articulo: 'MO', minutos: 7, concepto: 'TRAV-MARCO' },
+    ], incidencias: [] })
+  })
+  it('conserva el bloqueo de incrementos en el concepto por TMG', () => {
+    const r = minutosFabricacion({ elementos: [elemento({ grupo: 'TMG' })],
+      conceptos: [concepto({ codigo: 'TRAV-MARCO', minutos: 7, grupoAsociado: 'TMG', conIncrementos: true })], conceptosApertura: [],
+    })
+    expect(r).toEqual({ lineas: [], incidencias: ['mano de obra TRAV-MARCO: incrementos por medida sin contrastar'] })
+  })
+  it.each([
+    { grupoAsociado: 'TMP' },
+    { grupoAsociado: 'TMG', modulo: '8' },
+    { grupoAsociado: 'TMG', articuloAsociado: 'OTRO' },
+    { grupoAsociado: 'TMG', componenteAsociado: '17M' },
+  ])('mantiene bloqueadas otras asociaciones o selectores combinados %o', cambios => {
+    const r = minutosFabricacion({ elementos: [elemento({ grupo: cambios.grupoAsociado })],
+      conceptos: [concepto({ codigo: 'NO-CONTRASTADO', minutos: 7, ...cambios })], conceptosApertura: [],
+    })
+    expect(r).toEqual({ lineas: [], incidencias: ['mano de obra NO-CONTRASTADO: asociación por grupo sin contrastar'] })
+  })
 })

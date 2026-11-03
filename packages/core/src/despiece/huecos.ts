@@ -1,10 +1,10 @@
-/** GeometrÃ­a limpia de EstructurasDiseÃ±o para localizar los lÃ­mites de un hueco. */
+/** Geometría limpia de EstructurasDiseño para localizar los límites de un hueco. */
 
 import { evaluar, type Contexto } from './formula.ts'
 
 export interface NodoDisenyo {
   idItem: number
-  /** 1=marco, 2=hueco, 3=hoja, 5=vidrio, 6=travesaÃ±o/divisiÃ³n. */
+  /** 1=marco, 2=hueco, 3=hoja, 5=vidrio, 6=travesaño/división. */
   tipo: number
   contenidoEn: number | null
   idTravesano: number | null
@@ -29,7 +29,7 @@ export interface LimitesHueco {
 
 export interface AlojamientoVidrio {
   huecoId: number
-  /** null si el vidrio estÃ¡ directamente en un fijo. */
+  /** null si el vidrio está directamente en un fijo. */
   hojaId: number | null
 }
 

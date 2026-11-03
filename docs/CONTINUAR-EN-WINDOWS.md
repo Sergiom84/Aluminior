@@ -5,7 +5,101 @@ Relevo preparado el **10/10/2026** desde `origin/main` `9673659`. Entrada:
 Esta guía organiza el trabajo en Windows; los estados de cada tarea pertenecen
 al roadmap. [Auditoría y límites de esta revisión](AUDITORIA-DOCUMENTAL-2026-10-10.md).
 
+## 0. Relevo del 31/10/2026: equipo del titular con visión
+
+Sergio continúa E1 en el equipo de su tío, que tiene Productor original con
+mochila y sin fallos de componentes. **Claude opera Productor él mismo con
+visión (Computer Use: captura, una acción, captura); no delega los clics en
+Sergio** salvo elegir la empresa en el selector. Tras cada observación, afina
+Aluminior solo con la regla demostrada (ver «Afinar la app» abajo).
+
+Recepción: el 31/10 se publica la rama `codex/integracion-windows-mac-20261013`
+(integración `fa32fba`, lote E1 y este relevo) en `origin`; **no está en `main`**.
+En el equipo del titular: `git fetch origin` y `git switch codex/integracion-windows-mac-20261013`
+(o checkout limpio de esa rama). July: `july_sync` con acción `pull` y buscar los
+items por proyecto + `sync_uid` (E1 = `398049fbd618069e36bb84bab37913ed`). Los
+artefactos privados de `output/` del portátil no viajan: las fuentes privadas y
+la instalación de Productor del titular son las que valen allí.
+
+Cómo se maneja el programa original (aprendido el 31/10 en el portátil):
+
+- Productor es nativo (VB6/.NET) sin DOM. En Computer Use, `request_access`
+  rechaza «Productor Aluminio»; concede `aluminioApp.exe` (tier full). Pedir
+  ese nombre. La ventana principal se titula «Gestión para Carpinterías de
+  Aluminio y PVC».
+- El selector de empresa preselecciona **0016** y en el portátil el primer
+  arranque entró en ella sin clic. Sergio elige la empresa de pruebas; nunca
+  aceptar ni operar 0016. Comprobar la barra superior antes de actuar.
+- Los menús son propios del programa (no aparecen en Win32). Barra:
+  Ficheros, Compras, Ventas, Utilidades, Ayuda. **Configuración del Programa:
+  Ficheros > Otros > Configuración del Programa.** Exige cerrar antes todas las
+  ventanas hijas («Imposible acceder… Debe cerrar todas las ventanas primero»).
+  Abrirla solo para leer y cerrar sin guardar.
+- No usar, salvo orden expresa de Sergio, las opciones de Utilidades: Ejecuta
+  SQL, Copia de Seguridad, Reparar y Compactar la base de datos, Actualizar
+  Precios de Coste, Recalcular Precios de Venta, Sustituye Datos.
+- Las capturas y los importes van a `output/` (ignorado). El informe versionado
+  lleva solo códigos de ensayo y la regla demostrada.
+- Si aparece el aviso «True OLE DBGrid 8: TODGUB8.DLL is missing…» y se repite,
+  parar y reportar. **No instalar ni registrar DLL/OCX en este equipo** sin
+  autorización expresa de Sergio con plan de reversión. En el portátil se hizo
+  una sola vez, con su permiso (ver estado del portátil).
+
+Estado del portátil de Sergio (no replicar): E1V0 «PRUEBAS E1 VACIA»
+(2026, Access, `EMPE1V0`) creada vacía; lista de presupuestos con 0 registros;
+modo restringido por copia de seguridad del 05/10/2023; `C:\Productor\Aluminio`
+es una junction a `…\Desktop\MIX\Productor\Aluminio` (misma instalación);
+`EMP0017` existe en disco pero no sale en el selector. Configuración no abre:
+falta `TODGUB8.DLL`, ausente en todo `C:` y en los zips de MIX. Se instaló solo
+`todgub8.dll` 8.0.20024.13 (SHA-256 `641c495e…04b7`, del paquete oficial
+`C1StudioActiveX_Q402.msi` de ComponentOne, 120.574.976 B) en
+`C:\Windows\SysWOW64` y se registró; el OCX instalado es 8.0.20053.347, por lo
+que su efecto sigue sin comprobar. Reversión en el portátil: con Productor
+cerrado, `regsvr32 /u /s C:\Windows\SysWOW64\todgub8.dll` y borrar el fichero.
+`EMP0016\aluminio.mdb` no cambió (30/10 20:53, SHA-256 `92c2d104…48f4`).
+
+Orden en el equipo del titular (plan completo en
+[PASO-E1](paridad/PASO-E1-DESPUNTE.md#plan-r1-con-mochila-31102026)):
+
+1. Confirmar mochila, ruta de instalación y empresa de pruebas; hash previo de
+   la MDB de producción y de `Empresas.mdb` para demostrar que no cambian.
+2. F1 solo lectura: leer `REDprecio/REDlinea/REDbase/REDtotal` y el locale en
+   Configuración del Programa. Es lo que cierra la fila «Redondeo».
+3. Si el modo restringido (copia de seguridad) bloquea crear documentos, pedir
+   autorización para una copia de seguridad solo de la empresa de pruebas.
+4. Montar el caso R1 por el recorrido normal, fijar predicciones, calcular el
+   despunte, repetir, guardar y reabrir; decidir demostrada / refutada / no
+   discriminante.
+5. Después, comparación lateral P.6/P.7 con Sergio presente.
+
+Afinar la app: solo con regla demostrada por el ensayo. El motor candidato es
+`packages/core/src/produccion/despunte-catalogo/` (funciones puras sin I/O);
+el contrato y las condiciones están en
+[IMPLEMENTACION-CLONERSOFT-E1](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#control-reparto-y-totales).
+Fixture sintética, prueba con control negativo, gates (`npm run test`,
+`npm run typecheck`, `npm run check:architecture`) y revisión antes de tocar el
+motor. Sin demostración, el cargo permanece desactivado y E1 `in_progress`.
+No tocar G6, tarifas, catálogo ni migraciones.
+
+Al terminar: actualizar `ESTADO-ACTUAL`, el roadmap, `PASO-E1` y el item July
+181 (E1) por identidad estable; `july_sync push`.
+
 ## 1. Recibir el trabajo correcto
+
+Actualización local Windows, 13/10: la integración con el catálogo de septiembre
+quedó cerrada en `fa32fba`, rama `codex/integracion-windows-mac-20261013`, con
+cero conflictos y gates/revisión correctos. El [lote E1](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md)
+conserva aparte preparación física y cargo económico. Estos commits locales
+todavía no están publicados: recibir `origin/main` no los entrega. Inspeccionar
+esta rama antes de crear otro checkout o repetir la integración.
+
+Continuación local del 14/10 en la misma rama: anclajes dirigidos E1 y
+[selector de registros de tarifa dinámica](paridad/IMPLEMENTACION-CLONERSOFT-TARIFA-DINAMICA-2026-10-14.md)
+verificados con gate de 2.004 pruebas y la omisión previa por CSV privado,
+tipos/arquitectura y revisión independiente. No activar cargos ni tarifa.
+La recepción requiere el commit local de esta entrega; recibir main no lo
+incluye. Fuentes privadas y actualización local de July necesitan sus canales
+propios; no hay publicación o recibo acreditados de esta continuación.
 
 El main principal del Mac se reconcilia el **13/10/2026** con `origin/main`
 `4fb54b3`, conservando las mejoras del 09–12/10 y los commits locales pendientes.
@@ -120,6 +214,20 @@ entradas o tarifas difieren, separar formato de comparación económica.
 El pendiente P.2 sigue abierto hasta esta aceptación; no repetir su corrección técnica.
 
 ### E1: recuperar el ensayo de despunte
+
+Continuación ClonerSoft del 14/10: preparación física/condicional, wrappers,
+layout estático de `+0x7ac`, getters y consumidor `DEScalcula` ya verificados
+en su alcance; no reconstruirlos ni repetir literales. Receptores delegados de
+`alBDADO`, WORD de tabla auxiliar y selector `rsTabla` también acreditados;
+no repetir población de `this+0x88/+0x8c` ni enlaces `+0x34/+0x58/+0x3c`.
+Las declaraciones TypeLib y cuerpos de control/reparto/totales ya están seguidos
+en su alcance estático; no repetirlos. Siguen `VarFormat`, valores configurados,
+contrato de agregados y persistencia. Leer la
+[continuación del lote](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#control-reparto-y-totales).
+El selector independiente de registros de tarifa dinámica ya está implementado
+y verificado localmente; no activar precios a partir de esa selección.
+Los pasos de observación siguientes son una vía separada y conservan la
+autorización pendiente de G6; este lote no autoriza ejecutar el original.
 
 Leer [PASO-E1-DESPUNTE](paridad/PASO-E1-DESPUNTE.md) y su evidencia del 04/10.
 A–F, G1–G5 y el margen GID que explica los dos céntimos ya están demostrados.
@@ -252,6 +360,12 @@ respaldo siguen fuera de esa acreditación; no reescribir migraciones aplicadas.
 
 ## Prompt para la siguiente conversación en Windows
 
+> **Equipo del titular, 31/10:** lee primero §0 de docs/CONTINUAR-EN-WINDOWS.md.
+> Usa tu visión (Computer Use con `aluminioApp.exe`) para operar Productor tú
+> mismo; Sergio solo elige la empresa de pruebas. Empieza por F1 (leer RED y
+> locale) y sigue el plan R1 de PASO-E1. Después afina Aluminior solo con regla
+> demostrada.
+>
 > Retoma Aluminior desde docs/CONTINUAR-EN-WINDOWS.md, AGENTS.md,
 > docs/ESTADO-ACTUAL.md y ROADMAP-PARIDAD-PRODUCTOR.md. Comprueba git y July;
 > conserva cambios propios y usa un checkout limpio desde origin/main si hace falta.
