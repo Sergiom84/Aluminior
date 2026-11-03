@@ -5,7 +5,7 @@ DS2/GR1/E5/E5b), live en Render (`dep-dbl2kdp7lnhs738jfc3g`, 120 s, logs sin
 errores; `/login` 200 y el resto redirige al login). Supabase: 36 migraciones
 (hasta `0035`) y 52 uniones cargadas. Sin QA funcional con sesión en producción.
 
-Esta rama `integracion/codex-e2-20261103`, sobre `2abc1d4`: E2 integrado en rama,
+03/11/2026, `main` = `0a4958b` (fusión `integracion/codex-e2-20261103`): E2 integrado,
 sin medir en la 0016. La medición queda para el equipo de la mochila; los datos
 privados del contraste no están en este portátil. No reimplementar la serie propia
 de la unión. El único siguiente está en [Siguiente paso](#siguiente-paso).
