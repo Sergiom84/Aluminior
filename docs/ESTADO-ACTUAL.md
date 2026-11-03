@@ -1,6 +1,11 @@
 # Estado actual de Aluminior
 
-Revisión documental y producción: 12/10/2026. Código `40cedd1` live en Render,
+Producción, 03/11/2026: `main` = `46fd472` (M1 uniones + línea E1 de Windows +
+DS2/GR1/E5/E5b), live en Render (`dep-dbl2kdp7lnhs738jfc3g`, 120 s, logs sin
+errores; `/login` 200 y el resto redirige al login). Supabase: 36 migraciones
+(hasta `0035`) y 52 uniones cargadas. Sin QA funcional con sesión en producción.
+
+Anterior — revisión documental y producción: 12/10/2026. Código `40cedd1` live en Render,
 deploy `dep-db6hi2navr4c739d2e4g`, terminado a las 19:31:21 Europe/Madrid
 (17:31:21 UTC). Supabase: 33 migraciones, 0031/0032 y carga dirigida aplicadas;
 QA técnico remoto y preservación final correctos. Ver
