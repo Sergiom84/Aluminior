@@ -157,7 +157,20 @@ Controles negativos medidos: sin la guarda de unión cae 1; si se reescribe siem
 la receta cae 1; con la imagen fuera de la transacción cae 1; con el `validacion.ts`
 anterior caen 4; con el hook de borradores anterior cae 1.
 
-Sigue abierto: aplicar 0034 en Supabase (revisar antes 0021–0033), cargar las 52
-uniones, confirmar `UnionTipo` en Productor, contraste de la 0016 y comparación
-visual con Productor. Fuera de M1 (para después): precio manual explícito para
+**Supabase, 03/11/2026.** El remoto estaba en 33 migraciones (hasta `0032`).
+Se revisaron `0033`–`0035` (solo `CREATE TABLE IF NOT EXISTS`, RLS y claves
+foráneas) y se aplicaron con el migrador de Drizzle: 33 → 36. Se rellenó
+`estructura_union` desde `Estructuras.csv` con `sincronizarUnionesCatalogo`,
+sin recargar el despiece: 52 uniones, 0 de usuario. Los 14 códigos de reserva
+coinciden en grosor y tipo con la base.
+
+Datos reales que corrigen la hipótesis: `GMU007` (tipo 0) y `GMU013`/`GMU035`
+(tipo 3) tienen grosor 0. Se admite grosor 0 si el catálogo lo guarda así. 37
+uniones tienen `AsocASeriesSN`, pero `EstructurasSeriesAsoc` guarda pares
+`Serie`/`SerieUnir` cuya semántica sigue pendiente (va con E2). Mientras no se
+importen, una unión específica sin series cargadas se ofrece en todas, como antes.
+
+Sigue abierto: importar `EstructurasSeriesAsoc` con su semántica (E2),
+confirmar `UnionTipo` en Productor, contraste de la 0016 y comparación visual
+con Productor. Fuera de M1 (para después): precio manual explícito para
 piezas sin perfil en catálogo.

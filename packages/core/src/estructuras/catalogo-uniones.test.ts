@@ -66,6 +66,11 @@ describe('catálogo de uniones inyectado', () => {
     expect(unionAdmitida({ codigo: 'QA-U60', grosorMm: 0 }, [QA])).toBe(false)
   })
 
+  it('admite grosor cero si el catálogo lo guarda así, como GMU013 de tipo 3', () => {
+    const gmu013 = { codigo: 'GMU013', descripcion: 'Regulable', grosorMm: 0, unionTipo: 3 as const }
+    expect(unionAdmitida({ codigo: 'GMU013', grosorMm: 0 }, [gmu013])).toBe(true)
+  })
+
   it('rechaza grosor cero de un código nuevo y conserva la reserva', () => {
     expect(unionAdmitida({ codigo: 'QA-U60', grosorMm: 0 })).toBe(false)
     expect(unionAdmitida({ codigo: 'PSU006', grosorMm: 0 })).toBe(true)

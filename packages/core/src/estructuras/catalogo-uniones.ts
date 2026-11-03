@@ -36,7 +36,8 @@ export type CatalogoAdmision = readonly UnionVisual[] | typeof CATALOGO_SNAPSHOT
 
 /**
  * Al escribir, el código debe estar en el catálogo recibido o en la reserva.
- * El grosor cero solo es válido en un esquinero (tipo 4) de ese catálogo.
+ * El grosor cero vale en un esquinero (tipo 4) o si el propio catálogo lo
+ * guarda así: Productor tiene GMU007 (tipo 0) y GMU013/GMU035 (tipo 3) a cero.
  */
 export function unionAdmitida(
   union: Pick<UnionCerramiento, 'codigo' | 'grosorMm'>,
@@ -47,7 +48,7 @@ export function unionAdmitida(
   if (catalogo === CATALOGO_SNAPSHOT) return true
   const conocida = buscarUnion(catalogo, union.codigo) ?? buscarUnion(UNIONES_VISUALES, union.codigo)
   if (!conocida) return false
-  return union.grosorMm > 0 || (union.grosorMm === 0 && conocida.unionTipo === 4)
+  return union.grosorMm > 0 || (union.grosorMm === 0 && (conocida.unionTipo === 4 || conocida.grosorMm === 0))
 }
 
 export function aplicarGrosorCatalogo(

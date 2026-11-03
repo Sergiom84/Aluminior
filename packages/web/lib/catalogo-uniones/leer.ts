@@ -36,7 +36,8 @@ export async function leerCatalogoUniones(): Promise<CatalogoUniones> {
     unionTipo: fila.tipo as UnionVisual['unionTipo'],
     l1Mm: Number(fila.l1),
     l2Mm: Number(fila.l2),
-    seriesEspecificas: fila.seriesEspecificas,
+    // Sin series cargadas no se restringe: `EstructurasSeriesAsoc` (pares Serie/SerieUnir) aún no se importa.
+    seriesEspecificas: fila.seriesEspecificas && (porSerie.get(fila.estructuraCodigo)?.length ?? 0) > 0,
     series: porSerie.get(fila.estructuraCodigo) ?? [],
     imagen: fila.imagen,
     deUsuario: fila.deUsuario,
