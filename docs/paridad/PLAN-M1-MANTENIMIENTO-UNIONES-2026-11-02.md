@@ -170,6 +170,20 @@ uniones tienen `AsocASeriesSN`, pero `EstructurasSeriesAsoc` guarda pares
 `Serie`/`SerieUnir` cuya semántica sigue pendiente (va con E2). Mientras no se
 importen, una unión específica sin series cargadas se ofrece en todas, como antes.
 
+**Navegador, 03/11/2026** (rama de integración contra `aluminior_test`,
+configuración `web-local-test`): alta de «QA-U60» con perfil, grosor 60 e
+imagen; la ficha muestra 10,30 €/m L y 4,12 € para 400 mm; el configurador
+ofrece QA-U60, toma su grosor e imagen, y el alta del GRUPO pasa la validación
+del servidor (queda «sin valorar» por falta de receta de motor en esa base).
+Corregidos el desbordamiento horizontal (el `fieldset` no encogía), el botón
+estirado, las casillas separadas de su nombre, los `numeric` crudos («60.000»)
+y el formato del precio. Sin desbordamiento a 375 px.
+
+**Pista sobre `UnionTipo`:** con la hipótesis guardado = CHM − 1, los esquineros
+`PSU006`–`PSU009` (tipo 4) salen como «5 Regulable (Macho-Hembra)». La descripción
+contradice la etiqueta; la numeración debe confirmarse en Productor antes de
+darla por buena.
+
 Sigue abierto: importar `EstructurasSeriesAsoc` con su semántica (E2),
 confirmar `UnionTipo` en Productor, contraste de la 0016 y comparación visual
 con Productor. Fuera de M1 (para después): precio manual explícito para

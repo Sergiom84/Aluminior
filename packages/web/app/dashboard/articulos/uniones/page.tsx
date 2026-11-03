@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Shell } from '../../_components/shell.tsx'
 import { leerCatalogoUniones } from '../../../../lib/catalogo-uniones/leer.ts'
 import { BuscarUniones } from './_components/buscar-uniones.tsx'
+import { etiquetaTipoUnion } from './_lib/tipos-union.ts'
 
 export const dynamic = 'force-dynamic'
 
@@ -31,7 +32,7 @@ export default async function Uniones({ searchParams }: { searchParams: Promise<
             <td className="px-3 py-2 cifra">{union.grosorMm}</td>
             <td className="px-3 py-2 cifra">{union.l1Mm ?? ''}</td>
             <td className="px-3 py-2 cifra">{union.l2Mm ?? ''}</td>
-            <td className="px-3 py-2 cifra">{union.unionTipo ?? ''}</td>
+            <td className="px-3 py-2">{etiquetaTipoUnion(union.unionTipo ?? 0)}</td>
             <td className="px-3 py-2">{catalogo.tabla &&
               <Link href={`/dashboard/articulos/uniones/${encodeURIComponent(union.codigo)}`}>Editar</Link>}</td>
           </tr>)}

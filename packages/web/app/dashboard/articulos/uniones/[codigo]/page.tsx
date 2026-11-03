@@ -8,6 +8,10 @@ import { FichaUnion } from '../_components/ficha-union.tsx'
 
 export const dynamic = 'force-dynamic'
 
+/** `numeric` de Postgres llega como "60.000": se muestra como 60. */
+const cifra = (valor: string | number | null | undefined, defecto: number | string = '') =>
+  valor == null || valor === '' ? String(defecto) : String(Number(valor))
+
 export default async function EditarUnion({ params }: { params: Promise<{ codigo: string }> }) {
   const codigo = decodeURIComponent((await params).codigo)
   const ficha = await leerFichaUnion(codigo)
@@ -24,10 +28,10 @@ export default async function EditarUnion({ params }: { params: Promise<{ codigo
     <FichaUnion nuevo={false} valores={{
       codigo, descripcion: ficha?.descripcion ?? visual?.descripcion ?? codigo,
       cantidad: Math.max(1, Math.min(3, perfiles.length || 1)),
-      perfiles, grosor: String(ficha?.union?.grosor ?? visual?.grosorMm ?? ''),
-      l1: String(ficha?.union?.l1 ?? visual?.l1Mm ?? 0), l2: String(ficha?.union?.l2 ?? visual?.l2Mm ?? 0),
+      perfiles, grosor: cifra(ficha?.union?.grosor ?? visual?.grosorMm),
+      l1: cifra(ficha?.union?.l1 ?? visual?.l1Mm, 0), l2: cifra(ficha?.union?.l2 ?? visual?.l2Mm, 0),
       tipo: String(ficha?.union?.tipo ?? visual?.unionTipo ?? 0),
-      manoObra: String(ficha?.union?.manoObraMinutos ?? 0),
+      manoObra: cifra(ficha?.union?.manoObraMinutos, 0),
       deUsuario: ficha?.union?.deUsuario ?? false, seriesEspecificas: ficha?.union?.seriesEspecificas ?? false,
       series: ficha?.series ?? [], imagen,
     }} recetaProtegida={ficha?.recetaProtegida ?? false} series={series.map(serie => serie.codigo)}

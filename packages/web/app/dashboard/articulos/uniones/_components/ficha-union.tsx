@@ -5,14 +5,10 @@ import { useRouter } from 'next/navigation'
 import { precioLinealUnion } from '@aluminior/core/estructuras'
 import { buscarPerfiles, consultarPrecioPerfil, guardarUnionAction, type EstadoUnion } from '../_lib/acciones.ts'
 import { SelectorImagen } from './selector-imagen.tsx'
+import { TIPOS_UNION } from '../_lib/tipos-union.ts'
 
-const TIPOS = [
-  ['0', '1 Recto'],
-  ['1', '2 Abatible-Corredera'],
-  ['2', '3 90º'],
-  ['3', '4 Regulable (Tubo)'],
-  ['4', '5 Regulable (Macho-Hembra)'],
-] as const
+const importe = (valor: number, decimales = 2) =>
+  valor.toLocaleString('es-ES', { minimumFractionDigits: decimales, maximumFractionDigits: 4 })
 
 export interface ValoresUnion {
   codigo: string
@@ -59,7 +55,7 @@ export function FichaUnion({ nuevo, valores, series, imagenes, precioInicial, re
   }}>
     {nuevo && <input type="hidden" name="_nuevo" value="1" />}
     <Campo nombre="codigo" etiqueta="Código" defecto={valores.codigo} soloLectura={!nuevo} errores={errores} />
-    <Campo nombre="descripcion" etiqueta="Descripción" defecto={valores.descripcion} errores={errores} />
+    <Campo nombre="descripcion" etiqueta="Descripción" defecto={valores.descripcion} errores={errores} texto />
     <label>Cantidad
       <input name="cantidad" type="number" min={1} max={3} defaultValue={valores.cantidad} />
     </label>
@@ -75,7 +71,7 @@ export function FichaUnion({ nuevo, valores, series, imagenes, precioInicial, re
           }} />
       </label>
     ))}
-    {sugerencias.length > 0 && <ul aria-label="Perfiles">
+    {sugerencias.length > 0 && <ul aria-label="Perfiles" className="al-union-sugerencias">
       {sugerencias.map(item => <li key={item.codigo}>
         <button type="button" onClick={() => {
           const campo = document.getElementById(`perfil${ranura}`) as HTMLInputElement | null
@@ -90,40 +86,43 @@ export function FichaUnion({ nuevo, valores, series, imagenes, precioInicial, re
     <Campo nombre="l2" etiqueta="L2" defecto={valores.l2} errores={errores} />
     <label>Tipo de U.
       <select name="tipo" defaultValue={valores.tipo}>
-        {TIPOS.map(([valor, texto]) => <option key={valor} value={valor}>{texto}</option>)}
+        {TIPOS_UNION.map(([valor, texto]) => <option key={valor} value={valor}>{texto}</option>)}
       </select>
     </label>
     <Campo nombre="manoObra" etiqueta="Mano obra" defecto={valores.manoObra} errores={errores} soloLectura={recetaProtegida} />
-    <label>De usuario
-      <input name="deUsuario" type="checkbox" value="1" defaultChecked={valores.deUsuario} />
+    <label className="al-union-casilla">
+      <input name="deUsuario" type="checkbox" value="1" defaultChecked={valores.deUsuario} />De usuario
     </label>
-    <label>Series específicas
-      <input name="seriesEspecificas" type="checkbox" value="1" defaultChecked={valores.seriesEspecificas} />
+    <label className="al-union-casilla">
+      <input name="seriesEspecificas" type="checkbox" value="1" defaultChecked={valores.seriesEspecificas} />Series específicas
     </label>
     <fieldset>
       <legend>Series</legend>
-      {series.map(serie => <label key={serie} className="cifra">
+      {series.map(serie => <label key={serie} className="al-union-casilla cifra">
         <input type="checkbox" name="series" value={serie} defaultChecked={valores.series.includes(serie)} />
         {serie}
       </label>)}
     </fieldset>
     <SelectorImagen nombres={imagenes} valor={valores.imagen} />
     <label>Precio
-      <input readOnly className="cifra" value={precio ? `${precio.eurosPorMetro} €/m ${precio.acabado}` : ''} />
+      <input readOnly className="cifra" value={precio ? `${importe(Number(precio.eurosPorMetro))} €/m ${precio.acabado}` : ''} />
     </label>
     <label>400 mm
-      <input readOnly className="cifra" value={preview == null ? '' : preview.toLocaleString('es-ES', { minimumFractionDigits: 2 })} />
+      <input readOnly className="cifra" value={preview == null ? '' : `${importe(preview)} €`} />
     </label>
     {estado && !estado.ok && estado.mensaje && <p role="alert">{estado.mensaje}</p>}
-    <button type="submit">Aceptar F9</button>
+    <button type="submit" className="al-union-aceptar">Aceptar F9</button>
   </form>
 }
 
-function Campo({ nombre, etiqueta, defecto, errores, soloLectura = false }: {
+function Campo({ nombre, etiqueta, defecto, errores, soloLectura = false, texto = false }: {
   nombre: string; etiqueta: string; defecto: string; errores: Record<string, string[]>; soloLectura?: boolean
+  /** Texto libre: sin la alineación de cifras. */
+  texto?: boolean
 }) {
   return <label>{etiqueta}
-    <input name={nombre} defaultValue={defecto} readOnly={soloLectura} aria-invalid={errores[nombre] ? true : undefined} className="cifra" />
+    <input name={nombre} defaultValue={defecto} readOnly={soloLectura} aria-invalid={errores[nombre] ? true : undefined}
+      className={texto ? undefined : 'cifra'} />
     {errores[nombre] && <span role="alert">{errores[nombre].join('. ')}</span>}
   </label>
 }
