@@ -20,6 +20,7 @@ import { leerGastos } from '../_lib/gastos/index.ts'
 import { PaginaGastos } from './_components/pagina-gastos.tsx'
 import { PreferenciaMedidasPresupuesto } from './_components/disenador/preferencia-medidas.tsx'
 import { leerCatalogoUniones } from '../../../../lib/catalogo-uniones/leer.ts'
+import { codigosDibujables, leerCotasCatalogoDiseno } from '../_lib/estructuras/cotas-catalogo.ts'
 import styles from './presupuesto-movil.module.css'
 
 export const dynamic = 'force-dynamic'
@@ -36,6 +37,7 @@ export default async function DetallePresupuesto({ params, searchParams }: {
   if (!presupuesto) notFound()
   const plantillas = await asegurarCatalogoDiseno(db)
   const catalogoUniones = (await leerCatalogoUniones()).uniones
+  const cotasCatalogo = await leerCotasCatalogoDiseno(db, codigosDibujables(plantillas))
   const [cliente] = presupuesto.clienteCodigo
     ? await db.select({ nombre: schema.clientes.nombre }).from(schema.clientes)
         .where(eq(schema.clientes.codigo, presupuesto.clienteCodigo)).limit(1)
@@ -132,7 +134,7 @@ export default async function DetallePresupuesto({ params, searchParams }: {
         <CatalogoDiseno plantillas={plantillas}>
         {p.estado === 'PENDIENTE' && (
           <AnyadirLinea presupuestoId={id} series={series.map((serie) => serie.codigo)} acabados={acabados}
-            catalogoUniones={catalogoUniones} />
+            catalogoUniones={catalogoUniones} cotasCatalogo={cotasCatalogo} />
         )}
 
         <div className={`${styles.tableScroll} al-ficha-lines`} tabIndex={0}
@@ -155,7 +157,8 @@ export default async function DetallePresupuesto({ params, searchParams }: {
                 resultado={resultadosPorLinea.get(linea.id) ?? null}
                 manoObra={manoObra.filter(f => f.lineaId === linea.id)}
                 despiece={piezasPorLinea.get(linea.id) ?? []} edicion={edicionPorLinea.get(linea.id) ?? null}
-                series={series.map((serie) => serie.codigo)} acabados={acabados} catalogoUniones={catalogoUniones} />
+                series={series.map((serie) => serie.codigo)} acabados={acabados} catalogoUniones={catalogoUniones}
+                cotasCatalogo={cotasCatalogo} />
             ))}</tbody>
           </table>
         </div>

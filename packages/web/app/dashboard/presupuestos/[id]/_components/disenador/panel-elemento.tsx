@@ -2,7 +2,7 @@
 
 import React from 'react'
 import {
-  plantillaDiseno, type CambiosMaterial, type MaterialesGenerales, type ModuloCerramiento,
+  plantillaDiseno, type CambiosMaterial, type CotaCatalogo, type MaterialesGenerales, type ModuloCerramiento,
   type PlantillaDiseno, type RectVisual,
 } from '@aluminior/core/estructuras'
 import { MedidasElemento } from '../medidas-elemento.tsx'
@@ -12,7 +12,7 @@ import { MaterialesElemento } from './materiales-elemento.tsx'
 /** Pestaña Elemento seleccionado: la posición se calcula, no se edita. */
 export function PanelElemento({
   modulo, borrador, indice, rect, pendiente, bloqueado, preparada, eliminable, generales, series, modelos,
-  moviendo, onChange, onActualizar, onActualizarModelos, onDescartar, onSustituir, onEliminar, onMover,
+  cotasCatalogo = [], moviendo, onChange, onActualizar, onActualizarModelos, onDescartar, onSustituir, onEliminar, onMover,
 }: {
   modulo: ModuloCerramiento
   borrador: BorradorModulo
@@ -26,6 +26,7 @@ export function PanelElemento({
   series: readonly string[]
   /** Elementos con la misma estructura, incluido este. */
   modelos: number
+  cotasCatalogo?: readonly CotaCatalogo[]
   onChange: (cambios: BorradorModulo) => void
   onActualizar: () => void
   onActualizarModelos: () => void
@@ -37,7 +38,7 @@ export function PanelElemento({
   onMover: () => void
 }) {
   const plantilla = plantillaDiseno(modulo.estructuraCodigo)
-  const { serieCodigo: _s, vidrioCodigo: _v, ...medidas } = borrador
+  const { serieCodigo: _s, vidrioCodigo: _v, cotas: cotasBorrador, ...medidas } = borrador
   return (
     <div className="al-panel-elemento" aria-label={`Elemento ${indice}`}>
       <div className="al-panel-fila">
@@ -55,6 +56,7 @@ export function PanelElemento({
           </label>
         ))}
         <MedidasElemento modulo={{ ...modulo, ...medidas }} pendiente={pendiente}
+          cotasCatalogo={cotasCatalogo} cotasBorrador={cotasBorrador}
           onChange={onChange} onActualizar={onActualizar} onDescartar={onDescartar} />
       </div>
       <div className="al-panel-fila">

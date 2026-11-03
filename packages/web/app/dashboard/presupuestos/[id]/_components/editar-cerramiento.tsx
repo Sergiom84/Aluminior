@@ -26,7 +26,7 @@ const entrada = 'w-full rounded-md border px-3 py-2 text-sm'
 const estilo = { background: 'var(--al-surface)', borderColor: 'var(--al-border-strong)' }
 
 export function EditarCerramiento({
-  presupuestoId, lineaId, datos, series, acabados, onCancelar, catalogoUniones,
+  presupuestoId, lineaId, datos, series, acabados, onCancelar, catalogoUniones, cotasCatalogo,
 }: {
   presupuestoId: string
   lineaId: string
@@ -35,6 +35,7 @@ export function EditarCerramiento({
   acabados: { codigo: string; descripcion: string }[]
   onCancelar: () => void
   catalogoUniones?: readonly import('@aluminior/core/estructuras').UnionVisual[]
+  cotasCatalogo?: import('@aluminior/core/estructuras').CotasCatalogoPorEstructura
 }) {
   const { estado, enviar, enviando: guardando } = useEnvioFormulario<EstadoEdicionCerramiento>(editarCerramiento)
   const formulario = useRef<HTMLFormElement>(null)
@@ -78,6 +79,7 @@ export function EditarCerramiento({
         anchoMm={anchoMm} altoMm={altoMm} configuracionInicial={datos.configuracion}
         onConfiguracionChange={setConfiguracion} onDimensionesChange={actualizarDimensiones}
         onValidezChange={setConfiguracionValida} series={series} catalogoUniones={catalogoUniones}
+        cotasCatalogo={cotasCatalogo}
         generales={{ serieCodigo: serie || null, vidrioCodigo: vidrio || null }} />
 
       {estado?.mensaje && (

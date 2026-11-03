@@ -83,6 +83,24 @@ seleccionado`, con los datos del elemento elegido en el lienzo o en el árbol:
 | `Actualizar` / papelera | Botones | Aplica cambios al elemento / elimina el elemento (borra en cascada lo anclado) |
 | `Actualizar todos los elementos` | Botón | Aplica los valores a todos los elementos del conjunto |
 
+### Cotas de fijo y travesaño — hipótesis, 03/11/2026
+
+**No confirmado en Productor.** El contraste del 02/11 anotó que `Elemento
+seleccionado` solo muestra `Ancho × Alto` y que las cotas de división se
+editan desde el cartabón (`Diseño V3`). La guía no documenta el punto exacto
+dentro de un conjunto. El 03/11 el arquitecto decidió, como hipótesis, mostrarlas
+en Aluminior en el panel del elemento, junto a Ancho y Alto. Hay que
+confirmarlo en Productor antes de tratar esa ubicación como canónica. No
+moverlas a otra pantalla sin esa confirmación.
+
+En Aluminior, al seleccionar el elemento, el panel muestra un campo por cada
+cota de `estructura_cotas` que pertenezca a `FI`, `FS`, `VS`, `TD`, `F`, `FD`
+o `FZ`. La etiqueta es el nombre del catálogo, o el símbolo si falta; el valor
+por defecto se ve como referencia; la unidad es mm. Si el operador no lo cambia,
+no se guarda: el motor sigue con el catálogo. Vaciar el campo y pulsar
+`Actualizar` quita la cota de instancia. `1OFI` no cambia: sigue con `FIJO
+INFERIOR` (`fiMm`) y su geometría, sin un segundo FI.
+
 ### Lupa de PERFILES: series
 
 Ventana `Búsqueda` con rejilla `Codigo` / `Descripcion` / `DescripcionVentas`.

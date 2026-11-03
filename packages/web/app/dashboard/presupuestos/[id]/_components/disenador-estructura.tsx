@@ -8,7 +8,7 @@ import {
   medidasCerramiento, moduloDesdePlantilla, plantillaDiseno, PLANTILLAS_DISENO, posicionesCerramiento,
   UNIONES_VISUALES, type UnionVisual,
   anclajeInferior, anclajeLateral, medidasPrimeraVentana, modelosIguales, primerHueco, type AnclajeLibre, type ConfiguracionCerramiento,
-  type MaterialesGenerales, type PlantillaDiseno,
+  type CotasCatalogoPorEstructura, type MaterialesGenerales, type PlantillaDiseno,
 } from '@aluminior/core/estructuras'
 import { LienzoCerramiento, type ParteSeleccionada } from './lienzo-cerramiento.tsx'
 import { useBorradoresCerramiento } from './use-borradores-cerramiento.ts'
@@ -36,7 +36,7 @@ function seleccionModulo(configuracion: ConfiguracionCerramiento, id: string): P
  */
 export function DisenadorEstructura({
   codigo, anchoMm, altoMm, configuracionInicial, vacio = false, series = [],
-  catalogoUniones = UNIONES_VISUALES,
+  catalogoUniones = UNIONES_VISUALES, cotasCatalogo = {},
   generales = { serieCodigo: null, vidrioCodigo: null }, onConfiguracionChange,
   onDimensionesChange, onValidezChange,
 }: {
@@ -50,6 +50,7 @@ export function DisenadorEstructura({
   onValidezChange?: (valida: boolean) => void
   series?: readonly string[]
   catalogoUniones?: readonly UnionVisual[]
+  cotasCatalogo?: CotasCatalogoPorEstructura
   /** Materiales generales de la línea, para mostrar lo que heredan los elementos. */
   generales?: MaterialesGenerales
 }) {
@@ -207,6 +208,7 @@ export function DisenadorEstructura({
               onColocar={colocarLateral} />
           : modulo
             ? <PanelElemento modulo={modulo} borrador={edicion.borradores.modulos[modulo.id] ?? {}}
+                cotasCatalogo={cotasCatalogo[modulo.estructuraCodigo] ?? []}
                 generales={generales} series={series}
                 modelos={modelosIguales(configuracion, modulo.id).length}
                 onActualizarModelos={() => aplicarAModelos(modulo.id)}

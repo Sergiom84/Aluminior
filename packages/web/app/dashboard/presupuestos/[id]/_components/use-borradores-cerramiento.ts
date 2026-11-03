@@ -2,13 +2,15 @@
 
 import { useState } from 'react'
 import {
-  actualizarModuloCerramiento, actualizarFiModuloCerramiento, asignarMaterialesModulos,
+  actualizarModuloCerramiento, actualizarFiModuloCerramiento, actualizarCotasModuloCerramiento,
+  asignarMaterialesModulos,
   CAMPOS_MATERIAL, esConfiguracionCerramiento, unionConGrosorCatalogo, UNIONES_VISUALES,
-  type CambiosMaterial, type UnionVisual, type ConfiguracionCerramiento, type ModuloCerramiento, type UnionCerramiento,
+  type CambiosCotasModulo, type CambiosMaterial, type UnionVisual, type ConfiguracionCerramiento,
+  type ModuloCerramiento, type UnionCerramiento,
 } from '@aluminior/core/estructuras'
 
 type Medidas = Partial<Pick<ModuloCerramiento, 'anchoMm' | 'altoMm' | 'fiMm'>>
-export type BorradorModulo = Medidas & CambiosMaterial
+export type BorradorModulo = Medidas & CambiosMaterial & { cotas?: CambiosCotasModulo }
 type Union = Partial<Pick<UnionCerramiento, 'codigo' | 'longitudMm' | 'grosorMm'>>
 export type Borradores = { modulos: Record<string, BorradorModulo>; uniones: Record<string, Union> }
 
@@ -23,13 +25,14 @@ export function aplicarBorrador(configuracion: ConfiguracionCerramiento, borrado
   if (tipo === 'modulos') {
     if (!configuracion.modulos.some(item => item.id === id)) return null
     const borrador = borradores.modulos[id] ?? {}
-    const { fiMm, anchoMm, altoMm } = borrador
+    const { fiMm, anchoMm, altoMm, cotas } = borrador
     const medidas = Object.fromEntries(Object.entries({ anchoMm, altoMm }).filter(([, v]) => v !== undefined))
     const materiales = Object.fromEntries(CAMPOS_MATERIAL.filter(c => Object.hasOwn(borrador, c))
       .map(c => [c, borrador[c]])) as CambiosMaterial
     for (const destino of destinos) {
       siguiente = actualizarModuloCerramiento(siguiente, destino, medidas)
       if (Object.hasOwn(borrador, 'fiMm')) siguiente = actualizarFiModuloCerramiento(siguiente, destino, fiMm!)
+      if (cotas && Object.keys(cotas).length) siguiente = actualizarCotasModuloCerramiento(siguiente, destino, cotas)
     }
     if (Object.keys(materiales).length) siguiente = asignarMaterialesModulos(siguiente, destinos, materiales)
   } else {
@@ -49,9 +52,13 @@ export function useBorradoresCerramiento(configuracion: ConfiguracionCerramiento
     configuracion!.uniones.some(item => Boolean(borradores.uniones[item.id])))
   const editarModulo = (id: string, cambios: BorradorModulo) => {
     setError(null)
-    setBorradores(actual => ({ ...actual, modulos: {
-      ...actual.modulos, [id]: { ...actual.modulos[id], ...cambios },
-    } }))
+    setBorradores(actual => {
+      const previo = actual.modulos[id] ?? {}
+      const cotas = cambios.cotas ? { ...previo.cotas, ...cambios.cotas } : previo.cotas
+      return { ...actual, modulos: {
+        ...actual.modulos, [id]: { ...previo, ...cambios, ...(cotas ? { cotas } : {}) },
+      } }
+    })
   }
   const editarUnion = (id: string, cambios: Union) => {
     setError(null)

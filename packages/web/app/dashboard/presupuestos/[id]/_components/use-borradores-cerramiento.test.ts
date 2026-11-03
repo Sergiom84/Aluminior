@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest'
-import { anadirModuloCerramiento, crearConfiguracionCerramiento, plantillaDiseno,
-  UNIONES_VISUALES, esConfiguracionCerramiento } from '@aluminior/core/estructuras'
+import { afterEach, describe, expect, it } from 'vitest'
+import { anadirModuloCerramiento, crearConfiguracionCerramiento, generarPlantillaCatalogo, plantillaDiseno,
+  registrarCatalogoDiseno, UNIONES_VISUALES, esConfiguracionCerramiento } from '@aluminior/core/estructuras'
 import { aplicarBorrador, type Borradores } from './use-borradores-cerramiento.ts'
 
 const crear = () => anadirModuloCerramiento(
@@ -115,5 +115,91 @@ describe('aplicación a modelos iguales (mejora autorizada de fase 4)', () => {
     borradores.modulos['modulo-1'] = { vidrioCodigo: null }
     const general = aplicarBorrador(conExcepcion, borradores, 'modulos', 'modulo-1')!
     expect(general.modulos[0]).not.toHaveProperty('materiales')
+  })
+})
+
+describe('cotas de instancia en el borrador', () => {
+  afterEach(() => registrarCatalogoDiseno([]))
+
+  function registrar2Ofi() {
+    const generada = generarPlantillaCatalogo({
+      codigo: '2OFI', descripcion: 'Sintética 2OFI', familiaCodigo: '001', anchoMm: 1200, altoMm: 2100,
+      nodos: [
+        { id: 0, tipo: 1, padre: -1, division: 0, posicion: 0, travesano: '', invisible: false,
+          hoja: 0, numeroHoja: 0, tipoCota: 0, cota: 0, equidistantes: 0, marco: 'NOR', variantes: [] },
+        { id: 1, tipo: 5, padre: 0, division: 0, posicion: 0, travesano: '', invisible: false,
+          hoja: 0, numeroHoja: 0, tipoCota: 0, cota: 0, equidistantes: 0, marco: '', variantes: [] },
+      ],
+    })
+    if (generada.estado !== 'dibujable') throw new Error('2OFI sintética no dibujable')
+    registrarCatalogoDiseno([generada.plantilla])
+    return generada.plantilla
+  }
+
+  it('guarda FI escrito y no escribe nada si el borrador no trae cotas', () => {
+    const plantilla = registrar2Ofi()
+    const original = { ...crearConfiguracionCerramiento(plantilla), version: 3 as const }
+    const guardado = JSON.stringify(original)
+    const sinTocar = aplicarBorrador(original, vacios(), 'modulos', 'modulo-1')!
+    expect(sinTocar.modulos[0]).not.toHaveProperty('cotas')
+    expect(sinTocar.version).toBe(3)
+    expect(JSON.stringify(original)).toBe(guardado)
+
+    const borradores = vacios()
+    borradores.modulos['modulo-1'] = { cotas: { FI: 450 } }
+    const aplicado = aplicarBorrador(original, borradores, 'modulos', 'modulo-1')!
+    expect(aplicado.modulos[0].cotas).toEqual({ FI: 450 })
+    expect(original.modulos[0].cotas).toBeUndefined()
+  })
+
+  it('no aplica una cota inválida y vaciar el campo quita la instancia', () => {
+    const plantilla = registrar2Ofi()
+    const original = { ...crearConfiguracionCerramiento(plantilla), version: 3 as const,
+      modulos: [{ ...crearConfiguracionCerramiento(plantilla).modulos[0], cotas: { FI: 450, FS: 200 } }] }
+    const guardado = JSON.stringify(original)
+    const invalido = vacios()
+    invalido.modulos['modulo-1'] = { cotas: { FI: 0 } }
+    expect(aplicarBorrador(original, invalido, 'modulos', 'modulo-1')).toBeNull()
+    expect(JSON.stringify(original)).toBe(guardado)
+
+    const vacio = vacios()
+    vacio.modulos['modulo-1'] = { cotas: { FI: null } }
+    const limpio = aplicarBorrador(original, vacio, 'modulos', 'modulo-1')!
+    expect(limpio.modulos[0].cotas).toEqual({ FS: 200 })
+    const sinFs = vacios()
+    sinFs.modulos['modulo-1'] = { cotas: { FS: null } }
+    expect(aplicarBorrador(limpio, sinFs, 'modulos', 'modulo-1')!.modulos[0]).not.toHaveProperty('cotas')
+  })
+
+  it('aplica la cota a los modelos iguales o a ninguno', () => {
+    const plantilla = registrar2Ofi()
+    const dos = anadirModuloCerramiento(crearConfiguracionCerramiento(plantilla), plantilla)
+    const borradores = vacios()
+    borradores.modulos['modulo-1'] = { cotas: { FI: 320 } }
+    const aplicados = aplicarBorrador(dos, borradores, 'modulos', 'modulo-1', ['modulo-1', 'modulo-2'])!
+    expect(aplicados.version).toBe(3)
+    expect(aplicados.modulos.map((modulo) => modulo.cotas)).toEqual([{ FI: 320 }, { FI: 320 }])
+    borradores.modulos['modulo-1'] = { cotas: { FI: 0 } }
+    expect(aplicarBorrador(dos, borradores, 'modulos', 'modulo-1', ['modulo-1', 'modulo-2'])).toBeNull()
+    expect(dos.modulos.every((modulo) => modulo.cotas === undefined)).toBe(true)
+  })
+
+  it('1OFI no recibe FI por cotas y un v3 sin cotas no las gana al cambiar el ancho', () => {
+    const uno = crearConfiguracionCerramiento(plantillaDiseno('1OFI')!)
+    const borradores = vacios()
+    borradores.modulos['modulo-1'] = { cotas: { FI: 450 } }
+    const intacto = aplicarBorrador(uno, borradores, 'modulos', 'modulo-1')!
+    expect(intacto.version).toBe(2)
+    expect(intacto.modulos[0].fiMm).toBe(300)
+    expect(intacto.modulos[0]).not.toHaveProperty('cotas')
+
+    const v3 = { ...crearConfiguracionCerramiento(plantillaDiseno('2O')!), version: 3 as const }
+    const guardado = JSON.stringify(v3)
+    borradores.modulos['modulo-1'] = { anchoMm: 1000 }
+    const ancho = aplicarBorrador(v3, borradores, 'modulos', 'modulo-1')!
+    expect(ancho.modulos[0]).toMatchObject({ anchoMm: 1000 })
+    expect(ancho.modulos[0]).not.toHaveProperty('cotas')
+    expect(ancho.version).toBe(3)
+    expect(JSON.stringify(v3)).toBe(guardado)
   })
 })

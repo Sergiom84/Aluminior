@@ -385,12 +385,17 @@ lee las cotas de instancia desde `cotasDeCaso(e)` y `anonimizarGrupo` conserva
 
 **Pendiente y límites:**
 
-- **Observado:** en la interfaz del configurador web (`MedidasElemento`) hoy
-  solo `1OFI` expone un campo directo para editar `fiMm`. En Productor, la
-  pestaña `Elemento seleccionado` solo muestra `Ancho × Alto` y las cotas de
-  división se editan desde el icono de cartabón (`Diseño V3`); falta definir y
-  exponer en la interfaz web los controles visibles para que el operador edite
-  las cotas (`FI`, `FS`, `TD`, `F`, `FD`…) de las demás estructuras.
+- **Observado:** en Productor, la pestaña `Elemento seleccionado` solo
+  muestra `Ancho × Alto` y las cotas de división se editan desde el icono de
+  cartabón (`Diseño V3`).
+- **Implementado el 03/11/2026 (UI local, rama `feat/gr1-cotas-ui`):** el panel
+  del elemento muestra, junto a Ancho y Alto, las cotas del catálogo
+  (`estructura_cotas`: `FI`, `FS`, `VS`, `TD`, `F`, `FD`, `FZ`) y las guarda en
+  `modulo.cotas`; `1OFI` sigue con `fiMm`. Es una **desviación deliberada y
+  provisional** de Productor (que usa el cartabón), pendiente de decisión de
+  producto y de comparación lateral con la mochila. Verificado en navegador con
+  una cota sintética: valor del catálogo visible, error accesible, `FI: 350`
+  guardado y reabierto, sin desbordamiento a 375 px.
 - **Hipótesis:** en los ejercicios 2023–2024 (`EMP0013` y `EMP0014`, donde
   `VEstructurasVariables` está vacía) y en los 3 casos de `EMP0015` sin fila en
   `VEstructurasVariables`, Productor guardaba las cotas de instancia en

@@ -12,13 +12,15 @@ import {
   type PlantillaDiseno, type UnionVisual,
 } from './diseno.ts'
 import {
-  anclajesCerramiento, eliminarModuloConDependientes, posicionesCerramiento,
+  anclajesCerramiento, composicionExplicita, eliminarModuloConDependientes, posicionesCerramiento,
   type AnclajeModulo,
 } from './composicion-cerramiento.ts'
 import {
   VERSION_COMPOSICION_CERRAMIENTO, VERSION_CONFIGURACION_CERRAMIENTO,
 } from './versiones-cerramiento.ts'
-import type { CotasModulo } from './cotas-cerramiento.ts'
+import {
+  SIMBOLOS_COTA_MODULO, type CambiosCotasModulo, type CotasModulo, type SimboloCotaModulo,
+} from './cotas-cerramiento.ts'
 import type { MaterialesModulo, MaterialesUnion } from './materiales-cerramiento.ts'
 import type { CompactoModulo } from './compacto-cerramiento.ts'
 
@@ -168,7 +170,7 @@ export function actualizarModuloCerramiento(
   return { ...configuracion, modulos, uniones }
 }
 
-/** Editar FI es la única conversión implícita de v1 a la versión vigente. */
+/** Editar FI convierte v1 en v2. No es la conversión a v3: esa solo ocurre al escribir cotas. */
 export function actualizarFiModuloCerramiento(
   configuracion: ConfiguracionCerramiento,
   id: string,
@@ -183,6 +185,51 @@ export function actualizarFiModuloCerramiento(
     modulos: configuracion.modulos.map((actual) => actual.id === id
       ? { ...actual, fiMm }
       : actual),
+  }
+}
+
+/**
+ * Escribe cotas de instancia en el módulo. `null` quita el símbolo. No toca
+ * `FI` de `1OFI` (sigue en `fiMm`). Solo promueve a v3 si queda alguna cota:
+ * es la única versión que las admite, y un snapshot sin tocar no cambia.
+ */
+export function actualizarCotasModuloCerramiento(
+  configuracion: ConfiguracionCerramiento,
+  id: string,
+  cambios: CambiosCotasModulo,
+): ConfiguracionCerramiento {
+  const modulo = configuracion.modulos.find((actual) => actual.id === id)
+  if (!modulo) return configuracion
+  const es1Ofi = plantillaDiseno(modulo.estructuraCodigo)?.codigo === '1OFI'
+  const siguientes: Partial<Record<SimboloCotaModulo, number>> = { ...modulo.cotas }
+  let toco = false
+  for (const simbolo of SIMBOLOS_COTA_MODULO) {
+    if (!Object.hasOwn(cambios, simbolo) || (es1Ofi && simbolo === 'FI')) continue
+    toco = true
+    const valor = cambios[simbolo]
+    if (typeof valor === 'number') siguientes[simbolo] = valor
+    else delete siguientes[simbolo]
+  }
+  if (!toco) return configuracion
+  const cotas = {} as Partial<Record<SimboloCotaModulo, number>>
+  for (const simbolo of SIMBOLOS_COTA_MODULO) {
+    const valor = siguientes[simbolo]
+    if (typeof valor === 'number') cotas[simbolo] = valor
+  }
+  const hay = Object.keys(cotas).length > 0
+  if (!hay && !Object.hasOwn(modulo, 'cotas')) return configuracion
+  const base = hay && configuracion.version !== VERSION_COMPOSICION_CERRAMIENTO
+    ? composicionExplicita(configuracion) : configuracion
+  return {
+    ...base,
+    modulos: base.modulos.map((actual) => {
+      if (actual.id !== id) return actual
+      if (!hay) {
+        const { cotas: _quitar, ...resto } = actual
+        return resto
+      }
+      return { ...actual, cotas }
+    }),
   }
 }
 

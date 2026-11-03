@@ -14,6 +14,17 @@ export const SIMBOLOS_COTA_ANCHO = ['TD', 'F', 'FD', 'FZ'] as const
 export const SIMBOLOS_COTA_MODULO = [...SIMBOLOS_COTA_ALTO, ...SIMBOLOS_COTA_ANCHO] as const
 export type SimboloCotaModulo = (typeof SIMBOLOS_COTA_MODULO)[number]
 export type CotasModulo = Readonly<Partial<Record<SimboloCotaModulo, number>>>
+/** `null` quita el símbolo y vuelve al valor del catálogo. */
+export type CambiosCotasModulo = Partial<Record<SimboloCotaModulo, number | null>>
+
+/** Fila de `estructura_cotas` que el panel puede mostrar. Sin I/O. */
+export interface CotaCatalogo {
+  simbolo: SimboloCotaModulo
+  nombre: string | null
+  valorPorDefecto: number | null
+  orientacion: string | null
+}
+export type CotasCatalogoPorEstructura = Readonly<Record<string, readonly CotaCatalogo[]>>
 
 export function cotasModuloValidas(valor: unknown, altoMm: number, anchoMm = altoMm): valor is CotasModulo | undefined {
   if (valor === undefined) return true
