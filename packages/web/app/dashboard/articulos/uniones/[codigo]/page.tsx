@@ -12,21 +12,25 @@ export default async function EditarUnion({ params }: { params: Promise<{ codigo
   const codigo = decodeURIComponent((await params).codigo)
   const ficha = await leerFichaUnion(codigo)
   const visual = UNIONES_VISUALES.find(union => union.codigo === codigo)
-  if (!ficha && !visual) notFound()
+  if (!ficha?.union && !visual) notFound()
   const db = crearDb()
   const series = await db.select({ codigo: schema.series.codigo }).from(schema.series).orderBy(asc(schema.series.codigo))
   const perfiles = ficha?.perfiles ?? []
   const precio = await precioPerfil(perfiles[0] ?? '')
+  const imagenes = await imagenesDisponibles()
+  // Sin imagen guardada, la del código solo si existe: no se guarda un nombre que no hay.
+  const imagen = ficha?.union?.imagen ?? (imagenes.includes(`${codigo}.bmp`) ? `${codigo}.bmp` : '')
   return <Shell moduloActivo="articulos">
     <FichaUnion nuevo={false} valores={{
       codigo, descripcion: ficha?.descripcion ?? visual?.descripcion ?? codigo,
       cantidad: Math.max(1, Math.min(3, perfiles.length || 1)),
-      perfiles, grosor: String(ficha?.union.grosor ?? visual?.grosorMm ?? ''),
-      l1: String(ficha?.union.l1 ?? visual?.l1Mm ?? 0), l2: String(ficha?.union.l2 ?? visual?.l2Mm ?? 0),
-      tipo: String(ficha?.union.tipo ?? visual?.unionTipo ?? 0),
-      manoObra: String(ficha?.union.manoObraMinutos ?? 0),
-      deUsuario: ficha?.union.deUsuario ?? true, seriesEspecificas: ficha?.union.seriesEspecificas ?? false,
-      series: ficha?.series ?? [], imagen: ficha?.union.imagen ?? `${codigo}.bmp`,
-    }} series={series.map(serie => serie.codigo)} imagenes={await imagenesDisponibles()} precioInicial={precio} />
+      perfiles, grosor: String(ficha?.union?.grosor ?? visual?.grosorMm ?? ''),
+      l1: String(ficha?.union?.l1 ?? visual?.l1Mm ?? 0), l2: String(ficha?.union?.l2 ?? visual?.l2Mm ?? 0),
+      tipo: String(ficha?.union?.tipo ?? visual?.unionTipo ?? 0),
+      manoObra: String(ficha?.union?.manoObraMinutos ?? 0),
+      deUsuario: ficha?.union?.deUsuario ?? false, seriesEspecificas: ficha?.union?.seriesEspecificas ?? false,
+      series: ficha?.series ?? [], imagen,
+    }} recetaProtegida={ficha?.recetaProtegida ?? false} series={series.map(serie => serie.codigo)}
+      imagenes={imagenes} precioInicial={precio} />
   </Shell>
 }

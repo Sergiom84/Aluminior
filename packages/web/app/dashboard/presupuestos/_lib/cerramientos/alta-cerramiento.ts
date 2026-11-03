@@ -1,5 +1,5 @@
 import {
-  descripcionCerramiento, medidasCerramiento, type ConfiguracionCerramiento,
+  descripcionCerramiento, medidasCerramiento, type ConfiguracionCerramiento, type UnionVisual,
 } from '@aluminior/core/estructuras'
 import type { ClienteEscritura } from '../cliente-db.ts'
 import { validarConfiguracionCerramiento } from './validacion.ts'
@@ -22,6 +22,8 @@ export interface DatosAltaCerramiento {
   vidrioCodigo: string | null
   acabadoCodigo: string | null
   varianteAcristalamiento: '1' | '2'
+  /** Catálogo de uniones de la base. Sin él, solo la reserva de `UNIONES_VISUALES`. */
+  catalogoUniones?: readonly UnionVisual[]
 }
 
 /** Lo que el alta de línea necesita saber del cerramiento, ya resuelto. */
@@ -48,7 +50,7 @@ export type ResultadoAltaCerramiento =
  * se guarda en el documento.
  */
 export function prepararAltaCerramiento(datos: DatosAltaCerramiento): ResultadoAltaCerramiento {
-  const validacion = validarConfiguracionCerramiento(datos.configuracionSerializada)
+  const validacion = validarConfiguracionCerramiento(datos.configuracionSerializada, datos.catalogoUniones)
   if (!validacion.ok) {
     return { ok: false, errores: { configuracionCerramiento: [validacion.mensaje] } }
   }

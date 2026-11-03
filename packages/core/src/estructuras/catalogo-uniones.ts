@@ -28,19 +28,26 @@ export function unionesOfrecidas(catalogo: readonly UnionVisual[], serieCodigo: 
 }
 
 /**
- * Admite el código del catálogo recibido o de la reserva. Un código nuevo con
- * grosor positivo también vale: el snapshot ya trae la medida y la receta la
- * valora el motor. El grosor cero solo es válido en un esquinero conocido.
+ * Lectura de un snapshot ya guardado. Se validó contra el catálogo al escribirse
+ * y trae su propio grosor; leerlo no consulta catálogo.
+ */
+export const CATALOGO_SNAPSHOT = 'SNAPSHOT' as const
+export type CatalogoAdmision = readonly UnionVisual[] | typeof CATALOGO_SNAPSHOT
+
+/**
+ * Al escribir, el código debe estar en el catálogo recibido o en la reserva.
+ * El grosor cero solo es válido en un esquinero (tipo 4) de ese catálogo.
  */
 export function unionAdmitida(
   union: Pick<UnionCerramiento, 'codigo' | 'grosorMm'>,
-  catalogo: readonly UnionVisual[] = UNIONES_VISUALES,
+  catalogo: CatalogoAdmision = UNIONES_VISUALES,
 ): boolean {
   if (!Number.isFinite(union.grosorMm) || union.grosorMm < 0) return false
   if (!unionConfigurada(union)) return union.grosorMm > 0
+  if (catalogo === CATALOGO_SNAPSHOT) return true
   const conocida = buscarUnion(catalogo, union.codigo) ?? buscarUnion(UNIONES_VISUALES, union.codigo)
-  if (conocida) return union.grosorMm > 0 || (union.grosorMm === 0 && conocida.unionTipo === 4)
-  return union.grosorMm > 0
+  if (!conocida) return false
+  return union.grosorMm > 0 || (union.grosorMm === 0 && conocida.unionTipo === 4)
 }
 
 export function aplicarGrosorCatalogo(

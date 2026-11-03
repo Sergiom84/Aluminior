@@ -8,7 +8,7 @@ import { escribirSatelites } from './escribir-satelites.ts'
  */
 
 import { schema } from '@aluminior/db'
-import { descripcionCerramiento } from '@aluminior/core/estructuras'
+import { CATALOGO_SNAPSHOT, descripcionCerramiento } from '@aluminior/core/estructuras'
 import type { ClienteEscritura } from '../cliente-db.ts'
 import { validarConfiguracionCerramiento } from '../cerramientos/validacion.ts'
 import { actualizarTotales } from '../totales.ts'
@@ -70,7 +70,7 @@ function descripcionCopiada(
     avisos.push(`Línea ${entrada.linea.orden}: descripción de catálogo, se conserva`)
     return entrada.linea.descripcion
   }
-  const validacion = validarConfiguracionCerramiento(JSON.stringify(entrada.cerramiento.configuracion))
+  const validacion = validarConfiguracionCerramiento(JSON.stringify(entrada.cerramiento.configuracion), CATALOGO_SNAPSHOT)
   if (!validacion.ok) {
     avisos.push(`Línea ${entrada.linea.orden}: ${validacion.mensaje}; se conserva la descripción`)
     return entrada.linea.descripcion

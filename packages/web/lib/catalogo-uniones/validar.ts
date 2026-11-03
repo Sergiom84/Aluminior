@@ -40,16 +40,19 @@ export function validarUnion(entrada: Record<string, string | string[]>): { ok: 
   const tipo = Number(texto('tipo'))
   const manoObraMinutos = numero(texto('manoObra'))
   const series = (Array.isArray(entrada.series) ? entrada.series : texto('series') ? [texto('series')] : [])
-    .map(serie => serie.trim()).filter(Boolean)
+    .map(serie => serie.trim()).filter((serie, indice, todas) => serie && todas.indexOf(serie) === indice)
   const imagen = texto('imagen')
 
   if (!CODIGO.test(codigo)) errores.codigo = ['Código no válido']
   if (!descripcion || descripcion.length > 120) errores.descripcion = ['Descripción obligatoria']
   if (![1, 2, 3].includes(cantidad)) errores.cantidad = ['Cantidad 1, 2 o 3']
+  // Obligatorios solo si se escribe la receta; lo decide `guardarUnion` con el estado de la base.
   else perfiles.slice(0, cantidad).forEach((perfil, indice) => {
-    if (!CODIGO.test(perfil)) errores[`perfil${indice + 1}`] = ['Perfil obligatorio']
+    if (perfil && !CODIGO.test(perfil)) errores[`perfil${indice + 1}`] = ['Perfil no válido']
   })
   if (!Number.isFinite(grosor) || grosor < 0) errores.grosor = ['Grosor no válido']
+  // Igual que el configurador: grosor cero solo con el valor guardado 4 (opción «5» del CHM).
+  else if (grosor === 0 && tipo !== 4) errores.grosor = ['Grosor cero solo con el tipo 5']
   if (!Number.isFinite(l1) || l1 < 0) errores.l1 = ['L1 no válido']
   if (!Number.isFinite(l2) || l2 < 0) errores.l2 = ['L2 no válido']
   if (![0, 1, 2, 3, 4].includes(tipo)) errores.tipo = ['Tipo no válido']

@@ -66,7 +66,7 @@ export function DisenadorEstructura({
     region.current?.querySelector<SVGElement>(`[data-modulo-id="${enfocar.current}"]`)?.focus()
     enfocar.current = null
   }, [configuracion])
-  const edicion = useBorradoresCerramiento(configuracion, setConfiguracion)
+  const edicion = useBorradoresCerramiento(configuracion, setConfiguracion, catalogoUniones)
   const [seleccion, setSeleccion] = useState<ParteSeleccionada | null>(() =>
     configuracion ? seleccionModulo(configuracion, configuracion.modulos[0].id) : null)
   const [vista, setVista] = useState<VistaDisenador>(configuracion ? 'propiedades' : 'catalogo')
@@ -83,8 +83,8 @@ export function DisenadorEstructura({
     const medidas = medidasCerramiento(configuracion)
     onConfiguracionChange(configuracion)
     onDimensionesChange(medidas.anchoMm, medidas.altoMm)
-    onValidezChange?.(esConfiguracionCerramiento(configuracion) && !edicion.pendientes)
-  }, [configuracion, edicion.pendientes, onConfiguracionChange, onDimensionesChange, onValidezChange])
+    onValidezChange?.(esConfiguracionCerramiento(configuracion, catalogoUniones) && !edicion.pendientes)
+  }, [configuracion, catalogoUniones, edicion.pendientes, onConfiguracionChange, onDimensionesChange, onValidezChange])
 
   const terminarInsercion = () => { setPreparada(null); setArrastrada(null) }
   const colocar = (plantilla: PlantillaDiseno, anclaje: AnclajeLibre | null, copiar = false) => {

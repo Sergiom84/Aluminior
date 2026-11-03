@@ -1,12 +1,12 @@
 import {
-  esConfiguracionCerramiento, geometriaAperturaVisual, geometriaCerramiento,
+  CATALOGO_SNAPSHOT, esConfiguracionCerramiento, geometriaAperturaVisual, geometriaCerramiento,
   medidasCerramiento, proyectarCerramiento,
   type AperturaVisual, type ConfiguracionCerramiento, type RectVisual,
 } from '@aluminior/core/estructuras'
 
 /** Adaptación de coordenadas al soporte PDF; el reparto interior pertenece a core. */
 export function geometriaCerramientoPdf(configuracion: ConfiguracionCerramiento, ancho = 240, alto = 150) {
-  if (!esConfiguracionCerramiento(configuracion)) throw new Error('Configuración de cerramiento inválida')
+  if (!esConfiguracionCerramiento(configuracion, CATALOGO_SNAPSHOT)) throw new Error('Configuración de cerramiento inválida')
   if (!Number.isFinite(ancho) || !Number.isFinite(alto) || ancho < 100 || alto < 80) {
     throw new Error('El dibujo PDF requiere al menos 100 × 80 puntos')
   }

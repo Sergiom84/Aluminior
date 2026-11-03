@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { ilike, or, sql } from 'drizzle-orm'
 import { crearDb, schema } from '@aluminior/db'
 import { guardarUnion } from '../../../../../lib/catalogo-uniones/guardar.ts'
-import { guardarSubida } from '../../../../../lib/catalogo-uniones/subir.ts'
+import { prepararSubida, type ImagenSubida } from '../../../../../lib/catalogo-uniones/subir.ts'
 import { sesionValida } from '../../../../../lib/catalogo-uniones/sesion.ts'
 import { precioPerfil } from '../../../../../lib/catalogo-uniones/leer.ts'
 import { validarUnion } from '../../../../../lib/catalogo-uniones/validar.ts'
@@ -24,16 +24,17 @@ export async function guardarUnionAction(_previo: EstadoUnion, datos: FormData):
       entrada.series = [...(Array.isArray(lista) ? lista : []), valor]
     } else entrada[clave] = valor
   }
-  const archivo = datos.get('archivo')
-  if (archivo instanceof File && archivo.size > 0) {
-    const subida = await guardarSubida(archivo)
-    if (!subida.ok) return subida
-    entrada.imagen = subida.nombre
-  }
   const validada = validarUnion(entrada)
   if (!validada.ok) return validada
+  let subida: ImagenSubida | null = null
+  const archivo = datos.get('archivo')
+  if (archivo instanceof File && archivo.size > 0) {
+    const preparada = await prepararSubida(archivo)
+    if (!preparada.ok) return preparada
+    subida = preparada.imagen
+  }
   try {
-    const resultado = await guardarUnion(validada.datos, datos.get('_nuevo') === '1')
+    const resultado = await guardarUnion(validada.datos, datos.get('_nuevo') === '1', subida)
     if (!resultado.ok) return resultado
     revalidatePath('/dashboard/articulos/uniones')
     revalidatePath(`/dashboard/articulos/uniones/${encodeURIComponent(resultado.codigo)}`)

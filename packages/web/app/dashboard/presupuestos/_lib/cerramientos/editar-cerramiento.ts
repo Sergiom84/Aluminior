@@ -9,7 +9,7 @@ import type { ClienteEscritura } from '../cliente-db.ts'
 import { actualizarTotales } from '../totales.ts'
 import { persistirManoObra, type SnapshotManoObra } from '../mano-obra/index.ts'
 import { prepararAltaCerramiento, type AltaCerramiento } from './alta-cerramiento.ts'
-import { configuracionTieneFiExplicito } from '@aluminior/core/estructuras'
+import { configuracionTieneFiExplicito, type UnionVisual } from '@aluminior/core/estructuras'
 
 type Db = Pick<ReturnType<typeof crearDb>, 'transaction'>
 
@@ -25,6 +25,7 @@ export interface EntradaEdicionCerramiento {
   cantidad: number
   horasFabricacion: string
   horasColocacion: string
+  catalogoUniones?: readonly UnionVisual[]
 }
 
 export type ResultadoEdicionCerramiento =
@@ -52,6 +53,7 @@ export async function actualizarCerramiento(
     vidrioCodigo: entrada.vidrioCodigo,
     acabadoCodigo: entrada.acabadoCodigo,
     varianteAcristalamiento: entrada.varianteAcristalamiento,
+    catalogoUniones: entrada.catalogoUniones,
   })
   if (!alta.ok) return alta
 

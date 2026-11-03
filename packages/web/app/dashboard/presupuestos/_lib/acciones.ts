@@ -19,8 +19,10 @@ import { registrarFallo } from './errores.ts'
 import { esquemaLinea } from './lineas/esquema-linea.ts'
 import { crearPresupuestoAlta } from './presupuestos/crear-presupuesto.ts'
 import { fechaLocalMadrid } from './fecha-local.ts'
-import { prepararAltaCerramiento } from './cerramientos/index.ts'
+import { validarConfiguracionCerramiento } from './cerramientos/validacion.ts'
+import { CATALOGO_SNAPSHOT } from '@aluminior/core/estructuras'
 import { altaLinea } from './lineas/alta-linea.ts'
+import { leerCatalogoUniones } from '../../../../lib/catalogo-uniones/leer.ts'
 import { borrarLineaDePresupuesto, type ResultadoBorradoLinea } from './lineas/borrar-linea.ts'
 import { opcionesHerrajeDe as opcionesDeHerrajeOfrecidas, type GrupoOpcionesHerraje } from './estructuras/index.ts'
 import { asegurarCatalogoDiseno, necesitaCatalogoDiseno } from './catalogo-diseno/index.ts'
@@ -99,16 +101,18 @@ export async function anyadirLinea(_previo: Estado, datos: FormData): Promise<Es
   if (!p.success) return { ok: false, errores: p.error.flatten().fieldErrors }
 
   const cargarCatalogo = p.data.tipo === 'CERRAMIENTO' && necesitaCatalogoDiseno(p.data.configuracionCerramiento)
+  // Antes de conectar, solo la forma; el código de cada unión se valida con el catálogo de la base al dar de alta.
   if (p.data.tipo === 'CERRAMIENTO' && !cargarCatalogo) {
-    const alta = prepararAltaCerramiento({ ...p.data, configuracionSerializada: p.data.configuracionCerramiento })
-    if (!alta.ok) return alta
+    const forma = validarConfiguracionCerramiento(p.data.configuracionCerramiento, CATALOGO_SNAPSHOT)
+    if (!forma.ok) return { ok: false, errores: { configuracionCerramiento: [forma.mensaje] } }
   }
   let resultado: Awaited<ReturnType<typeof altaLinea>>
   try {
     if (!await usuarioActual()) return { ok: false, errores: {}, mensaje: 'Sesión no válida' }
+    const catalogoUniones = p.data.tipo === 'CERRAMIENTO' ? (await leerCatalogoUniones()).uniones : undefined
     const db = crearDb()
     if (cargarCatalogo) await asegurarCatalogoDiseno(db)
-    resultado = await altaLinea(db, p.data, datos.getAll('opcionHerraje').map(String))
+    resultado = await altaLinea(db, p.data, datos.getAll('opcionHerraje').map(String), catalogoUniones)
   } catch (e) {
     if (e instanceof ErrorOperacionCerramiento) return { ok: false, errores: {}, mensaje: e.message }
     return { ok: false, errores: {}, mensaje: registrarFallo('anyadirLinea', e) }

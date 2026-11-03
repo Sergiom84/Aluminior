@@ -30,8 +30,10 @@ export interface ValoresUnion {
   imagen: string
 }
 
-export function FichaUnion({ nuevo, valores, series, imagenes, precioInicial }: {
+export function FichaUnion({ nuevo, valores, series, imagenes, precioInicial, recetaProtegida = false }: {
   nuevo: boolean
+  /** Receta importada de Productor: perfiles y mano de obra no se reescriben. */
+  recetaProtegida?: boolean
   valores: ValoresUnion
   series: readonly string[]
   imagenes: readonly string[]
@@ -64,8 +66,10 @@ export function FichaUnion({ nuevo, valores, series, imagenes, precioInicial }: 
     {[1, 2, 3].map(n => (
       <label key={n}>Perfil unión {n}
         <input id={`perfil${n}`} name={`perfil${n}`} defaultValue={valores.perfiles[n - 1] ?? ''} className="cifra"
+          readOnly={recetaProtegida}
           onFocus={() => setRanura(n)}
           onChange={async evento => {
+            if (recetaProtegida) return
             if (n === 1) setPrecio(await consultarPrecioPerfil(evento.target.value))
             setSugerencias(await buscarPerfiles(evento.target.value))
           }} />
@@ -89,7 +93,7 @@ export function FichaUnion({ nuevo, valores, series, imagenes, precioInicial }: 
         {TIPOS.map(([valor, texto]) => <option key={valor} value={valor}>{texto}</option>)}
       </select>
     </label>
-    <Campo nombre="manoObra" etiqueta="Mano obra" defecto={valores.manoObra} errores={errores} />
+    <Campo nombre="manoObra" etiqueta="Mano obra" defecto={valores.manoObra} errores={errores} soloLectura={recetaProtegida} />
     <label>De usuario
       <input name="deUsuario" type="checkbox" value="1" defaultChecked={valores.deUsuario} />
     </label>

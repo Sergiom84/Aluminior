@@ -6,6 +6,7 @@ import { valorarArticulo } from '../articulos/valorar-articulo.ts'
 import { valorarEstructura } from '../estructuras/index.ts'
 import { guardarLinea, type OpcionHerrajeElegida, type PiezaDespiece,
   type RanuraAcristalamiento, type ValoresLinea } from './guardar-linea.ts'
+import type { UnionVisual } from '@aluminior/core/estructuras'
 import { altaCerramientoValorado } from '../cerramientos/alta-valorada.ts'
 import { comisionDeLineas } from '../gastos/index.ts'
 
@@ -14,9 +15,9 @@ export type ResultadoAltaLinea = { ok: true; id: string; mensaje?: string } |
   { ok: false; errores: Record<string, string[]>; mensaje?: string }
 
 export async function altaLinea(db: ReturnType<typeof crearDb>, d: EntradaAltaLinea,
-  opcionesElegidas: string[] = [],
+  opcionesElegidas: string[] = [], catalogoUniones?: readonly UnionVisual[],
 ): Promise<ResultadoAltaLinea> {
-  if (d.tipo === 'CERRAMIENTO') return altaCerramientoValorado(db, d)
+  if (d.tipo === 'CERRAMIENTO') return altaCerramientoValorado(db, d, catalogoUniones)
     const [presupuesto] = await db.select()
       .from(schema.presupuestos)
       .where(eq(schema.presupuestos.id, d.presupuestoId)).limit(1)

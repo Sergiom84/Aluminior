@@ -46,9 +46,8 @@ export async function leerCatalogoUniones(): Promise<CatalogoUniones> {
 
 export async function leerFichaUnion(codigo: string) {
   const db = crearDb()
-  const [union] = await db.select().from(schema.estructuraUnion)
+  const [union = null] = await db.select().from(schema.estructuraUnion)
     .where(eq(schema.estructuraUnion.estructuraCodigo, codigo)).limit(1)
-  if (!union) return null
   const [estructura] = await db.select({ descripcion: schema.estructuras.descripcion }).from(schema.estructuras)
     .where(eq(schema.estructuras.codigo, codigo)).limit(1)
   const [series, receta] = await Promise.all([
@@ -63,8 +62,13 @@ export async function leerFichaUnion(codigo: string) {
       .where(eq(schema.estructuraPlantillaCatalogo.estructuraCodigo, codigo))
       .orderBy(asc(schema.estructuraPlantillaCatalogo.lineaOrigen)),
   ])
+  if (!union && !estructura) return null
   const perfiles = receta.filter(fila => fila.funcion?.startsWith('UNION')).map(fila => fila.articulo)
-  return { union, descripcion: estructura?.descripcion ?? codigo, series: series.map(fila => fila.serie), perfiles }
+  return {
+    union, descripcion: estructura?.descripcion ?? codigo, series: series.map(fila => fila.serie), perfiles,
+    /** Receta importada: `guardarUnion` no la reescribe. */
+    recetaProtegida: receta.length > 0 && !union?.deUsuario,
+  }
 }
 
 async function tablaDibujos(db: ReturnType<typeof crearDb>) {

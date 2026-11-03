@@ -4,7 +4,7 @@ import { crearConfiguracionCerramiento, esConfiguracionCerramiento, medidasCerra
 import { insertarModuloEnAnclaje } from './composicion-cerramiento.ts'
 import { medidasFabricacionCerramiento } from './medidas-uniones.ts'
 import {
-  aplicarGrosorCatalogo, fusionarCatalogoUniones, precioLinealUnion, unionAdmitida, unionOfrecida,
+  aplicarGrosorCatalogo, CATALOGO_SNAPSHOT, fusionarCatalogoUniones, precioLinealUnion, unionAdmitida, unionOfrecida,
 } from './catalogo-uniones.ts'
 import { normalizarUnionesCerramiento } from './uniones-cerramiento.ts'
 
@@ -27,7 +27,8 @@ describe('catálogo de uniones inyectado', () => {
   it('QA-U60 en 2O + fijo 400 + 2O mide 2800 y cada tubo 400 mm', () => {
     const config = caso2800()
     expect(esConfiguracionCerramiento(config, [QA])).toBe(true)
-    expect(esConfiguracionCerramiento(config)).toBe(true)
+    expect(esConfiguracionCerramiento(config)).toBe(false)
+    expect(esConfiguracionCerramiento(config, CATALOGO_SNAPSHOT)).toBe(true)
     expect(medidasCerramiento(config)).toEqual({ anchoMm: 2800, altoMm: 1200 })
     expect([...medidasFabricacionCerramiento(config).uniones.values()]).toEqual([
       { longitudMm: 400 }, { longitudMm: 400 },
@@ -51,6 +52,18 @@ describe('catálogo de uniones inyectado', () => {
     expect(unionOfrecida(QA, 'RPT')).toBe(false)
     expect(unionOfrecida(QA, null)).toBe(false)
     expect(unionOfrecida({ ...QA, seriesEspecificas: false }, null)).toBe(true)
+  })
+
+  it('al escribir, un código fuera del catálogo recibido no se admite', () => {
+    expect(unionAdmitida({ codigo: 'XX999', grosorMm: 60 }, [QA])).toBe(false)
+    expect(unionAdmitida({ codigo: 'QA-U60', grosorMm: 60 }, [QA])).toBe(true)
+    expect(unionAdmitida({ codigo: 'XX999', grosorMm: 60 }, CATALOGO_SNAPSHOT)).toBe(true)
+  })
+
+  it('el esquinero de usuario de tipo 4 admite grosor cero; otro tipo no', () => {
+    const esquinero = { ...QA, codigo: 'QA-E0', grosorMm: 0, unionTipo: 4 as const }
+    expect(unionAdmitida({ codigo: 'QA-E0', grosorMm: 0 }, [esquinero])).toBe(true)
+    expect(unionAdmitida({ codigo: 'QA-U60', grosorMm: 0 }, [QA])).toBe(false)
   })
 
   it('rechaza grosor cero de un código nuevo y conserva la reserva', () => {

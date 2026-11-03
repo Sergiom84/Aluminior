@@ -54,6 +54,20 @@ describe('aplicación explícita del cerramiento', () => {
     expect(aplicarBorrador(original, borradores, 'uniones', 'union-1')!.uniones[0].grosorMm).toBe(2)
     expect(original.uniones[0].grosorMm).toBe(100)
   })
+  it('con el catálogo de la base usa su grosor y admite la unión de usuario', () => {
+    const original = crear()
+    const catalogo = [
+      { codigo: 'GMU038', descripcion: 'Tubo editado', grosorMm: 40, unionTipo: 0 as const },
+      { codigo: 'QA-U60', descripcion: 'Tubo de usuario', grosorMm: 60, unionTipo: 0 as const },
+    ]
+    const borradores = vacios()
+    borradores.uniones['union-1'] = { codigo: 'GMU038', grosorMm: 40 }
+    expect(aplicarBorrador(original, borradores, 'uniones', 'union-1', ['union-1'], catalogo)!.uniones[0].grosorMm).toBe(40)
+    expect(aplicarBorrador(original, borradores, 'uniones', 'union-1')!.uniones[0].grosorMm).toBe(60)
+    borradores.uniones['union-1'] = { codigo: 'QA-U60', grosorMm: 60 }
+    expect(aplicarBorrador(original, borradores, 'uniones', 'union-1', ['union-1'], catalogo)!.uniones[0].codigo).toBe('QA-U60')
+    expect(aplicarBorrador(original, borradores, 'uniones', 'union-1')).toBeNull()
+  })
   it('rechaza longitud vacía e identidades ausentes', () => {
     const original = crear()
     const borradores = vacios()

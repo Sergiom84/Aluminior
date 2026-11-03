@@ -1,20 +1,14 @@
 import { existsSync, readdirSync } from 'node:fs'
-import { dirname, resolve, sep } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { resolve, sep } from 'node:path'
 
 const NOMBRE = /^[^\\/:*?"<>|]{1,80}\.(bmp|png|jpe?g|webp)$/i
-const RAIZ_REPO = resolve(dirname(fileURLToPath(import.meta.url)), '../../../..')
 
 /** Carpeta pedida por el operador. No se copia al repositorio. */
 export const DIBUJOS_ESTRUCTURAS_LOCAL =
   'C:\\Users\\sergi\\Desktop\\MIX\\Productor\\Aluminio\\EMP0016\\DIBUJOS\\ESTRUCTURAS'
 
-export function carpetaSubidas() {
-  return resolve(RAIZ_REPO, 'output', 'uniones-imagenes')
-}
-
 export function raicesDibujos(env = process.env.ALUMINIOR_DIBUJOS_ESTRUCTURAS): string[] {
-  const candidatas = [env, DIBUJOS_ESTRUCTURAS_LOCAL, carpetaSubidas()].filter((ruta): ruta is string => Boolean(ruta))
+  const candidatas = [env, DIBUJOS_ESTRUCTURAS_LOCAL].filter((ruta): ruta is string => Boolean(ruta))
   return [...new Set(candidatas.filter(ruta => existsSync(ruta)).map(ruta => resolve(ruta)))]
 }
 

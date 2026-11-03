@@ -1,5 +1,5 @@
-import { plantillaDiseno, UNIONES_VISUALES, type UnionVisual } from './diseno.ts'
-import { unionAdmitida } from './catalogo-uniones.ts'
+import { plantillaDiseno, UNIONES_VISUALES } from './diseno.ts'
+import { unionAdmitida, type CatalogoAdmision } from './catalogo-uniones.ts'
 import { cotasModuloValidas } from './cotas-cerramiento.ts'
 import { compactoModuloValido } from './compacto-cerramiento.ts'
 import { resolverGeometriaFi1Ofi } from './geometria-1ofi.ts'
@@ -8,10 +8,13 @@ import { anclajesV3Validos, VERSION_COMPOSICION_CERRAMIENTO } from './composicio
 import type { ConfiguracionCerramiento } from './cerramiento.ts'
 import { VERSION_CONFIGURACION_CERRAMIENTO } from './versiones-cerramiento.ts'
 
-/** Guarda de datos recibidos del navegador o leídos de la base. */
+/**
+ * Guarda de datos recibidos del navegador o leídos de la base. Al escribir se
+ * pasa el catálogo cargado; al leer un snapshot guardado, `CATALOGO_SNAPSHOT`.
+ */
 export function esConfiguracionCerramiento(
   valor: unknown,
-  catalogo: readonly UnionVisual[] = UNIONES_VISUALES,
+  catalogo: CatalogoAdmision = UNIONES_VISUALES,
 ): valor is ConfiguracionCerramiento {
   if (!valor || typeof valor !== 'object') return false
   const candidato = valor as Partial<ConfiguracionCerramiento>

@@ -1,5 +1,6 @@
 import { compararDecimal, normalizarDecimal, sumarDecimal } from '../../precios/decimal.ts'
 import { configuracionTieneFiExplicito, esConfiguracionCerramiento } from '../cerramiento.ts'
+import { CATALOGO_SNAPSHOT } from '../catalogo-uniones.ts'
 import { decimal, objeto, tarifa, texto, textoNullable, unicos, variante } from './campos.ts'
 import { esHerraje, esPartida, esPieza, esRanura } from './validar-piezas.ts'
 import { esOrigenSinUnion } from './sin-union.ts'
@@ -60,7 +61,7 @@ export function esResultadoCerramiento(v: unknown): v is ResultadoCerramientoV1 
     !Array.isArray(v.configuracion.modulos) || !v.configuracion.modulos.every(objeto) ||
     !Array.isArray(v.configuracion.uniones) || !v.configuracion.uniones.every(objeto)) return false
   if (v.version !== 1 || (v.redondeoVenta !== 'ESTRUCTURA_NUMBER_V1' && v.redondeoVenta !== 'FILA_CENTIMOS') ||
-    !esConfiguracionCerramiento(v.configuracion) ||
+    !esConfiguracionCerramiento(v.configuracion, CATALOGO_SNAPSHOT) ||
     configuracionTieneFiExplicito(v.configuracion) ||
     !objeto(v.motor) || !texto(v.motor.codigo) || !texto(v.motor.version) || !tarifa(v.tarifa) ||
     v.unidadMateriales !== 'COMPOSICION' || v.ambitoManoObraManual !== 'LINEA' ||

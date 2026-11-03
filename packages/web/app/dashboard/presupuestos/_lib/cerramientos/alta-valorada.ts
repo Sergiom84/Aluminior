@@ -1,14 +1,15 @@
 import type { crearDb } from '@aluminior/db'
+import type { UnionVisual } from '@aluminior/core/estructuras'
 import type { EntradaAltaLinea, ResultadoAltaLinea } from '../lineas/alta-linea.ts'
 import { guardarLineaValorada } from '../lineas/guardar-linea.ts'
 import { prepararAltaCerramiento } from './alta-cerramiento.ts'
 import { prepararLineaValorada } from './preparar-linea-valorada.ts'
 
 export async function altaCerramientoValorado(db: Pick<ReturnType<typeof crearDb>, 'transaction'>,
-  entrada: EntradaAltaLinea,
+  entrada: EntradaAltaLinea, catalogoUniones?: readonly UnionVisual[],
 ): Promise<ResultadoAltaLinea> {
   const alta = prepararAltaCerramiento({ ...entrada,
-    configuracionSerializada: entrada.configuracionCerramiento })
+    configuracionSerializada: entrada.configuracionCerramiento, catalogoUniones })
   if (!alta.ok) return alta
   let aviso: string | null = null
   await guardarLineaValorada(db, entrada.presupuestoId, async (tx, cabecera) => {

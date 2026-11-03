@@ -6,7 +6,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { asc, eq, inArray } from 'drizzle-orm'
 import { crearDb, schema } from '@aluminior/db'
-import { esConfiguracionCerramiento } from '@aluminior/core/estructuras'
+import { CATALOGO_SNAPSHOT, esConfiguracionCerramiento } from '@aluminior/core/estructuras'
 import { presupuestoIncompleto } from '@aluminior/core/precios'
 import { Shell } from '../../_components/shell.tsx'
 import { AnyadirLinea } from './_components/anyadir-linea.tsx'
@@ -70,7 +70,7 @@ export default async function DetallePresupuesto({ params, searchParams }: {
   const edicionPorLinea = new Map<string, DatosEdicionCerramiento>()
   for (const cerramiento of cerramientos) {
     const linea = lineaPorId.get(cerramiento.lineaId)
-    if (!linea || !esConfiguracionCerramiento(cerramiento.configuracion)) continue
+    if (!linea || !esConfiguracionCerramiento(cerramiento.configuracion, CATALOGO_SNAPSHOT)) continue
     if (cerramiento.varianteAcristalamiento !== '1' && cerramiento.varianteAcristalamiento !== '2') continue
     const horas = manoObra.filter((fila) => fila.lineaId === linea.id)
     edicionPorLinea.set(linea.id, {

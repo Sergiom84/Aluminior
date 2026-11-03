@@ -1,4 +1,4 @@
-import { compactoEfectivoModulo, cotasEfectivasModulo, esConfiguracionCerramiento, esResultadoCerramiento, etapasVentaCerramiento, materialesEfectivos,
+import { CATALOGO_SNAPSHOT, compactoEfectivoModulo, cotasEfectivasModulo, esConfiguracionCerramiento, esResultadoCerramiento, etapasVentaCerramiento, materialesEfectivos,
   unionConfigurada, resolverOrigenSinUnion, medidasFabricacionCerramiento,
   type ConfiguracionCerramiento, type RedondeoVentaCerramiento, type ResultadoCerramientoV1,
   type ResultadoOrigenCerramiento } from '@aluminior/core/estructuras'
@@ -29,7 +29,7 @@ export interface EntradaValoracionCerramiento {
 export async function valorarCerramiento(cliente: ClienteEscritura,
   entrada: EntradaValoracionCerramiento,
 ): Promise<ResultadoCerramientoV1> {
-  if (!esConfiguracionCerramiento(entrada.configuracion) || !Number.isInteger(entrada.tarifa) ||
+  if (!esConfiguracionCerramiento(entrada.configuracion, CATALOGO_SNAPSHOT) || !Number.isInteger(entrada.tarifa) ||
     entrada.tarifa < 1 || entrada.tarifa > 32767) throw new Error('Configuración de valoración no válida')
   const origenes: ResultadoOrigenCerramiento[] = []
   // Con el catálogo de despiece completo cargado, cada origen se valora por filas

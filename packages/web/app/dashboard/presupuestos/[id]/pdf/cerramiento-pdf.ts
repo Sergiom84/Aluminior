@@ -1,5 +1,5 @@
 import {
-  esConfiguracionCerramiento, esResultadoCerramiento, medidasCerramiento,
+  CATALOGO_SNAPSHOT, esConfiguracionCerramiento, esResultadoCerramiento, medidasCerramiento,
   type ConfiguracionCerramiento,
 } from '@aluminior/core/estructuras'
 import type { CerramientoPdf } from './tipos'
@@ -25,7 +25,7 @@ function identidad(configuracion: ConfiguracionCerramiento) {
 /** Sólo proyecta datos persistidos; nunca consulta catálogo ni reconstruye importes. */
 export function adaptarCerramientoPdf(entrada: EntradaCerramientoPdf): CerramientoPdf {
   const { configuracion, resultado } = entrada
-  if (!esConfiguracionCerramiento(configuracion) || entrada.version !== configuracion.version) {
+  if (!esConfiguracionCerramiento(configuracion, CATALOGO_SNAPSHOT) || entrada.version !== configuracion.version) {
     throw new DatosPdfIncoherentes('Configuración de cerramiento no válida')
   }
   if (resultado && (!esResultadoCerramiento(resultado.resultado) ||

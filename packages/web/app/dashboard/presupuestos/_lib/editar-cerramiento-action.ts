@@ -8,6 +8,7 @@ import { registrarFallo } from './errores.ts'
 import { esquemaLinea } from './lineas/esquema-linea.ts'
 import { actualizarCerramiento } from './cerramientos/index.ts'
 import { asegurarCatalogoDiseno } from './catalogo-diseno/index.ts'
+import { leerCatalogoUniones } from '../../../../lib/catalogo-uniones/leer.ts'
 
 export type EstadoEdicionCerramiento =
   | { ok: true; mensaje: string }
@@ -42,6 +43,7 @@ export async function editarCerramiento(
       cantidad: p.data.cantidad,
       horasFabricacion: p.data.horasFabricacion,
       horasColocacion: p.data.horasColocacion,
+      catalogoUniones: (await leerCatalogoUniones()).uniones,
     })
     if (!resultado.ok) return resultado
     revalidatePath(`/dashboard/presupuestos/${p.data.presupuestoId}`)

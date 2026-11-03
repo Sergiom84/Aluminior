@@ -85,8 +85,8 @@ editando el artículo o la estructura. M1 cubre solo **Uniones**.
    y subirlas a la base. No se copian al repositorio. Están en `dibujo_catalogo`
    (494 BMP de catálogo, 24.196.892 bytes, RLS activo). No se subieron
    `Articulos` ni `VPresupuestosLin`. En disco no hay dibujo de `GMU038`–`GMU041`,
-   `PSU10` ni `U`. Una subida nueva del operador sigue yendo a
-   `output/uniones-imagenes/`.
+   `PSU10` ni `U`. Una subida nueva del operador se guarda en `dibujo_catalogo`
+   en la misma transacción que la unión (corrección del 03/11/2026).
 
 **Fuera de M1:** tornillos (ninguna unión los usa, y el motor no lee aún
 `Intervalo`/`UnidadesMin` de la plantilla; mostrar el campo solo cuando se
@@ -121,3 +121,43 @@ cualquier cambio en Supabase.
 - Al terminar: actualizar la fila M1 del roadmap, `docs/ESTADO-ACTUAL.md` y la
   [guía del diseñador](GUIA-DISENADOR-PRODUCTOR.md) §3, con fecha y evidencia.
   No crear documentos de relevo nuevos en la raíz.
+
+## Corrección tras la revisión — 03/11/2026
+
+La revisión de `e1c479f` encontró un test en rojo y seis defectos. Corregidos en
+la misma rama:
+
+1. **Validación de escritura.** `esConfiguracionCerramiento` vuelve a exigir que
+   el código esté en el catálogo (el de la base, o la reserva si no hay otro).
+   Alta, edición y copia de cerramientos cargan `leerCatalogoUniones()`. Para leer
+   un snapshot guardado (página, PDF, `esResultadoCerramiento`, entrada de
+   `valorarCerramiento`) se usa `CATALOGO_SNAPSHOT`, que no consulta catálogo.
+   `composicion-cerramiento.test.ts` («no un código fuera de catálogo») vuelve a
+   pasar.
+2. **Grosor.** El configurador y el servidor normalizan con el catálogo de la base.
+   Un grosor editado en `GMU038` llega al presupuesto.
+3. **Esquinero de usuario.** El tipo guardado 4 con grosor 0 se admite si está en
+   el catálogo cargado. La ficha rechaza grosor 0 con otro tipo.
+4. **Solo uniones.** `guardarUnion` rechaza editar un código que no sea una unión
+   (`No es una unión`). Ya no se puede pisar la receta de una ventana.
+5. **Receta de Productor.** La receta solo se reescribe si la unión es nueva, ya
+   era de usuario o no tiene filas. En una unión importada se editan grosor, L1,
+   L2, tipo, series e imagen. Perfiles y mano de obra quedan en solo lectura.
+   «De usuario» sale desmarcado por defecto en las importadas.
+6. **Imagen subida.** Va a `dibujo_catalogo` en la misma transacción. Si el
+   guardado falla, no queda imagen huérfana. Se quitó `output/uniones-imagenes`.
+
+**Desviación de las reglas de M1:** `valorar-cerramiento.ts` cambia en una línea
+(su guarda de entrada usa `CATALOGO_SNAPSHOT`). Sin ese cambio, una línea con una
+unión de usuario no se podría valorar. E2 debe integrarlo al fusionar.
+
+Evidencia (Postgres efímero local, 55433): `guardar.integracion.test.ts` (4),
+`validacion.test.ts` (4), `use-borradores-cerramiento.test.ts` (+1) y núcleo (+2).
+Controles negativos medidos: sin la guarda de unión cae 1; si se reescribe siempre
+la receta cae 1; con la imagen fuera de la transacción cae 1; con el `validacion.ts`
+anterior caen 4; con el hook de borradores anterior cae 1.
+
+Sigue abierto: aplicar 0034 en Supabase (revisar antes 0021–0033), cargar las 52
+uniones, confirmar `UnionTipo` en Productor, contraste de la 0016 y comparación
+visual con Productor. Fuera de M1 (para después): precio manual explícito para
+piezas sin perfil en catálogo.
