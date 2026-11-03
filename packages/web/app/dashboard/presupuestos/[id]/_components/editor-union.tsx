@@ -2,15 +2,22 @@
 
 import React from 'react'
 import {
-  UNION_SIN_CONFIGURAR, UNIONES_VISUALES, type UnionCerramiento,
+  UNION_SIN_CONFIGURAR, UNIONES_VISUALES, unionesOfrecidas, type UnionCerramiento, type UnionVisual,
 } from '@aluminior/core/estructuras'
 
-export function EditorUnion({ union, indice, pendiente, onChange, onActualizar, onDescartar }: {
+export function EditorUnion({ union, indice, pendiente, onChange, onActualizar, onDescartar,
+  catalogoUniones = UNIONES_VISUALES, serieCodigo = null }: {
   union: UnionCerramiento; indice: number; pendiente: boolean
   onChange: (cambios: Partial<UnionCerramiento>) => void
   onActualizar: () => void; onDescartar: () => void
+  catalogoUniones?: readonly UnionVisual[]
+  serieCodigo?: string | null
 }) {
-  const catalogo = UNIONES_VISUALES.find(item => item.codigo === union.codigo)
+  const ofrecidas = unionesOfrecidas(catalogoUniones, serieCodigo)
+  const opciones = ofrecidas.some(item => item.codigo === union.codigo) || !union.codigo
+    ? ofrecidas
+    : [...ofrecidas, ...catalogoUniones.filter(item => item.codigo === union.codigo)]
+  const catalogo = opciones.find(item => item.codigo === union.codigo)
   return <fieldset>
     <legend>Unión {indice}</legend>
     <label>Unión
@@ -19,16 +26,19 @@ export function EditorUnion({ union, indice, pendiente, onChange, onActualizar, 
           onChange({ ...UNION_SIN_CONFIGURAR })
           return
         }
-        const elegido = UNIONES_VISUALES.find(item => item.codigo === evento.target.value)
+        const elegido = opciones.find(item => item.codigo === evento.target.value)
         if (elegido) onChange({ codigo: elegido.codigo, grosorMm: elegido.grosorMm })
       }}>
         <option value={UNION_SIN_CONFIGURAR.codigo}>*(UNION NO CONFIG.)</option>
-        {UNIONES_VISUALES.map(item => <option key={item.codigo} value={item.codigo}>
+        {opciones.map(item => <option key={item.codigo} value={item.codigo}>
           {item.codigo} · {item.descripcion}
         </option>)}
       </select>
     </label>
     {catalogo && <span className="al-union-descripcion">{catalogo.descripcion}</span>}
+    {catalogo?.codigo && <img alt={catalogo.codigo} className="al-union-elegida"
+      src={`/dashboard/articulos/uniones/imagen?archivo=${encodeURIComponent(catalogo.imagen || `${catalogo.codigo}.bmp`)}`}
+      onError={evento => { evento.currentTarget.hidden = true }} />}
     <label>Longitud
       <input aria-label={`Longitud unión ${indice}`} type="number" min={1} step="any"
         value={Number.isFinite(union.longitudMm) ? union.longitudMm : ''}

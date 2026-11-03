@@ -204,6 +204,33 @@ describe('carga dirigida del catálogo del motor', () => {
     writeFileSync(join(origen, 'ConjuntosDescuentos.csv'), csv.ConjuntosDescuentos)
   }, 30000)
 
+  it('conserva la unión de usuario y su receta al recargar el catálogo', async () => {
+    await sql`INSERT INTO estructuras (codigo, descripcion, es_accesorio) VALUES
+      ('QA-U60', 'Unión de usuario', true), ('QA-CAT', 'Unión de catálogo', true)`
+    await sql`INSERT INTO estructura_union
+      (estructura_codigo, grosor, l1, l2, tipo, mano_obra_minutos, series_especificas, de_usuario)
+      VALUES ('QA-U60', 60, 0, 0, 0, 0, false, true)`
+    await sql`INSERT INTO estructura_plantilla_catalogo
+      (estructura_codigo, linea_origen, id_pieza, articulo, cantidad, hoja, grupos_adicionales, funcion, formula_largo)
+      VALUES ('QA-U60', 1, 0, 'GM60X60', 1, 0, ARRAY['','','',''], 'UNION1', 'L')`
+    writeFileSync(join(origen, 'Estructuras.csv'),
+      'Codigo,Familia,TipoPerf,UnionGrosor,UnionL1,UnionL2,UnionTipo,AsocASeriesSN,UsuarioSN\n' +
+      'QA-MOTOR,001,A,0,0,0,0,False,False\nQA-U60,103,,99,1,2,0,False,False\nQA-CAT,103,,40,0,0,2,False,False\n')
+    try {
+      await cargarMotorCatalogo(sql, origen, { aplicar: true })
+      expect(await sql`SELECT grosor::float AS grosor, de_usuario FROM estructura_union WHERE estructura_codigo = 'QA-U60'`)
+        .toEqual([{ grosor: 60, de_usuario: true }])
+      expect(await sql`SELECT articulo FROM estructura_plantilla_catalogo WHERE estructura_codigo = 'QA-U60'`)
+        .toEqual([{ articulo: 'GM60X60' }])
+      expect(await sql`SELECT grosor::float AS grosor, de_usuario FROM estructura_union WHERE estructura_codigo = 'QA-CAT'`)
+        .toEqual([{ grosor: 40, de_usuario: false }])
+    } finally {
+      await sql`DELETE FROM estructura_plantilla_catalogo WHERE estructura_codigo IN ('QA-U60', 'QA-CAT')`
+      await sql`DELETE FROM estructura_union WHERE estructura_codigo IN ('QA-U60', 'QA-CAT')`
+      await sql`DELETE FROM estructuras WHERE codigo IN ('QA-U60', 'QA-CAT')`
+    }
+  }, 30000)
+
   it('se niega sin la migración del motor', async () => {
     await sql`DROP TABLE conjunto_ranuras_vacias`
     await expect(cargarMotorCatalogo(sql, origen)).rejects.toBeInstanceOf(AbortoMotor)

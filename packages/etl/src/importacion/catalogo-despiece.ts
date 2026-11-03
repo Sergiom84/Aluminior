@@ -10,6 +10,7 @@ import type { Cargar } from './cargar.ts'
 import { crearCargadorEstricto } from './cargar-estricto.ts'
 import { configuracionPrecioTabla } from './precio-en-tabla.ts'
 import { descartar, excluir, type Resultado } from './resultado.ts'
+import { codigosUnionUsuario, sincronizarUnionesCatalogo, vaciarDespieceSalvoUsuario } from './uniones-catalogo.ts'
 
 const cero = (v: string | undefined) => num(v) ?? '0'
 const listas = (v: string | undefined) => (v ?? '').split(';').map(s => s.trim()).filter(Boolean)
@@ -93,7 +94,11 @@ export function parametrosSerie(f: Fila) {
   }
 }
 
-export async function cargarCatalogoDespiece(cargar: Cargar, estructuras: ReadonlySet<string> | null): Promise<Resultado[]> {
+export async function cargarCatalogoDespiece(
+  cargar: Cargar,
+  estructuras: ReadonlySet<string> | null,
+  conservar: ReadonlySet<string> = new Set(),
+): Promise<Resultado[]> {
   const unicas = (nombre: string) => { const vistas = new Set<string>(); return (r: Resultado, ...clave: unknown[]) => {
     const k = JSON.stringify(clave)
     if (vistas.has(k)) { descartar(r, `${nombre} duplicado`); return false }
@@ -105,6 +110,7 @@ export async function cargarCatalogoDespiece(cargar: Cargar, estructuras: Readon
   const vacias = new Set<string>()
   return [
     await cargar('EstructurasArticulos', 'estructura_plantilla_catalogo', (f, r) => {
+      if (conservar.has(txt(f.Estructura) ?? '')) { excluir(r, 'unión de usuario'); return null }
       const fila = filaPlantilla(f, r, estructuras)
       return fila && plantillaUnica(r, fila.estructura_codigo, fila.linea_origen) ? fila : null
     }),
@@ -124,6 +130,7 @@ export async function cargarCatalogoDespiece(cargar: Cargar, estructuras: Readon
     await cargar('Estructuras', 'estructura_parametros_despiece', (f, r) => {
       const codigo = txt(f.Codigo)
       if (!codigo) { descartar(r, 'estructura sin código'); return null }
+      if (conservar.has(codigo)) { excluir(r, 'unión de usuario'); return null }
       if (estructuras && !estructuras.has(codigo)) { excluir(r, 'estructura no importada'); return null }
       return { estructura_codigo: codigo, tipo_perfil: txt(f.TipoPerf) }
     }),
@@ -184,11 +191,13 @@ export function comprobarOrigenDespiece(origen: string) {
 export async function reemplazarCatalogoDespiece(tx: Sql, origen: string) {
   // 0033 es opcional: una base sin la tabla conserva la carga anterior sin opciones de accesorio.
   const [{ opciones }] = await tx<{ opciones: boolean }[]>`SELECT to_regclass('public.estructura_opciones_accesorio') IS NOT NULL AS opciones`
-  for (const tabla of [...TABLAS, ...opciones ? ['estructura_opciones_accesorio'] : []]) await tx`DELETE FROM ${tx(tabla)}`
+  const conservar = await codigosUnionUsuario(tx)
+  await vaciarDespieceSalvoUsuario(tx, [...TABLAS, ...opciones ? ['estructura_opciones_accesorio'] : []], conservar)
   const estructuras = new Set((await tx`SELECT codigo FROM estructuras`).map(f => String(f.codigo)))
   const cargar = crearCargadorEstricto(tx, origen)
+  await sincronizarUnionesCatalogo(tx, origen, estructuras, conservar)
   const resultados = [
-    ...await cargarCatalogoDespiece(cargar, estructuras),
+    ...await cargarCatalogoDespiece(cargar, estructuras, conservar),
     await cargarParametrosSerie(tx, origen),
     ...opciones ? [await cargar('EstructurasOpcOpciones', 'estructura_opciones_accesorio', (f, r) => filaOpcionAccesorio(f, r, estructuras))] : [],
   ]

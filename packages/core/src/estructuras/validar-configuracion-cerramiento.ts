@@ -1,16 +1,18 @@
-import { plantillaDiseno, UNIONES_VISUALES } from './diseno.ts'
+import { plantillaDiseno, UNIONES_VISUALES, type UnionVisual } from './diseno.ts'
+import { unionAdmitida } from './catalogo-uniones.ts'
 import { cotasModuloValidas } from './cotas-cerramiento.ts'
 import { compactoModuloValido } from './compacto-cerramiento.ts'
 import { resolverGeometriaFi1Ofi } from './geometria-1ofi.ts'
 import { materialesModuloValidos } from './materiales-cerramiento.ts'
-import {
-  anclajesV3Validos, unionConfigurada, VERSION_COMPOSICION_CERRAMIENTO,
-} from './composicion-cerramiento.ts'
+import { anclajesV3Validos, VERSION_COMPOSICION_CERRAMIENTO } from './composicion-cerramiento.ts'
 import type { ConfiguracionCerramiento } from './cerramiento.ts'
 import { VERSION_CONFIGURACION_CERRAMIENTO } from './versiones-cerramiento.ts'
 
 /** Guarda de datos recibidos del navegador o leídos de la base. */
-export function esConfiguracionCerramiento(valor: unknown): valor is ConfiguracionCerramiento {
+export function esConfiguracionCerramiento(
+  valor: unknown,
+  catalogo: readonly UnionVisual[] = UNIONES_VISUALES,
+): valor is ConfiguracionCerramiento {
   if (!valor || typeof valor !== 'object') return false
   const candidato = valor as Partial<ConfiguracionCerramiento>
   if ((candidato.version !== 1 && candidato.version !== VERSION_CONFIGURACION_CERRAMIENTO &&
@@ -36,10 +38,9 @@ export function esConfiguracionCerramiento(valor: unknown): valor is Configuraci
   })
   const unionesValidas = candidato.uniones.every((union) =>
     union && typeof union.id === 'string' && typeof union.codigo === 'string' &&
-    (!unionConfigurada(union) || UNIONES_VISUALES.some((catalogo) => catalogo.codigo === union.codigo)) &&
+    unionAdmitida(union, catalogo) &&
     Number.isFinite(union.longitudMm) && union.longitudMm > 0 &&
-    Number.isFinite(union.grosorMm) && (union.grosorMm > 0 ||
-      (union.grosorMm === 0 && UNIONES_VISUALES.some(c => c.codigo === union.codigo && c.unionTipo === 4))))
+    Number.isFinite(union.grosorMm))
   const ids = [...candidato.modulos.map((modulo) => modulo.id),
     ...candidato.uniones.map((union) => union.id)]
   const versionCoherente = candidato.version === VERSION_COMPOSICION_CERRAMIENTO

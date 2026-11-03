@@ -8,7 +8,11 @@
  * ya existen y se reutilizan.
  */
 
-import { boolean, index, integer, jsonb, numeric, pgTable, primaryKey, text } from 'drizzle-orm/pg-core'
+import { boolean, customType, index, integer, jsonb, numeric, pgTable, primaryKey, text } from 'drizzle-orm/pg-core'
+
+const bytea = customType<{ data: Buffer; driverData: Buffer }>({
+  dataType: () => 'bytea',
+})
 import { estructuras } from './catalogo.ts'
 
 /** Filas de `EstructurasArticulos` con `TipoDoc` vacío, con todos sus enlaces de diseño. */
@@ -157,6 +161,37 @@ export const conjuntoRanurasVacias = pgTable('conjunto_ranuras_vacias', {
   conjuntoCodigo: text('conjunto_codigo').notNull(),
   componente: text('componente').notNull(),
 }, t => ({ pk: primaryKey({ columns: [t.conjuntoCodigo, t.componente] }) })).enableRLS()
+
+/**
+ * Datos de unión que `estructuras` no guarda. 1:1 con una estructura de familia 103.
+ * `de_usuario` protege la fila y su receta frente a la recarga del catálogo.
+ */
+export const estructuraUnion = pgTable('estructura_union', {
+  estructuraCodigo: text('estructura_codigo').primaryKey().references(() => estructuras.codigo, { onDelete: 'cascade' }),
+  grosor: numeric('grosor', { precision: 10, scale: 3 }).notNull(),
+  l1: numeric('l1', { precision: 10, scale: 3 }).notNull().default('0'),
+  l2: numeric('l2', { precision: 10, scale: 3 }).notNull().default('0'),
+  tipo: integer('tipo').notNull(),
+  manoObraMinutos: numeric('mano_obra_minutos', { precision: 12, scale: 4 }).notNull().default('0'),
+  seriesEspecificas: boolean('series_especificas').notNull().default(false),
+  deUsuario: boolean('de_usuario').notNull().default(false),
+  /** Nombre de fichero. El binario no se versiona. */
+  imagen: text('imagen'),
+}).enableRLS()
+
+/** Dibujo de catálogo. El binario vive aquí, no en Git. Sin políticas: solo el servidor. */
+export const dibujoCatalogo = pgTable('dibujo_catalogo', {
+  nombre: text('nombre').primaryKey(),
+  tipo: text('tipo').notNull(),
+  bytes: integer('bytes').notNull(),
+  contenido: bytea('contenido').notNull(),
+}).enableRLS()
+
+/** Series con las que se puede usar la unión cuando `series_especificas` está activo. */
+export const estructuraUnionSeries = pgTable('estructura_union_series', {
+  estructuraCodigo: text('estructura_codigo').notNull().references(() => estructuraUnion.estructuraCodigo, { onDelete: 'cascade' }),
+  serieCodigo: text('serie_codigo').notNull(),
+}, t => ({ pk: primaryKey({ columns: [t.estructuraCodigo, t.serieCodigo] }) })).enableRLS()
 
 /**
  * `EstructurasOpcOpciones`: opciones de los grupos `G{grupo}O{opcion}` de una

@@ -103,11 +103,15 @@ export default async function Articulos({
           )}
         </form>
 
-        <Link href="/dashboard/articulos/nuevo"
-          className="rounded-md px-4 py-2 text-sm font-medium"
-          style={{ background: 'var(--al-accent)', color: 'var(--al-accent-contrast)' }}>
-          Nuevo artículo
-        </Link>
+        <div className="flex gap-2">
+          <Link href="/dashboard/articulos/uniones" className="rounded-md border px-4 py-2 text-sm"
+            style={{ borderColor: 'var(--al-border-strong)' }}>Uniones</Link>
+          <Link href="/dashboard/articulos/nuevo"
+            className="rounded-md px-4 py-2 text-sm font-medium"
+            style={{ background: 'var(--al-accent)', color: 'var(--al-accent-contrast)' }}>
+            Nuevo artículo
+          </Link>
+        </div>
       </div>
 
       <p className="mb-3 text-sm" style={{ color: 'var(--al-text-muted)' }}>

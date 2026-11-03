@@ -161,8 +161,10 @@ icono corresponde a cada uno y qué cambia en medida, despiece o precio.
 - El código se puede teclear en la casilla `Unión`. El desplegable no
   respondió bien al teclado. El acabado de unión se escribe a mano (`L`).
 
-En Aluminior, el desplegable de unión ofrece los mismos 14 códigos
-(`GMU038`–`GMU041`, `PSU001`–`PSU009`, `U`). Desde el 02/11/2026 las uniones
+En Aluminior, sin la migración 0034 el desplegable ofrece los 14 códigos de
+reserva (`GMU038`–`GMU041`, `PSU001`–`PSU009`, `U`). Con 0034, Artículos →
+Uniones mantiene el catálogo y el configurador lo lee; los dibujos salen de
+la carpeta local `DIBUJOS\ESTRUCTURAS` y no se copian al repositorio. Desde el 02/11/2026 las uniones
 configuradas restan la mitad de su grosor a cada pieza contigua y miden el
 lado común, como en los documentos reales: el 2 × 2 con `U` mide 2400 × 2400
 y 2O + fijo 400 + 2O con `GMU038` mide 2800. Las líneas anteriores conservan

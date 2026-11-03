@@ -2,7 +2,7 @@
 
 import React from 'react'
 import {
-  anclajesCerramiento, UNIONES_VISUALES, unionConfigurada, type ConfiguracionCerramiento,
+  anclajesCerramiento, UNIONES_VISUALES, unionConfigurada, type ConfiguracionCerramiento, type UnionVisual,
 } from '@aluminior/core/estructuras'
 
 export type Entrada =
@@ -10,7 +10,10 @@ export type Entrada =
   | { tipo: 'union'; id: string; indice: number; texto: string; configurada: boolean; lado: 'derecha' | 'abajo' | 'izquierda' }
 
 /** Orden de creación, como la lista de Productor: cada elemento seguido de su unión. */
-export function entradasCerramiento(configuracion: ConfiguracionCerramiento): Entrada[] {
+export function entradasCerramiento(
+  configuracion: ConfiguracionCerramiento,
+  catalogoUniones: readonly UnionVisual[] = UNIONES_VISUALES,
+): Entrada[] {
   const anclajes = anclajesCerramiento(configuracion)
   const uniones = new Map(configuracion.uniones.map((union) => [union.id, union]))
   const entradas: Entrada[] = []
@@ -20,7 +23,7 @@ export function entradasCerramiento(configuracion: ConfiguracionCerramiento): En
     const anclaje = anclajes.get(modulo.id)
     const union = anclaje && uniones.get(anclaje.unionId)
     if (!anclaje || !union) continue
-    const catalogo = UNIONES_VISUALES.find((item) => item.codigo === union.codigo)
+    const catalogo = catalogoUniones.find((item) => item.codigo === union.codigo)
     entradas.push({ tipo: 'union', id: union.id, indice: entradas.length, lado: anclaje.lado,
       configurada: unionConfigurada(union),
       texto: unionConfigurada(union) ? `${union.codigo} ${catalogo?.descripcion ?? ''}`.trim() : '*(UNION NO CONFIG.)' })
@@ -28,12 +31,13 @@ export function entradasCerramiento(configuracion: ConfiguracionCerramiento): En
   return entradas
 }
 
-export function ListaElementos({ configuracion, seleccionadoId, onSeleccionar }: {
+export function ListaElementos({ configuracion, seleccionadoId, onSeleccionar, catalogoUniones = UNIONES_VISUALES }: {
   configuracion: ConfiguracionCerramiento | null
   seleccionadoId: string | null
   onSeleccionar: (entrada: Entrada) => void
+  catalogoUniones?: readonly UnionVisual[]
 }) {
-  const entradas = configuracion ? entradasCerramiento(configuracion) : []
+  const entradas = configuracion ? entradasCerramiento(configuracion, catalogoUniones) : []
   return (
     <ol className="al-lista-elementos" aria-label="Elementos y uniones">
       {entradas.map((entrada) => (

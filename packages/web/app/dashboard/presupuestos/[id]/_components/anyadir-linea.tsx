@@ -23,11 +23,12 @@ type TipoLinea = 'ESTRUCTURA' | 'ARTICULO' | 'CERRAMIENTO'
  * Artículos siguen a un clic. Tras Aceptar, el diálogo se reabre para seguir añadiendo.
  */
 export function AnyadirLinea({
-  presupuestoId, series, acabados,
+  presupuestoId, series, acabados, catalogoUniones,
 }: {
   presupuestoId: string
   series: string[]
   acabados: { codigo: string; descripcion: string }[]
+  catalogoUniones?: readonly import('@aluminior/core/estructuras').UnionVisual[]
 }) {
   const [tipo, setTipo] = useState<TipoLinea>('CERRAMIENTO')
   const [plantilla, setPlantilla] = useState<PlantillaDiseno | null>(null)
@@ -154,7 +155,7 @@ export function AnyadirLinea({
           <DisenadorEstructura key={edicion} codigo="2O" anchoMm={anchoMm} altoMm={altoMm} vacio
             onConfiguracionChange={setConfiguracion}
             onDimensionesChange={actualizarDimensiones}
-            onValidezChange={setConfiguracionValida} series={series}
+            onValidezChange={setConfiguracionValida} series={series} catalogoUniones={catalogoUniones}
             generales={{ serieCodigo: serie || null, vidrioCodigo: vidrio || null }} />
           <CamposCerramiento err={err} series={series} acabados={acabados}
             serie={serie} setSerie={setSerie} vidrio={vidrio} setVidrio={setVidrio} />

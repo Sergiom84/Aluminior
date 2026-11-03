@@ -63,7 +63,15 @@ export interface UnionVisual {
   codigo: string
   descripcion: string
   grosorMm: number
-  unionTipo?: 0 | 4
+  /** Valor guardado en Productor. 4 = esquinero sin separación. 1–3 siguen como hipótesis del CHM. */
+  unionTipo?: 0 | 1 | 2 | 3 | 4
+  l1Mm?: number
+  l2Mm?: number
+  seriesEspecificas?: boolean
+  series?: readonly string[]
+  /** Nombre de fichero, nunca una ruta de Productor. */
+  imagen?: string | null
+  deUsuario?: boolean
 }
 
 export interface RectVisual { x: number; y: number; ancho: number; alto: number }

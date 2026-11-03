@@ -6,6 +6,7 @@ import {
   cambiarEstructuraModuloCerramiento, crearConfiguracionCerramiento, dependientesModulo,
   eliminarModuloConDependientes, esConfiguracionCerramiento, esModuloRaiz, insertarModuloEnAnclaje,
   medidasCerramiento, moduloDesdePlantilla, plantillaDiseno, PLANTILLAS_DISENO, posicionesCerramiento,
+  UNIONES_VISUALES, type UnionVisual,
   anclajeInferior, anclajeLateral, medidasPrimeraVentana, modelosIguales, primerHueco, type AnclajeLibre, type ConfiguracionCerramiento,
   type MaterialesGenerales, type PlantillaDiseno,
 } from '@aluminior/core/estructuras'
@@ -35,6 +36,7 @@ function seleccionModulo(configuracion: ConfiguracionCerramiento, id: string): P
  */
 export function DisenadorEstructura({
   codigo, anchoMm, altoMm, configuracionInicial, vacio = false, series = [],
+  catalogoUniones = UNIONES_VISUALES,
   generales = { serieCodigo: null, vidrioCodigo: null }, onConfiguracionChange,
   onDimensionesChange, onValidezChange,
 }: {
@@ -47,6 +49,7 @@ export function DisenadorEstructura({
   onDimensionesChange: (anchoMm: number, altoMm: number) => void
   onValidezChange?: (valida: boolean) => void
   series?: readonly string[]
+  catalogoUniones?: readonly UnionVisual[]
   /** Materiales generales de la línea, para mostrar lo que heredan los elementos. */
   generales?: MaterialesGenerales
 }) {
@@ -190,7 +193,7 @@ export function DisenadorEstructura({
       </div>
 
       <aside className="al-designer-lista">
-        <ListaElementos configuracion={configuracion}
+        <ListaElementos configuracion={configuracion} catalogoUniones={catalogoUniones}
           seleccionadoId={seleccion?.parte === 'union' ? seleccion.elemento : modulo?.id ?? null}
           onSeleccionar={seleccionarEntrada} />
       </aside>
@@ -219,7 +222,8 @@ export function DisenadorEstructura({
                 onEliminar={eliminar} moviendo={mover.moviendo === modulo.id}
                 onMover={() => mover.moviendo === modulo.id ? mover.cancelar() : mover.iniciar(modulo.id)} />
             : union && <div className="al-designer-union-editor">
-                <EditorUnion union={{ ...union, ...edicion.borradores.uniones[union.id] }}
+                <EditorUnion catalogoUniones={catalogoUniones} serieCodigo={generales.serieCodigo}
+                  union={{ ...union, ...edicion.borradores.uniones[union.id] }}
                   indice={entradasCerramiento(configuracion).find((e) => e.id === union.id)!.indice}
                   pendiente={Boolean(edicion.borradores.uniones[union.id])}
                   onChange={(cambios) => edicion.editarUnion(union.id, cambios)}

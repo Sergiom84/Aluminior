@@ -1,6 +1,6 @@
 # M1 — Mantenimiento de uniones (Asistente de Configuración) — 02/11/2026
 
-Estado: **plan**, sin implementar. Registro de la tarea:
+Estado: **implementado en rama** `feat/m1-mantenimiento-uniones` el 03/11/2026. Sin Supabase y sin repetir el contraste de la 0016. Registro de la tarea:
 [roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md), fila M1. Entrada: [estado](../ESTADO-ACTUAL.md).
 
 ## Por qué
@@ -81,11 +81,12 @@ editando el artículo o la estructura. M1 cubre solo **Uniones**.
    llamar al servicio, revalidar), como pide `AGENTS.md`. El editor de unión del
    configurador (`editor-union.tsx`, `lista-elementos.tsx`) lee el catálogo de
    la base y muestra la imagen en el escaparate de uniones.
-5. **Imagen.** Subida de PNG/JPG/WebP por el operador a almacenamiento privado,
-   con tipo y tamaño validados. No importar en bloque los BMP de
-   `C:\Productor\...\DIBUJOS`: la carpeta `ESTRUCTURAS` son recursos de Productor
-   y no se copian (`AGENTS.md`). Importar los dibujos de perfiles de
-   `Articulos` (catálogo del fabricante) es una decisión aparte.
+5. **Imagen.** El 03/11/2026 Sergio pidió usar `EMP0016\DIBUJOS\ESTRUCTURAS`
+   y subirlas a la base. No se copian al repositorio. Están en `dibujo_catalogo`
+   (494 BMP de catálogo, 24.196.892 bytes, RLS activo). No se subieron
+   `Articulos` ni `VPresupuestosLin`. En disco no hay dibujo de `GMU038`–`GMU041`,
+   `PSU10` ni `U`. Una subida nueva del operador sigue yendo a
+   `output/uniones-imagenes/`.
 
 **Fuera de M1:** tornillos (ninguna unión los usa, y el motor no lee aún
 `Intervalo`/`UnidadesMin` de la plantilla; mostrar el campo solo cuando se
