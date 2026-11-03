@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { esDibujoUnion } from '../../../../../lib/catalogo-uniones/dibujos.ts'
+import { esDibujoUnion } from '../../../../../lib/catalogo-uniones/nombres-dibujo.ts'
 
 export function SelectorImagen({ nombres, valor }: { nombres: readonly string[]; valor: string }) {
   const [filtro, setFiltro] = useState('')

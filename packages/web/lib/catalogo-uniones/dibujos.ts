@@ -1,7 +1,8 @@
 import { existsSync, readdirSync } from 'node:fs'
 import { resolve, sep } from 'node:path'
+import { esDibujoUnion, nombreDibujoValido } from './nombres-dibujo.ts'
 
-const NOMBRE = /^[^\\/:*?"<>|]{1,80}\.(bmp|png|jpe?g|webp)$/i
+export { esDibujoUnion, nombreDibujoValido }
 
 /** Carpeta pedida por el operador. No se copia al repositorio. */
 export const DIBUJOS_ESTRUCTURAS_LOCAL =
@@ -10,10 +11,6 @@ export const DIBUJOS_ESTRUCTURAS_LOCAL =
 export function raicesDibujos(env = process.env.ALUMINIOR_DIBUJOS_ESTRUCTURAS): string[] {
   const candidatas = [env, DIBUJOS_ESTRUCTURAS_LOCAL].filter((ruta): ruta is string => Boolean(ruta))
   return [...new Set(candidatas.filter(ruta => existsSync(ruta)).map(ruta => resolve(ruta)))]
-}
-
-export function nombreDibujoValido(archivo: string) {
-  return NOMBRE.test(archivo) && !archivo.includes('..')
 }
 
 /** Resuelve un nombre suelto dentro de una raíz permitida. Rechaza rutas. */
@@ -36,8 +33,4 @@ export function listarDibujos(raices = raicesDibujos()): string[] {
     }
   }
   return [...nombres].sort((a, b) => a.localeCompare(b, 'es'))
-}
-
-export function esDibujoUnion(nombre: string) {
-  return /^(GMU\d+|PSU\d+|U)\.bmp$/i.test(nombre)
 }
