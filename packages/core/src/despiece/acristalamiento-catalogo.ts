@@ -13,7 +13,9 @@
  *
  * Contrastado con facturas 2026 (GMA350 fijo y hoja, ELEGANTPVC): fase-7/06.
  * Productor omite sin aviso juntas cuyo artículo no existe (V1000); aquí se
- * omiten igual y se informa. Las tablas generadas por Productor también dejan
+ * omiten igual y se informa. Si ninguna fila cubre el grosor, el despiece
+ * guardado tampoco trae junquillo ni junta de esa tabla: se omite y se informa,
+ * no se bloquea la línea. Las tablas generadas por Productor también dejan
  * sus filas aquí (GM60: fase-7/07). Regeneración y posiciones: sin contrastar.
  */
 
@@ -80,7 +82,12 @@ export function acristalarVidrio(
     return { piezas, incidencias: ['tabla de acristalamiento con grosor no válido'], avisos }
   }
   const fila = [...tabla].sort((a, b) => a.grosor - b.grosor).find(f => f.grosor >= vidrio.grosorMm - 1e-9)
-  if (!fila) return { piezas, incidencias: [`sin junquillo para vidrio de ${vidrio.grosorMm} mm`], avisos }
+  // El despiece guardado no trae artículos de una tabla que no cubre el grosor.
+  // Omitir no es usar la última fila: esa sí aparece cuando el grosor entra.
+  if (!fila) {
+    avisos.push(`vidrio de ${vidrio.grosorMm} mm sin fila de acristalamiento: se omiten junquillo y juntas como en Productor`)
+    return { piezas, incidencias, avisos }
+  }
   const codigo = (c: string | null) => c && c !== '0' ? c : null
   const alternativas = tabla.filter(f => Math.abs(f.grosor - fila.grosor) <= 1e-9)
   if (alternativas.some(f => codigo(f.junquillo) !== codigo(fila.junquillo)

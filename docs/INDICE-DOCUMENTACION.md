@@ -1,5 +1,7 @@
 # Índice de documentación
 
+> **Dirección vigente — 19/10:** [auditoría de integración](paridad/AUDITORIA-INTEGRACION-REA-2026-10-19.md). Render `40cedd1` del 12/10; últimas entregas locales. Diez recorridos con BD Docker aislada y QA local pasan; Auth real y comparación humana pendientes. E1 comercial y tarifa dinámica sin activar; G6 protegido, Windows archivado. El [relevo existente](paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#continuar-en-otra-conversación) conserva la continuidad.
+
 Entrada de trabajo: [ESTADO-ACTUAL.md](ESTADO-ACTUAL.md).
 Clasificación documental inicial sobre `9bc879e` y comprobación local del 02/10.
 Revisión del 10/10/2026: 84 Markdown de `origin/main` `9673659` y una
@@ -12,7 +14,12 @@ propuesta entonces exclusiva del main local (integrada como herramienta el 13/10
 
 | Documento | Uso |
 |---|---|
-| [Contrato y lote E1 ClonerSoft 13/10, continuación 14/10](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md) | Físico/condicional, layout, consumidor/COM, receptores y control/reparto/totales acreditados estáticamente; matriz de ocho preguntas, VarFormat/configuración/agregados y persistencia pendientes |
+| [Auditoría de integración REA 19/10](paridad/AUDITORIA-INTEGRACION-REA-2026-10-19.md) | Corpus documental, fases/contratos frente al código, Docker actual y producción sólo lectura; integración parcial, sin publicación ni cierre global |
+| [Relevo vigente de aplicación 18/10](paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#continuar-en-otra-conversación) | Actualizado el 19/10: zoom nativo del configurador, corrección de etiqueta y prueba reproducible; arranque, siguiente unidad y límites; gobierna la continuidad con estado y roadmap |
+| [Relevo REA 17/10, histórico](paridad/RELEVO-REA-PRODUCTOR-2026-10-17.md) | Rutas y evidencia conservadas; sus instrucciones de seguir Windows están archivadas por el relevo del 18/10 |
+| [Investigación REA 16/10](paridad/INVESTIGACION-REA-PRODUCTOR-2026-10-16.md) | Inventario ampliado, metadatos/contratos managed y pseudocódigo nativo dirigido; evidencia privada, límites e integridad |
+| [Comparación REA 16/10](paridad/COMPARACION-REA-PRODUCTOR-2026-10-16.md) | Capacidades Productor frente al código actual; implementado, parcial y sin módulo localizado; prioridades sin porcentaje de paridad |
+| [Contrato y lote E1 ClonerSoft 13/10, continuaciones 14/10, 17/10 y 18/10](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#llamador-externo-y-destinatario-de-ex) | Físico/condicional, layout, consumidor/COM, receptores, control/reparto/totales, formato, proveedor/fallback, carga, índice y comparador/normalizador seguidos en su alcance; cuerpo de fila y proveedor/slots de transformaciones acreditados. Predicados `+0x48/+0x4c` seguidos por bytes, con ramas y conversión signed16; contrato WCTMB y enlace candidato ApiSet acreditados. Escrituras e inicialización condicionadas de las dos celdas KernelBase seguidas. Escritura literal condicionada del selector acreditada. Identidad del DWORD atribuida por bytes y tipos x86 a `_RTL_USER_PROCESS_PARAMETERS.Flags` `+0x8`. Inicialización local a 1 (bit 31 a cero en esa escritura) acreditada en ntdll `_RtlCreateProcessParametersInternal@48`, `0x4b2aa8f8`. Entrega interna `0x4b2aa9df` y wrappers Ex/WithTemplate seguidos. Llamador Ex identificado por símbolo en ncryptprov, llamada `0x1003da6a`, primer argumento dirección de `[EBP-0x64]`; uso local en offset `+0x29c` sin atribuir nombre. Frontera archivada: llamada importada NtCreateUserProcess `0x1003db34`, que relee ese slot como noveno argumento en `0x1003dadf`. Helper intermedio no seguido: contenido/alias continuo no probado. Sin conexión demostrada con Productor o el PEB consumidor ni orden previo a su lectura. Sin prioridad primera/última, equivalencia ni semántica efectiva demostradas. Valores efectivos, agregados y persistencia pendientes |
 | [Selector de registros de tarifa dinámica 14/10](paridad/IMPLEMENTACION-CLONERSOFT-TARIFA-DINAMICA-2026-10-14.md) | Cuatro búsquedas, intervalos decimales y ambigüedad; unidad pura local, sin precio ni activación |
 | [Encargo ClonerSoft 13/10](paridad/ENCARGO-IMPLEMENTACION-CLONERSOFT-2026-10-13.md) | Alcance de implementación local, fuentes y protecciones; el roadmap conserva etapas/orden |
 | [Extracción diferencial 13/10](paridad/EXTRACCION-DIFERENCIAL-CLONERSOFT-2026-10-13.md) | Evidencia estática/documental reutilizable, inventarios y límites; fotografía de integración abierta anterior a `fa32fba` |
@@ -31,7 +38,7 @@ propuesta entonces exclusiva del main local (integrada como herramienta el 13/10
 | [Estado actual](ESTADO-ACTUAL.md) | Estado, riesgos y siguiente paso |
 | [Guía del diseñador de Productor](paridad/GUIA-DISENADOR-PRODUCTOR.md) | Referencia viva: qué hace cada botón, pestaña y diálogo del diseñador y su equivalente en Aluminior; leer antes de operar Productor o cambiar el configurador |
 | [Roadmap de paridad](../ROADMAP-PARIDAD-PRODUCTOR.md) | Registro único de etapas/orden de tareas e instrucciones para actualizar o retirar documentos obsoletos |
-| [Paso E1: despunte](paridad/PASO-E1-DESPUNTE.md) | G1–G5 entregados; G6-incidencia preservada. Recuperar dos líneas tras autorización para quitar solo tercer GRUPO y verificar edición antes de precisión |
+| [Paso E1: despunte](paridad/PASO-E1-DESPUNTE.md) | Matriz de ocho preguntas ya evaluada; G6 protegido. Nueva empresa sintética/RED/locale y redondeo discriminante con autorización propia; procedimiento de limpieza antiguo inactivo |
 | [AGENTS](../AGENTS.md) / [CLAUDE](../CLAUDE.md) | Contratos de trabajo |
 | [Arquitectura](../ARQUITECTURA.md) | Responsabilidades y fronteras |
 | [Paridad](paridad/PARIDAD-PRODUCTOR.md) | Mapa de evidencia y aceptación |

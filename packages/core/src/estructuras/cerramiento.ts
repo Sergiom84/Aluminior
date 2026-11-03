@@ -19,7 +19,7 @@ import {
   VERSION_COMPOSICION_CERRAMIENTO, VERSION_CONFIGURACION_CERRAMIENTO,
 } from './versiones-cerramiento.ts'
 import type { CotasModulo } from './cotas-cerramiento.ts'
-import type { MaterialesModulo } from './materiales-cerramiento.ts'
+import type { MaterialesModulo, MaterialesUnion } from './materiales-cerramiento.ts'
 import type { CompactoModulo } from './compacto-cerramiento.ts'
 
 export { VERSION_CONFIGURACION_CERRAMIENTO }
@@ -47,6 +47,8 @@ export interface UnionCerramiento {
   codigo: string
   longitudMm: number
   grosorMm: number
+  /** Solo en v3: serie propia de la unión; ausente hereda la general. */
+  materiales?: MaterialesUnion
 }
 
 interface ConfiguracionCerramientoBase {

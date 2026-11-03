@@ -1,5 +1,7 @@
 # Continuar Aluminior en Windows
 
+> **Dirección vigente — 19/10:** [auditoría de integración](paridad/AUDITORIA-INTEGRACION-REA-2026-10-19.md). Render `40cedd1` del 12/10; últimas entregas locales. Diez recorridos con BD Docker aislada y QA local pasan; Auth real y comparación humana pendientes. E1 comercial/tarifa dinámica sin activar, G6 protegido y Windows archivado. Continuidad en el [relevo existente](paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#continuar-en-otra-conversación).
+
 Relevo preparado el **10/10/2026** desde `origin/main` `9673659`. Entrada:
 [estado actual](ESTADO-ACTUAL.md) → [roadmap](../ROADMAP-PARIDAD-PRODUCTOR.md).
 Esta guía organiza el trabajo en Windows; los estados de cada tarea pertenecen
@@ -85,6 +87,16 @@ Al terminar: actualizar `ESTADO-ACTUAL`, el roadmap, `PASO-E1` y el item July
 181 (E1) por identidad estable; `july_sync push`.
 
 ## 1. Recibir el trabajo correcto
+
+Investigación local del 16/10 en **otro worktree**, rama
+`codex/rea-productor-20261016`, base `307bf54`:
+[informe REA](paridad/INVESTIGACION-REA-PRODUCTOR-2026-10-16.md) y
+[comparación](paridad/COMPARACION-REA-PRODUCTOR-2026-10-16.md).
+Consultar esos resultados antes de repetir inventarios, Cut1D o análisis
+global de Ghidra. El pseudocódigo dirigido se obtuvo con advertencias y no
+cierra E1 ni sustituye el oráculo funcional. Los artefactos privados están
+en el output ignorado del worktree; necesitan transporte separado y autorizado.
+Esta rama entrega investigación/documentación, sin cambiar producto ni desplegar.
 
 Actualización local Windows, 13/10: la integración con el catálogo de septiembre
 quedó cerrada en `fa32fba`, rama `codex/integracion-windows-mac-20261013`, con
@@ -221,18 +233,63 @@ en su alcance; no reconstruirlos ni repetir literales. Receptores delegados de
 `alBDADO`, WORD de tabla auxiliar y selector `rsTabla` también acreditados;
 no repetir población de `this+0x88/+0x8c` ni enlaces `+0x34/+0x58/+0x3c`.
 Las declaraciones TypeLib y cuerpos de control/reparto/totales ya están seguidos
-en su alcance estático; no repetirlos. Siguen `VarFormat`, valores configurados,
-contrato de agregados y persistencia. Leer la
-[continuación del lote](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#control-reparto-y-totales).
+en su alcance estático; no repetirlos. La [unidad de formato del 17/10](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#contrato-de-formato-varformat)
+acredita máscaras/Variant y contrato público, sin empates/localización efectiva
+observados. La [unidad posterior de configuración](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#proveedor-de-configuración-y-argumento-2)
+identifica `gaConfigDAL.Carga` y el fallback condicionado del BSTR `2`; no
+demuestra escalas efectivas iguales a dos. La [procedencia de carga](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-y-precedencia-del-índice-de-configuración)
+ya sigue AbreRS y la petición de índice NombreDato. La [unidad del índice](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#configuración-construcción-y-selección-del-índice)
+sigue construcción/ordenación y selección de posición, sin prioridad primera/última
+ni equivalencia de claves demostradas. La [continuación de claves](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#comparación-y-normalización-de-claves)
+sigue inicialización del comparador y las dos rutas del normalizador, sin
+acreditar sus valores efectivos. La [unidad de fila y delegados](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#clave-de-fila-y-transformaciones-del-índice)
+atribuye cuerpo propio de `x_Clave` y proveedor/slots de transformación.
+Los [predicados internos de rellena](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#predicados-internos-de-rellena)
+ya tienen condiciones y efecto en ramas acreditados estáticamente. La [frontera WCTMB](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#frontera-widechartomultibyte)
+acredita contrato público y enlace candidato ApiSet. La [procedencia del estado](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-del-estado-de-kernelbase)
+acredita escrituras y fallback condicionados de las dos celdas. La
+[procedencia del selector](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-del-byte-selector-de-kernelbase)
+acredita una escritura literal condicionada a `1`. La [identidad del DWORD, 18/10](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-inmediata-del-dword-de-kernelbase)
+queda atribuida por bytes y tipos x86 a `_RTL_USER_PROCESS_PARAMETERS.Flags`
+en `+0x8`, mediante `TEB → PEB → ProcessParameters`. La [inicialización local de Flags, 18/10](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#inicialización-local-de-flags)
+acredita en ntdll `_RtlCreateProcessParametersInternal@48` la escritura de `1`
+en `0x4b2aa8f8`: bit 31 a cero en ese instante del bloque construido.
+No demuestra que sea el bloque del PEB leído ni que se ejecute antes del consumidor.
+La entrega interna `0x4b2aa9df` y los wrappers Ex/WithTemplate están seguidos.
+La [unidad del llamador Ex](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#llamador-externo-y-destinatario-de-ex)
+acredita una llamada en `ncryptprov.dll`, `0x1003da6a`, desde el símbolo
+`_CreateSecureProcessEx@28`: el primer argumento es la dirección del slot local
+`[EBP-0x64]`. Su lectura posterior y escritura en `+0x29c` están capturadas;
+no se atribuye nombre ni valor efectivo a ese offset. El mismo slot vuelve
+a leerse para el noveno argumento de una llamada importada a `NtCreateUserProcess`.
+**Frontera técnica archivada (no continuar):** esa llamada en `0x1003db34`
+(IAT `0x10068438`, lectura del slot en `0x1003dadf`), sin seguir su cuerpo.
+El helper intermedio `0x1003da93` no está seguido: no se demuestra conservación
+del contenido del slot a través de sus posibles efectos o alias.
+No se acredita que este llamador participe en Productor, que el bloque sea el
+del PEB leído por KernelBase ni orden previo a su lectura. No repetir la
+localización del llamador Ex ni sustituirla por la variante WithTemplate.
+No se acredita
+escritura del bit 31 a uno, significado del bit, valor efectivo ni ejecución. Campo
+`FS:[0x30]+0x228` y resultados del helper siguen abiertos por separado.
+No repetir escrituras de las dos celdas, contrato/enlace ni predicados;
+después equivalencia, valores efectivos, agregados y persistencia.
+No repetir `x_Clave`/proveedor/delegados ya seguidos, inicializador/normalizador,
+`xConfig`, construcción/búsqueda,
+AbreRS/carga de lista, proveedor/argumento `2` ni unidades anteriores.
 El selector independiente de registros de tarifa dinámica ya está implementado
 y verificado localmente; no activar precios a partir de esa selección.
-Los pasos de observación siguientes son una vía separada y conservan la
-autorización pendiente de G6; este lote no autoriza ejecutar el original.
+Los pasos de observación siguientes conservan la propuesta histórica del 04/10;
+esa recuperación de G6 queda inactiva. El siguiente ensayo vigente requiere
+nueva empresa sintética aislada, RED/locale y predicciones discriminantes, con
+autorización para el original. G6 no se modifica.
 
 Leer [PASO-E1-DESPUNTE](paridad/PASO-E1-DESPUNTE.md) y su evidencia del 04/10.
 A–F, G1–G5 y el margen GID que explica los dos céntimos ya están demostrados.
 El último intento de variante 1207×1150 dio error de opciones/SessionFactory
 y añadió un tercer GRUPO. No hubo recálculo posterior ni G7 válido.
+
+**Propuesta del 04/10, inactiva; no ejecutar como continuidad actual:**
 
 1. Observar la ventana y el documento actuales, cotejar los dos GRUPO válidos
    y el tercero de la incidencia con la copia conservada. No reutilizar
@@ -348,14 +405,17 @@ precios del taller. No copiar credenciales del Mac dentro del paquete.
 
 No repetir M0, A1, S1, A2, paginación técnica P.2, A3/0029, A4/0030, A5 ni S3.
 La aceptación comercial P.2 y la observación E7 permanecen abiertas.
-P.6/P.7 es el siguiente tramo técnico independiente; no se implementa en esta entrega.
+P.6/P.7 conserva correcciones locales y diez E2E Docker del 19/10 con QA local;
+faltan Auth real y comparación humana equivalente. No repetir esos gates sin
+cambio o fallo nuevo. Ver auditoría del inicio para sus límites.
 S2 conserva el seguimiento anunciado para el 14/10: consultar advisory oficial
 y versiones entonces; el enlace no pudo revalidarse en esta auditoría.
 No hay automatización creada para S2.
 
 Accesos a plataformas: leer primero `context/access/aluminior.md` en July.
-El esquema hasta 0030 está acreditado por la entrega del 09/10, no reconsultado
-en esta revisión. La deuda de hashes antiguos y la restauración completa del
+La entrega del 09/10 acreditó hasta 0030. La consulta de sólo lectura del 19/10
+confirma 33 migraciones y 0031/0032 normalizadas LF. La deuda de hashes antiguos
+y la restauración completa del
 respaldo siguen fuera de esa acreditación; no reescribir migraciones aplicadas.
 
 ## Prompt para la siguiente conversación en Windows
@@ -368,14 +428,14 @@ respaldo siguen fuera de esa acreditación; no reescribir migraciones aplicadas.
 >
 > Retoma Aluminior desde docs/CONTINUAR-EN-WINDOWS.md, AGENTS.md,
 > docs/ESTADO-ACTUAL.md y ROADMAP-PARIDAD-PRODUCTOR.md. Comprueba git y July;
-> conserva cambios propios y usa un checkout limpio desde origin/main si hace falta.
+> conserva cambios propios. Usa la raíz protegida del relevo, sin reset/checkout/stash.
 > A3/A4 y S3 ya están entregados; no repetir migraciones ni publicación.
 > Primero verifica la recepción y disponibilidad de las fuentes privadas. Para
 > trabajar con el titular, realiza la aceptación comercial P.2. Para continuar
-> el motor, retoma E1 desde G6-incidencia, con A–F y G1–G5 conservados y precisión
-> aún no discriminada. No borres el tercer GRUPO sin autorización humana concreta;
-> comprueba edición segura antes de otro cálculo. E7 requiere contraste Productor
-> tras A4; no reimplementar el soporte decimal. Trabaja en PRUEBAS ALUMINIOR [0017],
-> conserva 0016/0015 en consulta y evita cargas/migraciones/despliegues remotos.
+> el motor, conserva A–F/G1–G5/G6-incidencia. E1 requiere empresa sintética nueva,
+> RED/locale y predicciones divergentes, con autorización del original. No operar G6
+> ni seguir Windows. E7 requiere contraste Productor tras A4; no reimplementar
+> el soporte decimal. Diez E2E Docker ya prueban persistencia con QA local;
+> Auth real y aceptación humana siguen abiertos. Evita cargas/despliegues remotos.
 > Entrega evidencia de un ensayo, actualiza los documentos y el item July existente
 > por identidad y deja el siguiente paso exacto con sus límites.

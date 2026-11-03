@@ -5,13 +5,25 @@ DS2/GR1/E5/E5b), live en Render (`dep-dbl2kdp7lnhs738jfc3g`, 120 s, logs sin
 errores; `/login` 200 y el resto redirige al login). Supabase: 36 migraciones
 (hasta `0035`) y 52 uniones cargadas. Sin QA funcional con sesión en producción.
 
+Esta rama `integracion/codex-e2-20261103`, sobre `2abc1d4`: E2 integrado en rama,
+sin medir en la 0016. La medición queda para el equipo de la mochila; los datos
+privados del contraste no están en este portátil. No reimplementar la serie propia
+de la unión. El único siguiente está en [Siguiente paso](#siguiente-paso).
+
+Anterior — 19/10, auditoría, no es el puntero: Render entonces en `40cedd1`;
+diez recorridos con BD Docker y QA local; Auth real y aceptación Productor
+pendientes; E1 comercial y tarifa dinámica sin activar; G6 protegido.
+[Auditoría](paridad/AUDITORIA-INTEGRACION-REA-2026-10-19.md) y
+[relevo del 18/10](paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#continuar-en-otra-conversación).
+
 Anterior — revisión documental y producción: 12/10/2026. Código `40cedd1` live en Render,
 deploy `dep-db6hi2navr4c739d2e4g`, terminado a las 19:31:21 Europe/Madrid
 (17:31:21 UTC). Supabase: 33 migraciones, 0031/0032 y carga dirigida aplicadas;
-QA técnico remoto y preservación final correctos. Ver
+QA técnico remoto y preservación final correctos en la entrega del 12/10. Ver
 [publicación del 12/10](paridad/PUBLICACION-CLONERSOFT-2026-10-12.md).
 La revisión funcional del 09/10 en `487feb1` y la consulta Render del 10/10
-son antecedentes conservados; no sustituyen esta comprobación de producción.
+son antecedentes conservados. La auditoría del 19/10 confirma versión, destino
+y 33 migraciones; no repite las escrituras QA de aquella publicación.
 Se preservan la cobertura histórica del 03/10 y la investigación E1 del 04/10.
 [Auditoría documental](AUDITORIA-DOCUMENTAL-2026-10-10.md) y
 [continuación en Windows](CONTINUAR-EN-WINDOWS.md).
@@ -20,6 +32,182 @@ Este es el único punto de entrada de estado y siguiente trabajo.
 El [roadmap operativo](../ROADMAP-PARIDAD-PRODUCTOR.md) conserva el orden y
 estado único de las tareas de paridad, con mantenimiento documental obligatorio.
 
+## E1: ensayo autorizado y preparación — 19/10/2026
+
+Sergio autoriza el ensayo aislado de configuración/redondeo y la aplicación
+de lo demostrado, manteniendo G6 y producción intactos. Caso sintético R1
+preparado: cuatro predicciones distintas, reproducidas por cálculo racional
+y Decimal independiente. No es una observación de Productor ni cambia dinero.
+Inventario administrativo ejecutado por Sergio y verificado: Hyper-V responde,
+cero VMs registradas, Sandbox deshabilitado. La consulta por permisos queda
+resuelta; no repetir el comando. Sergio indica aprovechar la instalación
+existente: copia preparada de 341 archivos/220.429.241 bytes, sin MDB, empresas,
+credenciales o enlaces, con hashes de origen/copia verificados. No exigir una
+demo antes de probarla. Sandbox habilitado por el activador revisado:
+`Disabled → Enabled`, sin error. Reinicio completado y perfil abierto; recibo
+invitado verifica los 341 archivos y cero adaptadores de red activos. Al abrir
+«Productor copia E1», el comprobador exige Crystal Reports 13.0.35. Primera
+unidad detenida y revisada; no es Productor operativo ni R1. El MSI local
+declara 13.0.0.99; el paquete oficial firmado declara 13.0.35.4870, coincidente
+con el requisito observado. Instalado sólo en el invitado
+`d8248510-bae0-4a2e-a208-93484eee479c` como SYSTEM: msiexec terminó en 0, sin
+reinicio, y el registro de 32 bits muestra esa versión y el ProductCode
+`{E43D7D73-C531-4EB3-ACC9-0EF11E1A84B0}`. El comprobador de Crystal ya no aparece
+al reabrir la copia. El siguiente diálogo, sin pulsar Aceptar, dice que es
+necesario actualizar los controles y librerías. No repetir
+reinicio/activador/inventario ni instalar componentes en el host.
+Referencia 46.30.0006; la caché 42.35 queda fuera. Licencia/configuración todavía
+sin observar. No se han cambiado cálculos de Aluminior.
+[Procedimiento vigente y límites](paridad/PASO-E1-DESPUNTE.md#ensayo-autorizado-del-1910-configuración-y-redondeo).
+RED/locale siguen sin capturar; no se ejecuta el original en el host ni se
+activa el cargo. No repetir la auditoría o la investigación interna de Windows.
+
+## Auditoría de integración REA — 19/10/2026
+
+No están completas todas las fases. Se contrastan documentos, consumidores del
+código, Render/BD en sólo lectura y recorridos QA existentes. En Docker nuevo:
+56 DB, 881 web y diez E2E correctos; 964 core y 68 ETL seleccionados, tipos y
+arquitectura correctos. Primera pasada web: cuatro timeouts; se conserva el
+fallo y la pasada completa con dos workers efectivos, sin cambiar aserciones
+ni tiempos. E2E usa acceso QA local y conserva precio decimal nulo: no acredita
+Supabase Auth ni precio comercial aceptado. La hoja QA publicada conserva
+incidencias de fabricación y despunte sin cargo.
+[Informe, fases abiertas y evidencia](paridad/AUDITORIA-INTEGRACION-REA-2026-10-19.md).
+Se retiran punteros que pedían repetir la matriz E1 o limpiar G6. El 19/10 el siguiente de E1 era
+empresa sintética nueva y RED/locale/caso discriminante, con autorización del
+original. P.6/P.7: Auth real y comparación humana equivalente; guardado aislado
+de los diez casos ya probado. Sin cambios de producto, publicación ni cierre global.
+
+
+## Configurador al 200% nativo — 19/10/2026
+
+La etiqueta Acristalamiento se parte dentro de su campo, sin invadir Acabado.
+Control con fuente anterior sólo en memoria: cuatro escenarios fallan; con
+la corrección pasan los doce. Chrome visible, tres anchos de ventana,
+aceptación/rechazo/reintento, teclado y 58 capturas completas válidas.
+35 pruebas puras, tipos de cuatro paquetes y arquitectura correctos.
+[Resultado, prueba y límites](paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#resultado-local-p6p7-de-zoom-nativo--1910).
+Sólo entrega local sin BD ni persistencia. El 19/10 el siguiente era comparación humana con
+Productor y recorrido autenticado con BD efímera autorizada. P.6/P.7 sigue abierto; no es el puntero.
+
+## Retorno de foco P.6/P.7 local — 18/10/2026
+
+Tras un alta aceptada simulada de cerramiento, el diseñador se reinicia y el
+foco llega a «Añadir primera ventana»; Enter permite continuar. Rechazo de
+campo, rechazo general y respuesta perdida conservan el borrador y permiten
+reintentar. Segunda alta comprobada sin reutilizar la identidad confirmada.
+16 escenarios actuales a 1280/768/375/320 y ocho comprobaciones de foco que
+fallan con el código anterior; 35 pruebas puras, tipos y arquitectura correctos.
+[Resultado, prueba reproducible y límites](paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#resultado-local-p6p7-de-retorno-tras-alta--1810).
+La verificación visual 200% del configurador se completa en la unidad del 19/10 superior.
+P.6/P.7 integral continúa en curso. Sin BD, guardado real ni publicación.
+
+## Cabecera y configurador P.6/P.7 local — 18/10/2026
+
+Elegir cliente con Tab/Enter devuelve el foco a Cliente y permite F9 sobre la
+cabecera. Al rechazar un alta, el primer campo inválido o la alerta reciben
+foco; el borrador se conserva. Seis casos discriminantes fallan con el código
+anterior y pasan con el actual. Matriz a 1280/768/375/320, componentes reales,
+acciones sintéticas sin persistencia; 35 pruebas puras, tipos y arquitectura.
+[Detalle y siguiente unidad](paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#resultado-local-p6p7-de-cabecera-y-configurador--1810).
+El defecto de foco en body observado en esta entrega se corrige en el apartado
+superior. No se acredita guardado real ni recorrido autenticado; sin publicación.
+
+## Producción P.6/P.7 local — 18/10/2026
+
+Título de perfil y aviso de coste incompleto conservan referencias largas sin
+desbordar la página. Componentes reales con CSS y fixture sintética: diez
+combinaciones a 1280/768/375/320/640, teclado, foco, movimiento reducido y zoom
+nativo 200% comprobados. 40 pruebas puras, tipos y arquitectura correctos.
+[Alcance, evidencia y siguiente unidad](paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#resultado-local-p6p7-de-producción--1810).
+Sin BD ni recorrido autenticado; no publicado ni aceptado en uso real.
+P.6/P.7 integral sigue abierto. Los errores de cabecera/configurador se
+verifican en la entrega superior; no repetir el tramo de producción.
+
+## Corrección funcional local — 18/10/2026
+
+[Ocho preguntas E1 contrastadas](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#contraste-de-las-ocho-preguntas).
+En Producción → documento → «Coste técnico de despunte», costes iguales con
+distinta escala (`4`/`4.0000`) conservan su valoración. Costes distintos o
+ausentes siguen sin valorarse. Adaptador puro y vista existente, sin cargo,
+SQL ni cambios de presupuesto. Ver [resultado y siguiente entrega](paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#resultado-local-del-1810-y-siguiente-entrega).
+Estado local; no publicado ni aceptado en uso real. E1 económico sigue abierto.
+
+## Investigación REA — 16/10/2026, worktree separado (histórico)
+
+Continuación E1 del **17/10**: [contrato de formato](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#contrato-de-formato-varformat)
+con máscaras/Variant y conversión acreditados estáticamente, referencias oficiales
+congeladas y verificación propia. No cierra empates, localización efectiva ni
+importe comercial. La [unidad posterior de configuración](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#proveedor-de-configuración-y-argumento-2)
+identifica `gaConfigDAL.Carga` y demuestra el uso condicionado del BSTR `2`
+como fallback; no demuestra escalas efectivas iguales a dos. La [unidad de procedencia](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-y-precedencia-del-índice-de-configuración)
+sigue AbreRS, la consulta a gaConfig, la recarga y la petición de índice NombreDato.
+La [unidad del índice](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#configuración-construcción-y-selección-del-índice)
+sigue configuración, construcción, partición/intercambio y devolución inmediata
+de posición ante igualdad. No prueba prioridad primera/última ni equivalencia
+de claves. La [continuación de comparación y normalización](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#comparación-y-normalización-de-claves)
+sigue la inicialización del comparador y las dos rutas del normalizador.
+No demuestra colación ni normalización efectivas. La [unidad de clave de fila](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#clave-de-fila-y-transformaciones-del-índice)
+atribuye `_gaLstItem.x_Clave +0x38` al cuerpo `0x11074c00` y sigue proveedor,
+slots y cuerpo de las transformaciones. La [unidad de predicados internos](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#predicados-internos-de-rellena)
+acredita `+0x48/+0x4c`, intervalos sobre conversión signed16 y efecto en ramas.
+La [frontera WCTMB](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#frontera-widechartomultibyte)
+acredita contrato público y enlace candidato ApiSet. La [procedencia del estado](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-del-estado-de-kernelbase)
+acredita escrituras y fallback condicionados de las dos celdas. La
+[procedencia del selector](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-del-byte-selector-de-kernelbase)
+acredita una escritura literal condicionada a `1`. La [identidad del DWORD, 18/10](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-inmediata-del-dword-de-kernelbase)
+queda atribuida por bytes y tipos x86 a `_RTL_USER_PROCESS_PARAMETERS.Flags`
+en `+0x8`, mediante `TEB → PEB → ProcessParameters`. La [inicialización local de Flags, 18/10](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#inicialización-local-de-flags)
+acredita en ntdll `_RtlCreateProcessParametersInternal@48` la escritura de `1`
+en `0x4b2aa8f8`: bit 31 a cero en ese instante del bloque construido.
+No demuestra que sea el bloque del PEB leído ni que se ejecute antes del consumidor.
+La entrega interna `0x4b2aa9df` y los wrappers Ex/WithTemplate están seguidos.
+La [unidad del llamador Ex](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#llamador-externo-y-destinatario-de-ex)
+acredita una llamada en `ncryptprov.dll`, `0x1003da6a`, desde el símbolo
+`_CreateSecureProcessEx@28`: el primer argumento es la dirección del slot local
+`[EBP-0x64]`. Su lectura posterior y escritura en `+0x29c` están capturadas;
+no se atribuye nombre ni valor efectivo a ese offset. El mismo slot vuelve
+a leerse para el noveno argumento de una llamada importada a `NtCreateUserProcess`.
+**Frontera técnica archivada (no continuar):** esa llamada en `0x1003db34`
+(IAT `0x10068438`, lectura del slot en `0x1003dadf`), sin seguir su cuerpo.
+El helper intermedio `0x1003da93` no está seguido: no se demuestra conservación
+del contenido del slot a través de sus posibles efectos o alias.
+No se acredita que este llamador participe en Productor, que el bloque sea el
+del PEB leído por KernelBase ni orden previo a su lectura. No repetir la
+localización del llamador Ex ni sustituirla por la variante WithTemplate.
+No se acredita
+escritura del bit 31 a uno, significado del bit, valor efectivo ni ejecución. Campo
+`FS:[0x30]+0x228` y resultados del helper siguen abiertos por separado.
+Equivalencia y valores efectivos siguen abiertos, después agregados y persistencia.
+Cargo desactivado, G6 protegido.
+Evidencia privada: `output/e1-varformat-20261017/`, `output/e1-config-20261017/`
+y `output/e1-config-origin-20261017/`; índice en `output/e1-index-20261017/`
+y continuación en `output/e1-keys-20261017/`; unidad nueva de fila/delegados
+en `output/e1-rowkeys-20261017/`; predicados en
+`output/e1-rellena-predicates-20261017/`; frontera WCTMB en
+`output/e1-widechar-frontier-20261017/`; procedencia de estado en
+`output/e1-kernelbase-state-20261017/`; procedencia del selector en
+`output/e1-kernelbase-selector-20261017/`; identidad del DWORD en
+`output/e1-kernelbase-field-20261018/`; inicialización local de Flags en
+`output/e1-flags-writer-20261018/`; llamador Ex y destinatario local en
+`output/e1-processparameters-caller-20261018/`. Los trece árboles anteriores completos
+429/59/92/146/140/77/127/374/189/198/151/223/269 (2.474 archivos) se preservan por tamaño y SHA-256.
+
+[Relevo completo del 17/10 para otra conversación](paridad/RELEVO-REA-PRODUCTOR-2026-10-17.md):
+428, 56, 91 y 145 artefactos privados de los cuatro índices anteriores comprobados por tamaño y SHA-256; resultados de producto
+del 16/10 conservados con su fecha, sin nueva ejecución de suites.
+
+[Informe REA](paridad/INVESTIGACION-REA-PRODUCTOR-2026-10-16.md) y
+[comparación por capacidades](paridad/COMPARACION-REA-PRODUCTOR-2026-10-16.md),
+en `codex/rea-productor-20261016`, desde `307bf54`. Inventario ampliado,
+123 identidades managed y contratos seleccionados; pseudocódigo nativo
+dirigido obtenido con advertencias, sin repetir análisis global. No cambia
+paquetes, datos, producción ni aceptación económica. Fuentes/IL privados en
+el output ignorado del worktree; no viajan por Git. Reutilizar antes de extraer.
+E1 sigue por configuración, aceptación matemática, agregados y persistencia;
+el desglose de formato actualizado es el del 17/10 anterior. G6 protegido.
+Las brechas de corte, stock, compras, cobros e informes no son tareas ya
+implementadas por haberlas documentado. El roadmap conserva su orden.
 
 ## Contraste masivo de GRUPO reales — 02/11/2026
 
@@ -42,16 +230,17 @@ quedan como regresión local. Ampliado el mismo día a los 17 ejercicios
 actual (uniones `CMU…` y series retiradas); en 2023–2026 el 70 % de los
 valorados tiene la misma receta que Productor y el compacto es la causa más
 frecuente (235). La asimetría del reparto se concentra en las uniones de
-guías de compacto. Orden: GR1, E5, E2, E6, GR2.
+guías de compacto. Orden entonces: GR1, E5, E2, E6, GR2. GR1 y E5 quedaron
+medidos el 02/11; E2 está integrado en rama, sin medir en la 0016.
 
 GR1 implementado y verificado en local el mismo 02/11/2026 ([contraste §GR1](paridad/CONTRASTE-PRESUPUESTOS-2026-11-02.md#gr1--02112026)): `ModuloCerramiento` v3 admite `cotas?: CotasModulo` (`FI`, `FS`, `VS`, `TD`, `F`, `FD`, `FZ`), `valorarCerramiento` las pasa a `valorarEstructura` y `configuracionGrupo` las lee de `VEstructurasVariables`. En la 0016 los 23 GRUPO que coincidían al céntimo siguen coincidiendo, `cota-fi-fs` baja de 31 (140.530,91 €) a 0 y 26 de los 31 pasan a valorarse (`difiere` sube de 66 a 92 y `sin-valorar` baja de 123 a 97; 10 de los 26 nuevos valorados tienen `receta: igual` y en 5 el resto coincide al céntimo salvo el compacto). Los 5 restantes usan `PSU006` y quedan sin valorar únicamente por `PSESQCOM: sin PVP en la tarifa`. En la 0015 `difiere` sube de 119 a 138 (+19) y `cota-fi-fs` baja de 21 a 3; en 2023–2026 los valorados suben de 482 a 527 (350 con receta igual). Falta exponer en la UI del configurador los controles visibles para editar las cotas en estructuras distintas de `1OFI`. Sin cambios en el motor ni
 publicación.
 
 E5 parcial el 02/11/2026 ([contraste §E5, corrección vigente](paridad/CONTRASTE-PRESUPUESTOS-2026-11-02.md#corrección-del-mismo-02112026-vigente)): `ModuloCerramiento` v3 admite `compacto?: CompactoModulo` y `valorarCerramiento` lo propaga sin suponer opciones. El banco (`scripts/lib/banco-contraste/compacto-grupo.ts`) solo transmite el compacto al módulo con opciones guardadas y evidencia completa; si no, lo aparta con su importe. La primera entrega dejaba 53 GRUPO de la 0016 sin valorar por suponer `G1O0`, y su `regresion-06` usaba opciones de otra línea. Corregido: la 0016 vuelve a 23 / 92 / 97 / 13 y la 0015 a 0 / 137 / 72 / 19; `compacto` queda en 53 GRUPO de la 0016 y los tubos o accesorios repetidos pasan a la causa `otro-accesorio` (11). En la 0016, 272 de 276 compactos de GRUPO no guardan `VOpciones`.
 
-M1, 03/11/2026, implementado en `feat/m1-mantenimiento-uniones` y no cerrado: alta y edición de uniones, catálogo inyectado en el configurador y recarga que conserva `de_usuario`. Las imágenes de `ESTRUCTURAS` están en `dibujo_catalogo` de Supabase (494 BMP, 03/11/2026), sin copiarlas al repositorio. No se subieron documentos de presupuesto. No está aplicada la migración 0034 en Supabase ni se ha repetido el contraste de la 0016. El precio no es un campo libre: sale de la receta del perfil. El mismo día se corrigieron los seis defectos de la revisión ([corrección](paridad/PLAN-M1-MANTENIMIENTO-UNIONES-2026-11-02.md#corrección-tras-la-revisión--03112026)): validación de escritura con el catálogo de la base, grosor de la base, receta de Productor protegida e imagen subida a `dibujo_catalogo`. En Supabase quedan aplicadas 0033–0035 (36 migraciones) y cargadas las 52 uniones. Siguiente de paridad: E2.
+M1, 03/11/2026, implementado en `feat/m1-mantenimiento-uniones` y no cerrado: alta y edición de uniones, catálogo inyectado en el configurador y recarga que conserva `de_usuario`. Las imágenes de `ESTRUCTURAS` están en `dibujo_catalogo` de Supabase (494 BMP, 03/11/2026), sin copiarlas al repositorio. No se subieron documentos de presupuesto. No está aplicada la migración 0034 en Supabase ni se ha repetido el contraste de la 0016. El precio no es un campo libre: sale de la receta del perfil. El mismo día se corrigieron los seis defectos de la revisión ([corrección](paridad/PLAN-M1-MANTENIMIENTO-UNIONES-2026-11-02.md#corrección-tras-la-revisión--03112026)): validación de escritura con el catálogo de la base, grosor de la base, receta de Productor protegida e imagen subida a `dibujo_catalogo`. En Supabase quedan aplicadas 0033–0035 (36 migraciones) y cargadas las 52 uniones. El 03/11 el siguiente de paridad era E2; en esta rama queda integrado, sin medir en la 0016.
 
-E5b verificado en local el mismo día ([contraste §E5b](paridad/CONTRASTE-PRESUPUESTOS-2026-11-02.md#e5b--opciones-predeterminadas-del-catálogo-02112026-vigente)): la migración `0033_estructura_opciones_accesorio` carga `EstructurasOpcOpciones` (430 filas) y el despiece de accesorios aplica la predeterminada al grupo sin opción guardada. En la 0016 quedan 24 / 91 / 97 / 13; `compacto` baja de 53 a 8, el reparto desde el hueco pasa a ser la causa principal de 31 GRUPO (antes 10) y `regresion-06` coincide al céntimo con datos reales (1.410,08 €). La 0015 queda en 0 / 137 / 72 / 19. **0033 no está aplicada en Supabase**: la web funciona sin ella, pero la carga dirigida del motor la exige. Siguiente: E2 (varias series en GRUPO).
+E5b verificado en local el mismo día ([contraste §E5b](paridad/CONTRASTE-PRESUPUESTOS-2026-11-02.md#e5b--opciones-predeterminadas-del-catálogo-02112026-vigente)): la migración `0033_estructura_opciones_accesorio` carga `EstructurasOpcOpciones` (430 filas) y el despiece de accesorios aplica la predeterminada al grupo sin opción guardada. En la 0016 quedan 24 / 91 / 97 / 13; `compacto` baja de 53 a 8, el reparto desde el hueco pasa a ser la causa principal de 31 GRUPO (antes 10) y `regresion-06` coincide al céntimo con datos reales (1.410,08 €). La 0015 queda en 0 / 137 / 72 / 19. El 02/11 **0033 no estaba aplicada en Supabase**: la web funciona sin ella, pero la carga dirigida del motor la exige. El 03/11 producción declara 0033–0035 aplicadas. El 02/11 el siguiente era E2 (varias series en GRUPO); el puntero vigente es medirlo en la 0016, no reimplementarlo.
 
 ## Guía del diseñador de Productor — 01/11/2026
 
@@ -84,8 +273,8 @@ tests) y en la web (arrastre con ajuste magnético y botón «Mover elemento» c
 destinos enfocables). Verificado en local sobre el 2 × 2 de las capturas
 (2420 × 3640 y vuelta a 2420 × 2420), con guardado y recarga. Las uniones afectadas
 nacen sin configurar. La observación de Productor no se hizo: el acceso al
-escritorio no se concedió. Sin commit ni publicación. Siguiente: prueba de Sergio,
-deshacer y publicación. El orden económico E1–E11 no cambia.
+escritorio no se concedió. Sin commit ni publicación. El 01/11 el siguiente de DS2 era prueba de Sergio,
+deshacer y publicación. El orden económico E1–E11 no cambia; el puntero vigente es medir E2.
 
 
 ## Comparativa de presupuestos Productor / Aluminior — 01–02/11/2026
@@ -384,16 +573,47 @@ Los nueve documentos anteriores y tres líneas conservan sus huellas.
 
 ## Siguiente paso
 
-**ClonerSoft/E1 local:** preparación física/condicional, layout/getters,
+**Siguiente:** medir E2 en la 0016, en el equipo de la mochila. En
+`integracion/codex-e2-20261103` está integrado en rama, sin medir en la 0016.
+No reimplementar la serie propia de la unión ni repetir M1, GR1, E5 o E5b.
+La observación E1 por visión sigue en el equipo del titular
+([§0](CONTINUAR-EN-WINDOWS.md#0-relevo-del-31102026-equipo-del-titular-con-visión));
+no se reanuda desde este portátil. Los párrafos siguientes son antecedentes
+fechados y no ordenan trabajo.
+
+**Antecedente ClonerSoft/E1 local:** preparación física/condicional, layout/getters,
 consumidor, declaraciones COM, receptores y cuerpos de control/reparto/totales
-entregados en su alcance estático. Continuar por el contrato de `VarFormat`,
-configuración efectiva y entrada de agregados comerciales, según el
-[contrato y evidencia](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#control-reparto-y-totales).
+entregados en su alcance estático. Máscaras, tipos y contrato público de formato
+ampliados el 17/10; empates/localización efectiva permanecen sin ensayo.
+Proveedor `gaConfigDAL.Carga` y fallback condicionado del argumento BSTR `2`
+seguidos en la [unidad de configuración](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#proveedor-de-configuración-y-argumento-2).
+La [procedencia de la carga](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-y-precedencia-del-índice-de-configuración)
+ya está seguida en su alcance estático. La [unidad del índice](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#configuración-construcción-y-selección-del-índice)
+continúa construcción y selección; no repetir `xConfig`, ordenación ni búsqueda.
+La [continuación de claves](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#comparación-y-normalización-de-claves)
+sigue inicializador del comparador y bifurcación del normalizador; no repetirlos.
+La [unidad de fila y delegados](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#clave-de-fila-y-transformaciones-del-índice)
+atribuye el cuerpo propio `x_Clave` y proveedor/slots de transformación; no repetirlos.
+Los [predicados internos](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#predicados-internos-de-rellena)
+quedan seguidos en su alcance estático; no repetirlos. La [frontera WCTMB](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#frontera-widechartomultibyte)
+acredita contrato público y enlace candidato, sin demostrar resolución runtime.
+Las [escrituras de estado](paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-del-estado-de-kernelbase)
+ya están seguidas en su alcance condicionado. La escritura literal del selector
+también queda seguida. El DWORD queda atribuido a `_RTL_USER_PROCESS_PARAMETERS.Flags`
+`+0x8` mediante tipos x86 identificados. Inicialización local a 1 acreditada en
+`0x4b2aa8f8`; entrega `0x4b2aa9df` y wrappers seguidos. Llamador Ex en
+ncryptprov `0x1003da6a` y slot local `[EBP-0x64]` acreditados. Frontera archivada:
+llamada importada NtCreateUserProcess `0x1003db34`; no se acredita continuidad
+del contenido tras el helper intermedio ni conexión con el PEB consumidor.
+Conversión efectiva, equivalencia,
+prioridad de duplicados y valores runtime siguen abiertos.
+Las cuatro escalas efectivas siguen sin demostrar. Después, entrada de agregados comerciales.
 No repetir integración `fa32fba`, preparación, wrappers/getters, declaraciones,
-WORD de tabla auxiliar, selector `rsTabla`, enlaces delegados o cuerpos ya seguidos.
+WORD de tabla auxiliar, selector `rsTabla`, enlaces delegados, máscaras,
+proveedor/argumento `2`, AbreRS/carga de lista o cuerpos ya seguidos.
 Sin activar cargo ni operar G6.
 
-**Equipo del titular, 31/10:** siguiente acción real. Claude opera Productor por
+**Equipo del titular, 31/10 (antecedente, no es el puntero):** Claude opera Productor por
 visión según [CONTINUAR-EN-WINDOWS §0](CONTINUAR-EN-WINDOWS.md#0-relevo-del-31102026-equipo-del-titular-con-visión):
 F1 (leer RED y locale), después R1 del [plan](paridad/PASO-E1-DESPUNTE.md#plan-r1-con-mochila-31102026),
 y afinar Aluminior solo con regla demostrada.
@@ -404,12 +624,14 @@ titular; investigación económica E1 desde G6-incidencia y E7 tras A4, según
 
 S3 verificado localmente y en GitHub Actions (`36a47f4`): 1.448 pruebas correctas,
 una condicionada a CSV privado, seis recorridos, tipos, arquitectura y build; ver [evidencia y ejecuciones](paridad/MEDIDAS-Y-CI-2026-10-09.md#s3-validación-completa-de-los-paquetes-en-ci--09102026).
-Siguiente desde Mac: matriz restante de P.6/P.7 — otras anchuras, zoom 200%,
-reduced motion y recorrido humano comparativo. C1/0031/0032/carga/publicación
+Pendiente registrado el 12/10 (histórico): matriz de P.6/P.7 — anchuras, zoom
+200%, reduced motion y comparación humana. Los tramos locales del 18–19/10
+figuran arriba; el 12/10 la continuidad entonces era comparación humana y recorrido
+autenticado aislado autorizado. No es el puntero. C1/0031/0032/carga/publicación
 y QA remoto completados el 12/10; no repetirlos. Teclado/búsqueda/foco de este
 tramo están parcialmente publicados; su aceptación integral sigue abierta.
 
-**A3 publicado/verificado el 09/10 en `a06cd4f`, con 0029 aplicada.** A4 publicado/verificado en `487feb1`: 0030 aplicada, conexiones renovadas y alta/edición/recarga/copia/PDF decimales comprobados en producción. A5 verificado en GitHub Actions (run 37971854995, seis recorridos correctos). D1 reconciliado localmente. [Informe](paridad/MEDIDAS-Y-CI-2026-10-09.md). E1 depende de Windows; P.2 conserva aceptación comercial y S2 el anuncio del 14/10.
+**A3 publicado/verificado el 09/10 en `a06cd4f`, con 0029 aplicada.** A4 publicado/verificado en `487feb1`: 0030 aplicada, conexiones renovadas y alta/edición/recarga/copia/PDF decimales comprobados en producción. A5 verificado en GitHub Actions (run 37971854995, seis recorridos correctos). D1 reconciliado localmente. [Informe](paridad/MEDIDAS-Y-CI-2026-10-09.md). E1 requiere observación aislada del original con alcance propio; la investigación interna de Windows está archivada. P.2 conserva aceptación comercial y S2 revalidación tras la fecha anunciada del 14/10.
 
 Antecedente P.2: rama `codex/pdf-multipagina`, worktree `pdf-multipagina/Aluminior`, desde
 `7ad0ee2`. P.2 publicado en `46c613d`; endpoint PDF 260009 comprobado sin escritura, 1 página / 805,65 €. Ese main quedó reconciliado el 13/10 con `origin/main` del 12/10; se conservan
@@ -420,6 +642,26 @@ las mejoras publicadas y la herramienta de propuesta, sin aplicar tarifas.
 Pendientes del [banco local](paridad/BANCO-CONTRASTE-2026-10-03.md): de los 31 GRUPO
 de la iteración 13 quedan 8 con unión material de serie distinta, 1 con variantes
 de vidrio por elemento, 1 con PVP ausente/ambiguo y 1 con bloqueo de acristalamiento.
+E2 atiende los primeros: la unión ya guarda su propia serie y el banco la traslada
+([evidencia y límites](paridad/EVIDENCIA-E2-UNION-SERIE-2026-10-19.md), 19–20/10,
+local). En esta rama, 03/11, E2 está integrado, sin medir en la 0016: las cifras
+del 20/10 son del banco de la rama Codex, no de esta integración. Medido el 20/10 con base local y la copia autorizada: 407/523 líneas
+iguales (77,82 %) frente a 400/523, GRUPO 30/45 y cero líneas con la causa de
+serie de unión. Después, la [variante de acristalamiento por rango de la
+serie](paridad/EVIDENCIA-VARIANTE-ACRISTALAMIENTO-2026-10-20.md) deja el banco
+en 410/523 (78,39 %) y los GRUPO en 33/45, sin líneas bloqueadas por variantes
+de vidrio por elemento. Después, la [omisión de junquillo sin fila](paridad/EVIDENCIA-OMISION-JUNQUILLO-2026-10-20.md)
+deja las igualdades en 410/523 y baja sin valorar de 25 a 21: cuatro líneas
+pasan a valoradas y ninguna a igual. No repetirla ni ajustar la tarifa para
+cuadrarlas. Sigue pendiente la comparación lateral en Productor.
+Las causas ya cerradas sin regla y su condición de reapertura están en
+[CAUSAS-CERRADAS](paridad/CAUSAS-CERRADAS.md); consultarla antes de elegir
+unidad y calcular el techo con `scripts/techo-de-causa.mjs`. El 21/10 se cerró
+sin regla [la familia 112 de accesorios](paridad/EVIDENCIA-TUBOS-FAMILIA-112-2026-10-21.md),
+tres líneas: la plantilla del tubo ofrece cuatro filas, el despiece guarda una y
+los tres casos guardan tres distintas sin dato que lo determine. De las 21 sin
+valorar, diez son el despunte de cabecera (E1, parado por la licencia) y solo
+`caso-01869` y `caso-01944` quedan como unidades de una línea sin veredicto.
 También quedan despunte de cabecera (10) y las observaciones en Windows.
 La primera matriz está entregada; seguir la [lista de ensayos mínimos](paridad/ENSAYOS-MINIMOS-PRODUCTOR-2026-10-03.md):
 despunte, unión de otra serie, comisión, tapajuntas, compacto, acristalamiento y
@@ -427,7 +669,7 @@ fracciones. Coordinar con la conversación de visión antes de operar 0017 u
 obtener una copia. Verificar una regla antes de corregir el motor y repetir el
 banco conservando igualdades/exclusiones.
 
-**Siguiente ensayo económico: E1 — despunte**, según el [procedimiento preparado](paridad/PASO-E1-DESPUNTE.md).
+**Ensayo económico E1 — despunte (antecedente, no es el puntero),** según el [procedimiento preparado](paridad/PASO-E1-DESPUNTE.md).
 En curso: [manual y contraste guardado del 04/10](paridad/EVIDENCIA-E1-DESPUNTE-2026-10-04.md)
 acreditan la resta de costes en 13 documentos positivos con detalle de otra
 copia Windows; ocho discrepancias y un cargo sin detalle se conservan.
@@ -446,9 +688,10 @@ técnica completa. Datos privados en output/e1-despunte/complementario-20261004.
 Las tres políticas de redondeo coinciden en G4. Variante 1207×1150 con
 propiedades verificadas produjo error de opciones/SessionFactory y tercer
 GRUPO, sin sustituir segunda C2; G6-incidencia conservada, sin nuevo despunte.
-Siguiente: autorización solicitada para retirar solo tercer GRUPO y confirmar
-edición segura de segunda línea antes de comparación de precisión. Las dos
-líneas previas siguen idénticas a G4/G5. No repetir A–F, G1–G5 ni diagnóstico
+La propuesta del 04/10 de retirar el tercer GRUPO queda histórica e inactiva.
+El 19/10 el siguiente entonces era empresa sintética nueva con RED/locale y predicciones
+discriminantes; no modificar G6. Las dos líneas previas siguen idénticas a
+G4/G5. No repetir A–F, G1–G5 ni diagnóstico
 GID. Descuentos cero/cantidad 1 no discriminan base bruta/neta. E1 sigue En
 curso; cargo presupuestario y banco conservados. El subcontrato físico local
 del 13/10 se registra por separado arriba. Retirar instrucciones agotadas y preservar

@@ -1,27 +1,228 @@
 # Siguiente paso E1: cálculo y reparto del despunte
 
+> **Dirección vigente — 19/10, primer arranque observado:** ensayo E1 aislado autorizado. [Resultado y siguiente dependencia](#ensayo-autorizado-del-1910-configuración-y-redondeo): Sandbox operativo tras el reinicio; el comprobador de Productor exige Crystal Reports 13.0.35. No repetir reinicio/activador/inventario ni exigir demo. Primera unidad de arranque detenida y revisada; resolver únicamente ese requisito dentro del invitado antes de reintentar. Cargo comercial desactivado, G6 y producción intocables. Windows interno archivado.
+
 Procedimiento preparado el 03/10/2026 y actualizado el 04/10. Estado vigente:
 [roadmap](../../ROADMAP-PARIDAD-PRODUCTOR.md). La [continuación estática del 14/10](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#control-reparto-y-totales)
 ya recuperó wrappers/campos y, en su segunda unidad, layout estático y
 consumidor DEScalcula, declaraciones COM y receptores/selector de alBDADO.
-Los cuerpos de control/reparto/totales también están seguidos; continuar por
-`VarFormat`, configuración efectiva y entrada de agregados comerciales. No repetir
-inventarios/literales/preparación pura/declaraciones. El procedimiento
+Los cuerpos de control/reparto/totales también están seguidos. La
+[unidad del 17/10](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#contrato-de-formato-varformat)
+amplía máscaras/Variant y contrato público de formato, sin cerrar empates ni
+localización efectiva. La [unidad posterior de configuración](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#proveedor-de-configuración-y-argumento-2)
+identifica `gaConfigDAL.Carga` y acredita el fallback condicionado del BSTR `2`,
+sin demostrar las cuatro escalas efectivas. La [unidad de procedencia](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-y-precedencia-del-índice-de-configuración)
+sigue AbreRS y la carga de lista con índice NombreDato. La [unidad del índice](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#configuración-construcción-y-selección-del-índice)
+sigue configuración/construcción, ordenación y selección de posición; no prueba
+prioridad primera/última ni equivalencia de claves. La [continuación de claves](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#comparación-y-normalización-de-claves)
+sigue inicializador del comparador y bifurcación del normalizador; no repetirlos.
+La [unidad de fila y delegados](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#clave-de-fila-y-transformaciones-del-índice)
+atribuye el cuerpo propio de `x_Clave` y sigue proveedor/slots de transformación.
+Los [predicados internos de rellena](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#predicados-internos-de-rellena)
+ya tienen condiciones y ramas seguidas estáticamente. La [frontera WCTMB](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#frontera-widechartomultibyte)
+acredita contrato público y enlace candidato ApiSet. La [procedencia del estado](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-del-estado-de-kernelbase)
+acredita escrituras y fallback condicionados de las dos celdas. La
+[procedencia del selector](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-del-byte-selector-de-kernelbase)
+acredita una escritura literal condicionada a `1`. La [identidad del DWORD, 18/10](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-inmediata-del-dword-de-kernelbase)
+queda atribuida por bytes y tipos x86 a `_RTL_USER_PROCESS_PARAMETERS.Flags`
+en `+0x8`, mediante `TEB → PEB → ProcessParameters`. La [inicialización local de Flags, 18/10](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#inicialización-local-de-flags)
+acredita en ntdll `_RtlCreateProcessParametersInternal@48` la escritura de `1`
+en `0x4b2aa8f8`: bit 31 a cero en ese instante del bloque construido.
+No demuestra que sea el bloque del PEB leído ni que se ejecute antes del consumidor.
+La entrega interna `0x4b2aa9df` y los wrappers Ex/WithTemplate están seguidos.
+La [unidad del llamador Ex](IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#llamador-externo-y-destinatario-de-ex)
+acredita una llamada en `ncryptprov.dll`, `0x1003da6a`, desde el símbolo
+`_CreateSecureProcessEx@28`: el primer argumento es la dirección del slot local
+`[EBP-0x64]`. Su lectura posterior y escritura en `+0x29c` están capturadas;
+no se atribuye nombre ni valor efectivo a ese offset. El mismo slot vuelve
+a leerse para el noveno argumento de una llamada importada a `NtCreateUserProcess`.
+**Frontera técnica archivada (no continuar):** esa llamada en `0x1003db34`
+(IAT `0x10068438`, lectura del slot en `0x1003dadf`), sin seguir su cuerpo.
+El helper intermedio `0x1003da93` no está seguido: no se demuestra conservación
+del contenido del slot a través de sus posibles efectos o alias.
+No se acredita que este llamador participe en Productor, que el bloque sea el
+del PEB leído por KernelBase ni orden previo a su lectura. No repetir la
+localización del llamador Ex ni sustituirla por la variante WithTemplate.
+No se acredita
+escritura del bit 31 a uno, significado del bit, valor efectivo ni ejecución. Campo
+`FS:[0x30]+0x228` y resultados del helper siguen abiertos por separado.
+No repetir escrituras de las dos celdas, contrato/enlace ni predicados.
+Después valores efectivos, equivalencia y entrada de agregados. No repetir estos cuerpos ni `xConfig`,
+construcción/búsqueda, AbreRS/carga de lista ni
+inventarios/literales/preparación pura/declaraciones ni proveedor/argumento `2`. El procedimiento
 de observación siguiente es una vía separada y necesita autorización propia.
 Ya se entregó la
 [investigación documental y contraste guardado](EVIDENCIA-E1-DESPUNTE-2026-10-04.md);
 no repetirla. G1–G5 demuestran alta independiente, reparto por bases distintas
 y persistencia. La variante 1207×1150 produjo error de opciones/SessionFactory
 y un tercer GRUPO; se conserva como G6-incidencia, sin nuevo despunte.
-Siguiente: retirar solo ese tercer GRUPO tras autorización y verificar edición
-de segunda línea sin alta, antes del ensayo discriminante de precisión.
+La propuesta del 04/10 de retirar el tercer GRUPO queda histórica e inactiva.
+El siguiente ensayo vigente usa una nueva empresa sintética aislada con
+RED/locale efectivos y predicciones discriminantes; no operar G6.
 No repetir A–F ni G1–G5 ni atribuir G6-incidencia a un recálculo válido.
 
 Continuidad entre equipos: [guía Windows](../CONTINUAR-EN-WINDOWS.md).
 Item E1 por proyecto `aluminior` + sync_uid
-`398049fbd618069e36bb84bab37913ed`: Windows del ensayo 180, Mac 192.
-No editar el 180 del Mac, que trata descuentos. Las fuentes privadas no
+`398049fbd618069e36bb84bab37913ed`: los números Windows 180/Mac 192 son
+referencias históricas del ensayo, no identidad vigente. Redescubrir el ítem
+por sync_uid/proyecto antes de editarlo; el 180 del Mac trataba descuentos.
+Las fuentes privadas no
 viajan por Git/July; comprobar copias y autorización antes de operar.
+
+## Ensayo autorizado del 19/10: configuración y redondeo
+
+Petición posterior a la auditoría: ejecutar el ensayo en aislamiento y aplicar
+en Aluminior sólo lo demostrado, usando subagentes y sin tocar G6 ni producción.
+La autorización para ese alcance ya está recibida; no volver a pedirla por los
+antiguos avisos de esta documentación. El ensayo **todavía no está ejecutado**.
+
+**Inventario administrativo completado por Sergio:** recibo del 19/10 a las
+06:32:45 UTC, script/hash/destino verificados. `Get-VM -ComputerName localhost`
+responde correctamente y devuelve **cero VMs registradas**. Windows 11 Pro tiene
+Hyper-V instalado y Sandbox deshabilitado. El bloqueo inicial de consulta por
+permisos queda superado; no pedir repetir
+`output/e1-ensayo-config-20261019/preparacion/Comprobar-entorno-E1.ps1`.
+La sesión del agente sigue sin elevar: este recibo no le concede administración.
+Docker usa Linux; los servicios de licencia activos del host no demuestran
+licencia utilizable dentro de un invitado.
+
+**Vía elegida por Sergio: aprovechar la instalación existente** en
+`C:/Users/sergi/Desktop/MIX/Productor/Aluminio`. No se ha demostrado que requiera
+un instalador completo para probar su copia. Se preparan **341 archivos,
+220.429.241 bytes**, con manifiesto y hashes de origen/copia verificados:
+ejecutables actuales, bibliotecas, configuración neutra de runtime y paquete
+de componentes GAIA. La aplicación de referencia conserva **46.30.0006**.
+No se copian MDB, empresas `EMP*`, índices/configuración de Empresas, correo,
+credenciales, logs, backups, estado de licencia ni enlaces/junctions.
+La caché histórica `43.35/43.35` contiene otra versión, **42.35.0002**;
+no se usa como sustituto ni se ejecuta su actualizador.
+
+**Activación y reinicio completados:** el activador revisado se ejecutó
+elevado el 19/10 a las 06:56 UTC. Recibo: `Disabled → Enabled`, `restartNeeded=true`,
+sin error; CIM confirma `InstallState=1`. Sergio reinició Windows: arranque del
+host a las 10:51:42 UTC, posterior a la activación. `WindowsSandbox.exe` ya
+disponible. El perfil `Arranque-E1.wsb` se abrió a las 11:04:38 UTC; Windows
+completó su instalación de primer uso y abrió el invitado. No repetir el
+activador, el inventario ni solicitar otro reinicio por este paso.
+[Microsoft documenta](https://learn.microsoft.com/en-us/windows/security/application-security/application-isolation/windows-sandbox/windows-sandbox-configure-using-wsb-file)
+el control de red/carpetas y el descarte al cerrar. El perfil desactiva red,
+portapapeles, audio, vídeo, impresora y vGPU. Sólo comparte el paquete preparado
+como lectura y una salida nueva acotada; no comparte instalación original,
+empresas ni repositorio completo. Copia de trabajo dentro del disco invitado.
+El preparador invitado rechaza ejecutarse en el host y no lanza Productor.
+El recibo invitado del 19/10 a las 11:05:25 UTC confirma el modelo de máquina
+virtual, cuenta `WDAGUtilityAccount`, 341 archivos verificados en
+`C:/E1Guest/Aluminio` y cero adaptadores de red activos. No se copiaron MDB.
+Los campos `legacyExecuted=false` y `databasesCopied=false` pertenecen a esa
+preparación previa; no son una medición del intento posterior.
+Revisión independiente de preparación PASS tras un único lote de corrección
+(lectura UTF-8 explícita y política
+RemoteSigned sólo del proceso invitado). Sin Bypass ni política persistente.
+Con lectura anterior faltaban dos archivos con «ñ»; con UTF-8 se resuelven los
+341. Guardas del host y del activador, hashes, perfil y enlaces verificados.
+
+**Resultado del primer arranque:** doble clic sobre «Productor copia E1» en el
+escritorio invitado. El comprobador muestra «No es posible ejecutar la
+aplicación Productor Aluminio» y el requisito visible incumplido **Crystal
+Reports para Visual Studio. Versión 13.0.35**. Se capturó la pantalla y se detuvo
+esa unidad, sin pulsar su enlace ni registrar componentes. El lanzador alcanza
+la comprobación de requisitos; no demuestra aplicación operativa, licencia,
+empresa nueva, RED/locale ni ensayo económico R1.
+
+El MSI que acompaña la instalación original está firmado por SAP, pero su
+tabla Property declara **13.0.0.99**: no asumir versión por su nombre genérico.
+Lectura exclusivamente `MSIDBOPEN_READONLY`, sin instalar o reparar productos.
+GAIA publica un paquete explícito 13.0.35 de 32 bits en su
+[soporte oficial](https://www.gaia-soft.com/soporte). Se ha descargado al área
+privada de pruebas, con firma válida de SAP SE y propiedades leídas sin escritura:
+**13.0.35.4870**, ProductCode `{E43D7D73-C531-4EB3-ACC9-0EF11E1A84B0}`.
+
+**Instalación invitada completada y parada en la dependencia siguiente.**
+El mismo Sandbox, UUID `d8248510-bae0-4a2e-a208-93484eee479c`, recibió el MSI
+oficial por `wsb exec` como `NT AUTHORITY\SYSTEM`. Recibo
+`salida/crystal-13.0.35-20261019T113449349Z-09a9e4d0435e45739dd1c7d5559d73d7/recibo.json`:
+estado `installed-verified-stop`, salida 0, sin reinicio, una sola entrada
+Registry32 con DisplayVersion `13.0.35.4870`. Los 341 archivos del payload y
+su manifiesto no cambiaron. No se ejecutó msiexec en el host ni se usó el MSI
+13.0.0.99. Se cerró el comprobador que seguía abierto y se reabrió una vez
+`aluminio.exe`. Crystal Reports ya no figura como requisito incumplido. El
+diálogo nuevo, capturado y no aceptado, dice: «Es necesario actualizar los
+controles y librerías para el correcto funcionamiento del programa. Vuelva a
+ejecutar la aplicación Productor Aluminio al finalizar este proceso.» Esa
+actualización queda fuera de esa unidad: no se pulsó Aceptar ni se registraron
+componentes. Licencia, RED/locale y R1 siguen sin observar.
+
+**Unidad de controles y librerías — 19/10, parada por falta de mochila.**
+En el mismo invitado `d8248510-bae0-4a2e-a208-93484eee479c` se aceptó el diálogo
+y se observó la cadena completa de dependencias, sin tocar el host:
+
+| Observación | Evidencia | Límite |
+|---|---|---|
+| Al aceptar, el registrador `gaControlesReg` arranca y cae con «Run-time error '339': Component 'MSCOMCTL.OCX' or one of its dependencies not correctly registered» | `salida/controles-estado-20261019T133625237Z/` | El invitado no trae MSCOMCTL.OCX ni su CLSID; el payload de 341 archivos tampoco |
+| MSCOMCTL.OCX 6.00.8862 del host, firma Microsoft válida, SHA256 `09f126e6…b9712`, copiado a `SysWOW64` del invitado y registrado con `regsvr32 /s` | `salida/mscomctl-registro-20261019T133936925Z/` y `salida/mscomctl-verificacion-20261019T134128454Z.json`: 26 CLSID y la TypeLib `{831FDD16-…}` | Registro sólo en el invitado; el host no se modificó. El primer recibo se marcó `failed` por consultar un CLSID equivocado, corregido en la verificación posterior |
+| Reabierto `aluminio.exe`, vuelve a pedir actualizar controles; aceptado, el registrador recorre los componentes con RegAsm | `salida/reapertura-controles-20261019T134208324Z/` y `salida/controles-aceptar-20261019T134245870Z/` | Sigue sin acreditar aplicación operativa |
+| Único error final del registrador: «Error CRUFLGaia.dll: Error copiando CRUFLGaia.dll. No existe destino: C:\Windows\CRYSTAL\» | `salida/registrador-textos-*.json` | Falta la carpeta UFL heredada de Crystal; no se creó en esta unidad |
+
+Parada: Sergio comunica que **no dispone ahora de la mochila USB** de licencia
+(HASP/UniKey). Sin ella la copia no puede llegar a licencia, empresas ni al
+ensayo económico, así que la cadena RED/locale y el caso discriminante quedan
+bloqueados por hardware, no por preparación. No se instaló nada en el host, no
+se tocaron licencias ni salvaguardas y G6 sigue intacto. El aviso de batería
+crítica del equipo anfitrión quedó encima del invitado durante los últimos
+intentos y bloqueó el teclado/ratón sintético: se conserva en las capturas.
+
+Preparación privada y contrato detallado:
+`output/e1-ensayo-config-20261019/continuacion-admin/copia-instalada/`.
+Recibo de activación conservado allí:
+`sandbox-feature-20261019T065658248Z-510aaa62d052454ca2c8f055220ad53b.json`.
+Evidencia posterior:
+`output/e1-ensayo-config-20261019/post-reinicio-20261019/primer-arranque.png`,
+recibo invitado en `salida/`, revisión independiente y propiedades MSI en
+`post-reinicio-20261019/`. La verificación paralela conserva 369/370 guardas:
+«salida vacía» falla porque el invitado escribió su recibo durante el barrido;
+integridad del paquete, perfil y preservación sí pasan. No debilitar esa guarda
+ni presentar la ejecución completa del verificador como verde.
+La [demo oficial](https://landing.gaia-soft.com/pc-productor-aluminio-prueba/)
+queda como alternativa si un impedimento observado justifica usarla, no como
+requisito actual. No se ha solicitado ni enviado formulario alguno. El acceso
+de la licencia al invitado sigue sin observar; no se copia ni sustituye una llave.
+Antes de R1 siguen siendo obligatorios runtime/licencia legítimos, configuración
+efectiva RED/locale, empresa sintética y capacidad de despunte/guardado verificadas.
+
+Recibo privado de entrada:
+`output/e1-ensayo-config-20261019/preparacion/entorno-E1-20261019T063245234Z-7697d2a51ffe4737a0ac372a2998c986.json`
+(SHA256 `9634d0515bf10a66f4b6081ba473c14b2d8ff0885e6088a152a50930e0374cea`).
+Validación con cinco controles negativos e inventario de medios:
+`output/e1-ensayo-config-20261019/continuacion-admin/`.
+
+**Caso preparado R1, condicionado y no observado:** tres líneas con bases
+40/60/400 €, perfil ML sintético, barra 6.000 mm y cortes 400/600/4.000 mm.
+Coste candidato 16,68 €/m y PVP 100 €/m; sin descuentos, kerf, saneado o retales.
+El coste candidato de barras menos perfiles es 16,68 €. Con margen GID
+hipotético 0,01 % sobre coste resulta 16,681668 €. Las cuatro RED y el locale
+efectivos siguen sin capturar; las predicciones siguientes requieren escalas
+de dos decimales y las bases/agregados descritos. No son valores por defecto.
+
+| Hipótesis | Cargo L1 | Cargo L2 | Cargo L3 | Suma |
+|---|---:|---:|---:|---:|
+| A: GID fino y cuotas independientes | 1,33 | 2,00 | 13,35 | 16,68 |
+| B: GID a céntimos y cuotas independientes | 1,33 | 2,00 | 13,34 | 16,67 |
+| C: GID a céntimos y mayor resto | 1,34 | 2,00 | 13,34 | 16,68 |
+| D: precio unitario ML antes de importe | 1,34 | 2,00 | 13,36 | 16,70 |
+
+Los vectores distinguen las hipótesis por identidad, aunque A/C compartan suma.
+A/B/C no tienen empates monetarios ni de restos; la separación mínima de media
+unidad es 0,0003344 €. D advierte que el precio visible puede introducir otra
+etapa: registrar `GastosIndirectos` precisos, precio/unidad, metraje e importe.
+Un resultado fuera de las hipótesis exige corregirlas, no un ajuste de céntimos.
+No se clasifica nada si faltan RED/locale, entradas o formación de agregados.
+
+Preparación privada: `output/e1-ensayo-config-20261019/casos/PROTOCOLO.md`,
+`predecir.py`, `predicciones.json` y `captura-pendiente.json`. Generador racional
+independiente y contraste Decimal del arquitecto coinciden; ejecución sin
+conexiones. La captura mantiene configuración/observación/clasificación nulas.
+No se modifica `repartirDecimal`, el coste técnico ni un cargo comercial por
+estas simulaciones. No hay cambio funcional demostrado que aplicar todavía.
 
 ## Antes de abrir un ensayo
 
@@ -132,7 +333,11 @@ No hubo G7 ni recálculo. G6-incidencia conserva error, copia estable y proyecci
 las dos líneas anteriores son idénticas a G4/G5. No asumir configuración de
 opciones completa por haber generado un precio.
 
-1. Pendiente autorización de borrar **solo el tercer GRUPO de 1207×1150 de la
+**Procedimiento propuesto el 04/10, inactivo:** se conserva para explicar
+la incidencia y sus precauciones. No constituye el siguiente paso ni un
+permiso de borrado. Gobierna la dirección del inicio: empresa nueva y G6 intacto.
+
+1. Se propuso solicitar autorización de borrar **solo el tercer GRUPO de 1207×1150 de la
    incidencia**, con evidencia ya conservada; nunca retirar las dos líneas
    previas. Verificar estado restaurado mediante copia estable y proyección.
 2. Confirmar recorrido de edición de segunda línea sin alta nueva (se consultó

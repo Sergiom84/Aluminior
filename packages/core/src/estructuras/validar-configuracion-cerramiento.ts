@@ -4,7 +4,7 @@ import { cotasModuloValidas } from './cotas-cerramiento.ts'
 import { compactoModuloValido } from './compacto-cerramiento.ts'
 import { resolverGeometriaFi1Ofi } from './geometria-1ofi.ts'
 import { resolverGeometriaComposicion } from './geometria-composicion.ts'
-import { materialesModuloValidos } from './materiales-cerramiento.ts'
+import { materialesModuloValidos, materialesUnionValidos } from './materiales-cerramiento.ts'
 import { anclajesV3Validos, VERSION_COMPOSICION_CERRAMIENTO } from './composicion-cerramiento.ts'
 import type { ConfiguracionCerramiento } from './cerramiento.ts'
 import { VERSION_CONFIGURACION_CERRAMIENTO } from './versiones-cerramiento.ts'
@@ -43,6 +43,8 @@ export function esConfiguracionCerramiento(
   })
   const unionesValidas = candidato.uniones.every((union) =>
     union && typeof union.id === 'string' && typeof union.codigo === 'string' &&
+    (candidato.version === VERSION_COMPOSICION_CERRAMIENTO || !Object.hasOwn(union, 'materiales')) &&
+    materialesUnionValidos(union.materiales) &&
     unionAdmitida(union, catalogo) &&
     Number.isFinite(union.longitudMm) && union.longitudMm > 0 &&
     Number.isFinite(union.grosorMm))

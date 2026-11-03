@@ -1,4 +1,4 @@
-import { CATALOGO_SNAPSHOT, compactoEfectivoModulo, cotasEfectivasModulo, esConfiguracionCerramiento, esResultadoCerramiento, etapasVentaCerramiento, materialesEfectivos,
+import { CATALOGO_SNAPSHOT, compactoEfectivoModulo, cotasEfectivasModulo, esConfiguracionCerramiento, esResultadoCerramiento, etapasVentaCerramiento,
   unionConfigurada, resolverOrigenSinUnion, medidasFabricacionCerramiento,
   type ConfiguracionCerramiento, type RedondeoVentaCerramiento, type ResultadoCerramientoV1,
   type ResultadoOrigenCerramiento } from '@aluminior/core/estructuras'
@@ -8,6 +8,7 @@ import { valorarEstructura } from '../estructuras/valorar-estructura.ts'
 import { resolverMaterialesEstructura } from '../estructuras/materiales-estructura.ts'
 import { partidasValoracion } from '../estructuras/partidas-valoracion.ts'
 import { completarCostesOrigen } from './origen-valorado.ts'
+import { origenesGeometriaCerramiento } from './origenes-geometria.ts'
 import { catalogoDespieceCargado } from '../estructuras/catalogo-despiece/cargado.ts'
 import { valorarConCatalogo } from '../estructuras/catalogo-despiece/valorar-con-catalogo.ts'
 
@@ -36,13 +37,19 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
   // como Productor (FILA_CENTIMOS); sin él, la vía anterior y su protocolo.
   const redondeo: RedondeoVentaCerramiento = await catalogoDespieceCargado(cliente) ? 'FILA_CENTIMOS' : 'ESTRUCTURA_NUMBER_V1'
   // Las uniones configuradas restan su grosor a las piezas contiguas y miden el lado común.
+  // Sin serie propia la unión hereda la general; el vidrio de la unión no se hereda.
   const fabricacion = medidasFabricacionCerramiento(entrada.configuracion)
-  const geometria = [
-    ...entrada.configuracion.modulos.map(m => ({ tipo: 'MODULO' as const, id: m.id, materiales: materialesEfectivos(m, entrada),
-      codigo: m.estructuraCodigo, cotas: cotasEfectivasModulo(m), compacto: compactoEfectivoModulo(m, entrada), ...fabricacion.modulos.get(m.id)! })),
-    ...entrada.configuracion.uniones.map(u => ({ tipo: 'UNION' as const, id: u.id,
-      codigo: u.codigo, anchoMm: u.grosorMm, altoMm: fabricacion.uniones.get(u.id)!.longitudMm, materiales: null, cotas: null, compacto: null })),
-  ]
+  const porModulo = new Map(entrada.configuracion.modulos.map(m => [m.id, m]))
+  const geometria = origenesGeometriaCerramiento(entrada.configuracion, entrada).map(origen => {
+    if (origen.tipo === 'MODULO') {
+      const modulo = porModulo.get(origen.id)!
+      return {
+        ...origen, ...fabricacion.modulos.get(origen.id)!,
+        cotas: cotasEfectivasModulo(modulo), compacto: compactoEfectivoModulo(modulo, entrada),
+      }
+    }
+    return { ...origen, altoMm: fabricacion.uniones.get(origen.id)!.longitudMm, cotas: null, compacto: null }
+  })
   for (const g of geometria) {
     const origen: ResultadoOrigenCerramiento = {
       origen: { tipo: g.tipo, id: g.id }, codigo: g.codigo,

@@ -1,10 +1,93 @@
 # Relevo: paridad y fuentes de Productor
 
-**Vigente desde el 31/10/2026:** la observación E1 continúa en el equipo del
-titular, con Claude operando Productor por visión. Leer primero
+**Vigente desde el 03/11/2026:** E2 integrado en rama, sin medir en la 0016.
+La medición es el [siguiente del roadmap](ROADMAP-PARIDAD-PRODUCTOR.md#siguiente-paso),
+en el equipo de la mochila. No reimplementar la serie propia de la unión.
+La observación E1 por visión sigue en el equipo del titular:
 [CONTINUAR-EN-WINDOWS §0](docs/CONTINUAR-EN-WINDOWS.md#0-relevo-del-31102026-equipo-del-titular-con-visión)
 y el [plan R1](docs/paridad/PASO-E1-DESPUNTE.md#plan-r1-con-mochila-31102026).
-Lo que sigue es el relevo anterior, conservado como historia.
+No se reanuda desde este portátil.
+
+Lo que sigue está ordenado por fecha y no es un segundo puntero.
+
+### 19/10 — auditoría (antecedente)
+
+[Auditoría de integración](docs/paridad/AUDITORIA-INTEGRACION-REA-2026-10-19.md).
+Render entonces en `40cedd1`; diez E2E con BD Docker y QA local; Auth real y
+comparación humana pendientes; E1 comercial y tarifa dinámica sin activar; G6
+protegido. El relevo del 18/10 queda en
+[continuar en otra conversación](docs/paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#continuar-en-otra-conversación).
+No es la dirección vigente.
+
+### 16–18/10 — investigación estática (antecedente, no continuar)
+
+Para continuar en otra conversación de aquella fecha: [relevo del 18/10](docs/paridad/RELEVO-APLICACION-ALUMINIOR-2026-10-18.md#continuar-en-otra-conversación). No es el puntero.
+Continuación posterior: [proveedor de configuración E1](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#proveedor-de-configuración-y-argumento-2),
+después de la unidad de formato. `gaConfigDAL.Carga` y el fallback condicionado
+del BSTR `2` están seguidos; no demuestran escalas efectivas iguales a dos.
+La [unidad de procedencia](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-y-precedencia-del-índice-de-configuración)
+sigue AbreRS y carga de lista con índice NombreDato. No repetir esa carga,
+máscaras/Variant/helpers/650 ni proveedor/argumento `2`. La [unidad del índice](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#configuración-construcción-y-selección-del-índice)
+sigue configuración/construcción, ordenación y búsqueda sin acreditar prioridad
+primera/última o equivalencia de claves. La [continuación de claves](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#comparación-y-normalización-de-claves)
+sigue inicializador del comparador y bifurcación del normalizador; no repetirlos.
+La [unidad de fila y delegados](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#clave-de-fila-y-transformaciones-del-índice)
+atribuye `_gaLstItem.x_Clave +0x38` a `0x11074c00` y sigue las transformaciones.
+Los [predicados internos de rellena](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#predicados-internos-de-rellena)
+ya tienen declaraciones, cuerpos, argumentos y condiciones seguidos estáticamente.
+La [frontera WCTMB](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#frontera-widechartomultibyte)
+acredita contrato público y enlace candidato ApiSet. La [procedencia del estado](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-del-estado-de-kernelbase)
+acredita escrituras y fallback condicionados de las dos celdas. La
+[procedencia del selector](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-del-byte-selector-de-kernelbase)
+acredita una escritura literal condicionada a `1`. La [identidad del DWORD, 18/10](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#procedencia-inmediata-del-dword-de-kernelbase)
+queda atribuida por bytes y tipos x86 a `_RTL_USER_PROCESS_PARAMETERS.Flags`
+en `+0x8`, mediante `TEB → PEB → ProcessParameters`. La [inicialización local de Flags, 18/10](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#inicialización-local-de-flags)
+acredita en ntdll `_RtlCreateProcessParametersInternal@48` la escritura de `1`
+en `0x4b2aa8f8`: bit 31 a cero en ese instante del bloque construido.
+No demuestra que sea el bloque del PEB leído ni que se ejecute antes del consumidor.
+La entrega interna `0x4b2aa9df` y los wrappers Ex/WithTemplate están seguidos.
+La [unidad del llamador Ex](docs/paridad/IMPLEMENTACION-CLONERSOFT-E1-2026-10-13.md#llamador-externo-y-destinatario-de-ex)
+acredita una llamada en `ncryptprov.dll`, `0x1003da6a`, desde el símbolo
+`_CreateSecureProcessEx@28`: el primer argumento es la dirección del slot local
+`[EBP-0x64]`. Su lectura posterior y escritura en `+0x29c` están capturadas;
+no se atribuye nombre ni valor efectivo a ese offset. El mismo slot vuelve
+a leerse para el noveno argumento de una llamada importada a `NtCreateUserProcess`.
+**Frontera técnica archivada (no continuar):** esa llamada en `0x1003db34`
+(IAT `0x10068438`, lectura del slot en `0x1003dadf`), sin seguir su cuerpo.
+El helper intermedio `0x1003da93` no está seguido: no se demuestra conservación
+del contenido del slot a través de sus posibles efectos o alias.
+No se acredita que este llamador participe en Productor, que el bloque sea el
+del PEB leído por KernelBase ni orden previo a su lectura. No repetir la
+localización del llamador Ex ni sustituirla por la variante WithTemplate.
+No se acredita
+escritura del bit 31 a uno, significado del bit, valor efectivo ni ejecución. Campo
+`FS:[0x30]+0x228` y resultados del helper siguen abiertos por separado.
+No repetir contrato/enlace WCTMB, predicados, cuerpos ni `xConfig`.
+Empates y
+localización efectiva siguen sin ensayo; cargo desactivado y G6 protegido.
+Reúne rutas, trabajo realizado, evidencias comprobadas, límites y continuación;
+el roadmap mantiene los estados únicos. Comprobación local del 18/10:
+428, 56, 91 y 145 artefactos de los cuatro índices privados anteriores intactos,
+incluidos los dos `.pyc` antiguos conservados fuera del índice de formato;
+índice íntegro de 140 archivos conservado; evidencia nueva en
+`output/e1-processparameters-caller-20261018/`; trece árboles históricos completos
+429/59/92/146/140/77/127/374/189/198/151/223/269 (2.474 archivos) preservados,
+sin repetir suites de producto. La identidad del DWORD conserva su unidad anterior.
+Capturas, revisión y recibos nuevos permanecen privados; commit local sin push.
+
+Investigación REA del **16/10**, en worktree separado
+`C:\Users\sergi\.codex\worktrees\rea-productor-20261016\Aluminior`, rama
+`codex/rea-productor-20261016`, base `307bf54`:
+[informe](docs/paridad/INVESTIGACION-REA-PRODUCTOR-2026-10-16.md) y
+[comparación](docs/paridad/COMPARACION-REA-PRODUCTOR-2026-10-16.md).
+Reutilizar inventarios y contratos nuevos antes de repetir investigación.
+La vía nativa acotada produce pseudocódigo con advertencias; no repetir
+el análisis global fallido ni prometer fuentes originales/equivalencia.
+Evidencia privada en `output/rea-productor-20261016/` de ese worktree; recibir
+la rama no transporta esa carpeta. Sin producto/datos/publicación nuevos.
+El 18/10 el siguiente producto entonces era valores efectivos de configuración, aceptación matemática, agregados y persistencia E1; no es el puntero.
+G6 continúa protegido y las brechas nuevas no alteran el orden del roadmap.
+La continuación del 14/10 que sigue es antecedente de esta investigación.
 
 Continuación local Windows del 14/10, desde HEAD comprobado `a078975`, rama
 `codex/integracion-windows-mac-20261013`, árbol inicial limpio.
@@ -21,8 +104,10 @@ WORD de tabla auxiliar, selector `rsTabla` y cuerpos delegados acreditados
 estáticamente. `marcaDespunteCalculado`, `calculaTotalDoc` y cuerpos de gastos,
 reparto/totales ya seguidos: la matriz distingue filtros, bases/descuentos,
 sustitución, cantidades valoradas y defensa parcial de doble cómputo.
-Continuar por `VarFormat`, configuración efectiva y entrada de agregados;
-no repetir receptores, WORD, selector o esos cuerpos.
+La continuación entonces pendiente de `VarFormat` se amplió el 17/10 arriba;
+el proveedor se amplía en la unidad posterior enlazada arriba; siguen valores
+efectivos de configuración y entrada de agregados. No repetir
+receptores, WORD, selector, máscaras o esos cuerpos.
 El reenvío no acredita guardado durable.
 Usar slots públicos TypeLib y constructor inspeccionado, sin nombres por índice.
 Falta contrato monetario completo de formato/configuración/agregados y persistencia.
@@ -69,8 +154,9 @@ Publicación técnica 12/10 desde worktree `productor-clonersoft/Aluminior`:
 [recibo remoto](docs/paridad/PUBLICACION-CLONERSOFT-2026-10-12.md).
 Render live `40cedd1`, 0031/0032/carga dirigida y ambos CI comprobados; QA remoto
 y preservación final correctos. Main Mac reconciliado el 13/10; no repetir extracción,
-MO cero, migraciones, carga o gates entregados. Siguiente: matriz restante de
-P.6/P.7 y E1 Windows; E2/E6 conservan sus etapas. La publicación no acredita
+MO cero, migraciones, carga o gates entregados. Pendiente anotado el 12/10:
+P.6/P.7 y observación E1 del original; los avances locales y el siguiente paso
+del 19/10 están en la auditoría del inicio. E2/E6 conservan sus etapas. La publicación no acredita
 recepción en otro equipo ni fabricación. Fuentes/respaldo/recibos privados
 permanecen ignorados; no viajan por Git o July.
 
@@ -83,7 +169,7 @@ los estados pertenecen al [roadmap](ROADMAP-PARIDAD-PRODUCTOR.md).
 Entrada actual: [estado](docs/ESTADO-ACTUAL.md) →
 [roadmap operativo](ROADMAP-PARIDAD-PRODUCTOR.md). La matriz y la lista de
 ensayos ya están entregadas (M0 cerrado). Actualización 09/10: A1 y S1/A2 publicados/verificados, Render de aquella entrega `a06cd4f`, sustituido por A4 en `487feb1` (API reconsultada el 10/10).
-A3 publicado/verificado en `a06cd4f`, 0029 aplicada: [informe](docs/paridad/IDEMPOTENCIA-PRESUPUESTOS-2026-10-09.md). Continuación Mac: A4 publicado/verificado en 487feb1, 0030 aplicada, y A5 CI correcta, ver [informe](docs/paridad/MEDIDAS-Y-CI-2026-10-09.md). No repetir A4. S3 verificado en CI sobre 36a47f4: 1.448 tests correctos/uno condicionado a CSV privado, seis recorridos, tipos/arquitectura/build; runs 37978474635 y 37978474739. Siguiente Mac vigente: matriz restante P.6/P.7; C1 publicado/verificado técnico el 12/10; P.2 conserva aceptación comercial. E1 conserva procedimiento Windows y autorización pendiente; no repetir A3.
+A3 publicado/verificado en `a06cd4f`, 0029 aplicada: [informe](docs/paridad/IDEMPOTENCIA-PRESUPUESTOS-2026-10-09.md). Continuación Mac: A4 publicado/verificado en 487feb1, 0030 aplicada, y A5 CI correcta, ver [informe](docs/paridad/MEDIDAS-Y-CI-2026-10-09.md). No repetir A4. S3 verificado en CI sobre 36a47f4: 1.448 tests correctos/uno condicionado a CSV privado, seis recorridos, tipos/arquitectura/build; runs 37978474635 y 37978474739. El 12/10 el siguiente Mac entonces era la matriz restante de P.6/P.7; C1 ya publicado y verificado técnico; P.2 conserva aceptación comercial. No es el puntero. No repetir A3.
 No repetir S1/A2 ni la investigación de paginación. Rama `codex/pdf-multipagina`; P.2 se publicó en `46c613d`; PDF 260009 descargado válido, 1 página y 805,65 €.
 S2 conserva el anuncio Next previsto para el 14/10; no repetir mantenimiento ya entregado.
 E1 conserva su [procedimiento](docs/paridad/PASO-E1-DESPUNTE.md) para después.
@@ -96,6 +182,10 @@ de tareas agotados, preservando la evidencia según AGENTS. No repetir M0.
 
 ## Objetivo y siguiente trabajo
 
+Antecedente de coordinación del 03–09/10, inactivo como instrucción de trabajo.
+Conserva contexto y observaciones; no autoriza limpiar G6 ni sustituye el
+siguiente paso del roadmap: medir E2 en la 0016.
+
 Sergio quiere que su tío pueda presupuestar con Aluminior obteniendo resultados equivalentes a Productor Aluminio (GAIA): configuración, piezas, cortes, cantidades, metraje, mano de obra, precios, ajustes y documentos. Productor es la referencia funcional y de interacción; la presentación se moderniza conservando el modelo de trabajo demostrado.
 
 El cuello de botella actual es la interfaz lenta del original. La continuación debe aprovechar bases de datos, configuración, manuales y despieces guardados, y reservar la observación mediante visión para reglas que todavía necesiten un ensayo discriminante.
@@ -107,8 +197,8 @@ igual/precios cargados; F9/reapertura persisten. Copias privadas por estado en
 `output/e1-despunte/complementario-20261004/`. Precisión no discriminada por
 G4: variante 1207×1150 con propiedades verificadas produjo error de opciones/
 SessionFactory y tercer GRUPO. Copia G6-incidencia conserva fuente y error;
-previos intactos, sin otro despunte. Siguiente: quitar solo tercer GRUPO tras
-autorización solicitada y verificar edición segura de segunda línea sin alta.
+previos intactos, sin otro despunte. El 04/10 el siguiente era quitar solo el tercer GRUPO tras
+autorización; el 31/10 se retiró con autorización. No repetirlo. La edición sin alta quedó verificada ese día.
 No repetir A–F/G1–G5 ni diagnóstico GID. Descuentos/otras cantidades fuera
 del alcance; E1 En curso, motor y banco sin cambios. El item E1 mantiene sync_uid `398049fbd618069e36bb84bab37913ed`
 (Windows del ensayo 180, Mac 192); los IDs no se trasladan entre equipos.

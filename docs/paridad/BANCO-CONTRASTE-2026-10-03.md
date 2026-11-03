@@ -2,10 +2,9 @@
 
 > Referencia fechada; conservar evidencia y límites. No ejecutar sus pendientes o permisos como instrucciones actuales. Consultar el [roadmap vigente](../../ROADMAP-PARIDAD-PRODUCTOR.md).
 
-**76,48 % de las líneas elegibles salen al mismo precio efectivo que Productor: 400/523.**
-En 2026: **80,65 % (400/496)**.
+**78,39 % de las líneas elegibles salen al mismo precio efectivo que Productor: 410/523.**
+En 2026: **82,66 % (410/496)**.
 Se mide coincidencia numérica de la copia y del código actual, no aceptación comercial ni certificación de fabricación.
-
 
 ## Historial
 
@@ -28,6 +27,15 @@ publicadas en `main`; cada una conserva todas las igualdades anteriores.
 | 03/10/2026 | `e2468fa` | Vidrio y panel con el acabado principal | 377 | 80 | 9 | 57 | 0 |
 | 03/10/2026 | `9792c6d` | Opciones por defecto sin selección guardada | 380 | 81 | 5 | 57 | 0 |
 | 03/10/2026 | `e2b0232` | GRUPO: medidas fraccionarias, catálogo ESM y U SIN UNION | 400 | 81 | 5 | 37 | 0 |
+| 20/10/2026 | `2f0d452` | E2: serie propia de la unión del cerramiento | 407 | 82 | 5 | 29 | 0 |
+| 20/10/2026 | `1b3d8f8` | Variante de acristalamiento por rango de la serie | 410 | 83 | 5 | 25 | 0 |
+| 20/10/2026 | local, sin commit | Vidrio sin fila de acristalamiento: omitir junquillo y juntas | 410 | 84 | 8 | 21 | 0 |
+
+La fila «local, sin commit» no está en `main` ni en `9b03f5c`. Evidencia:
+[omisión de junquillo](EVIDENCIA-OMISION-JUNQUILLO-2026-10-20.md).
+
+
+
 
 
 ## Iteraciones y evidencia
@@ -489,6 +497,9 @@ una ventana; faltan sus entradas completas y resultados. E1–E7 permanecen
 pendientes. Producción consta como verificada por Claude en el relevo recibido,
 con aceptación de valorar/guardar/recargar/PDF todavía pendiente.
 
+
+
+
 ## Avance E1 — 04/10/2026, fuera del corpus del banco
 
 [Evidencia y reproducción](EVIDENCIA-E1-DESPUNTE-2026-10-04.md). Manual y
@@ -524,9 +535,9 @@ Intervalos excluyentes, sobre las distintas; error relativo absoluto en céntimo
 | Error | Líneas |
 |---|---:|
 | ≤1 % | 0 |
-| >1–5 % | 0 |
+| >1–5 % | 1 |
 | >5–10 % | 2 |
-| >10 % | 3 |
+| >10 % | 5 |
 | base cero | 0 |
 
 Una causa principal por línea: primer impedimento de representación, después primer aviso bloqueante.
@@ -536,18 +547,17 @@ La asignación por identidad queda en `resultados.json → diagnostico.bloqueos`
 | Modelo | Causa principal | Líneas |
 |---|---|---:|
 | 2O | sin bloqueo: valorado | 196 |
-| 1O | sin bloqueo: valorado | 103 |
-| 2O | vidrio-y-acristalamiento | 1 |
-| 1O | vidrio-y-acristalamiento | 2 |
-| 1O | sin bloqueo: valorado distinto | 2 |
+| 1O | sin bloqueo: valorado | 104 |
+| 2O | sin bloqueo: valorado distinto | 1 |
+| 1O | sin bloqueo: valorado distinto | 3 |
 | 2O | accesorio-de-linea-no-representable | 2 |
 | 2O | familia-adicional-no-representable | 1 |
 
 ## Alcance, fuente y preparación
 
 Copia autorizada `EMP0016/Anterior.mdb`, solo lectura con `mdb-reader` y proyección de campos técnicos.
-SHA-256: `e8518386687cb459ebfa7906c010700f6838e64d36e1bec72ecdc038123721a0`. Ejecución: `2026-10-03T18:11:36.166Z`.
-Revisión Git anterior al cambio de trabajo medido: `bec252349269ccb2fb67189f8b9648cf1d932bc2`; el Historial identifica cada corrección posterior.
+SHA-256: `e8518386687cb459ebfa7906c010700f6838e64d36e1bec72ecdc038123721a0`. Ejecución: `2026-10-20T09:53:10.021Z`.
+Revisión Git anterior al cambio de trabajo medido: `9b03f5c4450c55733620996d4233f422d1e30fbe`; el Historial identifica cada corrección posterior.
 Confirmados 403 presupuestos (22 de 2025, 381 de 2026) y 105011 filas:
 790 estructuras independientes, 167 GRUPO y 1169 elementos internos
 (1068 con Precio > 0). Los 1169 elementos no se suman de nuevo al denominador del GRUPO.
@@ -557,7 +567,7 @@ Universo de 957 líneas comerciales de estructura/GRUPO; 434 excluidas y 523 ele
 El porcentaje incluye sin valorar y errores en el denominador. Los excluidos no se dan por acertados ni fallidos.
 No extrapolar esta cifra a las 105.011 filas, a todos los modelos ni a los trabajos posteriores de la base activa.
 
-Postgres local `127.0.0.1:55433/aluminior_real_test`: 29 migraciones existentes, 541 estructuras,
+Postgres local `127.0.0.1:55433/aluminior_real_test`: 28 migraciones existentes, 541 estructuras,
 17.547 artículos, 83.367 PVP y 260.760 filas del motor. Simulación y carga dirigida:
 cero descartes, tablas protegidas conservadas. Clientes, proveedores, obras y documentos no importados.
 No se cargaron reglas calibradas del histórico para la vía antigua; los resultados de esa vía no pueden ser aciertos.
@@ -615,9 +625,9 @@ La proximidad nunca cuenta como igualdad. Una igualdad de precio puede tener dif
 
 | Modelo | Universo | Excluidas | Líneas | Igual | Cercano | Distinto | Sin valorar | Error | Igual % |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| 2O | 231 | 31 | 200 | 166 | 30 | 0 | 4 | 0 | 83,00 |
-| 1O | 140 | 33 | 107 | 89 | 14 | 2 | 2 | 0 | 83,18 |
-| GRUPO | 167 | 122 | 45 | 23 | 2 | 3 | 17 | 0 | 51,11 |
+| 2O | 231 | 31 | 200 | 166 | 30 | 1 | 3 | 0 | 83,00 |
+| 1O | 140 | 33 | 107 | 89 | 15 | 3 | 0 | 0 | 83,18 |
+| GRUPO | 167 | 122 | 45 | 33 | 4 | 4 | 4 | 0 | 73,33 |
 | PC2 | 33 | 2 | 31 | 22 | 8 | 0 | 1 | 0 | 70,97 |
 | C2 | 28 | 0 | 28 | 23 | 3 | 0 | 2 | 0 | 82,14 |
 | 0 | 31 | 10 | 21 | 18 | 3 | 0 | 0 | 0 | 85,71 |
@@ -662,7 +672,7 @@ La proximidad nunca cuenta como igualdad. Una igualdad de precio puede tener dif
 | PSM001 | 135 | 135 | 0 | 0 | 0 | 0 | 0 | 0 | — |
 | PSM002 | 11 | 11 | 0 | 0 | 0 | 0 | 0 | 0 | — |
 | PSM004 | 14 | 14 | 0 | 0 | 0 | 0 | 0 | 0 | — |
-| **TOTAL** | **957** | **434** | **523** | **400** | **81** | **5** | **37** | **0** | **76,48** |
+| **TOTAL** | **957** | **434** | **523** | **410** | **84** | **8** | **21** | **0** | **78,39** |
 
 ## Exclusiones
 
@@ -688,14 +698,14 @@ Actualización anterior no acredita por sí sola toda la historia de precios.
 
 | Año | Líneas | Igual | Cercano | Distinto | Sin valorar | Error | Igual % |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| 2026 | 496 | 400 | 55 | 4 | 37 | 0 | 80,65 |
+| 2026 | 496 | 410 | 58 | 7 | 21 | 0 | 82,66 |
 | 2025 | 27 | 0 | 26 | 1 | 0 | 0 | 0,00 |
 
 | Fecha de PVP respecto al presupuesto | Líneas | Igual | Cercano | Distinto | Sin valorar | Error |
 |---|---:|---:|---:|---:|---:|---:|
 | anterior-o-igual | 199 | 186 | 11 | 0 | 2 | 0 |
-| posterior | 71 | 5 | 60 | 3 | 3 | 0 |
-| desconocida | 253 | 209 | 10 | 2 | 32 | 0 |
+| posterior | 74 | 6 | 63 | 5 | 0 | 0 |
+| desconocida | 250 | 218 | 10 | 3 | 19 | 0 |
 
 Desconocida incluye cálculos no ejecutables y cualquier selección con fecha incompleta;
 no equivale a tarifa errónea. Los casos con PVP posterior permanecen separados y no demuestran
@@ -710,16 +720,16 @@ Estos diagnósticos localizan discrepancias; no atribuyen causalidad completa a 
 
 | Diagnóstico | Líneas | Precio esperado agregado € | Desviación absoluta medible € | Sin importe calculado |
 |---|---:|---:|---:|---:|
-| total-padre-no-reconciliado | 18 | 17.609,06 | 670,54 | 14 |
-| coste-de-articulo | 14 | 21.748,15 | 1006,10 | 9 |
-| acabado-de-articulo | 14 | 21.748,15 | 1006,10 | 9 |
-| serie-de-union-no-representable | 11 | 20.214,40 | 0,00 | 11 |
-| pvp-o-tarifa | 11 | 12.182,22 | 670,54 | 7 |
-| importe-de-fila | 11 | 12.182,22 | 670,54 | 7 |
+| total-padre-no-reconciliado | 17 | 16.391,20 | 975,74 | 11 |
+| coste-de-articulo | 14 | 25.740,64 | 1480,40 | 6 |
+| acabado-de-articulo | 14 | 25.740,64 | 1480,40 | 6 |
+| pvp-o-tarifa | 11 | 16.174,71 | 975,74 | 5 |
+| importe-de-fila | 11 | 16.174,71 | 975,74 | 5 |
 | despunte-de-documento-sin-regla | 10 | 9947,37 | 0,00 | 10 |
-| vidrio-y-acristalamiento | 6 | 8815,35 | 0,00 | 6 |
-| pieza-ausente | 5 | 14.802,44 | 335,56 | 4 |
-| mano-de-obra | 5 | 3735,70 | 162,61 | 3 |
+| pieza-ausente | 6 | 19.422,91 | 504,66 | 4 |
+| mano-de-obra | 5 | 3735,70 | 467,81 | 1 |
+| vidrio-y-acristalamiento | 4 | 10.030,85 | 0,00 | 4 |
+| longitud-de-corte | 4 | 7667,93 | 438,50 | 3 |
 
 Coste-de-artículo es una discrepancia de coste, **no causa del PVP**: el histórico conserva muchos ceros
 y el catálogo actual aporta costes. Acabados diferentes se comparan como el mismo artículo con acabado distinto,
@@ -743,9 +753,9 @@ Las cifras son **líneas candidatas a revisar como máximo**, solapadas; no gara
 | 3 | PVP/tarifa → hasta 11 | `estructuras/pvp-articulos.ts`, `catalogo-despiece/leer-catalogo.ts`, importación PVP; separar cambio de acabado de precio antiguo; no cambiar tarifa del catálogo para cuadrar |
 | 4 | Alternativa de acristalamiento → 0 bloqueadas | nTAcris 0/1 resuelto; valores superiores requieren CHM/configuración/ensayo y `acristalamiento-serie.ts` |
 | 5 | GRUPO no representable → 0 elegibles bloqueados; numerosos excluidos por accesorios incompletos | `core/estructuras/validar-configuracion-cerramiento.ts`, catálogo visual, configuración por origen y `cerramientos/valorar-cerramiento.ts`; medidas fraccionarias/modelos/uniones se reportan en detalle privado |
-| 6 | Metraje facturable → hasta 3 | `core/precios/importe-fila.ts`; cotejar mínimos/múltiplos y redondeo por pieza/fila con iguales tarifas |
-| 7 | Herrajes, MO y vidrio bloqueantes → hasta 1, 0 y 6 | `core/despiece/asociaciones/`, `mano-obra-fabricacion.ts`, `acristalamiento-catalogo.ts` y resolución de serie |
-| 8 | Cortes/cotas → hasta 3 | `core/despiece/linea-catalogo/diseno.ts` y referencias de corte; FI/FD y divisiones necesitan instancia verificable |
+| 6 | Metraje facturable → hasta 4 | `core/precios/importe-fila.ts`; cotejar mínimos/múltiplos y redondeo por pieza/fila con iguales tarifas |
+| 7 | Herrajes, MO y vidrio bloqueantes → hasta 3, 0 y 4 | `core/despiece/asociaciones/`, `mano-obra-fabricacion.ts`, `acristalamiento-catalogo.ts` y resolución de serie |
+| 8 | Cortes/cotas → hasta 4 | `core/despiece/linea-catalogo/diseno.ts` y referencias de corte; FI/FD y divisiones necesitan instancia verificable |
 | 9 | Costes → hasta 14 discrepancias diagnósticas | `estructuras/coste-articulos.ts` y ETL costes; aclarar ceros históricos antes de calcular márgenes. No usar este arreglo para prometer PVP correcto |
 | 10 | Snapshot de GRUPO → 0 errores | `cerramientos/valorar-cerramiento.ts`, `origen-valorado.ts` y `core/estructuras/resultado-cerramiento/validar.ts`; localizar el campo que incumple el contrato con una fixture sintética antes de modificarlo |
 
@@ -769,10 +779,38 @@ npx tsc -p scripts/tsconfig.banco-contraste.json --noEmit
 
 Para repetir sobre la misma copia y base basta `medir`. El script exige host local, puerto 55433 y base
 aluminior_real_test, no carga entorno ni admite parámetros de conexión alternativos.
+
+**Firma de base v2 — 21/10/2026.** `/var/lib/postgresql/data` del contenedor es
+`tmpfs`: la base muere al **parar** Docker, no solo al recrearlo, y
+`aluminior_real_test` hay que crearla otra vez. Hasta hoy la firma hasheaba la
+fila completa, así que los `id` uuid de `estructura_cotas` y
+`estructura_componentes` y el `creado_en` de `articulos` la cambiaban en cada
+reconstrucción con datos idénticos; el falso positivo se sorteaba apartando
+`base-verificada.json`, cuatro veces desde el 03/10. Ahora la firma excluye `id`
+y `creado_en`, comprobado sobre tablas temporales: regenerando solo los `id`, la
+firma v1 pasa de `6ecb9fcd…` a `825a7ae6…` y la v2 no se mueve.
+
+Consecuencia operativa: **no se borra `base-verificada.json`**. Una reconstrucción
+desde los mismos CSV debe reproducir sus firmas, así que una discrepancia ya
+significa algo real. `medir` distingue el cambio de fórmula de la deriva de
+catálogo y solo acepta la ausencia del fichero con `--base-nueva`, que queda
+registrado en el artefacto. La recalibración única de hoy dejó la firma anterior
+en `base-verificada-firma-v1.json`.
+
+Control negativo: `medir --contra <resultados.json>` no aborta, guarda en
+`resultados-control-negativo.json`, no toca `resultados.json` ni el informe y
+publica el delta en los dos sentidos, incluidos los importes que cambian sin
+cambiar de estado. `comprobarNoRegresion` sigue protegiendo las mediciones
+normales, pero solo ve igualdades perdidas: su silencio no es una confirmación.
+
+Reproducción del 21/10 sobre `f732338`, base reconstruida de cero desde los CSV
+y la misma copia: 410 iguales, 84 cercanas, 8 distintas, 21 sin valorar, cero
+errores. Idéntico a la medición del 20/10 hecha sobre el árbol de trabajo, y
+`--contra` sobre esa misma medición devuelve `sinCambio`.
 La exportación guarda huellas de cada CSV y la carga comprueba que banco y catálogo proceden de la misma copia.
 No usar el importador completo ni modificar el catálogo para elevar el porcentaje.
 
-Verificación de cierre: 41 pruebas del banco/adaptadores; typecheck específico y del
-monorepo, auditoría de arquitectura y suite general (1.389 pruebas pasadas, 1 omitida).
+Verificación de cierre: 35 pruebas del banco/adaptadores; typecheck específico y del
+monorepo, auditoría de arquitectura y suite general (1.322 pruebas pasadas, 1 omitida).
 Cada iteración detalla su evidencia y sus logs privados.
 Migraciones sin cambios. La base local es efímera y se pierde si se recrea/parada Docker.

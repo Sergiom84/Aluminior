@@ -87,7 +87,10 @@ function preparar(datos: DatosProduccion, parametros: ParametrosProduccion, sali
           descripcion: articulo.descripcion, acabadoCodigo: p.acabadoCodigo, longitudBarraMm: parametros.longitudBarraMm,
           plan: optimizarCorte([], { longitudBarra: util, kerf: parametros.kerfMm }), procedencias: new Map() }, cortes: [], costes: new Set<string | null>() }
         g.cortes.push({ longitud: Number(p.largoCorteMm), cantidad, ref })
-        g.costes.add(p.costeUnitario)
+        // Dos costes distintos ya bloquean la valoración; ceros finales no son otro coste.
+        if (g.costes.size < 2 && ![...g.costes].some(coste => coste === null || p.costeUnitario === null
+          ? coste === p.costeUnitario : compararDecimal(coste, p.costeUnitario) === 0))
+          g.costes.add(p.costeUnitario)
         g.grupo.procedencias = new Map([...g.grupo.procedencias!, [ref, { estructuraIndice: [...estructuras.keys()].indexOf(keyOrigen) + 1,
           referencia: fila.etiqueta, posicion: p.posicionTrabajo }]])
         grupos.set(key, g)

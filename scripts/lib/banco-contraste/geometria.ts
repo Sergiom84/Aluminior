@@ -79,8 +79,10 @@ export function configuracionGrupo(c: Caso, medidas: MedidasGrupo = 'linea'): { 
     // Solo aceptar la longitud si coincide con la medida económica de la línea.
     // En nominal, el motor recalcula la longitud como lado común.
     if (medidas === 'linea' && numero(u.ULongitud) !== e?.dimensiones.alto) motivos.push('longitud-de-union-no-demostrada')
+    // La serie de la unión se conserva aunque no sea la del primer módulo.
     uniones.push({ id: `union-${texto(u.Orden)}`, codigo: texto(u.CodEstr), grosorMm: numero(u.UGrosor)!,
-      longitudMm: medidas === 'nominal' ? numero(u.ULongitud)! : e?.dimensiones.alto! })
+      longitudMm: medidas === 'nominal' ? numero(u.ULongitud)! : e?.dimensiones.alto!,
+      ...(e?.serie ? { materiales: { serieCodigo: e.serie } } : {}) })
   }
   if (uniones.length !== modulos.length - 1) motivos.push('composicion-no-representable')
   return { configuracion: motivos.length ? null : { version: 3, modulos, uniones,

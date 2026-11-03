@@ -35,6 +35,7 @@ export function SelectorCliente({ errores = [], inicial }: { errores?: string[];
   }, [abierto, consulta, intento])
 
   const elegir = (cliente: ClienteEncontrado) => {
+    buscador.current?.focus()
     setCodigo(cliente.codigo)
     setConsulta(`${cliente.codigo} · ${cliente.nombre}`)
     setAbierto(false)

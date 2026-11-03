@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useEnvioFormulario } from './use-envio-formulario.ts'
 import {
   type ConfiguracionCerramiento,
@@ -12,6 +12,7 @@ import { EditorLineaEstructura } from './editor-linea.tsx'
 import { Escaparate } from './escaparate.tsx'
 import { CamposArticulo, CamposCerramiento, acabadoPorDefecto } from './campos-alta.tsx'
 import { MensajeError } from './mensaje-error.tsx'
+import { enfocarEdicion } from './foco-edicion.ts'
 import { catalogosEstructuraListos, claveCatalogoHerraje, type EstadoCargaCatalogo } from './editor-linea/disponibilidad-catalogos.ts'
 import styles from '../presupuesto-movil.module.css'
 
@@ -33,6 +34,8 @@ export function AnyadirLinea({
   const [tipo, setTipo] = useState<TipoLinea>('CERRAMIENTO')
   const [plantilla, setPlantilla] = useState<PlantillaDiseno | null>(null)
   const { estado, enviar, enviando } = useEnvioFormulario<Estado>(anyadirLinea, true)
+  const formulario = useRef<HTMLFormElement>(null)
+  const focoTrasAlta = useRef(false)
   const [serie, setSerie] = useState('')
   const [vidrio, setVidrio] = useState('')
   const [acabado, setAcabado] = useState(() => acabadoPorDefecto(acabados))
@@ -60,8 +63,19 @@ export function AnyadirLinea({
   }, [])
 
   useEffect(() => {
+    focoTrasAlta.current = Boolean(estado?.ok)
     if (estado?.ok) resetTrasAlta()
   }, [estado, resetTrasAlta])
+
+  useEffect(() => {
+    if (!focoTrasAlta.current) return
+    focoTrasAlta.current = false
+    formulario.current?.querySelector<HTMLButtonElement>('[data-foco-configurador-vacio]')?.focus()
+  }, [edicion])
+
+  useEffect(() => {
+    if (estado && !estado.ok) enfocarEdicion(estado, formulario.current)
+  }, [estado])
 
   const elegirTipo = (siguiente: TipoLinea) => {
     setTipo(siguiente)
@@ -88,7 +102,7 @@ export function AnyadirLinea({
     acristalamiento?.clave === serie && acristalamiento.estado === 'ERROR'
 
   return (
-    <form onSubmit={evento => {
+    <form ref={formulario} onSubmit={evento => {
       if (!puedeEnviar) { evento.preventDefault(); return }
       void enviar(evento)
     }} id="configurador" tabIndex={-1} aria-label="Introducir línea" aria-keyshortcuts="F7"
@@ -130,7 +144,7 @@ export function AnyadirLinea({
       </div>
 
       {estado?.mensaje && (
-        <div className="mb-4 rounded-md border p-3 text-sm"
+        <div role={estado.ok ? 'status' : 'alert'} tabIndex={-1} className="mb-4 rounded-md border p-3 text-sm"
           style={{ background: 'var(--al-warn-soft)', borderColor: 'var(--al-warn)' }}>
           {estado.mensaje}
         </div>

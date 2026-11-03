@@ -86,9 +86,8 @@ como hipótesis y necesita aprobación antes de tratarse como canónico.
 Un defecto conocido de Productor no es un requisito de compatibilidad:
 documenta la desviación y demuestra el resultado corregido.
 
-**Consulta `docs/paridad/CAUSAS-CERRADAS.md` (vive en la rama
-`codex/rea-productor-20261016` hasta integrarla; aquí el enlace no existe)
-antes de aceptar la unidad.** Si tu causa está ahí, solo se reabre nombrando la
+**Consulta [CAUSAS-CERRADAS.md](docs/paridad/CAUSAS-CERRADAS.md) antes de
+aceptar la unidad.** Si tu causa está ahí, solo se reabre nombrando la
 evidencia nueva que su última columna exige. Si no la tienes, para y dilo.
 
 **El techo se calcula, no se opina:**

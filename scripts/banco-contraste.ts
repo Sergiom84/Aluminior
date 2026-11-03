@@ -7,13 +7,18 @@ import { leerFuente } from './lib/banco-contraste/fuente.ts'
 import { construirContraste } from './lib/banco-contraste/extraer.ts'
 import { conectarLocal, prepararLocal, URL_LOCAL } from './lib/banco-contraste/local.ts'
 import { exportarCatalogo, verificarCatalogo } from './lib/banco-contraste/catalogo.ts'
-import { comprobarNoRegresion } from './lib/banco-contraste/diagnostico.ts'
+import { comprobarNoRegresion, delta } from './lib/banco-contraste/diagnostico.ts'
 import { verificarBase } from './lib/banco-contraste/verificar-base.ts'
 
 const { positionals, values } = parseArgs({ allowPositionals: true, options: {
   mdb: { type: 'string' }, salida: { type: 'string', default: 'export_datos/banco-contraste' },
   origen: { type: 'string' }, url: { type: 'string', default: URL_LOCAL },
   informe: { type: 'string' },
+  // Control negativo: compara contra una medición guardada, no aborta y no
+  // sobrescribe resultados.json ni el informe.
+  contra: { type: 'string' },
+  // Única forma de aceptar que falte base-verificada.json, y queda registrada.
+  'base-nueva': { type: 'boolean', default: false },
 } })
 const accion = positionals[0], salida = resolve(values.salida!)
 const rel = relative(resolve('.'), salida).split(sep).join('/')
@@ -51,22 +56,42 @@ if (accion === 'catalogo') {
     const firmasPrevias = join(salida, 'base-verificada.json')
     try {
       const previas = JSON.parse(readFileSync(firmasPrevias, 'utf8'))
+      if ((previas.firmaVersion ?? 1) !== verificacion.firmaVersion) throw new Error(
+        `base-verificada.json usa la fórmula de firma v${previas.firmaVersion ?? 1} y ahora es v${verificacion.firmaVersion}.\n` +
+        'No es deriva del catálogo: las firmas no son comparables entre fórmulas.\n' +
+        'Recalibra una vez aparta el fichero y repite con --base-nueva.')
       if (previas.fuenteHash !== manifiesto.sha256 || JSON.stringify(previas.firmas) !== JSON.stringify(verificacion.firmas)) throw new Error('El catálogo local cambió respecto a la medición anterior')
-    } catch (e) { if ((e as NodeJS.ErrnoException).code !== 'ENOENT') throw e }
-    guardar('base-verificada', { ...verificacion, fuenteHash: manifiesto.sha256 })
+    } catch (e) {
+      if ((e as NodeJS.ErrnoException).code !== 'ENOENT') throw e
+      // Su ausencia desactivaba en silencio la detección de catálogo cambiado,
+      // así que borrarlo salía verde. Ahora hay que declararlo.
+      if (!values['base-nueva']) throw new Error(
+        'Falta base-verificada.json: sin él no se puede comprobar que el catálogo no cambió entre mediciones.\n' +
+        'No lo borres para seguir. Si la base se perdió de verdad y la has vuelto a preparar, repite con --base-nueva.')
+    }
+    guardar('base-verificada', { ...verificacion, fuenteHash: manifiesto.sha256, baseNueva: values['base-nueva'] })
     const banco = construirContraste(t)
     const r = await ejecutarBanco(db, banco, t)
     const despues = await verificarBase(sql, t)
     if (JSON.stringify(despues.firmas) !== JSON.stringify(verificacion.firmas)) throw new Error('El catálogo cambió durante la medición; resultado descartado')
-    try {
-      const anteriores = JSON.parse(readFileSync(join(salida, 'resultados.json'), 'utf8'))
-      comprobarNoRegresion(anteriores.mediciones, r.mediciones)
-    } catch (e) { if ((e as NodeJS.ErrnoException).code !== 'ENOENT') throw e }
-    guardar('resultados', r)
-    if (values.informe) {
-      const { escribirInforme } = await import('./lib/banco-contraste/informe.ts')
-      escribirInforme(values.informe, r, manifiesto)
+    if (values.contra) {
+      // El control negativo es una medición de primera clase: no aborta, deja
+      // artefacto propio y no toca resultados.json ni el informe.
+      const base = JSON.parse(readFileSync(resolve(values.contra), 'utf8'))
+      const d = delta(base.mediciones, r.mediciones)
+      guardar('resultados-control-negativo', { ...r, contra: values.contra, delta: d })
+      console.log(JSON.stringify({ resumen: r.resumen, delta: d }, null, 2))
+    } else {
+      try {
+        const anteriores = JSON.parse(readFileSync(join(salida, 'resultados.json'), 'utf8'))
+        comprobarNoRegresion(anteriores.mediciones, r.mediciones)
+      } catch (e) { if ((e as NodeJS.ErrnoException).code !== 'ENOENT') throw e }
+      guardar('resultados', r)
+      if (values.informe) {
+        const { escribirInforme } = await import('./lib/banco-contraste/informe.ts')
+        escribirInforme(values.informe, r, manifiesto)
+      }
+      console.log(JSON.stringify(r.resumen, null, 2))
     }
-    console.log(JSON.stringify(r.resumen, null, 2))
   } finally { await sql.end({ timeout: 5 }) }
-} else throw new Error('Uso: node --import tsx scripts/banco-contraste.ts extraer|catalogo|preparar|medir [--mdb copia] [--origen CSV] [--salida export_datos/banco-contraste] [--url local] [--informe docs/paridad/BANCO-CONTRASTE-fecha.md]')
+} else throw new Error('Uso: node --import tsx scripts/banco-contraste.ts extraer|catalogo|preparar|medir [--mdb copia] [--origen CSV] [--salida export_datos/banco-contraste] [--url local] [--informe docs/paridad/BANCO-CONTRASTE-fecha.md] [--contra resultados.json] [--base-nueva]')

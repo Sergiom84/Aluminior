@@ -16,7 +16,7 @@ export function HojaCorteVista({ resultado: r }: { resultado: PreparacionProducc
     </Tabla>
     {r.planes.length === 0 && <p>Sin artículos marcados para corte en barra.</p>}
     {r.planes.map(g => <div key={JSON.stringify([g.articuloCodigo, g.acabadoCodigo])} className="space-y-3">
-      <h3 className="font-medium">{g.articuloCodigo} · {g.acabadoCodigo ?? 'Sin acabado'}</h3>
+      <h3 className="break-words font-medium">{g.articuloCodigo} · {g.acabadoCodigo ?? 'Sin acabado'}</h3>
       {g.plan.barras.map((b, i) => <Tabla key={i} titulo={`${g.articuloCodigo} · barra ${i + 1} · retal ${medida(b.sobrante)}`}
         cabeceras={['Origen y pieza', 'Corte', 'Ángulo izquierdo', 'Ángulo derecho', 'Posición']}>
         {b.cortes.map((c, j) => {
