@@ -19,7 +19,7 @@ async function preparar(numero: number) {
   const [p] = await db.insert(schema.presupuestos).values({ numero, serie: 'J05C', fecha: '2026-09-08',
     nombreLibre: nombre, tarifa: 32760 }).returning()
   const entrada = { presupuestoId: p.id, configuracionSerializada: JSON.stringify(configuracionJ04()),
-    serieCodigo: 'QA-J05-SIN-CATALOGO', vidrioCodigo: null, acabadoCodigo: null,
+    serieCodigo: 'QA-J05-SIN-CATALOGO', vidrioCodigo: 'QA-J05-VIDRIO', acabadoCodigo: 'QA-J05-ACABADO',
     varianteAcristalamiento: '1' as const, referencia: 'ANTES', cantidad: 1,
     horasFabricacion: '0', horasColocacion: '0' }
   const alta = prepararAltaCerramiento(entrada); if (!alta.ok) throw new Error('Geometría inválida')

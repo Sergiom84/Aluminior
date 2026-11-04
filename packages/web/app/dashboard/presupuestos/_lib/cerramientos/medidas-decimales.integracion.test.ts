@@ -30,6 +30,7 @@ it('alta, edición, lectura y copia conservan exteriores y snapshot sin inventar
         revision: 0, fecha: '2026-10-09', nombreLibre: 'Medidas SINTÉTICAS', tarifa: 1 }).returning()
       documentos.push(p.id)
       const entrada = esquemaLinea.parse({ presupuestoId: p.id, codigo: 'GRUPO', tipo: 'CERRAMIENTO',
+        serieCodigo: 'QA-DEC-SERIE', vidrioCodigo: 'QA-DEC-VIDRIO', acabadoCodigo: 'QA-DEC-ACABADO',
         configuracionCerramiento: JSON.stringify(configuracion(439.5)) })
       expect((await altaCerramientoValorado(tx, entrada)).ok).toBe(true)
       const original = (await leerDocumentoOrigen(tx, p.id))!.lineas[0]

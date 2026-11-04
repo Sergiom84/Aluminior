@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { schema } from '@aluminior/db'
 import {
-  anadirModuloCerramiento, crearConfiguracionCerramiento, plantillaDiseno, UNIONES_VISUALES,
+  anadirModuloCerramiento, crearConfiguracionCerramiento, faltasParaAceptar, mensajesParaAceptar,
+  plantillaDiseno, UNIONES_VISUALES,
 } from '@aluminior/core/estructuras'
 import type { ClienteEscritura } from '../cliente-db.ts'
 import {
@@ -136,5 +137,26 @@ describe('alta de cerramiento', () => {
     const { cliente } = clienteEspia(true)
     await expect(guardarAltaCerramiento(cliente, 'linea-1', preparado.alta))
       .rejects.toThrow('duplicate key')
+  })
+
+  it('rechaza materiales incompletos y uniones sin configurar antes de escribir', () => {
+    const sinVidrio = prepararAltaCerramiento({ ...datos, vidrioCodigo: null })
+    const esperadas = mensajesParaAceptar(faltasParaAceptar(configuracion, {
+      serieCodigo: datos.serieCodigo, vidrioCodigo: null, acabadoCodigo: datos.acabadoCodigo,
+    }))
+    expect(sinVidrio).toEqual({ ok: false, errores: { configuracionCerramiento: esperadas } })
+    expect(esperadas.join(' ')).toContain('falta vidrio')
+    expect(esperadas.join(' ')).not.toContain('Debe seleccionar el Perfil de Unión')
+
+    const sinUnion = {
+      ...configuracion,
+      uniones: configuracion.uniones.map((union) => ({ ...union, codigo: '' })),
+    }
+    const rechazada = prepararAltaCerramiento({
+      ...datos, configuracionSerializada: JSON.stringify(sinUnion),
+    })
+    expect(rechazada.ok).toBe(false)
+    if (rechazada.ok) return
+    expect(rechazada.errores.configuracionCerramiento.join(' ')).toContain('Debe seleccionar el Perfil de Unión y su Acabado')
   })
 })

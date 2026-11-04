@@ -24,8 +24,9 @@ describe('el estado del presupuesto se comprueba dentro de la transacción', () 
           modulos: [{ id: 'm1', estructuraCodigo: '0', anchoMm: 1000, altoMm: 1200 }], uniones: [] }
         await tx.insert(schema.lineasCerramiento).values({ lineaId: l!.id, configuracion })
         const editar = await actualizarCerramiento(tx, { presupuestoId: p!.id, lineaId: l!.id,
-          configuracionSerializada: JSON.stringify(configuracion), serieCodigo: null, vidrioCodigo: null,
-          acabadoCodigo: null, varianteAcristalamiento: '1', referencia: null, cantidad: 2,
+          configuracionSerializada: JSON.stringify(configuracion), serieCodigo: 'QA-EST-SERIE',
+          vidrioCodigo: 'QA-EST-VIDRIO', acabadoCodigo: 'QA-EST-ACABADO', varianteAcristalamiento: '1',
+          referencia: null, cantidad: 2,
           horasFabricacion: '0', horasColocacion: '0' })
         expect(editar).toMatchObject({ ok: false, mensaje: 'Sólo se puede editar un presupuesto pendiente' })
         expect(await borrarLineaDePresupuesto(tx as unknown as Parameters<typeof borrarLineaDePresupuesto>[0], l!.id, p!.id))

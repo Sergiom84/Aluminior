@@ -10,6 +10,20 @@ sin medir en la 0016. La medición queda para el equipo de la mochila; los datos
 privados del contraste no están en este portátil. No reimplementar la serie propia
 de la unión. El único siguiente está en [Siguiente paso](#siguiente-paso).
 
+04/11/2026, rama `feat/va1-validar-aceptar` (desde `8334f60`, pendiente de main),
+tarea VA1: al aceptar un cerramiento, Aluminior rechaza elementos sin serie,
+vidrio o acabado efectivos y uniones sin configurar. Nada se escribe. La copia
+no se valida. Abrir una línea antigua no la reescribe; guardarla exige completar
+los materiales. Hipótesis: identificación `código de ancho x alto`, aviso de
+todas las faltas a la vez, y vidrio obligatorio también sin hueco acristalado.
+`test:ci` del 04/11 en verde: core 1041, db 56, etl 114 y 1 omitida, web 928.
+El control negativo, con la llamada desconectada, hace caer 3 pruebas que
+afirman el rechazo; otras 10 de la misma pasada en paralelo fueron bloqueos y
+pasan aisladas; el arquitecto lo repitió y caen exactamente 3 de 928. E2e local
+10/10. Navegador 04/11 en `aluminior_audit_test`, puerto 3006: aceptar
+sin vidrio muestra el aviso y deja el dibujo; con vidrio se guarda. Sin mochila
+no hay comparación lateral. No mide el banco. El puntero no cambia.
+
 04/11/2026, rama `feat/d1-descripcion-grupo` (`cd3dba4`), tarea DG1: descripción generada
 del GRUPO en alta, edición y copia con regeneración. Un bloque por elemento, en
 el orden de `modulos`, con medidas nominales (`1.200,0`), color, código de serie

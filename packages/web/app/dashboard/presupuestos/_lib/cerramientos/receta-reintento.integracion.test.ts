@@ -42,7 +42,7 @@ describe('receta de seis módulos e identidad de alta', () => {
         fecha: '2026-09-20', nombreLibre: 'OTRO SINTÉTICO', tarifa: J04.tarifa }).returning()
       await expect(altaCerramientoValorado(tx, { ...entrada, presupuestoId: otro.id }))
         .rejects.toThrow('otro presupuesto')
-      const incompleta = { ...entrada, solicitudId: randomUUID(), serieCodigo: null }
+      const incompleta = { ...entrada, solicitudId: randomUUID(), serieCodigo: 'QA-F1-SERIE-AUSENTE' }
       expect((await altaCerramientoValorado(tx, incompleta)).ok).toBe(true)
       const despues = await leerDocumentoOrigen(tx, p.id)
       expect(despues!.lineas[1].linea).toMatchObject({ valoracionCompleta: false, precioUnitario: null })
@@ -56,6 +56,7 @@ describe('receta de seis módulos e identidad de alta', () => {
     try {
       const entrada = esquemaLinea.parse({ presupuestoId: p.id, solicitudId: randomUUID(),
         tipo: 'CERRAMIENTO', codigo: 'GRUPO', cantidad: 1,
+        serieCodigo: 'QA-F1-SERIE', vidrioCodigo: 'QA-F1-VIDRIO', acabadoCodigo: 'QA-F1-ACABADO',
         configuracionCerramiento: JSON.stringify(recetaSeisModulos()) })
       const resultados = await Promise.all([altaCerramientoValorado(db, entrada), altaCerramientoValorado(db, entrada)])
       expect(resultados.every(r => r.ok)).toBe(true)

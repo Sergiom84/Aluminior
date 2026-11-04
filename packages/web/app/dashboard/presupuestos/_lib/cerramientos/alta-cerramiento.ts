@@ -1,5 +1,6 @@
 import {
-  descripcionCerramiento, medidasCerramiento, type ConfiguracionCerramiento, type UnionVisual,
+  descripcionCerramiento, faltasParaAceptar, medidasCerramiento, mensajesParaAceptar,
+  type ConfiguracionCerramiento, type UnionVisual,
 } from '@aluminior/core/estructuras'
 import type { ClienteEscritura } from '../cliente-db.ts'
 import { validarConfiguracionCerramiento } from './validacion.ts'
@@ -55,6 +56,12 @@ export function prepararAltaCerramiento(datos: DatosAltaCerramiento): ResultadoA
     return { ok: false, errores: { configuracionCerramiento: [validacion.mensaje] } }
   }
   const { configuracion } = validacion
+  const faltas = faltasParaAceptar(configuracion, {
+    serieCodigo: datos.serieCodigo, vidrioCodigo: datos.vidrioCodigo, acabadoCodigo: datos.acabadoCodigo,
+  })
+  if (faltas.length) {
+    return { ok: false, errores: { configuracionCerramiento: mensajesParaAceptar(faltas) } }
+  }
   const medidas = medidasCerramiento(configuracion)
   return {
     ok: true,

@@ -20,9 +20,12 @@ async function caso(verificar: (tx: Tx, presupuestoId: string) => Promise<void>)
       await tx.insert(schema.conjuntos).values({ codigo: serie })
       await tx.insert(schema.conjuntoParametrosDespiece).values({ conjuntoCodigo: serie,
         herrajes: {}, manoObra: {}, grosorMaximoSimple: '10', grosorMaximoDoble: '20' })
+      if (!(await tx.select().from(schema.familias).where(eq(schema.familias.codigo, '050'))).length)
+        await tx.insert(schema.familias).values({ codigo: '050', descripcion: 'Vidrio sintético de prueba' })
       await tx.insert(schema.articulos).values([
         { codigo: perfil, descripcion: 'Perfil SINTÉTICO', tipoMetraje: 'ML' },
         { codigo: herraje, descripcion: 'Herraje SINTÉTICO', tipoMetraje: 'UD' },
+        { codigo: 'QA-DEFAULT-V', descripcion: 'Vidrio SINTÉTICO', tipoMetraje: 'M2', familiaCodigo: '050' },
       ])
       await tx.insert(schema.articulosDespiece).values([perfil, herraje].map(articuloCodigo => ({
         articuloCodigo, generico: false, dobleAcristalamiento: false, grosorAcristalar: '0', incrementosPrecio: false, precioEnTabla: false,
@@ -50,7 +53,7 @@ async function caso(verificar: (tx: Tx, presupuestoId: string) => Promise<void>)
 }
 
 const entrada = (presupuestoId: string) => esquemaLinea.parse({ presupuestoId, tipo: 'CERRAMIENTO',
-  codigo: 'GRUPO', cantidad: 2, serieCodigo: serie, acabadoCodigo: 'UNI',
+  codigo: 'GRUPO', cantidad: 2, serieCodigo: serie, vidrioCodigo: 'QA-DEFAULT-V', acabadoCodigo: 'UNI',
   configuracionCerramiento: JSON.stringify({ version: 1,
     modulos: [{ id: 'm1', estructuraCodigo: '0', anchoMm: 1000, altoMm: 1200 }], uniones: [] }),
 })

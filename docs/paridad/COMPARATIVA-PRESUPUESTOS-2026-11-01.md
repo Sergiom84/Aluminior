@@ -33,6 +33,11 @@ Diferencias de recorrido observadas:
 - Productor hereda serie, vidrio y acabado de la última línea dentro de la
   misma sesión; al día siguiente el conjunto nuevo salió sin materiales.
 
+04/11/2026, rama `feat/va1-validar-aceptar`: Aluminior ya exige ambas cosas al
+aceptar. Un elemento sin serie, vidrio o acabado efectivos, o una unión sin
+configurar, no crea ni reescribe la línea. El párrafo anterior se conserva:
+es lo observado el 01/11.
+
 ## Caso 1 — 2O 1200 × 1200, ELEGANTPVC, VCG4, acabado L
 
 | Campo | Productor (observado) | Aluminior (observado) | Diferencia |
