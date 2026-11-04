@@ -230,8 +230,13 @@ describe('copia de presupuesto', () => {
     const copia = await lineasDe(resultado.presupuestoId)
     expect(copia[0].precioUnitario).toBe('100.0000')
     expect(copia[1].precioUnitario).toBe('50.0000')
-    // Descripción regenerada desde la configuración del cerramiento…
-    expect(copia[0].descripcion).toBe('CERRAMIENTO SEGÚN DIBUJO · 2O + 2O')
+    // Descripción regenerada desde la configuración: medidas nominales, serie y sin la unión.
+    // El nombre del elemento depende de si el catálogo de prueba ya tiene la fila `2O`.
+    expect(copia[0].descripcion).toContain('DE MEDIDAS : 1.200,0 x 1.200,0')
+    expect(copia[0].descripcion).toContain('ELEGANTPVC')
+    expect(copia[0].descripcion).not.toContain('PSU001')
+    expect(copia[0].descripcion).not.toContain('CERRAMIENTO SEGÚN DIBUJO')
+    expect(copia[0].descripcion.split('\n\n')).toHaveLength(2)
     // …y la escrita a mano, respetada.
     expect(copia[1].descripcion).toBe('VENTANA 2 HOJAS')
   })

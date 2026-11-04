@@ -80,7 +80,7 @@ export function LineaPresupuesto({
     <>
       <tr className="border-b" style={{ borderColor: 'var(--al-border)' }}>
         <td className="px-3 py-2 font-mono text-[11px]">{articulo}</td>
-        <td className="px-3 py-2">
+        <td className="px-3 py-2" style={{ whiteSpace: 'pre-line', overflowWrap: 'break-word', minWidth: '22rem' }}>
           {l.descripcion}
           {l.avisoValoracion && (
             <div className="mt-0.5 text-xs" style={{ color: 'var(--al-warn)' }}>{l.avisoValoracion}</div>

@@ -8,8 +8,9 @@ import { escribirSatelites } from './escribir-satelites.ts'
  */
 
 import { schema } from '@aluminior/db'
-import { CATALOGO_SNAPSHOT, descripcionCerramiento } from '@aluminior/core/estructuras'
+import { CATALOGO_SNAPSHOT, descripcionGrupo } from '@aluminior/core/estructuras'
 import type { ClienteEscritura } from '../cliente-db.ts'
+import { leerNombresDescripcion } from '../cerramientos/nombres-descripcion.ts'
 import { validarConfiguracionCerramiento } from '../cerramientos/validacion.ts'
 import { actualizarTotales } from '../totales.ts'
 import { copiarGastos } from '../gastos/index.ts'
@@ -60,11 +61,12 @@ function valoresCabecera(
  * del catálogo y no depende de los códigos sustituidos, así que se conserva y
  * se dice por qué.
  */
-function descripcionCopiada(
+async function descripcionCopiada(
+  cliente: ClienteEscritura,
   entrada: LineaConSatelites,
   cambio: CambioLinea,
   avisos: string[],
-): string {
+): Promise<string> {
   if (!cambio.regenerarDescripcion) return entrada.linea.descripcion
   if (!entrada.cerramiento) {
     avisos.push(`Línea ${entrada.linea.orden}: descripción de catálogo, se conserva`)
@@ -75,21 +77,29 @@ function descripcionCopiada(
     avisos.push(`Línea ${entrada.linea.orden}: ${validacion.mensaje}; se conserva la descripción`)
     return entrada.linea.descripcion
   }
-  return descripcionCerramiento(validacion.configuracion)
+  const nombres = await leerNombresDescripcion(cliente, {
+    configuracion: validacion.configuracion,
+    serieCodigo: entrada.cerramiento.serieCodigo,
+    vidrioCodigo: entrada.cerramiento.vidrioCodigo,
+    acabadoCodigo: entrada.cerramiento.acabadoCodigo,
+  })
+  return descripcionGrupo(validacion.configuracion, nombres)
 }
 
-function valoresLinea(
+async function valoresLinea(
+  cliente: ClienteEscritura,
   entrada: LineaConSatelites,
   cambio: CambioLinea,
   presupuestoId: string,
   avisos: string[],
-): typeof schema.lineas.$inferInsert {
+): Promise<typeof schema.lineas.$inferInsert> {
+  const descripcion = await descripcionCopiada(cliente, entrada, cambio, avisos)
   const { id: _id, ...resto } = entrada.linea
   if (cambio.conservarPrecio) {
     return {
       ...resto,
       presupuestoId,
-      descripcion: descripcionCopiada(entrada, cambio, avisos),
+      descripcion,
     }
   }
   // Regla del dinero: la valoración guardada es la del código anterior. No se
@@ -97,7 +107,7 @@ function valoresLinea(
   return {
     ...resto,
     presupuestoId,
-    descripcion: descripcionCopiada(entrada, cambio, avisos),
+    descripcion,
     precioUnitario: null,
     total: null,
     valoracionCompleta: false,
@@ -132,7 +142,7 @@ export async function escribirCopia(
     const cambio = cambios.get(linea.linea.id)
     if (!cambio) continue
     const [nueva] = await cliente.insert(schema.lineas)
-      .values(valoresLinea(linea, cambio, cabecera.id, avisos))
+      .values(await valoresLinea(cliente, linea, cambio, cabecera.id, avisos))
       .returning({ id: schema.lineas.id })
     await escribirSatelites(cliente, linea, cambio, nueva.id)
     copiadas += 1

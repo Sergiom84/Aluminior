@@ -10,6 +10,22 @@ sin medir en la 0016. La medición queda para el equipo de la mochila; los datos
 privados del contraste no están en este portátil. No reimplementar la serie propia
 de la unión. El único siguiente está en [Siguiente paso](#siguiente-paso).
 
+04/11/2026, rama `feat/d1-descripcion-grupo` (`cd3dba4`), tarea DG1: descripción generada
+del GRUPO en alta, edición y copia con regeneración. Un bloque por elemento, en
+el orden de `modulos`, con medidas nominales (`1.200,0`), color, código de serie
+y vidrio resuelto; la unión no entra; el compacto cierra el bloque de su elemento.
+Los documentos ya guardados no se reescriben. La serie sale como código: falta
+migrar `conjuntos.descripcion` (DG1b). Hipótesis sin confirmar en Productor: texto
+de un elemento sin vidrio, orden de bloques cuando la composición no es una
+cadena, y por qué el 260499 mostró solo el primer elemento. Sin mochila no hay
+comparación lateral. La edición manual de la descripción no entra. `test:ci`
+del 04/11: core 1034, db 56, etl 114 (1 omitida), web 923, todos verdes. Al
+volver a `descripcionCerramiento` en el alta, cae 1 de 923 pruebas web: guarda
+`CERRAMIENTO SEGÚN DIBUJO · 2O`; el arquitecto repitió el control por separado en
+edición (cae 1) y copia (caen 2). En navegador, la columna Descripción se
+estrechaba a 134 px a 1024 de ancho; corregida con ancho mínimo. No rehacer la función ni medir el banco desde
+este portátil.
+
 Anterior — 19/10, auditoría, no es el puntero: Render entonces en `40cedd1`;
 diez recorridos con BD Docker y QA local; Auth real y aceptación Productor
 pendientes; E1 comercial y tarifa dinámica sin activar; G6 protegido.

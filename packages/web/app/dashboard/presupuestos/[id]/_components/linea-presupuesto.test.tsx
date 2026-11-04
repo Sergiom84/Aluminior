@@ -30,6 +30,28 @@ function renderizarLinea(configuracion: ConfiguracionCerramiento) {
   /></tbody></table>)
 }
 
+describe('descripción de la línea', () => {
+  it('conserva los saltos de línea sin estrechar la columna', () => {
+    const html = renderToStaticMarkup(<table><tbody><LineaPresupuesto
+      editable={false}
+      linea={{
+        id: 'linea-qa', orden: 1, tipo: 'CERRAMIENTO', articuloCodigo: null, acabadoArticuloCodigo: null,
+        descripcion: 'QA-D1 elemento DE MEDIDAS : 1.200,0 x 1.200,0\nEN COLOR QA-D1 blanco',
+        referencia: null, anchoMm: 1200, altoMm: 1200, cantidad: '1', precioUnitario: null,
+        descuento: '0', total: null, valoracionCompleta: false, avisoValoracion: null,
+      }}
+      resultado={null} manoObra={[]} presupuestoId="presupuesto-qa" despiece={[]}
+      edicion={null} series={[]} acabados={[]}
+    /></tbody></table>)
+
+    expect(html).toContain('white-space:pre-line')
+    expect(html).toContain('overflow-wrap:break-word')
+    expect(html).toContain('min-width:22rem')
+    expect(html).toContain('QA-D1 elemento DE MEDIDAS : 1.200,0 x 1.200,0')
+    expect(html).toContain('EN COLOR QA-D1 blanco')
+  })
+})
+
 describe('miniatura del cerramiento persistido', () => {
   it('dibuja 1OFI con el FI guardado en vez del reparto legado', () => {
     const html = renderizarLinea({ version: 2, modulos: [{

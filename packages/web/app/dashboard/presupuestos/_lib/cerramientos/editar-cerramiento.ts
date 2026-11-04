@@ -9,7 +9,8 @@ import type { ClienteEscritura } from '../cliente-db.ts'
 import { actualizarTotales } from '../totales.ts'
 import { persistirManoObra, type SnapshotManoObra } from '../mano-obra/index.ts'
 import { prepararAltaCerramiento, type AltaCerramiento } from './alta-cerramiento.ts'
-import { configuracionTieneFiExplicito, type UnionVisual } from '@aluminior/core/estructuras'
+import { configuracionTieneFiExplicito, descripcionGrupo, type UnionVisual } from '@aluminior/core/estructuras'
+import { leerNombresDescripcion } from './nombres-descripcion.ts'
 
 type Db = Pick<ReturnType<typeof crearDb>, 'transaction'>
 
@@ -63,7 +64,13 @@ export async function actualizarCerramiento(
     const linea = await lineaEditable(tx, entrada)
     if (!linea) return { ok: false, errores: {}, mensaje: 'La línea no pertenece al presupuesto o no es un cerramiento' }
     const preparada = await prepararLineaValorada(tx, alta.alta, { ...entrada, tarifa: documento.tarifa })
-    await escribirEdicionPreparada(tx, { ...entrada, alta: alta.alta,
+    const descripcion = descripcionGrupo(alta.alta.configuracion, await leerNombresDescripcion(tx, {
+      configuracion: alta.alta.configuracion,
+      serieCodigo: alta.alta.datos.serieCodigo,
+      vidrioCodigo: alta.alta.datos.vidrioCodigo,
+      acabadoCodigo: alta.alta.datos.acabadoCodigo,
+    }))
+    await escribirEdicionPreparada(tx, { ...entrada, alta: { ...alta.alta, descripcion },
       manoObra: preparada.manoObra, aviso: preparada.aviso ?? '',
       ...(preparada.estado === 'VALORADA'
         ? { resultado: preparada.resultado, importes: preparada.importes }
