@@ -723,8 +723,8 @@ crea una segunda lista de tareas con otro orden:
 - **Aceptación:** P.2 mantiene formato comercial pendiente; P.6/P.7 mantienen
   matriz de anchuras, zoom 200 %, reduced motion y recorrido humano comparativo.
   E7 no se cierra por la migración decimal A4 ya publicada.
-- **Mantenimiento:** S2 conserva su seguimiento documental pendiente. Consultar
-  fuentes oficiales vigentes al abordar esa tarea; aquí no se auditó seguridad.
+- **Mantenimiento:** S2 cerrado en local el 04/11/2026 (next 15.5.29, zod 4.6.7);
+  no repetir. Consultar la fila S2 del roadmap.
 
 No rehacer presupuestos, pedidos de compra, hojas de corte/producción, A3/A4,
 M0, C1/0031/0032 o integración Windows–Mac. Ya tienen implementaciones/entregas

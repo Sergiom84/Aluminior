@@ -403,14 +403,14 @@ precios del taller. No copiar credenciales del Mac dentro del paquete.
 
 ## 6. Punteros de continuación
 
-No repetir M0, A1, S1, A2, paginación técnica P.2, A3/0029, A4/0030, A5 ni S3.
+No repetir M0, A1, S1, S2, A2, paginación técnica P.2, A3/0029, A4/0030, A5 ni S3.
 La aceptación comercial P.2 y la observación E7 permanecen abiertas.
 P.6/P.7 conserva correcciones locales y diez E2E Docker del 19/10 con QA local;
 faltan Auth real y comparación humana equivalente. No repetir esos gates sin
 cambio o fallo nuevo. Ver auditoría del inicio para sus límites.
-S2 conserva el seguimiento anunciado para el 14/10: consultar advisory oficial
-y versiones entonces; el enlace no pudo revalidarse en esta auditoría.
-No hay automatización creada para S2.
+S2, historia 04/11/2026: el seguimiento del 14/10 quedó cerrado en
+`fix/s2-next-zod-seguridad` (next 15.5.29, zod 4.6.7, audit de producción 0).
+No repetir esa revisión. No hay automatización creada para S2.
 
 Accesos a plataformas: leer primero `context/access/aluminior.md` en July.
 La entrega del 09/10 acreditó hasta 0030. La consulta de sólo lectura del 19/10

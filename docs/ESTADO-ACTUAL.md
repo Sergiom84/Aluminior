@@ -10,6 +10,21 @@ sin medir en la 0016. La medición queda para el equipo de la mochila; los datos
 privados del contraste no están en este portátil. No reimplementar la serie propia
 de la unión. El único siguiente está en [Siguiente paso](#siguiente-paso).
 
+04/11/2026, rama `fix/s2-next-zod-seguridad` (desde `5b709ac`, sin commit ni
+publicación), tarea S2: `next` 15.5.27→15.5.29 exacto y `zod` ^4.4.3→^4.6.7.
+GitHub marca 15.5.28 como primera parcheada de GHSA-2464 y GHSA-p3m5; 15.5.29
+es la instalada y queda fuera del rango `<=15.5.28` de GHSA-7qx7 y GHSA-f3mh.
+GHSA-mrhx se corrige desde 4.6.6; instalada 4.6.7, última 4.x publicada.
+GHSA-pc58-hwjq-p385 sigue sin versión parcheada en el advisory (`<16.0.0` y
+`>=16.0.0`, `patched_versions` vacío); el release 15.5.29 lo cita, pero no se
+sube a 16. Riesgo residual: en `packages/web` no hay `fetch(`, `return fetch(`,
+`return await fetch(`, `new Response(res.body` ni `NextResponse.rewrite`.
+`npm audit --omit=dev`: 0. `npm audit`: 3 de desarrollo, vitest/@vitest/mocker
+<=4.1.11 y vite <=6.4.3, pendiente aparte; el override no se toca. `test:ci`:
+core 1041, db 56, etl 114 y 1 omitida, web 928. E2e 10/10. Build Next 15.5.29.
+No se prueba un exploit. Producción sigue en 15.5.27. El puntero no cambia.
+No repetir la revisión del anuncio del 14/10.
+
 04/11/2026, rama `feat/va1-validar-aceptar` (desde `8334f60`, pendiente de main),
 tarea VA1: al aceptar un cerramiento, Aluminior rechaza elementos sin serie,
 vidrio o acabado efectivos y uniones sin configurar. Nada se escribe. La copia
@@ -509,7 +524,8 @@ La miniatura representa todo el GRUPO con posiciones/proporciones guardadas.
 QA local de tres módulos, dos uniones, guardado/recarga, teclado, escritorio/móvil
 y PDF correcto; 260009 repetido en producción mantiene 805,65 € y sus avisos.
 No hay cambios de tarifas, valoración ni migraciones. El anuncio posterior de
-Next para el 14/10 conserva seguimiento S2; no queda cubierto por audit 0.
+Next para el 14/10 quedó revisado el 04/11/2026 en `fix/s2-next-zod-seguridad`;
+el audit 0 de S1 no lo cubría. No repetir esa revisión.
 
 ## A3 publicado
 
@@ -662,7 +678,7 @@ autenticado aislado autorizado. No es el puntero. C1/0031/0032/carga/publicació
 y QA remoto completados el 12/10; no repetirlos. Teclado/búsqueda/foco de este
 tramo están parcialmente publicados; su aceptación integral sigue abierta.
 
-**A3 publicado/verificado el 09/10 en `a06cd4f`, con 0029 aplicada.** A4 publicado/verificado en `487feb1`: 0030 aplicada, conexiones renovadas y alta/edición/recarga/copia/PDF decimales comprobados en producción. A5 verificado en GitHub Actions (run 37971854995, seis recorridos correctos). D1 reconciliado localmente. [Informe](paridad/MEDIDAS-Y-CI-2026-10-09.md). E1 requiere observación aislada del original con alcance propio; la investigación interna de Windows está archivada. P.2 conserva aceptación comercial y S2 revalidación tras la fecha anunciada del 14/10.
+**A3 publicado/verificado el 09/10 en `a06cd4f`, con 0029 aplicada.** A4 publicado/verificado en `487feb1`: 0030 aplicada, conexiones renovadas y alta/edición/recarga/copia/PDF decimales comprobados en producción. A5 verificado en GitHub Actions (run 37971854995, seis recorridos correctos). D1 reconciliado localmente. [Informe](paridad/MEDIDAS-Y-CI-2026-10-09.md). E1 requiere observación aislada del original con alcance propio; la investigación interna de Windows está archivada. P.2 conserva aceptación comercial. S2 quedó verificado en local el 04/11/2026; no repetir la revalidación del 14/10.
 
 Antecedente P.2: rama `codex/pdf-multipagina`, worktree `pdf-multipagina/Aluminior`, desde
 `7ad0ee2`. P.2 publicado en `46c613d`; endpoint PDF 260009 comprobado sin escritura, 1 página / 805,65 €. Ese main quedó reconciliado el 13/10 con `origin/main` del 12/10; se conservan

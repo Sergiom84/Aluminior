@@ -187,13 +187,14 @@ reabre tareas técnicas cerradas ni cambia el orden E1–E11.
 
 **S3 verificado en CI el 09/10:** 1.448 pruebas correctas/una condicionada a CSV privado, seis recorridos de navegador, tipos, arquitectura y build en 36a47f4. El 12/10 el siguiente Mac entonces era la matriz restante de P.6/P.7; C1 ya estaba publicado y verificado técnico. [Evidencia](docs/paridad/MEDIDAS-Y-CI-2026-10-09.md#s3-validación-completa-de-los-paquetes-en-ci--09102026). No es el puntero.
 
-**A3 publicado/verificado el 09/10 en `a06cd4f`, con 0029 aplicada.** A4 publicado/verificado en `487feb1`: 0030 aplicada, conexiones renovadas y alta/edición/recarga/copia/PDF decimales comprobados en producción. A5 verificado en GitHub Actions (run 37971854995, seis recorridos correctos). D1 reconciliado localmente. [Informe](docs/paridad/MEDIDAS-Y-CI-2026-10-09.md). E1 depende de Windows; P.2 conserva aceptación comercial y S2 el anuncio del 14/10.
+**A3 publicado/verificado el 09/10 en `a06cd4f`, con 0029 aplicada.** A4 publicado/verificado en `487feb1`: 0030 aplicada, conexiones renovadas y alta/edición/recarga/copia/PDF decimales comprobados en producción. A5 verificado en GitHub Actions (run 37971854995, seis recorridos correctos). D1 reconciliado localmente. [Informe](docs/paridad/MEDIDAS-Y-CI-2026-10-09.md). E1 depende de Windows; P.2 conserva aceptación comercial. S2 quedó verificado en local el 04/11/2026 en `fix/s2-next-zod-seguridad`; no repetir la revisión del anuncio del 14/10.
 
 **S1 y A2 publicados y verificados el 09/10**, Render live `7ad0ee2`: dependencias
 sin avisos npm publicados a la fecha, 1.431 pruebas y miniaturas de conjunto.
 260009 reguardado/recargado conserva 805,65 € y avisos. [Informe y límites](docs/paridad/MANTENIMIENTO-Y-MINIATURAS-2026-10-09.md).
-**S2**: revisar el anuncio Next previsto para el 14/10 cuando se publiquen las
-versiones afectadas/corregidas. Sin seguimiento automático creado.
+**S2, historia 04/11/2026:** el anuncio del 14/10 quedó revisado en
+`fix/s2-next-zod-seguridad` (next 15.5.29, zod 4.6.7, audit de producción 0).
+No repetir. Sin seguimiento automático. El puntero no cambia.
 
 ### Investigación económica E1 conservada (no es el puntero)
 
@@ -247,7 +248,7 @@ el total de todos los módulos pendientes del producto.
 | E11 | Mínimos, múltiplos e intervalos restantes | Condicionado | Usar límites reales de catálogo y entradas compatibles a ambos lados de cada frontera |
 | A1 | Aceptación en web publicada | Cerrado el recorrido auditado 09/10 | [Auditoría](docs/paridad/AUDITORIA-FUNCIONAL-2026-10-09.md): Render live f6d5bcd, 260009 guardado/recargado y PDF válido 805,65 €. Visor IAB gris, archivo comprobado aparte. No certifica todas las familias, fabricación ni precio |
 | S1 | Mantenimiento de dependencias | Publicado/verificado 09/10 | b1682a3 incluido en Render live 7ad0ee2; audit 11→0 / producción 4→0; ci, 1.431 tests, tipos, arquitectura y build correctos. Guardado/recarga/PDF 260009; no cubre el anuncio futuro S2 |
-| S2 | Revisar anuncio de seguridad Next.js del 08/10 | Pendiente de revalidación; fecha anunciada 14/10 ya transcurrida | Revalidar advisory/versiones en su unidad propia; esta auditoría de integración no ejecuta esa revisión ni lo da por corregido. Fuente en informe de mantenimiento; sin automatización creada |
+| S2 | Dependencias de producción con avisos publicados | Verificado en local 04/11/2026, rama `fix/s2-next-zod-seguridad`, sin commit ni publicación | next 15.5.27→15.5.29 exacto; zod ^4.4.3→^4.6.7. GitHub: GHSA-2464 `>=10.0.0, <=15.5.27`, primera parcheada 15.5.28; GHSA-p3m5 `>=13.0.0, <=15.5.27`, primera parcheada 15.5.28; GHSA-mrhx `<4.6.6`, primera parcheada 4.6.6. Instalada 15.5.29, fuera del rango `<=15.5.28` de GHSA-7qx7 y GHSA-f3mh. `npm audit --omit=dev` 2→0. `npm audit` deja 3 de desarrollo (vitest/@vitest/mocker <=4.1.11 y vite <=6.4.3, override sin tocar): pendiente aparte, sin arreglar. GHSA-pc58-hwjq-p385: advisory del repo con rango `<16.0.0` y `>=16.0.0`, `patched_versions` vacío el 04/11/2026; el cuerpo del release 15.5.29 lo cita, el advisory no publica parche. Riesgo residual. Búsqueda en `packages/web` de `fetch(`, `return fetch(`, `return await fetch(`, `new Response(res.body` y `NextResponse.rewrite`: 0 coincidencias. Lock: además de next/@next/* y zod, `npm install` movió caniuse-lite 1.0.30001806→1.0.30001820 (rango de next) y semver 7.8.5→7.8.6 (rango de sharp 0.35.5). Overrides de la raíz sin tocar; sharp 0.35.5 y postcss 8.5.23 siguen resueltos. No se prueba exploit. Producción sigue en 15.5.27. No repetir |
 | A2 | Miniatura del GRUPO completo | Publicado/verificado 09/10 | 7ad0ee2; tres módulos desiguales con dos uniones guardados/reabiertos en QA, SVG/PDF completos; teclado y escritorio/móvil. Basado en RECON-CERRAMIENTOS §4 quater; sin cambios de valoración |
 | A3 | Idempotencia de nueva cabecera y copia | Publicado/verificado 09/10 | a06cd4f live; 0029 aplicada, RLS y documentos previos conservados. Alta/copia/revisión sintéticas y tres reintentos READ ONLY remotos con mismos IDs; pérdida HTTP física local. Ver informe A3 |
 | P.2 | Aceptación PDF multipágina | Paginación publicada/verificada 09/10; formato comercial pendiente | [Informe](docs/paridad/PDF-MULTIPAGINA-2026-10-09.md): 6 escenarios, 21 páginas, 628 marcadores, 28 bloques; endpoint local 12 líneas/4 páginas. 741 tests web, tipos/build/arquitectura. Render live 46c613d, endpoint 260009 verificado (1 página, 805,65 €); formato comercial Productor/titular pendiente. July 205 |
@@ -407,7 +408,7 @@ El bloque siguiente es historia ordenada por fecha, no un segundo puntero. El 18
 
 - 03–09/10: S1/A2 en `7ad0ee2`; P.2 en `46c613d` (queda aceptación comercial, July 205; no repetir paginación); A3 en `a06cd4f` con 0029; A4 en `487feb1` con 0030; A5 run 37971854995; D1 cerrado local. No repetir.
 - 12/10: C1 y publicación técnica en `40cedd1`. El siguiente Mac de entonces era la matriz P.6/P.7. No repetir la publicación.
-- 14/10: S2 era revalidar el anuncio Next; la fecha ya pasó y este registro no lo cierra. No repetir S1/A2.
+- 14/10, cerrado el 04/11/2026: S2 revalidó el anuncio Next en `fix/s2-next-zod-seguridad` (next 15.5.29, zod 4.6.7, audit de producción 0). Este registro ya no manda revisarlo. No repetir S1/A2 ni S2.
 - 04–19/10: E1 mediante `docs/paridad/PASO-E1-DESPUNTE.md` y `EVIDENCIA-E1-DESPUNTE-2026-10-04.md`. Copia F y A–F; residuo B/D explicado por margen GID. G1–G5 entregados y G6 protegido. La propuesta de limpieza del 04/10 está inactiva. El 19/10 la observación entonces era empresa sintética, RED/locale y predicciones. No repetir A–F ni G1–G5.
 - 31/10: la observación E1 por visión sigue en el equipo del titular. No se reanuda desde este portátil.
 

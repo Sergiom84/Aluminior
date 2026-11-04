@@ -171,7 +171,7 @@ Entrada actual: [estado](docs/ESTADO-ACTUAL.md) →
 ensayos ya están entregadas (M0 cerrado). Actualización 09/10: A1 y S1/A2 publicados/verificados, Render de aquella entrega `a06cd4f`, sustituido por A4 en `487feb1` (API reconsultada el 10/10).
 A3 publicado/verificado en `a06cd4f`, 0029 aplicada: [informe](docs/paridad/IDEMPOTENCIA-PRESUPUESTOS-2026-10-09.md). Continuación Mac: A4 publicado/verificado en 487feb1, 0030 aplicada, y A5 CI correcta, ver [informe](docs/paridad/MEDIDAS-Y-CI-2026-10-09.md). No repetir A4. S3 verificado en CI sobre 36a47f4: 1.448 tests correctos/uno condicionado a CSV privado, seis recorridos, tipos/arquitectura/build; runs 37978474635 y 37978474739. El 12/10 el siguiente Mac entonces era la matriz restante de P.6/P.7; C1 ya publicado y verificado técnico; P.2 conserva aceptación comercial. No es el puntero. No repetir A3.
 No repetir S1/A2 ni la investigación de paginación. Rama `codex/pdf-multipagina`; P.2 se publicó en `46c613d`; PDF 260009 descargado válido, 1 página y 805,65 €.
-S2 conserva el anuncio Next previsto para el 14/10; no repetir mantenimiento ya entregado.
+S2, historia 04/11/2026: anuncio Next del 14/10 revisado (next 15.5.29, zod 4.6.7); ver fila S2 del roadmap. No repetir.
 E1 conserva su [procedimiento](docs/paridad/PASO-E1-DESPUNTE.md) para después.
 Avance del 04/10: [evidencia parcial E1](docs/paridad/EVIDENCIA-E1-DESPUNTE-2026-10-04.md).
 Manual, diagnóstico histórico y observación A–F entregados; usar copia F de 0017, sin repetirlos
