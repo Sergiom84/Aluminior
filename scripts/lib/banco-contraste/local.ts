@@ -34,8 +34,17 @@ export async function prepararLocal(sql: Sql, origen: string) {
     if (rs.some(r => r.descartadas > 0 || r.motivos.has('CSV no encontrado'))) throw new Error('Catálogo base incompleto; carga revertida')
     return rs.map(r => ({ tabla: r.tabla, insertadas: r.insertadas, descartadas: r.descartadas, excluidas: r.excluidas }))
   })
-  const simulacion = await cargarMotorCatalogo(sql, origen, { aplicar: false })
-  const aplicado = await cargarMotorCatalogo(sql, origen, { aplicar: true })
+  // La carga base ya está confirmada: si el motor falla, la base queda a medias y
+  // `preparar` rechazará repetir. Se dice cómo volver a empezar en vez de dejarlo implícito.
+  const motor = async (aplicar: boolean) => {
+    try { return await cargarMotorCatalogo(sql, origen, { aplicar }) } catch (error) {
+      throw new Error(`Carga del motor de catálogo fallida; aluminior_real_test queda con el catálogo base a medias. ` +
+        `Recréala (dropdb y createdb en aluminior_pg_test) antes de repetir preparar. Causa: ${error instanceof Error ? error.message : String(error)}`,
+      { cause: error })
+    }
+  }
+  const simulacion = await motor(false)
+  const aplicado = await motor(true)
   return { migraciones: (await sql`SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations`)[0]!.n,
     base: resultados, simulacion: simulacion.resultados.map(r => ({ tabla: r.tabla, filas: r.insertadas })),
     motor: aplicado.resultados.map(r => ({ tabla: r.tabla, filas: r.insertadas })),

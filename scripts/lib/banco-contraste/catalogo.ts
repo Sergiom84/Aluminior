@@ -3,11 +3,13 @@ import { execFileSync } from 'node:child_process'
 import { readFileSync, writeFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { hash } from './fuente.ts'
+// Todas las tablas que lee la carga del ETL salvo personas; catalogo.test.ts barre el ETL.
+// EstructurasOpcOpciones la exige la carga del despiece desde E5b (migración 0033).
 export const TABLAS_CATALOGO = ['Familias', 'Acabados', 'Articulos', 'AcaTonalidades', 'Subfamilias',
   'Estructuras', 'EstructurasDiseño', 'EstructurasArticulos', 'EstructurasSeriesAsoc', 'ConfigSeries',
   'Conjuntos', 'ConjuntosLin', 'ConjuntosOpcionesHerraje', 'TAcristalamientoLin', 'ArticulosCoste',
   'ArticulosPVP', 'ConjuntosDescuentos', 'ConjuntosAsoc', 'FamiliasGruposAsoc', 'SeriesAsocV2TiposHoja',
-  'MOConceptos', 'ArticulosIncrPrecio']
+  'MOConceptos', 'ArticulosIncrPrecio', 'EstructurasOpcOpciones']
 export function exportarCatalogo(mdb: string, destino: string) {
   const antes = hash(readFileSync(mdb))
   execFileSync(process.execPath, ['export_datos/herramientas/exportar-csv.mjs', mdb, destino, ...TABLAS_CATALOGO], { stdio: 'inherit' })
