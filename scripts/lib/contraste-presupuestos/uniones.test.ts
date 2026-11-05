@@ -20,12 +20,12 @@ test('caso 3 de la 0017: Productor deja 1160/360 donde Aluminior da 1170/340', (
   assert.equal(r.uniones.length, 0)
 })
 
-test('una unión que recorre la columna recorta todas sus piezas en Productor y solo el par anclado en Aluminior', () => {
+test('GR2: la unión que recorre la columna recorta todas sus piezas, como Productor', () => {
   const r = analizarReparto(grupo(UNION_LARGA))
-  assert.equal(r.estado, 'difiere')
-  assert.deepEqual(r.patrones, ['union-recorre-varias-piezas'])
-  const inferior = r.piezas.at(-1)!
-  assert.deepEqual([inferior.prevista[0], inferior.guardada[0]], [1000, 970])
+  assert.equal(r.estado, 'coincide')
+  assert.deepEqual(r.patrones, [])
+  assert.deepEqual(r.piezas.map(p => [p.codigo, ...p.prevista]),
+    [['0', 970, 2440], ['0', 640, 2440], ['C2', 970, 439.5], ['C2', 970, 1999.5]])
 })
 
 test('el cajón del compacto se reconoce por su resta y no cuenta como diferencia de reparto', () => {

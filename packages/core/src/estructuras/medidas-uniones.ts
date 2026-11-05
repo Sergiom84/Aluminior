@@ -1,16 +1,20 @@
 /**
  * Reparto del grosor de las uniones configuradas, observado en Productor
- * (docs/paridad/COMPARATIVA-PRESUPUESTOS-2026-11-01.md): la unión no añade
- * ancho al conjunto, resta la mitad de su grosor a cada pieza contigua y mide
- * lo que el lado común. Ej.: 960 + GMU038 + 850 = 1810, piezas de 930 y 820.
+ * (docs/paridad/COMPARATIVA-PRESUPUESTOS-2026-11-01.md y contraste del
+ * 02/11/2026): la unión no añade ancho al conjunto. Con `repartoUniones:
+ * 'PIEZAS'` recorre la junta y resta la mitad de su grosor, una vez, a cada
+ * pieza que toca. En un par aislado el recorrido es el lado común.
  *
- * Solo con `repartoUniones: 'PIEZAS'`, que pone crearConfiguracionCerramiento
- * desde el 02/11/2026. Las líneas anteriores, también al editarlas, conservan
- * la geometría con la que se guardaron. La unión sin configurar
- * separa 20 mm, como el diseñador de Productor, y deja la línea sin valorar.
+ * Solo con ese campo, que pone crearConfiguracionCerramiento desde el
+ * 02/11/2026. Las líneas anteriores, también al editarlas, conservan la
+ * geometría con la que se guardaron. La unión sin configurar separa 20 mm,
+ * como el diseñador de Productor, y deja la línea sin valorar.
+ * El dibujo no cambia: `posicionesCerramiento` sigue acortando el rectángulo
+ * de la unión al par anclado.
  */
 import type { ConfiguracionCerramiento, ModuloCerramiento } from './cerramiento.ts'
-import { anclajesCerramiento, unionConfigurada, type LadoAnclaje } from './composicion-cerramiento.ts'
+import { type LadoAnclaje } from './composicion-cerramiento.ts'
+import { recorridosUniones } from './recorrido-uniones.ts'
 
 /** Longitud del lado común entre la pieza y su padre en el anclaje. */
 export function longitudLadoComun(
@@ -29,21 +33,18 @@ export interface MedidasFabricacionCerramiento {
 /** Medidas con las que se despieza y valora cada pieza y cada unión. */
 export function medidasFabricacionCerramiento(configuracion: ConfiguracionCerramiento): MedidasFabricacionCerramiento {
   const modulos = new Map(configuracion.modulos.map(m => [m.id, { anchoMm: m.anchoMm, altoMm: m.altoMm }]))
-  const porId = new Map(configuracion.modulos.map(m => [m.id, m]))
   const uniones = new Map(configuracion.uniones.map(u => [u.id, { longitudMm: u.longitudMm }]))
-  const unionPorId = new Map(configuracion.uniones.map(u => [u.id, u]))
-  for (const [hijoId, anclaje] of anclajesCerramiento(configuracion)) {
-    const union = unionPorId.get(anclaje.unionId)
-    const padre = porId.get(anclaje.moduloId)
-    const hijo = porId.get(hijoId)
-    if (configuracion.repartoUniones !== 'PIEZAS' || !union || !padre || !hijo || !unionConfigurada(union)) continue
-    const mitad = union.grosorMm / 2
-    const campo = anclaje.lado === 'abajo' ? 'altoMm' : 'anchoMm'
-    for (const id of [padre.id, hijo.id]) {
-      const medidas = modulos.get(id)!
+  if (configuracion.repartoUniones !== 'PIEZAS') return { modulos, uniones }
+  const grosor = new Map(configuracion.uniones.map(u => [u.id, u.grosorMm]))
+  for (const recorrido of recorridosUniones(configuracion)) {
+    const mitad = (grosor.get(recorrido.unionId) ?? 0) / 2
+    const campo = recorrido.eje === 'vertical' ? 'anchoMm' : 'altoMm'
+    for (const id of recorrido.modulos) {
+      const medidas = modulos.get(id)
+      if (!medidas) continue
       modulos.set(id, { ...medidas, [campo]: medidas[campo] - mitad })
     }
-    uniones.set(union.id, { longitudMm: longitudLadoComun(padre, hijo, anclaje.lado) })
+    uniones.set(recorrido.unionId, { longitudMm: recorrido.longitudMm })
   }
   return { modulos, uniones }
 }
