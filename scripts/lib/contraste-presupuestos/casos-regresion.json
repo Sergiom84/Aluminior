@@ -2812,7 +2812,7 @@
   "guardadas": 1410.08
  },
  {
-  "descripcion": "Reparto de uniones: coincide con medidas guardadas, no desde el hueco",
+  "descripcion": "Reparto de uniones: desde GR2 (05/11/2026) coincide también desde el hueco",
   "caso": {
    "id": "regresion-07",
    "tipo": "GRUPO",
@@ -3322,10 +3322,8 @@
     }
    ]
   },
-  "resultado": "difiere",
-  "causas": [
-   "reparto-uniones"
-  ],
+  "resultado": "coincide",
+  "causas": [],
   "guardadas": 1854.01
  },
  {
@@ -3907,8 +3905,7 @@
   "resultado": "difiere",
   "causas": [
    "tapajuntas",
-   "invisible",
-   "reparto-uniones"
+   "invisible"
   ],
   "guardadas": 1650.57
  },

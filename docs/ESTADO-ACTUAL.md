@@ -622,7 +622,7 @@ Los nueve documentos anteriores y tres líneas conservan sus huellas.
 **Siguiente:** medir E2 en la 0016, en el equipo de la mochila. En
 `integracion/codex-e2-20261103` está integrado en rama, sin medir en la 0016.
 No reimplementar la serie propia de la unión ni repetir M1, GR1 (motor del 02/11 y UI de cotas del 03/11; no rehacerla), E5 o E5b.
-GR2 (unión que recorre varias piezas) está implementado y verificado sin banco el 05/11/2026 en `feat/gr2-union-recorre`: no rehacer la regla; falta medir el precio en el equipo de la mochila ([roadmap](../ROADMAP-PARIDAD-PRODUCTOR.md)).
+GR2 (unión que recorre varias piezas) está publicado el 05/11/2026 (`1040a92`) y su precio medido en local el mismo día (`coincide` 24 → 33 en 176 GRUPO de la 0016): no rehacer la regla ni la medición; quedan 16 GRUPO con el patrón ([roadmap](../ROADMAP-PARIDAD-PRODUCTOR.md)).
 La ubicación de esas cotas en el panel es hipótesis; confirmarla en Productor y medir el banco queda para el equipo de la mochila.
 La observación E1 por visión sigue en el equipo del titular
 ([§0](CONTINUAR-EN-WINDOWS.md#0-relevo-del-31102026-equipo-del-titular-con-visión));
