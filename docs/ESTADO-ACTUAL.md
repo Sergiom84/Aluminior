@@ -1,17 +1,19 @@
 # Estado actual de Aluminior
 
+Producción, 06/11/2026: `main` = `7bd12d3`, live en Render (`dep-dbmcj0ajnfac7399g5l0`, 05/11 18:24 UTC). Todas las ramas de trabajo están integradas en `main`; ningún worktree tiene commits propios. Incluye M1, E2, GR1 (motor y UI), E5, E5b, E6, DS2, DG1 (`8334f60`), VA1 (`5b709ac`), S2 (`5298a7b`), GR2 (`1040a92`, `a3ffc67`) y el arreglo del banco (`7bd12d3`). Sin migraciones nuevas desde la 0035. Los párrafos siguientes que dicen «rama», «local», «sin commit» o «sin publicar» son antecedentes fechados: su código ya está en `main`.
+
 Producción, 03/11/2026: `main` = `46fd472` (M1 uniones + línea E1 de Windows +
 DS2/GR1/E5/E5b), live en Render (`dep-dbl2kdp7lnhs738jfc3g`, 120 s, logs sin
 errores; `/login` 200 y el resto redirige al login). Supabase: 36 migraciones
 (hasta `0035`) y 52 uniones cargadas. Sin QA funcional con sesión en producción.
 
 03/11/2026, `main` = `0a4958b` (fusión `integracion/codex-e2-20261103`): E2 integrado,
-sin medir en la 0016. La medición queda para el equipo de la mochila; los datos
-privados del contraste no están en este portátil. No reimplementar la serie propia
+sin medir en la 0016. La medición queda pendiente; desde el 05/11 el banco se
+monta en este portátil (ver GR2). No reimplementar la serie propia
 de la unión. El único siguiente está en [Siguiente paso](#siguiente-paso).
 
-04/11/2026, rama `fix/s2-next-zod-seguridad` (desde `5b709ac`, sin commit ni
-publicación), tarea S2: `next` 15.5.27→15.5.29 exacto y `zod` ^4.4.3→^4.6.7.
+04/11/2026, rama `fix/s2-next-zod-seguridad` (desde `5b709ac`; publicada después en
+`main` como `5298a7b`), tarea S2: `next` 15.5.27→15.5.29 exacto y `zod` ^4.4.3→^4.6.7.
 GitHub marca 15.5.28 como primera parcheada de GHSA-2464 y GHSA-p3m5; 15.5.29
 es la instalada y queda fuera del rango `<=15.5.28` de GHSA-7qx7 y GHSA-f3mh.
 GHSA-mrhx se corrige desde 4.6.6; instalada 4.6.7, última 4.x publicada.
@@ -22,10 +24,10 @@ sube a 16. Riesgo residual: en `packages/web` no hay `fetch(`, `return fetch(`,
 `npm audit --omit=dev`: 0. `npm audit`: 3 de desarrollo, vitest/@vitest/mocker
 <=4.1.11 y vite <=6.4.3, pendiente aparte; el override no se toca. `test:ci`:
 core 1041, db 56, etl 114 y 1 omitida, web 928. E2e 10/10. Build Next 15.5.29.
-No se prueba un exploit. Producción sigue en 15.5.27. El puntero no cambia.
+No se prueba un exploit. Producción pasó a 15.5.29 con `5298a7b` (04/11). El puntero no cambia.
 No repetir la revisión del anuncio del 14/10.
 
-04/11/2026, rama `feat/va1-validar-aceptar` (desde `8334f60`, pendiente de main),
+04/11/2026, rama `feat/va1-validar-aceptar` (desde `8334f60`; en `main` como `5b709ac`),
 tarea VA1: al aceptar un cerramiento, Aluminior rechaza elementos sin serie,
 vidrio o acabado efectivos y uniones sin configurar. Nada se escribe. La copia
 no se valida. Abrir una línea antigua no la reescribe; guardarla exige completar
@@ -39,7 +41,7 @@ pasan aisladas; el arquitecto lo repitió y caen exactamente 3 de 928. E2e local
 sin vidrio muestra el aviso y deja el dibujo; con vidrio se guarda. Sin mochila
 no hay comparación lateral. No mide el banco. El puntero no cambia.
 
-04/11/2026, rama `feat/d1-descripcion-grupo` (`cd3dba4`), tarea DG1: descripción generada
+04/11/2026, rama `feat/d1-descripcion-grupo` (`cd3dba4`; en `main` como `8334f60`), tarea DG1: descripción generada
 del GRUPO en alta, edición y copia con regeneración. Un bloque por elemento, en
 el orden de `modulos`, con medidas nominales (`1.200,0`), color, código de serie
 y vidrio resuelto; la unión no entra; el compacto cierra el bloque de su elemento.
@@ -276,14 +278,13 @@ actual (uniones `CMU…` y series retiradas); en 2023–2026 el 70 % de los
 valorados tiene la misma receta que Productor y el compacto es la causa más
 frecuente (235). La asimetría del reparto se concentra en las uniones de
 guías de compacto. Orden entonces: GR1, E5, E2, E6, GR2. GR1 y E5 quedaron
-medidos el 02/11; E2 está integrado en rama, sin medir en la 0016.
+medidos el 02/11; E2 está en `main` (`0a4958b`), sin medir en la 0016.
 
-GR1 implementado y verificado en local el mismo 02/11/2026 ([contraste §GR1](paridad/CONTRASTE-PRESUPUESTOS-2026-11-02.md#gr1--02112026)): `ModuloCerramiento` v3 admite `cotas?: CotasModulo` (`FI`, `FS`, `VS`, `TD`, `F`, `FD`, `FZ`), `valorarCerramiento` las pasa a `valorarEstructura` y `configuracionGrupo` las lee de `VEstructurasVariables`. En la 0016 los 23 GRUPO que coincidían al céntimo siguen coincidiendo, `cota-fi-fs` baja de 31 (140.530,91 €) a 0 y 26 de los 31 pasan a valorarse (`difiere` sube de 66 a 92 y `sin-valorar` baja de 123 a 97; 10 de los 26 nuevos valorados tienen `receta: igual` y en 5 el resto coincide al céntimo salvo el compacto). Los 5 restantes usan `PSU006` y quedan sin valorar únicamente por `PSESQCOM: sin PVP en la tarifa`. En la 0015 `difiere` sube de 119 a 138 (+19) y `cota-fi-fs` baja de 21 a 3; en 2023–2026 los valorados suben de 482 a 527 (350 con receta igual). El 03/11/2026 la UI del configurador, en `feat/gr1-cotas-ui`, muestra junto a Ancho y Alto las cotas de catálogo (`FI`, `FS`, `VS`, `TD`, `F`, `FD`, `FZ`) de las estructuras dibujables; `1OFI` sigue con `fiMm` y no duplica FI. Si el operador no toca el campo, no se escribe `modulo.cotas`. La ubicación es hipótesis y debe confirmarse en Productor. No se ha medido el banco en este portátil: no rehacer la UI ni repetir la medición de la 0016 desde aquí. Sin cambios en el motor ni
-publicación.
+GR1 implementado y verificado en local el mismo 02/11/2026 ([contraste §GR1](paridad/CONTRASTE-PRESUPUESTOS-2026-11-02.md#gr1--02112026)): `ModuloCerramiento` v3 admite `cotas?: CotasModulo` (`FI`, `FS`, `VS`, `TD`, `F`, `FD`, `FZ`), `valorarCerramiento` las pasa a `valorarEstructura` y `configuracionGrupo` las lee de `VEstructurasVariables`. En la 0016 los 23 GRUPO que coincidían al céntimo siguen coincidiendo, `cota-fi-fs` baja de 31 (140.530,91 €) a 0 y 26 de los 31 pasan a valorarse (`difiere` sube de 66 a 92 y `sin-valorar` baja de 123 a 97; 10 de los 26 nuevos valorados tienen `receta: igual` y en 5 el resto coincide al céntimo salvo el compacto). Los 5 restantes usan `PSU006` y quedan sin valorar únicamente por `PSESQCOM: sin PVP en la tarifa`. En la 0015 `difiere` sube de 119 a 138 (+19) y `cota-fi-fs` baja de 21 a 3; en 2023–2026 los valorados suben de 482 a 527 (350 con receta igual). El 03/11/2026 la UI del configurador, en `feat/gr1-cotas-ui` (en `main` como `cd3dba4`), muestra junto a Ancho y Alto las cotas de catálogo (`FI`, `FS`, `VS`, `TD`, `F`, `FD`, `FZ`) de las estructuras dibujables; `1OFI` sigue con `fiMm` y no duplica FI. Si el operador no toca el campo, no se escribe `modulo.cotas`. La ubicación es hipótesis y debe confirmarse en Productor. La UI no se ha medido con el banco: no rehacer la UI ni repetir la medición del motor de la 0016. Sin cambios en el motor.
 
 E5 parcial el 02/11/2026 ([contraste §E5, corrección vigente](paridad/CONTRASTE-PRESUPUESTOS-2026-11-02.md#corrección-del-mismo-02112026-vigente)): `ModuloCerramiento` v3 admite `compacto?: CompactoModulo` y `valorarCerramiento` lo propaga sin suponer opciones. El banco (`scripts/lib/banco-contraste/compacto-grupo.ts`) solo transmite el compacto al módulo con opciones guardadas y evidencia completa; si no, lo aparta con su importe. La primera entrega dejaba 53 GRUPO de la 0016 sin valorar por suponer `G1O0`, y su `regresion-06` usaba opciones de otra línea. Corregido: la 0016 vuelve a 23 / 92 / 97 / 13 y la 0015 a 0 / 137 / 72 / 19; `compacto` queda en 53 GRUPO de la 0016 y los tubos o accesorios repetidos pasan a la causa `otro-accesorio` (11). En la 0016, 272 de 276 compactos de GRUPO no guardan `VOpciones`.
 
-M1, 03/11/2026, implementado en `feat/m1-mantenimiento-uniones` y no cerrado: alta y edición de uniones, catálogo inyectado en el configurador y recarga que conserva `de_usuario`. Las imágenes de `ESTRUCTURAS` están en `dibujo_catalogo` de Supabase (494 BMP, 03/11/2026), sin copiarlas al repositorio. No se subieron documentos de presupuesto. No está aplicada la migración 0034 en Supabase ni se ha repetido el contraste de la 0016. El precio no es un campo libre: sale de la receta del perfil. El mismo día se corrigieron los seis defectos de la revisión ([corrección](paridad/PLAN-M1-MANTENIMIENTO-UNIONES-2026-11-02.md#corrección-tras-la-revisión--03112026)): validación de escritura con el catálogo de la base, grosor de la base, receta de Productor protegida e imagen subida a `dibujo_catalogo`. En Supabase quedan aplicadas 0033–0035 (36 migraciones) y cargadas las 52 uniones. El 03/11 el siguiente de paridad era E2; en esta rama queda integrado, sin medir en la 0016.
+M1, 03/11/2026, implementado en `feat/m1-mantenimiento-uniones` (en `main` y producción desde `46fd472`) y no cerrado: alta y edición de uniones, catálogo inyectado en el configurador y recarga que conserva `de_usuario`. Las imágenes de `ESTRUCTURAS` están en `dibujo_catalogo` de Supabase (494 BMP, 03/11/2026), sin copiarlas al repositorio. No se subieron documentos de presupuesto. No se ha repetido el contraste de la 0016 (la 0034 se aplicó en Supabase el mismo 03/11; ver abajo). El precio no es un campo libre: sale de la receta del perfil. El mismo día se corrigieron los seis defectos de la revisión ([corrección](paridad/PLAN-M1-MANTENIMIENTO-UNIONES-2026-11-02.md#corrección-tras-la-revisión--03112026)): validación de escritura con el catálogo de la base, grosor de la base, receta de Productor protegida e imagen subida a `dibujo_catalogo`. En Supabase quedan aplicadas 0033–0035 (36 migraciones) y cargadas las 52 uniones. El 03/11 el siguiente de paridad era E2; está en `main`, sin medir en la 0016.
 
 E5b verificado en local el mismo día ([contraste §E5b](paridad/CONTRASTE-PRESUPUESTOS-2026-11-02.md#e5b--opciones-predeterminadas-del-catálogo-02112026-vigente)): la migración `0033_estructura_opciones_accesorio` carga `EstructurasOpcOpciones` (430 filas) y el despiece de accesorios aplica la predeterminada al grupo sin opción guardada. En la 0016 quedan 24 / 91 / 97 / 13; `compacto` baja de 53 a 8, el reparto desde el hueco pasa a ser la causa principal de 31 GRUPO (antes 10) y `regresion-06` coincide al céntimo con datos reales (1.410,08 €). La 0015 queda en 0 / 137 / 72 / 19. El 02/11 **0033 no estaba aplicada en Supabase**: la web funciona sin ella, pero la carga dirigida del motor la exige. El 03/11 producción declara 0033–0035 aplicadas. El 02/11 el siguiente era E2 (varias series en GRUPO); el puntero vigente es medirlo en la 0016, no reimplementarlo.
 
@@ -310,7 +311,7 @@ inferior libre más bajo. Verificado con el recorrido de las capturas de Sergio
 (2420 × 2420), en escritorio y a 375 px. Tests core 664 correctos, test del
 diseñador correcto, tipos y arquitectura limpios. La batería web completa dio
 17 timeouts de integración PostgreSQL con el servidor de desarrollo abierto;
-esos cuatro ficheros pasan al ejecutarlos en serie. Sin commit ni publicación.
+esos cuatro ficheros pasan al ejecutarlos en serie. Publicado después en `main` (`ba9a5a5`).
 
 DS2, segundo paso, mismo día: Sergio elige recolocar en anclajes y que las piezas
 colgadas de la movida se queden fijas. Implementado en core (`mover-modulo.ts`, 6
@@ -318,8 +319,8 @@ tests) y en la web (arrastre con ajuste magnético y botón «Mover elemento» c
 destinos enfocables). Verificado en local sobre el 2 × 2 de las capturas
 (2420 × 3640 y vuelta a 2420 × 2420), con guardado y recarga. Las uniones afectadas
 nacen sin configurar. La observación de Productor no se hizo: el acceso al
-escritorio no se concedió. Sin commit ni publicación. El 01/11 el siguiente de DS2 era prueba de Sergio,
-deshacer y publicación. El orden económico E1–E11 no cambia; el puntero vigente es medir E2.
+escritorio no se concedió. Publicado después en `main` (`ba9a5a5`). Falta prueba de Sergio y
+deshacer. El orden económico E1–E11 no cambia; el puntero vigente es medir E2.
 
 
 ## Comparativa de presupuestos Productor / Aluminior — 01–02/11/2026
@@ -338,7 +339,7 @@ su grosor a cada pieza y miden el lado común, regla contrastada con 26
 conjuntos reales de la 0016. El 2 × 2 con `U` da 2400 × 2400 y 1.391,88 €, y
 el caso 3 da 2800 con uniones de 4,12 € (1.117,76 €; queda la diferencia del
 fijo invisible, DS3). Solo para configuraciones nuevas: las líneas guardadas
-conservan su geometría. Tests core 677, web 812 en serie; sin publicar.
+conservan su geometría. Tests core 677, web 812 en serie; publicado después en `main` (`bc0f227`).
 Cobertura: 541 estructuras importadas, 160 dibujables. El compacto sigue
 siendo E5.
 
@@ -418,7 +419,7 @@ locales de septiembre, hasta `97099bc`. El main posterior del Mac conserva
 el estado operativo vigente; las ampliaciones compatibles de catálogo,
 cotas, TMP, dibujo y PDF se recuperan sin convertir los ensayos de septiembre
 en aceptación económica o fabricación.
-Commit local `fa32fba`, con ambos padres y cero conflictos; todavía sin publicar.
+Commit `fa32fba`, con ambos padres y cero conflictos; publicado después (está en `main`).
 
 Se preservan los informes [fase 7/07–13](paridad/fase-7/13-cierre-cotas-c2.md)
 y [fase 8/00–13](paridad/fase-8/13-cotas-economicas-y-relevo.md) como evidencia
@@ -619,11 +620,11 @@ Los nueve documentos anteriores y tres líneas conservan sus huellas.
 
 ## Siguiente paso
 
-**Siguiente:** medir E2 en la 0016, en el equipo de la mochila. En
-`integracion/codex-e2-20261103` está integrado en rama, sin medir en la 0016.
+**Siguiente:** medir E2 en la 0016 con el banco local, que se monta en este portátil
+desde el 05/11 (ver GR2). E2 está en `main` desde `0a4958b`, sin medir.
 No reimplementar la serie propia de la unión ni repetir M1, GR1 (motor del 02/11 y UI de cotas del 03/11; no rehacerla), E5 o E5b.
 GR2 (unión que recorre varias piezas) está publicado el 05/11/2026 (`1040a92`) y su precio medido en local el mismo día (`coincide` 24 → 33 en 176 GRUPO de la 0016): no rehacer la regla ni la medición; quedan 16 GRUPO con el patrón ([roadmap](../ROADMAP-PARIDAD-PRODUCTOR.md)).
-La ubicación de esas cotas en el panel es hipótesis; confirmarla en Productor y medir el banco queda para el equipo de la mochila.
+La ubicación de esas cotas en el panel es hipótesis; confirmarla en Productor queda para el equipo de la mochila.
 La observación E1 por visión sigue en el equipo del titular
 ([§0](CONTINUAR-EN-WINDOWS.md#0-relevo-del-31102026-equipo-del-titular-con-visión));
 no se reanuda desde este portátil. Los párrafos siguientes son antecedentes
@@ -692,7 +693,7 @@ de la iteración 13 quedan 8 con unión material de serie distinta, 1 con varian
 de vidrio por elemento, 1 con PVP ausente/ambiguo y 1 con bloqueo de acristalamiento.
 E2 atiende los primeros: la unión ya guarda su propia serie y el banco la traslada
 ([evidencia y límites](paridad/EVIDENCIA-E2-UNION-SERIE-2026-10-19.md), 19–20/10,
-local). En esta rama, 03/11, E2 está integrado, sin medir en la 0016: las cifras
+local). Desde el 03/11 E2 está en `main` (`0a4958b`), sin medir en la 0016: las cifras
 del 20/10 son del banco de la rama Codex, no de esta integración. Medido el 20/10 con base local y la copia autorizada: 407/523 líneas
 iguales (77,82 %) frente a 400/523, GRUPO 30/45 y cero líneas con la causa de
 serie de unión. Después, la [variante de acristalamiento por rango de la

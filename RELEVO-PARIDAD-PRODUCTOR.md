@@ -1,8 +1,8 @@
 # Relevo: paridad y fuentes de Productor
 
-**Vigente desde el 03/11/2026:** E2 integrado en rama, sin medir en la 0016.
+**Vigente desde el 03/11/2026, revisado el 06/11:** E2 está en `main` (`0a4958b`), sin medir en la 0016.
 La medición es el [siguiente del roadmap](ROADMAP-PARIDAD-PRODUCTOR.md#siguiente-paso),
-en el equipo de la mochila. No reimplementar la serie propia de la unión.
+con el banco local, que se monta en este portátil desde el 05/11. No reimplementar la serie propia de la unión.
 La observación E1 por visión sigue en el equipo del titular:
 [CONTINUAR-EN-WINDOWS §0](docs/CONTINUAR-EN-WINDOWS.md#0-relevo-del-31102026-equipo-del-titular-con-visión)
 y el [plan R1](docs/paridad/PASO-E1-DESPUNTE.md#plan-r1-con-mochila-31102026).

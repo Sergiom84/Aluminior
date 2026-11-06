@@ -90,7 +90,7 @@ permanece desconocido. 0032 guarda el acabado elegido del artículo en la línea
 nullable en históricos; copia/edición/PDF conservan el snapshot. Estas dos
 migraciones se aplicaron en Supabase el 12/10, con carga dirigida y código
 `40cedd1` live; ver [recibo técnico](docs/paridad/PUBLICACION-CLONERSOFT-2026-10-12.md).
-0033 (`estructura_opciones_accesorio`, 02/11/2026, solo en local) guarda las
+0033 (`estructura_opciones_accesorio`, 02/11/2026, aplicada en Supabase el 03/11 junto con 0034–0035) guarda las
 opciones de accesorio de `EstructurasOpcOpciones` con su predeterminada; el
 despiece de compactos la aplica al grupo sin opción guardada. Sin la tabla, la
 web declara incompleto ese grupo y la importación suplementaria la omite; la
