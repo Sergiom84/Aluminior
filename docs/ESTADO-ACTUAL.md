@@ -278,13 +278,13 @@ actual (uniones `CMU…` y series retiradas); en 2023–2026 el 70 % de los
 valorados tiene la misma receta que Productor y el compacto es la causa más
 frecuente (235). La asimetría del reparto se concentra en las uniones de
 guías de compacto. Orden entonces: GR1, E5, E2, E6, GR2. GR1 y E5 quedaron
-medidos el 02/11; E2 está en `main` (`0a4958b`), sin medir en la 0016.
+medidos el 02/11; E2 está en `main` (`0a4958b`) y se midió en la 0016 el 06/11.
 
 GR1 implementado y verificado en local el mismo 02/11/2026 ([contraste §GR1](paridad/CONTRASTE-PRESUPUESTOS-2026-11-02.md#gr1--02112026)): `ModuloCerramiento` v3 admite `cotas?: CotasModulo` (`FI`, `FS`, `VS`, `TD`, `F`, `FD`, `FZ`), `valorarCerramiento` las pasa a `valorarEstructura` y `configuracionGrupo` las lee de `VEstructurasVariables`. En la 0016 los 23 GRUPO que coincidían al céntimo siguen coincidiendo, `cota-fi-fs` baja de 31 (140.530,91 €) a 0 y 26 de los 31 pasan a valorarse (`difiere` sube de 66 a 92 y `sin-valorar` baja de 123 a 97; 10 de los 26 nuevos valorados tienen `receta: igual` y en 5 el resto coincide al céntimo salvo el compacto). Los 5 restantes usan `PSU006` y quedan sin valorar únicamente por `PSESQCOM: sin PVP en la tarifa`. En la 0015 `difiere` sube de 119 a 138 (+19) y `cota-fi-fs` baja de 21 a 3; en 2023–2026 los valorados suben de 482 a 527 (350 con receta igual). El 03/11/2026 la UI del configurador, en `feat/gr1-cotas-ui` (en `main` como `cd3dba4`), muestra junto a Ancho y Alto las cotas de catálogo (`FI`, `FS`, `VS`, `TD`, `F`, `FD`, `FZ`) de las estructuras dibujables; `1OFI` sigue con `fiMm` y no duplica FI. Si el operador no toca el campo, no se escribe `modulo.cotas`. La ubicación es hipótesis y debe confirmarse en Productor. La UI no se ha medido con el banco: no rehacer la UI ni repetir la medición del motor de la 0016. Sin cambios en el motor.
 
 E5 parcial el 02/11/2026 ([contraste §E5, corrección vigente](paridad/CONTRASTE-PRESUPUESTOS-2026-11-02.md#corrección-del-mismo-02112026-vigente)): `ModuloCerramiento` v3 admite `compacto?: CompactoModulo` y `valorarCerramiento` lo propaga sin suponer opciones. El banco (`scripts/lib/banco-contraste/compacto-grupo.ts`) solo transmite el compacto al módulo con opciones guardadas y evidencia completa; si no, lo aparta con su importe. La primera entrega dejaba 53 GRUPO de la 0016 sin valorar por suponer `G1O0`, y su `regresion-06` usaba opciones de otra línea. Corregido: la 0016 vuelve a 23 / 92 / 97 / 13 y la 0015 a 0 / 137 / 72 / 19; `compacto` queda en 53 GRUPO de la 0016 y los tubos o accesorios repetidos pasan a la causa `otro-accesorio` (11). En la 0016, 272 de 276 compactos de GRUPO no guardan `VOpciones`.
 
-M1, 03/11/2026, implementado en `feat/m1-mantenimiento-uniones` (en `main` y producción desde `46fd472`) y no cerrado: alta y edición de uniones, catálogo inyectado en el configurador y recarga que conserva `de_usuario`. Las imágenes de `ESTRUCTURAS` están en `dibujo_catalogo` de Supabase (494 BMP, 03/11/2026), sin copiarlas al repositorio. No se subieron documentos de presupuesto. No se ha repetido el contraste de la 0016 (la 0034 se aplicó en Supabase el mismo 03/11; ver abajo). El precio no es un campo libre: sale de la receta del perfil. El mismo día se corrigieron los seis defectos de la revisión ([corrección](paridad/PLAN-M1-MANTENIMIENTO-UNIONES-2026-11-02.md#corrección-tras-la-revisión--03112026)): validación de escritura con el catálogo de la base, grosor de la base, receta de Productor protegida e imagen subida a `dibujo_catalogo`. En Supabase quedan aplicadas 0033–0035 (36 migraciones) y cargadas las 52 uniones. El 03/11 el siguiente de paridad era E2; está en `main`, sin medir en la 0016.
+M1, 03/11/2026, implementado en `feat/m1-mantenimiento-uniones` (en `main` y producción desde `46fd472`) y no cerrado: alta y edición de uniones, catálogo inyectado en el configurador y recarga que conserva `de_usuario`. Las imágenes de `ESTRUCTURAS` están en `dibujo_catalogo` de Supabase (494 BMP, 03/11/2026), sin copiarlas al repositorio. No se subieron documentos de presupuesto. No se ha repetido el contraste de la 0016 (la 0034 se aplicó en Supabase el mismo 03/11; ver abajo). El precio no es un campo libre: sale de la receta del perfil. El mismo día se corrigieron los seis defectos de la revisión ([corrección](paridad/PLAN-M1-MANTENIMIENTO-UNIONES-2026-11-02.md#corrección-tras-la-revisión--03112026)): validación de escritura con el catálogo de la base, grosor de la base, receta de Productor protegida e imagen subida a `dibujo_catalogo`. En Supabase quedan aplicadas 0033–0035 (36 migraciones) y cargadas las 52 uniones. El 03/11 el siguiente de paridad era E2; está en `main` y se midió en la 0016 el 06/11.
 
 E5b verificado en local el mismo día ([contraste §E5b](paridad/CONTRASTE-PRESUPUESTOS-2026-11-02.md#e5b--opciones-predeterminadas-del-catálogo-02112026-vigente)): la migración `0033_estructura_opciones_accesorio` carga `EstructurasOpcOpciones` (430 filas) y el despiece de accesorios aplica la predeterminada al grupo sin opción guardada. En la 0016 quedan 24 / 91 / 97 / 13; `compacto` baja de 53 a 8, el reparto desde el hueco pasa a ser la causa principal de 31 GRUPO (antes 10) y `regresion-06` coincide al céntimo con datos reales (1.410,08 €). La 0015 queda en 0 / 137 / 72 / 19. El 02/11 **0033 no estaba aplicada en Supabase**: la web funciona sin ella, pero la carga dirigida del motor la exige. El 03/11 producción declara 0033–0035 aplicadas. El 02/11 el siguiente era E2 (varias series en GRUPO); el puntero vigente es medirlo en la 0016, no reimplementarlo.
 
@@ -320,7 +320,7 @@ destinos enfocables). Verificado en local sobre el 2 × 2 de las capturas
 (2420 × 3640 y vuelta a 2420 × 2420), con guardado y recarga. Las uniones afectadas
 nacen sin configurar. La observación de Productor no se hizo: el acceso al
 escritorio no se concedió. Publicado después en `main` (`ba9a5a5`). Falta prueba de Sergio y
-deshacer. El orden económico E1–E11 no cambia; el puntero vigente es medir E2.
+deshacer. El orden económico E1–E11 no cambia; E2 se midió el 06/11.
 
 
 ## Comparativa de presupuestos Productor / Aluminior — 01–02/11/2026
@@ -620,8 +620,12 @@ Los nueve documentos anteriores y tres líneas conservan sus huellas.
 
 ## Siguiente paso
 
-**Siguiente:** medir E2 en la 0016 con el banco local, que se monta en este portátil
-desde el 05/11 (ver GR2). E2 está en `main` desde `0a4958b`, sin medir.
+**Siguiente:** PDF con decimales en formato español (comparativa del 01/11) y el resto
+de DS2: deshacer, mover el primer elemento y prueba de Sergio.
+E2 medido el 06/11/2026 en la 0016 con el banco local: `coincide` 26 → 33 de 176 GRUPO y
+`union-otra-serie` 30 → 1 ([roadmap](../ROADMAP-PARIDAD-PRODUCTOR.md)).
+Defecto del banco encontrado: `contraste-presupuestos.ts` termina con código 0 aunque la base no
+responda (todos los GRUPO en `error-del-servicio`); comprobar el contenedor antes de leer un resultado.
 No reimplementar la serie propia de la unión ni repetir M1, GR1 (motor del 02/11 y UI de cotas del 03/11; no rehacerla), E5 o E5b.
 GR2 (unión que recorre varias piezas) está publicado el 05/11/2026 (`1040a92`) y su precio medido en local el mismo día (`coincide` 24 → 33 en 176 GRUPO de la 0016): no rehacer la regla ni la medición; quedan 16 GRUPO con el patrón ([roadmap](../ROADMAP-PARIDAD-PRODUCTOR.md)).
 La ubicación de esas cotas en el panel es hipótesis; confirmarla en Productor queda para el equipo de la mochila.
@@ -693,7 +697,7 @@ de la iteración 13 quedan 8 con unión material de serie distinta, 1 con varian
 de vidrio por elemento, 1 con PVP ausente/ambiguo y 1 con bloqueo de acristalamiento.
 E2 atiende los primeros: la unión ya guarda su propia serie y el banco la traslada
 ([evidencia y límites](paridad/EVIDENCIA-E2-UNION-SERIE-2026-10-19.md), 19–20/10,
-local). Desde el 03/11 E2 está en `main` (`0a4958b`), sin medir en la 0016: las cifras
+local). Desde el 03/11 E2 está en `main` (`0a4958b`), medido en la 0016 el 06/11: las cifras
 del 20/10 son del banco de la rama Codex, no de esta integración. Medido el 20/10 con base local y la copia autorizada: 407/523 líneas
 iguales (77,82 %) frente a 400/523, GRUPO 30/45 y cero líneas con la causa de
 serie de unión. Después, la [variante de acristalamiento por rango de la

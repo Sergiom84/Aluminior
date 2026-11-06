@@ -1,8 +1,8 @@
 # Relevo: paridad y fuentes de Productor
 
-**Vigente desde el 03/11/2026, revisado el 06/11:** E2 está en `main` (`0a4958b`), sin medir en la 0016.
-La medición es el [siguiente del roadmap](ROADMAP-PARIDAD-PRODUCTOR.md#siguiente-paso),
-con el banco local, que se monta en este portátil desde el 05/11. No reimplementar la serie propia de la unión.
+**Vigente desde el 06/11/2026:** E2 está en `main` (`0a4958b`) y medido en la 0016 (`coincide` 26 → 33 de 176 GRUPO).
+El [siguiente del roadmap](ROADMAP-PARIDAD-PRODUCTOR.md#siguiente-paso) es el PDF con decimales en formato español
+y el resto de DS2. El banco se monta en este portátil desde el 05/11. No reimplementar la serie propia de la unión.
 La observación E1 por visión sigue en el equipo del titular:
 [CONTINUAR-EN-WINDOWS §0](docs/CONTINUAR-EN-WINDOWS.md#0-relevo-del-31102026-equipo-del-titular-con-visión)
 y el [plan R1](docs/paridad/PASO-E1-DESPUNTE.md#plan-r1-con-mochila-31102026).
@@ -184,7 +184,7 @@ de tareas agotados, preservando la evidencia según AGENTS. No repetir M0.
 
 Antecedente de coordinación del 03–09/10, inactivo como instrucción de trabajo.
 Conserva contexto y observaciones; no autoriza limpiar G6 ni sustituye el
-siguiente paso del roadmap: medir E2 en la 0016.
+siguiente paso del roadmap (E2 se midió en la 0016 el 06/11).
 
 Sergio quiere que su tío pueda presupuestar con Aluminior obteniendo resultados equivalentes a Productor Aluminio (GAIA): configuración, piezas, cortes, cantidades, metraje, mano de obra, precios, ajustes y documentos. Productor es la referencia funcional y de interacción; la presentación se moderniza conservando el modelo de trabajo demostrado.
 
