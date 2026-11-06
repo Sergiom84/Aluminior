@@ -1,6 +1,6 @@
 # Estado actual de Aluminior
 
-Producción, 06/11/2026: `main` = `7bd12d3`, live en Render (`dep-dbmcj0ajnfac7399g5l0`, 05/11 18:24 UTC). Todas las ramas de trabajo están integradas en `main`; ningún worktree tiene commits propios. Incluye M1, E2, GR1 (motor y UI), E5, E5b, E6, DS2, DG1 (`8334f60`), VA1 (`5b709ac`), S2 (`5298a7b`), GR2 (`1040a92`, `a3ffc67`) y el arreglo del banco (`7bd12d3`). Sin migraciones nuevas desde la 0035. Los párrafos siguientes que dicen «rama», «local», «sin commit» o «sin publicar» son antecedentes fechados: su código ya está en `main`.
+06/11/2026: `main` = `ab4c5b9` (suma PDF1 y DS2 sobre `7bd12d3`). Último despliegue comprobado en Render: `7bd12d3` (`dep-dbmcj0ajnfac7399g5l0`, 05/11 18:24 UTC); el de `ab4c5b9` está sin comprobar. Todas las ramas de trabajo están integradas en `main`; ningún worktree tiene commits propios. Incluye M1, E2, GR1 (motor y UI), E5, E5b, E6, DS2, DG1 (`8334f60`), VA1 (`5b709ac`), S2 (`5298a7b`), GR2 (`1040a92`, `a3ffc67`) y el arreglo del banco (`7bd12d3`). Sin migraciones nuevas desde la 0035. Los párrafos siguientes que dicen «rama», «local», «sin commit» o «sin publicar» son antecedentes fechados: su código ya está en `main`.
 
 Producción, 03/11/2026: `main` = `46fd472` (M1 uniones + línea E1 de Windows +
 DS2/GR1/E5/E5b), live en Render (`dep-dbl2kdp7lnhs738jfc3g`, 120 s, logs sin
@@ -620,7 +620,7 @@ Los nueve documentos anteriores y tres líneas conservan sus huellas.
 
 ## Siguiente paso
 
-**Siguiente:** prueba de Sergio del diseñador y QA con sesión en producción de DG1, VA1, GR2,
+**Siguiente:** QA con sesión en producción de DG1, VA1, GR2,
 PDF1 y DS2; después, los 16 GRUPO con el patrón de GR2 y `caso-02155` de E2.
 DS2 (06/11/2026): deshacer y rehacer de todo cambio del conjunto y mover también el primer
 elemento dejando fijos a los demás; ver su fila del roadmap. No rehacerlo.
