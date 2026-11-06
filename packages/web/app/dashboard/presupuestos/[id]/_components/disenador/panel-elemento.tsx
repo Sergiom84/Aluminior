@@ -12,7 +12,7 @@ import { MaterialesElemento } from './materiales-elemento.tsx'
 /** Pestaña Elemento seleccionado: la posición se calcula, no se edita. */
 export function PanelElemento({
   modulo, borrador, indice, rect, pendiente, bloqueado, preparada, eliminable, generales, series, modelos,
-  cotasCatalogo = [], moviendo, onChange, onActualizar, onActualizarModelos, onDescartar, onSustituir, onEliminar, onMover,
+  cotasCatalogo = [], moviendo, movible, onChange, onActualizar, onActualizarModelos, onDescartar, onSustituir, onEliminar, onMover,
 }: {
   modulo: ModuloCerramiento
   borrador: BorradorModulo
@@ -33,8 +33,9 @@ export function PanelElemento({
   onDescartar: () => void
   onSustituir: () => void
   onEliminar: () => void
-  /** Elige destino en el lienzo; el primer elemento (eliminable false) no se mueve. */
+  /** Elige destino en el lienzo; el primer elemento también se mueve si hay otro (DS2). */
   moviendo: boolean
+  movible: boolean
   onMover: () => void
 }) {
   const plantilla = plantillaDiseno(modulo.estructuraCodigo)
@@ -74,7 +75,7 @@ export function PanelElemento({
           </button>
         )}
         <button type="button" className="al-command" aria-pressed={moviendo}
-          disabled={bloqueado || !eliminable} onClick={onMover}>
+          disabled={bloqueado || !movible} onClick={onMover}>
           {moviendo ? 'Cancelar mover' : 'Mover elemento'}
         </button>
         <button type="button" className="al-command al-command-danger"

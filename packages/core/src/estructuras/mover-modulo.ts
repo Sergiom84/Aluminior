@@ -3,13 +3,14 @@
  * Sergio del 01/11/2026). Mejora deliberada sobre Productor, donde hay que
  * eliminar y volver a arrastrar. Los elementos que colgaban del movido se
  * quedan fijos: se re-anclan a un vecino que los deje exactamente donde
- * estaban, o el movimiento se rechaza. El primero sigue siendo la referencia.
+ * estaban, o el movimiento se rechaza. Si se mueve el primero, la referencia
+ * pasa a otro elemento que deje a todos en su sitio.
  */
 import type { RectVisual } from './diseno.ts'
 import type { ConfiguracionCerramiento, ConfiguracionCerramientoV3, ModuloCerramiento, UnionCerramiento } from './cerramiento.ts'
 import {
-  UNION_SIN_CONFIGURAR, anclajesCerramiento, anclajesLibresCerramiento, composicionExplicita, dependientesModulo,
-  esModuloRaiz, insertarModuloEnAnclaje, posicionesCerramiento, type AnclajeLibre, type AnclajeModulo, type LadoAnclaje,
+  UNION_SIN_CONFIGURAR, anclajesCerramiento, anclajesLibresCerramiento, composicionExplicita,
+  insertarModuloEnAnclaje, posicionesCerramiento, type AnclajeLibre, type AnclajeModulo, type LadoAnclaje,
 } from './composicion-cerramiento.ts'
 
 export type ResultadoMover =
@@ -46,37 +47,68 @@ function ordenarPorAnclajes(modulos: readonly ModuloCerramiento[]): ModuloCerram
   return orden
 }
 
-/** Quita el elemento dejando fijos los que colgaban de él, o explica por qué no se puede. */
-function quitarDejandoFijos(configuracion: ConfiguracionCerramiento, id: string): ConfiguracionCerramientoV3 | string {
-  const base = composicionExplicita(configuracion)
-  const anclajes = anclajesCerramiento(base)
-  const rects = posicionesCerramiento(base).modulos
-  const hijos = base.modulos.filter((m) => m.anclaje?.moduloId === id)
-  const excluidos = new Set([id, ...dependientesModulo(base, id)])
-  const usados = new Set([...anclajes.entries()]
-    .filter(([moduloId, anclaje]) => moduloId !== id && anclaje.moduloId !== id)
-    .map(([, anclaje]) => `${anclaje.moduloId}:${anclaje.lado}`))
-  let siguienteUnion = numero(base.uniones.map((u) => u.id))
-  const nuevos = new Map<string, AnclajeModulo>()
+const NO_FIJOS = 'Hay elementos colgados de este que no pueden quedarse fijos en su sitio.'
+
+/**
+ * Reconstruye los anclajes sin `quitado` partiendo de `raiz`: cada pieza
+ * conserva su anclaje si su padre sigue colocado; si no, se re-ancla a una
+ * pieza colocada que la deje exactamente donde estaba, con unión nueva sin
+ * configurar. Devuelve null si alguna no puede quedarse en su sitio.
+ */
+function reanclar(base: ConfiguracionCerramientoV3, rects: ReadonlyMap<string, RectVisual>,
+  quitado: string, raiz: ModuloCerramiento): ConfiguracionCerramientoV3 | null {
+  const colocados: ModuloCerramiento[] = [raiz]
+  const usados = new Set<string>()
+  const nuevos = new Map<string, AnclajeModulo | undefined>([[raiz.id, undefined]])
   const uniones: UnionCerramiento[] = []
-  for (const hijo of hijos) {
-    const rect = rects.get(hijo.id)!
-    const destino = base.modulos.filter((m) => !excluidos.has(m.id))
-      .flatMap((padre) => LADOS.map((lado) => ({ padre, lado })))
-      .find(({ padre, lado }) => !usados.has(`${padre.id}:${lado}`)
-        && mismoRect(rectColgado(rects.get(padre.id)!, lado, rect), rect))
-    if (!destino) return 'Hay elementos colgados de este que no pueden quedarse fijos en su sitio.'
-    usados.add(`${destino.padre.id}:${destino.lado}`)
+  let siguienteUnion = numero(base.uniones.map((u) => u.id))
+  let pendientes = base.modulos.filter((m) => m.id !== quitado && m.id !== raiz.id)
+  const colocar = (m: ModuloCerramiento, anclaje: AnclajeModulo) => {
+    usados.add(`${anclaje.moduloId}:${anclaje.lado}`)
+    nuevos.set(m.id, anclaje)
+    colocados.push(m)
+    pendientes = pendientes.filter((p) => p.id !== m.id)
+  }
+  while (pendientes.length) {
+    // Primero las que conservan su anclaje: su padre ya está colocado.
+    const conserva = pendientes.find((m) => m.anclaje && colocados.some((c) => c.id === m.anclaje!.moduloId)
+      && !usados.has(`${m.anclaje.moduloId}:${m.anclaje.lado}`))
+    if (conserva) { colocar(conserva, conserva.anclaje!); continue }
+    // Si ninguna puede, se re-ancla la primera que quepa exactamente en su sitio.
+    const destino = pendientes.flatMap((hijo) => colocados.flatMap((padre) => LADOS.map((lado) => ({ hijo, padre, lado }))))
+      .find(({ hijo, padre, lado }) => !usados.has(`${padre.id}:${lado}`)
+        && mismoRect(rectColgado(rects.get(padre.id)!, lado, rects.get(hijo.id)!), rects.get(hijo.id)!))
+    if (!destino) return null
     const unionId = `union-${++siguienteUnion}`
-    nuevos.set(hijo.id, { moduloId: destino.padre.id, lado: destino.lado, unionId })
     uniones.push({ id: unionId, codigo: UNION_SIN_CONFIGURAR.codigo, grosorMm: UNION_SIN_CONFIGURAR.grosorMm,
       longitudMm: destino.lado === 'abajo' ? destino.padre.anchoMm : destino.padre.altoMm })
+    colocar(destino.hijo, { moduloId: destino.padre.id, lado: destino.lado, unionId })
   }
-  const descartadas = new Set([anclajes.get(id)!.unionId, ...hijos.map((h) => h.anclaje!.unionId)])
-  const modulos = ordenarPorAnclajes(base.modulos.filter((m) => m.id !== id)
-    .map((m) => nuevos.has(m.id) ? { ...m, anclaje: nuevos.get(m.id) } : m))
-  if (!modulos) return 'Hay elementos colgados de este que no pueden quedarse fijos en su sitio.'
-  return { ...base, modulos, uniones: [...base.uniones.filter((u) => !descartadas.has(u.id)), ...uniones] }
+  const vigentes = new Set([...nuevos.values()].flatMap((a) => a ? [a.unionId] : []))
+  const modulos = ordenarPorAnclajes(colocados.map((m) => {
+    const { anclaje: _anclaje, ...resto } = m
+    const anclaje = nuevos.get(m.id)
+    return anclaje ? { ...resto, anclaje } : resto
+  }))
+  if (!modulos) return null
+  return { ...base, modulos, uniones: [...base.uniones.filter((u) => vigentes.has(u.id)), ...uniones] }
+}
+
+/**
+ * Quita el elemento dejando fijos los demás, o explica por qué no se puede.
+ * Si es el primero, la referencia pasa al primer elemento restante que permita
+ * dejar a todos en su sitio (DS2, decisión de Sergio del 06/11/2026).
+ */
+function quitarDejandoFijos(configuracion: ConfiguracionCerramiento, id: string): ConfiguracionCerramientoV3 | string {
+  const base = composicionExplicita(configuracion)
+  const rects = posicionesCerramiento(base).modulos
+  const raiz = base.modulos[0]
+  const candidatas = raiz.id === id ? base.modulos.filter((m) => m.id !== id) : [raiz]
+  for (const candidata of candidatas) {
+    const resultado = reanclar(base, rects, id, candidata)
+    if (resultado) return resultado
+  }
+  return NO_FIJOS
 }
 
 /**
@@ -89,9 +121,8 @@ export function moverModuloCerramiento(
   destino: { moduloId: string; lado: LadoAnclaje },
 ): ResultadoMover {
   const modulo = configuracion.modulos.find((m) => m.id === id)
-  if (!modulo || esModuloRaiz(configuracion, id)) {
-    return { ok: false, motivo: 'El primer elemento es la referencia del conjunto y no se mueve.' }
-  }
+  if (!modulo) return { ok: false, motivo: 'El elemento no existe.' }
+  if (configuracion.modulos.length === 1) return { ok: false, motivo: 'Un único elemento no tiene dónde moverse.' }
   if (destino.moduloId === id) return { ok: false, motivo: 'Un elemento no puede colocarse junto a sí mismo.' }
   const actual = anclajesCerramiento(configuracion).get(id)
   if (actual?.moduloId === destino.moduloId && actual.lado === destino.lado) return { ok: true, configuracion }
@@ -108,10 +139,11 @@ export function moverModuloCerramiento(
 
 /** Anclajes donde puede soltarse el elemento, en coordenadas del conjunto actual. */
 export function anclajesParaMover(configuracion: ConfiguracionCerramiento, id: string): AnclajeLibre[] {
-  if (esModuloRaiz(configuracion, id) || !configuracion.modulos.some((m) => m.id === id)) return []
+  if (configuracion.modulos.length < 2 || !configuracion.modulos.some((m) => m.id === id)) return []
   const sin = quitarDejandoFijos(configuracion, id)
   if (typeof sin === 'string') return []
-  const raiz = configuracion.modulos[0].id
+  // Referencia común a ambos conjuntos: la del conjunto sin el elemento.
+  const raiz = sin.modulos[0].id
   const antes = posicionesCerramiento(configuracion).modulos.get(raiz)!
   const despues = posicionesCerramiento(sin).modulos.get(raiz)!
   const actual = anclajesCerramiento(configuracion).get(id)

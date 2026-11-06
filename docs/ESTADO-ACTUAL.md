@@ -620,7 +620,10 @@ Los nueve documentos anteriores y tres líneas conservan sus huellas.
 
 ## Siguiente paso
 
-**Siguiente:** el resto de DS2: deshacer, mover el primer elemento y prueba de Sergio.
+**Siguiente:** prueba de Sergio del diseñador y QA con sesión en producción de DG1, VA1, GR2,
+PDF1 y DS2; después, los 16 GRUPO con el patrón de GR2 y `caso-02155` de E2.
+DS2 (06/11/2026): deshacer y rehacer de todo cambio del conjunto y mover también el primer
+elemento dejando fijos a los demás; ver su fila del roadmap. No rehacerlo.
 PDF1 (06/11/2026): el PDF escribe medidas, importes, cantidades y horas en formato español
 («970,0 × 1.999,5», «1.391,88 €»); ver su fila del roadmap. No rehacerlo.
 E2 medido el 06/11/2026 en la 0016 con el banco local: `coincide` 26 → 33 de 176 GRUPO y

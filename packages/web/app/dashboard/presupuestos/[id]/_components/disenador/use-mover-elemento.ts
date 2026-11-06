@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import {
-  anclajesParaMover, esModuloRaiz, moverModuloCerramiento, type AnclajeLibre, type ConfiguracionCerramiento,
+  anclajesParaMover, moverModuloCerramiento, type AnclajeLibre, type ConfiguracionCerramiento,
 } from '@aluminior/core/estructuras'
 
 /**
@@ -21,9 +21,10 @@ export function useMoverElemento({ configuracion, bloqueado, onMovido, onAviso }
   return {
     moviendo: activo,
     anclajes,
-    puedeMover: (id: string) => Boolean(configuracion) && !bloqueado && !esModuloRaiz(configuracion!, id),
+    puedeMover: (id: string) => Boolean(configuracion) && !bloqueado && configuracion!.modulos.length > 1
+      && configuracion!.modulos.some((m) => m.id === id),
     iniciar: (id: string) => {
-      if (!configuracion || bloqueado || esModuloRaiz(configuracion, id)) return
+      if (!configuracion || bloqueado || configuracion.modulos.length < 2) return
       onAviso(anclajesParaMover(configuracion, id).length ? null
         : 'Este elemento no tiene otra posición libre donde colocarse.')
       setMoviendo(id)

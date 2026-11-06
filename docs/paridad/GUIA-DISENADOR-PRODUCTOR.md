@@ -305,8 +305,9 @@ pieza borra en cascada todo lo que está anclado a ella.
     materiales. Cada pieza que colgaba de ella se re-ancla a un vecino que la
     deje exactamente donde estaba; si alguna no puede, el movimiento se
     rechaza con aviso. Las uniones afectadas nacen sin configurar, porque unen
-    piezas distintas. El primer elemento es la referencia y no se mueve. Solo
-    se ofrecen destinos sin solapes.
+    piezas distintas. Desde el 06/11/2026 el primer elemento también se mueve:
+    la referencia pasa al primer elemento restante que deje a todos en su
+    sitio. Un elemento único no se mueve. Solo se ofrecen destinos sin solapes.
   - Efecto en la lista: los elementos se reordenan para que cada pieza siga a
     aquella de la que cuelga, así que su índice puede cambiar.
   - Verificado en la web local: en el 2 × 2 de las capturas, arrastrar la 2O
@@ -314,7 +315,14 @@ pieza borra en cascada todo lo que está anclado a ella.
     (2420 × 3640); por teclado vuelve a su posición (2420 × 2420). Guardada,
     recargada y conservada como GRUPO «sin valorar» (sin vidrio ni uniones
     configuradas: no da un falso cero).
-  - Pendiente: deshacer (Ctrl+Z) y mover el primer elemento.
+  - Deshacer y rehacer (06/11/2026, decisión de Sergio, sin equivalente
+    observado en Productor): un paso por cada cambio del conjunto (colocar,
+    mover, eliminar, sustituir, aplicar medidas, materiales o uniones).
+    Ctrl+Z deshace; Ctrl+Y o Ctrl+Mayús+Z rehace; botones «Deshacer» y
+    «Rehacer» en la barra. No actúan dentro de un campo de texto, ni con
+    borradores sin aplicar, una inserción o un movimiento a medias. Se
+    conservan 100 pasos mientras el diseñador está abierto.
+  - Pendiente: prueba de Sergio.
 
 ## Diseño específico (cartabón) y elemento invisible
 
@@ -383,7 +391,7 @@ siendo del operador; la 7 queda resuelta salvo el PDF.
 |---|---|---|
 | Escaparate de ventanas | Sí: 541 estructuras, 160 dibujables | Sí, con paginación; faltan familias no dibujables |
 | Composición a la derecha / debajo | — | Sí: «+» lateral e inferior y botones de la barra (01/11/2026) |
-| Mover una pieza colocada | — | Sí: arrastre con ajuste a anclajes y botón «Mover elemento»; sin deshacer (DS2) |
+| Mover una pieza colocada | — | Sí: arrastre con ajuste a anclajes y botón «Mover elemento», también el primero; deshacer y rehacer (DS2) |
 | Elemento seleccionado | — | Sí: posición calculada, medidas, perfiles, vidrio, actualizar, eliminar |
 | Perfiles (series) | Sí: 57 series | Desplegable de códigos; falta búsqueda con descripción y filtro |
 | Vidrio | Sí: familia 050 | Búsqueda por código y descripción |

@@ -51,9 +51,22 @@ describe('recolocar un elemento en otro anclaje', () => {
     expect(r).toEqual({ ok: false, motivo: 'Hay elementos colgados de este que no pueden quedarse fijos en su sitio.' })
   })
 
-  it('el primer elemento no se mueve y no se suelta sobre sí mismo ni encima de otro', () => {
+  it('el primer elemento se mueve dejando fijos a los demás; la referencia pasa a otro', () => {
     const base = dosPorDos()
-    expect(moverModuloCerramiento(base, 'modulo-1', { moduloId: 'modulo-4', lado: 'derecha' }).ok).toBe(false)
+    const c = movida(moverModuloCerramiento(base, 'modulo-1', { moduloId: 'modulo-3', lado: 'derecha' }))
+    for (const id of ['modulo-2', 'modulo-3', 'modulo-4']) expect(rect(c, id)).toEqual(rect(base, id))
+    expect(rect(c, 'modulo-1')).toEqual({ x: 2440, y: 0, ancho: 1200, alto: 1200 })
+    expect(c.modulos[0].id).toBe('modulo-3')
+    expect(c.modulos[0].anclaje).toBeUndefined()
+    expect(anclajesCerramiento(c).get('modulo-2')).toMatchObject({ moduloId: 'modulo-4', lado: 'izquierda' })
+    expect(esConfiguracionCerramiento(c)).toBe(true)
+  })
+
+  it('un único elemento no se mueve; nada se suelta sobre sí mismo ni encima de otro', () => {
+    const solo = crearConfiguracionCerramiento(plantillaDiseno('2O')!)
+    expect(moverModuloCerramiento(solo, 'modulo-1', { moduloId: 'modulo-1', lado: 'derecha' }).ok).toBe(false)
+    expect(anclajesParaMover(solo, 'modulo-1')).toEqual([])
+    const base = dosPorDos()
     expect(moverModuloCerramiento(base, 'modulo-4', { moduloId: 'modulo-4', lado: 'derecha' }).ok).toBe(false)
     expect(moverModuloCerramiento(base, 'modulo-2', { moduloId: 'modulo-1', lado: 'derecha' }))
       .toEqual({ ok: false, motivo: 'No cabe ahí sin solapar otro elemento.' })
@@ -74,6 +87,12 @@ describe('anclajes para mover', () => {
     expect(destinos.some((a) => a.moduloId === 'modulo-3' && a.lado === 'abajo')).toBe(false)
     expect(destinos).toContainEqual({ moduloId: 'modulo-3', lado: 'derecha', x: 2420, y: 0 })
     expect(destinos.every((a) => moverModuloCerramiento(base, 'modulo-4', a).ok)).toBe(true)
-    expect(anclajesParaMover(base, 'modulo-1')).toEqual([])
+  })
+
+  it('el primer elemento también tiene destinos, en las coordenadas del conjunto actual', () => {
+    const base = dosPorDos()
+    const destinos = anclajesParaMover(base, 'modulo-1')
+    expect(destinos).toContainEqual({ moduloId: 'modulo-3', lado: 'derecha', x: 2420, y: 0 })
+    expect(destinos.every((a) => moverModuloCerramiento(base, 'modulo-1', a).ok)).toBe(true)
   })
 })

@@ -20,6 +20,8 @@ import { BarraDisenador, type VistaDisenador } from './disenador/barra-disenador
 import { useInsercionVentanas } from './disenador/use-insercion-ventanas.ts'
 import { LienzoVacio, LienzoConExtremos } from './disenador/lienzo-insercion.tsx'
 import { useMoverElemento } from './disenador/use-mover-elemento.ts'
+import { useHistorialCerramiento } from './disenador/use-historial-cerramiento.ts'
+import { accionDeTeclado } from './disenador/historial.ts'
 import { SelectorVentana, PreguntaMedidas, OpcionesMedidas } from './disenador/dialogos-insercion.tsx'
 import styles from '../presupuesto-movil.module.css'
 
@@ -54,12 +56,20 @@ export function DisenadorEstructura({
   /** Materiales generales de la línea, para mostrar lo que heredan los elementos. */
   generales?: MaterialesGenerales
 }) {
-  const [configuracion, setConfiguracion] = useState<ConfiguracionCerramiento | null>(() => {
+  const historial = useHistorialCerramiento(() => {
     if (configuracionInicial) return configuracionInicial
     if (vacio) return null
     const base = crearConfiguracionCerramiento(plantillaDiseno(codigo) ?? PLANTILLAS_DISENO[0])
     return { ...base, modulos: [{ ...base.modulos[0], anchoMm, altoMm }] }
+  }, (siguiente) => {
+    // Tras deshacer o rehacer, la selección vuelve al primero si su elemento ya no existe.
+    setAviso(null)
+    const existe = siguiente && seleccion && [...siguiente.modulos, ...siguiente.uniones]
+      .some((p) => p.id === (seleccion.parte === 'union' ? seleccion.elemento : seleccion.moduloId))
+    if (!siguiente) { setSeleccion(null); setVista('catalogo') } else if (!existe) setSeleccion(seleccionModulo(siguiente, siguiente.modulos[0].id))
   })
+  const configuracion = historial.configuracion
+  const setConfiguracion = historial.registrar
   const region = useRef<HTMLElement>(null)
   const enfocar = useRef<string | null>(null)
   useEffect(() => {
@@ -75,6 +85,7 @@ export function DisenadorEstructura({
   const [arrastrada, setArrastrada] = useState<PlantillaDiseno | null>(null)
   const [aviso, setAviso] = useState<string | null>(null)
   const insertando = arrastrada ?? preparada
+  const historialLibre = !edicion.pendientes && !insertando
 
   useEffect(() => {
     if (!configuracion) {
@@ -166,6 +177,12 @@ export function DisenadorEstructura({
   return (
     <section ref={region} className={`${styles.designer} al-designer`} aria-label="Diseñador de cerramientos"
       onKeyDown={(evento) => {
+        const accion = accionDeTeclado(evento)
+        if (accion && historialLibre && !mover.moviendo) {
+          evento.preventDefault()
+          historial[accion]()
+          return
+        }
         if (evento.key !== 'Escape') return
         if (mover.moviendo) mover.cancelar()
         else if (insertando) terminarInsercion()
@@ -175,7 +192,9 @@ export function DisenadorEstructura({
         onColocarDerecha={configuracion && preparada && !edicion.pendientes
           ? () => colocarLateral(preparada) : null}
         onColocarDebajo={configuracion && preparada && !edicion.pendientes
-          ? () => colocarEn(preparada, inferior, 'debajo') : null} />
+          ? () => colocarEn(preparada, inferior, 'debajo') : null}
+        onDeshacer={historial.puedeDeshacer && historialLibre && !mover.moviendo ? historial.deshacer : null}
+        onRehacer={historial.puedeRehacer && historialLibre && !mover.moviendo ? historial.rehacer : null} />
 
       <div className="al-designer-canvas" data-testid="designer-canvas" data-insertando={Boolean(insertando) || undefined}>
         {configuracion
@@ -221,7 +240,7 @@ export function DisenadorEstructura({
                 onDescartar={() => edicion.descartar('modulos', modulo.id)}
                 onSustituir={() => preparada && setConfiguracion(
                   cambiarEstructuraModuloCerramiento(configuracion, modulo.id, preparada))}
-                onEliminar={eliminar} moviendo={mover.moviendo === modulo.id}
+                onEliminar={eliminar} moviendo={mover.moviendo === modulo.id} movible={mover.puedeMover(modulo.id)}
                 onMover={() => mover.moviendo === modulo.id ? mover.cancelar() : mover.iniciar(modulo.id)} />
             : union && <div className="al-designer-union-editor">
                 <EditorUnion catalogoUniones={catalogoUniones} serieCodigo={generales.serieCodigo}

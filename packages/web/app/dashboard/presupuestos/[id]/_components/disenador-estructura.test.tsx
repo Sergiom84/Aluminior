@@ -23,6 +23,13 @@ describe('configurador con la disposición de Productor', () => {
     expect(html).not.toContain('al-chain-drawing')
   })
 
+  it('abre con Deshacer y Rehacer en la barra, desactivados y con su atajo', () => {
+    const html = renderToStaticMarkup(<DisenadorEstructura codigo="2O" anchoMm={1200} altoMm={1200}
+      onConfiguracionChange={vi.fn()} onDimensionesChange={vi.fn()} />)
+    expect(html).toMatch(/<button type="button" disabled="" aria-keyshortcuts="Control\+Z" title="Deshacer \(Ctrl\+Z\)">Deshacer<\/button>/)
+    expect(html).toMatch(/<button type="button" disabled="" aria-keyshortcuts="Control\+Y Control\+Shift\+Z" title="Rehacer \(Ctrl\+Y\)">Rehacer<\/button>/)
+  })
+
   it('lista elementos y uniones en orden de creación y marca la unión sin configurar', () => {
     const base = crearConfiguracionCerramiento(plantillaDiseno('2')!)
     const configuracion = insertarModuloEnAnclaje(base, moduloDesdePlantilla(plantillaDiseno('0')!),

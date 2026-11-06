@@ -7,10 +7,11 @@ export type VistaDisenador = 'catalogo' | 'propiedades'
 
 /**
  * Barra superior del configurador: recuento, vista de la barra inferior,
- * medidas globales y, con una miniatura preparada, su colocación a la derecha o debajo.
+ * deshacer y rehacer, medidas globales y, con una miniatura preparada, su
+ * colocación a la derecha o debajo.
  */
 export function BarraDisenador({
-  elementos, vista, onVista, medidas, preparada, onColocarDerecha, onColocarDebajo, onMedidas,
+  elementos, vista, onVista, medidas, preparada, onColocarDerecha, onColocarDebajo, onMedidas, onDeshacer, onRehacer,
 }: {
   onMedidas?: () => void
   elementos: number
@@ -20,6 +21,9 @@ export function BarraDisenador({
   preparada: PlantillaDiseno | null
   onColocarDerecha: (() => void) | null
   onColocarDebajo: (() => void) | null
+  /** Null cuando no hay paso o hay una edición, inserción o movimiento a medias. */
+  onDeshacer: (() => void) | null
+  onRehacer: (() => void) | null
 }) {
   return (
     <header className="al-designer-toolbar">
@@ -28,6 +32,12 @@ export function BarraDisenador({
         <button type="button" aria-pressed={vista === 'catalogo'} onClick={() => onVista('catalogo')}>Catálogo</button>
         <button type="button" aria-pressed={vista === 'propiedades'} disabled={elementos === 0}
           onClick={() => onVista('propiedades')}>Propiedades</button>
+      </div>
+      <div className="al-designer-vistas" role="group" aria-label="Historial">
+        <button type="button" disabled={!onDeshacer} onClick={onDeshacer ?? undefined}
+          aria-keyshortcuts="Control+Z" title="Deshacer (Ctrl+Z)">Deshacer</button>
+        <button type="button" disabled={!onRehacer} onClick={onRehacer ?? undefined}
+          aria-keyshortcuts="Control+Y Control+Shift+Z" title="Rehacer (Ctrl+Y)">Rehacer</button>
       </div>
       {preparada && onColocarDerecha && (
         <button type="button" className="al-command-primary al-designer-colocar" onClick={onColocarDerecha}>
