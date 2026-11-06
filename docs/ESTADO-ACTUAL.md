@@ -620,8 +620,9 @@ Los nueve documentos anteriores y tres líneas conservan sus huellas.
 
 ## Siguiente paso
 
-**Siguiente:** PDF con decimales en formato español (comparativa del 01/11) y el resto
-de DS2: deshacer, mover el primer elemento y prueba de Sergio.
+**Siguiente:** el resto de DS2: deshacer, mover el primer elemento y prueba de Sergio.
+PDF1 (06/11/2026): el PDF escribe medidas, importes, cantidades y horas en formato español
+(«970,0 × 1.999,5», «1.391,88 €»); ver su fila del roadmap. No rehacerlo.
 E2 medido el 06/11/2026 en la 0016 con el banco local: `coincide` 26 → 33 de 176 GRUPO y
 `union-otra-serie` 30 → 1 ([roadmap](../ROADMAP-PARIDAD-PRODUCTOR.md)).
 Defecto del banco encontrado: `contraste-presupuestos.ts` termina con código 0 aunque la base no

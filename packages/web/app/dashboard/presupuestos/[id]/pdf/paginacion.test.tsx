@@ -3,6 +3,7 @@ import { renderToBuffer, type DocumentProps } from '@react-pdf/renderer'
 import { describe, expect, it } from 'vitest'
 import { PresupuestoPDF } from './documento.tsx'
 import type { DatosPresupuestoPdf, LineaPdf } from './tipos.ts'
+import { fmtMedidas } from './formato'
 
 interface NodoLayout {
   type: string
@@ -58,7 +59,7 @@ function comprobarDibujos(juego: Awaited<ReturnType<typeof maquetar>>, esperadas
   expect(dibujos).toHaveLength(esperadas.length)
   expect(etiquetas.map(n => n.texto)).toEqual(esperadas.map(l => `Línea ${l.orden}`))
   esperadas.forEach((l, i) => {
-    const cotas = colocados.filter(n => n.texto === `${l.anchoMm} × ${l.altoMm} mm`)
+    const cotas = colocados.filter(n => n.texto === `${fmtMedidas(l.anchoMm!, l.altoMm!)} mm`)
     expect(cotas).toHaveLength(1)
     const [cota] = cotas
     expect(etiquetas[i].pagina, `Etiqueta separada del dibujo de línea ${l.orden}`).toBe(dibujos[i].pagina)

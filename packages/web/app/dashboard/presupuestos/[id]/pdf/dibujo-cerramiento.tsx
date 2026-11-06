@@ -6,6 +6,7 @@ import {
 import {
   geometriaCerramientoPdf, geometriaHerrajesPdf, trazosAperturaPdf,
 } from './geometria-cerramiento'
+import { fmtMedidas } from './formato'
 
 function Rectangulo({ rect, fill }: { rect: RectVisual; fill: string }) {
   return <Rect x={rect.x} y={rect.y} width={rect.ancho} height={rect.alto}
@@ -54,7 +55,7 @@ export function DibujoCerramientoPdf({ configuracion, ancho = 240, alto = 150 }:
       {dibujo.uniones.map((union) => <Rectangulo key={union.id} rect={union.rect} fill="#94a3b8" />)}
     </Svg>
     <Text style={{ fontSize: 8, textAlign: 'center', fontFamily: 'Helvetica' }}>
-      {dibujo.medidas.anchoMm} × {dibujo.medidas.altoMm} mm
+      {fmtMedidas(dibujo.medidas.anchoMm, dibujo.medidas.altoMm)} mm
     </Text>
   </View>
 }

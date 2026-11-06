@@ -1,8 +1,8 @@
 # Relevo: paridad y fuentes de Productor
 
 **Vigente desde el 06/11/2026:** E2 está en `main` (`0a4958b`) y medido en la 0016 (`coincide` 26 → 33 de 176 GRUPO).
-El [siguiente del roadmap](ROADMAP-PARIDAD-PRODUCTOR.md#siguiente-paso) es el PDF con decimales en formato español
-y el resto de DS2. El banco se monta en este portátil desde el 05/11. No reimplementar la serie propia de la unión.
+El [siguiente del roadmap](ROADMAP-PARIDAD-PRODUCTOR.md#siguiente-paso) es el resto de DS2
+(el formato español del PDF quedó hecho el 06/11, PDF1). El banco se monta en este portátil desde el 05/11. No reimplementar la serie propia de la unión.
 La observación E1 por visión sigue en el equipo del titular:
 [CONTINUAR-EN-WINDOWS §0](docs/CONTINUAR-EN-WINDOWS.md#0-relevo-del-31102026-equipo-del-titular-con-visión)
 y el [plan R1](docs/paridad/PASO-E1-DESPUNTE.md#plan-r1-con-mochila-31102026).
