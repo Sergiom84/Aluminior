@@ -19,7 +19,9 @@ export function useAltaPresupuesto() {
       guardarSolicitudAlta(datos)
       const resultado = await crearPresupuesto(previo, datos)
       if (resultado?.ok) {
-        router.push(`/dashboard/presupuestos/${resultado.id}#configurador`)
+        // replace: «atrás» desde el presupuesto vuelve a la lista, no al alta,
+        // y no se crea un segundo presupuesto vacío por reenviar el formulario.
+        router.replace(`/dashboard/presupuestos/${resultado.id}#configurador`)
         limpiarSolicitudAlta()
         confirmarOperacion('alta')
         setRecuperando(false)

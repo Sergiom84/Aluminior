@@ -1,6 +1,7 @@
 'use client'
 import { useActionState, useCallback, useRef, useState } from 'react'
 import { SelectorCliente } from '../../nuevo/selector-cliente'
+import { SelectorFormaPago } from '../../nuevo/selector-forma-pago'
 import { editarCabecera } from '../../_lib/editar-cabecera-action'
 import type { EstadoEdicion } from '../../_lib/edicion/estado'
 import { CampoEdicion, usarResultadoEdicion } from './campo-edicion'
@@ -19,14 +20,18 @@ function FormularioCabecera({ datos: d, cerrar }: { datos: DatosCabeceraEdicion;
   return <form ref={formulario} action={accion} aria-label="Editar cabecera" data-guardar-ficha
     className="mt-3 rounded-md border p-3" style={{ borderColor: 'var(--al-accent)' }}>
     <input type="hidden" name="presupuestoId" value={d.presupuestoId} />
+    {d.potencialCodigo && <input type="hidden" name="potencialCodigo" value={d.potencialCodigo} />}
     {estado && !estado.ok && estado.mensaje && <p role="alert" tabIndex={-1} style={{ color: 'var(--al-error)' }}>{estado.mensaje}</p>}
     <div className="grid min-w-0 gap-3 sm:grid-cols-2">
       <SelectorCliente inicial={d.clienteCodigo ? { codigo: d.clienteCodigo, nombre: d.clienteNombre ?? d.clienteCodigo } : null}
         errores={errores.clienteCodigo} />
-      <CampoEdicion id="editar-potencial" nombre="potencialCodigo" etiqueta="Potencial" valor={d.potencialCodigo} errores={errores.potencialCodigo} />
       <CampoEdicion id="editar-nombre" nombre="nombreLibre" etiqueta="Nombre" valor={d.nombreLibre} errores={errores.nombreLibre} largo={200} />
       <CampoEdicion id="editar-obra" nombre="obraTexto" etiqueta="Obra" valor={d.obraTexto} errores={errores.obraTexto} largo={200} />
-      <CampoEdicion id="editar-pago" nombre="formaPago" etiqueta="Forma de pago" valor={d.formaPago} errores={errores.formaPago} largo={60} />
+      <div className="min-w-0">
+        <label htmlFor="editar-pago" className="mb-1 block text-sm">Forma de pago</label>
+        <SelectorFormaPago id="editar-pago" valor={d.formaPago} className="w-full min-w-0 rounded-md border px-3 py-2 text-sm"
+          style={{ background: 'var(--al-surface)', borderColor: 'var(--al-border-strong)' }} />
+      </div>
       <CampoEdicion id="editar-observaciones" nombre="observaciones" etiqueta="Observaciones" valor={d.observaciones} errores={errores.observaciones} largo={4000} area />
     </div>
     <div className="mt-3 flex flex-wrap gap-2">

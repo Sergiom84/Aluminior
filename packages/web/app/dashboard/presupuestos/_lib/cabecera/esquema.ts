@@ -11,7 +11,7 @@ const campos = z.object({
 
 function destinatario(d: z.infer<typeof campos>, ctx: z.RefinementCtx) {
   if (!d.clienteCodigo && !d.potencialCodigo && !d.nombreLibre)
-    ctx.addIssue({ code: 'custom', path: ['nombreLibre'], message: 'Indica cliente, potencial o al menos un nombre' })
+    ctx.addIssue({ code: 'custom', path: ['nombreLibre'], message: 'Indica cliente o al menos un nombre' })
   if (d.clienteCodigo && d.potencialCodigo)
     ctx.addIssue({ code: 'custom', path: ['clienteCodigo'], message: 'Elige cliente o potencial, no ambos' })
 }

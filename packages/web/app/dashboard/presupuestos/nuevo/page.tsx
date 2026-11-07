@@ -1,13 +1,23 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAltaPresupuesto } from './use-alta-presupuesto.ts'
 import { Shell } from '../../_components/shell.tsx'
 import { SelectorCliente } from './selector-cliente.tsx'
+import { siguienteNumeroPresupuesto } from './siguiente-numero.ts'
+import { SelectorFormaPago } from './selector-forma-pago.tsx'
 
 export default function NuevoPresupuesto() {
   const router = useRouter()
   const { estado, accion, enviando, recuperando, mensaje } = useAltaPresupuesto()
+
+  const [numero, setNumero] = useState<number | null>(null)
+  useEffect(() => {
+    let vigente = true
+    siguienteNumeroPresupuesto().then(n => { if (vigente) setNumero(n) }).catch(() => {})
+    return () => { vigente = false }
+  }, [])
 
   const err = estado && !estado.ok ? estado.errores : {}
   const entrada = 'w-full rounded-md border px-3 py-2 text-sm'
@@ -24,12 +34,10 @@ export default function NuevoPresupuesto() {
         )}
 
         <header className="al-document-heading">
-          <h2>Nuevo Documento</h2>
+          <h2>Nuevo Presupuesto</h2>
         </header>
 
         <fieldset disabled={recuperando || enviando} className="al-new-document-fields">
-          <legend>Nuevo Documento de Ventas</legend>
-
           <div className="al-new-document-grid">
             <div>
               <label htmlFor="delegacion">Delegación</label>
@@ -37,12 +45,6 @@ export default function NuevoPresupuesto() {
             </div>
 
             <SelectorCliente errores={err.clienteCodigo} />
-
-            <div>
-              <label htmlFor="potencialCodigo">Potencial</label>
-              <input id="potencialCodigo" name="potencialCodigo" className={entrada} style={estilo}
-                placeholder="Código" />
-            </div>
 
             <div className="al-span-2">
               <label htmlFor="nombreLibre">Nombre</label>
@@ -68,8 +70,8 @@ export default function NuevoPresupuesto() {
             </div>
 
             <div>
-              <label htmlFor="numero">Número</label>
-              <input id="numero" value="Automático" readOnly aria-readonly="true" className={entrada} style={estilo} />
+              <label htmlFor="numero">Nº Presupuesto</label>
+              <input id="numero" value={numero ?? ''} readOnly aria-readonly="true" className={entrada} style={estilo} />
             </div>
 
             <div>
@@ -85,7 +87,7 @@ export default function NuevoPresupuesto() {
 
             <div className="al-span-2">
               <label htmlFor="formaPago">Forma de pago</label>
-              <input id="formaPago" name="formaPago" className={entrada} style={estilo} />
+              <SelectorFormaPago id="formaPago" className={entrada} style={estilo} />
             </div>
           </div>
         </fieldset>
