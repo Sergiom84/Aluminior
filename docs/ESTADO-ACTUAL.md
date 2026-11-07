@@ -630,6 +630,9 @@ Mover: en producción funcionaba; lo que lo bloqueaba eran medidas tecleadas sin
 «Actualizar» (parecía texto). Ahora «Actualizar» es botón principal, Intro en una medida
 actualiza sin enviar la línea y el intento de mover con cambios pendientes avisa. Ver la fila
 DS3 del roadmap. No rehacerlo.
+Un solo editor de línea a la vez: al editar una línea guardada se oculta el alta (sin perder lo
+que tuviera a medias) y el «Editar» de las demás líneas queda desactivado; antes aparecían dos
+configuradores en la página.
 DS2 (06/11/2026): deshacer y rehacer de todo cambio del conjunto y mover también el primer
 elemento dejando fijos a los demás; ver su fila del roadmap. No rehacerlo.
 PDF1 (06/11/2026): el PDF escribe medidas, importes, cantidades y horas en formato español
