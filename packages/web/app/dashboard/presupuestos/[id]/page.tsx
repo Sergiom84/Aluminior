@@ -52,6 +52,9 @@ export default async function DetallePresupuesto({ params, searchParams }: {
   const acabados = await db.select({
     codigo: schema.acabados.codigo, descripcion: schema.acabados.descripcion,
   }).from(schema.acabados).orderBy(asc(schema.acabados.codigo))
+  const mosquiteras = await db.select({
+    codigo: schema.estructuras.codigo, descripcion: schema.estructuras.descripcion,
+  }).from(schema.estructuras).where(eq(schema.estructuras.familia, '101')).orderBy(asc(schema.estructuras.codigo))
   const idsLineas = lineas.map((linea) => linea.id)
   const piezas = idsLineas.length
     ? await db.select().from(schema.lineasDespiece).where(inArray(schema.lineasDespiece.lineaId, idsLineas)) : []
@@ -134,7 +137,8 @@ export default async function DetallePresupuesto({ params, searchParams }: {
         <CatalogoDiseno plantillas={plantillas}>
         {p.estado === 'PENDIENTE' && (
           <AnyadirLinea presupuestoId={id} series={series.map((serie) => serie.codigo)} acabados={acabados}
-            catalogoUniones={catalogoUniones} cotasCatalogo={cotasCatalogo} />
+            catalogoUniones={catalogoUniones} cotasCatalogo={cotasCatalogo}
+            mosquiteras={mosquiteras} />
         )}
 
         <div className={`${styles.tableScroll} al-ficha-lines`} tabIndex={0}

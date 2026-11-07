@@ -44,6 +44,9 @@ export function PestanaEstructura({
             onChange={(evento) => setSerie(evento.target.value)} className={entrada}
             style={{ ...estilo, borderColor: bordeCampo('serieCodigo', err, estilo.borderColor) }}>
             <option value="">Elegir serie…</option>
+            {serie && !series.includes(serie) && (
+              <option value={serie}>{serie} · no sirve para esta estructura</option>
+            )}
             {series.map((item) => <option key={item} value={item}>{item}</option>)}
           </select>
           <MensajeError campo="serieCodigo" errores={err} />

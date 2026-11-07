@@ -16,7 +16,9 @@ const POR_PAGINA = 6
  * preparada para colocarla con teclado o pulsación en un anclaje, y el doble
  * clic la coloca directamente a la derecha.
  */
-export function CatalogoInferior({ preparada, onPreparar, onArrastre, onColocar, onElegir }: {
+export function CatalogoInferior({ preparada, onPreparar, onArrastre, onColocar, onElegir, panelMosquiteras }: {
+  /** Sustituye las miniaturas de la familia Mosquiteras (artículos con medidas, no módulos dibujables). */
+  panelMosquiteras?: React.ReactNode
   onElegir?: (plantilla: PlantillaDiseno) => void
   preparada: PlantillaDiseno | null
   onPreparar: (plantilla: PlantillaDiseno | null) => void
@@ -35,12 +37,13 @@ export function CatalogoInferior({ preparada, onPreparar, onArrastre, onColocar,
           <button key={categoria.id} type="button" role="option"
             aria-selected={categoria.id === categoriaId}
             data-foco-inicial={onElegir && categoria.id === categoriaId || undefined}
-            data-empty={!categoriaConCatalogo(categoria) || undefined}
+            data-empty={(!categoriaConCatalogo(categoria) && !(panelMosquiteras && categoria.id === 'mosquiteras')) || undefined}
             onClick={() => { setCategoriaId(categoria.id); setPagina(1) }}>
             {categoria.nombre}
           </button>
         ))}
       </div>
+      {panelMosquiteras && categoriaId === 'mosquiteras' ? panelMosquiteras : <>
       <div className="al-catalogo-miniaturas">
         {vista.items.map((plantilla) => (
           <button key={plantilla.codigo} type="button" draggable={!onElegir}
@@ -71,6 +74,7 @@ export function CatalogoInferior({ preparada, onPreparar, onArrastre, onColocar,
         <span>Pág <b className="cifra">{vista.pagina}</b></span>
         <span>Total <b className="cifra">{vista.totalPaginas}</b></span>
       </div>
+      </>}
     </div>
   )
 }

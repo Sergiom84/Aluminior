@@ -7,6 +7,7 @@ import { editarCerramiento, type EstadoEdicionCerramiento } from '../../_lib/edi
 import { MAXIMO_HORAS } from '../../_lib/lineas/esquema-linea.ts'
 import { DisenadorEstructura } from './disenador-estructura.tsx'
 import styles from '../presupuesto-movil.module.css'
+import { useSeriesValidas } from './use-series-validas.ts'
 import { CampoVidrio } from './vidrios/campo-vidrio.tsx'
 import { usarResultadoEdicion } from './campo-edicion.tsx'
 
@@ -44,6 +45,7 @@ export function EditarCerramiento({
   const [serie, setSerie] = useState(datos.serieCodigo ?? '')
   const [vidrio, setVidrio] = useState(datos.vidrioCodigo ?? '')
   const [configuracionValida, setConfiguracionValida] = useState(true)
+  const seriesValidas = useSeriesValidas(series, configuracion.modulos.map((m) => m.estructuraCodigo), vidrio)
   const medidasIniciales = medidasCerramiento(datos.configuracion)
   const [anchoMm, setAnchoMm] = useState(medidasIniciales.anchoMm)
   const [altoMm, setAltoMm] = useState(medidasIniciales.altoMm)
@@ -78,7 +80,8 @@ export function EditarCerramiento({
       <DisenadorEstructura codigo={configuracion.modulos[0].estructuraCodigo}
         anchoMm={anchoMm} altoMm={altoMm} configuracionInicial={datos.configuracion}
         onConfiguracionChange={setConfiguracion} onDimensionesChange={actualizarDimensiones}
-        onValidezChange={setConfiguracionValida} series={series} catalogoUniones={catalogoUniones}
+        onValidezChange={setConfiguracionValida} series={seriesValidas.grupo}
+        seriesPorEstructura={seriesValidas.porEstructura} catalogoUniones={catalogoUniones}
         cotasCatalogo={cotasCatalogo}
         generales={{ serieCodigo: serie || null, vidrioCodigo: vidrio || null }} />
 
@@ -99,7 +102,10 @@ export function EditarCerramiento({
           <label htmlFor={identificador('serieCodigo')} className="mb-1 block text-sm">Serie</label>
           <select {...campo('serieCodigo')} value={serie} onChange={e => setSerie(e.target.value)} className={entrada} style={estilo}>
             <option value="">— sin serie —</option>
-            {series.map((serie) => <option key={serie} value={serie}>{serie}</option>)}
+            {serie && !seriesValidas.grupo.includes(serie) && (
+              <option value={serie}>{serie} · no sirve para estos modelos</option>
+            )}
+            {seriesValidas.grupo.map((codigo) => <option key={codigo} value={codigo}>{codigo}</option>)}
           </select>
           <ErrorCampo nombre="serieCodigo" />
         </div>
