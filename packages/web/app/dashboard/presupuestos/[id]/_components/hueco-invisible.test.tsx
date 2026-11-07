@@ -47,12 +47,12 @@ describe('elemento convertido en hueco (DS3)', () => {
 describe('panel del elemento en una fila', () => {
   it('con un solo elemento no repite Perfiles y Vidrio de la línea', () => {
     const html = render(crearConfiguracionCerramiento(plantillaDiseno('2')!))
-    expect(html).not.toContain('>Perfiles<')
+    expect(html).not.toContain('>Perfiles del elemento<')
     expect(html).not.toContain('Aplicar a modelos iguales')
   })
 
   it('con varios elementos ofrece Perfiles y Vidrio propios', () => {
-    expect(render(dosElementos())).toContain('>Perfiles<')
+    expect(render(dosElementos())).toContain('>Perfiles del elemento<')
   })
 
   it('Actualizar es un botón principal visible', () => {

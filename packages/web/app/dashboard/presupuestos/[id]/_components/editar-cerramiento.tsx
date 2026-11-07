@@ -92,13 +92,13 @@ export function EditarCerramiento({
         </div>
       )}
 
-      <div className={`${styles.fields} mt-4`}>
-        <div className="col-span-2">
+      <div className={`${styles.fields} ${styles.filaCerramiento} mt-4`}>
+        <div>
           <label htmlFor={identificador('referencia')} className="mb-1 block text-sm">Ubicación</label>
           <input {...campo('referencia')} defaultValue={datos.referencia ?? ''} className={entrada} style={estilo} />
           <ErrorCampo nombre="referencia" />
         </div>
-        <div className="col-span-2">
+        <div>
           <label htmlFor={identificador('serieCodigo')} className="mb-1 block text-sm">Serie</label>
           <select {...campo('serieCodigo')} value={serie} onChange={e => setSerie(e.target.value)} className={entrada} style={estilo}>
             <option value="">— sin serie —</option>
@@ -109,12 +109,12 @@ export function EditarCerramiento({
           </select>
           <ErrorCampo nombre="serieCodigo" />
         </div>
-        <div className="col-span-2">
+        <div>
           <label htmlFor={identificador('vidrioCodigo')} className="mb-1 block text-sm">Vidrio</label>
           <CampoVidrio {...campo('vidrioCodigo')} value={vidrio} onChange={setVidrio} className={entrada} style={estilo} />
           <ErrorCampo nombre="vidrioCodigo" />
         </div>
-        <div className="col-span-2">
+        <div>
           <label htmlFor={identificador('varianteAcristalamiento')} className="mb-1 block text-sm">Acristalamiento</label>
           <select {...campo('varianteAcristalamiento')} defaultValue={datos.varianteAcristalamiento}
             className={entrada} style={estilo}>
@@ -122,7 +122,7 @@ export function EditarCerramiento({
             <option value="1">Cristal sencillo</option>
           </select>
         </div>
-        <div className="col-span-2">
+        <div>
           <label htmlFor={identificador('acabadoCodigo')} className="mb-1 block text-sm">Acabado</label>
           <select {...campo('acabadoCodigo')} defaultValue={datos.acabadoCodigo ?? ''} className={entrada} style={estilo}>
             <option value="">— sin acabado —</option>
@@ -133,30 +133,25 @@ export function EditarCerramiento({
             ))}
           </select>
         </div>
-        <div className="col-span-1">
+        <div>
           <label htmlFor={identificador('cantidad')} className="mb-1 block text-sm">Cdad.</label>
           <input {...campo('cantidad')} type="number" min={1} step={1} defaultValue={datos.cantidad}
             className={`cifra ${entrada}`} style={estilo} />
           <ErrorCampo nombre="cantidad" />
         </div>
+        {([
+          ['horasFabricacion', 'Horas de fabricación', datos.horasFabricacion],
+          ['horasColocacion', 'Horas de colocación', datos.horasColocacion],
+        ] as const).map(([nombre, etiqueta, valor]) => (
+          <div key={nombre}>
+            <label htmlFor={identificador(nombre)} className="mb-1 block text-sm">{etiqueta}</label>
+            <input {...campo(nombre)} type="number" min={0} max={MAXIMO_HORAS} step="0.01"
+              defaultValue={valor} className={`cifra ${entrada}`} style={estilo} />
+            <ErrorCampo nombre={nombre} />
+          </div>
+        ))}
       </div>
 
-      <fieldset className="mt-4 rounded-md border p-3" style={{ borderColor: 'var(--al-border)' }}>
-        <legend className="px-1 text-sm">Mano de obra adicional · total de línea</legend>
-        <div className={styles.workFields}>
-          {([
-            ['horasFabricacion', 'Fabricación (h)', datos.horasFabricacion],
-            ['horasColocacion', 'Colocación (h)', datos.horasColocacion],
-          ] as const).map(([nombre, etiqueta, valor]) => (
-            <div key={nombre}>
-              <label htmlFor={identificador(nombre)} className="mb-1 block text-sm">{etiqueta}</label>
-              <input {...campo(nombre)} type="number" min={0} max={MAXIMO_HORAS} step="0.01"
-                defaultValue={valor} className={`cifra ${entrada}`} style={estilo} />
-              <ErrorCampo nombre={nombre} />
-            </div>
-          ))}
-        </div>
-      </fieldset>
 
       <div className={`${styles.formActions} mt-4`}>
         <button type="button" onClick={onCancelar} disabled={guardando}

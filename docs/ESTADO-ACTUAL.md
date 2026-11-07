@@ -633,6 +633,10 @@ DS3 del roadmap. No rehacerlo.
 Un solo editor de línea a la vez: al editar una línea guardada se oculta el alta (sin perder lo
 que tuviera a medias) y el «Editar» de las demás líneas queda desactivado; antes aparecían dos
 configuradores en la página.
+Etiquetas sin ambigüedad: «Perfiles del elemento» y «Vidrio del elemento» (excepción del elemento)
+frente a «Serie» y «Vidrio» de la línea; «Horas de fabricación» y «Horas de colocación» (antes
+«Fabricación (h)», «Colocación (h)», que se confundían con «Posición»). Al editar una línea, las
+horas van en la misma fila que el resto de campos, como en el alta.
 DS2 (06/11/2026): deshacer y rehacer de todo cambio del conjunto y mover también el primer
 elemento dejando fijos a los demás; ver su fila del roadmap. No rehacerlo.
 PDF1 (06/11/2026): el PDF escribe medidas, importes, cantidades y horas en formato español

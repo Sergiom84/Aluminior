@@ -79,14 +79,14 @@ export function CamposCerramiento({
         <MensajeError campo="cantidad" errores={err} />
       </div>
       <div>
-        <label htmlFor="horasFabricacion">Fabricación (h)</label>
+        <label htmlFor="horasFabricacion">Horas de fabricación</label>
         <input {...atributosCampo('horasFabricacion', err)} type="number" min={0} step="0.01"
           defaultValue={0} className={`cifra ${entrada}`}
           style={{ ...estilo, borderColor: bordeCampo('horasFabricacion', err, estilo.borderColor) }} />
         <MensajeError campo="horasFabricacion" errores={err} />
       </div>
       <div>
-        <label htmlFor="horasColocacion">Colocación (h)</label>
+        <label htmlFor="horasColocacion">Horas de colocación</label>
         <input {...atributosCampo('horasColocacion', err)} type="number" min={0} step="0.01"
           defaultValue={0} className={`cifra ${entrada}`}
           style={{ ...estilo, borderColor: bordeCampo('horasColocacion', err, estilo.borderColor) }} />
