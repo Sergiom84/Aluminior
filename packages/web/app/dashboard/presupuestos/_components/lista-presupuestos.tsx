@@ -105,12 +105,14 @@ export function ListaPresupuestos({ filas }: { filas: FilaPresupuesto[] }) {
                 <td className="cifra font-semibold">
                   {textoTotalListado(p.total, p.tieneLineaSinValorar, (valor) => eur.format(valor))}
                 </td>
-                <td className="al-row-actions">
-                  <Link href={`/dashboard/presupuestos/${p.id}`} className="font-semibold"
-                    style={{ color: 'var(--al-accent-strong)' }}>Editar</Link>
-                  <a href={`/dashboard/presupuestos/${p.id}/pdf`} target="_blank" rel="noopener">Emitir</a>
-                  <CopiarRevisionBoton presupuestoId={p.id} numero={p.numero}
-                    revision={p.revision} serie={p.serie} />
+                <td>
+                  <div className="al-row-actions">
+                    <Link href={`/dashboard/presupuestos/${p.id}`} className="font-semibold"
+                      style={{ color: 'var(--al-accent-strong)' }}>Editar</Link>
+                    <a href={`/dashboard/presupuestos/${p.id}/pdf`} target="_blank" rel="noopener">Emitir</a>
+                    <CopiarRevisionBoton presupuestoId={p.id} numero={p.numero}
+                      revision={p.revision} serie={p.serie} />
+                  </div>
                 </td>
               </tr>
             ))}

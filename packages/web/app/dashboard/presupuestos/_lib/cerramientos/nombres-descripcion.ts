@@ -50,7 +50,7 @@ export async function leerNombresDescripcion(
   const articulos = new Set<string>()
   const vidrioGeneral = texto(entrada.vidrioCodigo)
   for (const modulo of entrada.configuracion.modulos) {
-    const estructura = texto(modulo.estructuraCodigo)
+    const estructura = modulo.invisible ? '0' : texto(modulo.estructuraCodigo)
     if (estructura) estructuras.add(estructura)
     const compacto = texto(modulo.compacto?.estructuraCodigo)
     if (compacto) estructuras.add(compacto)

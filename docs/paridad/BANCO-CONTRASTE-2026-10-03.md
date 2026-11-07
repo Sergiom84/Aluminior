@@ -248,7 +248,7 @@ Productor tenían un factor constante por documento (0,85; 0,90; 1,05; 1,10; 1,2
 | GRUPO con comisión sumada que siguen el mismo factor | 20/23 |
 | Mismo factor aplicado también a MO y MOCOL de la línea | sí (sin él no cuadra) |
 
-Las hijas conservan los importes base. El residuo de 1 a 4 céntimos lleva el signo de
+Las hijas conservan los importes base. El residuo de 1 a 4 céntimos (y 7 céntimos por unidad / 14 en el total en el GRUPO `nDoc 887`, `caso-02119`, con 8 líneas de estructura, `Cdad = 2`, 30 h de colocación y +15 % de comisión: 5.233,35 € / 10.466,70 € en Productor frente a 5.233,28 € / 10.466,56 €) lleva el signo de
 la comisión y crece con el número de filas; ningún orden de redondeo ensayado (total,
 por fila, por PVP a 2 o 4 decimales, truncado) lo reproduce: queda como hipótesis.
 Cambio: `core/precios/comision.ts` (factor sobre el precio de línea, a céntimos);
@@ -377,7 +377,7 @@ restantes, con una causa principal cada una:
 | GRUPO no admitido por el configurador web | 31 | Contrato del configurador: C2, PC2 y otros sin plantilla visual estática y medidas de módulo con 0,5 mm |
 | Despunte de cabecera | 10 | Hipótesis: «Calcular Despunte» suma el coste de sobrantes de barra al precio (doc. con C2: 403,79 + 348,61) |
 | Piezas o importes de fila | 16 | Tapajuntas de puerta sin lado inferior (3), superficie COM009 en mitades (4 filas), metraje V484, redondeo binario |
-| Residuo de comisión sumada | 6 | 1–4 céntimos con el signo de la comisión; orden de redondeo sin demostrar |
+| Residuo de comisión sumada | 6 | 1–4 céntimos (y 7 céntimos/ud en el GRUPO `nDoc 887` con 8 filas) con el signo de la comisión; orden de redondeo sin demostrar |
 | Otros bloqueos de entrada | 22 | Vidrio sin junquillo (4), tubos y accesorios repetidos (3), uniones de serie distinta (3), perfil adicional C2FI (2)… |
 
 Hipótesis que necesitan observar Productor en Windows (empresa de pruebas, sin guardar):

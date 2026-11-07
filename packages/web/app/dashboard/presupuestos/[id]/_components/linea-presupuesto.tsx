@@ -111,7 +111,7 @@ export function LineaPresupuesto({
         <td className="cifra px-3 py-2 font-medium">
           {!l.valoracionCompleta || l.total === null ? '—' : eur.format(Number(l.total))}
           {manoObra.map(f => <div key={f.id} className="mt-1 text-xs font-normal" style={{ color: 'var(--al-text-muted)' }}>
-            {f.concepto === 'COLOCACION' ? 'Colocación' : 'Fabricación'} {f.horas === null ? '—' : Number(f.horas)} h total línea: {f.importe === null ? 'sin valorar' : eur.format(Number(f.importe))}
+            {f.concepto === 'COLOCACION' ? 'Colocación' : 'Fabricación'} {f.horas === null ? '—' : Number(f.horas)} h / ud.: {f.importe === null ? 'sin valorar' : eur.format(Number(f.importe))}
           </div>)}
         </td>
         <td className="px-2 py-1">

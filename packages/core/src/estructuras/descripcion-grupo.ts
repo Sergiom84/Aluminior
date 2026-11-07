@@ -36,7 +36,8 @@ function resuelto(mapa: ReadonlyMap<string, string>, codigo: string | null | und
   return texto || null
 }
 
-function descripcionElemento(codigo: string, datos: DatosDescripcionGrupo): string {
+function descripcionElemento(modulo: ModuloCerramiento, datos: DatosDescripcionGrupo): string {
+  const codigo = modulo.invisible ? '0' : modulo.estructuraCodigo
   return resuelto(datos.estructuras, codigo) ?? plantillaDiseno(codigo)?.descripcion ?? codigo.trim()
 }
 
@@ -54,7 +55,7 @@ function vidrioDe(modulo: ModuloCerramiento, datos: DatosDescripcionGrupo): stri
 
 function bloque(modulo: ModuloCerramiento, datos: DatosDescripcionGrupo): string {
   const lineas = [
-    `${descripcionElemento(modulo.estructuraCodigo, datos)} DE MEDIDAS : ${formatoMedida(modulo.anchoMm)} x ${formatoMedida(modulo.altoMm)}`,
+    `${descripcionElemento(modulo, datos)} DE MEDIDAS : ${formatoMedida(modulo.anchoMm)} x ${formatoMedida(modulo.altoMm)}`,
   ]
   const color = resuelto(datos.acabados, datos.acabadoCodigo)
   if (color) lineas.push(`EN COLOR ${color}`)

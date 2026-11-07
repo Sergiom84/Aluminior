@@ -165,5 +165,13 @@ describe('descripción generada del GRUPO', () => {
       modulo({ id: 'm1', estructuraCodigo: '  QA-SIN-NOMBRE  ' }),
     ]), datos())
     expect(sinPlantilla).toBe('QA-SIN-NOMBRE DE MEDIDAS : 1.200,0 x 1.200,0')
+    expect(descripcionGrupo(config([
+      modulo({ id: 'm1', estructuraCodigo: 'C2' }),
+      modulo({ id: 'm2', estructuraCodigo: 'C2', invisible: true, anchoMm: 400, altoMm: 400 }),
+    ]), datos({ estructuras: new Map([['C2', 'VENTANA CORREDERA DE DOS HOJAS']]) }))).toBe([
+      'VENTANA CORREDERA DE DOS HOJAS DE MEDIDAS : 1.200,0 x 1.200,0',
+      '',
+      'FIJO DE 1 HUECO DE MEDIDAS : 400,0 x 400,0',
+    ].join('\n'))
   })
 })

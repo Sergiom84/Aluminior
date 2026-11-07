@@ -160,7 +160,7 @@
 
 .al-row-actions {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   gap: 10px;
 }
