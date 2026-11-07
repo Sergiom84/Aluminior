@@ -5,16 +5,15 @@ const leer = (relativo: string) =>
   readFileSync(new URL(relativo, import.meta.url), 'utf8')
 
 describe('flujo de alta de presupuesto', () => {
-  it('abre en el configurador de cerramientos, con Catálogo y Artículos a un clic', () => {
+  it('abre en el configurador de cerramientos unificado, con Artículos a un clic', () => {
     const alta = leer('./anyadir-linea.tsx')
     expect(alta).toContain("useState<TipoLinea>('CERRAMIENTO')")
-    expect(alta).toContain("['ESTRUCTURA', 'Catálogo']")
+    expect(alta).toContain("['CERRAMIENTO', 'Cerramiento']")
     expect(alta).toContain("['ARTICULO', 'Artículos']")
-    expect(alta).not.toContain("['CERRAMIENTO', 'Cerramiento']")
-    expect(alta).toContain("elegirTipo('CERRAMIENTO')")
-    expect(alta).toContain('Cerramiento')
-    expect(alta).toContain('<Escaparate onElegir={elegirPlantilla} />')
-    expect(alta).toContain('<EditorLineaEstructura')
+    expect(alta).not.toContain("['ESTRUCTURA', 'Catálogo']")
+    expect(alta).toContain('opcionesCatalogo={{')
+    expect(alta).toContain('onHerrajeChange: setHerraje')
+    expect(alta).toContain('onAcristalamientoChange: setAcristalamiento')
   })
 
   it('tras crear el presupuesto sustituye el alta en el historial, no la apila', () => {
@@ -30,10 +29,10 @@ describe('flujo de alta de presupuesto', () => {
     expect(nuevo).toContain('siguienteNumeroPresupuesto')
   })
 
-  it('reabre el escaparate tras un alta correcta', () => {
+  it('reinicia el configurador tras un alta correcta', () => {
     const alta = leer('./anyadir-linea.tsx')
     expect(alta).toContain('if (estado?.ok) resetTrasAlta()')
-    expect(alta).toContain('setPlantilla(null)')
+    expect(alta).toContain('setConfiguracion(null)')
   })
 
   it('mantiene lista y ficha como vistas del mismo documento', () => {

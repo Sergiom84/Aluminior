@@ -17,7 +17,7 @@ export type ResultadoAltaLinea = { ok: true; id: string; mensaje?: string } |
 export async function altaLinea(db: ReturnType<typeof crearDb>, d: EntradaAltaLinea,
   opcionesElegidas: string[] = [], catalogoUniones?: readonly UnionVisual[],
 ): Promise<ResultadoAltaLinea> {
-  if (d.tipo === 'CERRAMIENTO') return altaCerramientoValorado(db, d, catalogoUniones)
+  if (d.tipo === 'CERRAMIENTO') return altaCerramientoValorado(db, d, catalogoUniones, opcionesElegidas)
     const [presupuesto] = await db.select()
       .from(schema.presupuestos)
       .where(eq(schema.presupuestos.id, d.presupuestoId)).limit(1)
@@ -66,6 +66,7 @@ export async function altaLinea(db: ReturnType<typeof crearDb>, d: EntradaAltaLi
         varianteAcristalamiento: d.varianteAcristalamiento,
         opcionAcristalamiento: d.opcionAcristalamiento,
         acabadoCodigo: d.acabadoCodigo,
+        acabadoAccesoriosCodigo: d.acabadoCodigo === 'L' ? 'L' : 'UNI',
         // Por unidad, como Productor: MO y MOCOL dentro del despiece y del
         // precio unitario; el total es Cdad × Precio (banco, iteración 5).
         horasFabricacion: d.horasFabricacion,

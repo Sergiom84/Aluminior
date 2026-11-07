@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { crearConfiguracionCerramiento, insertarModuloEnAnclaje, moduloDesdePlantilla, plantillaDiseno,
   type ConfiguracionCerramiento } from '@aluminior/core/estructuras'
 import { DisenadorEstructura } from './disenador-estructura.tsx'
+import { siguienteUnionId } from './disenador/opciones-cerramiento.tsx'
 
 const render = (configuracion: ConfiguracionCerramiento) => renderToStaticMarkup(
   <DisenadorEstructura codigo="1OFI" anchoMm={900} altoMm={1500}
@@ -12,7 +13,7 @@ const render = (configuracion: ConfiguracionCerramiento) => renderToStaticMarkup
 )
 
 describe('configurador con la disposición de Productor', () => {
-  it('abre vacío con familias y miniaturas, sin elementos', () => {
+  it('abre vacío con familias y miniaturas, sin elementos, y expone las pestañas unificadas en la barra', () => {
     const html = renderToStaticMarkup(<DisenadorEstructura codigo="2O" anchoMm={1200} altoMm={1200} vacio
       onConfiguracionChange={vi.fn()} onDimensionesChange={vi.fn()} />)
     expect(html).toContain('CERRAMIENTO · 0 ELEMENTOS')
@@ -20,6 +21,10 @@ describe('configurador con la disposición de Productor', () => {
     expect(html).toContain('draggable="true"')
     expect(html).toContain('aria-label="Añadir primera ventana"')
     expect(html).toContain('Medidas de nuevas ventanas')
+    expect(html).toContain('>Uniones</button>')
+    expect(html).toContain('>Opc.Herraje</button>')
+    expect(html).toContain('>Cargos Adic.</button>')
+    expect(html).toContain('>Acristalamiento</button>')
     expect(html).not.toContain('al-chain-drawing')
   })
 
@@ -30,7 +35,7 @@ describe('configurador con la disposición de Productor', () => {
     expect(html).toMatch(/<button type="button" disabled="" aria-keyshortcuts="Control\+Y Control\+Shift\+Z" title="Rehacer \(Ctrl\+Y\)">Rehacer<\/button>/)
   })
 
-  it('lista elementos y uniones en orden de creación y marca la unión sin configurar', () => {
+  it('lista elementos y uniones en orden de creación, habilita Uniones (1) en la barra y marca la unión sin configurar', () => {
     const base = crearConfiguracionCerramiento(plantillaDiseno('2')!)
     const configuracion = insertarModuloEnAnclaje(base, moduloDesdePlantilla(plantillaDiseno('0')!),
       { moduloId: 'modulo-1', lado: 'abajo' })
@@ -38,10 +43,29 @@ describe('configurador con la disposición de Productor', () => {
     expect(html).toMatch(/>0<\/span><span>2 de 1200 x 1200/)
     expect(html).toMatch(/>2<\/span><span>\*\(UNION NO CONFIG\.\)/)
     expect(html).toContain('data-pendiente="true"')
+    expect(html).toMatch(/<button type="button" aria-pressed="false" data-pendiente="true" title="Seleccionar la siguiente unión del cerramiento">Uniones \(1\)<\/button>/)
     expect(html).toContain('aria-label="Añadir ventana a la izquierda"')
     expect(html).toContain('aria-label="Añadir ventana a la derecha"')
     expect(html).toMatch(/<button type="button" class="al-insertar-ventana al-insertar-debajo" aria-label="Añadir ventana debajo">/)
     expect(html).toContain('Ancho <b class="cifra">1200</b> mm × Alto <b class="cifra">2420</b> mm')
+  })
+
+  it('siguienteUnionId prioriza la primera unión sin configurar y recorre circularmente las uniones', () => {
+    const base = crearConfiguracionCerramiento(plantillaDiseno('2')!)
+    const conDos = insertarModuloEnAnclaje(base, moduloDesdePlantilla(plantillaDiseno('2')!),
+      { moduloId: 'modulo-1', lado: 'derecha' })
+    const conTres = insertarModuloEnAnclaje(conDos, moduloDesdePlantilla(plantillaDiseno('0')!),
+      { moduloId: 'modulo-1', lado: 'abajo' })
+    const configuradaPrimera: ConfiguracionCerramiento = {
+      ...conTres,
+      uniones: [
+        { ...conTres.uniones[0], codigo: 'UNIR90', grosorMm: 20 },
+        conTres.uniones[1],
+      ],
+    }
+    expect(siguienteUnionId(configuradaPrimera, null)).toBe(conTres.uniones[1].id)
+    expect(siguienteUnionId(configuradaPrimera, conTres.uniones[0].id)).toBe(conTres.uniones[1].id)
+    expect(siguienteUnionId(configuradaPrimera, conTres.uniones[1].id)).toBe(conTres.uniones[0].id)
   })
 })
 

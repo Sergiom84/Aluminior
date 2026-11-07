@@ -3,14 +3,14 @@
 import { useState } from 'react'
 import {
   actualizarModuloCerramiento, actualizarFiModuloCerramiento, actualizarCotasModuloCerramiento,
-  asignarMaterialesModulos,
+  asignarComplementosModulos, asignarMaterialesModulos,
   CAMPOS_MATERIAL, esConfiguracionCerramiento, unionConGrosorCatalogo, UNIONES_VISUALES,
-  type CambiosCotasModulo, type CambiosMaterial, type UnionVisual, type ConfiguracionCerramiento,
-  type ModuloCerramiento, type UnionCerramiento,
+  type CambiosComplementosModulo, type CambiosCotasModulo, type CambiosMaterial, type UnionVisual,
+  type ConfiguracionCerramiento, type ModuloCerramiento, type UnionCerramiento,
 } from '@aluminior/core/estructuras'
 
 type Medidas = Partial<Pick<ModuloCerramiento, 'anchoMm' | 'altoMm' | 'fiMm'>>
-export type BorradorModulo = Medidas & CambiosMaterial & { cotas?: CambiosCotasModulo }
+export type BorradorModulo = Medidas & CambiosMaterial & CambiosComplementosModulo & { cotas?: CambiosCotasModulo }
 type Union = Partial<Pick<UnionCerramiento, 'codigo' | 'longitudMm' | 'grosorMm'>>
 export type Borradores = { modulos: Record<string, BorradorModulo>; uniones: Record<string, Union> }
 
@@ -29,12 +29,16 @@ export function aplicarBorrador(configuracion: ConfiguracionCerramiento, borrado
     const medidas = Object.fromEntries(Object.entries({ anchoMm, altoMm }).filter(([, v]) => v !== undefined))
     const materiales = Object.fromEntries(CAMPOS_MATERIAL.filter(c => Object.hasOwn(borrador, c))
       .map(c => [c, borrador[c]])) as CambiosMaterial
+    const complementos: CambiosComplementosModulo = {}
+    if (Object.hasOwn(borrador, 'compacto')) complementos.compacto = borrador.compacto
+    if (Object.hasOwn(borrador, 'tapajuntas')) complementos.tapajuntas = borrador.tapajuntas
     for (const destino of destinos) {
       siguiente = actualizarModuloCerramiento(siguiente, destino, medidas)
       if (Object.hasOwn(borrador, 'fiMm')) siguiente = actualizarFiModuloCerramiento(siguiente, destino, fiMm!)
       if (cotas && Object.keys(cotas).length) siguiente = actualizarCotasModuloCerramiento(siguiente, destino, cotas)
     }
     if (Object.keys(materiales).length) siguiente = asignarMaterialesModulos(siguiente, destinos, materiales)
+    if (Object.keys(complementos).length) siguiente = asignarComplementosModulos(siguiente, destinos, complementos)
   } else {
     if (!configuracion.uniones.some(item => item.id === id)) return null
     siguiente = { ...configuracion, uniones: configuracion.uniones.map(item =>

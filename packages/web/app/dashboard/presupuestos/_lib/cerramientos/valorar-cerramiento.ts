@@ -1,4 +1,4 @@
-import { CATALOGO_SNAPSHOT, compactoEfectivoModulo, esModuloInvisible, origenInvisible, cotasEfectivasModulo, esConfiguracionCerramiento, esResultadoCerramiento, etapasVentaCerramiento,
+import { CATALOGO_SNAPSHOT, accesoriosEfectivosModulo, compactoEfectivoModulo, esModuloInvisible, origenInvisible, cotasEfectivasModulo, esConfiguracionCerramiento, esResultadoCerramiento, etapasVentaCerramiento,
   unionConfigurada, resolverOrigenSinUnion, medidasFabricacionCerramiento,
   type ConfiguracionCerramiento, type RedondeoVentaCerramiento, type ResultadoCerramientoV1,
   type ResultadoOrigenCerramiento } from '@aluminior/core/estructuras'
@@ -20,6 +20,7 @@ export interface EntradaValoracionCerramiento {
   acabadoAccesoriosCodigo?: string | null
   vidrioCodigo: string | null
   varianteAcristalamiento: '1' | '2'
+  opcionAcristalamiento?: number
   tarifa: number
   opcionesHerraje?: readonly string[]
   /** Sin selección guardada: opciones por defecto en cada módulo. */
@@ -43,12 +44,23 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
   const geometria = origenesGeometriaCerramiento(entrada.configuracion, entrada).map(origen => {
     if (origen.tipo === 'MODULO') {
       const modulo = porModulo.get(origen.id)!
+      const medidas = fabricacion.modulos.get(origen.id)!
+      const compacto = compactoEfectivoModulo(modulo, entrada)
+      const accesorios = accesoriosEfectivosModulo(modulo, entrada)
+      const dtoCajon = modulo.compacto?.descontarHueco && compacto ? compacto.altoCajonMm : 0
+      const dtoTapH = modulo.tapajuntas?.descontarHueco && modulo.tapajuntas ? 3 : 0
+      const dtoTapV = modulo.tapajuntas?.descontarHueco && modulo.tapajuntas
+        ? (modulo.tapajuntas.opciones?.includes('G2O1') ? 1.5 : 3) : 0
       return {
-        ...origen, ...fabricacion.modulos.get(origen.id)!,
-        cotas: cotasEfectivasModulo(modulo), compacto: compactoEfectivoModulo(modulo, entrada),
+        ...origen,
+        anchoMm: Math.max(1, medidas.anchoMm - dtoTapH),
+        altoMm: Math.max(1, medidas.altoMm - dtoCajon - dtoTapV),
+        cotas: cotasEfectivasModulo(modulo),
+        compacto,
+        accesorios,
       }
     }
-    return { ...origen, altoMm: fabricacion.uniones.get(origen.id)!.longitudMm, cotas: null, compacto: null }
+    return { ...origen, altoMm: fabricacion.uniones.get(origen.id)!.longitudMm, cotas: null, compacto: null, accesorios: null }
   })
   for (const g of geometria) {
     const origen: ResultadoOrigenCerramiento = {
@@ -68,7 +80,7 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
         ...(materialIncompleto ? [{ codigo: 'COBERTURA_INCOMPLETA', ambito: 'FABRICACION' as const, bloqueante: true, detalle }] : [])]
     }
     // Horas y comisión del cerramiento se aplican a la línea (importesLineaCerramiento), nunca por módulo.
-    const parametros = { ...entrada, horasFabricacion: null, horasColocacion: null, compacto: g.compacto, accesorios: null,
+    const parametros = { ...entrada, horasFabricacion: null, horasColocacion: null, compacto: g.compacto, accesorios: g.accesorios,
       comisionPorc: null, cotas: g.cotas ?? undefined,
       trazabilidad: true, codigo: g.codigo, anchoMm: g.anchoMm, altoMm: g.altoMm,
       serieCodigo: origen.serieCodigo,

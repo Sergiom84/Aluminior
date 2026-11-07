@@ -45,7 +45,7 @@ export interface PiezaDetalle {
 
 export function LineaPresupuesto({
   linea: l, presupuestoId, despiece, edicion, series, acabados, resultado, manoObra, editable, catalogoUniones,
-  cotasCatalogo,
+  cotasCatalogo, complementosCatalogo,
 }: {
   editable: boolean
   linea: LineaDetalle
@@ -58,6 +58,7 @@ export function LineaPresupuesto({
   acabados: { codigo: string; descripcion: string }[]
   catalogoUniones?: readonly import('@aluminior/core/estructuras').UnionVisual[]
   cotasCatalogo?: import('@aluminior/core/estructuras').CotasCatalogoPorEstructura
+  complementosCatalogo?: import('./disenador/complementos-elemento.tsx').CatalogoComplementosDisenador
 }) {
   const edicionActiva = useEdicionLineaActiva()
   const editando = edicionActiva.activa === l.id
@@ -138,7 +139,7 @@ export function LineaPresupuesto({
           <td colSpan={12} className={`${styles.editorCell} p-3`}>
             <EditarCerramiento presupuestoId={presupuestoId} lineaId={l.id} datos={edicion}
               series={series} acabados={acabados} onCancelar={cerrarEditor} catalogoUniones={catalogoUniones}
-              cotasCatalogo={cotasCatalogo} />
+              cotasCatalogo={cotasCatalogo} complementosCatalogo={complementosCatalogo} />
           </td>
         </tr>
       )}

@@ -128,7 +128,7 @@
 .al-lista-elementos button[aria-current='true'] { background: var(--al-row-selected); color: var(--al-accent-strong); }
 .al-lista-elementos button:focus-visible { outline: 2px solid var(--al-accent); outline-offset: -2px; }
 .al-lista-elementos .cifra { min-width: 16px; color: var(--al-text-faint); }
-.al-lista-elementos button[data-pendiente] { color: var(--al-error); }
+.al-lista-elementos button[data-pendiente], .al-designer-vistas button[data-pendiente]:not([aria-pressed='true']) { color: var(--al-error); }
 .al-lista-icono {
   flex: none;
   width: 12px;

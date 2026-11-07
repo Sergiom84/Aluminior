@@ -123,6 +123,7 @@ describe('descripción generada del GRUPO', () => {
       modulo({
         id: 'm1', estructuraCodigo: 'QA-1',
         compacto: { estructuraCodigo: 'QA-COMP', altoCajonMm: 155 },
+        tapajuntas: { estructuraCodigo: 'QA-TAP' },
       }),
       modulo({ id: 'm2', estructuraCodigo: 'QA-2' }),
     ]), datos({
@@ -130,12 +131,14 @@ describe('descripción generada del GRUPO', () => {
         ['QA-1', 'QA elemento'],
         ['QA-2', 'QA segundo'],
         ['QA-COMP', 'QA cajón sintético'],
+        ['QA-TAP', 'QA tapajuntas 40'],
       ]),
     }))
 
     expect(texto).toBe([
       'QA elemento DE MEDIDAS : 1.200,0 x 1.200,0',
       'QA cajón sintético',
+      'QA tapajuntas 40',
       '',
       'QA segundo DE MEDIDAS : 1.200,0 x 1.200,0',
     ].join('\n'))

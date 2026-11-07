@@ -54,6 +54,8 @@ export async function leerNombresDescripcion(
     if (estructura) estructuras.add(estructura)
     const compacto = texto(modulo.compacto?.estructuraCodigo)
     if (compacto) estructuras.add(compacto)
+    const tapajuntas = texto(modulo.tapajuntas?.estructuraCodigo)
+    if (tapajuntas) estructuras.add(tapajuntas)
     const vidrio = texto(modulo.materiales?.vidrioCodigo) ?? vidrioGeneral
     if (vidrio) articulos.add(vidrio)
   }

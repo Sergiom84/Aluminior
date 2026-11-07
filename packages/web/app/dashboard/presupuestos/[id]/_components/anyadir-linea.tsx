@@ -4,29 +4,28 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useEnvioFormulario } from './use-envio-formulario.ts'
 import {
   type ConfiguracionCerramiento,
-  type PlantillaDiseno,
 } from '@aluminior/core/estructuras'
 import { anyadirLinea, type Estado } from '../../_lib/acciones.ts'
 import { DisenadorEstructura } from './disenador-estructura.tsx'
-import { EditorLineaEstructura } from './editor-linea.tsx'
-import { Escaparate } from './escaparate.tsx'
-import { CamposArticulo, CamposCerramiento, acabadoPorDefecto } from './campos-alta.tsx'
+import { CamposArticulo, CamposCerramiento } from './campos-alta.tsx'
 import { MensajeError } from './mensaje-error.tsx'
 import { enfocarEdicion } from './foco-edicion.ts'
 import { useSeriesValidas } from './use-series-validas.ts'
 import { MosquiterasCatalogo, type ModeloMosquitera } from './disenador/mosquiteras-catalogo.tsx'
+import type { CatalogoComplementosDisenador } from './disenador/complementos-elemento.tsx'
 import { catalogosEstructuraListos, claveCatalogoHerraje, type EstadoCargaCatalogo } from './editor-linea/disponibilidad-catalogos.ts'
 import styles from '../presupuesto-movil.module.css'
 
-type TipoLinea = 'ESTRUCTURA' | 'ARTICULO' | 'CERRAMIENTO'
+type TipoLinea = 'CERRAMIENTO' | 'ARTICULO'
 
 /**
- * Alta de línea. Abre en el configurador de cerramientos, que es el recorrido
- * del operador (cabecera mínima y configurador inmediato); Estructuras y
- * Artículos siguen a un clic. Tras Aceptar, el diálogo se reabre para seguir añadiendo.
+ * Alta de línea unificada en `Cerramiento` y `Artículos`. Abre directamente en
+ * el configurador de cerramientos (recorrido del operador: 1 o varios elementos,
+ * uniones, mosquiteras, Opc.Herraje y Acristalamiento); tras Aceptar se reinicia
+ * para seguir añadiendo líneas sin salir del documento.
  */
 export function AnyadirLinea({
-  presupuestoId, series, acabados, catalogoUniones, cotasCatalogo, mosquiteras = [],
+  presupuestoId, series, acabados, catalogoUniones, cotasCatalogo, complementosCatalogo, mosquiteras = [],
 }: {
   mosquiteras?: readonly ModeloMosquitera[]
   presupuestoId: string
@@ -34,16 +33,14 @@ export function AnyadirLinea({
   acabados: { codigo: string; descripcion: string }[]
   catalogoUniones?: readonly import('@aluminior/core/estructuras').UnionVisual[]
   cotasCatalogo?: import('@aluminior/core/estructuras').CotasCatalogoPorEstructura
+  complementosCatalogo?: CatalogoComplementosDisenador
 }) {
   const [tipo, setTipo] = useState<TipoLinea>('CERRAMIENTO')
-  const [plantilla, setPlantilla] = useState<PlantillaDiseno | null>(null)
   const { estado, enviar, enviando } = useEnvioFormulario<Estado>(anyadirLinea, true)
   const formulario = useRef<HTMLFormElement>(null)
   const focoTrasAlta = useRef(false)
   const [serie, setSerie] = useState('')
   const [vidrio, setVidrio] = useState('')
-  const [acabado, setAcabado] = useState(() => acabadoPorDefecto(acabados))
-  const [variante, setVariante] = useState<'1' | '2'>('2')
   const [anchoMm, setAnchoMm] = useState(1200)
   const [altoMm, setAltoMm] = useState(1200)
   const [configuracion, setConfiguracion] = useState<ConfiguracionCerramiento | null>(null)
@@ -51,18 +48,19 @@ export function AnyadirLinea({
   const [configuracionValida, setConfiguracionValida] = useState(true)
   const [herraje, setHerraje] = useState<EstadoCargaCatalogo | null>(null)
   const [acristalamiento, setAcristalamiento] = useState<EstadoCargaCatalogo | null>(null)
+  const [elementoOpciones, setElementoOpciones] = useState<{ serie: string; estructura: string } | null>(null)
   const actualizarDimensiones = useCallback((ancho: number, alto: number) => {
     setAnchoMm(ancho)
     setAltoMm(alto)
   }, [])
 
   const resetTrasAlta = useCallback(() => {
-    setPlantilla(null)
     setAnchoMm(1200)
     setAltoMm(1200)
     setConfiguracion(null)
     setHerraje(null)
     setAcristalamiento(null)
+    setElementoOpciones(null)
     setEdicion((actual) => actual + 1)
   }, [])
 
@@ -83,32 +81,26 @@ export function AnyadirLinea({
 
   const elegirTipo = (siguiente: TipoLinea) => {
     setTipo(siguiente)
-    setPlantilla(null)
     if (siguiente === 'CERRAMIENTO') resetTrasAlta()
-  }
-
-  const elegirPlantilla = (siguiente: PlantillaDiseno) => {
-    setHerraje(null)
-    setAcristalamiento(null)
-    setPlantilla(siguiente)
-    setAnchoMm(siguiente.anchoMm)
-    setAltoMm(siguiente.altoMm)
-    setEdicion((actual) => actual + 1)
   }
 
   const estructurasEnPantalla = tipo === 'CERRAMIENTO'
     ? configuracion?.modulos.map((modulo) => modulo.estructuraCodigo) ?? []
-    : tipo === 'ESTRUCTURA' && plantilla ? [plantilla.codigo] : []
+    : []
   const seriesValidas = useSeriesValidas(series, estructurasEnPantalla, vidrio)
 
   const err = estado && !estado.ok ? estado.errores : {}
-  const enEscaparate = tipo === 'ESTRUCTURA' && !plantilla
-  const codigoLinea = tipo === 'CERRAMIENTO' ? 'GRUPO' : plantilla?.codigo ?? ''
-  const puedeEnviar = tipo === 'ESTRUCTURA'
-    ? Boolean(plantilla) && catalogosEstructuraListos(serie, codigoLinea, herraje, acristalamiento)
-    : tipo !== 'CERRAMIENTO' || configuracionValida
-  const falloCatalogos = herraje?.clave === claveCatalogoHerraje(serie, codigoLinea) && herraje.estado === 'ERROR' ||
-    acristalamiento?.clave === serie && acristalamiento.estado === 'ERROR'
+  const serieOpciones = elementoOpciones?.serie ?? ''
+  const estructuraOpciones = elementoOpciones?.estructura ?? ''
+  const opcionesListas = !serieOpciones || !estructuraOpciones ||
+    catalogosEstructuraListos(serieOpciones, estructuraOpciones, herraje, acristalamiento)
+  const puedeEnviar = tipo !== 'CERRAMIENTO' || (configuracionValida && opcionesListas)
+  const falloCatalogos = Boolean(
+    serieOpciones && estructuraOpciones && (
+      (herraje?.clave === claveCatalogoHerraje(serieOpciones, estructuraOpciones) && herraje.estado === 'ERROR') ||
+      (acristalamiento?.clave === serieOpciones && acristalamiento.estado === 'ERROR')
+    ),
+  )
 
   return (
     <form ref={formulario} onSubmit={evento => {
@@ -123,12 +115,12 @@ export function AnyadirLinea({
         <input type="hidden" name="configuracionCerramiento" value={JSON.stringify(configuracion)} />
       )}
       {tipo === 'CERRAMIENTO' && configuracion && (
-        <input type="hidden" name="codigo" value={codigoLinea} />
+        <input type="hidden" name="codigo" value="GRUPO" />
       )}
 
       <div className={`${styles.modeTabs} mb-4`}>
         {([
-          ['ESTRUCTURA', 'Catálogo'],
+          ['CERRAMIENTO', 'Cerramiento'],
           ['ARTICULO', 'Artículos'],
         ] as const).map(([valor, etiqueta]) => (
           <button key={valor} type="button" onClick={() => elegirTipo(valor)}
@@ -141,15 +133,6 @@ export function AnyadirLinea({
             {etiqueta}
           </button>
         ))}
-        <button type="button" onClick={() => elegirTipo('CERRAMIENTO')}
-          className="rounded-md border px-4 py-1.5 text-sm"
-          style={{
-            background: tipo === 'CERRAMIENTO' ? 'var(--al-accent)' : 'var(--al-surface)',
-            color: tipo === 'CERRAMIENTO' ? 'var(--al-accent-contrast)' : 'var(--al-text)',
-            borderColor: tipo === 'CERRAMIENTO' ? 'var(--al-accent)' : 'var(--al-border-strong)',
-          }}>
-          Cerramiento
-        </button>
       </div>
 
       {estado?.mensaje && (
@@ -157,18 +140,6 @@ export function AnyadirLinea({
           style={{ background: 'var(--al-warn-soft)', borderColor: 'var(--al-warn)' }}>
           {estado.mensaje}
         </div>
-      )}
-
-      {enEscaparate && <Escaparate onElegir={elegirPlantilla} />}
-
-      {tipo === 'ESTRUCTURA' && plantilla && (
-        <EditorLineaEstructura
-          plantilla={plantilla} series={seriesValidas.grupo} acabados={acabados}
-          serie={serie} setSerie={setSerie} anchoMm={anchoMm} setAnchoMm={setAnchoMm}
-          altoMm={altoMm} setAltoMm={setAltoMm} vidrio={vidrio} setVidrio={setVidrio}
-          acabado={acabado} setAcabado={setAcabado} variante={variante} setVariante={setVariante}
-          onHerrajeChange={setHerraje} onAcristalamientoChange={setAcristalamiento}
-          err={err} onCambiarEstructura={() => setPlantilla(null)} />
       )}
 
       {tipo === 'CERRAMIENTO' && (
@@ -180,7 +151,13 @@ export function AnyadirLinea({
             onDimensionesChange={actualizarDimensiones}
             onValidezChange={setConfiguracionValida} series={seriesValidas.grupo}
             seriesPorEstructura={seriesValidas.porEstructura} catalogoUniones={catalogoUniones}
-            cotasCatalogo={cotasCatalogo}
+            cotasCatalogo={cotasCatalogo} complementosCatalogo={complementosCatalogo}
+            opcionesCatalogo={{
+              onHerrajeChange: setHerraje,
+              onAcristalamientoChange: setAcristalamiento,
+              errores: err,
+            }}
+            onElementoOpcionesChange={setElementoOpciones}
             panelMosquiteras={mosquiteras.length ? (
               <MosquiterasCatalogo presupuestoId={presupuestoId} modelos={mosquiteras} acabados={acabados} />
             ) : undefined}
@@ -192,26 +169,24 @@ export function AnyadirLinea({
 
       {tipo === 'ARTICULO' && <CamposArticulo key={edicion} err={err} acabados={acabados} />}
 
-      {!enEscaparate && (
-        <div className={`${styles.formActions} mt-4`}>
-          {tipo === 'ESTRUCTURA' && !puedeEnviar && (
-            <p role={falloCatalogos ? 'alert' : 'status'} className="text-sm">
-              {falloCatalogos
-                ? 'No se pudieron cargar las opciones. Reintenta la consulta en Opc.Herraje o Acristalamiento.'
-                : 'Cargando opciones de la estructura…'}
-            </p>
-          )}
-          <button type="submit" disabled={enviando || !puedeEnviar}
-            className="al-command-primary disabled:opacity-50">
-            {enviando ? 'Añadiendo…' : 'Aceptar'}
+      <div className={`${styles.formActions} mt-4`}>
+        {tipo === 'CERRAMIENTO' && Boolean(configuracion) && !opcionesListas && (
+          <p role={falloCatalogos ? 'alert' : 'status'} className="text-sm">
+            {falloCatalogos
+              ? 'No se pudieron cargar las opciones. Reintenta la consulta en Opc.Herraje o Acristalamiento.'
+              : 'Cargando opciones de la estructura…'}
+          </p>
+        )}
+        <button type="submit" disabled={enviando || !puedeEnviar}
+          className="al-command-primary disabled:opacity-50">
+          {enviando ? 'Añadiendo…' : 'Aceptar'}
+        </button>
+        {tipo === 'CERRAMIENTO' && (
+          <button type="button" className="al-command" onClick={resetTrasAlta}>
+            Cerrar
           </button>
-          {(tipo === 'ESTRUCTURA' || tipo === 'CERRAMIENTO') && (
-            <button type="button" className="al-command" onClick={() => tipo === 'CERRAMIENTO' ? elegirTipo('ESTRUCTURA') : setPlantilla(null)}>
-              Cerrar
-            </button>
-          )}
-        </div>
-      )}
+        )}
+      </div>
     </form>
   )
 }

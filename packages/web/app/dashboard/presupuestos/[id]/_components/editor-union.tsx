@@ -6,10 +6,11 @@ import {
 } from '@aluminior/core/estructuras'
 
 export function EditorUnion({ union, indice, pendiente, onChange, onActualizar, onDescartar,
-  catalogoUniones = UNIONES_VISUALES, serieCodigo = null }: {
+  onSiguienteUnion = null, catalogoUniones = UNIONES_VISUALES, serieCodigo = null }: {
   union: UnionCerramiento; indice: number; pendiente: boolean
   onChange: (cambios: Partial<UnionCerramiento>) => void
   onActualizar: () => void; onDescartar: () => void
+  onSiguienteUnion?: (() => void) | null
   catalogoUniones?: readonly UnionVisual[]
   serieCodigo?: string | null
 }) {
@@ -54,5 +55,8 @@ export function EditorUnion({ union, indice, pendiente, onChange, onActualizar, 
       aria-label={`Actualizar unión ${indice}`}>Actualizar</button>
     {pendiente && <button type="button" className="al-command" onClick={onDescartar}
       aria-label={`Descartar cambios unión ${indice}`}>Descartar cambios</button>}
+    {onSiguienteUnion && <button type="button" className="al-command" onClick={onSiguienteUnion}>
+      Siguiente unión
+    </button>}
   </fieldset>
 }

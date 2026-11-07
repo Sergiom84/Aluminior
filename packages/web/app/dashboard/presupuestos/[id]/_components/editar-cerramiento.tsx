@@ -6,6 +6,7 @@ import { medidasCerramiento, type ConfiguracionCerramiento } from '@aluminior/co
 import { editarCerramiento, type EstadoEdicionCerramiento } from '../../_lib/editar-cerramiento-action.ts'
 import { MAXIMO_HORAS } from '../../_lib/lineas/esquema-linea.ts'
 import { DisenadorEstructura } from './disenador-estructura.tsx'
+import type { CatalogoComplementosDisenador } from './disenador/complementos-elemento.tsx'
 import styles from '../presupuesto-movil.module.css'
 import { useSeriesValidas } from './use-series-validas.ts'
 import { CampoVidrio } from './vidrios/campo-vidrio.tsx'
@@ -27,7 +28,7 @@ const entrada = 'w-full rounded-md border px-3 py-2 text-sm'
 const estilo = { background: 'var(--al-surface)', borderColor: 'var(--al-border-strong)' }
 
 export function EditarCerramiento({
-  presupuestoId, lineaId, datos, series, acabados, onCancelar, catalogoUniones, cotasCatalogo,
+  presupuestoId, lineaId, datos, series, acabados, onCancelar, catalogoUniones, cotasCatalogo, complementosCatalogo,
 }: {
   presupuestoId: string
   lineaId: string
@@ -37,6 +38,7 @@ export function EditarCerramiento({
   onCancelar: () => void
   catalogoUniones?: readonly import('@aluminior/core/estructuras').UnionVisual[]
   cotasCatalogo?: import('@aluminior/core/estructuras').CotasCatalogoPorEstructura
+  complementosCatalogo?: CatalogoComplementosDisenador
 }) {
   const { estado, enviar, enviando: guardando } = useEnvioFormulario<EstadoEdicionCerramiento>(editarCerramiento)
   const formulario = useRef<HTMLFormElement>(null)
@@ -82,7 +84,7 @@ export function EditarCerramiento({
         onConfiguracionChange={setConfiguracion} onDimensionesChange={actualizarDimensiones}
         onValidezChange={setConfiguracionValida} series={seriesValidas.grupo}
         seriesPorEstructura={seriesValidas.porEstructura} catalogoUniones={catalogoUniones}
-        cotasCatalogo={cotasCatalogo}
+        cotasCatalogo={cotasCatalogo} complementosCatalogo={complementosCatalogo}
         generales={{ serieCodigo: serie || null, vidrioCodigo: vidrio || null }} />
 
       {estado?.mensaje && (

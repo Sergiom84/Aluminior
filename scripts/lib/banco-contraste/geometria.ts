@@ -23,7 +23,10 @@ function compactoDeModulo(c: Caso, compacto: CompactoGrupo | undefined, g: NonNu
   const elemCom = (comp.nLinEstrGrupo ? (porLin.get(texto(comp.nLinEstrGrupo)) ?? porLinCom.get(texto(comp.nLinEstrGrupo))) : null) ??
     (c.compactosElementos ?? c.elementos ?? []).find(el => el.modelo === texto(comp.Accesorio))
   const altoCom = elemCom?.dimensiones.alto
-  const altoPrevisto = (medidas === 'nominal' ? nominal(g.AltoHueco, g.Alto) : e.dimensiones.alto!) + numero(comp.AltoCajon)!
+  const descontarHueco = medidas === 'nominal' && si(comp.compDtoHuecoSN)
+  const altoPrevisto = (medidas === 'nominal'
+    ? nominal(g.AltoHueco, g.Alto) - (descontarHueco ? numero(comp.AltoCajon)! : 0)
+    : e.dimensiones.alto!) + numero(comp.AltoCajon)!
   const alturaTotalMm = altoCom && Math.abs(altoCom - altoPrevisto) > 1 ? altoCom : undefined
   return { estructuraCodigo: texto(comp.Accesorio), altoCajonMm: numero(comp.AltoCajon)!,
     ...(acabado ? { acabadoCodigo: acabado } : {}), opciones,
@@ -31,6 +34,7 @@ function compactoDeModulo(c: Caso, compacto: CompactoGrupo | undefined, g: NonNu
     ...(numero(comp.VueloD) ? { vueloDerechoMm: numero(comp.VueloD)! } : {}),
     ...(numero(comp.PosGuiaCentral) ? { posicionGuiaCentralMm: numero(comp.PosGuiaCentral)! } : {}),
     ...(numero(comp.DtoHuecoV) ? { descuentoVerticalMm: numero(comp.DtoHuecoV)! } : {}),
+    ...(descontarHueco ? { descontarHueco: true } : {}),
     ...(alturaTotalMm ? { alturaTotalMm } : {}) }
 }
 /** UOrdenElem1/2 se resuelven por Orden, nunca por nLinea ni posición de array. */

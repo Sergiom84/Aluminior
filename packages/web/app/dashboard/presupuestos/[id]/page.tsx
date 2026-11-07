@@ -56,6 +56,13 @@ export default async function DetallePresupuesto({ params, searchParams }: {
   const mosquiteras = await db.select({
     codigo: schema.estructuras.codigo, descripcion: schema.estructuras.descripcion,
   }).from(schema.estructuras).where(eq(schema.estructuras.familia, '101')).orderBy(asc(schema.estructuras.codigo))
+  const compactos = await db.select({
+    codigo: schema.estructuras.codigo, descripcion: schema.estructuras.descripcion,
+  }).from(schema.estructuras).where(eq(schema.estructuras.familia, '100')).orderBy(asc(schema.estructuras.codigo))
+  const tapajuntas = await db.select({
+    codigo: schema.estructuras.codigo, descripcion: schema.estructuras.descripcion,
+  }).from(schema.estructuras).where(eq(schema.estructuras.familia, '102')).orderBy(asc(schema.estructuras.codigo))
+  const complementosCatalogo = { compactos, tapajuntas }
   const idsLineas = lineas.map((linea) => linea.id)
   const piezas = idsLineas.length
     ? await db.select().from(schema.lineasDespiece).where(inArray(schema.lineasDespiece.lineaId, idsLineas)) : []
@@ -140,7 +147,7 @@ export default async function DetallePresupuesto({ params, searchParams }: {
         {p.estado === 'PENDIENTE' && (
           <AltaSinEdicionActiva>
             <AnyadirLinea presupuestoId={id} series={series.map((serie) => serie.codigo)} acabados={acabados}
-              catalogoUniones={catalogoUniones} cotasCatalogo={cotasCatalogo}
+              catalogoUniones={catalogoUniones} cotasCatalogo={cotasCatalogo} complementosCatalogo={complementosCatalogo}
               mosquiteras={mosquiteras} />
           </AltaSinEdicionActiva>
         )}
@@ -166,7 +173,7 @@ export default async function DetallePresupuesto({ params, searchParams }: {
                 manoObra={manoObra.filter(f => f.lineaId === linea.id)}
                 despiece={piezasPorLinea.get(linea.id) ?? []} edicion={edicionPorLinea.get(linea.id) ?? null}
                 series={series.map((serie) => serie.codigo)} acabados={acabados} catalogoUniones={catalogoUniones}
-                cotasCatalogo={cotasCatalogo} />
+                cotasCatalogo={cotasCatalogo} complementosCatalogo={complementosCatalogo} />
             ))}</tbody>
           </table>
         </div>

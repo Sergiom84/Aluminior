@@ -1,12 +1,14 @@
 /**
- * Compacto de persiana por módulo del cerramiento (E5).
+ * Compacto de persiana y tapajuntas por módulo del cerramiento (E5).
  *
  * Cada módulo de una composición v3 puede incorporar un compacto de persiana
  * (COM001-COM017), con su altura de cajón, acabado, opciones de guía central o
- * motor, y eventual altura total cuando cubre fijos inferiores/superiores.
+ * motor, y eventual altura total cuando cubre fijos inferiores/superiores, así
+ * como un tapajuntas/premarco (GMT001-GMT023, TAP40).
  */
-import type { CompactoLineaCatalogo } from '../despiece/linea-catalogo/tipos.ts'
-import type { ModuloCerramiento } from './cerramiento.ts'
+import type { AccesorioLineaCatalogo, CompactoLineaCatalogo } from '../despiece/linea-catalogo/tipos.ts'
+import type { ConfiguracionCerramiento, ModuloCerramiento } from './cerramiento.ts'
+import { composicionExplicita } from './composicion-cerramiento.ts'
 
 export interface CompactoModulo {
   estructuraCodigo: string
@@ -18,6 +20,14 @@ export interface CompactoModulo {
   vueloDerechoMm?: number
   posicionGuiaCentralMm?: number
   descuentoVerticalMm?: number
+  descontarHueco?: boolean
+}
+
+export interface TapajuntasModulo {
+  estructuraCodigo: string
+  acabadoCodigo?: string
+  opciones?: readonly string[]
+  descontarHueco?: boolean
 }
 
 export function compactoModuloValido(valor: unknown): valor is CompactoModulo | undefined {
@@ -33,6 +43,18 @@ export function compactoModuloValido(valor: unknown): valor is CompactoModulo | 
   if (c.vueloDerechoMm !== undefined && (typeof c.vueloDerechoMm !== 'number' || !Number.isFinite(c.vueloDerechoMm) || c.vueloDerechoMm < 0)) return false
   if (c.posicionGuiaCentralMm !== undefined && (typeof c.posicionGuiaCentralMm !== 'number' || !Number.isFinite(c.posicionGuiaCentralMm) || c.posicionGuiaCentralMm < 0)) return false
   if (c.descuentoVerticalMm !== undefined && (typeof c.descuentoVerticalMm !== 'number' || !Number.isFinite(c.descuentoVerticalMm) || c.descuentoVerticalMm < 0)) return false
+  if (c.descontarHueco !== undefined && typeof c.descontarHueco !== 'boolean') return false
+  return true
+}
+
+export function tapajuntasModuloValido(valor: unknown): valor is TapajuntasModulo | undefined {
+  if (valor === undefined) return true
+  if (!valor || typeof valor !== 'object' || Array.isArray(valor)) return false
+  const t = valor as Partial<TapajuntasModulo>
+  if (typeof t.estructuraCodigo !== 'string' || !t.estructuraCodigo.trim()) return false
+  if (t.acabadoCodigo !== undefined && (typeof t.acabadoCodigo !== 'string' || !t.acabadoCodigo.trim())) return false
+  if (t.opciones !== undefined && (!Array.isArray(t.opciones) || t.opciones.some(o => typeof o !== 'string' || !o.trim()))) return false
+  if (t.descontarHueco !== undefined && typeof t.descontarHueco !== 'boolean') return false
   return true
 }
 
@@ -63,4 +85,47 @@ export function compactoEfectivoModulo(
     descuentoVerticalMm: c.descuentoVerticalMm ?? 0,
     ...(c.alturaTotalMm !== undefined ? { alturaTotalMm: c.alturaTotalMm } : {}),
   }
+}
+
+export function accesoriosEfectivosModulo(
+  modulo: Pick<ModuloCerramiento, 'tapajuntas'>,
+  cerramiento: { acabadoCodigo?: string | null },
+): readonly AccesorioLineaCatalogo[] {
+  if (!modulo.tapajuntas) return []
+  const t = modulo.tapajuntas
+  const acabado = t.acabadoCodigo?.trim().toUpperCase() ||
+    cerramiento.acabadoCodigo?.trim().toUpperCase() ||
+    'UNI'
+  return [{
+    estructura: t.estructuraCodigo.trim().toUpperCase(),
+    acabado,
+    opciones: t.opciones ?? ['G1O0', 'G2O0', 'G3O0', 'G4O0'],
+  }]
+}
+
+export interface CambiosComplementosModulo {
+  compacto?: CompactoModulo | null
+  tapajuntas?: TapajuntasModulo | null
+}
+
+function aplicarComplementos(modulo: ModuloCerramiento, cambios: CambiosComplementosModulo): ModuloCerramiento {
+  const { compacto: _c, tapajuntas: _t, ...base } = modulo
+  const compacto = Object.hasOwn(cambios, 'compacto') ? cambios.compacto ?? undefined : modulo.compacto
+  const tapajuntas = Object.hasOwn(cambios, 'tapajuntas') ? cambios.tapajuntas ?? undefined : modulo.tapajuntas
+  return {
+    ...base,
+    ...(compacto ? { compacto } : {}),
+    ...(tapajuntas ? { tapajuntas } : {}),
+  }
+}
+
+export function asignarComplementosModulos(
+  configuracion: ConfiguracionCerramiento,
+  ids: readonly string[],
+  cambios: CambiosComplementosModulo,
+): ConfiguracionCerramiento {
+  const destino = new Set(ids)
+  if (!configuracion.modulos.some((modulo) => destino.has(modulo.id))) return configuracion
+  const base = composicionExplicita(configuracion)
+  return { ...base, modulos: base.modulos.map((m) => destino.has(m.id) ? aplicarComplementos(m, cambios) : m) }
 }

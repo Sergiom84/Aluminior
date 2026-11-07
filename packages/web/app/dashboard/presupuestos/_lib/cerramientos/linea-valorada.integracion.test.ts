@@ -83,10 +83,10 @@ describe('J05 línea valorada: servicio productivo y PostgreSQL', () => {
     expect(await documento(tx, id)).toEqual(antes)
   }))
 
-  it.each([[2, '311.66'], [3, '452.49']])('cantidad %s conserva MO de toda la línea', (cantidad, total) => caso(async (tx, id) => {
+  it.each([[2, '341.66'], [3, '512.49']])('cantidad %s multiplica MO unitaria en total', (cantidad, total) => caso(async (tx, id) => {
     expect((await altaCerramientoValorado(tx, entradaJ05(id, Number(cantidad)))).ok).toBe(true)
     const d = await documento(tx, id); const l = d.lineas[0]
-    expect(l.linea).toMatchObject({ precioUnitario: '140.8300', total, valoracionCompleta: true })
+    expect(l.linea).toMatchObject({ precioUnitario: '170.8300', total, valoracionCompleta: true })
     expect(l.resultadoCerramiento?.costeMateriales).toEqual({ completo: true, importe: '53.6720' })
     expect(l.despiece).toHaveLength(20)
     expect(l.despiece.filter(p => p.origenId === 'm1')).toHaveLength(9)
@@ -102,8 +102,8 @@ describe('J05 línea valorada: servicio productivo y PostgreSQL', () => {
     await altaCerramientoValorado(tx, entradaJ05(id, 3))
     const l = (await documento(tx, id)).lineas[0]
     expect(l.manoObra[0].importe).toBe('1.00')
-    expect(l.linea.precioUnitario).toBe('140.8300')
-    expect(l.linea.total).toBe('423.49')
+    expect(l.linea.precioUnitario).toBe('141.8300')
+    expect(l.linea.total).toBe('425.49')
   }))
   it('edición completa→incompleta→completa conserva identidad y elimina piezas antiguas', () => caso(async (tx, id) => {
     await altaCerramientoValorado(tx, entradaJ05(id))
@@ -169,8 +169,8 @@ describe('J05 línea valorada: servicio productivo y PostgreSQL', () => {
       .toEqual({ ...antes, revisionesUsadas: [0, 1] })
     const l = d.lineas[0], o = antes.lineas[0]
     expect(l.linea.id).not.toBe(o.linea.id)
-    expect(l.linea.total).toBe('311.66'); expect(l.resultadoCerramiento).toEqual(o.resultadoCerramiento)
-    expect(d.presupuesto).toMatchObject({ revision: 1, creadoPor: 'qa-j05@local.test', subtotal: '311.66' })
+    expect(l.linea.total).toBe('341.66'); expect(l.resultadoCerramiento).toEqual(o.resultadoCerramiento)
+    expect(d.presupuesto).toMatchObject({ revision: 1, creadoPor: 'qa-j05@local.test', subtotal: '341.66' })
     const sinIds = (filas: readonly { id: string; lineaId: string }[]) => filas.map(({ id: _id, lineaId: _lineaId, ...r }) => r)
     expect(sinIds(l.despiece)).toEqual(sinIds(o.despiece))
     expect(sinIds(l.manoObra)).toEqual(sinIds(o.manoObra))

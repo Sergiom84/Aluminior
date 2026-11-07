@@ -70,6 +70,7 @@ export function prepararVariante(c: Caso): VarianteGrupo {
  * del cajón que hizo Productor (E5): así la valoración nominal aísla el reparto de uniones.
  */
 export function descontarCajon(c: Caso, piezas: readonly { orden: string; compacto: boolean; prevista: [number, number]; guardada: [number, number] }[]): Caso {
+  if ((c.accesorios ?? []).some(a => texto(a.FamiliaAcc) === '100')) return c
   const resta = new Map(piezas.filter(p => p.compacto).map(p => [p.orden, p.prevista[1] - p.guardada[1]]))
   if (!resta.size) return c
   return { ...c, geometria: (c.geometria ?? []).map(g => resta.has(texto(g.Orden)) && !si(g.EsUnionSN)

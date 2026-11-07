@@ -66,6 +66,10 @@ function bloque(modulo: ModuloCerramiento, datos: DatosDescripcionGrupo): string
     const compacto = resuelto(datos.estructuras, modulo.compacto.estructuraCodigo)
     if (compacto) lineas.push(compacto)
   }
+  if (modulo.tapajuntas) {
+    const tapajuntas = resuelto(datos.estructuras, modulo.tapajuntas.estructuraCodigo)
+    if (tapajuntas) lineas.push(tapajuntas)
+  }
   return lineas.join('\n')
 }
 

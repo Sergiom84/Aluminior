@@ -104,26 +104,23 @@ test('medidas fraccionarias: guardar, reabrir y emitir PDF', async ({ page }, in
 test('el catálogo bloquea guardar durante latencia y permite reintentar un fallo', async ({ page }, info) => {
   await alta(page, `QA CI catálogo ${info.project.name} ${Date.now()}`)
   await expect(page).toHaveURL(/\/presupuestos\/[0-9a-f-]{36}(#configurador)?$/)
-  await page.getByRole('button', { name: 'Estructuras', exact: true }).click()
-  await page.getByRole('button', { name: 'FIJOS ABATIBLES', exact: true }).click()
+  await page.getByRole('option', { name: 'FIJOS ABATIBLES', exact: true }).click()
   await page.getByRole('button', { name: /\[0\]$/ }).click()
+  await page.getByRole('button', { name: 'Colocar 0', exact: true }).press('Enter')
   let soltar!: () => void
   let capturar!: () => void
   const puerta = new Promise<void>(resolve => { soltar = resolve })
   const capturada = new Promise<void>(resolve => { capturar = resolve })
-  let accionFallida: string | undefined
-  await page.route('**/dashboard/presupuestos**', async route => {
-    const req = route.request()
-    const accion = req.headers()['next-action']
-    if (req.method() !== 'POST' || !accion || !req.postData()?.includes('QA-J04-S')) return route.continue()
-    accionFallida ??= accion
-    if (accion !== accionFallida) return route.continue()
+  let fallada = false
+  await page.route('**/dashboard/presupuestos/herraje**', async route => {
+    if (fallada || !route.request().url().includes('QA-J04-S')) return route.continue()
+    fallada = true
     capturar()
     await puerta
     await route.abort('connectionreset')
   })
   try {
-    await page.getByLabel('Perfiles', { exact: true }).selectOption('QA-J04-S')
+    await page.getByLabel('Serie', { exact: true }).selectOption('QA-J04-S')
     await capturada
     await expect(page.getByRole('button', { name: 'Aceptar', exact: true })).toBeDisabled()
   } finally { soltar() }
@@ -131,15 +128,18 @@ test('el catálogo bloquea guardar durante latencia y permite reintentar un fall
   await page.unrouteAll({ behavior: 'wait' })
   let reintentado = false
   for (const nombre of ['Opc.Herraje', 'Acristalamiento']) {
-    await page.getByRole('tab', { name: nombre, exact: true }).click()
+    await page.getByRole('button', { name: nombre, exact: true }).click()
     const retry = page.getByRole('button', { name: 'Reintentar', exact: true })
     if (await retry.isVisible()) { await retry.press('Enter'); reintentado = true }
   }
   expect(reintentado).toBe(true)
   await expect(page.getByRole('button', { name: 'Aceptar', exact: true })).toBeEnabled()
-  await page.getByRole('tab', { name: 'Estructura', exact: true }).click()
-  await page.getByLabel('Ancho (mm)', { exact: true }).fill('970.25')
-  await page.getByLabel('Alto (mm)', { exact: true }).fill('439.5')
+  await page.getByRole('button', { name: 'Propiedades', exact: true }).click()
+  await page.getByLabel('Ancho elemento', { exact: true }).fill('970.25')
+  await page.getByLabel('Alto elemento', { exact: true }).fill('439.5')
+  await page.getByRole('button', { name: 'Actualizar elemento', exact: true }).press('Enter')
+  await page.locator('#vidrioCodigo').fill('QA-E2E-VIDRIO')
+  await page.getByLabel('Acabado', { exact: true }).selectOption('QA-J04-L')
   await page.getByRole('button', { name: 'Aceptar', exact: true }).press('Enter')
   await expect(page.getByRole('cell', { name: '439.5', exact: true })).toBeVisible()
 })

@@ -197,7 +197,7 @@ Catálogo observado: `GMU038` tubo 60×60, `GMU039` 40×40, `GMU040`/`GMU041`
 
 **En Aluminior: parcial.** Las uniones existen como elemento entre módulos
 (`editor-union.tsx`, lista `Elementos y uniones`) con código, longitud y
-grosor (editable, no bloqueado). No hay botón «siguiente unión», tipo
+grosor (bloqueado en solo lectura). Desde el 07/11/2026 la barra superior del configurador (`disenador/barra-disenador.tsx`, `disenador/opciones-cerramiento.tsx`) incluye el botón explícito `Uniones` (y `Siguiente unión` dentro de `EditorUnion`), que prioriza la primera unión sin configurar y recorre circularmente las uniones del cerramiento, marcando en rojo (`data-pendiente="true"`) cuando queda alguna pendiente; además, el alta de ventanas queda unificada en `Cerramiento` con las pestañas `Catálogo`, `Propiedades`, `Uniones`, `Opc.Herraje`, `Cargos Adic.` y `Acristalamiento` en la misma barra. Quedan pendientes el tipo
 fija/variable, acabado de unión, casilla de longitud manual ni escaparate de
 uniones con dibujo.
 

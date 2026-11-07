@@ -3,20 +3,25 @@
 import React from 'react'
 import type { PlantillaDiseno } from '@aluminior/core/estructuras'
 
-export type VistaDisenador = 'catalogo' | 'propiedades'
+export type VistaDisenador = 'catalogo' | 'propiedades' | 'herraje' | 'acristalamiento'
 
 /**
- * Barra superior del configurador: recuento, vista de la barra inferior,
- * deshacer y rehacer, medidas globales y, con una miniatura preparada, su
- * colocación a la derecha o debajo.
+ * Barra superior del configurador: recuento, vista de la barra inferior
+ * (catálogo, propiedades, uniones, herraje, cargos adicionales y acristalamiento),
+ * deshacer y rehacer, medidas globales y colocación de una miniatura preparada.
  */
 export function BarraDisenador({
-  elementos, vista, onVista, medidas, preparada, onColocarDerecha, onColocarDebajo, onMedidas, onDeshacer, onRehacer,
+  elementos, vista, onVista, uniones = 0, unionesSinConfigurar = 0, unionActiva = false, onUniones = null,
+  medidas, preparada, onColocarDerecha, onColocarDebajo, onMedidas, onDeshacer, onRehacer,
 }: {
   onMedidas?: () => void
   elementos: number
   vista: VistaDisenador
   onVista: (vista: VistaDisenador) => void
+  uniones?: number
+  unionesSinConfigurar?: number
+  unionActiva?: boolean
+  onUniones?: (() => void) | null
   medidas: { anchoMm: number; altoMm: number }
   preparada: PlantillaDiseno | null
   onColocarDerecha: (() => void) | null
@@ -30,8 +35,20 @@ export function BarraDisenador({
       <strong>CERRAMIENTO · {elementos} {elementos === 1 ? 'ELEMENTO' : 'ELEMENTOS'}</strong>
       <div className="al-designer-vistas" role="group" aria-label="Barra inferior">
         <button type="button" aria-pressed={vista === 'catalogo'} onClick={() => onVista('catalogo')}>Catálogo</button>
-        <button type="button" aria-pressed={vista === 'propiedades'} disabled={elementos === 0}
+        <button type="button" aria-pressed={vista === 'propiedades' && !unionActiva} disabled={elementos === 0}
           onClick={() => onVista('propiedades')}>Propiedades</button>
+        <button type="button" aria-pressed={vista === 'propiedades' && unionActiva} disabled={!onUniones}
+          data-pendiente={unionesSinConfigurar > 0 || undefined} onClick={onUniones ?? undefined}
+          title={uniones > 0
+            ? 'Seleccionar la siguiente unión del cerramiento'
+            : 'Añade dos o más elementos para configurar sus uniones'}>
+          Uniones{uniones > 0 ? ` (${uniones})` : ''}
+        </button>
+        <button type="button" aria-pressed={vista === 'herraje'} disabled={elementos === 0}
+          onClick={() => onVista('herraje')}>Opc.Herraje</button>
+        <button type="button" disabled>Cargos Adic.</button>
+        <button type="button" aria-pressed={vista === 'acristalamiento'} disabled={elementos === 0}
+          onClick={() => onVista('acristalamiento')}>Acristalamiento</button>
       </div>
       <div className="al-designer-vistas" role="group" aria-label="Historial">
         <button type="button" disabled={!onDeshacer} onClick={onDeshacer ?? undefined}

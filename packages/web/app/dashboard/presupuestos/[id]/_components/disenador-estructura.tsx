@@ -6,7 +6,7 @@ import {
   cambiarEstructuraModuloCerramiento, cambiarInvisibleModulo, crearConfiguracionCerramiento, esModuloInvisible, dependientesModulo,
   eliminarModuloConDependientes, esConfiguracionCerramiento, esModuloRaiz, insertarModuloEnAnclaje,
   medidasCerramiento, moduloDesdePlantilla, plantillaDiseno, PLANTILLAS_DISENO, posicionesCerramiento,
-  UNIONES_VISUALES, type UnionVisual,
+  unionConfigurada, serieEfectivaUnion, UNIONES_VISUALES, type UnionVisual,
   anclajeInferior, anclajeLateral, medidasPrimeraVentana, modelosIguales, primerHueco, type AnclajeLibre, type ConfiguracionCerramiento,
   type CotasCatalogoPorEstructura, type MaterialesGenerales, type PlantillaDiseno,
 } from '@aluminior/core/estructuras'
@@ -16,7 +16,9 @@ import { EditorUnion } from './editor-union.tsx'
 import { CatalogoInferior } from './disenador/catalogo-inferior.tsx'
 import { ListaElementos, entradasCerramiento, type Entrada } from './disenador/lista-elementos.tsx'
 import { PanelElemento } from './disenador/panel-elemento.tsx'
+import type { CatalogoComplementosDisenador } from './disenador/complementos-elemento.tsx'
 import { BarraDisenador, type VistaDisenador } from './disenador/barra-disenador.tsx'
+import { OpcionesCerramiento, siguienteUnionId, type PropsOpcionesCerramiento } from './disenador/opciones-cerramiento.tsx'
 import { useInsercionVentanas } from './disenador/use-insercion-ventanas.ts'
 import { LienzoVacio, LienzoConExtremos } from './disenador/lienzo-insercion.tsx'
 import { useMoverElemento } from './disenador/use-mover-elemento.ts'
@@ -33,12 +35,12 @@ function seleccionModulo(configuracion: ConfiguracionCerramiento, id: string): P
 
 /**
  * Configurador de cerramientos con la disposición de Productor: lienzo, lista
- * de elementos y uniones, y barra inferior que alterna catálogo y propiedades.
- * `vacio` abre sin elementos, como el configurador original.
+ * de elementos y uniones, y barra inferior que alterna catálogo, propiedades,
+ * uniones y opciones de herraje y acristalamiento.
  */
 export function DisenadorEstructura({
   codigo, anchoMm, altoMm, configuracionInicial, vacio = false, series = [], seriesPorEstructura, panelMosquiteras,
-  catalogoUniones = UNIONES_VISUALES, cotasCatalogo = {},
+  catalogoUniones = UNIONES_VISUALES, cotasCatalogo = {}, complementosCatalogo, opcionesCatalogo, onElementoOpcionesChange,
   generales = { serieCodigo: null, vidrioCodigo: null }, onConfiguracionChange,
   onDimensionesChange, onValidezChange,
 }: {
@@ -57,6 +59,9 @@ export function DisenadorEstructura({
   panelMosquiteras?: React.ReactNode
   catalogoUniones?: readonly UnionVisual[]
   cotasCatalogo?: CotasCatalogoPorEstructura
+  complementosCatalogo?: CatalogoComplementosDisenador
+  opcionesCatalogo?: PropsOpcionesCerramiento
+  onElementoOpcionesChange?: (elemento: { serie: string; estructura: string } | null) => void
   /** Materiales generales de la línea, para mostrar lo que heredan los elementos. */
   generales?: MaterialesGenerales
 }) {
@@ -144,11 +149,21 @@ export function DisenadorEstructura({
   const seleccionarEntrada = (entrada: Entrada) => seleccionar(entrada.tipo === 'modulo'
     ? seleccionModulo(configuracion!, entrada.id)
     : { moduloId: entrada.id, elemento: entrada.id, parte: 'union' })
+  const seleccionarSiguienteUnion = () => {
+    const id = configuracion ? siguienteUnionId(configuracion, seleccion?.parte === 'union' ? seleccion.elemento : null) : null
+    if (id) seleccionar({ moduloId: id, elemento: id, parte: 'union' })
+  }
 
   const modulo = configuracion && seleccion?.parte !== 'union'
     ? configuracion.modulos.find((actual) => actual.id === seleccion?.moduloId) ?? null : null
   const union = configuracion && seleccion?.parte === 'union'
     ? configuracion.uniones.find((actual) => actual.id === seleccion.elemento) ?? null : null
+  const moduloOpciones = modulo ?? configuracion?.modulos[0] ?? null
+  const serieOpciones = moduloOpciones?.materiales?.serieCodigo ?? generales.serieCodigo ?? ''
+  const estructuraOpciones = moduloOpciones?.estructuraCodigo ?? ''
+  useEffect(() => {
+    onElementoOpcionesChange?.(moduloOpciones ? { serie: serieOpciones, estructura: estructuraOpciones } : null)
+  }, [moduloOpciones, serieOpciones, estructuraOpciones, onElementoOpcionesChange])
   const medidas = configuracion ? medidasCerramiento(configuracion) : { anchoMm: 0, altoMm: 0 }
   const inferior = configuracion ? anclajeInferior(configuracion, modulo?.id ?? null) : null
 
@@ -191,7 +206,17 @@ export function DisenadorEstructura({
         if (mover.moviendo) mover.cancelar()
         else if (insertando) terminarInsercion()
       }}>
-      <BarraDisenador elementos={configuracion?.modulos.length ?? 0} vista={vista} onVista={setVista}
+      <BarraDisenador elementos={configuracion?.modulos.length ?? 0} vista={vista}
+        onVista={(siguiente) => {
+          if (siguiente === 'propiedades' && seleccion?.parte === 'union' && configuracion) {
+            setSeleccion(seleccionModulo(configuracion, configuracion.modulos[0].id))
+          }
+          setVista(siguiente)
+        }}
+        uniones={configuracion?.uniones.length ?? 0}
+        unionesSinConfigurar={configuracion?.uniones.filter((u) => !unionConfigurada(u)).length ?? 0}
+        unionActiva={seleccion?.parte === 'union'}
+        onUniones={configuracion && configuracion.uniones.length > 0 ? seleccionarSiguienteUnion : null}
         medidas={medidas} preparada={preparada} onMedidas={insercion.abrirOpciones}
         onColocarDerecha={configuracion && preparada && !edicion.pendientes
           ? () => colocarLateral(preparada) : null}
@@ -230,9 +255,10 @@ export function DisenadorEstructura({
         {vista === 'catalogo' || !configuracion
           ? <CatalogoInferior preparada={preparada} onPreparar={setPreparada} onArrastre={setArrastrada}
               onColocar={colocarLateral} panelMosquiteras={panelMosquiteras} />
-          : modulo
+          : vista === 'propiedades' && (modulo
             ? <PanelElemento modulo={modulo} borrador={edicion.borradores.modulos[modulo.id] ?? {}}
                 cotasCatalogo={cotasCatalogo[modulo.estructuraCodigo] ?? []}
+                complementosCatalogo={complementosCatalogo}
                 generales={generales} series={seriesPorEstructura?.[modulo.estructuraCodigo] ?? series}
                 modelos={modelosIguales(configuracion, modulo.id).length}
                 onActualizarModelos={() => aplicarAModelos(modulo.id)}
@@ -251,14 +277,19 @@ export function DisenadorEstructura({
                 onInvisible={() => setConfiguracion(cambiarInvisibleModulo(configuracion, modulo.id, !esModuloInvisible(modulo)))}
                 onMover={() => mover.moviendo === modulo.id ? mover.cancelar() : mover.iniciar(modulo.id)} />
             : union && <div className="al-designer-union-editor">
-                <EditorUnion catalogoUniones={catalogoUniones} serieCodigo={generales.serieCodigo}
+                <EditorUnion catalogoUniones={catalogoUniones} serieCodigo={serieEfectivaUnion(configuracion, union, generales)}
                   union={{ ...union, ...edicion.borradores.uniones[union.id] }}
                   indice={entradasCerramiento(configuracion).find((e) => e.id === union.id)!.indice}
                   pendiente={Boolean(edicion.borradores.uniones[union.id])}
+                  onSiguienteUnion={configuracion.uniones.length > 1 ? seleccionarSiguienteUnion : null}
                   onChange={(cambios) => edicion.editarUnion(union.id, cambios)}
                   onActualizar={() => edicion.aplicar('uniones', union.id)}
                   onDescartar={() => edicion.descartar('uniones', union.id)} />
-              </div>}
+              </div>)}
+        {configuracion && moduloOpciones && (
+          <OpcionesCerramiento vista={vista} serie={serieOpciones}
+            estructuraCodigo={estructuraOpciones} {...opcionesCatalogo} />
+        )}
       </div>
       {insercion.selector && <SelectorVentana onCerrar={insercion.cerrarSelector}
         onElegir={plantilla => insercion.solicitar(plantilla, insercion.selector!.destino)} />}

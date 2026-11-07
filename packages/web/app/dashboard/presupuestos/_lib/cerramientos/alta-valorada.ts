@@ -8,9 +8,10 @@ import { prepararLineaValorada } from './preparar-linea-valorada.ts'
 
 export async function altaCerramientoValorado(db: Pick<ReturnType<typeof crearDb>, 'transaction'>,
   entrada: EntradaAltaLinea, catalogoUniones?: readonly UnionVisual[],
+  opcionesHerraje?: readonly string[],
 ): Promise<ResultadoAltaLinea> {
   const alta = prepararAltaCerramiento({ ...entrada,
-    configuracionSerializada: entrada.configuracionCerramiento, catalogoUniones })
+    configuracionSerializada: entrada.configuracionCerramiento, catalogoUniones, opcionesHerraje })
   if (!alta.ok) return alta
   let aviso: string | null = null
   await guardarLineaValorada(db, entrada.presupuestoId, async (tx, cabecera) => {

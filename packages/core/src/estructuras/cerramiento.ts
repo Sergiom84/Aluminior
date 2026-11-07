@@ -22,7 +22,7 @@ import {
   SIMBOLOS_COTA_MODULO, type CambiosCotasModulo, type CotasModulo, type SimboloCotaModulo,
 } from './cotas-cerramiento.ts'
 import type { MaterialesModulo, MaterialesUnion } from './materiales-cerramiento.ts'
-import type { CompactoModulo } from './compacto-cerramiento.ts'
+import type { CompactoModulo, TapajuntasModulo } from './compacto-cerramiento.ts'
 
 export { VERSION_CONFIGURACION_CERRAMIENTO }
 export const FI_1OFI_NUEVA_ALTA_MM = 300 as const
@@ -41,6 +41,8 @@ export interface ModuloCerramiento {
   materiales?: MaterialesModulo
   /** Solo en v3: compacto de persiana integrado en el módulo. */
   compacto?: CompactoModulo
+  /** Solo en v3: tapajuntas / premarco de catálogo asociado al módulo. */
+  tapajuntas?: TapajuntasModulo
   /** Solo en v3: espacio que no se instala (viga, pared); precio 0 y sin despiece (DS3). */
   invisible?: true
 }

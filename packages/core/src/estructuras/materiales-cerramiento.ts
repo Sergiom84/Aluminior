@@ -7,8 +7,8 @@
  * guarda solo sus excepciones: sin excepción hereda el valor general de la
  * línea, de modo que cambiar el general no pisa lo elegido para un elemento.
  */
-import type { ConfiguracionCerramiento, ModuloCerramiento } from './cerramiento.ts'
-import { composicionExplicita } from './composicion-cerramiento.ts'
+import type { ConfiguracionCerramiento, ModuloCerramiento, UnionCerramiento } from './cerramiento.ts'
+import { anclajesCerramiento, composicionExplicita } from './composicion-cerramiento.ts'
 
 export interface MaterialesModulo {
   serieCodigo?: string
@@ -46,6 +46,30 @@ export function materialesEfectivos(
     return propio ? { valor: propio, origen: 'elemento' } : { valor: generales[campo] || null, origen: 'general' }
   }
   return { serieCodigo: resolver('serieCodigo'), vidrioCodigo: resolver('vidrioCodigo') }
+}
+
+export function serieEfectivaUnion(
+  configuracion: ConfiguracionCerramiento,
+  union: Pick<UnionCerramiento, 'id' | 'materiales'>,
+  generales: Pick<MaterialesGenerales, 'serieCodigo'>,
+): string | null {
+  const propia = union.materiales?.serieCodigo?.trim()
+  if (propia) return propia
+  const general = generales.serieCodigo?.trim()
+  if (general) return general
+  const porId = new Map(configuracion.modulos.map((m) => [m.id, m]))
+  for (const [hijoId, anclaje] of anclajesCerramiento(configuracion)) {
+    if (anclaje.unionId !== union.id) continue
+    const seriePadre = porId.get(anclaje.moduloId)?.materiales?.serieCodigo?.trim()
+    if (seriePadre) return seriePadre
+    const serieHijo = porId.get(hijoId)?.materiales?.serieCodigo?.trim()
+    if (serieHijo) return serieHijo
+  }
+  for (const modulo of configuracion.modulos) {
+    const serie = modulo.materiales?.serieCodigo?.trim()
+    if (serie) return serie
+  }
+  return null
 }
 
 /**

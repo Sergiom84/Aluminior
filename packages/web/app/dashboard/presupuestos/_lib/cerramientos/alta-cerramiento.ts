@@ -22,7 +22,10 @@ export interface DatosAltaCerramiento {
   serieCodigo: string | null
   vidrioCodigo: string | null
   acabadoCodigo: string | null
+  acabadoAccesoriosCodigo?: string | null
   varianteAcristalamiento: '1' | '2'
+  opcionAcristalamiento?: number
+  opcionesHerraje?: readonly string[]
   /** Catálogo de uniones de la base. Sin él, solo la reserva de `UNIONES_VISUALES`. */
   catalogoUniones?: readonly UnionVisual[]
 }

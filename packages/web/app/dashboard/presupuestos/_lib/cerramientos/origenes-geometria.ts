@@ -6,7 +6,7 @@
  * sí puede ser distinta de la del primer módulo, como en los GRUPO históricos
  * que unen dos series (docs/paridad/EVIDENCIA-E2-UNION-SERIE-2026-10-19.md).
  */
-import { materialesEfectivos, type ConfiguracionCerramiento, type MaterialEfectivo,
+import { materialesEfectivos, serieEfectivaUnion, type ConfiguracionCerramiento, type MaterialEfectivo,
   type MaterialesGenerales } from '@aluminior/core/estructuras'
 
 export interface OrigenGeometria {
@@ -28,13 +28,17 @@ export function origenesGeometriaCerramiento(
       anchoMm: modulo.anchoMm, altoMm: modulo.altoMm,
       materiales: materialesEfectivos(modulo, generales),
     })),
-    ...configuracion.uniones.map((union): OrigenGeometria => ({
-      tipo: 'UNION', id: union.id, codigo: union.codigo,
-      anchoMm: union.grosorMm, altoMm: union.longitudMm,
-      materiales: {
-        serieCodigo: materialesEfectivos(union, generales).serieCodigo,
-        vidrioCodigo: { valor: null, origen: 'elemento' },
-      },
-    })),
+    ...configuracion.uniones.map((union): OrigenGeometria => {
+      const propia = union.materiales?.serieCodigo?.trim()
+      const valor = serieEfectivaUnion(configuracion, union, generales)
+      return {
+        tipo: 'UNION', id: union.id, codigo: union.codigo,
+        anchoMm: union.grosorMm, altoMm: union.longitudMm,
+        materiales: {
+          serieCodigo: { valor, origen: propia ? 'elemento' : 'general' },
+          vidrioCodigo: { valor: null, origen: 'elemento' },
+        },
+      }
+    }),
   ]
 }

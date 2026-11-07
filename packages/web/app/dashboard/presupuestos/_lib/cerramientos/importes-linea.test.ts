@@ -8,6 +8,32 @@ describe('adaptación de estados MO a total de línea', () => {
     expect(importesLineaCerramiento(r(), '3', { estado: 'SIN_HORAS' })).toEqual({
       precioUnitario: '10.00', total: '30.00', valoracionCompleta: true })
   })
+  it('incluye las horas manuales en precioUnitario y las multiplica por cantidad en total', () => {
+    expect(importesLineaCerramiento(r(), '3', {
+      estado: 'PREPARADA',
+      valorable: true,
+      notas: [],
+      filas: [{
+        concepto: 'COLOCACION',
+        origen: 'MANUAL',
+        articuloCodigo: 'MOCOL',
+        articuloDescripcion: 'Colocación',
+        unidad: 'UD',
+        acabadoCodigo: 'UNI',
+        tarifa: 1,
+        horas: '2.00',
+        minutos: '120.00',
+        precioMinuto: '0.5000',
+        importe: '60.00',
+        costeMinuto: null,
+        costeTotal: null,
+        valoracionCompleta: true,
+        motivoCodigo: null,
+        motivoCosteCodigo: null,
+      }],
+    })).toEqual({
+      precioUnitario: '70.00', total: '210.00', valoracionCompleta: true })
+  })
   it('Sumar Comisión multiplica precio y total de la línea; sin comisión no cambia nada', () => {
     expect(importesLineaCerramiento(r(), '3', { estado: 'SIN_HORAS' }, '-10')).toEqual({
       precioUnitario: '9.00', total: '27.00', valoracionCompleta: true })

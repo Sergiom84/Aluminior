@@ -85,8 +85,8 @@ describe('J04 agregado auténtico, catálogo sintético y PostgreSQL', () => {
     expect(r.origenes.map(o => o.piezas.length)).toEqual([9, 9, 2])
     expect(r.origenes.map(o => o.origen.id)).toEqual(['m1', 'm2', 'u1'])
     expect(r.origenes.slice(0, 2).map(o => o.acristalamiento[0].slot)).toEqual([1, 1])
-    expect(totalLineaCerramiento(r.ventaMateriales, '2', [{ completo: true, importe: '30' }]).importe).toBe('311.66')
-    expect(totalLineaCerramiento(r.ventaMateriales, '3', [{ completo: true, importe: '30' }]).importe).toBe('452.49')
+    expect(totalLineaCerramiento(r.ventaMateriales, '2', [{ completo: true, importe: '30' }]).importe).toBe('341.66')
+    expect(totalLineaCerramiento(r.ventaMateriales, '3', [{ completo: true, importe: '30' }]).importe).toBe('512.49')
   }))
   it('módulos idénticos preservan procedencias y cantidad de cada receta', () => caso(async tx => {
     const e = entrada(); e.configuracion.modulos = [e.configuracion.modulos[0], { ...e.configuracion.modulos[0], id: 'm2' }]

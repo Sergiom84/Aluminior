@@ -24,10 +24,13 @@ export async function prepararLineaValorada(tx: ClienteEscritura, alta: AltaCerr
   }
   const tablas = await tx.execute<{ tabla: string | null }>(sql`SELECT to_regclass('public.lineas_cerramiento_resultados')::text AS tabla`)
   if (!tablas[0]?.tabla) throw new ErrorOperacionCerramiento('Falta aplicar la migración de resultados de cerramientos en este entorno')
+  const esEstructuraSimple = alta.configuracion.modulos.length === 1 && !alta.configuracion.modulos[0]?.compacto
+  const acabadoAccesoriosCodigo = alta.datos.acabadoAccesoriosCodigo ??
+    (esEstructuraSimple && alta.datos.acabadoCodigo === 'L' ? 'L' : 'UNI')
   const resultado = await valorarCerramiento(tx, { configuracion: alta.configuracion,
-    // Este configurador no envía una selección de herraje por módulo. La
-    // ausencia de selección conserva SelecDefSN; no significa desmarcar todo.
-    ...alta.datos, tarifa: entrada.tarifa, opcionesPorDefecto: true })
+    // Sin selección explícita de herraje (p. ej. sin reglas herrajeConjuntos),
+    // la ausencia de selección conserva SelecDefSN; no significa desmarcar todo.
+    ...alta.datos, acabadoAccesoriosCodigo, tarifa: entrada.tarifa, opcionesPorDefecto: !alta.datos.opcionesHerraje?.length })
   const manoObra = await prepararManoObra(tx, { tarifa: entrada.tarifa,
     horas: { fabricacion: entrada.horasFabricacion, colocacion: entrada.horasColocacion } })
   if (manoObra.estado === 'MIGRACION_PENDIENTE') throw new ErrorOperacionCerramiento(manoObra.mensaje)

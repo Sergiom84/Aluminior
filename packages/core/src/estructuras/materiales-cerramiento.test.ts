@@ -4,7 +4,8 @@ import {
   crearConfiguracionCerramiento, esConfiguracionCerramiento, moduloDesdePlantilla,
 } from './cerramiento.ts'
 import { insertarModuloEnAnclaje } from './composicion-cerramiento.ts'
-import { asignarMaterialesModulos, materialesEfectivos, modelosIguales } from './materiales-cerramiento.ts'
+import { accesoriosEfectivosModulo, asignarComplementosModulos } from './compacto-cerramiento.ts'
+import { asignarMaterialesModulos, materialesEfectivos, modelosIguales, serieEfectivaUnion } from './materiales-cerramiento.ts'
 
 /** A1 y A2 iguales (2O), B1 distinto (0), como en el plan de fase 4. */
 function a1a2b1() {
@@ -56,5 +57,27 @@ describe('materiales por elemento', () => {
       .toBe(false)
     expect(esConfiguracionCerramiento({ ...c, modulos: [{ ...c.modulos[0], materiales: { acabado: 'L' } }] }))
       .toBe(false)
+  })
+
+  it('serieEfectivaUnion hereda serie del módulo adyacente cuando la serie general está vacía', () => {
+    let c = a1a2b1()
+    c = asignarMaterialesModulos(c, ['modulo-1'], { serieCodigo: 'GMA350' })
+    c = asignarMaterialesModulos(c, ['modulo-2'], { serieCodigo: 'GMC400' })
+    expect(serieEfectivaUnion(c, c.uniones[0], { serieCodigo: null })).toBe('GMA350')
+    expect(serieEfectivaUnion(c, c.uniones[1], { serieCodigo: null })).toBe('GMC400')
+    expect(serieEfectivaUnion(c, c.uniones[0], { serieCodigo: 'ELEGANTPVC' })).toBe('ELEGANTPVC')
+  })
+
+  it('asigna y valida compacto y tapajuntas por módulo en v3', () => {
+    const cadena = crearConfiguracionCerramiento(plantillaDiseno('2O')!)
+    const c = asignarComplementosModulos(cadena, ['modulo-1'], {
+      compacto: { estructuraCodigo: 'COM001', altoCajonMm: 155, descontarHueco: true },
+      tapajuntas: { estructuraCodigo: 'GMT004', opciones: ['G1O0', 'G2O0', 'G3O0', 'G4O0'], descontarHueco: true },
+    })
+    expect(c.version).toBe(3)
+    expect(esConfiguracionCerramiento(c)).toBe(true)
+    expect(accesoriosEfectivosModulo(c.modulos[0], { acabadoCodigo: 'L' })).toEqual([
+      { estructura: 'GMT004', acabado: 'L', opciones: ['G1O0', 'G2O0', 'G3O0', 'G4O0'] },
+    ])
   })
 })

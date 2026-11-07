@@ -2,21 +2,22 @@
 
 import React from 'react'
 import {
-  plantillaDiseno, type CambiosMaterial, type CotaCatalogo, type MaterialesGenerales, type ModuloCerramiento,
-  type PlantillaDiseno, type RectVisual,
+  plantillaDiseno, type CambiosComplementosModulo, type CambiosMaterial, type CotaCatalogo,
+  type MaterialesGenerales, type ModuloCerramiento, type PlantillaDiseno, type RectVisual,
 } from '@aluminior/core/estructuras'
 import { MedidasElemento } from '../medidas-elemento.tsx'
 import type { BorradorModulo } from '../use-borradores-cerramiento.ts'
+import { ComplementosElemento, type CatalogoComplementosDisenador } from './complementos-elemento.tsx'
 import { MaterialesElemento } from './materiales-elemento.tsx'
 
 /**
  * Pestaña Elemento seleccionado, en una fila de izquierda a derecha: qué es,
- * dónde está (calculado), medidas, materiales propios y acciones.
+ * dónde está (calculado), medidas, materiales propios, complementos y acciones.
  */
 export function PanelElemento({
   modulo, borrador, indice, rect, pendiente, bloqueado, preparada, eliminable, generales, series, modelos,
-  cotasCatalogo = [], moviendo, movible, invisible = false, materialesPropios = true, onChange, onActualizar, onActualizarModelos, onDescartar,
-  onSustituir, onEliminar, onMover, onInvisible,
+  cotasCatalogo = [], complementosCatalogo, moviendo, movible, invisible = false, materialesPropios = true,
+  onChange, onActualizar, onActualizarModelos, onDescartar, onSustituir, onEliminar, onMover, onInvisible,
 }: {
   modulo: ModuloCerramiento
   borrador: BorradorModulo
@@ -31,6 +32,7 @@ export function PanelElemento({
   /** Elementos con la misma estructura, incluido este. */
   modelos: number
   cotasCatalogo?: readonly CotaCatalogo[]
+  complementosCatalogo?: CatalogoComplementosDisenador
   onChange: (cambios: BorradorModulo) => void
   onActualizar: () => void
   onActualizarModelos: () => void
@@ -51,7 +53,9 @@ export function PanelElemento({
   materialesPropios?: boolean
 }) {
   const plantilla = plantillaDiseno(modulo.estructuraCodigo)
-  const { serieCodigo: _s, vidrioCodigo: _v, cotas: cotasBorrador, ...medidas } = borrador
+  const { serieCodigo: _s, vidrioCodigo: _v, compacto: _c, tapajuntas: _t, cotas: cotasBorrador, ...medidas } = borrador
+  const hayComplementos = Boolean(complementosCatalogo &&
+    (complementosCatalogo.compactos.length > 0 || complementosCatalogo.tapajuntas.length > 0))
   return (
     <div className="al-panel-elemento" aria-label={`Elemento ${indice}`}>
       <div className="al-panel-grupo al-panel-estructura">
@@ -74,9 +78,13 @@ export function PanelElemento({
           cotasCatalogo={cotasCatalogo} cotasBorrador={cotasBorrador}
           onChange={onChange} onActualizar={onActualizar} onDescartar={onDescartar} />
       </div>
-      {materialesPropios && <div className="al-panel-grupo">
-        <MaterialesElemento modulo={modulo} borrador={borrador as CambiosMaterial}
-          generales={generales} series={series} onChange={onChange} />
+      {(materialesPropios || hayComplementos) && <div className="al-panel-grupo">
+        {materialesPropios && <MaterialesElemento modulo={modulo} borrador={borrador as CambiosMaterial}
+          generales={generales} series={series} onChange={onChange} />}
+        {hayComplementos && complementosCatalogo && (
+          <ComplementosElemento modulo={modulo} borrador={borrador as CambiosComplementosModulo}
+            catalogo={complementosCatalogo} onChange={onChange} />
+        )}
         {modelos > 1 && <button type="button" className="al-command" disabled={!pendiente}
           onClick={onActualizarModelos}>
           Aplicar a modelos iguales ({modelos})
