@@ -128,7 +128,7 @@ export function AnyadirLinea({
 
       <div className={`${styles.modeTabs} mb-4`}>
         {([
-          ['ESTRUCTURA', 'Estructuras'],
+          ['ESTRUCTURA', 'Catálogo'],
           ['ARTICULO', 'Artículos'],
         ] as const).map(([valor, etiqueta]) => (
           <button key={valor} type="button" onClick={() => elegirTipo(valor)}
