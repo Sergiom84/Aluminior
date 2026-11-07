@@ -1,0 +1,13 @@
+/* Panel «Elemento seleccionado» del diseñador: una fila de grupos de izquierda a derecha. */
+.al-panel-elemento { display: flex; flex-wrap: wrap; align-items: end; gap: 10px 0; }
+.al-panel-grupo { display: flex; flex-wrap: wrap; align-items: end; gap: 8px 10px; padding: 0 14px; border-left: 1px solid var(--al-border); }
+.al-panel-grupo:first-child { padding-left: 0; border-left: 0; }
+.al-panel-estructura .al-designer-measure input { width: 56px; }
+.al-panel-estructura .al-panel-descripcion { max-width: 22ch; padding-bottom: 6px; }
+.al-panel-posicion input { width: 72px; }
+.al-panel-acciones { margin-left: auto; }
+.al-panel-descripcion { align-self: center; color: var(--al-accent-strong); font-size: 12px; }
+
+/* Hueco que no se instala (DS3): en blanco, con un contorno tenue para poder seleccionarlo. */
+.al-hueco-invisible { fill: transparent; stroke: #9aa5ab; stroke-width: 2; stroke-dasharray: 12 10; }
+.al-hueco-invisible.al-module-selected { stroke: #1d82e6; stroke-width: 5; }

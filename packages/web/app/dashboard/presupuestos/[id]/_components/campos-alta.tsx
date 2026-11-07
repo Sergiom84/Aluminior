@@ -24,25 +24,28 @@ export function CamposCerramiento({
   setVidrio: (valor: string) => void
 }) {
   return (
-    <div className={styles.fields}>
-      <div className="col-span-2">
+    <div className={`${styles.fields} ${styles.filaCerramiento}`}>
+      <div>
         <label htmlFor="referencia">Ubicación</label>
         <input {...atributosCampo('referencia', err)} className={entrada}
           style={{ ...estilo, borderColor: bordeCampo('referencia', err, estilo.borderColor) }}
           placeholder="SALÓN" />
         <MensajeError campo="referencia" errores={err} />
       </div>
-      <div className="col-span-2">
+      <div>
         <label htmlFor="serieCodigo">Serie</label>
         <select {...atributosCampo('serieCodigo', err)} value={serie}
           onChange={(evento) => setSerie(evento.target.value)} className={entrada}
           style={{ ...estilo, borderColor: bordeCampo('serieCodigo', err, estilo.borderColor) }}>
           <option value="">Elegir…</option>
+          {serie && !series.includes(serie) && (
+            <option value={serie}>{serie} · no sirve para estos modelos</option>
+          )}
           {series.map((item) => <option key={item} value={item}>{item}</option>)}
         </select>
         <MensajeError campo="serieCodigo" errores={err} />
       </div>
-      <div className="col-span-2">
+      <div>
         <label htmlFor="vidrioCodigo">Vidrio</label>
         <CampoVidrio {...atributosCampo('vidrioCodigo', err)} className={entrada}
           style={{ ...estilo, borderColor: bordeCampo('vidrioCodigo', err, estilo.borderColor) }}
@@ -50,7 +53,7 @@ export function CamposCerramiento({
           value={vidrio} onChange={setVidrio} />
         <MensajeError campo="vidrioCodigo" errores={err} />
       </div>
-      <div className="col-span-2">
+      <div>
         <label htmlFor="varianteAcristalamiento" className="break-words">Acristalamiento</label>
         <select id="varianteAcristalamiento" name="varianteAcristalamiento" defaultValue="2"
           className={entrada} style={estilo}>
@@ -58,7 +61,7 @@ export function CamposCerramiento({
           <option value="1">Cristal sencillo</option>
         </select>
       </div>
-      <div className="col-span-2">
+      <div>
         <label htmlFor="acabadoCodigo">Acabado</label>
         <select id="acabadoCodigo" name="acabadoCodigo" defaultValue={acabadoPorDefecto(acabados)}
           className={entrada} style={estilo}>
@@ -68,22 +71,22 @@ export function CamposCerramiento({
           ))}
         </select>
       </div>
-      <div className="col-span-2">
+      <div>
         <label htmlFor="cantidad">Cdad.</label>
         <input {...atributosCampo('cantidad', err)} type="number" defaultValue={1} min={1} step={1}
           className={`cifra ${entrada}`}
           style={{ ...estilo, borderColor: bordeCampo('cantidad', err, estilo.borderColor) }} />
         <MensajeError campo="cantidad" errores={err} />
       </div>
-      <div className="col-span-2">
-        <label htmlFor="horasFabricacion">Fabricación (h)</label>
+      <div>
+        <label htmlFor="horasFabricacion">Horas de fabricación</label>
         <input {...atributosCampo('horasFabricacion', err)} type="number" min={0} step="0.01"
           defaultValue={0} className={`cifra ${entrada}`}
           style={{ ...estilo, borderColor: bordeCampo('horasFabricacion', err, estilo.borderColor) }} />
         <MensajeError campo="horasFabricacion" errores={err} />
       </div>
-      <div className="col-span-2">
-        <label htmlFor="horasColocacion">Colocación (h)</label>
+      <div>
+        <label htmlFor="horasColocacion">Horas de colocación</label>
         <input {...atributosCampo('horasColocacion', err)} type="number" min={0} step="0.01"
           defaultValue={0} className={`cifra ${entrada}`}
           style={{ ...estilo, borderColor: bordeCampo('horasColocacion', err, estilo.borderColor) }} />

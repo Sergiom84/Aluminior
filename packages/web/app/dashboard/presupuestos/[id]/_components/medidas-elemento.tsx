@@ -67,16 +67,22 @@ export function MedidasElemento({
   const geometriaFi = modulo.estructuraCodigo === '1OFI' && Object.hasOwn(modulo, 'fiMm')
     ? resolverGeometriaFi1Ofi(modulo.anchoMm, modulo.altoMm, modulo.fiMm) : null
   const cotas = cotasDelElemento(modulo.estructuraCodigo, cotasCatalogo)
+  // Intro en una medida actualiza el elemento; sin esto enviaría el formulario de la línea.
+  const alPulsarTecla = (evento: React.KeyboardEvent<HTMLInputElement>) => {
+    if (evento.key !== 'Enter') return
+    evento.preventDefault()
+    if (pendiente) onActualizar()
+  }
   return <>
     {(['anchoMm', 'altoMm'] as const).map(campo => <label key={campo} className="al-designer-measure">
       <span className="al-designer-properties-label">{campo === 'anchoMm' ? 'Ancho elemento' : 'Alto elemento'}</span>
-      <input type="number" min={1} step="any"
+      <input type="number" min={1} step="any" onKeyDown={alPulsarTecla}
         value={Number.isFinite(modulo[campo]) ? modulo[campo] : ''}
         onChange={evento => onChange({ [campo]: evento.target.valueAsNumber })} />
     </label>)}
     {modulo.estructuraCodigo === '1OFI' && <label className="al-designer-measure">
       <span className="al-designer-properties-label">FIJO INFERIOR</span>
-      <input type="number" step="any" value={Number.isFinite(modulo.fiMm) ? modulo.fiMm : ''}
+      <input type="number" step="any" onKeyDown={alPulsarTecla} value={Number.isFinite(modulo.fiMm) ? modulo.fiMm : ''}
         aria-invalid={geometriaFi?.valido === false || undefined}
         aria-describedby={geometriaFi?.valido === false ? `fi-error-${modulo.id}` : undefined}
         onChange={evento => onChange({ fiMm: evento.target.valueAsNumber })} />
@@ -94,7 +100,7 @@ export function MedidasElemento({
           {etiquetaCota(cota)}
           {cota.valorPorDefecto !== null && <> <span className="cifra" data-cota-defecto={cota.simbolo}>{cota.valorPorDefecto}</span></>}
         </span>
-        <input type="number" step="any" inputMode="decimal" data-cota={cota.simbolo}
+        <input type="number" step="any" inputMode="decimal" data-cota={cota.simbolo} onKeyDown={alPulsarTecla}
           value={texto === '' ? '' : Number(texto)}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? errorId : undefined}
@@ -103,8 +109,8 @@ export function MedidasElemento({
         {error && <small id={errorId} style={{ color: 'var(--al-error)' }}>{error}</small>}
       </label>
     })}
-    <button type="button" disabled={!pendiente} onClick={onActualizar}
+    <button type="button" className="al-command-primary" disabled={!pendiente} onClick={onActualizar}
       aria-label="Actualizar elemento">Actualizar</button>
-    {pendiente && <button type="button" onClick={onDescartar}>Descartar cambios</button>}
+    {pendiente && <button type="button" className="al-command" onClick={onDescartar}>Descartar cambios</button>}
   </>
 }

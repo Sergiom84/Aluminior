@@ -1,7 +1,8 @@
 'use client'
 
 import type { ResultadoCerramientoV1 } from '@aluminior/core/estructuras'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useRef } from 'react'
+import { useEdicionLineaActiva } from './edicion-linea-activa.tsx'
 import { EditarArticulo } from './editar-articulo'
 import { BotonBorrarLinea } from './boton-borrar-linea.tsx'
 import { MiniaturaCerramiento } from './miniatura-cerramiento.tsx'
@@ -58,9 +59,12 @@ export function LineaPresupuesto({
   catalogoUniones?: readonly import('@aluminior/core/estructuras').UnionVisual[]
   cotasCatalogo?: import('@aluminior/core/estructuras').CotasCatalogoPorEstructura
 }) {
-  const [editando, setEditando] = useState(false)
+  const edicionActiva = useEdicionLineaActiva()
+  const editando = edicionActiva.activa === l.id
+  const otraEnEdicion = edicionActiva.activa !== null && !editando
   const botonEditar = useRef<HTMLButtonElement>(null)
-  const cerrarEditor = useCallback(() => { setEditando(false); requestAnimationFrame(() => botonEditar.current?.focus()) }, [])
+  const { cerrar } = edicionActiva
+  const cerrarEditor = useCallback(() => { cerrar(); requestAnimationFrame(() => botonEditar.current?.focus()) }, [cerrar])
   const esArticuloEditable = editable && l.tipo === 'ARTICULO'
   const esCerramientoEditable = editable && Boolean(edicion)
   const costeTotal = despiece.reduce((acc, pieza) => acc + (pieza.costeTotal ? Number(pieza.costeTotal) : 0), 0)
@@ -119,7 +123,8 @@ export function LineaPresupuesto({
         <td className="px-3 py-2 text-right">
           <div className="flex justify-end gap-2">
             {(esCerramientoEditable || esArticuloEditable) && (
-              <button ref={botonEditar} type="button" onClick={() => setEditando((actual) => !actual)}
+              <button ref={botonEditar} type="button" disabled={otraEnEdicion}
+                onClick={() => editando ? cerrarEditor() : edicionActiva.abrir(l.id)}
                 className="text-xs" style={{ color: 'var(--al-accent)' }} aria-expanded={editando}>
                 {editando ? 'Cerrar edición' : 'Editar'}
               </button>

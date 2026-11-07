@@ -33,7 +33,8 @@ export function DibujoCerramientoPdf({ configuracion, ancho = 240, alto = 150 }:
   const dibujo = geometriaCerramientoPdf(configuracion, ancho, alto)
   return <View wrap={false} style={{ width: ancho, height: alto }}>
     <Svg width={ancho} height={alto - 16} viewBox={`0 0 ${ancho} ${alto - 16}`}>
-      {dibujo.modulos.map((modulo) => <G key={modulo.id}>
+      {/* El elemento invisible (DS3) deja su hueco en blanco. */}
+      {dibujo.modulos.filter((modulo) => !modulo.invisible).map((modulo) => <G key={modulo.id}>
         <Rectangulo rect={modulo.rect} fill="#e2e8f0" />
         {modulo.elementos.map((elemento) => {
           if (elemento.tipo === 'separador') {

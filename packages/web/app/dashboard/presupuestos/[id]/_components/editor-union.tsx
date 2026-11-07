@@ -50,9 +50,9 @@ export function EditorUnion({ union, indice, pendiente, onChange, onActualizar, 
         readOnly value={Number.isFinite(union.grosorMm) ? union.grosorMm : ''} />
       <span>mm</span>
     </label>
-    <button type="button" disabled={!pendiente} onClick={onActualizar}
+    <button type="button" className="al-command-primary" disabled={!pendiente} onClick={onActualizar}
       aria-label={`Actualizar unión ${indice}`}>Actualizar</button>
-    {pendiente && <button type="button" onClick={onDescartar}
+    {pendiente && <button type="button" className="al-command" onClick={onDescartar}
       aria-label={`Descartar cambios unión ${indice}`}>Descartar cambios</button>}
   </fieldset>
 }

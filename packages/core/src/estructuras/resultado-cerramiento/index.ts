@@ -1,5 +1,6 @@
 export type * from './tipos.ts'
 export { esResultadoCerramiento } from './validar.ts'
 export { resolverOrigenSinUnion } from './sin-union.ts'
+export { origenInvisible, REGLA_ELEMENTO_INVISIBLE } from './invisible.ts'
 export { etapasVentaCerramiento } from './etapas-venta.ts'
 export type { EtapasVentaCerramiento } from './etapas-venta.ts'

@@ -7,6 +7,8 @@ export interface ModuloGeometriaCerramiento {
   id: string
   rect: RectVisual
   elementos: readonly ElementoColocado[]
+  /** Hueco que no se instala (DS3): ocupa su sitio pero no se dibuja. */
+  invisible: boolean
 }
 
 export interface UnionGeometriaCerramiento {
@@ -31,7 +33,7 @@ export function geometriaCerramiento(configuracion: ConfiguracionCerramiento): G
   const posiciones = posicionesCerramiento(configuracion)
   const modulos = configuracion.modulos.map((modulo) => {
     const rect = posiciones.modulos.get(modulo.id)!
-    return { id: modulo.id, rect, elementos: distribuirModuloCerramiento(modulo, rect) }
+    return { id: modulo.id, rect, elementos: distribuirModuloCerramiento(modulo, rect), invisible: modulo.invisible === true }
   })
   const uniones = configuracion.uniones.flatMap((union) => {
     const rect = posiciones.uniones.get(union.id)

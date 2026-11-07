@@ -14,10 +14,11 @@ describe('contrato móvil del editor de presupuestos', () => {
   it('activa el layout estrecho hasta 620 px sin depender del ancho del contenedor', () => {
     expect(css).toContain('@media (max-width: 620px)')
     expect(css).toMatch(/\.fields\s*>\s*\*\s*{[\s\S]*?grid-column:\s*1\s*\/\s*-1\s*!important/)
-    expect(css).toMatch(/\.workFields\s*{[\s\S]*?grid-template-columns:\s*minmax\(0,\s*1fr\)/)
+    expect(css).toMatch(/\.filaCerramiento\s*{[\s\S]*?grid-template-columns:/)
     expect(camposAlta).toContain('className={styles.fields}')
+    expect(camposAlta).toContain('styles.filaCerramiento')
     expect(edicion).toContain('styles.fields')
-    expect(edicion).toContain('styles.workFields')
+    expect(edicion).toContain('styles.filaCerramiento')
   })
 
   it('mantiene catálogo y tablas dentro de desplazadores locales accesibles', () => {

@@ -4,6 +4,7 @@ import { CATALOGO_SNAPSHOT } from '../catalogo-uniones.ts'
 import { decimal, objeto, tarifa, texto, textoNullable, unicos, variante } from './campos.ts'
 import { esHerraje, esPartida, esPieza, esRanura } from './validar-piezas.ts'
 import { esOrigenSinUnion } from './sin-union.ts'
+import { esOrigenInvisible, REGLA_ELEMENTO_INVISIBLE } from './invisible.ts'
 import { etapasVentaCerramiento } from './etapas-venta.ts'
 import type { DiagnosticoCerramiento, ImporteSnapshot, RedondeoVentaCerramiento, ResultadoCerramientoV1,
   ResultadoOrigenCerramiento } from './tipos.ts'
@@ -43,6 +44,7 @@ function esResultadoOrigen(v: unknown, redondeo: RedondeoVentaCerramiento): v is
   const diagnosticos = v.diagnosticos
   const bloquea = (ambito: string) => diagnosticos.some(d => d.bloqueante && d.ambito === ambito)
   if (v.reglaMaterial === 'SIN_UNION_U') return esOrigenSinUnion(v as unknown as ResultadoOrigenCerramiento)
+  if (v.reglaMaterial === REGLA_ELEMENTO_INVISIBLE) return esOrigenInvisible(v as unknown as ResultadoOrigenCerramiento)
   if (v.venta.completo) {
     if (!v.reglaMaterial || !v.piezas.length || !v.partidasValoracion.length || bloquea('VENTA') ||
       etapasVentaCerramiento(v.partidasValoracion, redondeo)?.total !==
@@ -76,6 +78,10 @@ export function esResultadoCerramiento(v: unknown): v is ResultadoCerramientoV1 
   if (!v.origenes.every(o => geometria.some(g => g.tipo === o.origen.tipo &&
     g.id === o.origen.id && g.codigo === o.codigo))) return false
   if (v.origenes.some(o => o.partidasValoracion.some(p => p.tarifa !== v.tarifa))) return false
+  // La regla del invisible solo vale para un elemento marcado invisible, y el marcado no se valora de otra forma.
+  const invisibles = new Set(v.configuracion.modulos.filter(m => m.invisible === true).map(m => m.id))
+  if (v.origenes.some(o => o.origen.tipo === 'MODULO' &&
+    (o.reglaMaterial === REGLA_ELEMENTO_INVISIBLE) !== invisibles.has(o.origen.id))) return false
   for (const [total, campo] of [[v.ventaMateriales, 'venta'], [v.costeMateriales, 'coste']] as const) {
     const completos = v.origenes.every(o => o[campo].completo)
     if (total.completo !== completos ||

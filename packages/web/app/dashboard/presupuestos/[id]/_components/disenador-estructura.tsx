@@ -3,7 +3,7 @@
 import React from 'react'
 import { useEffect, useRef, useState } from 'react'
 import {
-  cambiarEstructuraModuloCerramiento, crearConfiguracionCerramiento, dependientesModulo,
+  cambiarEstructuraModuloCerramiento, cambiarInvisibleModulo, crearConfiguracionCerramiento, esModuloInvisible, dependientesModulo,
   eliminarModuloConDependientes, esConfiguracionCerramiento, esModuloRaiz, insertarModuloEnAnclaje,
   medidasCerramiento, moduloDesdePlantilla, plantillaDiseno, PLANTILLAS_DISENO, posicionesCerramiento,
   UNIONES_VISUALES, type UnionVisual,
@@ -37,7 +37,7 @@ function seleccionModulo(configuracion: ConfiguracionCerramiento, id: string): P
  * `vacio` abre sin elementos, como el configurador original.
  */
 export function DisenadorEstructura({
-  codigo, anchoMm, altoMm, configuracionInicial, vacio = false, series = [],
+  codigo, anchoMm, altoMm, configuracionInicial, vacio = false, series = [], seriesPorEstructura, panelMosquiteras,
   catalogoUniones = UNIONES_VISUALES, cotasCatalogo = {},
   generales = { serieCodigo: null, vidrioCodigo: null }, onConfiguracionChange,
   onDimensionesChange, onValidezChange,
@@ -51,6 +51,10 @@ export function DisenadorEstructura({
   onDimensionesChange: (anchoMm: number, altoMm: number) => void
   onValidezChange?: (valida: boolean) => void
   series?: readonly string[]
+  /** Series que sirven a cada estructura; el elemento ofrece las de la suya. */
+  seriesPorEstructura?: Readonly<Record<string, readonly string[]>>
+  /** Panel de la familia Mosquiteras del catálogo, solo al dar de alta una línea. */
+  panelMosquiteras?: React.ReactNode
   catalogoUniones?: readonly UnionVisual[]
   cotasCatalogo?: CotasCatalogoPorEstructura
   /** Materiales generales de la línea, para mostrar lo que heredan los elementos. */
@@ -206,7 +210,8 @@ export function DisenadorEstructura({
               insercion={{ activa: Boolean(insertando) && !edicion.pendientes,
                 onInsertar: (anclaje) => insercion.solicitar(insertando!, anclaje) }}
               movimiento={{ moduloId: mover.moviendo, anclajes: mover.anclajes, puedeMover: mover.puedeMover,
-                onIniciar: mover.iniciar, onMover: mover.mover, onCancelar: mover.cancelar }} />
+                onIniciar: mover.iniciar, onMover: mover.mover, onCancelar: mover.cancelar,
+                onBloqueado: (id) => { if (mover.movible(id)) mover.avisarBloqueo() } }} />
             </LienzoConExtremos>
           : <LienzoVacio preparada={preparada} onColocar={(plantilla) => insercion.solicitar(plantilla, null)}
               onAbrir={() => insercion.abrirSelector(null)} />}
@@ -224,11 +229,11 @@ export function DisenadorEstructura({
         {aviso && <p role="alert">{aviso}</p>}
         {vista === 'catalogo' || !configuracion
           ? <CatalogoInferior preparada={preparada} onPreparar={setPreparada} onArrastre={setArrastrada}
-              onColocar={colocarLateral} />
+              onColocar={colocarLateral} panelMosquiteras={panelMosquiteras} />
           : modulo
             ? <PanelElemento modulo={modulo} borrador={edicion.borradores.modulos[modulo.id] ?? {}}
                 cotasCatalogo={cotasCatalogo[modulo.estructuraCodigo] ?? []}
-                generales={generales} series={series}
+                generales={generales} series={seriesPorEstructura?.[modulo.estructuraCodigo] ?? series}
                 modelos={modelosIguales(configuracion, modulo.id).length}
                 onActualizarModelos={() => aplicarAModelos(modulo.id)}
                 indice={entradasCerramiento(configuracion).find((e) => e.id === modulo.id)!.indice}
@@ -236,11 +241,14 @@ export function DisenadorEstructura({
                 pendiente={Boolean(edicion.borradores.modulos[modulo.id])} bloqueado={edicion.pendientes}
                 preparada={preparada} eliminable={!esModuloRaiz(configuracion, modulo.id)}
                 onChange={(cambios) => edicion.editarModulo(modulo.id, cambios)}
-                onActualizar={() => edicion.aplicar('modulos', modulo.id)}
-                onDescartar={() => edicion.descartar('modulos', modulo.id)}
+                onActualizar={() => { setAviso(null); edicion.aplicar('modulos', modulo.id) }}
+                onDescartar={() => { setAviso(null); edicion.descartar('modulos', modulo.id) }}
                 onSustituir={() => preparada && setConfiguracion(
                   cambiarEstructuraModuloCerramiento(configuracion, modulo.id, preparada))}
-                onEliminar={eliminar} moviendo={mover.moviendo === modulo.id} movible={mover.puedeMover(modulo.id)}
+                onEliminar={eliminar} moviendo={mover.moviendo === modulo.id} movible={mover.movible(modulo.id)}
+                invisible={esModuloInvisible(modulo)}
+                materialesPropios={configuracion.modulos.length > 1 || Boolean(modulo.materiales)}
+                onInvisible={() => setConfiguracion(cambiarInvisibleModulo(configuracion, modulo.id, !esModuloInvisible(modulo)))}
                 onMover={() => mover.moviendo === modulo.id ? mover.cancelar() : mover.iniciar(modulo.id)} />
             : union && <div className="al-designer-union-editor">
                 <EditorUnion catalogoUniones={catalogoUniones} serieCodigo={generales.serieCodigo}

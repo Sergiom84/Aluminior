@@ -10,6 +10,7 @@ import { CATALOGO_SNAPSHOT, esConfiguracionCerramiento } from '@aluminior/core/e
 import { presupuestoIncompleto } from '@aluminior/core/precios'
 import { Shell } from '../../_components/shell.tsx'
 import { AnyadirLinea } from './_components/anyadir-linea.tsx'
+import { AltaSinEdicionActiva, EdicionLineaActiva } from './_components/edicion-linea-activa.tsx'
 import { LineaPresupuesto } from './_components/linea-presupuesto.tsx'
 import type { DatosEdicionCerramiento } from './_components/editar-cerramiento.tsx'
 import { PestanasDocumento, PestanasFicha } from '../_components/pestanas-documento.tsx'
@@ -52,6 +53,9 @@ export default async function DetallePresupuesto({ params, searchParams }: {
   const acabados = await db.select({
     codigo: schema.acabados.codigo, descripcion: schema.acabados.descripcion,
   }).from(schema.acabados).orderBy(asc(schema.acabados.codigo))
+  const mosquiteras = await db.select({
+    codigo: schema.estructuras.codigo, descripcion: schema.estructuras.descripcion,
+  }).from(schema.estructuras).where(eq(schema.estructuras.familia, '101')).orderBy(asc(schema.estructuras.codigo))
   const idsLineas = lineas.map((linea) => linea.id)
   const piezas = idsLineas.length
     ? await db.select().from(schema.lineasDespiece).where(inArray(schema.lineasDespiece.lineaId, idsLineas)) : []
@@ -132,9 +136,13 @@ export default async function DetallePresupuesto({ params, searchParams }: {
           editable: p.estado === 'PENDIENTE' }} /> :
         <PreferenciaMedidasPresupuesto presupuestoId={id} inicial={p.medidasNuevasVentanas}>
         <CatalogoDiseno plantillas={plantillas}>
+        <EdicionLineaActiva>
         {p.estado === 'PENDIENTE' && (
-          <AnyadirLinea presupuestoId={id} series={series.map((serie) => serie.codigo)} acabados={acabados}
-            catalogoUniones={catalogoUniones} cotasCatalogo={cotasCatalogo} />
+          <AltaSinEdicionActiva>
+            <AnyadirLinea presupuestoId={id} series={series.map((serie) => serie.codigo)} acabados={acabados}
+              catalogoUniones={catalogoUniones} cotasCatalogo={cotasCatalogo}
+              mosquiteras={mosquiteras} />
+          </AltaSinEdicionActiva>
         )}
 
         <div className={`${styles.tableScroll} al-ficha-lines`} tabIndex={0}
@@ -162,6 +170,7 @@ export default async function DetallePresupuesto({ params, searchParams }: {
             ))}</tbody>
           </table>
         </div>
+        </EdicionLineaActiva>
         </CatalogoDiseno>
         </PreferenciaMedidasPresupuesto>}
 

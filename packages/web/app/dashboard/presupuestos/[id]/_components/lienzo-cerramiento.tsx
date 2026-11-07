@@ -41,7 +41,7 @@ export function LienzoCerramiento({ configuracion, moduloActivoId, seleccion, on
         return (
           <g key={modulo.id} data-modulo-id={modulo.id} role="button" tabIndex={0}
             aria-label={`Elemento ${indice}: ${plantilla.descripcion}`}
-            data-selected={activa} className="al-chain-module"
+            data-selected={activa} className="al-chain-module" data-invisible={modulo.invisible || undefined}
             data-movible={movimiento?.puedeMover(modulo.id) || undefined}
             data-en-movimiento={movimiento?.moduloId === modulo.id || undefined}
             onPointerDown={(evento) => arrastre.alPulsarModulo(evento, modulo.id)}
@@ -56,8 +56,11 @@ export function LienzoCerramiento({ configuracion, moduloActivoId, seleccion, on
                 evento.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true }))
               }
             }}>
-            <rect {...svgRect(modulo.rect)} className={activa ? 'al-frame al-module-selected' : 'al-frame'} />
-            {modulo.elementos.map((elemento) => <ElementoModulo key={`${modulo.id}-${elemento.id}`}
+            {modulo.invisible
+              // Hueco (DS3): ocupa su sitio, sin marco ni vidrio; solo un contorno para poder seleccionarlo.
+              ? <rect {...svgRect(modulo.rect)} className={activa ? 'al-hueco-invisible al-module-selected' : 'al-hueco-invisible'} />
+              : <rect {...svgRect(modulo.rect)} className={activa ? 'al-frame al-module-selected' : 'al-frame'} />}
+            {!modulo.invisible && modulo.elementos.map((elemento) => <ElementoModulo key={`${modulo.id}-${elemento.id}`}
               elemento={elemento} moduloId={modulo.id} seleccion={seleccion} onSeleccion={onSeleccion} />)}
           </g>
         )

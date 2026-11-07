@@ -152,6 +152,7 @@
 }
 
 .al-command:disabled,
+.al-command-primary:disabled,
 .al-command[aria-disabled='true'] {
   cursor: not-allowed;
   opacity: 0.48;

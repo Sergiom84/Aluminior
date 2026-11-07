@@ -5,6 +5,7 @@ import { compactoModuloValido } from './compacto-cerramiento.ts'
 import { resolverGeometriaFi1Ofi } from './geometria-1ofi.ts'
 import { resolverGeometriaComposicion } from './geometria-composicion.ts'
 import { materialesModuloValidos, materialesUnionValidos } from './materiales-cerramiento.ts'
+import { invisibleValido } from './elemento-invisible.ts'
 import { anclajesV3Validos, VERSION_COMPOSICION_CERRAMIENTO } from './composicion-cerramiento.ts'
 import type { ConfiguracionCerramiento } from './cerramiento.ts'
 import { VERSION_CONFIGURACION_CERRAMIENTO } from './versiones-cerramiento.ts'
@@ -30,7 +31,8 @@ export function esConfiguracionCerramiento(
       !Number.isFinite(modulo.anchoMm) || modulo.anchoMm <= 0 ||
       !Number.isFinite(modulo.altoMm) || modulo.altoMm <= 0) return false
     if (candidato.version !== VERSION_COMPOSICION_CERRAMIENTO &&
-      (Object.hasOwn(modulo, 'anclaje') || Object.hasOwn(modulo, 'materiales') || Object.hasOwn(modulo, 'cotas') || Object.hasOwn(modulo, 'compacto'))) return false
+      (Object.hasOwn(modulo, 'anclaje') || Object.hasOwn(modulo, 'materiales') || Object.hasOwn(modulo, 'cotas') || Object.hasOwn(modulo, 'compacto') || Object.hasOwn(modulo, 'invisible'))) return false
+    if (!invisibleValido(modulo.invisible)) return false
     if (!materialesModuloValidos(modulo.materiales) || !cotasModuloValidas(modulo.cotas, modulo.altoMm, modulo.anchoMm) || !compactoModuloValido(modulo.compacto)) return false
     const plantilla = plantillaDiseno(modulo.estructuraCodigo)
     if (!plantilla) return false

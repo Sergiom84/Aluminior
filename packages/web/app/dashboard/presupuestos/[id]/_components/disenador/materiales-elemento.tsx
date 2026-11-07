@@ -21,7 +21,7 @@ export function MaterialesElemento({ modulo, borrador, generales, series, onChan
   const serie = valor('serieCodigo')
   return <>
     <label className="al-designer-measure">
-      <span className="al-designer-properties-label">Perfiles</span>
+      <span className="al-designer-properties-label">Perfiles del elemento</span>
       <select value={serie} data-excepcion={Boolean(serie) || undefined}
         onChange={(evento) => onChange({ serieCodigo: evento.target.value || null })}>
         <option value="">{general('serieCodigo')}</option>
@@ -30,8 +30,8 @@ export function MaterialesElemento({ modulo, borrador, generales, series, onChan
       </select>
     </label>
     <label className="al-designer-measure">
-      <span className="al-designer-properties-label">Vidrio</span>
-      <CampoVidrio aria-label="Vidrio" value={valor('vidrioCodigo')} placeholder={general('vidrioCodigo')}
+      <span className="al-designer-properties-label">Vidrio del elemento</span>
+      <CampoVidrio aria-label="Vidrio del elemento" value={valor('vidrioCodigo')} placeholder={general('vidrioCodigo')}
         data-excepcion={Boolean(valor('vidrioCodigo')) || undefined} className="cifra"
         onChange={codigo => onChange({ vidrioCodigo: codigo || null })} />
     </label>

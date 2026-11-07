@@ -13,6 +13,8 @@ import { Escaparate } from './escaparate.tsx'
 import { CamposArticulo, CamposCerramiento, acabadoPorDefecto } from './campos-alta.tsx'
 import { MensajeError } from './mensaje-error.tsx'
 import { enfocarEdicion } from './foco-edicion.ts'
+import { useSeriesValidas } from './use-series-validas.ts'
+import { MosquiterasCatalogo, type ModeloMosquitera } from './disenador/mosquiteras-catalogo.tsx'
 import { catalogosEstructuraListos, claveCatalogoHerraje, type EstadoCargaCatalogo } from './editor-linea/disponibilidad-catalogos.ts'
 import styles from '../presupuesto-movil.module.css'
 
@@ -24,8 +26,9 @@ type TipoLinea = 'ESTRUCTURA' | 'ARTICULO' | 'CERRAMIENTO'
  * Artículos siguen a un clic. Tras Aceptar, el diálogo se reabre para seguir añadiendo.
  */
 export function AnyadirLinea({
-  presupuestoId, series, acabados, catalogoUniones, cotasCatalogo,
+  presupuestoId, series, acabados, catalogoUniones, cotasCatalogo, mosquiteras = [],
 }: {
+  mosquiteras?: readonly ModeloMosquitera[]
   presupuestoId: string
   series: string[]
   acabados: { codigo: string; descripcion: string }[]
@@ -93,6 +96,11 @@ export function AnyadirLinea({
     setEdicion((actual) => actual + 1)
   }
 
+  const estructurasEnPantalla = tipo === 'CERRAMIENTO'
+    ? configuracion?.modulos.map((modulo) => modulo.estructuraCodigo) ?? []
+    : tipo === 'ESTRUCTURA' && plantilla ? [plantilla.codigo] : []
+  const seriesValidas = useSeriesValidas(series, estructurasEnPantalla, vidrio)
+
   const err = estado && !estado.ok ? estado.errores : {}
   const enEscaparate = tipo === 'ESTRUCTURA' && !plantilla
   const codigoLinea = tipo === 'CERRAMIENTO' ? 'GRUPO' : plantilla?.codigo ?? ''
@@ -155,7 +163,7 @@ export function AnyadirLinea({
 
       {tipo === 'ESTRUCTURA' && plantilla && (
         <EditorLineaEstructura
-          plantilla={plantilla} series={series} acabados={acabados}
+          plantilla={plantilla} series={seriesValidas.grupo} acabados={acabados}
           serie={serie} setSerie={setSerie} anchoMm={anchoMm} setAnchoMm={setAnchoMm}
           altoMm={altoMm} setAltoMm={setAltoMm} vidrio={vidrio} setVidrio={setVidrio}
           acabado={acabado} setAcabado={setAcabado} variante={variante} setVariante={setVariante}
@@ -170,10 +178,14 @@ export function AnyadirLinea({
           <DisenadorEstructura key={edicion} codigo="2O" anchoMm={anchoMm} altoMm={altoMm} vacio
             onConfiguracionChange={setConfiguracion}
             onDimensionesChange={actualizarDimensiones}
-            onValidezChange={setConfiguracionValida} series={series} catalogoUniones={catalogoUniones}
+            onValidezChange={setConfiguracionValida} series={seriesValidas.grupo}
+            seriesPorEstructura={seriesValidas.porEstructura} catalogoUniones={catalogoUniones}
             cotasCatalogo={cotasCatalogo}
+            panelMosquiteras={mosquiteras.length ? (
+              <MosquiterasCatalogo presupuestoId={presupuestoId} modelos={mosquiteras} acabados={acabados} />
+            ) : undefined}
             generales={{ serieCodigo: serie || null, vidrioCodigo: vidrio || null }} />
-          <CamposCerramiento err={err} series={series} acabados={acabados}
+          <CamposCerramiento err={err} series={seriesValidas.grupo} acabados={acabados}
             serie={serie} setSerie={setSerie} vidrio={vidrio} setVidrio={setVidrio} />
         </>
       )}
