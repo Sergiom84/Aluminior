@@ -79,6 +79,7 @@ se conservan como fuentes inactivas, sin reactivar instrucciones ni permisos.
 | [RECON-DESPIECE-UNIDAD.md](paridad/RECON-DESPIECE-UNIDAD.md) | Evidencia o verificación fechada; conservar sus límites |
 | [RECON-DETALLE-PRESUPUESTO.md](paridad/RECON-DETALLE-PRESUPUESTO.md) | Evidencia o verificación fechada; conservar sus límites |
 | [SPEC-MANO-DE-OBRA.md](paridad/SPEC-MANO-DE-OBRA.md) | Contrato de horas manuales y mediciones originales |
+| [TUTORIAL-JAVI.md](../Manual/TUTORIAL-JAVI.md) | Tutorial de prueba para Javi, rehecho el 07/11/2026 con capturas de producción (`.html` autocontenido para enviar); guía de uso, no evidencia de paridad |
 | [VERIFICACION-CODEX-2026-09-19.md](paridad/VERIFICACION-CODEX-2026-09-19.md) | Evidencia o verificación fechada; conservar sus límites |
 | [VERIFICACION-MANOS-B1.md](paridad/VERIFICACION-MANOS-B1.md) | Evidencia o verificación fechada; conservar sus límites |
 | [antecedentes/PROMPT-FASE-0-PARIDAD-PRODUCTOR.md](paridad/antecedentes/PROMPT-FASE-0-PARIDAD-PRODUCTOR.md) | Evidencia o verificación fechada; conservar sus límites |

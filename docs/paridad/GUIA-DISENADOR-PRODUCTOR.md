@@ -216,6 +216,12 @@ uniones con dibujo.
 | Forzar medidas manuales | Altura total, Largo guía izq., Largo guía der. (mm) | Sustituyen el cálculo automático |
 | Botones | `Aceptar`, `Cerrar`, papelera | Aplicar, salir sin aplicar, quitar el compacto |
 
+**En Aluminior (07/11/2026):** el panel del elemento lleva los desplegables `Compacto` (COM001–COM017) y
+`Tapajuntas` (GMT001–GMT023 y TAP40) por elemento, y `Aplicar a modelos iguales` los copia a los elementos
+del mismo modelo (`disenador/complementos-elemento.tsx`). El diálogo de Productor con guías, registro de
+persiana y medidas manuales no está reproducido; `descontarHueco` viene del banco (`compDtoHuecoSN`) y no se
+ha contrastado con un documento real.
+
 Lupa de compacto: los 17 de la familia `100`:
 `COM001` cajón de PVC con lama de aluminio térmica; `COM002`–`COM004` cajón
 cuadrado de PVC con lama térmica (s/g, + 1 tapa c/g, + 1 tapa s/g);

@@ -1,5 +1,28 @@
 # Estado actual de Aluminior
 
+07/11/2026: `main` = `eea1917` (sobre `226f130`, integración de `feat/ds3-hueco-panel`). Lote revisado por el
+arquitecto tras el trabajo de Gemini, sin migraciones nuevas. Contenido: alta de línea unificada en
+`Cerramiento` y `Artículos` (sin pestaña `Estructuras`), con las pestañas `Catálogo`, `Propiedades`,
+`Uniones`, `Opc.Herraje`, `Cargos Adic.` y `Acristalamiento`; botón `Uniones` que recorre las uniones
+sin configurar; compacto y tapajuntas por elemento (`TapajuntasModulo`, `descontarHueco`); serie efectiva
+de la unión heredada del módulo contiguo (`serieEfectivaUnion`); mano de obra por cantidad
+(`totalLineaCerramiento` multiplica materiales y horas por unidad); el hueco (`invisible`) describe como
+«FIJO DE 1 HUECO»; etiqueta `h / ud.`; y las acciones de la lista de presupuestos ya no se solapan.
+**Mano de obra por cantidad, demostrada en la 0016** (`Anterior.mdb`, copia, solo lectura): `nDoc 1132`
+GRUPO `Cdad = 2`, `MOCOL` 840 min en total (420 por unidad), `Precio` 842,52 € y total 1.685,04 €
+(coincide al céntimo; el comportamiento anterior daba 1.475,04 €). **Residuo abierto:** `nDoc 887`,
+`Precio` 5.233,35 € frente a 5.233,28 € calculados (7 céntimos por unidad, 14 en el total) con 8 filas,
+`Cdad = 2` y +15 %; es el residuo de comisión sumada del [banco](paridad/BANCO-CONTRASTE-2026-10-03.md), y el
+test lo comprueba con tolerancia explícita (≤ 0,10 €), no como igualdad. No tocar el redondeo de la
+comisión sin una regla demostrada. Verificación: core 1054, web 969 (en serie; en paralelo los tests de
+integración con Postgres se bloquean entre sí por interbloqueo y fallan al azar también sin estos cambios),
+typecheck y `check:architecture` limpios. Los tests de `db` necesitan Postgres en `127.0.0.1:55433`.
+El tutorial para Javi (`Manual/TUTORIAL-JAVI.md` y `.html` autocontenido, 29 capturas) se rehízo el
+07/11 desde producción con el flujo nuevo; los datos de prueba (presupuesto 260021 «PRUEBA JAVI», cliente
+00526) siguen en producción y hay que borrarlos al terminar la prueba. Pendiente: el panel de acciones de
+la lista (`nowrap`) no se ha comprobado a 375 px; el descuento de hueco del compacto y el tapajuntas por
+elemento no se han contrastado con un documento real de Productor.
+
 06/11/2026: `main` = `ab4c5b9` (suma PDF1 y DS2 sobre `7bd12d3`). Último despliegue comprobado en Render: `7bd12d3` (`dep-dbmcj0ajnfac7399g5l0`, 05/11 18:24 UTC); el de `ab4c5b9` está sin comprobar. Todas las ramas de trabajo están integradas en `main`; ningún worktree tiene commits propios. Incluye M1, E2, GR1 (motor y UI), E5, E5b, E6, DS2, DG1 (`8334f60`), VA1 (`5b709ac`), S2 (`5298a7b`), GR2 (`1040a92`, `a3ffc67`) y el arreglo del banco (`7bd12d3`). Sin migraciones nuevas desde la 0035. Los párrafos siguientes que dicen «rama», «local», «sin commit» o «sin publicar» son antecedentes fechados: su código ya está en `main`.
 
 Producción, 03/11/2026: `main` = `46fd472` (M1 uniones + línea E1 de Windows +
@@ -620,9 +643,11 @@ Los nueve documentos anteriores y tres líneas conservan sus huellas.
 
 ## Siguiente paso
 
-**Siguiente:** que Sergio pruebe en local la rama `feat/ds3-hueco-panel` y decida integrarla;
-después, QA con sesión en producción de DG1, VA1, GR2, PDF1, DS2 y DS3; luego los 16 GRUPO
-con el patrón de GR2 y `caso-02155` de E2.
+**Siguiente:** que Javi pruebe con el [tutorial](../Manual/TUTORIAL-JAVI.md) y devuelva observaciones
+(`feat/ds3-hueco-panel` ya está en `main`); después, QA con sesión en producción de DG1, VA1, GR2,
+PDF1, DS2 y DS3; luego contrastar el compacto/tapajuntas por elemento con un documento real de la 0016
+y los 16 GRUPO con el patrón de GR2 y `caso-02155` de E2. No rehacer la mano de obra por cantidad
+(demostrada con `nDoc 1132`) ni cambiar el redondeo de la comisión (residuo de `nDoc 887` documentado).
 DS3 y panel del elemento (07/11/2026, rama `feat/ds3-hueco-panel` sobre `5196b30`): «Convertir
 en hueco» (elemento invisible a 0 €, sin despiece, cuenta en medidas y uniones); panel del
 elemento y campos de la línea en una fila; con un solo elemento no se repiten Perfiles/Vidrio.
