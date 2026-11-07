@@ -3,7 +3,7 @@
 import React from 'react'
 import { useEffect, useRef, useState } from 'react'
 import {
-  cambiarEstructuraModuloCerramiento, crearConfiguracionCerramiento, dependientesModulo,
+  cambiarEstructuraModuloCerramiento, cambiarInvisibleModulo, crearConfiguracionCerramiento, esModuloInvisible, dependientesModulo,
   eliminarModuloConDependientes, esConfiguracionCerramiento, esModuloRaiz, insertarModuloEnAnclaje,
   medidasCerramiento, moduloDesdePlantilla, plantillaDiseno, PLANTILLAS_DISENO, posicionesCerramiento,
   UNIONES_VISUALES, type UnionVisual,
@@ -210,7 +210,8 @@ export function DisenadorEstructura({
               insercion={{ activa: Boolean(insertando) && !edicion.pendientes,
                 onInsertar: (anclaje) => insercion.solicitar(insertando!, anclaje) }}
               movimiento={{ moduloId: mover.moviendo, anclajes: mover.anclajes, puedeMover: mover.puedeMover,
-                onIniciar: mover.iniciar, onMover: mover.mover, onCancelar: mover.cancelar }} />
+                onIniciar: mover.iniciar, onMover: mover.mover, onCancelar: mover.cancelar,
+                onBloqueado: (id) => { if (mover.movible(id)) mover.avisarBloqueo() } }} />
             </LienzoConExtremos>
           : <LienzoVacio preparada={preparada} onColocar={(plantilla) => insercion.solicitar(plantilla, null)}
               onAbrir={() => insercion.abrirSelector(null)} />}
@@ -240,11 +241,14 @@ export function DisenadorEstructura({
                 pendiente={Boolean(edicion.borradores.modulos[modulo.id])} bloqueado={edicion.pendientes}
                 preparada={preparada} eliminable={!esModuloRaiz(configuracion, modulo.id)}
                 onChange={(cambios) => edicion.editarModulo(modulo.id, cambios)}
-                onActualizar={() => edicion.aplicar('modulos', modulo.id)}
-                onDescartar={() => edicion.descartar('modulos', modulo.id)}
+                onActualizar={() => { setAviso(null); edicion.aplicar('modulos', modulo.id) }}
+                onDescartar={() => { setAviso(null); edicion.descartar('modulos', modulo.id) }}
                 onSustituir={() => preparada && setConfiguracion(
                   cambiarEstructuraModuloCerramiento(configuracion, modulo.id, preparada))}
-                onEliminar={eliminar} moviendo={mover.moviendo === modulo.id} movible={mover.puedeMover(modulo.id)}
+                onEliminar={eliminar} moviendo={mover.moviendo === modulo.id} movible={mover.movible(modulo.id)}
+                invisible={esModuloInvisible(modulo)}
+                materialesPropios={configuracion.modulos.length > 1 || Boolean(modulo.materiales)}
+                onInvisible={() => setConfiguracion(cambiarInvisibleModulo(configuracion, modulo.id, !esModuloInvisible(modulo)))}
                 onMover={() => mover.moviendo === modulo.id ? mover.cancelar() : mover.iniciar(modulo.id)} />
             : union && <div className="al-designer-union-editor">
                 <EditorUnion catalogoUniones={catalogoUniones} serieCodigo={generales.serieCodigo}

@@ -14,6 +14,8 @@ export interface MovimientoLienzo {
   onIniciar: (id: string) => void
   onMover: (anclaje: AnclajeLibre) => void
   onCancelar: () => void
+  /** El gesto de arrastre empezó sobre un elemento que ahora no se puede mover. */
+  onBloqueado?: (id: string) => void
 }
 
 const clave = (a: AnclajeLibre) => `${a.moduloId}:${a.lado}`
@@ -36,7 +38,7 @@ export function useArrastreModulo({ svg, movimiento, tamanoMm }: {
   movimiento?: MovimientoLienzo
   tamanoMm: number
 }) {
-  const inicio = useRef<{ id: string; x: number; y: number; arrastrando: boolean } | null>(null)
+  const inicio = useRef<{ id: string; x: number; y: number; arrastrando: boolean; bloqueado: boolean } | null>(null)
   const [resaltado, setResaltado] = useState<string | null>(null)
   const proximo = (evento: PointerEvent) => {
     const punto = svg.current && puntoEnMm(svg.current, evento.clientX, evento.clientY)
@@ -53,8 +55,9 @@ export function useArrastreModulo({ svg, movimiento, tamanoMm }: {
   return {
     resaltado,
     alPulsarModulo: (evento: PointerEvent, id: string) => {
-      if (evento.button !== 0 || !movimiento.puedeMover(id)) return
-      inicio.current = { id, x: evento.clientX, y: evento.clientY, arrastrando: false }
+      if (evento.button !== 0) return
+      inicio.current = { id, x: evento.clientX, y: evento.clientY, arrastrando: false,
+        bloqueado: !movimiento.puedeMover(id) }
     },
     manejadores: {
       onPointerMove: (evento: PointerEvent<SVGSVGElement>) => {
@@ -62,6 +65,11 @@ export function useArrastreModulo({ svg, movimiento, tamanoMm }: {
         if (!actual) return
         if (!actual.arrastrando) {
           if (Math.hypot(evento.clientX - actual.x, evento.clientY - actual.y) < UMBRAL_ARRASTRE_PX) return
+          if (actual.bloqueado) {
+            inicio.current = null
+            movimiento.onBloqueado?.(actual.id)
+            return
+          }
           actual.arrastrando = true
           svg.current?.setPointerCapture(evento.pointerId)
           movimiento.onIniciar(actual.id)

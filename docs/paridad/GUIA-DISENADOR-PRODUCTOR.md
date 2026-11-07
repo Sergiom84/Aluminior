@@ -381,9 +381,20 @@ invisible + 2O con uniones `GMU038`; ver la
   y Productor no lo aceptó hasta rellenarlos («Datos incompletos para el
   Elemento»).
 
-**En Aluminior: no existe.** No hay elemento invisible ni editor de diseño
-específico por elemento. Tarea `DS3` del roadmap. Las preguntas 6 y 8 siguen
-siendo del operador; la 7 queda resuelta salvo el PDF.
+**En Aluminior (07/11/2026, DS3, rama `feat/ds3-hueco-panel`):** botón
+«Convertir en hueco» en el panel del elemento (y «Volver a ventana» para
+deshacerlo; también entra en Deshacer/Rehacer). Se guarda como
+`invisible: true` en el módulo (composición v3). Valoración: origen completo a
+0 € sin piezas y sin consultar catálogo (regla `ELEMENTO_INVISIBLE`); las
+uniones a sus lados se valoran (GMU038 = 4,12 €, como en Productor). Cuenta en
+el ancho/alto y se mueve como cualquier elemento. La descripción del `GRUPO`
+lo incluye como «FIJO DE 1 HUECO DE MEDIDAS : 400,0 x 400,0» con color, serie
+y vidrio. Dibujo: en el lienzo, contorno discontinuo para poder seleccionarlo
+(desviación deliberada: en Productor solo se ve al seleccionarlo); en la
+miniatura y el PDF, en blanco. Sigue sin existir el editor `Diseño V3`
+(cartabón). Las preguntas 6 y 8 siguen siendo del operador; el PDF de
+Productor con un invisible sigue sin emitirse, así que el blanco del PDF es
+hipótesis.
 
 ## Cobertura en Aluminior
 
@@ -392,14 +403,14 @@ siendo del operador; la 7 queda resuelta salvo el PDF.
 | Escaparate de ventanas | Sí: 541 estructuras, 160 dibujables | Sí, con paginación; faltan familias no dibujables |
 | Composición a la derecha / debajo | — | Sí: «+» lateral e inferior y botones de la barra (01/11/2026) |
 | Mover una pieza colocada | — | Sí: arrastre con ajuste a anclajes y botón «Mover elemento», también el primero; deshacer y rehacer (DS2) |
-| Elemento seleccionado | — | Sí: posición calculada, medidas, perfiles, vidrio, actualizar, eliminar |
+| Elemento seleccionado | — | Sí, en una fila: posición calculada, medidas (Intro actualiza), perfiles y vidrio propios (solo con varios elementos o excepción ya guardada), mover, convertir en hueco, eliminar |
 | Perfiles (series) | Sí: 57 series | Desplegable de códigos; falta búsqueda con descripción y filtro |
 | Vidrio | Sí: familia 050 | Búsqueda por código y descripción |
 | Acabado | Sí: 18 acabados | No hay acabado por elemento en el panel del diseñador |
 | Unión | Sí: artículos de unión | Parcial; sin «siguiente unión», tipo fija/variable ni escaparate |
 | Insertar tapajuntas cerramientos | Sí: 24 tapajuntas (familia 102) | No; función pendiente de explicar |
 | Insertar compacto | Sí: 17 compactos | No (E5) |
-| Cartabón / Diseño V3 y elemento invisible | — | No (DS3) |
+| Cartabón / Diseño V3 y elemento invisible | — | Invisible sí, como «Convertir en hueco» (DS3, 07/11/2026); Diseño V3 no |
 
 ## Pendiente de explicar
 

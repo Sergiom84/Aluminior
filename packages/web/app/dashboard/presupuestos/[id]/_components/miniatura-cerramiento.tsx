@@ -42,7 +42,7 @@ export function MiniaturaCerramiento({ configuracion }: { configuracion: Configu
     role="img" aria-label={`Cerramiento ${modelos}: ${geometria.anchoMm} × ${geometria.altoContractualMm} mm`}
     preserveAspectRatio="xMidYMid meet">
     <g pointerEvents="none">
-      {geometria.modulos.map((modulo) => <g key={modulo.id}>
+      {geometria.modulos.filter((modulo) => !modulo.invisible).map((modulo) => <g key={modulo.id}>
         <Rectangulo rect={transformar(modulo.rect)} clase="al-frame" />
         {modulo.elementos.map((elemento) => <ElementoMiniatura key={elemento.id}
           elemento={{ ...elemento, ...transformar(elemento) }} />)}

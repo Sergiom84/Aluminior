@@ -19,7 +19,7 @@ export function entradasCerramiento(
   const entradas: Entrada[] = []
   for (const modulo of configuracion.modulos) {
     entradas.push({ tipo: 'modulo', id: modulo.id, indice: entradas.length,
-      texto: `${modulo.estructuraCodigo} de ${modulo.anchoMm} x ${modulo.altoMm}` })
+      texto: `${modulo.estructuraCodigo} de ${modulo.anchoMm} x ${modulo.altoMm}${modulo.invisible ? ' · hueco' : ''}` })
     const anclaje = anclajes.get(modulo.id)
     const union = anclaje && uniones.get(anclaje.unionId)
     if (!anclaje || !union) continue

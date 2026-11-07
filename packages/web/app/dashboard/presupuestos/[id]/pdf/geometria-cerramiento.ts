@@ -25,6 +25,7 @@ export function geometriaCerramientoPdf(configuracion: ConfiguracionCerramiento,
   }
   const modulos = geometria.modulos.map((modulo) => ({
     id: modulo.id,
+    invisible: modulo.invisible,
     rect: transformar(modulo.rect),
     elementos: modulo.elementos.map((elemento) => ({
       ...elemento, ...transformar(elemento),

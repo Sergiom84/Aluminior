@@ -41,6 +41,8 @@ export interface ModuloCerramiento {
   materiales?: MaterialesModulo
   /** Solo en v3: compacto de persiana integrado en el módulo. */
   compacto?: CompactoModulo
+  /** Solo en v3: espacio que no se instala (viga, pared); precio 0 y sin despiece (DS3). */
+  invisible?: true
 }
 
 export interface UnionCerramiento {

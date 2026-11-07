@@ -1,4 +1,4 @@
-import { CATALOGO_SNAPSHOT, compactoEfectivoModulo, cotasEfectivasModulo, esConfiguracionCerramiento, esResultadoCerramiento, etapasVentaCerramiento,
+import { CATALOGO_SNAPSHOT, compactoEfectivoModulo, esModuloInvisible, origenInvisible, cotasEfectivasModulo, esConfiguracionCerramiento, esResultadoCerramiento, etapasVentaCerramiento,
   unionConfigurada, resolverOrigenSinUnion, medidasFabricacionCerramiento,
   type ConfiguracionCerramiento, type RedondeoVentaCerramiento, type ResultadoCerramientoV1,
   type ResultadoOrigenCerramiento } from '@aluminior/core/estructuras'
@@ -60,6 +60,8 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
       coste: { completo: false, importe: null }, piezas: [], partidasValoracion: [],
       acristalamiento: [], opcionesHerraje: [], diagnosticos: [],
     }
+    // Elemento invisible (DS3): precio 0 y sin despiece, como Productor; no consulta catálogo.
+    if (g.tipo === 'MODULO' && esModuloInvisible(porModulo.get(g.id)!)) { origenes.push(origenInvisible(origen)); continue }
     const bloquear = (detalle: string, materialIncompleto = true) => {
       origen.diagnosticos = [...origen.diagnosticos,
         { codigo: 'MATERIAL_INCOMPLETO', ambito: 'VENTA', bloqueante: true, detalle },

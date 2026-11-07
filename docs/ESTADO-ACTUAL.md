@@ -620,8 +620,16 @@ Los nueve documentos anteriores y tres líneas conservan sus huellas.
 
 ## Siguiente paso
 
-**Siguiente:** QA con sesión en producción de DG1, VA1, GR2,
-PDF1 y DS2; después, los 16 GRUPO con el patrón de GR2 y `caso-02155` de E2.
+**Siguiente:** que Sergio pruebe en local la rama `feat/ds3-hueco-panel` y decida integrarla;
+después, QA con sesión en producción de DG1, VA1, GR2, PDF1, DS2 y DS3; luego los 16 GRUPO
+con el patrón de GR2 y `caso-02155` de E2.
+DS3 y panel del elemento (07/11/2026, rama `feat/ds3-hueco-panel` sobre `5196b30`): «Convertir
+en hueco» (elemento invisible a 0 €, sin despiece, cuenta en medidas y uniones); panel del
+elemento y campos de la línea en una fila; con un solo elemento no se repiten Perfiles/Vidrio.
+Mover: en producción funcionaba; lo que lo bloqueaba eran medidas tecleadas sin pulsar
+«Actualizar» (parecía texto). Ahora «Actualizar» es botón principal, Intro en una medida
+actualiza sin enviar la línea y el intento de mover con cambios pendientes avisa. Ver la fila
+DS3 del roadmap. No rehacerlo.
 DS2 (06/11/2026): deshacer y rehacer de todo cambio del conjunto y mover también el primer
 elemento dejando fijos a los demás; ver su fila del roadmap. No rehacerlo.
 PDF1 (06/11/2026): el PDF escribe medidas, importes, cantidades y horas en formato español
