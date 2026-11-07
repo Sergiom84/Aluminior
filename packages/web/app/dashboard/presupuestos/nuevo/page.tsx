@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useAltaPresupuesto } from './use-alta-presupuesto.ts'
 import { Shell } from '../../_components/shell.tsx'
 import { SelectorCliente } from './selector-cliente.tsx'
+import { SelectorFormaPago } from './selector-forma-pago.tsx'
 
 export default function NuevoPresupuesto() {
   const router = useRouter()
@@ -24,12 +25,10 @@ export default function NuevoPresupuesto() {
         )}
 
         <header className="al-document-heading">
-          <h2>Nuevo Documento</h2>
+          <h2>Nuevo Presupuesto</h2>
         </header>
 
         <fieldset disabled={recuperando || enviando} className="al-new-document-fields">
-          <legend>Nuevo Documento de Ventas</legend>
-
           <div className="al-new-document-grid">
             <div>
               <label htmlFor="delegacion">Delegación</label>
@@ -85,7 +84,7 @@ export default function NuevoPresupuesto() {
 
             <div className="al-span-2">
               <label htmlFor="formaPago">Forma de pago</label>
-              <input id="formaPago" name="formaPago" className={entrada} style={estilo} />
+              <SelectorFormaPago id="formaPago" className={entrada} style={estilo} />
             </div>
           </div>
         </fieldset>
