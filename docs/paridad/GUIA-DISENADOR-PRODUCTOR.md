@@ -62,6 +62,15 @@ no aparecen todavía. Componentes:
 `packages/web/app/dashboard/presupuestos/[id]/_components/escaparate.tsx` y
 `disenador/catalogo-inferior.tsx` (paginación `Página anterior/siguiente`).
 
+**Código (09/11/2026, prueba con el operador).** En Productor, `Edición de
+Línea` acepta el código de la estructura y Enter abre el editor
+([RECON-CERRAMIENTOS §5](RECON-CERRAMIENTOS.md)). En Aluminior la casilla
+`Código` está en el catálogo inferior y en el diálogo `Añadir ventana`. Enter
+o `Elegir` coloca esa ventana, o la elige si el diálogo está abierto. No
+adivina prefijos: `2` no es `2O` y `C2` no es `C2P`. `2O+FIJO` equivale a
+`2O+ FIJO`. Si no hay una plantilla dibujable con ese código, avisa y no
+inserta nada. Las no dibujables siguen sin poder elegirse.
+
 ## 2. Propiedades del cerramiento → `Elemento seleccionado`
 
 **Explicado.** El botón abre las pestañas `Elemento seleccionado`, `Unión`,
@@ -406,7 +415,7 @@ hipótesis.
 
 | Botón / diálogo | Catálogo en Aluminior | Interacción en Aluminior |
 |---|---|---|
-| Escaparate de ventanas | Sí: 541 estructuras, 160 dibujables | Sí, con paginación; faltan familias no dibujables |
+| Escaparate de ventanas | Sí: 541 estructuras, 160 dibujables | Sí, con paginación y elección por código (09/11/2026); faltan familias no dibujables |
 | Composición a la derecha / debajo | — | Sí: «+» lateral e inferior y botones de la barra (01/11/2026) |
 | Mover una pieza colocada | — | Sí: arrastre con ajuste a anclajes y botón «Mover elemento», también el primero; deshacer y rehacer (DS2) |
 | Elemento seleccionado | — | Sí, en una fila: posición calculada, medidas (Intro actualiza), perfiles y vidrio propios (solo con varios elementos o excepción ya guardada), mover, convertir en hueco, eliminar |

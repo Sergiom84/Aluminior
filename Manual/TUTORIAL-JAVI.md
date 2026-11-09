@@ -75,8 +75,9 @@ línea solo eliges entre **Cerramiento** y **Artículos**.
 ![Ventana colocada](img/08-ventana-colocada.jpg)
 
 Abajo está el escaparate por familias (correderas, abatibles, oscilobatientes,
-fijos…). Pulsa un modelo, por ejemplo **C2**, y luego **Colocar C2**. También puedes
-pulsar el **+** del lienzo y elegirla en la ventana que se abre.
+fijos…). Escribe el código, por ejemplo `C2`, y pulsa **Elegir** o Intro. También
+puedes pulsar un modelo y luego **Colocar C2**, o el **+** del lienzo: en esa
+ventana el código funciona igual.
 
 Encima del dibujo tienes las pestañas del cerramiento: **Catálogo**,
 **Propiedades**, **Uniones**, **Opc.Herraje**, **Cargos Adic.** y

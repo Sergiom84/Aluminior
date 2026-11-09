@@ -1,5 +1,7 @@
 # Estado actual de Aluminior
 
+09/11/2026, prueba con el operador (local, sin publicar): en presupuestos se elige la ventana escribiendo su código en el catálogo inferior y en `Añadir ventana`. Enter o `Elegir` coloca la coincidencia exacta (`2` no es `2O`; `2O+FIJO` equivale a `2O+ FIJO`). Si no hay plantilla dibujable, avisa y no inserta. Guía del diseñador y tutorial (`Manual/TUTORIAL-JAVI.md` y la frase equivalente del HTML) actualizados.
+
 07/11/2026: `main` = `eea1917` (sobre `226f130`, integración de `feat/ds3-hueco-panel`). Lote revisado por el
 arquitecto tras el trabajo de Gemini, sin migraciones nuevas. Contenido: alta de línea unificada en
 `Cerramiento` y `Artículos` (sin pestaña `Estructuras`), con las pestañas `Catálogo`, `Propiedades`,

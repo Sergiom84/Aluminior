@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
+import { plantillaDiseno } from './diseno.ts'
 import {
-  CATEGORIAS_ESCAPARATE, categoriaConCatalogo, categoriaInicialEscaparate,
+  buscarVentanasPorCodigo, CATEGORIAS_ESCAPARATE, categoriaConCatalogo, categoriaInicialEscaparate,
   itemsEscaparate, paginaEscaparate,
 } from './escaparate.ts'
 
@@ -34,6 +35,23 @@ describe('escaparate de estructuras', () => {
     expect(primera.pagina).toBe(1)
     const fuera = paginaEscaparate(muchos, 99, 4)
     expect(fuera.pagina).toBe(fuera.totalPaginas)
+  })
+
+  it('elige por código exacto, sin convertir un prefijo en otra ventana', () => {
+    expect(buscarVentanasPorCodigo('2').exacta?.codigo).toBe('2')
+    expect(buscarVentanasPorCodigo('2').coincidencias.map((item) => item.codigo))
+      .toEqual(expect.arrayContaining(['2', '2O', '2O+ FIJO']))
+    expect(buscarVentanasPorCodigo('2o').exacta?.codigo).toBe('2O')
+    expect(buscarVentanasPorCodigo('  c2 ').exacta?.codigo).toBe('C2')
+    expect(buscarVentanasPorCodigo('C2').exacta?.codigo).toBe('C2')
+    expect(buscarVentanasPorCodigo('C2').coincidencias.map((item) => item.codigo)).toContain('C2P')
+    expect(buscarVentanasPorCodigo('2O+FIJO').exacta?.codigo).toBe('2O+ FIJO')
+    expect(buscarVentanasPorCodigo('   ')).toEqual({ consulta: '', exacta: null, coincidencias: [] })
+    const acotada = buscarVentanasPorCodigo('C2', [plantillaDiseno('C2')!, plantillaDiseno('C2P')!])
+    expect(acotada.exacta?.codigo).toBe('C2')
+    expect(acotada.coincidencias.map((item) => item.codigo)).toEqual(['C2', 'C2P'])
+    expect(buscarVentanasPorCodigo('C99', [plantillaDiseno('C2')!]))
+      .toEqual({ consulta: 'C99', exacta: null, coincidencias: [] })
   })
 
   it('usa familias del catálogo y orden observado en la 0017', () => {

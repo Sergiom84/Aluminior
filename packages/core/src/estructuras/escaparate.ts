@@ -91,3 +91,32 @@ export function paginaEscaparate(
 export function categoriaConCatalogo(categoria: CategoriaEscaparate): boolean {
   return categoria.familias.length > 0 && itemsEscaparate(categoria.id).length > 0
 }
+
+export interface BusquedaVentanaCodigo {
+  readonly consulta: string
+  readonly exacta: PlantillaDiseno | null
+  readonly coincidencias: readonly PlantillaDiseno[]
+}
+
+/** Código comparable: mayúsculas y sin espacios. `2O+FIJO` es `2O+ FIJO`. */
+const codigoComparable = (codigo: string) => codigo.trim().toUpperCase().replace(/\s+/g, '')
+
+/**
+ * Búsqueda por código de estructura dibujable. La exacta no se confunde con un
+ * prefijo: `2` es la ventana `2`, no `2O`; `C2` no es `C2P`.
+ */
+export function buscarVentanasPorCodigo(
+  consulta: string,
+  plantillas: readonly PlantillaDiseno[] = plantillasDisponibles(),
+): BusquedaVentanaCodigo {
+  const normalizada = codigoComparable(consulta)
+  if (!normalizada) return { consulta: '', exacta: null, coincidencias: [] }
+  const coincidencias = plantillas
+    .filter((plantilla) => codigoComparable(plantilla.codigo).startsWith(normalizada))
+    .sort((a, b) => porCodigo.compare(a.codigo, b.codigo))
+  return {
+    consulta: normalizada,
+    exacta: coincidencias.find((plantilla) => codigoComparable(plantilla.codigo) === normalizada) ?? null,
+    coincidencias,
+  }
+}

@@ -20,6 +20,8 @@ describe('configurador con la disposición de Productor', () => {
     expect(html).toContain('VENTANAS ABATIBLES')
     expect(html).toContain('draggable="true"')
     expect(html).toContain('aria-label="Añadir primera ventana"')
+    expect(html).toContain('Código')
+    expect(html).toContain('>Elegir</button>')
     expect(html).toContain('Medidas de nuevas ventanas')
     expect(html).toContain('>Uniones</button>')
     expect(html).toContain('>Opc.Herraje</button>')
