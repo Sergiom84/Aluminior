@@ -205,9 +205,11 @@ export async function cargarTarifa(
     return { modo: 'apply', tarifa: TARIFA, escrito: false, filas: 0, totalEnTarifa: existentes.length, altas: altas.length, cambios: cambios.length, iguales: iguales.length, noEncontrados: noEncontrados.length, fueraRango: fueraRango.length, invalidas: invalidas.length }
   }
   const lote = [...validas.values()].map((v) => ({ articulo_codigo: v.articulo, acabado_codigo: v.acabado, tarifa: TARIFA, precio: v.precio.toFixed(4) }))
+  // Un precio puesto por el operador (de_usuario) no se pisa: la tarifa no lo traía.
   await sql.begin(async (tx) => {
     await tx`INSERT INTO articulos_pvp ${tx(lote, 'articulo_codigo', 'acabado_codigo', 'tarifa', 'precio')}
-             ON CONFLICT (articulo_codigo, acabado_codigo, tarifa) DO UPDATE SET precio = EXCLUDED.precio`
+             ON CONFLICT (articulo_codigo, acabado_codigo, tarifa) DO UPDATE SET precio = EXCLUDED.precio
+             WHERE NOT articulos_pvp.de_usuario`
     // registro de la tarifa (procedencia + vigencia); fecha_carga la pone la BD (defaultNow).
     await tx`INSERT INTO tarifas ${tx([registro], 'id', 'descripcion', 'proveedor', 'fecha_vigencia')}
              ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion, proveedor = EXCLUDED.proveedor,

@@ -2,6 +2,7 @@ import { plantillaDiseno, UNIONES_VISUALES } from './diseno.ts'
 import { unionAdmitida, type CatalogoAdmision } from './catalogo-uniones.ts'
 import { cotasModuloValidas } from './cotas-cerramiento.ts'
 import { compactoModuloValido, tapajuntasModuloValido } from './compacto-cerramiento.ts'
+import { preciosManualesValidos } from '../precios/precio-manual.ts'
 import { resolverGeometriaFi1Ofi } from './geometria-1ofi.ts'
 import { resolverGeometriaComposicion } from './geometria-composicion.ts'
 import { materialesModuloValidos, materialesUnionValidos } from './materiales-cerramiento.ts'
@@ -25,7 +26,8 @@ export function esConfiguracionCerramiento(
       !Array.isArray(candidato.modulos) || !Array.isArray(candidato.uniones) ||
       candidato.modulos.length === 0 ||
       candidato.uniones.length !== candidato.modulos.length - 1 ||
-      (Object.hasOwn(candidato, 'repartoUniones') && candidato.repartoUniones !== 'PIEZAS')) return false
+      (Object.hasOwn(candidato, 'repartoUniones') && candidato.repartoUniones !== 'PIEZAS') ||
+      !preciosManualesValidos(candidato.preciosManuales)) return false
   const modulosValidos = candidato.modulos.every((modulo) => {
     if (!modulo || typeof modulo.id !== 'string' || typeof modulo.estructuraCodigo !== 'string' ||
       !Number.isFinite(modulo.anchoMm) || modulo.anchoMm <= 0 ||

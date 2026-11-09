@@ -23,6 +23,7 @@ import {
 } from './cotas-cerramiento.ts'
 import type { MaterialesModulo, MaterialesUnion } from './materiales-cerramiento.ts'
 import type { CompactoModulo, TapajuntasModulo } from './compacto-cerramiento.ts'
+import type { PrecioManual } from '../precios/precio-manual.ts'
 
 export { VERSION_CONFIGURACION_CERRAMIENTO }
 export const FI_1OFI_NUEVA_ALTA_MM = 300 as const
@@ -66,6 +67,8 @@ interface ConfiguracionCerramientoBase {
    * geometría con la que se guardaron.
    */
   repartoUniones?: 'PIEZAS'
+  /** Precios puestos por el operador a piezas sin PVP, solo para esta línea. */
+  preciosManuales?: readonly PrecioManual[]
 }
 
 export interface ConfiguracionCerramientoV1 extends ConfiguracionCerramientoBase {

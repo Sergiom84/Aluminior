@@ -61,6 +61,7 @@ beforeAll(async () => {
       acabado_codigo text NOT NULL,
       tarifa integer NOT NULL,
       precio numeric(12, 4) NOT NULL,
+      de_usuario boolean DEFAULT false NOT NULL,
       CONSTRAINT articulos_pvp_pk PRIMARY KEY (articulo_codigo, acabado_codigo, tarifa)
     );
     CREATE TABLE tarifas (
@@ -151,6 +152,17 @@ describe('cargarTarifa — efectos de escritura (Postgres efímero)', () => {
     expect(r.totalEnTarifa).toBe(3) // sigue habiendo 3 filas, no 4
     const [row] = await sql`SELECT precio::text FROM articulos_pvp WHERE tarifa = 2026 AND articulo_codigo = 'GM306'`
     expect(row.precio).toBe('9.9900')
+  })
+
+  it('no pisa un precio puesto por el operador (de_usuario)', async () => {
+    await sql`INSERT INTO articulos_pvp (articulo_codigo, acabado_codigo, tarifa, precio, de_usuario)
+      VALUES ('PT100', 'L', 2026, 99, true)`
+    await cargarTarifa(sql, { fichero: csv('u.csv', CSV_2026), tarifa: 2026, apply: true }, noop)
+    const [fila] = await sql`SELECT precio::text p, de_usuario FROM articulos_pvp
+      WHERE articulo_codigo = 'PT100' AND acabado_codigo = 'L' AND tarifa = 2026`
+    expect(fila).toEqual({ p: '99.0000', de_usuario: true })
+    const [{ n }] = await sql`SELECT COUNT(*)::int n FROM articulos_pvp WHERE tarifa = 2026`
+    expect(n).toBe(3)
   })
 
   it('--rollback --apply borra SOLO la tarifa destino (y su registro)', async () => {

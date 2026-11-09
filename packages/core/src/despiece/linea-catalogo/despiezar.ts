@@ -12,6 +12,7 @@
 
 import { importeFila, redondearCentimos } from '../../precios/importe-fila.ts'
 import { incidenciaPrecioEnTabla } from '../../precios/precio-en-tabla.ts'
+import { buscarPrecioManual, tarifaConPrecioManual, type PiezaSinPrecio } from '../../precios/precio-manual.ts'
 import { despiezarAccesoriosVentana, despiezarCompacto } from './compacto.ts'
 import { despiezarDiseno } from './diseno.ts'
 import { despiezarEstandar } from './estandar.ts'
@@ -20,6 +21,7 @@ import type { CatalogoLinea, EntradaLineaCatalogo, ResultadoLineaCatalogo } from
 
 const ARTICULO_MANO_OBRA = 'MO'
 const ARTICULO_COLOCACION = 'MOCOL'
+const SIN_PVP = 'sin PVP en la tarifa'
 
 export function despiezarLineaCatalogo(catalogo: CatalogoLinea, entrada: EntradaLineaCatalogo): ResultadoLineaCatalogo {
   const serie = catalogo.serie(entrada.serie)
@@ -48,6 +50,7 @@ export function despiezarLineaCatalogo(catalogo: CatalogoLinea, entrada: Entrada
   }
 
   let total = 0
+  const sinPrecio: PiezaSinPrecio[] = [], conPrecioManual = new Set<string>()
   for (const f of filas) {
     const articulo = catalogo.articulo(f.articulo)
     const bloqueo = incidenciaPrecioEnTabla(f.articulo, articulo?.precioEnTabla)
@@ -58,13 +61,19 @@ export function despiezarLineaCatalogo(catalogo: CatalogoLinea, entrada: Entrada
       if (!tabla.completo) { incidencias.push(`${f.articulo}: ${tabla.motivo}`); continue }
       tarifa = { tipoMetraje: 'UD', pvp: tabla.precio, minimo: 0, multiploAnchoCm: 0, multiploLargoCm: 0, incrementos: [] }
     } else if (bloqueo) { incidencias.push(bloqueo); continue }
-    const r = importeFila(f, tarifa)
+    const efectiva = tarifaConPrecioManual(tarifa, buscarPrecioManual(entrada.preciosManuales, f.articulo, f.acabado))
+    if (efectiva.manual) { f.precioManual = true; conPrecioManual.add(f.articulo) }
+    const r = importeFila(f, efectiva.tarifa)
     f.metraje = r.metraje
     f.precio = r.precio
     f.importe = r.importe
+    if (r.incidencia === SIN_PVP && tarifa) sinPrecio.push({ articulo: f.articulo, acabado: f.acabado,
+      tipoMetraje: tarifa.tipoMetraje, cantidad: f.cantidad, largoMm: f.largoMm, anchoMm: f.anchoMm })
     if (r.incidencia) incidencias.push(`${f.articulo}: ${r.incidencia}`)
     else total += r.importe!
   }
+  if (conPrecioManual.size) avisos.push(`precio puesto a mano: ${[...conPrecioManual].join(', ')}`)
   const unicas = [...new Set(incidencias)]
-  return { filas, importe: unicas.length ? null : redondearCentimos(total), incidencias: unicas, avisos: [...new Set(avisos)] }
+  return { filas, importe: unicas.length ? null : redondearCentimos(total), incidencias: unicas,
+    avisos: [...new Set(avisos)], ...(sinPrecio.length ? { sinPrecio } : {}) }
 }

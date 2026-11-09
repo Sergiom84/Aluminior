@@ -253,6 +253,13 @@
       "when": 1793811200000,
       "tag": "0035_dibujo_catalogo",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1794227370616,
+      "tag": "0036_precio_de_usuario",
+      "breakpoints": true
     }
   ]
 }

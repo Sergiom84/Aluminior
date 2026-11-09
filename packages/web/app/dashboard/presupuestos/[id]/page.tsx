@@ -23,6 +23,8 @@ import { PreferenciaMedidasPresupuesto } from './_components/disenador/preferenc
 import { leerCatalogoUniones } from '../../../../lib/catalogo-uniones/leer.ts'
 import { codigosDibujables, leerCotasCatalogoDiseno } from '../_lib/estructuras/cotas-catalogo.ts'
 import { listarGuiasCompacto } from '../_lib/estructuras/catalogo-despiece/guias-compacto.ts'
+import { leerPendientesPrecio } from '../_lib/precios-manuales/index.ts'
+import { PreciosPendientes } from './_components/precios-pendientes/precios-pendientes.tsx'
 import styles from './presupuesto-movil.module.css'
 
 export const dynamic = 'force-dynamic'
@@ -75,6 +77,7 @@ export default async function DetallePresupuesto({ params, searchParams }: {
 
   const resultadosPorLinea = new Map(await Promise.all(cerramientos.map(async c =>
     [c.lineaId, await leerResultadoCerramiento(db, c.lineaId)] as const)))
+  const pendientesPrecio = await leerPendientesPrecio(db, lineas, resultadosPorLinea)
   const piezasPorLinea = new Map<string, typeof piezas>()
   for (const pieza of piezas) {
     const lista = piezasPorLinea.get(pieza.lineaId) ?? []
@@ -154,6 +157,8 @@ export default async function DetallePresupuesto({ params, searchParams }: {
           </AltaSinEdicionActiva>
         )}
 
+        <PreciosPendientes presupuestoId={id} tarifa={presupuesto.tarifa} lineas={pendientesPrecio}
+          editable={p.estado === 'PENDIENTE'} />
         <div className={`${styles.tableScroll} al-ficha-lines`} tabIndex={0}
           aria-label="Líneas del presupuesto, tabla desplazable">
           <table className={`${styles.budgetTable} text-sm`}>

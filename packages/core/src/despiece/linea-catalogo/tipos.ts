@@ -9,6 +9,7 @@ import type { OpcionCatalogo, ReglaAsociacion, SeleccionGuardada } from '../asoc
 import type { FilaTablaAcristalamiento } from '../acristalamiento-catalogo.ts'
 import type { ConceptoManoObraCatalogo } from '../mano-obra-fabricacion.ts'
 import type { ArticuloTarifado } from '../../precios/importe-fila.ts'
+import type { PiezaSinPrecio, PrecioManual } from '../../precios/precio-manual.ts'
 import type { ResultadoPrecioTabla } from '../../precios/seleccionar-precio-tabla.ts'
 import type { VarianteAcristalamiento } from '../../series/resolver.ts'
 
@@ -151,6 +152,8 @@ export interface EntradaLineaCatalogo {
   compacto?: CompactoLineaCatalogo | null
   /** Mosquitera y tapajuntas de la línea. */
   accesorios?: readonly AccesorioLineaCatalogo[]
+  /** Precios que el operador puso a piezas sin PVP; nunca sustituyen un PVP existente. */
+  preciosManuales?: readonly PrecioManual[]
 }
 
 export type OrigenFila = 'plantilla' | 'vidrio' | 'asociado' | 'acristalamiento' | 'mano-obra' | 'compacto'
@@ -167,6 +170,8 @@ export interface FilaDespieceCatalogo {
   /** Precio unitario efectivo de la fila (PVP con incremento por medida). */
   precio?: number | null
   importe: number | null
+  /** El precio lo puso el operador: la tarifa no tenía PVP. */
+  precioManual?: true
 }
 
 export interface ResultadoLineaCatalogo {
@@ -175,4 +180,6 @@ export interface ResultadoLineaCatalogo {
   importe: number | null
   incidencias: string[]
   avisos: string[]
+  /** Piezas que bloquean el total por no tener PVP en la tarifa. */
+  sinPrecio?: PiezaSinPrecio[]
 }

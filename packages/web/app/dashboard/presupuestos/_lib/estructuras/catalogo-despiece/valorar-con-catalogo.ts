@@ -14,7 +14,7 @@ import {
   clavesTipoHoja, despiezarLineaCatalogo, esTipoHojaMarco, opcionesMarcadas, type CatalogoLinea,
   type FilaDespieceCatalogo, type SeleccionGuardada,
 } from '@aluminior/core/despiece'
-import { incidenciaPrecioEnTabla, multiplicarDecimal, normalizarDecimal, type DatosArticuloPrecio } from '@aluminior/core/precios'
+import { buscarPrecioManual, incidenciaPrecioEnTabla, multiplicarDecimal, normalizarDecimal, type DatosArticuloPrecio } from '@aluminior/core/precios'
 import { explicarIncidenciaCompacto, type PartidaValoracionCerramiento } from '@aluminior/core/estructuras'
 import type { ClienteEscritura } from '../../cliente-db.ts'
 import type { OpcionHerrajeElegida, PiezaDespiece, RanuraAcristalamiento } from '../../lineas/guardar-linea.ts'
@@ -101,6 +101,7 @@ export async function valorarConCatalogo(
     vidrio: entrada.vidrioCodigo, acabado, acabadoAccesorios: entrada.acabadoAccesoriosCodigo || 'UNI', opcionesGuardadas: guardadas,
     compacto: entrada.compacto ?? null, accesorios: entrada.accesorios ?? [], cotas: entrada.cotas ?? undefined,
     minutosFabricacionAdicionales: minutosDeHoras(entrada.horasFabricacion), minutosColocacion: minutosDeHoras(entrada.horasColocacion),
+    preciosManuales: entrada.preciosManuales,
   })
 
   const codigos = [...new Set(resultado.filas.map(f => f.articulo))]
@@ -121,7 +122,8 @@ export async function valorarConCatalogo(
     const t = catalogo.tarifa(f.articulo, f.acabado)
     const cantidad = decimal(f.metraje, 6), precio = decimal(f.precio ?? t?.pvp, 4)
     const valorada = cantidad !== null && precio !== null && f.importe !== null
-    return { ordinal, grupoValoracion: GRUPO[f.origen], articuloCodigo: f.articulo, unidad: t?.tipoMetraje ?? null,
+    const unidad = f.precioManual ? buscarPrecioManual(entrada.preciosManuales, f.articulo, f.acabado)!.unidad : t?.tipoMetraje
+    return { ordinal, grupoValoracion: GRUPO[f.origen], articuloCodigo: f.articulo, unidad: unidad ?? null,
       cantidadFacturable: cantidad, precioUnitario: valorada ? precio : null,
       importeExacto: valorada ? multiplicarDecimal(cantidad!, precio!, 10) : null,
       incidencia: valorada ? null : 'Sin importe de catálogo', tarifa: entrada.tarifa,
@@ -135,5 +137,6 @@ export async function valorarConCatalogo(
     ok: true, descripcion: estructura?.descripcion ?? entrada.codigo, precioUnitario: resultado.importe, aviso, piezas,
     acristalamiento, opcionesHerraje, partidas: entrada.trazabilidad ? partidas : [],
     materialCompleto: resultado.incidencias.length === 0, motor: 'catalogo',
+    ...(resultado.sinPrecio ? { sinPrecio: resultado.sinPrecio } : {}),
   }
 }

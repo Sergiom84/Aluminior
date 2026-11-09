@@ -18,6 +18,14 @@ describe('medidas económicas del cerramiento', () => {
     expect(modulo.altoMm).toBe(1200.300048828125)
   })
 
+  it('admite precios manuales válidos y rechaza los duplicados o sin precio', () => {
+    const inicial = crearConfiguracionCerramiento(plantillaDiseno('0')!)
+    const precio = { articulo: 'PSG100', acabado: 'L', unidad: 'ML', precio: 12.5 }
+    expect(esConfiguracionCerramiento({ ...inicial, preciosManuales: [precio] })).toBe(true)
+    expect(esConfiguracionCerramiento({ ...inicial, preciosManuales: [precio, precio] })).toBe(false)
+    expect(esConfiguracionCerramiento({ ...inicial, preciosManuales: [{ ...precio, precio: -1 }] })).toBe(false)
+  })
+
   it('admite la plantilla generada por el catálogo, pero exige su registro', () => {
     const generada = generarPlantillaCatalogo({ codigo: 'QA-CATALOGO', descripcion: 'Fijo sintético',
       familiaCodigo: '001', anchoMm: 1200, altoMm: 1200, nodos: [

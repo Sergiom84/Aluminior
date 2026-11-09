@@ -1,4 +1,4 @@
-import { CATALOGO_SNAPSHOT, accesoriosEfectivosModulo, compactoEfectivoModulo, esModuloInvisible, origenInvisible, cotasEfectivasModulo, esConfiguracionCerramiento, esResultadoCerramiento, etapasVentaCerramiento,
+import { CATALOGO_SNAPSHOT, accesoriosEfectivosModulo, diagnosticosSinPrecio, compactoEfectivoModulo, esModuloInvisible, origenInvisible, cotasEfectivasModulo, esConfiguracionCerramiento, esResultadoCerramiento, etapasVentaCerramiento,
   unionConfigurada, resolverOrigenSinUnion, medidasFabricacionCerramiento,
   type ConfiguracionCerramiento, type RedondeoVentaCerramiento, type ResultadoCerramientoV1,
   type ResultadoOrigenCerramiento } from '@aluminior/core/estructuras'
@@ -84,7 +84,8 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
       comisionPorc: null, cotas: g.cotas ?? undefined,
       trazabilidad: true, codigo: g.codigo, anchoMm: g.anchoMm, altoMm: g.altoMm,
       serieCodigo: origen.serieCodigo,
-      vidrioCodigo: origen.vidrioCodigo, opcionesHerraje: entrada.opcionesHerraje }
+      vidrioCodigo: origen.vidrioCodigo, opcionesHerraje: entrada.opcionesHerraje,
+      preciosManuales: entrada.configuracion.preciosManuales }
     let ventaMotor: number | null = null
     let avisoMotor: string | null = null
     let piezas: Parameters<typeof completarCostesOrigen>[1] = []
@@ -102,6 +103,7 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
         avisoMotor = valor.aviso
         origen.reglaMaterial = piezas.length ? `estructura:${g.codigo}` : null
         origen.partidasValoracion = valor.partidas ?? []
+        origen.diagnosticos = [...origen.diagnosticos, ...diagnosticosSinPrecio(valor.sinPrecio)]
         if (valor.precioUnitario === null) bloquear(valor.aviso ?? `Unión ${g.id} incompleta`, valor.materialCompleto !== true)
       }
     } else if (g.tipo === 'UNION') {
@@ -147,6 +149,7 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
           vidrioHojas: r.vidrioHojas ?? null, vidrioFijos: r.vidrioFijos ?? null, variante: r.variante === '2' ? '2' : '1' }))
         origen.opcionesHerraje = valor.opcionesHerraje.map(o => ({ categoria: o.categoria,
           opcionCodigo: o.opcionCodigo, descripcion: o.descripcion ?? null }))
+        origen.diagnosticos = [...origen.diagnosticos, ...diagnosticosSinPrecio(valor.sinPrecio)]
         if (valor.precioUnitario === null) bloquear(valor.aviso ?? 'Estructura incompleta', valor.materialCompleto !== true)
         if (valor.motor !== 'catalogo' && (origen.opcionesHerraje.length || parametros.opcionesHerraje?.length)) {
           bloquear('Herrajes seleccionados sin resolución material demostrada')

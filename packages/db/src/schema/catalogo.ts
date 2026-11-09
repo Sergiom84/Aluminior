@@ -106,6 +106,8 @@ export const articulosPvp = pgTable('articulos_pvp', {
   acabadoCodigo: text('acabado_codigo').notNull(),
   tarifa: integer('tarifa').notNull(),
   precio: numeric('precio', { precision: 12, scale: 4 }).notNull(),
+  /** Precio puesto por el operador para un artículo sin PVP; la recarga de tarifas no lo pisa. */
+  deUsuario: boolean('de_usuario').notNull().default(false),
 }, (t) => ({
   pk: primaryKey({ columns: [t.articuloCodigo, t.acabadoCodigo, t.tarifa] }),
 }))

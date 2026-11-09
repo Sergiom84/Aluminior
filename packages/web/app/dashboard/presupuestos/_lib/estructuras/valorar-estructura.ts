@@ -3,7 +3,7 @@ import { partidasValoracion } from './partidas-valoracion.ts'
 import type { PartidaValoracionCerramiento } from '@aluminior/core/estructuras'
 import type { AccesorioLineaCatalogo, CompactoLineaCatalogo } from '@aluminior/core/despiece'
 import { resolverMaterialesEstructura } from './materiales-estructura.ts'
-import { incidenciaPrecioEnTabla, lineaValorable, precioConComision } from '@aluminior/core/precios'
+import { incidenciaPrecioEnTabla, lineaValorable, precioConComision, type PiezaSinPrecio, type PrecioManual } from '@aluminior/core/precios'
 import { leerCatalogoPreciosTabla } from '../precios-tabla/index.ts'
 import type { ClienteEscritura } from '../cliente-db.ts'
 import type {
@@ -49,6 +49,8 @@ export interface EntradaValoracionEstructura {
   opcionesHerraje?: readonly string[]
   opcionesPorDefecto?: boolean
   trazabilidad?: boolean
+  /** Precios del operador para piezas sin PVP; solo los usa el catálogo completo. */
+  preciosManuales?: readonly PrecioManual[]
 }
 
 export type ResultadoValoracionEstructura =
@@ -65,6 +67,8 @@ export type ResultadoValoracionEstructura =
       materialCompleto?: boolean
       /** `catalogo`: despiece completo de Productor (fase-7/06); si falta, la vía anterior. */
       motor?: 'catalogo' | 'anterior'
+      /** Piezas sin PVP en la tarifa (solo catálogo completo). */
+      sinPrecio?: PiezaSinPrecio[]
     }
 
 /**
