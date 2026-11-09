@@ -28,6 +28,7 @@ export async function leerAgenda(desde: string, hasta: string): Promise<AgendaLe
       observaciones: schema.agendaNotas.observaciones,
       urgencia: schema.agendaNotas.urgencia,
       hecha: schema.agendaNotas.hecha,
+      dia: schema.agendaNotas.dia,
       creadoEn: schema.agendaNotas.creadoEn,
     }).from(schema.agendaNotas)
     return {

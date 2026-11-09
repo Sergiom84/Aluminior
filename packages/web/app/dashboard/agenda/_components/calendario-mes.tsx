@@ -4,18 +4,23 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef } from 'react'
 import {
-  DIAS_CORTOS, desplazarMes, diasDelMes, etiquetaDia, nombreMes, sumarDias,
+  DIAS_CORTOS, desplazarMes, diasDelMes, etiquetaDia, marcasPorDia, nombreMes, sumarDias,
 } from '@aluminior/core/agenda'
 import { hrefDia } from '../_lib/rutas.ts'
-import type { EventoVista } from '../_lib/tipos.ts'
+import type { EventoVista, NotaVista } from '../_lib/tipos.ts'
+
+function plural(n: number, uno: string, varios: string): string {
+  return `${n} ${n === 1 ? uno : varios}`
+}
 
 export function CalendarioMes({
-  dia, mes, hoy, eventos,
+  dia, mes, hoy, eventos, notas,
 }: {
   dia: string
   mes: string
   hoy: string
   eventos: readonly EventoVista[]
+  notas: readonly NotaVista[]
 }) {
   const router = useRouter()
   const enfocar = useRef(false)
@@ -24,8 +29,7 @@ export function CalendarioMes({
   const celdas = diasDelMes(anio, numeroMes) ?? []
   const anterior = desplazarMes(anio, numeroMes, -1)
   const siguiente = desplazarMes(anio, numeroMes, 1)
-  const cuentas = new Map<string, number>()
-  for (const evento of eventos) cuentas.set(evento.dia, (cuentas.get(evento.dia) ?? 0) + 1)
+  const marcas = marcasPorDia(eventos, notas)
 
   useEffect(() => {
     if (!enfocar.current) return
@@ -62,7 +66,11 @@ export function CalendarioMes({
           <div role="row" className="al-agenda-mes-fila" key={celdas[fila * 7].fecha}>
             {celdas.slice(fila * 7, fila * 7 + 7).map((celda) => {
               const etiqueta = etiquetaDia(celda.fecha)
-              const cuenta = cuentas.get(celda.fecha) ?? 0
+              const marca = marcas.get(celda.fecha)
+              const resumen = [
+                marca?.trabajos ? plural(marca.trabajos, 'trabajo', 'trabajos') : '',
+                marca?.tareas ? plural(marca.tareas, 'tarea', 'tareas') : '',
+              ].filter(Boolean).join(', ')
               return (
                 <div role="gridcell" key={celda.fecha}>
                   <Link
@@ -73,7 +81,8 @@ export function CalendarioMes({
                     data-fuera={celda.enMes ? undefined : 'true'}
                     data-hoy={celda.fecha === hoy ? 'true' : undefined}
                     aria-current={celda.fecha === dia ? 'date' : undefined}
-                    aria-label={etiqueta ? `${etiqueta.corto} ${etiqueta.numero}${cuenta ? `, ${cuenta}` : ''}` : celda.fecha}
+                    aria-label={etiqueta ? `${etiqueta.corto} ${etiqueta.numero}${resumen ? `, ${resumen}` : ''}` : celda.fecha}
+                    title={resumen || undefined}
                     onKeyDown={(evento) => {
                       if (!evento.key.startsWith('Arrow')) return
                       evento.preventDefault()
@@ -81,7 +90,12 @@ export function CalendarioMes({
                     }}
                   >
                     <span>{etiqueta?.numero}</span>
-                    {cuenta > 0 && <span className="al-agenda-cuenta">{cuenta}</span>}
+                    {marca && (
+                      <span className="al-agenda-marcas" aria-hidden="true">
+                        {marca.trabajos > 0 && <span className="al-marca-trabajo" />}
+                        {marca.tareas > 0 && <span className="al-marca-tarea" />}
+                      </span>
+                    )}
                   </Link>
                 </div>
               )

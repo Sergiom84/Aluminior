@@ -83,6 +83,7 @@ export async function guardarNota(_previo: EstadoFormulario, datos: FormData): P
     texto: String(datos.get('texto') ?? ''),
     observaciones: String(datos.get('observaciones') ?? ''),
     urgencia: String(datos.get('urgencia') ?? ''),
+    dia: String(datos.get('dia') ?? ''),
   })
   if (!resultado.ok) return resultado
   const { id, ...valor } = resultado.valor

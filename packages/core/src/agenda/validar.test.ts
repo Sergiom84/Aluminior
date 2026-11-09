@@ -14,6 +14,9 @@ describe('validación de agenda', () => {
   it('ordena de más a menos urgente y deja lo hecho al final', () => {
     expect(validarNota({ texto: 'Llamar', urgencia: '5' })).toMatchObject({ ok: true, valor: { urgencia: 5 } })
     expect(validarNota({ texto: 'Llamar', urgencia: 0 }).ok).toBe(false)
+    expect(validarNota({ texto: 'Llamar', urgencia: 3, dia: '2026-11-12' })).toMatchObject({ ok: true, valor: { dia: '2026-11-12' } })
+    expect(validarNota({ texto: 'Llamar', urgencia: 3, dia: '' })).toMatchObject({ ok: true, valor: { dia: null } })
+    expect(validarNota({ texto: 'Llamar', urgencia: 3, dia: '2026-02-31' }).ok).toBe(false)
     expect(ordenarNotas([
       { urgencia: 2, hecha: false, creadoEn: '2026-11-09T10:00:00.000Z' },
       { urgencia: 5, hecha: true, creadoEn: '2026-11-09T12:00:00.000Z' },

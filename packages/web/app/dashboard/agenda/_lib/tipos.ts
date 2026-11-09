@@ -13,5 +13,6 @@ export interface NotaVista {
   observaciones: string | null
   urgencia: number
   hecha: boolean
+  dia: string | null
   creadoEn: string
 }

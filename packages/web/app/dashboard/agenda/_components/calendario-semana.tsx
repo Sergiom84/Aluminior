@@ -81,6 +81,7 @@ export function CalendarioSemana({
                         key={item.id}
                         type="button"
                         className="al-semana-evento"
+                        data-estrecho={total > 1 ? 'true' : undefined}
                         title={`${item.horaInicio}–${item.horaFin} ${item.titulo}`}
                         style={{
                           top: `${caja.top}%`,
@@ -90,7 +91,8 @@ export function CalendarioSemana({
                         }}
                         onClick={() => onEditar(item)}
                       >
-                        <span>{item.horaInicio}</span> {item.titulo}
+                        <span className="al-semana-evento-hora">{item.horaInicio}</span>
+                        <span className="al-semana-evento-titulo">{item.titulo}</span>
                       </button>
                     )
                   })}

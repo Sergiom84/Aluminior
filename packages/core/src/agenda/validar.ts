@@ -23,6 +23,8 @@ export interface NotaValida {
   texto: string
   observaciones: string | null
   urgencia: number
+  /** Día al que se refiere la tarea; vacío si no tiene fecha. */
+  dia: string | null
 }
 
 function anotar(errores: Errores, campo: string, mensaje: string) {
@@ -85,6 +87,7 @@ export function validarNota(entrada: {
   texto?: string
   observaciones?: string
   urgencia?: string | number
+  dia?: string
 }): { ok: true; valor: NotaValida } | Fallo {
   const errores: Errores = {}
   const texto = entrada.texto?.trim() ?? ''
@@ -101,11 +104,14 @@ export function validarNota(entrada: {
     anotar(errores, 'urgencia', 'La urgencia va de 1 a 5')
   }
 
+  const dia = entrada.dia?.trim() ?? ''
+  if (dia && !partesFecha(dia)) anotar(errores, 'dia', 'La fecha no es válida')
+
   const id = entrada.id?.trim() ?? ''
   if (id && !UUID.test(id)) anotar(errores, 'id', 'Identificador no válido')
   if (Object.keys(errores).length) return { ok: false, errores }
   return {
     ok: true,
-    valor: { id: id || null, texto, observaciones: observaciones || null, urgencia },
+    valor: { id: id || null, texto, observaciones: observaciones || null, urgencia, dia: dia || null },
   }
 }

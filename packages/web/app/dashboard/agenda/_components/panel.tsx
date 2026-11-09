@@ -23,7 +23,7 @@ export function PanelAgenda({
     <div className="al-agenda">
       <h1 className="al-agenda-titulo">Dashboard</h1>
       <div className="al-agenda-principal">
-        <CalendarioMes dia={dia} mes={mes} hoy={hoy} eventos={eventos} />
+        <CalendarioMes dia={dia} mes={mes} hoy={hoy} eventos={eventos} notas={notas} />
         <CalendarioSemana
           dia={dia}
           eventos={eventos}

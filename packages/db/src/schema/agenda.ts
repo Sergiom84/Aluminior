@@ -51,11 +51,14 @@ export const agendaNotas = pgTable('agenda_notas', {
   /** 5 es lo más urgente; 1, lo menos. */
   urgencia: smallint('urgencia').notNull().default(3),
   hecha: boolean('hecha').notNull().default(false),
+  /** Día de la tarea en el calendario; null si no tiene fecha. */
+  dia: date('dia'),
   creadoEn: timestamp('creado_en', { withTimezone: true }).notNull().defaultNow(),
   actualizadoEn: timestamp('actualizado_en', { withTimezone: true }).notNull().defaultNow(),
   creadoPor: text('creado_por'),
 }, (t) => ({
   ordenIdx: index('agenda_notas_orden_idx').on(t.hecha, t.urgencia),
+  diaIdx: index('agenda_notas_dia_idx').on(t.dia),
   urgenciaCheck: check('agenda_notas_urgencia_check', sql`${t.urgencia} between 1 and 5`),
   textoCheck: check('agenda_notas_texto_check', sql`char_length(btrim(${t.texto})) between 1 and 4000`),
   observacionesCheck: check(
