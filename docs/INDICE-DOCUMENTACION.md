@@ -35,6 +35,7 @@ propuesta entonces exclusiva del main local (integrada como herramienta el 13/10
 | [PDF multipágina 09/10](paridad/PDF-MULTIPAGINA-2026-10-09.md) | P.2: reproducción, corrección, regresión sintética, endpoint local y publicación 46c613d verificada |
 | [Mantenimiento y miniaturas 09/10](paridad/MANTENIMIENTO-Y-MINIATURAS-2026-10-09.md) | S1 y A2: dependencias, evidencia de dibujo y verificación de la continuación |
 | [Auditoría funcional 09/10](paridad/AUDITORIA-FUNCIONAL-2026-10-09.md) | Fallos reproducidos, correcciones, aceptación y mejoras propuestas |
+| [Contexto operativo](CONTEXTO-OPERATIVO.md) | Quién prueba, URL publicada, ruta de Productor, solo EMP0016 y dónde están los accesos |
 | [Estado actual](ESTADO-ACTUAL.md) | Estado, riesgos y siguiente paso |
 | [Guía del diseñador de Productor](paridad/GUIA-DISENADOR-PRODUCTOR.md) | Referencia viva: qué hace cada botón, pestaña y diálogo del diseñador y su equivalente en Aluminior; leer antes de operar Productor o cambiar el configurador |
 | [Roadmap de paridad](../ROADMAP-PARIDAD-PRODUCTOR.md) | Registro único de etapas/orden de tareas e instrucciones para actualizar o retirar documentos obsoletos |

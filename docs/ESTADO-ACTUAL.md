@@ -1,5 +1,9 @@
 # Estado actual de Aluminior
 
+Contexto que no cambia (quién prueba, URLs, rutas, accesos): [CONTEXTO-OPERATIVO.md](CONTEXTO-OPERATIVO.md).
+
+09/11/2026, revisión en producción (Render live `143f4e7`) de las cinco quejas del operador, repetidas como él: buscar cliente por calle («sahara 87» en Presupuestos y en Clientes) y filtrar presupuestos por cliente (`?cliente=00429`) funcionan; escribir `C2` + Enter en el catálogo coloca la corredera de dos hojas; C2, C2FI, C2FS y C2FSFI salen en Ventanas correderas 90º; el compacto se dibuja con cajón, guías laterales y las opciones predeterminadas (Guía central No, Accionamiento Recogedor). El presupuesto 260022 seguía «sin valorar» porque su línea se guardó antes del despliegue; al reabrirla y guardarla sin cambios vale 492,02 € (aviso: vidrio de 28 mm fuera del rango de doble acristalamiento de ELEGANTPVC). Ninguna otra línea de la base conserva el aviso «sin una opción marcada». Pendiente: las guías laterales siguen sin entrar en el precio.
+
 09/11/2026, prueba con el operador: el compacto y las guías no se entendían, y la ventana quedaba sin
 valorar. Causa observada: `estructura_opciones_accesorio` tiene 0 filas en la base que usa la web, y el
 despiece de `COM001` exige una opción de `Guía Central`; sin ella anula el precio de toda la ventana.
@@ -8,7 +12,7 @@ predeterminadas al elegir y, si la tabla sigue vacía, el motor usa el catálogo
 Las guías laterales se dibujan y se guardan; no entran en el precio (sin regla de metraje contrastada).
 Registro y medidas manuales siguen fuera.
 
-09/11/2026, prueba con el operador (local, sin publicar): en presupuestos se elige la ventana escribiendo su código en el catálogo inferior y en `Añadir ventana`. Enter o `Elegir` coloca la coincidencia exacta (`2` no es `2O`; `2O+FIJO` equivale a `2O+ FIJO`). Si no hay plantilla dibujable, avisa y no inserta. Guía del diseñador y tutorial (`Manual/TUTORIAL-JAVI.md` y la frase equivalente del HTML) actualizados.
+09/11/2026, prueba con el operador (publicado en `1e8dd34`): en presupuestos se elige la ventana escribiendo su código en el catálogo inferior y en `Añadir ventana`. Enter o `Elegir` coloca la coincidencia exacta (`2` no es `2O`; `2O+FIJO` equivale a `2O+ FIJO`). Si no hay plantilla dibujable, avisa y no inserta. Guía del diseñador y tutorial (`Manual/TUTORIAL-JAVI.md` y la frase equivalente del HTML) actualizados.
 
 07/11/2026: `main` = `eea1917` (sobre `226f130`, integración de `feat/ds3-hueco-panel`). Lote revisado por el
 arquitecto tras el trabajo de Gemini, sin migraciones nuevas. Contenido: alta de línea unificada en

@@ -7,6 +7,7 @@
 - **Stack:** monorepo TypeScript/Node.js 20.9+, Drizzle, PostgreSQL/Supabase, Next.js App Router y React. `packages/api` es histórico.
 - **Structure:** `packages/db`, `packages/etl`, `packages/core`, `packages/web`.
 - **Canonical commands:** `npm install`, `npm run test`, `npm run typecheck`, `npm run check:architecture`, `npm run dev:web`.
+- **Operational context:** `docs/CONTEXTO-OPERATIVO.md` (who tests, production URL, Productor path, EMP0016 only, where access lives). Read it first.
 - **Project documentation:** `docs/ESTADO-ACTUAL.md`, `README.md`, `ARQUITECTURA.md` y `docs/paridad/PARIDAD-PRODUCTOR.md`; `docs/INDICE-DOCUMENTACION.md` clasifica planes y entregas históricos.
 
 ## Working contract
