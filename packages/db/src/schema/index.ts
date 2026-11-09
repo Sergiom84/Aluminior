@@ -12,3 +12,4 @@ export * from './despiece-catalogo.ts'
 export * from './operaciones-presupuesto.ts'
 
 export * from './precio-tabla-catalogo.ts'
+export * from './agenda.ts'

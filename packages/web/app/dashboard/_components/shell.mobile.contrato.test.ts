@@ -23,6 +23,11 @@ describe('contrato móvil del shell operativo', () => {
     expect(movil).toMatch(/\.al-session-form\s*{[^}]*grid-column:\s*2;/s)
   })
 
+  it('nombra la entrada operativa Dashboard', () => {
+    expect(shell).toContain("nombre: 'Dashboard'")
+    expect(shell).not.toContain("nombre: 'Inicio'")
+  })
+
   it('conserva foco semántico y targets táctiles de al menos 44 px', () => {
     expect(shell).toContain('<nav className="al-primary-nav" aria-label="Módulos">')
     expect(shell).toContain("aria-current={activo ? 'page' : undefined}")

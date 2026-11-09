@@ -17,7 +17,7 @@ export interface Modulo {
  * para documentos y tablas, en lugar de consumirla con un sidebar genérico.
  */
 export const MODULOS: Modulo[] = [
-  { id: 'inicio', nombre: 'Inicio', descripcion: 'Resumen de actividad', href: '/dashboard', listo: true },
+  { id: 'dashboard', nombre: 'Dashboard', descripcion: 'Agenda y notas', href: '/dashboard', listo: true },
   { id: 'articulos', nombre: 'Artículos', descripcion: 'Materiales, familias y tarifas', href: '/dashboard/articulos', listo: true },
   { id: 'clientes', nombre: 'Clientes', descripcion: 'Clientes, potenciales y obras', href: '/dashboard/clientes', listo: true },
   { id: 'estructuras', nombre: 'Estructuras', descripcion: 'Tipos de hueco configurables', href: '/dashboard/estructuras', listo: true },

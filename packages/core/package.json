@@ -9,7 +9,8 @@
     "./despiece": "./src/despiece/index.ts",
     "./precios": "./src/precios/index.ts",
     "./series": "./src/series/index.ts",
-    "./produccion": "./src/produccion/index.ts"
+    "./produccion": "./src/produccion/index.ts",
+    "./agenda": "./src/agenda/index.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",

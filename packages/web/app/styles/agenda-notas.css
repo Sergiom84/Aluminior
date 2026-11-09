@@ -1,0 +1,130 @@
+.al-agenda-notas {
+  position: sticky;
+  top: 8px;
+  max-height: calc(100dvh - 78px);
+  overflow: auto;
+}
+
+.al-agenda-notas ul {
+  display: grid;
+  gap: 8px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.al-nota {
+  display: grid;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 8px;
+}
+
+.al-nota[data-urgencia='5'] { border-left: 3px solid var(--al-error); }
+.al-nota[data-urgencia='4'] { border-left: 3px solid var(--al-warn); }
+.al-nota[data-urgencia='3'] { border-left: 3px solid var(--al-accent); }
+.al-nota[data-hecha='true'] { background: var(--al-surface-muted); }
+
+.al-nota label,
+.al-agenda-dialogo label {
+  display: grid;
+  gap: 4px;
+  color: var(--al-text-muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.al-nota textarea,
+.al-nota select,
+.al-agenda-dialogo input,
+.al-agenda-dialogo textarea {
+  width: 100%;
+  border: 1px solid var(--al-border-strong);
+  border-radius: var(--al-radius-sm);
+  background: var(--al-surface);
+  color: var(--al-text);
+  padding: 6px 8px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.al-nota textarea {
+  resize: vertical;
+  overflow-wrap: anywhere;
+}
+
+.al-nota [data-invalido='true'],
+.al-agenda-dialogo [data-invalido='true'] {
+  border-color: var(--al-error);
+}
+
+.al-nota-hecho {
+  display: inline-flex;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  gap: 6px;
+  color: var(--al-text);
+  font-size: 12px;
+}
+
+.al-nota-hecho input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--al-accent);
+}
+
+.al-nota-urgencia {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.al-nota-urgencia select {
+  width: auto;
+  min-height: 32px;
+  font-variant-numeric: tabular-nums;
+}
+
+.al-agenda-dialogo {
+  width: min(480px, calc(100vw - 24px));
+  padding: 16px;
+  color: var(--al-text);
+  box-shadow: var(--al-shadow-lg);
+}
+
+.al-agenda-dialogo::backdrop {
+  background: rgb(24 35 41 / 0.4);
+}
+
+.al-agenda-dialogo form {
+  display: grid;
+  gap: 8px;
+}
+
+.al-agenda-horas {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 8px;
+}
+
+.al-agenda-error {
+  margin: 0;
+  color: var(--al-error);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+@media (max-width: 960px) {
+  .al-agenda-notas {
+    position: static;
+    max-height: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .al-agenda-horas {
+    grid-template-columns: 1fr;
+  }
+}
