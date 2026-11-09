@@ -7,11 +7,11 @@ import {
   eliminarModuloConDependientes, esConfiguracionCerramiento, esModuloRaiz, insertarModuloEnAnclaje,
   medidasCerramiento, moduloDesdePlantilla, plantillaDiseno, PLANTILLAS_DISENO, posicionesCerramiento,
   unionConfigurada, serieEfectivaUnion, UNIONES_VISUALES, type UnionVisual,
-  anclajeInferior, anclajeLateral, medidasPrimeraVentana, modelosIguales, primerHueco, type AnclajeLibre, type ConfiguracionCerramiento,
+  anclajeInferior, anclajeLateral, asignarComplementosModulos, medidasPrimeraVentana, modelosIguales, primerHueco, type AnclajeLibre, type ConfiguracionCerramiento,
   type CotasCatalogoPorEstructura, type MaterialesGenerales, type PlantillaDiseno,
 } from '@aluminior/core/estructuras'
 import { LienzoCerramiento, type ParteSeleccionada } from './lienzo-cerramiento.tsx'
-import { useBorradoresCerramiento } from './use-borradores-cerramiento.ts'
+import { aplicarComplementosAModelos, useBorradoresCerramiento } from './use-borradores-cerramiento.ts'
 import { EditorUnion } from './editor-union.tsx'
 import { CatalogoInferior } from './disenador/catalogo-inferior.tsx'
 import { ListaElementos, entradasCerramiento, type Entrada } from './disenador/lista-elementos.tsx'
@@ -173,9 +173,14 @@ export function DisenadorEstructura({
     const ids = modelosIguales(configuracion, id)
     const indices = entradasCerramiento(configuracion).filter((e) => ids.includes(e.id)).map((e) => e.indice)
     const codigo = configuracion.modulos.find((m) => m.id === id)?.estructuraCodigo
-    if (window.confirm(`¿Aplicar los cambios a los ${ids.length} elementos ${codigo} (${indices.join(', ')})?`)) {
+    if (!window.confirm(`¿Aplicar los cambios a los ${ids.length} elementos ${codigo} (${indices.join(', ')})?`)) return
+    const siguiente = aplicarComplementosAModelos(configuracion, edicion.borradores, id, ids, catalogoUniones)
+    if (!siguiente) {
       edicion.aplicar('modulos', id, ids)
+      return
     }
+    setConfiguracion(siguiente)
+    edicion.descartar('modulos', id)
   }
 
   const eliminar = () => {
@@ -266,7 +271,14 @@ export function DisenadorEstructura({
                 rect={posicionesCerramiento(configuracion).modulos.get(modulo.id)!}
                 pendiente={Boolean(edicion.borradores.modulos[modulo.id])} bloqueado={edicion.pendientes}
                 preparada={preparada} eliminable={!esModuloRaiz(configuracion, modulo.id)}
-                onChange={(cambios) => edicion.editarModulo(modulo.id, cambios)}
+                onChange={(cambios) => {
+                  if (Object.hasOwn(cambios, 'compacto') || Object.hasOwn(cambios, 'tapajuntas')) {
+                    const siguiente = asignarComplementosModulos(configuracion, [modulo.id], cambios)
+                    if (esConfiguracionCerramiento(siguiente, catalogoUniones)) setConfiguracion(siguiente)
+                    return
+                  }
+                  edicion.editarModulo(modulo.id, cambios)
+                }}
                 onActualizar={() => { setAviso(null); edicion.aplicar('modulos', modulo.id) }}
                 onDescartar={() => { setAviso(null); edicion.descartar('modulos', modulo.id) }}
                 onSustituir={() => preparada && setConfiguracion(

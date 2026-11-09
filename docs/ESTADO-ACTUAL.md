@@ -1,5 +1,13 @@
 # Estado actual de Aluminior
 
+09/11/2026, prueba con el operador: el compacto y las guías no se entendían, y la ventana quedaba sin
+valorar. Causa observada: `estructura_opciones_accesorio` tiene 0 filas en la base que usa la web, y el
+despiece de `COM001` exige una opción de `Guía Central`; sin ella anula el precio de toda la ventana.
+El panel ahora muestra modelo, cajón, guías izquierda/derecha y las opciones con su título, marca las
+predeterminadas al elegir y, si la tabla sigue vacía, el motor usa el catálogo exportado de EMP0016.
+Las guías laterales se dibujan y se guardan; no entran en el precio (sin regla de metraje contrastada).
+Registro y medidas manuales siguen fuera.
+
 09/11/2026, prueba con el operador (local, sin publicar): en presupuestos se elige la ventana escribiendo su código en el catálogo inferior y en `Añadir ventana`. Enter o `Elegir` coloca la coincidencia exacta (`2` no es `2O`; `2O+FIJO` equivale a `2O+ FIJO`). Si no hay plantilla dibujable, avisa y no inserta. Guía del diseñador y tutorial (`Manual/TUTORIAL-JAVI.md` y la frase equivalente del HTML) actualizados.
 
 07/11/2026: `main` = `eea1917` (sobre `226f130`, integración de `feat/ds3-hueco-panel`). Lote revisado por el

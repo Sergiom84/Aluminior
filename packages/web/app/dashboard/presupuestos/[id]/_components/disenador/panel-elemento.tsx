@@ -85,7 +85,8 @@ export function PanelElemento({
           <ComplementosElemento modulo={modulo} borrador={borrador as CambiosComplementosModulo}
             catalogo={complementosCatalogo} onChange={onChange} />
         )}
-        {modelos > 1 && <button type="button" className="al-command" disabled={!pendiente}
+        {modelos > 1 && <button type="button" className="al-command"
+          disabled={!pendiente && !modulo.compacto && !modulo.tapajuntas}
           onClick={onActualizarModelos}>
           Aplicar a modelos iguales ({modelos})
         </button>}

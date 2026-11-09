@@ -21,6 +21,10 @@ export interface CompactoModulo {
   posicionGuiaCentralMm?: number
   descuentoVerticalMm?: number
   descontarHueco?: boolean
+  /** Guía de persiana izquierda (familia 051). No entra en el despiece: no hay regla de metraje contrastada. */
+  guiaIzquierda?: string
+  /** Guía de persiana derecha. Si no se indica, Productor usa la misma que la izquierda. */
+  guiaDerecha?: string
 }
 
 export interface TapajuntasModulo {
@@ -44,6 +48,8 @@ export function compactoModuloValido(valor: unknown): valor is CompactoModulo | 
   if (c.posicionGuiaCentralMm !== undefined && (typeof c.posicionGuiaCentralMm !== 'number' || !Number.isFinite(c.posicionGuiaCentralMm) || c.posicionGuiaCentralMm < 0)) return false
   if (c.descuentoVerticalMm !== undefined && (typeof c.descuentoVerticalMm !== 'number' || !Number.isFinite(c.descuentoVerticalMm) || c.descuentoVerticalMm < 0)) return false
   if (c.descontarHueco !== undefined && typeof c.descontarHueco !== 'boolean') return false
+  if (c.guiaIzquierda !== undefined && (typeof c.guiaIzquierda !== 'string' || !c.guiaIzquierda.trim())) return false
+  if (c.guiaDerecha !== undefined && (typeof c.guiaDerecha !== 'string' || !c.guiaDerecha.trim())) return false
   return true
 }
 

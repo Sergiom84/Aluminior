@@ -2,10 +2,11 @@
 
 import { useRef } from 'react'
 import {
-  geometriaAperturaVisual, geometriaCerramiento, plantillaDiseno,
+  geometriaAperturaVisual, geometriaCerramiento, opcionMarcadaCompacto, plantillaDiseno,
   type AnclajeLibre, type ConfiguracionCerramiento, type ElementoColocado, type RectVisual,
 } from '@aluminior/core/estructuras'
 import { AnclajesLienzo, useSoltarEnLienzo } from './disenador/anclajes-lienzo.tsx'
+import { CajonPersiana } from './disenador/cajon-lienzo.tsx'
 import { useArrastreModulo, type MovimientoLienzo } from './disenador/use-arrastre-modulo.ts'
 
 export type ParteVisual = 'marco' | 'hoja' | 'vidrio' | 'travesano' | 'union'
@@ -36,8 +37,10 @@ export function LienzoCerramiento({ configuracion, moduloActivoId, seleccion, on
       viewBox={`${-margen} ${-margen} ${geometria.anchoVisibleMm + margen * 2} ${geometria.altoVisibleMm + margen * 2}`}
       preserveAspectRatio="xMidYMid meet" role="group" aria-label="Composición del cerramiento">
       {geometria.modulos.map((modulo, indice) => {
-        const plantilla = plantillaDiseno(configuracion.modulos[indice].estructuraCodigo)!
+        const datos = configuracion.modulos[indice]!
+        const plantilla = plantillaDiseno(datos.estructuraCodigo)!
         const activa = modulo.id === moduloActivoId
+        const compacto = datos.compacto
         return (
           <g key={modulo.id} data-modulo-id={modulo.id} role="button" tabIndex={0}
             aria-label={`Elemento ${indice}: ${plantilla.descripcion}`}
@@ -62,6 +65,11 @@ export function LienzoCerramiento({ configuracion, moduloActivoId, seleccion, on
               : <rect {...svgRect(modulo.rect)} className={activa ? 'al-frame al-module-selected' : 'al-frame'} />}
             {!modulo.invisible && modulo.elementos.map((elemento) => <ElementoModulo key={`${modulo.id}-${elemento.id}`}
               elemento={elemento} moduloId={modulo.id} seleccion={seleccion} onSeleccion={onSeleccion} />)}
+            {!modulo.invisible && compacto && (
+              <CajonPersiana rect={modulo.rect} altoCajonMm={compacto.altoCajonMm} altoModuloMm={datos.altoMm}
+                guiaCentral={opcionMarcadaCompacto(compacto.opciones, 1) === 1}
+                conGuias={Boolean(compacto.guiaIzquierda || compacto.guiaDerecha)} />
+            )}
           </g>
         )
       })}

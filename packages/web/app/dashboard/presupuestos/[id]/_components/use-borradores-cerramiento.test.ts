@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { anadirModuloCerramiento, crearConfiguracionCerramiento, generarPlantillaCatalogo, plantillaDiseno,
   registrarCatalogoDiseno, UNIONES_VISUALES, esConfiguracionCerramiento } from '@aluminior/core/estructuras'
-import { aplicarBorrador, type Borradores } from './use-borradores-cerramiento.ts'
+import { aplicarBorrador, aplicarComplementosAModelos, type Borradores } from './use-borradores-cerramiento.ts'
 
 const crear = () => anadirModuloCerramiento(
   crearConfiguracionCerramiento(plantillaDiseno('2O')!), plantillaDiseno('2O')!)
@@ -201,5 +201,19 @@ describe('cotas de instancia en el borrador', () => {
     expect(ancho.modulos[0]).not.toHaveProperty('cotas')
     expect(ancho.version).toBe(3)
     expect(JSON.stringify(v3)).toBe(guardado)
+  })
+
+  it('copia el compacto ya aplicado a los modelos iguales sin exigir un borrador', () => {
+    const original = crear()
+    const conCompacto = {
+      ...original,
+      version: 3 as const,
+      modulos: original.modulos.map((modulo, indice) => indice === 0
+        ? { ...modulo, compacto: { estructuraCodigo: 'COM001', altoCajonMm: 155, descontarHueco: true, opciones: ['G1O0'] } }
+        : modulo),
+    }
+    const copiado = aplicarComplementosAModelos(conCompacto, vacios(), 'modulo-1', ['modulo-1', 'modulo-2'])!
+    expect(copiado.modulos.map((modulo) => modulo.compacto?.estructuraCodigo)).toEqual(['COM001', 'COM001'])
+    expect(original.modulos[1]).not.toHaveProperty('compacto')
   })
 })

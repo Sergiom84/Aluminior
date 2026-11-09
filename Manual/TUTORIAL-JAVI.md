@@ -88,9 +88,10 @@ sirven (por ejemplo Uniones con una sola ventana) salen apagadas.
 
 Al pulsar sobre una ventana, debajo del dibujo aparece su ficha en una sola fila:
 qué modelo es, su posición en el dibujo (se calcula sola), **Ancho** y **Alto**,
-**Compacto** y **Tapajuntas** (para añadir un cajón de persiana o un tapajuntas a
-esa ventana) y los botones **Mover elemento**, **Convertir en hueco** y
-**Eliminar elemento**.
+el bloque **Compacto** (modelo, cajón, guía izquierda, guía derecha y guía central)
+y **Tapajuntas**, y los botones **Mover elemento**, **Convertir en hueco** y
+**Eliminar elemento**. Si eliges un compacto, la guía central queda en «No» y la
+ventana se valora; cambia a «Sí» solo si esa ventana lleva guía central.
 
 Más abajo están los datos de toda la línea: **Ubicación**, **Serie**, **Vidrio**,
 **Acristalamiento**, **Acabado**, **Cdad.**, **Horas de fabricación** y **Horas de

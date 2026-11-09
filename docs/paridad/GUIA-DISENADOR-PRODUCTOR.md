@@ -225,11 +225,17 @@ uniones con dibujo.
 | Forzar medidas manuales | Altura total, Largo guía izq., Largo guía der. (mm) | Sustituyen el cálculo automático |
 | Botones | `Aceptar`, `Cerrar`, papelera | Aplicar, salir sin aplicar, quitar el compacto |
 
-**En Aluminior (07/11/2026):** el panel del elemento lleva los desplegables `Compacto` (COM001–COM017) y
-`Tapajuntas` (GMT001–GMT023 y TAP40) por elemento, y `Aplicar a modelos iguales` los copia a los elementos
-del mismo modelo (`disenador/complementos-elemento.tsx`). El diálogo de Productor con guías, registro de
-persiana y medidas manuales no está reproducido; `descontarHueco` viene del banco (`compDtoHuecoSN`) y no se
-ha contrastado con un documento real.
+**En Aluminior (09/11/2026):** el panel del elemento agrupa el compacto en un bloque propio: modelo
+(COM001–COM017), cajón (155/185/200; por encima de 1.600 mm propone 185), descontar del hueco, guía
+izquierda y derecha (familia 051, al elegir la izquierda copia a la derecha si esa está vacía) y las
+opciones del catálogo con su título (`Guía Central`, accionamiento, vuelos). El cajón se dibuja sobre la
+ventana; las guías laterales, solo si se han elegido. Al elegir un compacto se marcan las opciones
+predeterminadas del catálogo, así la ventana se valora sin que el operador conozca `G1O0`. La tabla
+`estructura_opciones_accesorio` de la base que usa la web está vacía (0 filas, observado el 09/11/2026);
+el despiece usa el catálogo exportado de EMP0016 cuando la base no tiene predeterminadas. Las guías
+izquierda/derecha se guardan y se dibujan, pero aún no entran en el precio: no hay regla de metraje
+contrastada. Registro de persiana y medidas manuales siguen sin reproducir. `descontarHueco` no se ha
+contrastado con un documento real.
 
 Lupa de compacto: los 17 de la familia `100`:
 `COM001` cajón de PVC con lama de aluminio térmica; `COM002`–`COM004` cajón
@@ -253,9 +259,8 @@ sigue en 1.200,0 x 1.200,0. La línea vale 595,76 € (514,31 de la ventana más
 descripción. Hipótesis: el aviso de guías y la resta del cajón dependen de
 entrar por la ficha de línea y no por el diseñador.
 
-**En Aluminior: catálogo importado, función sin modelar.** Los 17 `COM…`
-están en `estructuras` (familia 100) y como artículos, pero no hay botón,
-diálogo, resta de cajón ni valoración. Tarea **E5** del roadmap.
+**En Aluminior:** el párrafo del 09/11/2026, arriba, es el estado vigente. Esta
+frase de «función sin modelar» quedó superada por E5 y por el bloque del panel.
 
 
 ## Recorrido de composición en el lienzo
@@ -418,13 +423,13 @@ hipótesis.
 | Escaparate de ventanas | Sí: 541 estructuras, 160 dibujables | Sí, con paginación y elección por código (09/11/2026); faltan familias no dibujables |
 | Composición a la derecha / debajo | — | Sí: «+» lateral e inferior y botones de la barra (01/11/2026) |
 | Mover una pieza colocada | — | Sí: arrastre con ajuste a anclajes y botón «Mover elemento», también el primero; deshacer y rehacer (DS2) |
-| Elemento seleccionado | — | Sí, en una fila: posición calculada, medidas (Intro actualiza), perfiles y vidrio propios (solo con varios elementos o excepción ya guardada), mover, convertir en hueco, eliminar |
+| Elemento seleccionado | — | Sí, en una fila: posición calculada, medidas (Intro actualiza), compacto y guías, perfiles y vidrio propios (solo con varios elementos o excepción ya guardada), mover, convertir en hueco, eliminar |
 | Perfiles (series) | Sí: 57 series | Desplegable de códigos; falta búsqueda con descripción y filtro |
 | Vidrio | Sí: familia 050 | Búsqueda por código y descripción |
 | Acabado | Sí: 18 acabados | No hay acabado por elemento en el panel del diseñador |
 | Unión | Sí: artículos de unión | Parcial; sin «siguiente unión», tipo fija/variable ni escaparate |
 | Insertar tapajuntas cerramientos | Sí: 24 tapajuntas (familia 102) | No; función pendiente de explicar |
-| Insertar compacto | Sí: 17 compactos | No (E5) |
+| Insertar compacto | Sí: 17 compactos y guías 051 | Parcial (09/11/2026): bloque en el panel, cajón dibujado y valoración con opciones predeterminadas; sin registro ni medidas manuales; las guías laterales no entran en el precio |
 | Cartabón / Diseño V3 y elemento invisible | — | Invisible sí, como «Convertir en hueco» (DS3, 07/11/2026); Diseño V3 no |
 
 ## Pendiente de explicar

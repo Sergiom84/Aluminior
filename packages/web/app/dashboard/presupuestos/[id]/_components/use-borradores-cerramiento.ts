@@ -47,6 +47,26 @@ export function aplicarBorrador(configuracion: ConfiguracionCerramiento, borrado
   return esConfiguracionCerramiento(siguiente, catalogo) ? siguiente : null
 }
 
+/**
+ * Copia el compacto y el tapajuntas ya aplicados a los modelos iguales.
+ * Si hay un borrador válido, lo aplica antes; si es inválido, no copia nada.
+ */
+export function aplicarComplementosAModelos(configuracion: ConfiguracionCerramiento, borradores: Borradores,
+  id: string, destinos: readonly string[], catalogo: readonly UnionVisual[] = UNIONES_VISUALES,
+): ConfiguracionCerramiento | null {
+  const hayBorrador = Boolean(borradores.modulos[id] && Object.keys(borradores.modulos[id]).length)
+  const base = hayBorrador
+    ? aplicarBorrador(configuracion, borradores, 'modulos', id, destinos, catalogo)
+    : configuracion
+  if (!base) return null
+  const origen = base.modulos.find((modulo) => modulo.id === id)
+  if (!origen) return null
+  return asignarComplementosModulos(base, destinos, {
+    compacto: origen.compacto ?? null,
+    tapajuntas: origen.tapajuntas ?? null,
+  })
+}
+
 export function useBorradoresCerramiento(configuracion: ConfiguracionCerramiento | null,
   onAplicar: (configuracion: ConfiguracionCerramiento) => void,
   catalogo: readonly UnionVisual[] = UNIONES_VISUALES) {

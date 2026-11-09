@@ -15,7 +15,7 @@ import {
   type FilaDespieceCatalogo, type SeleccionGuardada,
 } from '@aluminior/core/despiece'
 import { incidenciaPrecioEnTabla, multiplicarDecimal, normalizarDecimal, type DatosArticuloPrecio } from '@aluminior/core/precios'
-import type { PartidaValoracionCerramiento } from '@aluminior/core/estructuras'
+import { explicarIncidenciaCompacto, type PartidaValoracionCerramiento } from '@aluminior/core/estructuras'
 import type { ClienteEscritura } from '../../cliente-db.ts'
 import type { OpcionHerrajeElegida, PiezaDespiece, RanuraAcristalamiento } from '../../lineas/guardar-linea.ts'
 import { costePorArticuloDe, leerCostesArticulos } from '../coste-articulos.ts'
@@ -128,7 +128,7 @@ export async function valorarConCatalogo(
   })
 
   const aviso = resultado.incidencias.length
-    ? `Importe incompleto: ${resultado.incidencias.join('; ')}.`
+    ? `Importe incompleto: ${resultado.incidencias.map(explicarIncidenciaCompacto).join('; ')}.`
     : resultado.avisos.length ? `Valorado con avisos: ${resultado.avisos.join('; ')}.` : null
   return {
     ok: true, descripcion: estructura?.descripcion ?? entrada.codigo, precioUnitario: resultado.importe, aviso, piezas,

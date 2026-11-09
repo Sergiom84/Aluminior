@@ -7,6 +7,25 @@
 .al-panel-posicion input { width: 72px; }
 .al-panel-acciones { margin-left: auto; }
 .al-panel-descripcion { align-self: center; color: var(--al-accent-strong); font-size: 12px; }
+.al-complementos {
+  display: flex; flex-wrap: wrap; align-items: end; gap: 8px 10px;
+  margin: 0; border: 0; padding: 0; min-width: 0;
+}
+.al-complementos legend {
+  padding: 0 0 4px; color: var(--al-text-muted); font-size: 10px; font-weight: 700;
+  letter-spacing: .04em; text-transform: uppercase;
+}
+.al-complemento select,
+.al-complementos select {
+  width: min(280px, 72vw); max-width: 100%; min-height: 30px;
+  border: 1px solid var(--al-border-strong); border-radius: var(--al-radius-sm);
+  background: white; padding: 4px 7px; font: 12px var(--al-font);
+}
+.al-complemento-corto select { width: 88px; font-family: var(--al-font-num); }
+.al-cajon { fill: #e4e0d6; stroke: #3f4c52; stroke-width: 2; }
+.al-cajon-lama { stroke: #8a9398; stroke-width: 1; }
+.al-guia-persiana { fill: #c5ccd0; stroke: #3f4c52; stroke-width: 1; }
+.al-guia-central { stroke: #3f4c52; stroke-width: 2; }
 
 /* Hueco que no se instala (DS3): en blanco, con un contorno tenue para poder seleccionarlo. */
 .al-hueco-invisible { fill: transparent; stroke: #9aa5ab; stroke-width: 2; stroke-dasharray: 12 10; }
