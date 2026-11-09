@@ -23,7 +23,19 @@ export function FormularioEvento({
   const router = useRouter()
   const dialogo = useRef<HTMLDialogElement>(null)
   const cerrando = useRef(false)
-  const [estado, accion, pendiente] = useActionState(guardarEvento, null as EstadoFormulario)
+  // React vacía el formulario tras cada envío; si falla, se repone lo escrito.
+  const [enviado, setEnviado] = useState<Record<string, string> | null>(null)
+  const [estado, accion, pendiente] = useActionState(
+    async (previo: EstadoFormulario, datos: FormData) => {
+      const resultado = await guardarEvento(previo, datos)
+      if (!resultado.ok) {
+        setEnviado(Object.fromEntries([...datos.entries()].map(([clave, valor]) => [clave, String(valor)])))
+      }
+      return resultado
+    },
+    null as EstadoFormulario,
+  )
+  const valor = (campo: string, inicial: string) => enviado?.[campo] ?? inicial
   const [confirmando, setConfirmando] = useState(false)
   const [errorQuitar, setErrorQuitar] = useState<string | null>(null)
   const [quitando, iniciar] = useTransition()
@@ -64,7 +76,7 @@ export function FormularioEvento({
       ref={dialogo}
       className="al-agenda-dialogo"
       aria-labelledby="agenda-trabajo"
-      onClose={() => { if (!cerrando.current) onCerrar() }}
+      onClose={() => { if (!cerrando.current && !dialogo.current?.open) onCerrar() }}
     >
       <form action={accion}>
         <h2 id="agenda-trabajo">Trabajo</h2>
@@ -72,27 +84,27 @@ export function FormularioEvento({
         {borrador.id && <input type="hidden" name="id" value={borrador.id} />}
         <label>
           Título
-          <input name="titulo" required maxLength={200} autoFocus defaultValue={borrador.titulo ?? ''} data-invalido={errores.titulo ? 'true' : undefined} />
+          <input name="titulo" required maxLength={200} autoFocus defaultValue={valor('titulo', borrador.titulo ?? '')} data-invalido={errores.titulo ? 'true' : undefined} />
         </label>
         {errores.titulo && <p className="al-agenda-error">{errores.titulo.join('. ')}</p>}
         <div className="al-agenda-horas">
           <label>
             Día
-            <input name="dia" type="date" required defaultValue={borrador.dia} data-invalido={errores.dia ? 'true' : undefined} />
+            <input name="dia" type="date" required defaultValue={valor('dia', borrador.dia)} data-invalido={errores.dia ? 'true' : undefined} />
           </label>
           <label>
             Inicio
-            <input name="horaInicio" type="time" required step={60} defaultValue={borrador.horaInicio} data-invalido={errores.horaInicio ? 'true' : undefined} />
+            <input name="horaInicio" type="time" required step={60} defaultValue={valor('horaInicio', borrador.horaInicio)} data-invalido={errores.horaInicio ? 'true' : undefined} />
           </label>
           <label>
             Fin
-            <input name="horaFin" type="time" required step={60} defaultValue={fin} data-invalido={errores.horaFin ? 'true' : undefined} />
+            <input name="horaFin" type="time" required step={60} defaultValue={valor('horaFin', fin)} data-invalido={errores.horaFin ? 'true' : undefined} />
           </label>
         </div>
         {errores.horaFin && <p className="al-agenda-error">{errores.horaFin.join('. ')}</p>}
         <label>
           Observaciones
-          <textarea name="observaciones" rows={3} maxLength={4000} defaultValue={borrador.observaciones ?? ''} />
+          <textarea name="observaciones" rows={3} maxLength={4000} defaultValue={valor('observaciones', borrador.observaciones ?? '')} />
         </label>
         <div className="al-agenda-acciones">
           <button type="submit" className="al-command-primary" disabled={pendiente || quitando}>Guardar</button>

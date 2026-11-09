@@ -81,6 +81,7 @@ export function CalendarioSemana({
                         key={item.id}
                         type="button"
                         className="al-semana-evento"
+                        title={`${item.horaInicio}–${item.horaFin} ${item.titulo}`}
                         style={{
                           top: `${caja.top}%`,
                           height: `${caja.alto}%`,

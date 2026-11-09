@@ -64,7 +64,10 @@
   margin-right: auto;
 }
 
-.al-agenda-mes,
+.al-agenda-mes {
+  display: grid;
+}
+
 .al-agenda-mes-fila {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
@@ -89,7 +92,7 @@
   display: flex;
   min-height: 44px;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 4px;
   border-radius: var(--al-radius-sm);
   padding: 4px 6px;

@@ -89,6 +89,9 @@
 
 .al-agenda-dialogo {
   width: min(480px, calc(100vw - 24px));
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  overflow: auto;
   padding: 16px;
   color: var(--al-text);
   box-shadow: var(--al-shadow-lg);
