@@ -5,8 +5,16 @@
   align-items: start;
 }
 
-.al-agenda-titulo {
+.al-agenda-cabecera {
+  display: flex;
   grid-column: 1 / -1;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.al-agenda-titulo {
   margin: 0;
   font-size: 18px;
   font-weight: 700;

@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useCallback, useState } from 'react'
 import { CalendarioMes } from './calendario-mes.tsx'
 import { CalendarioSemana } from './calendario-semana.tsx'
@@ -21,7 +22,10 @@ export function PanelAgenda({
 
   return (
     <div className="al-agenda">
-      <h1 className="al-agenda-titulo">Dashboard</h1>
+      <header className="al-agenda-cabecera">
+        <h1 className="al-agenda-titulo">Dashboard</h1>
+        <Link href="/dashboard/presupuestos/dictado" className="al-command">Dictar presupuesto</Link>
+      </header>
       <div className="al-agenda-principal">
         <CalendarioMes dia={dia} mes={mes} hoy={hoy} eventos={eventos} notas={notas} />
         <CalendarioSemana

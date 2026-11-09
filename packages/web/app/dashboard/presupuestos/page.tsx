@@ -71,6 +71,9 @@ export default async function Presupuestos({
           <Link href="/dashboard/presupuestos/nuevo" className="al-command-primary">
             Nuevo
           </Link>
+          <Link href="/dashboard/presupuestos/dictado" className="al-command">
+            Dictar
+          </Link>
           <FiltroCliente
             inicial={clienteSeleccionado ? { codigo: clienteSeleccionado.codigo, nombre: clienteSeleccionado.nombre } : null}
             busqueda={busqueda}
