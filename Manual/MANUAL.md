@@ -33,7 +33,7 @@ responder tras estar inactivo y al guardar. Si un botón muestra "Creando…" o
 
    ![Cliente creado](img/03-cliente-creado-en-lista.jpg)
 
-Para localizar un cliente, escribe en el buscador parte del nombre, código, NIF o
+Para localizar un cliente, escribe calle, apellidos, nombre, teléfono, código, NIF o
 población y pulsa **Buscar**.
 
 ---
@@ -42,14 +42,15 @@ población y pulsa **Buscar**.
 
 1. Entra en **Presupuestos**. Verás el listado con número, revisión, fecha, cliente,
    obra, tarifa, estado, líneas y total. Una línea "sin valorar" significa que falta
-   algún precio: nunca es un 0 falso.
+   algún precio: nunca es un 0 falso. El buscador admite número, cliente, obra, fecha
+   (`12/03/2026`) y precio (`1.200,50`).
 
    ![Listado de presupuestos](img/04-lista-presupuestos.jpg)
 
 2. Pulsa **Nuevo**.
-3. En **Cliente** escribe el código o varios trozos del nombre en cualquier orden
-   (por ejemplo `garcia prueba`). Aparece la lista de coincidencias; elige la fila y
-   queda guardado el código del cliente.
+3. En **Cliente** escribe el código, trozos del nombre o los apellidos, la calle o el
+   teléfono (por ejemplo `garcia mayor`). Aparece la lista de coincidencias; elige la
+   fila y queda guardado el código del cliente.
 
    ![Buscar cliente en el presupuesto](img/05-presupuesto-buscar-cliente.jpg)
 

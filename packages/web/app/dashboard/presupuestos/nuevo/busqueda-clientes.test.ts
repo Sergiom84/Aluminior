@@ -1,8 +1,14 @@
 import { describe, expect, it, vi } from 'vitest'
 import { clientesVigentes, iniciarBusquedaClientes, type EstadoBusquedaClientes } from './busqueda-clientes.ts'
 
-const anterior = { codigo: 'QA001', nombre: 'Cliente anterior sintético', poblacion: null }
-const actual = { codigo: 'QA002', nombre: 'Cliente actual sintético', poblacion: null }
+const anterior = {
+  codigo: 'QA001', nombre: 'Cliente anterior sintético', poblacion: null,
+  direccion: null, telefono: null, telefonoMovil: null,
+}
+const actual = {
+  codigo: 'QA002', nombre: 'Cliente actual sintético', poblacion: null,
+  direccion: null, telefono: null, telefonoMovil: null,
+}
 const pendiente = <T>() => {
   let resolver!: (valor: T) => void
   let rechazar!: (motivo: Error) => void

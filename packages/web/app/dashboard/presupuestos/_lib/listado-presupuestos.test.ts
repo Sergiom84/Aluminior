@@ -19,11 +19,12 @@ describe('lista de presupuestos', () => {
   })
 
   it('busca también por el cliente unido y su código canónico', () => {
+    const busqueda = readFileSync(new URL('./busqueda-listado.ts', import.meta.url), 'utf8')
     const pagina = readFileSync(new URL('../page.tsx', import.meta.url), 'utf8')
-    const bloqueFiltro = pagina.slice(pagina.indexOf('const filtro'), pagina.indexOf('const filas'))
 
-    expect(bloqueFiltro).toContain('schema.clientes.nombre')
-    expect(bloqueFiltro).toContain('schema.presupuestos.clienteCodigo')
+    expect(busqueda).toContain('schema.clientes.nombre')
+    expect(busqueda).toContain('schema.presupuestos.clienteCodigo')
+    expect(pagina).toContain('filtroClienteSeleccionado')
   })
 
   it('no aplica acciones globales a la primera fila y ofrece acciones inequívocas por fila', () => {

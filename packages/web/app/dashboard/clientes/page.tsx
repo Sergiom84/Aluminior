@@ -7,9 +7,10 @@
  */
 
 import Link from 'next/link'
-import { or, ilike, sql, asc } from 'drizzle-orm'
+import { sql, asc } from 'drizzle-orm'
 import { crearDb, schema } from '@aluminior/db'
 import { Shell } from '../_components/shell.tsx'
+import { filtroListadoClientes } from '../../lib/busqueda-clientes.ts'
 
 export const dynamic = 'force-dynamic'
 
@@ -24,16 +25,7 @@ export default async function Clientes({
   const busqueda = (q ?? '').trim()
 
   const db = crearDb()
-  const patron = `%${busqueda}%`
-
-  const filtro = busqueda
-    ? or(
-        ilike(schema.clientes.nombre, patron),
-        ilike(schema.clientes.codigo, patron),
-        ilike(schema.clientes.nif, patron),
-        ilike(schema.clientes.poblacion, patron),
-      )
-    : undefined
+  const filtro = filtroListadoClientes(busqueda)
 
   const [filas, [{ total }]] = await Promise.all([
     db.select({
@@ -41,6 +33,7 @@ export default async function Clientes({
       nombre: schema.clientes.nombre,
       nif: schema.clientes.nif,
       poblacion: schema.clientes.poblacion,
+      direccion: schema.clientes.direccion,
       telefono: schema.clientes.telefono,
       movil: schema.clientes.telefonoMovil,
     })
@@ -56,13 +49,15 @@ export default async function Clientes({
 
   return (
     <Shell moduloActivo="clientes">
-      <div className="mb-5 flex items-center justify-between gap-4">
-        <form className="flex gap-2">
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
+        <form className="flex min-w-0 flex-1 flex-wrap gap-2">
+          <label htmlFor="buscar-cliente" className="sr-only">Buscar cliente</label>
           <input
+            id="buscar-cliente"
             name="q"
             defaultValue={busqueda}
-            placeholder="Buscar por nombre, código, NIF o población…"
-            className="w-96 rounded-md border px-3 py-2 text-sm"
+            placeholder="Calle, nombre, teléfono o código"
+            className="w-full max-w-md rounded-md border px-3 py-2 text-sm"
             style={{ background: 'var(--al-surface)', borderColor: 'var(--al-border-strong)' }}
           />
           <button
@@ -136,7 +131,12 @@ export default async function Clientes({
                       {c.codigo}
                     </Link>
                   </td>
-                  <td className="px-4 py-2">{c.nombre}</td>
+                  <td className="px-4 py-2">
+                    <div>{c.nombre}</div>
+                    {c.direccion && (
+                      <div className="text-xs" style={{ color: 'var(--al-text-muted)' }}>{c.direccion}</div>
+                    )}
+                  </td>
                   <td className="px-4 py-2" style={{ color: 'var(--al-text-muted)' }}>{c.nif ?? '—'}</td>
                   <td className="px-4 py-2" style={{ color: 'var(--al-text-muted)' }}>{c.poblacion ?? '—'}</td>
                   <td className="px-4 py-2" style={{ color: 'var(--al-text-muted)' }}>

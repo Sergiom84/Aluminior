@@ -643,6 +643,15 @@ Los nueve documentos anteriores y tres líneas conservan sus huellas.
 
 ## Siguiente paso
 
+**Hecho en local, sin publicar (09/11/2026):** primera observación de Javi. La búsqueda de cliente,
+en el listado y en la cabecera del presupuesto, admite calle, nombre o apellidos, teléfono y código.
+No hay columna de apellidos: están en `nombre`. No hay módulo de facturas; fecha (`12/03/2026`) y
+precio (`1.200,50`) se buscan en el listado de presupuestos, que es el documento comercial que se
+crea hoy. Un documento «sin valorar» no casa por precio. No rehacer esta búsqueda. No está en Render.
+La observación siguiente, «no se seleccionan por cliente», queda en local: el listado filtra al elegir un
+cliente y la ficha del cliente lista sus presupuestos. No se ha creado tabla nueva: calle, NIF y nombre
+ya están en `clientes`; partir apellidos de las fichas importadas inventaría datos.
+
 **Siguiente:** que Javi pruebe con el [tutorial](../Manual/TUTORIAL-JAVI.md) y devuelva observaciones
 (`feat/ds3-hueco-panel` ya está en `main`); después, QA con sesión en producción de DG1, VA1, GR2,
 PDF1, DS2 y DS3; luego contrastar el compacto/tapajuntas por elemento con un documento real de la 0016

@@ -22,7 +22,7 @@ Presupuestos, Producción, Compras e Informes.
 ![Listado de clientes](img/01-lista-clientes.jpg)
 
 Entra en **Clientes**. Ves todos los clientes importados de Productor. Para buscar
-uno, escribe parte del nombre, el código, el NIF o la población y pulsa **Buscar**.
+uno, escribe calle, apellidos, nombre, teléfono, código, NIF o población y pulsa **Buscar**.
 
 ![Formulario de cliente nuevo](img/02-cliente-formulario.jpg)
 
@@ -45,13 +45,15 @@ a mostrar todos.
 
 Entra en **Presupuestos**. Cada fila es un presupuesto con su número, fecha,
 cliente, obra, estado y total. Si pone **«sin valorar»** es que falta algún precio:
-el programa nunca se inventa un 0. Pulsa **Nuevo**.
+el programa nunca se inventa un 0. Para localizar uno, escribe el número, el cliente,
+la obra, la fecha (`12/03/2026`) o el precio (`1.200,50`). También puedes elegir un cliente
+en el buscador de la lista: se quedan solo sus presupuestos. Pulsa **Nuevo**.
 
 ![Buscar cliente](img/05-presupuesto-buscar-cliente.jpg)
 
-En **Cliente** puedes escribir el código o trozos del nombre en cualquier orden
-(por ejemplo `garcia prueba`). Elige la fila que quieras. El cliente es opcional:
-si no está dado de alta, déjalo vacío.
+En **Cliente** puedes escribir el código, trozos del nombre o los apellidos, la calle
+o el teléfono (por ejemplo `garcia mayor` o `699991001`). Elige la fila que quieras.
+El cliente es opcional: si no está dado de alta, déjalo vacío.
 
 ![Cabecera del presupuesto](img/06-presupuesto-cabecera.jpg)
 

@@ -9,6 +9,14 @@ import { textoTotalListado } from '../_lib/listado-presupuestos.ts'
 
 const eur = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' })
 
+function Destinatario({ fila }: { fila: FilaPresupuesto }) {
+  const nombre = resolverDestinatarioPresupuesto({
+    clienteNombre: fila.cliente, potencialNombre: fila.potencial, nombreLibre: fila.nombreLibre,
+  })
+  if (!fila.clienteCodigo) return nombre
+  return <Link href={`/dashboard/presupuestos?cliente=${encodeURIComponent(fila.clienteCodigo)}`}>{nombre}</Link>
+}
+
 export interface FilaPresupuesto {
   id: string
   numero: number
@@ -89,11 +97,15 @@ export function ListaPresupuestos({ filas }: { filas: FilaPresupuesto[] }) {
                 </td>
                 <td className="cifra" style={{ textAlign: 'left' }}>{p.revision}</td>
                 <td>{p.fecha ? new Date(p.fecha).toLocaleDateString('es-ES') : '—'}</td>
-                <td className="font-mono text-[11px]">{p.clienteCodigo ?? '—'}</td>
+                <td className="font-mono text-[11px]">
+                  {p.clienteCodigo ? (
+                    <Link href={`/dashboard/presupuestos?cliente=${encodeURIComponent(p.clienteCodigo)}`}>
+                      {p.clienteCodigo}
+                    </Link>
+                  ) : '—'}
+                </td>
                 <td className="max-w-72 overflow-hidden text-ellipsis">
-                  {resolverDestinatarioPresupuesto({
-                    clienteNombre: p.cliente, potencialNombre: p.potencial, nombreLibre: p.nombreLibre,
-                  })}
+                  <Destinatario fila={p} />
                 </td>
                 <td className="max-w-64 overflow-hidden text-ellipsis" style={{ color: 'var(--al-text-muted)' }}>
                   {p.obraTexto ?? '—'}

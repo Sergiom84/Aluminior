@@ -58,12 +58,25 @@
   min-width: 0;
 }
 
+.al-client-filter {
+  width: min(280px, 100%);
+  flex: 0 1 280px;
+}
+
+.al-client-filter label {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--al-text-muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
 .al-client-results {
   position: absolute;
   z-index: 20;
   top: calc(100% + 4px);
   left: 0;
-  width: min(430px, calc(100vw - 40px));
+  width: min(520px, calc(100vw - 40px));
   overflow: hidden;
   border: 1px solid var(--al-border-strong);
   border-radius: var(--al-radius-sm);
@@ -74,9 +87,9 @@
 .al-client-results button {
   display: grid;
   width: 100%;
-  grid-template-columns: 64px minmax(0, 1fr) auto;
+  grid-template-columns: 72px minmax(0, 1fr);
   align-items: baseline;
-  gap: 8px;
+  gap: 2px 8px;
   border-bottom: 1px solid var(--al-border);
   padding: 7px 9px;
   color: var(--al-text);
@@ -107,8 +120,11 @@
 }
 
 .al-client-results small {
+  grid-column: 2;
+  overflow: hidden;
   color: var(--al-text-muted);
   font-size: 10px;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 

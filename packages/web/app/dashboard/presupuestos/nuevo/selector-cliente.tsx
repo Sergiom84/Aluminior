@@ -4,7 +4,25 @@ import { useEffect, useId, useRef, useState } from 'react'
 import { buscarClientes, type ClienteEncontrado } from '../_lib/acciones.ts'
 import { clientesVigentes, iniciarBusquedaClientes, type EstadoBusquedaClientes } from './busqueda-clientes.ts'
 
-export function SelectorCliente({ errores = [], inicial }: { errores?: string[]; inicial?: { codigo: string; nombre: string } | null }) {
+function metaCliente(cliente: ClienteEncontrado) {
+  const telefonos = [cliente.telefono, cliente.telefonoMovil].filter((telefono, indice, todos) =>
+    telefono && todos.indexOf(telefono) === indice)
+  return [cliente.direccion, ...telefonos, cliente.poblacion].filter(Boolean).join(' · ')
+}
+
+function MetaCliente({ cliente }: { cliente: ClienteEncontrado }) {
+  const meta = metaCliente(cliente)
+  if (!meta) return null
+  return <small title={meta}>{meta}</small>
+}
+
+export function SelectorCliente({
+  errores = [], inicial, onElegir,
+}: {
+  errores?: string[]
+  inicial?: { codigo: string; nombre: string } | null
+  onElegir?: (cliente: ClienteEncontrado) => void
+}) {
   const listaId = useId()
   const contenedor = useRef<HTMLDivElement>(null)
   const buscador = useRef<HTMLInputElement>(null)
@@ -40,6 +58,7 @@ export function SelectorCliente({ errores = [], inicial }: { errores?: string[];
     setConsulta(`${cliente.codigo} · ${cliente.nombre}`)
     setAbierto(false)
     setActivo(-1)
+    onElegir?.(cliente)
   }
 
   return (
@@ -58,7 +77,7 @@ export function SelectorCliente({ errores = [], inicial }: { errores?: string[];
         aria-invalid={errores.length ? true : undefined}
         aria-describedby={errores.length ? `${listaId}-error` : undefined}
         value={consulta}
-        placeholder="Código o nombre"
+        placeholder="Código, nombre, calle o teléfono"
         autoComplete="off"
         role="combobox"
         aria-autocomplete="list"
@@ -127,7 +146,7 @@ export function SelectorCliente({ errores = [], inicial }: { errores?: string[];
               >
                 <strong>{cliente.codigo}</strong>
                 <span>{cliente.nombre}</span>
-                {cliente.poblacion && <small>{cliente.poblacion}</small>}
+                <MetaCliente cliente={cliente} />
               </button>
             ))}
           </div>
