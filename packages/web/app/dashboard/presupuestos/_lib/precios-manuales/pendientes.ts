@@ -33,16 +33,19 @@ export async function leerPendientesPrecio(
   const porLinea = lineas.flatMap((linea) => {
     const resultado = resultados.get(linea.id)
     const pendientes = resultado ? pendientesDePrecio(resultado) : []
-    return pendientes.length ? [{ linea, pendientes }] : []
+    if (!pendientes.length) return []
+    // El GRUPO no guarda artículo: se nombra por sus elementos (1O, C2+1O…).
+    const elementos = [...new Set(resultado!.origenes.filter((o) => o.origen.tipo === 'MODULO').map((o) => o.codigo))]
+    return [{ linea, pendientes, nombre: linea.articuloCodigo?.trim() || elementos.join('+') }]
   })
   if (!porLinea.length) return []
   const codigos = [...new Set(porLinea.flatMap((l) => l.pendientes.map((p) => p.articulo)))]
   const articulos = await cliente.select({ codigo: schema.articulos.codigo, descripcion: schema.articulos.descripcion })
     .from(schema.articulos).where(inArray(schema.articulos.codigo, codigos))
   const descripcion = new Map(articulos.map((a) => [a.codigo, a.descripcion]))
-  return porLinea.map(({ linea, pendientes }) => ({
+  return porLinea.map(({ linea, pendientes, nombre }) => ({
     lineaId: linea.id,
-    articuloLinea: linea.articuloCodigo ?? '',
+    articuloLinea: nombre,
     piezas: pendientes.map((p) => ({
       articulo: p.articulo, descripcion: descripcion.get(p.articulo) ?? p.articulo, acabado: p.acabado,
       unidadCatalogo: p.tipoMetraje, unidades: unidadesPosibles(p.filas), filas: p.filas,

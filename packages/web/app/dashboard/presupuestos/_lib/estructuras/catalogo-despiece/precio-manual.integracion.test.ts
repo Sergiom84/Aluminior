@@ -5,7 +5,7 @@ import { pendientesDePrecio } from '@aluminior/core/estructuras'
 import { altaLinea } from '../../lineas/alta-linea.ts'
 import { valorarCerramiento } from '../../cerramientos/valorar-cerramiento.ts'
 import { leerResultadoCerramiento } from '../../cerramientos/resultado-persistido.ts'
-import { aplicarPreciosLinea } from '../../precios-manuales/index.ts'
+import { aplicarPreciosLinea, leerPendientesPrecio } from '../../precios-manuales/index.ts'
 import { caso, db, entrada } from './catalogo-qa-corr.fixture.ts'
 
 afterAll(() => db.$client.end({ timeout: 5 }))
@@ -48,6 +48,9 @@ describe('piezas sin PVP y precio puesto por el operador', () => {
     expect(linea!.valoracionCompleta).toBe(false)
     const resultado = await leerResultadoCerramiento(tx, linea!.id)
     const [felpudo] = pendientesDePrecio(resultado!)
+    const [ficha] = await leerPendientesPrecio(tx, [linea!], new Map([[linea!.id, resultado]]))
+    expect(ficha).toMatchObject({ lineaId: linea!.id, articuloLinea: 'C2',
+      piezas: [{ articulo: 'QA-FELPUDO', unidadCatalogo: 'ML', unidades: ['ML', 'UD'] }] })
     const precio = { articulo: 'QA-FELPUDO', acabado: felpudo!.acabado, unidad: 'ML' as const, precio: 1 }
     const base = { presupuestoId: presupuesto!.id, lineaId: linea!.id }
 

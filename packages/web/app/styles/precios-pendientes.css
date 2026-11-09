@@ -13,13 +13,17 @@
 .al-precios-tabla table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .al-precios-tabla th, .al-precios-tabla td { padding: 6px 8px; border-bottom: 1px solid var(--al-border); text-align: left; vertical-align: middle; }
 .al-precios-tabla thead th { color: var(--al-text-muted); font-size: 12px; font-weight: 500; white-space: nowrap; }
-.al-precios-tabla tbody th { font-weight: 500; min-width: 14rem; }
+.al-precios-tabla tbody th { font-weight: 500; min-width: 8rem; }
 .al-precios-tabla td:nth-child(5), .al-precios-tabla td:nth-child(6) { text-align: right; white-space: nowrap; }
 .al-precios-tabla select, .al-precios-tabla input {
   padding: 3px 6px; border: 1px solid var(--al-border-strong); border-radius: var(--al-radius-sm);
   background: var(--al-surface); color: var(--al-text); font-size: 13px;
 }
-.al-precios-tabla input { width: 6.5rem; text-align: right; }
+.al-precios-tabla input { width: 5.5rem; text-align: right; }
+@media (max-width: 640px) {
+  .al-precios-tabla th, .al-precios-tabla td { padding: 4px; }
+  .al-precios-tabla th:nth-child(2), .al-precios-tabla td:nth-child(2) { display: none; }
+}
 .al-precios-tabla select:focus-visible, .al-precios-tabla input:focus-visible { outline: 2px solid var(--al-accent); outline-offset: 1px; }
 .al-precios-error { margin: 0; color: var(--al-error); font-size: 13px; }
 .al-precios-acciones { display: flex; justify-content: flex-end; gap: 8px; }
