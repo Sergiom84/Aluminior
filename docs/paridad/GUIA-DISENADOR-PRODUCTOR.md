@@ -221,7 +221,7 @@ uniones con dibujo.
 | | Acabado: dos códigos con lupa + `#` | Acabado del compacto |
 | Registro de Persiana | Código + lupa + desplegable + dos iconos; `Cajón` 300 mm | Alternativa de registro (Pendiente de explicar) |
 | | Acabado: dos códigos con lupa + `#` | |
-| Guías | Izquierda / Derecha: código + ojo + lupa | Guías de persiana (Sergio las explicará más adelante) |
+| Guías | Izquierda / Derecha: código + ojo + lupa | Conjunto de guía de persiana (familia 051); su perfil es el componente `GP` |
 | Forzar medidas manuales | Altura total, Largo guía izq., Largo guía der. (mm) | Sustituyen el cálculo automático |
 | Botones | `Aceptar`, `Cerrar`, papelera | Aplicar, salir sin aplicar, quitar el compacto |
 
@@ -233,8 +233,14 @@ ventana; las guías laterales, solo si se han elegido. Al elegir un compacto se 
 predeterminadas del catálogo, así la ventana se valora sin que el operador conozca `G1O0`. La tabla
 `estructura_opciones_accesorio` de la base que usa la web está vacía (0 filas, observado el 09/11/2026);
 el despiece usa el catálogo exportado de EMP0016 cuando la base no tiene predeterminadas. Las guías
-izquierda/derecha se guardan y se dibujan, pero aún no entran en el precio: no hay regla de metraje
-contrastada. Registro de persiana y medidas manuales siguen sin reproducir. `descontarHueco` no se ha
+izquierda/derecha son **conjuntos de la familia 051** (GMG001-GMG014, PSG001-PSG011), como en Productor; el
+perfil es su componente `GP` (`GMG010` → `GM6805L`). Desde el 10/11/2026 entran en el precio con la regla
+del único caso de EMP0016 (presupuesto 970: C2 de 1.600 de alto, COM005, cajón 155, GMG010): por lado,
+1 perfil a metro lineal de largo = alto del compacto − cajón (1.445) y 5 minutos de `MOCOMP`. La línea
+sale «valorada con avisos» hasta contrastar otra guía y otra altura. `PSG90`, `PSG100`, `PSG120` y
+`PSG120L` no tienen PVP en EMP0016 (tampoco en Productor): el selector las marca «sin precio» y la línea
+queda sin valorar en vez de sumar 0. Pendiente de contraste: efecto de `DescuentoGuia` (53 mm en GMG010),
+origen de los 5 minutos y caso sin descontar el cajón. Registro de persiana y medidas manuales siguen sin reproducir. `descontarHueco` no se ha
 contrastado con un documento real.
 
 Lupa de compacto: los 17 de la familia `100`:
@@ -429,7 +435,7 @@ hipótesis.
 | Acabado | Sí: 18 acabados | No hay acabado por elemento en el panel del diseñador |
 | Unión | Sí: artículos de unión | Parcial; sin «siguiente unión», tipo fija/variable ni escaparate |
 | Insertar tapajuntas cerramientos | Sí: 24 tapajuntas (familia 102) | No; función pendiente de explicar |
-| Insertar compacto | Sí: 17 compactos y guías 051 | Parcial (09/11/2026): bloque en el panel, cajón dibujado y valoración con opciones predeterminadas; sin registro ni medidas manuales; las guías laterales no entran en el precio |
+| Insertar compacto | Sí: 17 compactos y guías 051 | Parcial (09/11/2026): bloque en el panel, cajón dibujado y valoración con opciones predeterminadas; sin registro ni medidas manuales; guías laterales valoradas con aviso (regla de un caso, 10/11/2026) |
 | Cartabón / Diseño V3 y elemento invisible | — | Invisible sí, como «Convertir en hueco» (DS3, 07/11/2026); Diseño V3 no |
 
 ## Pendiente de explicar
@@ -446,7 +452,9 @@ esta lista a July como pendientes desde el equipo donde está instalado.
 3. Registro de persiana frente a compacto y su `Cajón` de 300 mm.
 4. ~~Lupa de perfiles: si filtra las series por tipo de estructura.~~
    Resuelta el 01/11/2026: sí filtra.
-5. Guías de persiana (Sergio las explicará más adelante).
+5. Guías de persiana: catálogo y regla de precio resueltos el 10/11/2026 con un
+   solo caso (ver «Compacto»). Falta contrastar en Productor otra guía (`PSG002`),
+   otra altura, el efecto de `DescuentoGuia` y de dónde salen los 5 minutos.
 6. Elemento invisible: qué se selecciona al «pulsar en la imagen» (el marco o
    el vidrio).
 7. Elemento invisible: resuelta el 02/11/2026 salvo el dibujo en el PDF

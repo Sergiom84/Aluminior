@@ -1,0 +1,28 @@
+/* Campo «Código» del catálogo inferior del diseñador: elegir la ventana escribiendo su código. */
+.al-catalogo-modelos { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.al-catalogo-codigo { display: flex; flex-wrap: wrap; align-items: end; gap: 6px; min-width: 0; }
+.al-catalogo-codigo label { display: grid; gap: 2px; color: var(--al-text-muted); font-size: 11px; }
+.al-catalogo-codigo input {
+  width: 8.5rem;
+  max-width: 100%;
+  padding: 3px 6px;
+  border: 1px solid var(--al-border-strong);
+  border-radius: var(--al-radius-sm);
+  background: var(--al-surface);
+  color: var(--al-text);
+  font: 600 13px var(--al-font-num);
+  text-align: left;
+  text-transform: uppercase;
+}
+.al-catalogo-codigo-nombre {
+  flex: 1 1 12rem;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--al-accent-strong);
+  font-size: 12px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.al-catalogo-codigo [role='alert'], .al-catalogo-vacio { flex-basis: 100%; margin: 0; color: var(--al-error); font-size: 12px; }
+.al-catalogo-vacio { color: var(--al-text-muted); }

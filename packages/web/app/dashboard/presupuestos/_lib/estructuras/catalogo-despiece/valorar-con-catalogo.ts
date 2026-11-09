@@ -69,6 +69,7 @@ export async function valorarConCatalogo(
   const catalogo = await leerCatalogoLinea(cliente, {
     estructura: entrada.codigo, serie: entrada.serieCodigo, vidrio: entrada.vidrioCodigo, tarifa: entrada.tarifa,
     adicionales: [entrada.compacto, ...entrada.accesorios ?? []].flatMap(a => a ? [a.estructura] : []),
+    guias: [entrada.compacto?.guiaIzquierda, entrada.compacto?.guiaDerecha].filter((g): g is string => Boolean(g)),
     opcionAcristalamiento: entrada.opcionAcristalamiento,
   })
   if (!catalogo) return null

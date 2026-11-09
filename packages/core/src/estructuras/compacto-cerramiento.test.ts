@@ -92,6 +92,14 @@ describe('compactoEfectivoModulo', () => {
     expect(c3?.acabado).toBe('UNI')
   })
 
+  it('pasa al despiece las guías de cada lado en mayúsculas y omite las vacías', () => {
+    const c = compactoEfectivoModulo(
+      { compacto: { estructuraCodigo: 'com005', altoCajonMm: 155, guiaIzquierda: ' gmg010 ' } }, {},
+    )
+    expect(c?.guiaIzquierda).toBe('GMG010')
+    expect(c && 'guiaDerecha' in c).toBe(false)
+  })
+
   it('respeta acabado propio y opciones cuando se especifican', () => {
     const c = compactoEfectivoModulo(
       {

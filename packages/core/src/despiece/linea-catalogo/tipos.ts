@@ -92,6 +92,8 @@ export interface CatalogoLinea {
   conceptosManoObra(): readonly ConceptoManoObraCatalogo[]
   /** Opciones predeterminadas `G{grupo}O{opcion}` de una estructura accesoria (`OPCpredetSN`); ausente sin catálogo 0033. */
   opcionesPredeterminadas?(estructura: string): readonly string[]
+  /** Perfil (componente `GP`) del conjunto de guía de persiana, familia 051; null si no está en catálogo. */
+  articuloGuia?(conjunto: string): string | null
   /** `Estructuras.TipoPerf` de la estructura; null o ausente si no está en el catálogo. */
   tipoPerfil?(estructura: string): string | null
   /** PVP y reglas de metraje del artículo en ese acabado; null si no está en catálogo. */
@@ -119,6 +121,9 @@ export interface CompactoLineaCatalogo extends AccesorioLineaCatalogo {
   descuentoVerticalMm: number
   /** Altura total cuando difiere de altoMm + altoCajon (e.g. persiana que cubre fijos). */
   alturaTotalMm?: number
+  /** Conjunto de guía de persiana (familia 051) a cada lado (`CerrCodGuiaI`/`CerrCodGuiaD`). */
+  guiaIzquierda?: string
+  guiaDerecha?: string
 }
 
 export interface EntradaLineaCatalogo {

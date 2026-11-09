@@ -21,7 +21,7 @@ export interface CompactoModulo {
   posicionGuiaCentralMm?: number
   descuentoVerticalMm?: number
   descontarHueco?: boolean
-  /** Guía de persiana izquierda (familia 051). No entra en el despiece: no hay regla de metraje contrastada. */
+  /** Conjunto de guía de persiana izquierda (familia 051, p. ej. GMG010). Se valora con aviso: regla de un solo caso. */
   guiaIzquierda?: string
   /** Guía de persiana derecha. Si no se indica, Productor usa la misma que la izquierda. */
   guiaDerecha?: string
@@ -90,6 +90,8 @@ export function compactoEfectivoModulo(
     posicionGuiaCentralMm: c.posicionGuiaCentralMm ?? 0,
     descuentoVerticalMm: c.descuentoVerticalMm ?? 0,
     ...(c.alturaTotalMm !== undefined ? { alturaTotalMm: c.alturaTotalMm } : {}),
+    ...(c.guiaIzquierda?.trim() ? { guiaIzquierda: c.guiaIzquierda.trim().toUpperCase() } : {}),
+    ...(c.guiaDerecha?.trim() ? { guiaDerecha: c.guiaDerecha.trim().toUpperCase() } : {}),
   }
 }
 

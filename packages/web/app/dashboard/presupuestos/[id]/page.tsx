@@ -22,6 +22,7 @@ import { PaginaGastos } from './_components/pagina-gastos.tsx'
 import { PreferenciaMedidasPresupuesto } from './_components/disenador/preferencia-medidas.tsx'
 import { leerCatalogoUniones } from '../../../../lib/catalogo-uniones/leer.ts'
 import { codigosDibujables, leerCotasCatalogoDiseno } from '../_lib/estructuras/cotas-catalogo.ts'
+import { listarGuiasCompacto } from '../_lib/estructuras/catalogo-despiece/guias-compacto.ts'
 import styles from './presupuesto-movil.module.css'
 
 export const dynamic = 'force-dynamic'
@@ -62,9 +63,7 @@ export default async function DetallePresupuesto({ params, searchParams }: {
   const tapajuntas = await db.select({
     codigo: schema.estructuras.codigo, descripcion: schema.estructuras.descripcion,
   }).from(schema.estructuras).where(eq(schema.estructuras.familia, '102')).orderBy(asc(schema.estructuras.codigo))
-  const guias = await db.select({
-    codigo: schema.articulos.codigo, descripcion: schema.articulos.descripcion,
-  }).from(schema.articulos).where(eq(schema.articulos.familiaCodigo, '051')).orderBy(asc(schema.articulos.codigo))
+  const guias = await listarGuiasCompacto(db, presupuesto.tarifa)
   const complementosCatalogo = { compactos, tapajuntas, guias }
   const idsLineas = lineas.map((linea) => linea.id)
   const piezas = idsLineas.length

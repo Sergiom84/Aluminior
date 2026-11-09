@@ -15,8 +15,8 @@ export interface ModeloComplemento {
 export interface CatalogoComplementosDisenador {
   compactos: readonly ModeloComplemento[]
   tapajuntas: readonly ModeloComplemento[]
-  /** Guías de persiana, familia 051. Vacío si el catálogo no las tiene. */
-  guias?: readonly ModeloComplemento[]
+  /** Conjuntos de guía de persiana, familia 051. Vacío si el catálogo no las tiene. */
+  guias?: readonly (ModeloComplemento & { sinPrecio?: boolean })[]
 }
 
 const CAJONES_ESTANDAR = [155, 185, 200] as const
@@ -56,8 +56,7 @@ export function ComplementosElemento({ modulo, borrador, catalogo, onChange }: {
     ? borrador.tapajuntas ?? null : modulo.tapajuntas ?? null
   const sinInferior = Boolean(tapajuntas?.opciones?.includes('G2O1'))
   const grupos = compacto ? gruposOpcionesVisibles(compacto.estructuraCodigo) : []
-  const guias = [...catalogo.guias ?? []].sort((a, b) =>
-    Number(a.codigo === '27') - Number(b.codigo === '27') || a.codigo.localeCompare(b.codigo))
+  const guias = [...catalogo.guias ?? []].sort((a, b) => a.codigo.localeCompare(b.codigo))
   return <>
     {catalogo.compactos.length > 0 && (
       <fieldset className="al-complementos">
@@ -112,8 +111,13 @@ export function ComplementosElemento({ modulo, borrador, catalogo, onChange }: {
                     data-excepcion={Boolean(valor) || undefined}
                     onChange={(e) => onChange({ compacto: asignarGuia(compacto, lado, e.target.value) })}>
                     <option value="">Sin guía</option>
+                    {valor && !guias.some((guia) => guia.codigo === valor) && (
+                      <option value={valor}>{valor}</option>
+                    )}
                     {guias.map((guia) => (
-                      <option key={guia.codigo} value={guia.codigo}>{guia.codigo} · {guia.descripcion}</option>
+                      <option key={guia.codigo} value={guia.codigo}>
+                        {guia.codigo} · {guia.descripcion}{guia.sinPrecio ? ' (sin precio)' : ''}
+                      </option>
                     ))}
                   </select>
                 </label>

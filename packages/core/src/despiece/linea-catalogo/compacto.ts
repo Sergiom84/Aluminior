@@ -16,6 +16,7 @@
  */
 
 import { evaluar } from '../formula.ts'
+import { despiezarGuiasCompacto } from './guias-compacto.ts'
 import { fila, parcialVacio, type DespieceParcial } from './parcial.ts'
 import type { AccesorioLineaCatalogo, CatalogoLinea, CompactoLineaCatalogo } from './tipos.ts'
 
@@ -80,8 +81,14 @@ export function despiezarCompacto(
     return { ...parcialVacio(), incidencias: [`accesorio ${compacto.estructura}: descuento vertical adicional sin caso contrastado`] }
   }
   const largo = compacto.alturaTotalMm ?? (ventana.altoMm + compacto.altoCajonMm)
-  return despiezarAccesorio(catalogo, compacto, { A: ventana.anchoMm, L: largo,
+  const r = despiezarAccesorio(catalogo, compacto, { A: ventana.anchoMm, L: largo,
     CAJ: compacto.altoCajonMm, CVI: compacto.vueloIzquierdoMm, CVD: compacto.vueloDerechoMm, CGC: compacto.posicionGuiaCentralMm })
+  const guias = despiezarGuiasCompacto(catalogo, compacto, largo)
+  return {
+    filas: [...r.filas, ...guias.filas],
+    incidencias: [...r.incidencias, ...guias.incidencias],
+    avisos: [...r.avisos, ...guias.avisos],
+  }
 }
 
 /** Mosquitera y tapajuntas: medida de la ventana y cajón del compacto de la línea. */
