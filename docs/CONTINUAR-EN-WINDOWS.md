@@ -15,13 +15,22 @@ visión (Computer Use: captura, una acción, captura); no delega los clics en
 Sergio** salvo elegir la empresa en el selector. Tras cada observación, afina
 Aluminior solo con la regla demostrada (ver «Afinar la app» abajo).
 
-Recepción: el 31/10 se publica la rama `codex/integracion-windows-mac-20261013`
-(integración `fa32fba`, lote E1 y este relevo) en `origin`; **no está en `main`**.
-En el equipo del titular: `git fetch origin` y `git switch codex/integracion-windows-mac-20261013`
-(o checkout limpio de esa rama). July: `july_sync` con acción `pull` y buscar los
-items por proyecto + `sync_uid` (E1 = `398049fbd618069e36bb84bab37913ed`). Los
-artefactos privados de `output/` del portátil no viajan: las fuentes privadas y
-la instalación de Productor del titular son las que valen allí.
+**Relevo del 12/11/2026 (vigente; sustituye a la recepción del 31/10).** Todo está en
+`main` (`git pull`) y Supabase tiene las 39 migraciones. El equipo del titular **no
+tiene July**: la fuente de verdad es este repositorio (`docs/ESTADO-ACTUAL.md`,
+`ROADMAP-PARIDAD-PRODUCTOR.md`, esta guía). `Ser-Gio` es solo el equipo de desarrollo
+(copia de Productor con `EMPE1V0` vacía); las pruebas con mochila van en el del titular.
+Primera sesión allí, por orden: (1) abrir Productor y elegir la empresa de pruebas,
+nunca 0016; (2) contrastar guías de persiana y compacto: altura distinta y otra guía,
+efecto de `DescuentoGuia` (53 mm en GMG010), origen de los 5 min de `MOCOMP`, caso sin
+descontar el cajón, acabado de accesorios del compacto y de las guías (en el 970 las
+guías van en el color de la ventana, `CompAccAcaGuias` = VS), descuento de hueco y
+tapajuntas por elemento; ver [GUIA-DISENADOR §5](paridad/GUIA-DISENADOR-PRODUCTOR.md#5-insertar-compacto);
+(3) dónde pone Productor las cotas FI/FS/VS en el panel; (4) E1/R1 más abajo.
+Items abiertos de July sin equivalente en Git: 195 (P.6/P.7 al 200 %), 182 (hoja de
+corte y hoja de producción son documentos distintos) y 181 (E1, `sync_uid`
+`398049fbd618069e36bb84bab37913ed`); su estado resumido está en `ESTADO-ACTUAL`. El
+`.env` y `output/` no viajan por Git.
 
 Cómo se maneja el programa original (aprendido el 31/10 en el portátil):
 
