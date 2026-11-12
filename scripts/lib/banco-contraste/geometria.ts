@@ -1,4 +1,4 @@
-import { SIMBOLOS_COTA_MODULO, type ConfiguracionCerramientoV3, type CotasModulo, type ModuloCerramiento, type UnionCerramiento } from '@aluminior/core/estructuras'
+import { SIMBOLOS_COTA_MODULO, descuentoGuiasCompactoMm, modulosConPiezaALaIzquierda, type ConfiguracionCerramientoV3, type CotasModulo, type ModuloCerramiento, type UnionCerramiento } from '@aluminior/core/estructuras'
 import { cotasDeCaso } from './cotas.ts'
 import { compactosDeGrupo, type CompactoGrupo } from './compacto-grupo.ts'
 import { clave, numero, si, texto, type Caso } from './datos.ts'
@@ -18,12 +18,16 @@ const nominal = (hueco: unknown, dibujo: unknown) => numero(hueco)! > 0 ? numero
 function compactoDeModulo(c: Caso, compacto: CompactoGrupo | undefined, g: NonNullable<Caso['geometria']>[number],
   e: Caso, porLin: Map<string, Caso>, medidas: MedidasGrupo): ModuloCerramiento['compacto'] {
   if (!compacto) return undefined
-  const { fila: comp, opciones } = compacto, acabado = texto(comp.Acabado)
-  const porLinCom = new Map((c.compactosElementos ?? []).map(el => [texto(el.padre.nLinea), el]))
+  const { fila: comp, opciones, orden } = compacto, acabado = texto(comp.Acabado)
+  const coms = c.compactosElementos ?? (c.elementos ?? []).filter(el => /^COM/.test(el.modelo))
+  const porLinCom = new Map(coms.map(el => [texto(el.padre.nLinea), el]))
+  const porOrden = coms[orden]?.modelo === texto(comp.Accesorio) ? coms[orden] : undefined
   const elemCom = (comp.nLinEstrGrupo ? (porLin.get(texto(comp.nLinEstrGrupo)) ?? porLinCom.get(texto(comp.nLinEstrGrupo))) : null) ??
-    (c.compactosElementos ?? c.elementos ?? []).find(el => el.modelo === texto(comp.Accesorio))
+    porOrden ?? coms.find(el => el.modelo === texto(comp.Accesorio))
   const altoCom = elemCom?.dimensiones.alto
-  const descontarHueco = medidas === 'nominal' && si(comp.compDtoHuecoSN)
+  const guiaIzquierda = texto(comp.CerrCodGuiaI), guiaDerecha = texto(comp.CerrCodGuiaD)
+  const acabadoGuias = texto(comp.CompAccAcaGuias)
+  const descontarHueco = (medidas === 'nominal' || Boolean(guiaIzquierda || guiaDerecha)) && si(comp.compDtoHuecoSN)
   const altoPrevisto = (medidas === 'nominal'
     ? nominal(g.AltoHueco, g.Alto) - (descontarHueco ? numero(comp.AltoCajon)! : 0)
     : e.dimensiones.alto!) + numero(comp.AltoCajon)!
@@ -34,6 +38,9 @@ function compactoDeModulo(c: Caso, compacto: CompactoGrupo | undefined, g: NonNu
     ...(numero(comp.VueloD) ? { vueloDerechoMm: numero(comp.VueloD)! } : {}),
     ...(numero(comp.PosGuiaCentral) ? { posicionGuiaCentralMm: numero(comp.PosGuiaCentral)! } : {}),
     ...(numero(comp.DtoHuecoV) ? { descuentoVerticalMm: numero(comp.DtoHuecoV)! } : {}),
+    ...(guiaIzquierda ? { guiaIzquierda } : {}),
+    ...(guiaDerecha ? { guiaDerecha } : {}),
+    ...(acabadoGuias && acabadoGuias !== acabado ? { acabadoGuiasCodigo: acabadoGuias } : {}),
     ...(descontarHueco ? { descontarHueco: true } : {}),
     ...(alturaTotalMm ? { alturaTotalMm } : {}) }
 }
@@ -89,6 +96,13 @@ export function configuracionGrupo(c: Caso, medidas: MedidasGrupo = 'linea'): { 
       ...(e?.serie ? { materiales: { serieCodigo: e.serie } } : {}) })
   }
   if (uniones.length !== modulos.length - 1) motivos.push('composicion-no-representable')
+  if (!motivos.length && medidas === 'linea' && modulos.some(m => m.compacto?.descontarHueco)) {
+    const conIzquierda = modulosConPiezaALaIzquierda({ version: 3, modulos, uniones })
+    for (const m of modulos) if (m.compacto?.descontarHueco) {
+      m.anchoMm += descuentoGuiasCompactoMm(m.compacto, conIzquierda.has(m.id))
+      m.altoMm += m.compacto.altoCajonMm
+    }
+  }
   return { configuracion: motivos.length ? null : { version: 3, modulos, uniones,
     ...(medidas === 'nominal' ? { repartoUniones: 'PIEZAS' as const } : {}) }, motivos: [...new Set(motivos)] }
 }

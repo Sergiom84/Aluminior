@@ -280,20 +280,44 @@ Reglas que salen de ahí:
   la de la guía izquierda.
 - La línea `GRUPO` guarda `Ancho` 1.094 (el de la ventana) y `Largo` 1.200.
 
-En una fila de varias piezas con unión, el presupuesto 970 de EMP0016 (C2 con COM005 y GMG010 a ambos
-lados en las cuatro) da dos descuentos en la primera pieza (1.070 → 964) y uno solo en las tres
-siguientes (1.469 → 1.416; 1.070 → 1.017). Lectura aplicada: la guía izquierda no descuenta cuando la
-pieza tiene otra a su izquierda. Sale de ese único documento; falta contrastarlo en el diseñador.
+En una fila de varias piezas con unión, el presupuesto 970 de EMP0016 (copiado en 1034, albarán 280 y
+factura 365: cuatro C2 con COM005 y GMG010 a ambos lados) da dos descuentos en la primera pieza
+(1.070 → 964) y uno solo en las tres siguientes (1.469 → 1.416; 1.070 → 1.017). Comprobados todos los
+`GRUPO` con `CerrCodGuiaI/D` de `EMP0013`–`EMP0016` (25 en `VPRES` más `VALB 280` y `VFAC 365`; 21
+cerramientos multicolumna con 59 módulos con guías), el 100 % cumple la regla de `descuento-guias.ts`:
+la primera columna por la izquierda descuenta ambas guías y todo módulo con otra pieza a su izquierda
+descuenta solo `guiaDerecha`, incluso cuando la pieza contigua izquierda es un fijo sin compacto
+(`EMP0013` presupuestos 159 y 269; `EMP0014` presupuestos 1042 y 1074). En los 3 cerramientos que apilan
+un módulo debajo de otro que lleva compacto con guías (`EMP0013` 269 y 596; `EMP0015` 330; ninguno en la
+0016), las guías verticales estrechan también el módulo inferior en la misma medida.
 
-**En Aluminior (12/11/2026):** `descuento-guias.ts` (core) guarda la tabla y `valorarCerramiento` resta
-el descuento al ancho de la ventana y devuelve el del hueco al compacto. `compactoEfectivoModulo` toma el
-acabado de la ventana. Mismo caso A montado en la web local con el catálogo real: 630,47 €, IVA 132,40 €
-y total 762,87 €, igual que Productor; antes daba 636,31 € (guías en `UNI` a 20,61 €/m y ventana sin
-estrechar). Caso B: mismas filas de compacto; queda sin valorar por `PSG100` sin PVP. Sin compacto con
-guías: 595,76 €, igual que la observación del 01/11. Diferencias que quedan: la opción de guía muestra la
-descripción del perfil («GUIA COMPACTO DE 110 MM») y no la del conjunto; la descripción de la línea no
-añade la guía ni la serie con su nombre (DG1b); el lienzo no estrecha la ventana ni marca el hueco; la
-fila guarda 1.200 de ancho y no 1.094; el panel no deja elegir el acabado del compacto.
+Además, contrastados los `GRUPO` multifila con compacto de `EMP0013`–`EMP0016` (más de 50 casos):
+- **`VAccesorios.nModulo` (`1..N`, familia 100) numera siempre las columnas de la fila superior**
+  (`modulosSuperioresCerramiento`, `indiceModuloCompacto` en `compacto-cerramiento.ts`), es decir, los
+  módulos cuya cadena de anclajes desde el módulo raíz no pasa por ninguna unión horizontal (`UnionVH = 'H'`),
+  incluso cuando un fijo inferior tiene `Orden` menor que una ventana superior (`EMP0016`: presupuestos 871,
+  881, 1029, 1124, 1263, 1339 y 1368).
+- **Subacabados del compacto (`CompAccAcaLamas`, `CompAccAcaGuias`, `CompAccAcaAcc`):** en las 351 filas de
+  plantilla de `COM001`–`COM017`, `COMPVAL` se tarifa siempre en `VAccesorios.Acabado` (o el acabado de la
+  ventana si aquel viene vacío, como en `VFAC 365`), mientras que `CompAccAcaGuias` se aplica al perfil de
+  las guías laterales (`GUIAIZ`/`GUIADE` en `guias-compacto.ts`). Sin guía central (`!GuiaCentralSN`), un
+  valor distinto en `CompAccAca*` no altera `COMPVAL` (confirmado en los 7 `GRUPO` de la 0016: 937, 1234,
+  1239, 1264, 1265, 1274 y 1287, que coinciden al céntimo).
+
+**En Aluminior (12/11/2026, commit `30dbc16` + reglas de compacto en GRUPO):** `descuento-guias.ts` (core)
+guarda la tabla y `valorarCerramiento` resta el descuento al ancho de la ventana y devuelve el del hueco al
+compacto. `compactoEfectivoModulo` toma el acabado de la ventana y pasa `acabadoGuias` cuando existe. En el
+banco de contraste de `GRUPO` de la 0016 (225 `GRUPO`, 186 documentos), tras `30dbc16` (72 / 101 / 39 / 13
+frente a 24 / 91 / 97 / 13 en `3504eb4`) y estas reglas se alcanzan **83 coinciden al céntimo**
+(`190.858,31 €`) / **90 difieren** (`271.666,29 €`) / **39 sin valorar** (`135.776,95 €`) / **13 no
+reproducibles** (`40.327,66 €`), con 114 recetas iguales y 172 repartos de unión coincidentes. Mismo caso A
+montado en la web local con el catálogo real: 630,47 €, IVA 132,40 € y total 762,87 €, igual que Productor;
+antes daba 636,31 € (guías en `UNI` a 20,61 €/m y ventana sin estrechar). Caso B: mismas filas de compacto;
+queda sin valorar por `PSG100` sin PVP. Sin compacto con guías: 595,76 €, igual que la observación del
+01/11. Diferencias que quedan en la UI: la opción de guía muestra la descripción del perfil («GUIA COMPACTO
+DE 110 MM») y no la del conjunto; la descripción de la línea no añade la guía ni la serie con su nombre
+(DG1b); el lienzo no estrecha la ventana ni marca el hueco; la fila guarda 1.200 de ancho y no 1.094; el
+panel no deja elegir el acabado del compacto.
 
 Lupa de compacto: los 17 de la familia `100`:
 `COM001` cajón de PVC con lama de aluminio térmica; `COM002`–`COM004` cajón

@@ -21,10 +21,12 @@ export interface CompactoModulo {
   posicionGuiaCentralMm?: number
   descuentoVerticalMm?: number
   descontarHueco?: boolean
-  /** Conjunto de guía de persiana izquierda (familia 051, p. ej. GMG010). Se valora con aviso: regla de un solo caso. */
+  /** Conjunto de guía de persiana izquierda (familia 051, p. ej. GMG010). */
   guiaIzquierda?: string
   /** Guía de persiana derecha. Si no se indica, Productor usa la misma que la izquierda. */
   guiaDerecha?: string
+  /** Acabado específico para las guías de persiana (`CompAccAcaGuias`); si se omite, hereda el del compacto/ventana. */
+  acabadoGuiasCodigo?: string
 }
 
 export interface TapajuntasModulo {
@@ -50,6 +52,7 @@ export function compactoModuloValido(valor: unknown): valor is CompactoModulo | 
   if (c.descontarHueco !== undefined && typeof c.descontarHueco !== 'boolean') return false
   if (c.guiaIzquierda !== undefined && (typeof c.guiaIzquierda !== 'string' || !c.guiaIzquierda.trim())) return false
   if (c.guiaDerecha !== undefined && (typeof c.guiaDerecha !== 'string' || !c.guiaDerecha.trim())) return false
+  if (c.acabadoGuiasCodigo !== undefined && (typeof c.acabadoGuiasCodigo !== 'string' || !c.acabadoGuiasCodigo.trim())) return false
   return true
 }
 
@@ -94,6 +97,7 @@ export function compactoEfectivoModulo(
     ...(c.alturaTotalMm !== undefined ? { alturaTotalMm: c.alturaTotalMm } : {}),
     ...(c.guiaIzquierda?.trim() ? { guiaIzquierda: c.guiaIzquierda.trim().toUpperCase() } : {}),
     ...(c.guiaDerecha?.trim() ? { guiaDerecha: c.guiaDerecha.trim().toUpperCase() } : {}),
+    ...(c.acabadoGuiasCodigo?.trim() ? { acabadoGuias: c.acabadoGuiasCodigo.trim().toUpperCase() } : {}),
   }
 }
 
@@ -138,4 +142,46 @@ export function asignarComplementosModulos(
   if (!configuracion.modulos.some((modulo) => destino.has(modulo.id))) return configuracion
   const base = composicionExplicita(configuracion)
   return { ...base, modulos: base.modulos.map((m) => destino.has(m.id) ? aplicarComplementos(m, cambios) : m) }
+}
+
+/**
+ * Módulos de la fila superior del cerramiento, en orden de módulo: aquellos cuya
+ * cadena de anclajes desde la raíz no pasa por ningún anclaje `'abajo'` (`UnionVH = 'H'`).
+ * En Productor (`VAccesorios.nModulo`, familia 100), el índice `1..N` del compacto
+ * numera siempre las columnas de la fila superior, incluso cuando un módulo inferior
+ * se insertó con `Orden` menor que otro superior (demostrado en los 50+ GRUPO multifila
+ * con compacto de EMP0013–EMP0016; en la 0016: presupuestos 871, 881, 1029, 1124,
+ * 1263, 1339 y 1368).
+ */
+export function modulosSuperioresCerramiento(
+  modulos: readonly Pick<ModuloCerramiento, 'id' | 'anclaje'>[],
+): readonly string[] {
+  const porId = new Map(modulos.map(m => [m.id, m]))
+  const esSuperior = (id: string, visitados = new Set<string>()): boolean => {
+    if (visitados.has(id)) return false
+    visitados.add(id)
+    const m = porId.get(id)
+    if (!m?.anclaje) return true
+    if (m.anclaje.lado === 'abajo') return false
+    return esSuperior(m.anclaje.moduloId, visitados)
+  }
+  return modulos.filter(m => esSuperior(m.id)).map(m => m.id)
+}
+
+/**
+ * Índice en `modulos` al que corresponde `nModulo` de `VAccesorios` (familia 100):
+ * `0` solo cuando el cerramiento tiene un único módulo; `1..N` sobre la fila superior
+ * (`modulosSuperioresCerramiento`). Devuelve `null` si está fuera de rango.
+ */
+export function indiceModuloCompacto(
+  modulos: readonly Pick<ModuloCerramiento, 'id' | 'anclaje'>[],
+  nModulo: number | null,
+): number | null {
+  if (nModulo === null || !Number.isInteger(nModulo)) return null
+  if (nModulo === 0) return modulos.length === 1 ? 0 : null
+  const superiores = modulosSuperioresCerramiento(modulos)
+  if (nModulo < 1 || nModulo > superiores.length) return null
+  const id = superiores[nModulo - 1]!
+  const indice = modulos.findIndex(m => m.id === id)
+  return indice >= 0 ? indice : null
 }

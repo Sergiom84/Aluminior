@@ -59,4 +59,17 @@ describe('guías del compacto', () => {
     expect(r.incidencias).toEqual(['guía XX9 sin perfil en el catálogo'])
     expect(r.filas.map(f => f.articulo)).toEqual(['COM005'])
   })
+
+  it('usa acabadoGuias (CompAccAcaGuias) para los perfiles de guía manteniendo el acabado del compacto en COMPVAL', () => {
+    const r = despiezarCompacto(
+      catalogo,
+      { ...compacto, guiaIzquierda: 'GMG010', acabadoGuias: 'l' },
+      ventana,
+    )
+    expect(r.filas.map(f => [f.articulo, f.acabado, f.funcion])).toEqual([
+      ['COM005', 'VS', 'COMPVAL'],
+      ['GM6805L', 'L', 'GUIAIZ'],
+      ['MOCOMP', 'UNI', null],
+    ])
+  })
 })

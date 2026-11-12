@@ -524,8 +524,32 @@ predeterminada, y ningún grupo ni opción es condicional, escalar ni incompatib
   `compacto-sin-modulo` (tres compactos en un GRUPO de dos módulos).
 - La receta igual baja de 79 a 76 porque ahora se comparan también las piezas del
   compacto. Sin diseño específico, 4 GRUPO valorados con compacto difieren en longitud
-  de corte o metraje (documentos 881, 1019, 1020 y 1249): es lo siguiente a revisar.
+  de corte o metraje (documentos 881, 1019, 1020 y 1249): resueltos `881`, `1249` y los
+  7 de `acabados-de-accesorio-distintos` el 12/11/2026 (ver sección siguiente).
 - En la 0015 manda la tarifa (PVP de 2026 frente a documentos de 2025).
+
+### Actualización del 12/11/2026 (tras `30dbc16` y reglas de compacto en GRUPO — vigente)
+
+Repetido `scripts/contraste-presupuestos.ts` sobre la misma copia de la 0016 (`225 GRUPO`, `186 documentos`):
+
+| Medición (0016) | Coincide | Difiere | Sin valorar | No reproducible | Receta igual / distinta | Reparto `coincide` | `compacto` (principal) |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Con E5b (`3504eb4`, 02/11) | 24 (`45.803,58 €`) | 91 (`223.114,55 €`) | 97 (`329.383,42 €`) | 13 (`40.327,66 €`) | 76 / 39 | 127 | 8 (8) |
+| En `30dbc16` (con E2, GR2, DS3, CF1 y guías/acabado) | 72 (`147.343,61 €`) | 101 (`315.180,99 €`) | 39 (`135.776,95 €`) | 13 (`40.327,66 €`) | 109 / 64 | 170 | 11 (8) |
+| **12/11/2026 (vigente)** | **83 (`190.858,31 €`)** | **90 (`271.666,29 €`)** | **39 (`135.776,95 €`)** | **13 (`40.327,66 €`)** | **114 / 59** | **172** | **3 (1)** |
+
+Reglas demostradas e incorporadas el 12/11/2026 (no repetir):
+1. **`VAccesorios.nModulo` (`1..N`) indexa la fila superior (`modulosSuperioresCerramiento`, `indiceModuloCompacto` en `compacto-cerramiento.ts`):** demostrado en el 100 % de los más de 50 `GRUPO` multifila con compacto de `EMP0013`–`EMP0016`. Cuando un fijo inferior tiene `Orden` menor que una ventana superior (`871, 881, 1029, 1124, 1263, 1339, 1368`), `nModulo` numera las columnas superiores y salta los módulos cuyo anclaje desciende por `UnionVH = 'H'`. Además, cuando `nLinEstrGrupo` es `0` (`1249`) o procede de un presupuesto copiado (`1124, 1313`), el banco enlaza el elemento `COM*` por el orden de `nModulo`.
+2. **Subacabados del compacto (`CompAccAcaLamas`, `CompAccAcaGuias`, `CompAccAcaAcc`) y `acabadoGuias` (`guias-compacto.ts`):** en las 351 filas de plantilla de `COM001`–`COM017`, `COMPVAL` usa siempre `VAccesorios.Acabado` y `CompAccAcaGuias` se aplica al perfil de guía lateral (`GUIAIZ`/`GUIADE`). Sin guía central (`!GuiaCentralSN`), los 7 `GRUPO` antes apartados por `acabados-de-accesorio-distintos` (`937, 1234, 1239, 1264, 1265, 1274, 1287`, `20.883,07 €`) pasan a coincidir al céntimo (`0,00 €`).
+3. **Descuento de guías en filas de varias piezas (`descuento-guias.ts`):** confirmado en los 21 `GRUPO` multicolumna con `CerrCodGuiaI/D` (59 módulos) de `EMP0013`–`EMP0016` (`970, 1034, VALB 280, VFAC 365` en `0016`; 14 en `0013`, 4 en `0014`, 1 en `0015`), incluidos los que tienen un fijo sin compacto a la izquierda (`0013` `159, 269`; `0014` `1042, 1074`).
+4. **Lo que queda abierto en `difiere` (90) y `sin-valorar` (39):**
+   - `diseno-especifico`: 51 principales (`151.131,76 €` en líneas, `11.159,76 €` atribuibles).
+   - `reparto-uniones`: 29 (`10` principales, `94.158,45 €`; en `guardadas` coinciden al céntimo).
+   - `tarifa`: 30 (`19` principales, `85.116,67 €`; tarifa anterior en presupuestos de nov 2025–feb 2026 o céntimos de `COMPVAL`).
+   - `importe-de-fila`: 15 principales (`1.381,67 €` atribuibles: mosquitera `PSM001` y `VOpciones` por módulo en `1029`/`1124`; un único `COM009` de `2.500 mm` sobre dos `PC2` de `1.250 mm` en `1019`/`1020`; residuo de comisión en `887`).
+   - `vidrio`: 2 principales en `1080` (`4/22/4` de 30 mm en `GMA350` con `CorrGrosorVidDA = 26`).
+   - `mano-de-obra` (3 principales), `cortes` (1 principal: `1122`), `compacto` (1 principal: fila huérfana `nModulo=3` con `nLinEstrGrupo=0` en `854`), `tapajuntas` (1 principal: `756`) y `acabado` (1 principal: `890`).
+   - En `sin-valorar` (39): 12 por `despunte` (E1), 11 por `otro-accesorio` (tubos `112` o accesorio repetido), 10 por PVP ausente en tarifa (`PSU006`/`PSESQCOM` en 5, `1OPLD` en 3, `GMA05` en 1, `1811` en 1), 4 por estructura sin despiece en catálogo (`04V` en 3, `C2P` en 1) y 2 por `union-otra-serie` sin PVP.
 
 ### Resultado de la primera entrega (retirado; ver corrección)
 

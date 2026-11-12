@@ -7,11 +7,14 @@
  *
  * Contrastado en Productor el 12/11/2026 (empresa de pruebas, presupuesto 260504):
  * 2O de 1.200 con GMG010 a ambos lados queda en 1.094 (2 × 53) y con PSG002 solo
- * a la izquierda en 1.160 (40). El presupuesto 970 de EMP0016 da lo mismo en su
- * primera pieza (1.070 → 964) y, en las tres siguientes de la fila, un solo
- * descuento (1.469 → 1.416; 1.070 → 1.017): la guía izquierda no descuenta cuando
- * la pieza tiene otra a su izquierda. Esta segunda parte sale de ese único
- * documento.
+ * a la izquierda en 1.160 (40). En cerramientos de varias columnas, la primera
+ * pieza por la izquierda descuenta ambas guías y las siguientes con otra pieza a
+ * su izquierda descuentan una sola (`guiaDerecha`), incluso cuando la pieza
+ * contigua izquierda no lleva compacto: confirmado en 21 cerramientos multicolumna
+ * (59 módulos con guías) de EMP0013–EMP0016 (en EMP0016: presupuestos 970 y 1034,
+ * albarán 280 y factura 365, 1.070 → 964 en el primer módulo y 1.469 → 1.416,
+ * 1.070 → 1.017 en los tres siguientes; en EMP0013: 14 GRUPO, incluidos 159 y 269
+ * con fijo sin compacto a la izquierda; en EMP0014: 8 GRUPO, incluidos 1042 y 1074).
  *
  * Valores de `Conjuntos.csv` de EMP0016. Una guía ausente de la tabla no descuenta.
  */

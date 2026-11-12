@@ -29,4 +29,22 @@ describe('descuento de las guías de persiana en el ancho de la ventana', () => 
     } as unknown as ConfiguracionCerramiento
     expect([...modulosConPiezaALaIzquierda(configuracion)]).toEqual(['b'])
   })
+
+  it('descuenta una sola guía aunque la pieza situada a su izquierda sea un fijo sin compacto (EMP0013 159/269, EMP0014 1042/1074)', () => {
+    const configuracion = {
+      version: 3, repartoUniones: 'PIEZAS',
+      modulos: [
+        { id: 'fijo-izq', estructuraCodigo: '0', anchoMm: 785, altoMm: 2215 },
+        {
+          id: 'ventana-der', estructuraCodigo: 'C2', anchoMm: 1560, altoMm: 2215,
+          anclaje: { moduloId: 'fijo-izq', lado: 'derecha', unionId: 'u1' },
+          compacto: { estructuraCodigo: 'COM001', altoCajonMm: 185, descontarHueco: true, guiaIzquierda: 'GMG001', guiaDerecha: 'GMG001' },
+        },
+      ],
+      uniones: [{ id: 'u1', codigo: 'GMU003', longitudMm: 2215, grosorMm: 15 }],
+    } as unknown as ConfiguracionCerramiento
+    const conIzquierda = modulosConPiezaALaIzquierda(configuracion)
+    expect(conIzquierda.has('ventana-der')).toBe(true)
+    expect(descuentoGuiasCompactoMm(configuracion.modulos[1]!.compacto, conIzquierda.has('ventana-der'))).toBe(40.5)
+  })
 })

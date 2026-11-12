@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest'
 import {
   compactoEfectivoModulo,
   compactoModuloValido,
+  indiceModuloCompacto,
+  modulosSuperioresCerramiento,
   type CompactoModulo,
 } from './compacto-cerramiento.ts'
 import { esConfiguracionCerramiento } from './validar-configuracion-cerramiento.ts'
@@ -94,9 +96,10 @@ describe('compactoEfectivoModulo', () => {
 
   it('pasa al despiece las guías de cada lado en mayúsculas y omite las vacías', () => {
     const c = compactoEfectivoModulo(
-      { compacto: { estructuraCodigo: 'com005', altoCajonMm: 155, guiaIzquierda: ' gmg010 ' } }, {},
+      { compacto: { estructuraCodigo: 'com005', altoCajonMm: 155, guiaIzquierda: ' gmg010 ', acabadoGuiasCodigo: ' vs ' } }, {},
     )
     expect(c?.guiaIzquierda).toBe('GMG010')
+    expect(c?.acabadoGuias).toBe('VS')
     expect(c && 'guiaDerecha' in c).toBe(false)
   })
 
@@ -177,5 +180,38 @@ describe('validar-configuracion-cerramiento con compacto', () => {
       uniones: [],
     }
     expect(esConfiguracionCerramiento(v1ConCompacto)).toBe(false)
+  })
+})
+
+describe('modulosSuperioresCerramiento e indiceModuloCompacto (EMP0016: 871, 1339, 1368)', () => {
+  it('numera nModulo sobre la fila superior cuando un fijo inferior tiene Orden menor que una ventana superior', () => {
+    // Caso real anonimizado de EMP0016 (presupuesto 871, caso-02815):
+    // modulo-1 (2O), modulo-3 (2O a la derecha), modulo-5 (fijo 0 abajo de modulo-1), modulo-7 (1OI a la derecha de modulo-3).
+    const modulos = [
+      { id: 'modulo-1' },
+      { id: 'modulo-3', anclaje: { moduloId: 'modulo-1', unionId: 'union-2', lado: 'derecha' as const } },
+      { id: 'modulo-5', anclaje: { moduloId: 'modulo-1', unionId: 'union-4', lado: 'abajo' as const } },
+      { id: 'modulo-7', anclaje: { moduloId: 'modulo-3', unionId: 'union-6', lado: 'derecha' as const } },
+    ]
+    expect(modulosSuperioresCerramiento(modulos)).toEqual(['modulo-1', 'modulo-3', 'modulo-7'])
+    expect(indiceModuloCompacto(modulos, 1)).toBe(0)
+    expect(indiceModuloCompacto(modulos, 2)).toBe(1)
+    expect(indiceModuloCompacto(modulos, 3)).toBe(3)
+    expect(indiceModuloCompacto(modulos, 4)).toBeNull()
+  })
+
+  it('salta toda la columna inferior cuando se apila primero hacia abajo y luego hacia la derecha (1339 y 1368)', () => {
+    // Caso real anonimizado de EMP0016 (presupuesto 1368, caso-02996):
+    // modulo-1 (PC2), modulo-3 (PC2 abajo de modulo-1), modulo-5 (2O derecha de modulo-1), modulo-7 (2O derecha de modulo-5).
+    const modulos = [
+      { id: 'modulo-1' },
+      { id: 'modulo-3', anclaje: { moduloId: 'modulo-1', unionId: 'union-2', lado: 'abajo' as const } },
+      { id: 'modulo-5', anclaje: { moduloId: 'modulo-1', unionId: 'union-4', lado: 'derecha' as const } },
+      { id: 'modulo-7', anclaje: { moduloId: 'modulo-5', unionId: 'union-6', lado: 'derecha' as const } },
+    ]
+    expect(modulosSuperioresCerramiento(modulos)).toEqual(['modulo-1', 'modulo-5', 'modulo-7'])
+    expect(indiceModuloCompacto(modulos, 1)).toBe(0)
+    expect(indiceModuloCompacto(modulos, 2)).toBe(2)
+    expect(indiceModuloCompacto(modulos, 3)).toBe(3)
   })
 })

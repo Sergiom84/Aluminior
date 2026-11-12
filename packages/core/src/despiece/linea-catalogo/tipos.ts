@@ -125,6 +125,8 @@ export interface CompactoLineaCatalogo extends AccesorioLineaCatalogo {
   /** Conjunto de guía de persiana (familia 051) a cada lado (`CerrCodGuiaI`/`CerrCodGuiaD`). */
   guiaIzquierda?: string
   guiaDerecha?: string
+  /** Acabado específico para las guías de persiana (`CompAccAcaGuias`); omitido usa `acabado`. */
+  acabadoGuias?: string
   /** Mm que las guías quitan al ancho de la ventana (`DescuentoGuia`); el compacto mide el hueco: ventana + este valor. */
   descuentoGuiasMm?: number
 }

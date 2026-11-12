@@ -3,7 +3,7 @@
  * frente a la que daría Aluminior (`repartoUniones: 'PIEZAS'`) desde el hueco
  * nominal del dibujo. Puro: no consulta precios ni la base de datos.
  */
-import { anclajesCerramiento, medidasFabricacionCerramiento, unionConfigurada,
+import { anclajesCerramiento, descuentoGuiasCompactoMm, medidasFabricacionCerramiento, modulosConPiezaALaIzquierda, unionConfigurada,
   type ConfiguracionCerramientoV3 } from '@aluminior/core/estructuras'
 import { configuracionGrupo } from '../banco-contraste/geometria.ts'
 import { numero, si, texto, type Caso } from '../banco-contraste/datos.ts'
@@ -36,15 +36,18 @@ export function analizarReparto(c: Caso): AnalisisReparto {
   const { configuracion, motivos } = configuracionGrupo(c, 'nominal')
   if (!configuracion) return { estado: 'no-analizable', piezas: [], uniones: [], patrones: [], motivos }
   const fabricacion = medidasFabricacionCerramiento(configuracion)
+  const conIzquierda = modulosConPiezaALaIzquierda(configuracion)
   const elementos = new Map((c.elementos ?? []).map(e => [texto(e.padre.nLinea), e]))
   const geometria = new Map((c.geometria ?? []).filter(g => !si(g.EsUnionSN)).map(g => [`modulo-${texto(g.Orden)}`, g]))
   const cajones = (c.accesorios ?? []).map(a => numero(a.AltoCajon)!).filter(v => v > 0)
   const piezas: PiezaReparto[] = configuracion.modulos.map(m => {
     const g = geometria.get(m.id)!, e = elementos.get(texto(g.nLinEstr))!, p = fabricacion.modulos.get(m.id)!
+    const dtoGuias = descuentoGuiasCompactoMm(m.compacto, conIzquierda.has(m.id))
+    const prevista: [number, number] = [p.anchoMm - dtoGuias, p.altoMm]
     const guardada: [number, number] = [e.dimensiones.ancho!, e.dimensiones.alto!]
     // El compacto no se enlaza a su módulo por clave: se reconoce por la resta exacta del cajón.
     const compacto = cajones.some(h => cerca(p.altoMm - guardada[1], h, 2)) || numero(g.DisAltoCaj)! > 0
-    return { orden: texto(g.Orden), codigo: m.estructuraCodigo, nominal: [m.anchoMm, m.altoMm], prevista: [p.anchoMm, p.altoMm],
+    return { orden: texto(g.Orden), codigo: m.estructuraCodigo, nominal: [m.anchoMm, m.altoMm], prevista,
       guardada, compacto, invisible: si(g.DisEspecificoSN) && e.esperado === 0 }
   })
   // Sin uniones configuradas no hay reparto que medir; las piezas sirven para el cajón.
