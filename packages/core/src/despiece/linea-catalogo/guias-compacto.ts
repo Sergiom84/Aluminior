@@ -8,8 +8,12 @@
  * 1 × `GM6805L` a metro lineal de 1.445 mm (alto del compacto − cajón, funciones
  * GUIAIZ y GUIADE) y 5 minutos de `MOCOMP`.
  *
- * Sin contrastar todavía: otra guía, otra altura, el efecto de `DescuentoGuia`
- * y el origen de los 5 minutos. Por eso la línea se valora con aviso.
+ *
+ * Contrastado en Productor el 12/11/2026 (empresa de pruebas, presupuesto 260504):
+ * GMG010 a ambos lados con alto 1.200 y cajón 155 da 2 × `GM6805L` de 1.045 y
+ * 5 + 5 minutos; PSG002 solo a la izquierda con alto 1.700 y cajón 185 da
+ * 1 × `PSG100` de 1.515 y 5 minutos. El estrechamiento de la ventana
+ * (`DescuentoGuia`) está en `estructuras/descuento-guias.ts`.
  */
 
 import { fila, parcialVacio, type DespieceParcial } from './parcial.ts'
@@ -17,8 +21,6 @@ import type { CatalogoLinea, CompactoLineaCatalogo } from './tipos.ts'
 
 export const MINUTOS_MANO_OBRA_GUIA = 5
 export const ARTICULO_MANO_OBRA_COMPACTO = 'MOCOMP'
-export const AVISO_GUIAS_SIN_CONTRASTE =
-  'guías valoradas con la regla de un solo presupuesto de Productor (alto de la ventana y 5 min por guía), pendiente de contraste'
 
 export function despiezarGuiasCompacto(
   catalogo: CatalogoLinea,
@@ -43,6 +45,5 @@ export function despiezarGuiasCompacto(
       cantidad: MINUTOS_MANO_OBRA_GUIA, largoMm: null,
     }))
   }
-  if (r.filas.length) r.avisos.push(AVISO_GUIAS_SIN_CONTRASTE)
   return r
 }

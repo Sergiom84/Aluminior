@@ -66,7 +66,9 @@ export function tapajuntasModuloValido(valor: unknown): valor is TapajuntasModul
 
 /**
  * Compacto efectivo que recibe el motor de despiece para el módulo.
- * Hereda el acabado de accesorios o general de la línea cuando no tiene propio.
+ * Sin acabado propio toma el de la ventana, como Productor (260504 de pruebas,
+ * 12/11/2026: ventana L con accesorios UNI da compacto, lamas y guías en L; 970 de
+ * EMP0016: VS). El de accesorios solo se usa si la línea no tiene acabado.
  * Sin opciones guardadas no se suponen aquí: el despiece toma las predeterminadas
  * del catálogo (`EstructurasOpcOpciones`, 0033) o, sin él, lo declara incompleto.
  */
@@ -77,8 +79,8 @@ export function compactoEfectivoModulo(
   if (!modulo.compacto) return null
   const c = modulo.compacto
   const acabado = c.acabadoCodigo?.trim().toUpperCase() ||
-    cerramiento.acabadoAccesoriosCodigo?.trim().toUpperCase() ||
     cerramiento.acabadoCodigo?.trim().toUpperCase() ||
+    cerramiento.acabadoAccesoriosCodigo?.trim().toUpperCase() ||
     'UNI'
   return {
     estructura: c.estructuraCodigo.trim().toUpperCase(),

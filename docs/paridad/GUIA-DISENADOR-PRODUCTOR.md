@@ -234,14 +234,66 @@ predeterminadas del catálogo, así la ventana se valora sin que el operador con
 `estructura_opciones_accesorio` de la base que usa la web está vacía (0 filas, observado el 09/11/2026);
 el despiece usa el catálogo exportado de EMP0016 cuando la base no tiene predeterminadas. Las guías
 izquierda/derecha son **conjuntos de la familia 051** (GMG001-GMG014, PSG001-PSG011), como en Productor; el
-perfil es su componente `GP` (`GMG010` → `GM6805L`). Desde el 10/11/2026 entran en el precio con la regla
-del único caso de EMP0016 (presupuesto 970: C2 de 1.600 de alto, COM005, cajón 155, GMG010): por lado,
-1 perfil a metro lineal de largo = alto del compacto − cajón (1.445) y 5 minutos de `MOCOMP`. La línea
-sale «valorada con avisos» hasta contrastar otra guía y otra altura. `PSG90`, `PSG100`, `PSG120` y
-`PSG120L` no tienen PVP en EMP0016 (tampoco en Productor): el selector las marca «sin precio» y la línea
-queda sin valorar en vez de sumar 0. Pendiente de contraste: efecto de `DescuentoGuia` (53 mm en GMG010),
-origen de los 5 minutos y caso sin descontar el cajón. Registro de persiana y medidas manuales siguen sin reproducir. `descontarHueco` no se ha
-contrastado con un documento real.
+perfil es su componente `GP` (`GMG010` → `GM6805L`). Desde el 10/11/2026 entran en el precio: por lado,
+1 perfil a metro lineal de largo = alto del compacto − cajón y 5 minutos de `MOCOMP`. Desde el 12/11/2026
+la regla está contrastada (ver «Contraste del 12/11/2026», abajo) y la línea ya no sale con aviso; además
+las guías estrechan la ventana y el compacto toma el acabado de la ventana. `PSG90`, `PSG100`, `PSG120` y
+`PSG120L` no tienen PVP en EMP0016: el selector las marca «sin precio» y la línea queda sin valorar.
+Productor, en cambio, las suma a 0 (desviación deliberada: un precio ausente no es un cero). Sin
+contrastar: el caso sin descontar el cajón. Registro de persiana y medidas manuales siguen sin reproducir.
+
+### Contraste del 12/11/2026 (empresa de pruebas, presupuesto 260504)
+
+**Observado** con la mochila en el equipo del titular. Dos líneas montadas en el diseñador, ambas 2O con
+ELEGANTPVC, VCG4, acabado `L` `*`, accesorios `UNI` y `COM001`; despiece leído de la MDB de la 0017 en
+solo lectura (volcado privado en `output/contraste-guias-20261112/`).
+
+| | Caso A | Caso B |
+|---|---|---|
+| Hueco | 1.200 × 1.200 | 1.200 × 1.700 |
+| Cajón que propone | 155 | 185 |
+| Guías | GMG010 a ambos lados | PSG002 solo a la izquierda |
+| Ventana valorada | 1.094 × 1.045 | 1.160 × 1.515 |
+| Compacto (`COMPVAL`) | 1.200 × 1.200, 1,50 m² (mínimo) | 1.200 × 1.700, 2,04 m² |
+| Guía | 2 × `GM6805L` de 1.045 (1,05 ml cada una) | 1 × `PSG100` de 1.515, sin PVP: suma 0 |
+| `MOCOMP` | 15 + 5 + 5 min | 15 + 5 min |
+| Línea | 630,47 € | 720,15 € |
+
+Reglas que salen de ahí:
+
+- **Las guías estrechan la ventana.** El ancho de la ventana es el del hueco menos el `DescuentoGuia`
+  de cada guía colocada (`Conjuntos`, familia 051): GMG010–014 = 53; GMG001–004 = 40,5; PSG001–005 = 40;
+  PSG006/008/009 = 45; PSG007 = 46; PSG010 = 47,5; GMG006–008 = 2; PSG011 = 1,5; GMG005/009 = 0.
+  El compacto conserva el ancho del hueco. El dibujo lo refleja: el cajón ocupa todo el ancho y la
+  ventana queda más estrecha, con el hueco seleccionado en azul alrededor.
+- **El cajón resta su altura** a la ventana (`compDtoHuecoSN` marcado por defecto) y el compacto se
+  mide con el alto del hueco. La descripción sigue diciendo 1.200,0 x 1.200,0.
+- **Largo de la guía** = alto del hueco − cajón; **5 minutos de `MOCOMP` por guía**, además de los 15 de
+  la plantilla del compacto. El metraje se redondea por pieza (1.045 → 1,05).
+- **Acabado.** Al elegir el compacto se rellena con el acabado de la ventana (`L` `*`), no con el de
+  accesorios (`UNI`); lamas, guías y accesorios del compacto (`CompAccAca…`) van en ese mismo acabado.
+- **Cajón:** con alto 1.700 propone 185 (confirma el tramo por encima de 1.600).
+- **Copia de guía:** teclear la izquierda y pulsar Tab copia el código a la derecha; elegirla con la lupa
+  no. Se puede vaciar la derecha y aceptar con una sola guía.
+- La lupa de guías lista 14 `GMG`, 11 `PSG` y `G` SIN GUIAS, con la descripción del conjunto
+  («(GM) GUIA PARA RECOGEDOR 110MM RPT (6805L)»). La descripción de la línea añade, tras el compacto,
+  la de la guía izquierda.
+- La línea `GRUPO` guarda `Ancho` 1.094 (el de la ventana) y `Largo` 1.200.
+
+En una fila de varias piezas con unión, el presupuesto 970 de EMP0016 (C2 con COM005 y GMG010 a ambos
+lados en las cuatro) da dos descuentos en la primera pieza (1.070 → 964) y uno solo en las tres
+siguientes (1.469 → 1.416; 1.070 → 1.017). Lectura aplicada: la guía izquierda no descuenta cuando la
+pieza tiene otra a su izquierda. Sale de ese único documento; falta contrastarlo en el diseñador.
+
+**En Aluminior (12/11/2026):** `descuento-guias.ts` (core) guarda la tabla y `valorarCerramiento` resta
+el descuento al ancho de la ventana y devuelve el del hueco al compacto. `compactoEfectivoModulo` toma el
+acabado de la ventana. Mismo caso A montado en la web local con el catálogo real: 630,47 €, IVA 132,40 €
+y total 762,87 €, igual que Productor; antes daba 636,31 € (guías en `UNI` a 20,61 €/m y ventana sin
+estrechar). Caso B: mismas filas de compacto; queda sin valorar por `PSG100` sin PVP. Sin compacto con
+guías: 595,76 €, igual que la observación del 01/11. Diferencias que quedan: la opción de guía muestra la
+descripción del perfil («GUIA COMPACTO DE 110 MM») y no la del conjunto; la descripción de la línea no
+añade la guía ni la serie con su nombre (DG1b); el lienzo no estrecha la ventana ni marca el hueco; la
+fila guarda 1.200 de ancho y no 1.094; el panel no deja elegir el acabado del compacto.
 
 Lupa de compacto: los 17 de la familia `100`:
 `COM001` cajón de PVC con lama de aluminio térmica; `COM002`–`COM004` cajón
@@ -435,7 +487,7 @@ hipótesis.
 | Acabado | Sí: 18 acabados | No hay acabado por elemento en el panel del diseñador |
 | Unión | Sí: artículos de unión | Parcial; sin «siguiente unión», tipo fija/variable ni escaparate |
 | Insertar tapajuntas cerramientos | Sí: 24 tapajuntas (familia 102) | No; función pendiente de explicar |
-| Insertar compacto | Sí: 17 compactos y guías 051 | Parcial (09/11/2026): bloque en el panel, cajón dibujado y valoración con opciones predeterminadas; sin registro ni medidas manuales; guías laterales valoradas con aviso (regla de un caso, 10/11/2026) |
+| Insertar compacto | Sí: 17 compactos y guías 051 | Parcial (09/11/2026): bloque en el panel, cajón dibujado y valoración con opciones predeterminadas; sin registro ni medidas manuales; guías valoradas y ventana estrechada por `DescuentoGuia`, contrastado al céntimo el 12/11/2026 |
 | Cartabón / Diseño V3 y elemento invisible | — | Invisible sí, como «Convertir en hueco» (DS3, 07/11/2026); Diseño V3 no |
 
 ## Pendiente de explicar
@@ -452,9 +504,9 @@ esta lista a July como pendientes desde el equipo donde está instalado.
 3. Registro de persiana frente a compacto y su `Cajón` de 300 mm.
 4. ~~Lupa de perfiles: si filtra las series por tipo de estructura.~~
    Resuelta el 01/11/2026: sí filtra.
-5. Guías de persiana: catálogo y regla de precio resueltos el 10/11/2026 con un
-   solo caso (ver «Compacto»). Falta contrastar en Productor otra guía (`PSG002`),
-   otra altura, el efecto de `DescuentoGuia` y de dónde salen los 5 minutos.
+5. ~~Guías de persiana: otra guía, otra altura, `DescuentoGuia` y los 5 minutos.~~
+   Resuelta el 12/11/2026 (ver «Contraste del 12/11/2026»). Queda la fila de
+   varias piezas con guías (lectura del 970) y el caso sin descontar el cajón.
 6. Elemento invisible: qué se selecciona al «pulsar en la imagen» (el marco o
    el vidrio).
 7. Elemento invisible: resuelta el 02/11/2026 salvo el dibujo en el PDF

@@ -63,14 +63,14 @@ describe('compactoEfectivoModulo', () => {
     expect(compactoEfectivoModulo({}, { acabadoCodigo: 'BLANCO' })).toBeNull()
   })
 
-  it('hereda acabado de accesorios o general de la línea cuando no tiene propio', () => {
+  it('sin acabado propio toma el de la ventana y no el de accesorios (260504 de pruebas, 12/11/2026)', () => {
     const c1 = compactoEfectivoModulo(
       { compacto: { estructuraCodigo: 'com009', altoCajonMm: 155 } },
       { acabadoCodigo: 'blanco', acabadoAccesoriosCodigo: 'negro' },
     )
     expect(c1).toEqual({
       estructura: 'COM009',
-      acabado: 'NEGRO',
+      acabado: 'BLANCO',
       opciones: [],
       altoCajonMm: 155,
       vueloIzquierdoMm: 0,

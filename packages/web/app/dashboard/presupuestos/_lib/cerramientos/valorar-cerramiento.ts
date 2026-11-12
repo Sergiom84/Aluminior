@@ -1,4 +1,4 @@
-import { CATALOGO_SNAPSHOT, accesoriosEfectivosModulo, diagnosticosSinPrecio, compactoEfectivoModulo, esModuloInvisible, origenInvisible, cotasEfectivasModulo, esConfiguracionCerramiento, esResultadoCerramiento, etapasVentaCerramiento,
+import { CATALOGO_SNAPSHOT, accesoriosEfectivosModulo, diagnosticosSinPrecio, compactoEfectivoModulo, descuentoGuiasCompactoMm, modulosConPiezaALaIzquierda, esModuloInvisible, origenInvisible, cotasEfectivasModulo, esConfiguracionCerramiento, esResultadoCerramiento, etapasVentaCerramiento,
   unionConfigurada, resolverOrigenSinUnion, medidasFabricacionCerramiento,
   type ConfiguracionCerramiento, type RedondeoVentaCerramiento, type ResultadoCerramientoV1,
   type ResultadoOrigenCerramiento } from '@aluminior/core/estructuras'
@@ -41,11 +41,15 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
   // Sin serie propia la unión hereda la general; el vidrio de la unión no se hereda.
   const fabricacion = medidasFabricacionCerramiento(entrada.configuracion)
   const porModulo = new Map(entrada.configuracion.modulos.map(m => [m.id, m]))
+  const conPiezaALaIzquierda = modulosConPiezaALaIzquierda(entrada.configuracion)
   const geometria = origenesGeometriaCerramiento(entrada.configuracion, entrada).map(origen => {
     if (origen.tipo === 'MODULO') {
       const modulo = porModulo.get(origen.id)!
       const medidas = fabricacion.modulos.get(origen.id)!
-      const compacto = compactoEfectivoModulo(modulo, entrada)
+      // Las guías estrechan la ventana; el compacto conserva el ancho del hueco.
+      const dtoGuias = descuentoGuiasCompactoMm(modulo.compacto, conPiezaALaIzquierda.has(origen.id))
+      const efectivo = compactoEfectivoModulo(modulo, entrada)
+      const compacto = efectivo && dtoGuias ? { ...efectivo, descuentoGuiasMm: dtoGuias } : efectivo
       const accesorios = accesoriosEfectivosModulo(modulo, entrada)
       const dtoCajon = modulo.compacto?.descontarHueco && compacto ? compacto.altoCajonMm : 0
       const dtoTapH = modulo.tapajuntas?.descontarHueco && modulo.tapajuntas ? 3 : 0
@@ -53,7 +57,7 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
         ? (modulo.tapajuntas.opciones?.includes('G2O1') ? 1.5 : 3) : 0
       return {
         ...origen,
-        anchoMm: Math.max(1, medidas.anchoMm - dtoTapH),
+        anchoMm: Math.max(1, medidas.anchoMm - dtoTapH - dtoGuias),
         altoMm: Math.max(1, medidas.altoMm - dtoCajon - dtoTapV),
         cotas: cotasEfectivasModulo(modulo),
         compacto,

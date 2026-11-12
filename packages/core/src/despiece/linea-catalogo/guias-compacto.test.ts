@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest'
 import { despiezarCompacto } from './compacto.ts'
-import { AVISO_GUIAS_SIN_CONTRASTE } from './guias-compacto.ts'
 import type { CatalogoLinea, CompactoLineaCatalogo, FilaPlantillaCatalogo } from './tipos.ts'
 
 const plantilla: FilaPlantillaCatalogo[] = [{
@@ -29,7 +28,7 @@ describe('guías del compacto', () => {
       ['GM6805L', 'VS', 1, 'GUIAIZ', 1445], ['MOCOMP', 'UNI', 5, null, null],
       ['GM6805L', 'VS', 1, 'GUIADE', 1445], ['MOCOMP', 'UNI', 5, null, null],
     ])
-    expect(r.avisos).toEqual([AVISO_GUIAS_SIN_CONTRASTE])
+    expect(r.avisos).toEqual([])
   })
 
   it('sin guías no añade filas ni aviso', () => {
@@ -42,6 +41,17 @@ describe('guías del compacto', () => {
     const r = despiezarCompacto(catalogo, { ...compacto, guiaIzquierda: 'PSG002', alturaTotalMm: 1900 }, ventana)
     expect(r.filas.filter(f => f.funcion?.startsWith('GUIA')).map(f => [f.articulo, f.funcion, f.largoMm]))
       .toEqual([['PSG100', 'GUIAIZ', 1745]])
+  })
+
+  it('con guías que estrechan la ventana el compacto conserva el ancho del hueco (260504 de pruebas, 12/11/2026)', () => {
+    // 2O de 1.200 x 1.200, cajón 155, GMG010 a ambos lados: ventana de 1.094 x 1.045.
+    const r = despiezarCompacto(catalogo, { ...compacto, guiaIzquierda: 'GMG010', guiaDerecha: 'GMG010', descuentoGuiasMm: 106 },
+      { anchoMm: 1094, altoMm: 1045 })
+    expect(r.filas.map(f => [f.articulo, f.funcion, f.largoMm, f.anchoMm, f.cantidad])).toEqual([
+      ['COM005', 'COMPVAL', 1200, 1200, 1],
+      ['GM6805L', 'GUIAIZ', 1045, null, 1], ['MOCOMP', null, null, null, 5],
+      ['GM6805L', 'GUIADE', 1045, null, 1], ['MOCOMP', null, null, null, 5],
+    ])
   })
 
   it('una guía sin perfil en el catálogo deja la línea incompleta en vez de valorarla a cero', () => {
