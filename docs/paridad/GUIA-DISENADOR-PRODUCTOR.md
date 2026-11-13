@@ -94,7 +94,11 @@ seleccionado`, con los datos del elemento elegido en el lienzo o en el árbol:
 
 ### Cotas de fijo y travesaño — hipótesis, 03/11/2026
 
-**No confirmado en Productor.** El contraste del 02/11 anotó que `Elemento
+**Confirmado en parte el 13/11/2026:** en Productor las cotas de división se
+editan en `Diseño V3` → travesaño → `Posición` (ver «Diseño V3 observado el
+13/11/2026»), no en `Elemento seleccionado`. La ubicación de Aluminior junto a
+Ancho y Alto sigue siendo una desviación sin decisión de producto. Antecedente:
+el contraste del 02/11 anotó que `Elemento
 seleccionado` solo muestra `Ancho × Alto` y que las cotas de división se
 editan desde el cartabón (`Diseño V3`). La guía no documenta el punto exacto
 dentro de un conjunto. El 03/11 el arquitecto decidió, como hipótesis, mostrarlas
@@ -442,6 +446,114 @@ seleccionada) contiene:
 - Pie: `Cursor` (x : y), dos campos de cota, `Recalcular Dimensiones`,
   `Propiedades Estructura` y `Mostrar/Ocultar Propiedades`.
 
+### Diseño V3 observado el 13/11/2026 (empresa de pruebas, presupuesto 260507)
+
+**Observado** por visión en la 0017 con un fijo `0` de 1.200 × 1.200,
+`GMA350`, `VCG4`, `L`. El presupuesto 260507 se queda como referencia.
+
+- **Barra:** `Aceptar`, grabar, X roja, cuadrado blanco (invisible), varita,
+  `Igualado horizontal de vidrios` (rótulo leído) y su pareja vertical
+  (rótulo no leído: hipótesis), arco y reguladores (sin observar).
+- **Clic derecho sobre el vidrio:** `Añadir Travesaño`, `Añadir Barrotillo
+  Interior`, `Añadir Veneciana Interior`, `Añadir Barrotes de Tubo`,
+  `Añadir Contraventana >`, `Eliminar`, `Eliminar Todos`.
+- **Añadir Travesaño:** parte el hueco en dos y **quita el vidrio**; el panel
+  inferior pasa a `Travesaño` con dos pestañas:
+  - `Posición`: Horizontal (Arriba), Horizontal (Abajo), Vertical
+    (Izquierda), Vertical (Derecha) — `TipoTrav` `HA`, `HB`, `VI`, `VD`.
+    `Propiedades`: `Equidistante` con `+`/`−` y número de huecos; `Cota
+    Fija` en mm (`TipoCota = 2`, `Cota`); `Fija desde elemento Exterior`
+    (mm = mm interior); `Cota Variable` con `Nombre`, `Símbolo` y `Cota por`
+    (así nacen `FI`, `FS`… del catálogo). **Confirma** que las cotas de
+    división se editan aquí y no en `Elemento seleccionado`.
+  - `Principal`: `Tipo Travesaño` (Ventana, Puerta (A), Zócalo (A)), perfil
+    del travesaño de marco (`GM303` en `GMA350`) y `Otros Perfiles…`.
+- **Escaparate interno** (pestaña `Escaparate`): `Marco`, `1 Hoja`, `2 Hojas`,
+  `3 y 4 Hojas`, `Mas Hojas`, `Plegables`, `Superficies` y `Accesorios`.
+  En `Superficies` hay vidrio, panel, lamas y barrotillos, y un segundo grupo
+  `Añadir a Todos los Huecos`. Se aplican con **doble clic** y con un hueco
+  seleccionado; con el travesaño seleccionado responde «Imposible agregar
+  Vidrio.».
+- **Vidrio de un hueco:** al seleccionar un cristal el panel pasa a `Vidrio`
+  (`Principal` / `Avanzada`) con `Vidrio`, `Acabado` y `Genérico`. Teclear
+  el código y `Tab` funciona (`VCG6`). Ese vidrio se guarda en el nodo
+  (`EstructurasDiseño.Vidrio`) y solo cambia ese cristal.
+- **Qué guarda:** al aceptar, la línea queda con `DisEspecificoSN`, el árbol
+  en `EstructurasDiseño` (`TipoDoc = VPRES`) y **su propia plantilla de
+  despiece** en `EstructurasArticulos` (`TipoDoc = VPRES`, mismas `nDoc` y
+  `nLinEstr`), con las cotas ya sustituidas (`300`, `L-300`).
+- **Precio del caso:** 236,96 € (travesaño `GM303` de 1.157,6; vidrio `VCG4`
+  arriba y `VCG6` abajo, este con junta interior `GM4089` en lugar de
+  `GM4090`). Aluminior, con la plantilla y el vidrio del documento, da
+  236,96 €; con la plantilla de catálogo, 153,31 €.
+
+#### Juego de casos del 13/11/2026 (0017, presupuesto 260508, `Id` 1316)
+
+**Observado** por visión. Fijo `0` 1.200 × 1.200, `GMA350`, `VCG4`, `L`
+salvo indicación. Precio de la línea `GRUPO` leído de `VPresupuestosLin` en
+la copia `export_datos/contraste-2026-11/fuentes/EMP0017/copia-aluminio-20261113.mdb`;
+volcados en `output/diseno-especifico-20261113/casos-0017/`
+(`EstructurasArticulos`, `EstructurasDiseno`, `VPresupuestosLin`,
+`VDatosLinEstr`, `VPresupuestos`). Todas las líneas de estructura quedan con
+`DisEspecificoSN = True`.
+
+| Caso | Diseño | Línea (`nOrden`) | `nLinEstr` | Precio |
+|---|---|---|---|---|
+| 1 | Travesaño vertical equidistante, 2 huecos | 1 | 497020 | 191,67 € |
+| 2 | Travesaño horizontal equidistante, 3 huecos | 2 | 497065 | 233,54 € |
+| 3 | Horizontal (Abajo) a cota fija 400 | 3 | 497121 | 192,99 € |
+| 4 | Horizontal (Abajo) a cota fija 300 y vertical equidistante en el hueco inferior | 4 | 497166 | 238,93 € |
+| 5 | Cota Variable FI 300 | — | — | **saltado**: `Cota Variable` está deshabilitada al añadir un travesaño (dos intentos) |
+| 6 | Horizontal (Abajo) a 300 y hoja practicable (`1 Hoja`, primer icono) en el hueco inferior | 5 | 497221 | 351,45 € |
+| 7 | Igual que 6 con oscilobatiente (`1 Hoja`, tercer icono) | 6 | 497300 | 394,16 € |
+| 8 | Sin travesaño, barrotillo interior `BI` `L`, 2 horizontales y 1 vertical; vidrio del cristal `VGS616AL33I` (ver abajo) | 7 | 497375 | 322,40 € |
+| 9 | Caso 1 en `ELEGANTPVC` (`VCG4`, `L`) | 8 | 497406 | 220,26 € |
+| 10 | `1OFI` de catálogo 800 × 2.000 `ELEGANTPVC`, `VCG4`, `L`; `Cota por` del fijo inferior de 300 a 500 | 9 | 497453 | 460,24 € |
+
+En el árbol (`EstructurasDiseño`): travesaño `Tipo 6` con `TipoTrav`
+(`VI`, `HA`, `HB`), `TipoCota` 0 equidistante (`OperacionEqui` = huecos),
+2 cota fija, 1 variable (caso 10: `Cota 500`, `Simbolo FI`); hoja `Tipo 3`;
+barrotillo `Tipo 7` colgando del vidrio `Tipo 5`. En `VDatosLinEstr` queda
+además una fila suelta (`nVLinea 497012`, sin línea en `VPresupuestosLin`),
+anterior a esta sesión: no es un caso.
+
+Visto por primera vez en esta sesión:
+
+- **Cota Variable** solo existe si el travesaño viene del catálogo: en la
+  `1OFI` el travesaño `Trav. Marco ( de abajo)` trae `Cota Variable` marcada
+  (gris) con `Nombre FIJO INFERIOR`, `Símbolo FI`, `Cota por 300`, y se puede
+  cambiar `Cota por`. En un travesaño añadido a mano la opción está gris y no
+  se puede elegir.
+- **Cota fija:** el campo valida cada cambio; si queda un valor imposible
+  sale «Cota para travesaño no válida.» y se pone a 0. Borrar con
+  `Fin` + retroceso y teclear el número entero.
+- **Clic derecho sobre un hueco vacío** (`MARCO`): `Añadir Vidrio`,
+  `Añadir Vidrio a Todo`, `Añadir Barrotes de Tubo`, `Añadir Barrotillo
+  Exterior`, `Añadir Travesaño`, `Añadir Mallorquina Fija`, `Añadir
+  Mallorquina Regulable`, `Añadir Panel Machihembrado`, `Añadir
+  Contraventana >`, `Curvar`, `Eliminar`.
+- **Barrotillo interior:** con `VCG4` responde «El vidrio VCG4 'CARGLASS
+  4mm' NO Admite Barrotillo Interior al vidrio.». Los `BI` reales de la
+  0016 (24 de 24 en la copia del 31/10) llevan `VGS616AL33I` en el nodo;
+  con ese vidrio (descripción «DOBLE») sí se añade. Panel `Barrotillo`:
+  artículo (`BI`, «BARROTILLO INTERIOR AL VIDRIO») con desplegable,
+  `Acabado`, `Cantidad` horizontales/verticales con `+`/`−`, `Separación
+  entre ejes (Info.)` y botones `Copiar Sin Alinear` / `Copiar Alineado`.
+- **Hoja en un hueco:** panel `Hoja` (`Principal`, `Accesorios`,
+  `Avanzada`): `Tipo Hoja` (Ventana, Puerta), `Hoja Inferior` (Hoja
+  Interior, Zócalo Interior, Hoja para Marco Abierto), `Apertura` (Interior,
+  Exterior), perfiles `GM301` sup/inf/iz/de y `GM302` inversora en
+  `GMA350`, `Otros Perfiles` (`GM310`, `GM322`, `GM323`) y `Tipo de Corte`.
+  Tras meter la hoja, `Añadir a Todos los Huecos` pone vidrio también en la
+  hoja.
+- **Elemento seleccionado:** esta vez teclear serie, vidrio y acabado + `Tab`
+  sí funcionó (`GMA350`, `ELEGANTPVC`, `VCG4`, `L`).
+
+En los 225 `GRUPO` de 2026 (copia del 31/10) hay 170 elementos con diseño
+específico y precio, en 83 `GRUPO`: cota de
+un travesaño cambiada, travesaños añadidos, una hoja metida en un hueco de un
+fijo, otro tipo de hoja, otro vidrio en un hueco y barrotillos interiores.
+
 Para el elemento invisible: se pulsa sobre el dibujo y luego el **cuadrado
 blanco** junto a la X roja; se acepta. Uso según Sergio: representar en el
 conjunto un espacio que **no se instala**, normalmente una viga o un trozo de
@@ -512,7 +624,7 @@ hipótesis.
 | Unión | Sí: artículos de unión | Parcial; sin «siguiente unión», tipo fija/variable ni escaparate |
 | Insertar tapajuntas cerramientos | Sí: 24 tapajuntas (familia 102) | No; función pendiente de explicar |
 | Insertar compacto | Sí: 17 compactos y guías 051 | Parcial (09/11/2026): bloque en el panel, cajón dibujado y valoración con opciones predeterminadas; sin registro ni medidas manuales; guías valoradas y ventana estrechada por `DescuentoGuia`, contrastado al céntimo el 12/11/2026 |
-| Cartabón / Diseño V3 y elemento invisible | — | Invisible sí, como «Convertir en hueco» (DS3, 07/11/2026); Diseño V3 no |
+| Cartabón / Diseño V3 y elemento invisible | — | Invisible sí, como «Convertir en hueco» (DS3, 07/11/2026). Diseño V3: el motor valora un módulo con plantilla propia, vidrio por hueco y barrotillos (13/11/2026), pero no hay editor ni generador de la plantilla: el operador aún no puede crear esos diseños (DS4) |
 
 ## Pendiente de explicar
 

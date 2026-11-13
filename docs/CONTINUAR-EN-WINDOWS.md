@@ -15,7 +15,36 @@ visión (Computer Use: captura, una acción, captura); no delega los clics en
 Sergio** salvo elegir la empresa en el selector. Tras cada observación, afina
 Aluminior solo con la regla demostrada (ver «Afinar la app» abajo).
 
-**Relevo del 12/11/2026 (vigente; sustituye a la recepción del 31/10).** Todo está en
+**Relevo del 13/11/2026 (vigente): del equipo del titular al equipo de Sergio.**
+Todo el código y la documentación están en `main` (`git pull`). Lo que no viaja por
+Git hay que copiarlo a mano, con la misma ruta relativa dentro del repositorio:
+
+1. `export_datos/contraste-2026-11/fuentes/EMP0017/copia-aluminio-20261113.mdb`
+   (0017 con el presupuesto de casos 260508) y
+   `export_datos/contraste-2026-11/fuentes/EMP0016/copia-aluminio-20261113.mdb`
+   (0016 al 13/11, copiada sin abrir; aún no medida).
+2. `export_datos/contraste-2026-11/EMP0016-copia-aluminio-20261031/plantillas-documento.tsv`
+   y `disenos-documento.tsv`: sin ellos el banco de la 0016 vuelve a medir como el
+   12/11 (83 coinciden) en lugar de 111.
+3. `output/diseno-especifico-20261113/casos-0017/`: volcados del 260508
+   (`EstructurasArticulos`, `EstructurasDiseno`, `VPresupuestosLin`,
+   `VDatosLinEstr`, `VPresupuestos`).
+4. El `.env` local, si ese equipo no lo tiene ya.
+
+Al llegar: `git pull`, `npm install`, `npm run typecheck`, `npm run test`; el test
+`plantilla-propia.integracion.test.ts` necesita la base local de pruebas como los
+demás `*.integracion.test.ts`. Siguiente tarea: **DS4** en el
+[roadmap](../ROADMAP-PARIDAD-PRODUCTOR.md): generar la plantilla de despiece desde
+el árbol `EstructurasDiseño`, usando los 9 casos del 260508 como contraste (árbol en
+`EstructurasDiseno.tsv`, plantilla esperada en `EstructurasArticulos.tsv` por
+`nLinEstr`, precio en la línea `GRUPO`; tabla en la
+[guía](paridad/GUIA-DISENADOR-PRODUCTOR.md#juego-de-casos-del-13112026-0017-presupuesto-260508-id-1316)).
+No hace falta volver al equipo del titular para DS4; volver solo si una regla del
+generador no se puede deducir de esos casos ni de las 170 plantillas de la 0016.
+La Cota Variable de un travesaño añadido a mano no se puede crear en Productor: no
+repetir ese intento.
+
+**Relevo del 12/11/2026 (antecedente; sustituía a la recepción del 31/10).** Todo está en
 `main` (`git pull`) y Supabase tiene las 39 migraciones. El equipo del titular **no
 tiene July**: la fuente de verdad es este repositorio (`docs/ESTADO-ACTUAL.md`,
 `ROADMAP-PARIDAD-PRODUCTOR.md`, esta guía). `Ser-Gio` es solo el equipo de desarrollo

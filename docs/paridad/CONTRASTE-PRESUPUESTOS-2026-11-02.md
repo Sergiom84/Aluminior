@@ -528,7 +528,7 @@ predeterminada, y ningún grupo ni opción es condicional, escalar ni incompatib
   7 de `acabados-de-accesorio-distintos` el 12/11/2026 (ver sección siguiente).
 - En la 0015 manda la tarifa (PVP de 2026 frente a documentos de 2025).
 
-### Actualización del 12/11/2026 (tras `30dbc16` y reglas de compacto en GRUPO — vigente)
+### Actualización del 12/11/2026 (tras `30dbc16` y reglas de compacto en GRUPO; sustituida por la del 13/11)
 
 Repetido `scripts/contraste-presupuestos.ts` sobre la misma copia de la 0016 (`225 GRUPO`, `186 documentos`):
 
@@ -543,13 +543,69 @@ Reglas demostradas e incorporadas el 12/11/2026 (no repetir):
 2. **Subacabados del compacto (`CompAccAcaLamas`, `CompAccAcaGuias`, `CompAccAcaAcc`) y `acabadoGuias` (`guias-compacto.ts`):** en las 351 filas de plantilla de `COM001`–`COM017`, `COMPVAL` usa siempre `VAccesorios.Acabado` y `CompAccAcaGuias` se aplica al perfil de guía lateral (`GUIAIZ`/`GUIADE`). Sin guía central (`!GuiaCentralSN`), los 7 `GRUPO` antes apartados por `acabados-de-accesorio-distintos` (`937, 1234, 1239, 1264, 1265, 1274, 1287`, `20.883,07 €`) pasan a coincidir al céntimo (`0,00 €`).
 3. **Descuento de guías en filas de varias piezas (`descuento-guias.ts`):** confirmado en los 21 `GRUPO` multicolumna con `CerrCodGuiaI/D` (59 módulos) de `EMP0013`–`EMP0016` (`970, 1034, VALB 280, VFAC 365` en `0016`; 14 en `0013`, 4 en `0014`, 1 en `0015`), incluidos los que tienen un fijo sin compacto a la izquierda (`0013` `159, 269`; `0014` `1042, 1074`).
 4. **Lo que queda abierto en `difiere` (90) y `sin-valorar` (39):**
-   - `diseno-especifico`: 51 principales (`151.131,76 €` en líneas, `11.159,76 €` atribuibles).
+   - `diseno-especifico`: 51 principales (`151.131,76 €` en líneas, `11.159,76 €` atribuibles). Atacado el 13/11/2026 (ver abajo): quedan 13.
    - `reparto-uniones`: 29 (`10` principales, `94.158,45 €`; en `guardadas` coinciden al céntimo).
    - `tarifa`: 30 (`19` principales, `85.116,67 €`; tarifa anterior en presupuestos de nov 2025–feb 2026 o céntimos de `COMPVAL`).
    - `importe-de-fila`: 15 principales (`1.381,67 €` atribuibles: mosquitera `PSM001` y `VOpciones` por módulo en `1029`/`1124`; un único `COM009` de `2.500 mm` sobre dos `PC2` de `1.250 mm` en `1019`/`1020`; residuo de comisión en `887`).
    - `vidrio`: 2 principales en `1080` (`4/22/4` de 30 mm en `GMA350` con `CorrGrosorVidDA = 26`).
    - `mano-de-obra` (3 principales), `cortes` (1 principal: `1122`), `compacto` (1 principal: fila huérfana `nModulo=3` con `nLinEstrGrupo=0` en `854`), `tapajuntas` (1 principal: `756`) y `acabado` (1 principal: `890`).
    - En `sin-valorar` (39): 12 por `despunte` (E1), 11 por `otro-accesorio` (tubos `112` o accesorio repetido), 10 por PVP ausente en tarifa (`PSU006`/`PSESQCOM` en 5, `1OPLD` en 3, `GMA05` en 1, `1811` en 1), 4 por estructura sin despiece en catálogo (`04V` en 3, `C2P` en 1) y 2 por `union-otra-serie` sin PVP.
+
+### Actualización del 13/11/2026 (diseño específico — vigente)
+
+Misma copia de la 0016 (`225 GRUPO`, `186 documentos`). El banco lee ahora, junto a la
+extracción, dos volcados de la copia hechos con `scripts/volcar-tabla-mdb.ps1` (solo
+lectura): `plantillas-documento.tsv` (`EstructurasArticulos`, `TipoDoc = VPRES`) y
+`disenos-documento.tsv` (`EstructurasDiseño`, `TipoDoc = VPRES`). Sin ellos el banco
+mide como el 12/11.
+
+| Medición (0016) | Coincide | Difiere | Sin valorar | No reproducible | Receta igual / distinta |
+|---|---:|---:|---:|---:|---:|
+| 12/11/2026 (`3a8d700`) | 83 (`190.858,31 €`) | 90 (`271.666,29 €`) | 39 (`135.776,95 €`) | 13 (`40.327,66 €`) | 114 / 59 |
+| + plantilla propia del documento | 97 (`224.589,42 €`) | 67 | 48 | 13 | 131 / 33 |
+| + vidrio propio del hueco | 106 (`260.035,54 €`) | 58 | 48 | 13 | 140 / 24 |
+| **13/11/2026 (vigente): + barrotillo, múltiplo por metro y más de 5 cristales** | **111 (`273.023,76 €`)** | **60 (`186.189,44 €`)** | **41 (`139.088,35 €`)** | **13 (`40.327,66 €`)** | **145 / 26** |
+
+28 `GRUPO` pasan de `difiere` a `coincide` (`835` ×2, `837`, `847`, `850`, `875`, `905`,
+`922`, `957`, `975`, `996`, `1001`, `1017`, `1026`, `1050` ×2, `1090` ×2, `1110` ×2,
+`1155`, `1161`, `1171`, `1172`, `1226`, `1228`, `1347`, `1355`); ninguno deja de coincidir.
+2 pasan de `difiere` a `sin-valorar` (`917`, `939`): su plantilla lleva el artículo `157`
+(diseño con curva, `DisTipoCurva = 8`), que Productor guarda a precio 0 y Aluminior no
+tiene regla para valorar; antes daban un importe con la plantilla equivocada.
+
+Reglas demostradas e incorporadas el 13/11/2026 (no repetir):
+1. **Plantilla propia del módulo.** Un elemento con `DisEspecificoSN` no se despieza con
+   la plantilla de catálogo de su estructura sino con la que Productor guarda en el
+   documento. `plantillaPropia` (estructura) y `plantillasPropias` (cerramiento, por id
+   de módulo) la llevan hasta `leerCatalogoLinea`. Contrastado además en Productor
+   (0017, presupuesto 260507): 236,96 € en ambos; 153,31 € con la plantilla de catálogo.
+2. **Vidrio propio del hueco** (`EstructurasDiseño.Vidrio` del nodo de cristal →
+   `vidrioPropio` de la fila): cambia solo ese cristal, con su junquillo y sus juntas
+   por grosor. Fijo inferior con laminado en `1OFI`/`2OFI` (`835`, `847`, `1050`…).
+3. **Barrotillo interior** (`DisComponente = BI`, `barrotillos.ts`): mide el cristal que
+   referencia sin descuento (ancho si trabaja en `A`, largo si en `L`); `Cantidad` es el
+   número de barras; cantidad 0 no produce pieza. 8 nodos de `1026` y los de `957`,
+   `1110`, `1171`, `1172`.
+4. **Metraje por metro con múltiplo de largo** (`importe-fila.ts`): cada pieza sube a su
+   múltiplo y después se multiplica por la cantidad. 15 filas `BI` (múltiplo 5 cm) de 4
+   presupuestos. **Solo demostrado con `BI`**; el mínimo por metro sigue bloqueando.
+5. **Más de cinco cristales por pieza:** el snapshot admitía 5 ranuras de acristalamiento
+   y un fijo con 9 huecos (`1183`) fallaba con «snapshot incompatible».
+
+Lo que queda en los 21 `difiere` con diseño específico:
+- 8 solo difieren al dibujar desde el hueco (`reparto-uniones`); con medidas guardadas
+  coinciden: `872`, `918`, `948`, `969`, `1195`, `1247`, `1251`, `1252`.
+- Céntimos (≤ 0,07 €): `887` (residuo de comisión conocido), `924`, `1082`, `1183`,
+  `1232`, `1286`.
+- Tarifa de la fecha del documento: `773`, `786`, `803`.
+- Sin analizar: `823` (−30,16 €), `847` (+1,67 €), `931` (+2,88 €), `1080` (+208,34 €).
+
+En `sin-valorar` (41): 12 `despunte`, 11 `otro-accesorio`, 10 `tarifa` (incluye `917` y
+`939`), 3 `mano-de-obra`, 2 `vidrio`, 2 `union-otra-serie`, 1 `acabado`.
+
+**Límite:** el banco entrega al motor la plantilla que generó Productor. Aluminior no
+tiene todavía el editor `Diseño V3` ni genera esa plantilla a partir del árbol de diseño
+(DS4 en el roadmap): el motor acierta con el diseño, pero el operador aún no puede crearlo.
 
 ### Resultado de la primera entrega (retirado; ver corrección)
 
