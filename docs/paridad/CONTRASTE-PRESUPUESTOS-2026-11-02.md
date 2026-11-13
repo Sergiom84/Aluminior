@@ -607,6 +607,44 @@ En `sin-valorar` (41): 12 `despunte`, 11 `otro-accesorio`, 10 `tarifa` (incluye 
 tiene todavía el editor `Diseño V3` ni genera esa plantilla a partir del árbol de diseño
 (DS4 en el roadmap): el motor acierta con el diseño, pero el operador aún no puede crearlo.
 
+### DS4, primer paso — generador de la plantilla de fijos (13/11/2026)
+
+Hasta aquí el banco entregaba al motor la plantilla que guardó Productor. `generarPlantillaDisenoPropio`
+(`@aluminior/core/despiece`) la genera desde el árbol de `EstructurasDiseño`. Se contrasta con
+`scripts/contraste-diseno-propio.ts`, que compara cada plantilla generada con la de Productor en los
+campos que lee el motor (`FilaPlantillaCatalogo`), sobre el catálogo y los documentos de la extracción.
+
+| Copia | Pares árbol/plantilla | En alcance | Idénticas | Distintas |
+|---|---:|---:|---:|---:|
+| 0016 del 13/11 (catálogo, `VPRES`, `VALB`, `VFAC`) y 260508 de la 0017 | 970 | 77 | 77 | 0 |
+
+Reglas deducidas de esos pares (no repetir):
+1. **Orden.** Marco (izquierdo, derecho, superior, inferior), escuadras y mano de obra del marco; después una
+   fila por nodo en el orden de su `Id` (travesaños, vidrios y barrotillos intercalados); al final la mano de
+   obra de acristalar (cantidad = número de vidrios) y el artículo `62`.
+2. **Medida de cada hueco** como fórmula de `L` y `A`: equidistante `(eje)/n`; cota fija, la cota en el hueco
+   del lado que nombra el travesaño (`HA` arriba, `HB` abajo, `VI` izquierda, `VD` derecha) y `eje-cota` en el
+   otro. Un travesaño dentro de un hueco parte la fórmula de ese hueco (`(A)/2-300`). La fórmula de
+   referencia es la misma con `REF` en lugar de `L` o `A`.
+3. **Referencias y grupos.** El largo cuelga de la fila 1 (marco izquierdo) y el ancho de la 3 (marco
+   superior). Cada vidrio lleva el grupo del perfil que tiene a cada lado (`MV`, `MH` o `TMP`); el travesaño,
+   el de los perfiles donde termina.
+4. **Mano de obra de hueco** (módulo `41`): sin travesaños, una fila del marco; con ellos, dos filas por
+   travesaño para sus huecos finales (un hueco partido por otro travesaño no lleva). Con varios travesaños
+   en la misma división, Productor desplaza esas filas tantos huecos hacia atrás como travesaños hermanos
+   hay, y las que caen antes del primer hueco salen sin ancho (`03H`, `03V`, `04F`, `06`). Parece un defecto
+   de Productor; se reproduce porque cambia los minutos y, con ellos, el precio. **Decisión de producto
+   pendiente:** mantenerlo por paridad o corregirlo y documentar la desviación.
+5. **Marco de corte recto** (`TipoCorte` 2 en las cuatro esquinas, `FC`): los verticales apoyan en `MH`.
+6. **Barrotillo interior:** dos filas por nodo (horizontales en `A`, verticales en `L`) referidas a la fila
+   de su vidrio.
+
+Fuera de alcance, devuelto como «no soportado» con su motivo: hojas (`Tipo 3`, 650 pares), marco de puerta
+`PTA` (136), curva o tirada (38), travesaño que no es de marco de ventana (24), marco `3C` (19), `VEN` (12),
+fijo independiente de corredera (`Estructuras.DisFIsn`, 4), `Tipo 9` (4), sin marco único (4) y `SOL` (2).
+La cota variable y varios travesaños a cota fija en una división no aparecen en los pares en alcance y
+también se rechazan.
+
 ### Resultado de la primera entrega (retirado; ver corrección)
 
 - **0016 (2026)**:

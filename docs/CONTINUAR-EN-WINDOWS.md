@@ -22,7 +22,9 @@ Git hay que copiarlo a mano, con la misma ruta relativa dentro del repositorio:
 1. `export_datos/contraste-2026-11/fuentes/EMP0017/copia-aluminio-20261113.mdb`
    (0017 con el presupuesto de casos 260508) y
    `export_datos/contraste-2026-11/fuentes/EMP0016/copia-aluminio-20261113.mdb`
-   (0016 al 13/11, copiada sin abrir; aún no medida).
+   (0016 al 13/11; medida el 13/11 en el equipo de Sergio: 114 / 61 / 42 / 14, ver [estado](ESTADO-ACTUAL.md)).
+   Recibidas y montadas en el equipo de Sergio el 13/11; los puntos 2 y 3 se regeneraron allí desde
+   estas copias y `export_datos/herramientas/exportar-csv.mjs` se reconstruyó: no hace falta copiarlos.
 2. `export_datos/contraste-2026-11/EMP0016-copia-aluminio-20261031/plantillas-documento.tsv`
    y `disenos-documento.tsv`: sin ellos el banco de la 0016 vuelve a medir como el
    12/11 (83 coinciden) en lugar de 111.
