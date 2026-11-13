@@ -1,5 +1,6 @@
 /** Contrato técnico local. Nunca contiene cabeceras de cliente ni textos de obra. */
 import { numeroOrigen } from '../banco-precios.mjs'
+import type { FilaPlantillaCatalogo } from '@aluminior/core/despiece'
 export type Fila = Record<string, unknown>
 export type Tablas = Record<string, Fila[]>
 export const texto = (v: unknown) => String(v ?? '').trim()
@@ -37,6 +38,8 @@ export interface Caso {
   accesorios?: Fila[]; opcionesAccesorio?: Fila[]
   /** `VEstructurasVariables` (VPRES) de la línea. */
   variables?: Fila[]
+  /** Plantilla propia de cada elemento con diseño específico, por `nLinEstr` (contraste de GRUPO). */
+  plantillasPropias?: Record<string, readonly FilaPlantillaCatalogo[]>
 }
 export type Estado = 'igual' | 'cercano' | 'distinto' | 'sin valorar' | 'error'
 export interface Medicion {

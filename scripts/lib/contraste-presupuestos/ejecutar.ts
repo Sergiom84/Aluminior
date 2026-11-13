@@ -5,6 +5,8 @@ import { diagnosticar, precioComparable } from '../banco-contraste/comparar.ts'
 import { si, texto, type Caso } from '../banco-contraste/datos.ts'
 import { analizarReparto, type AnalisisReparto } from './uniones.ts'
 import { prepararVariante, esperadoResto, descontarCajon } from './variantes.ts'
+import { clavePlantilla } from './plantillas-documento.ts'
+import type { FilaPlantillaCatalogo } from '@aluminior/core/despiece'
 import { clasificarGrupo, type Clasificacion, type EntradaClasificacion, type Valoracion } from './clasificar.ts'
 
 export interface ContrasteGrupo {
@@ -29,12 +31,13 @@ async function valorar(db: ClienteEscritura, c: Caso, medidas: 'linea' | 'nomina
   }
 }
 
-export async function contrastarGrupos(db: ClienteEscritura, casos: Caso[], nuevos: (c: Caso) => boolean) {
+export async function contrastarGrupos(db: ClienteEscritura, casos: Caso[], nuevos: (c: Caso) => boolean,
+  plantillas: ReadonlyMap<string, readonly FilaPlantillaCatalogo[]> = new Map()) {
   // Plantillas del catálogo importado, como la web: sin ellas solo se dibujan las verificadas.
   await asegurarCatalogoDiseno(db)
   const salida: ContrasteGrupo[] = []
   for (const [i, c] of casos.entries()) {
-    const v = prepararVariante(c), reparto = analizarReparto(c)
+    const v = prepararVariante(conPlantillasPropias(c, plantillas)), reparto = analizarReparto(c)
     let guardadas: Valoracion = { precio: null, causas: [], motivos: [], avisos: [] }, nominales: Valoracion | null = null, invisible: number | null = null
     if (!v.bloqueos.length) {
       const a = await valorar(db, v.variante, 'linea'); guardadas = a.v
@@ -62,6 +65,15 @@ export async function contrastarGrupos(db: ClienteEscritura, casos: Caso[], nuev
     if ((i + 1) % 25 === 0) console.log(`GRUPO ${i + 1}/${casos.length}; sin escrituras`)
   }
   return salida
+}
+
+/** Adjunta a cada elemento con diseño específico la plantilla que Productor guardó con el documento. */
+export function conPlantillasPropias(c: Caso, plantillas: ReadonlyMap<string, readonly FilaPlantillaCatalogo[]>): Caso {
+  const propias = Object.fromEntries((c.geometria ?? []).flatMap(g => {
+    const p = si(g.DisEspecificoSN) && !si(g.EsUnionSN) ? plantillas.get(clavePlantilla(c.padre.nDoc, g.nLinEstr)) : undefined
+    return p?.length ? [[texto(g.nLinEstr), p]] : []
+  }))
+  return Object.keys(propias).length ? { ...c, plantillasPropias: propias } : c
 }
 
 const recortar = (v: Valoracion): Valoracion => ({ ...v, avisos: [...new Set(v.avisos)].slice(0, 20) })

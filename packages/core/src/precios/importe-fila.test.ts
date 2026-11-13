@@ -12,6 +12,14 @@ describe('importeFila', () => {
     expect(importeFila({ cantidad: 4, largoMm: 502.25, anchoMm: null }, articulo({ tipoMetraje: 'ML', pvp: 1.81 })).importe).toBe(3.62)
     expect(importeFila({ cantidad: 2, largoMm: 1257, anchoMm: null }, articulo({ tipoMetraje: 'ML', pvp: 1.81 })).importe).toBe(4.56)
   })
+  it('ML con múltiplo de largo: cada pieza sube a su múltiplo antes de multiplicar por la cantidad', () => {
+    // Barrotillo interior de 2026 (múltiplo 5 cm, PVP 12,98): metrajes e importes guardados por Productor.
+    const barrotillo = articulo({ tipoMetraje: 'ML', pvp: 12.98, multiploLargoCm: 5 })
+    expect(importeFila({ cantidad: 3, largoMm: 784, anchoMm: null }, barrotillo)).toEqual({ metraje: 2.4, precio: 12.98, importe: 31.15, incidencia: null })
+    expect(importeFila({ cantidad: 3, largoMm: 701.5, anchoMm: null }, barrotillo)).toMatchObject({ metraje: 2.25, importe: 29.21 })
+    expect(importeFila({ cantidad: 1, largoMm: 220, anchoMm: null }, barrotillo)).toMatchObject({ metraje: 0.25, importe: 3.25 })
+    expect(importeFila({ cantidad: 2, largoMm: 2099, anchoMm: null }, barrotillo)).toMatchObject({ metraje: 4.2, importe: 54.52 })
+  })
   it('M2 con múltiplos en cm, mínimo e incrementos por metraje y por lado mayor', () => {
     const vidrio = articulo({
       tipoMetraje: 'M2', pvp: 10, multiploLargoCm: 6, multiploAnchoCm: 6, minimo: 0.7,

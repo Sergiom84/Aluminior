@@ -70,7 +70,7 @@ export async function valorarConCatalogo(
     estructura: entrada.codigo, serie: entrada.serieCodigo, vidrio: entrada.vidrioCodigo, tarifa: entrada.tarifa,
     adicionales: [entrada.compacto, ...entrada.accesorios ?? []].flatMap(a => a ? [a.estructura] : []),
     guias: [entrada.compacto?.guiaIzquierda, entrada.compacto?.guiaDerecha].filter((g): g is string => Boolean(g)),
-    opcionAcristalamiento: entrada.opcionAcristalamiento,
+    opcionAcristalamiento: entrada.opcionAcristalamiento, plantillaPropia: entrada.plantillaPropia,
   })
   if (!catalogo) return null
   const [estructura] = await cliente.select({ descripcion: schema.estructuras.descripcion })

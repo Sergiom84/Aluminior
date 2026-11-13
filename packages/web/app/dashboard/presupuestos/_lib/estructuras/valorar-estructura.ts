@@ -1,7 +1,7 @@
 import { opcionesAcristalamientoDeSerie } from './acristalamiento-serie.ts'
 import { partidasValoracion } from './partidas-valoracion.ts'
 import type { PartidaValoracionCerramiento } from '@aluminior/core/estructuras'
-import type { AccesorioLineaCatalogo, CompactoLineaCatalogo } from '@aluminior/core/despiece'
+import type { AccesorioLineaCatalogo, CompactoLineaCatalogo, FilaPlantillaCatalogo } from '@aluminior/core/despiece'
 import { resolverMaterialesEstructura } from './materiales-estructura.ts'
 import { incidenciaPrecioEnTabla, lineaValorable, precioConComision, type PiezaSinPrecio, type PrecioManual } from '@aluminior/core/precios'
 import { leerCatalogoPreciosTabla } from '../precios-tabla/index.ts'
@@ -51,6 +51,11 @@ export interface EntradaValoracionEstructura {
   trazabilidad?: boolean
   /** Precios del operador para piezas sin PVP; solo los usa el catálogo completo. */
   preciosManuales?: readonly PrecioManual[]
+  /**
+   * Plantilla del diseño propio (divisiones, hojas o cotas cambiadas en el diseñador):
+   * sustituye a la de catálogo. Solo la valora el catálogo de despiece completo.
+   */
+  plantillaPropia?: readonly FilaPlantillaCatalogo[]
 }
 
 export type ResultadoValoracionEstructura =

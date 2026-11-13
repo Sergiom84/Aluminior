@@ -37,8 +37,9 @@ const articulos: Record<string, Partial<ArticuloCatalogo>> = {
   'G-MO': { generico: true, componente: '39', tipoMetraje: 'UD' }, 'G-CRISTAL': { generico: true, componente: '1', tipoMetraje: 'M2' },
   MARCO: {}, HOJA: {}, RODAMIENTO: {}, FELPUDO: {}, CIERRE: { tipoMetraje: 'UD' }, MO: { tipoMetraje: 'UD' }, TUBO: {},
   VIDRIO: { tipoMetraje: 'M2', grosorAcristalar: 16, dobleAcristalamiento: true },
+  LAMINADO: { tipoMetraje: 'M2', grosorAcristalar: 16, dobleAcristalamiento: true },
 }
-const precios: Record<string, number> = { MARCO: 10, HOJA: 8, RODAMIENTO: 6, FELPUDO: 1, CIERRE: 4, MO: 0.5, TUBO: 3, VIDRIO: 50 }
+const precios: Record<string, number> = { MARCO: 10, HOJA: 8, RODAMIENTO: 6, FELPUDO: 1, CIERRE: 4, MO: 0.5, TUBO: 3, VIDRIO: 50, LAMINADO: 100 }
 const asociaciones: Record<string, ReglaAsociacion[]> = {
   HERR: [
     { id: 'a1', conjunto: 'HERR', articulo: 'FELPUDO', cantidad: 2, acabado: '---A', intervalo: 0, medidaMin: 0, medidaMax: 0,
@@ -131,6 +132,18 @@ describe('despiezarLineaCatalogo', () => {
     const r = despiezarLineaCatalogo(simple, entrada)
     expect(r.importe).toBeNull()
     expect(r.incidencias).toContain('la serie no resuelve el componente 23 (G-HH)')
+  })
+  it('usa el vidrio propio del hueco de un diseño específico solo en su fila de cristal', () => {
+    // Regla del 13/11/2026: 1OFI y 2OFI reales con laminado en el fijo inferior y otro vidrio en la hoja.
+    const propia = plantillas.CORR!.map(f => f.id === 23 ? { ...f, vidrioPropio: 'LAMINADO' } : f)
+    const r = despiezarLineaCatalogo(catalogo({ plantilla: () => propia }), entrada)
+    expect(r.incidencias).toEqual([])
+    expect(r.filas.filter(f => f.origen === 'vidrio').map(f => `${f.articulo}:${f.importe}`)).toEqual(['VIDRIO:32.5', 'LAMINADO:61'])
+    expect(r.importe).toBe(168.06)
+    const ausente = propia.map(f => f.vidrioPropio ? { ...f, vidrioPropio: 'NO-EXISTE' } : f)
+    const sin = despiezarLineaCatalogo(catalogo({ plantilla: () => ausente }), entrada)
+    expect(sin.importe).toBeNull()
+    expect(sin.incidencias).toContain('vidrio NO-EXISTE ausente del catálogo')
   })
   it('valora una estructura estándar sin asociaciones de serie', () => {
     const r = despiezarLineaCatalogo(catalogo(), { ...entrada, estructura: 'UNION', anchoMm: 0, altoMm: 2000 })

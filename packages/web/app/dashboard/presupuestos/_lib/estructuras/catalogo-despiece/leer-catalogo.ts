@@ -34,6 +34,8 @@ export interface EntradaCatalogoLinea {
   /** Guías de persiana del compacto (conjuntos 051) cuyo perfil se precarga. */
   guias?: readonly string[]
   opcionAcristalamiento?: number
+  /** Plantilla del diseño propio del módulo: sustituye a la de catálogo de la estructura. */
+  plantillaPropia?: readonly FilaPlantillaCatalogo[]
 }
 
 export async function leerCatalogoLinea(cliente: ClienteEscritura, e: EntradaCatalogoLinea): Promise<CatalogoLinea | null> {
@@ -57,6 +59,7 @@ export async function leerCatalogoLinea(cliente: ClienteEscritura, e: EntradaCat
     grupoInferior: f.grupoInferior, gruposAdicionales: f.gruposAdicionales.map(vacioANull), perfilAdicional: f.perfilAdicional,
     formulaSeleccion: f.formulaSeleccion,
   }])
+  if (e.plantillaPropia?.length) plantillas.set(e.estructura, [...e.plantillaPropia])
   const plantilla = plantillas.get(e.estructura)!
 
   const [predeterminadas, perfilesGuia] = await Promise.all([
@@ -99,10 +102,11 @@ export async function leerCatalogoLinea(cliente: ClienteEscritura, e: EntradaCat
   const tacris = await cliente.select().from(schema.tacrisFilas)
     .where(inArray(schema.tacrisFilas.tabla, [tablaHojas, tablaFijos].filter((t): t is string => !!t).concat('')))
 
-  const codigos = new Set<string>([...plantillaFilas.map(f => f.articulo), ...resoluciones.values(),
+  const codigos = new Set<string>([...plantillaFilas.map(f => f.articulo), ...plantilla.map(f => f.articulo), ...resoluciones.values(),
     ...asociacionesFilas.map(a => a.articulo), ...conceptos.map(c => c.articulo)])
   for (const t of tacris) for (const c of [t.junquillo, t.juntaExterior, t.juntaInterior]) if (c) codigos.add(c)
   if (e.vidrio) codigos.add(e.vidrio)
+  for (const f of plantilla) if (f.vidrioPropio) codigos.add(f.vidrioPropio)
   // Horas manuales por unidad: fabricación y colocación.
   for (const c of ['MO', 'MOCOL']) codigos.add(c)
   // Guías del compacto: perfil y mano de obra por guía.

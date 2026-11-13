@@ -9,6 +9,14 @@ describe('snapshot de materiales por origen, versión 1', () => {
     expect(s.origenes.map(o => o.acristalamiento[0].slot)).toEqual([1, 1, 1])
     expect(esResultadoCerramiento(JSON.parse(JSON.stringify(s)))).toBe(true)
   })
+  it('admite más de cinco cristales en una pieza (fijo con divisiones) y rechaza una ranura fuera de rango', () => {
+    const s = snapshotSintetico()
+    const ranura = s.origenes[0].acristalamiento[0]
+    Object.assign(s.origenes[0], { acristalamiento: Array.from({ length: 9 }, (_, i) => ({ ...ranura, slot: i + 1 })) })
+    expect(esResultadoCerramiento(JSON.parse(JSON.stringify(s)))).toBe(true)
+    Object.assign(s.origenes[0], { acristalamiento: [{ ...ranura, slot: 100 }] })
+    expect(esResultadoCerramiento(JSON.parse(JSON.stringify(s)))).toBe(false)
+  })
   it('acepta precio genérico UNI aunque se solicita acabado L', () => {
     const s = snapshotSintetico()
     Object.assign(s.origenes[0].partidasValoracion[0], { criterioPrecio: 'GENERICO', acabadoCodigo: 'UNI' })

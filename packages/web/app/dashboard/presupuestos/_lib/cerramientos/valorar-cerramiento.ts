@@ -3,6 +3,7 @@ import { CATALOGO_SNAPSHOT, accesoriosEfectivosModulo, diagnosticosSinPrecio, co
   type ConfiguracionCerramiento, type RedondeoVentaCerramiento, type ResultadoCerramientoV1,
   type ResultadoOrigenCerramiento } from '@aluminior/core/estructuras'
 import { sumarDecimal } from '@aluminior/core/precios'
+import type { FilaPlantillaCatalogo } from '@aluminior/core/despiece'
 import type { ClienteEscritura } from '../cliente-db.ts'
 import { valorarEstructura } from '../estructuras/valorar-estructura.ts'
 import { resolverMaterialesEstructura } from '../estructuras/materiales-estructura.ts'
@@ -25,6 +26,8 @@ export interface EntradaValoracionCerramiento {
   opcionesHerraje?: readonly string[]
   /** Sin selección guardada: opciones por defecto en cada módulo. */
   opcionesPorDefecto?: boolean
+  /** Plantilla del diseño propio de cada módulo, por su id; ausente usa la de catálogo. */
+  plantillasPropias?: ReadonlyMap<string, readonly FilaPlantillaCatalogo[]>
 }
 
 /** Resuelve por origen; nunca multiplica el despiece por la cantidad comercial. */
@@ -89,7 +92,8 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
       trazabilidad: true, codigo: g.codigo, anchoMm: g.anchoMm, altoMm: g.altoMm,
       serieCodigo: origen.serieCodigo,
       vidrioCodigo: origen.vidrioCodigo, opcionesHerraje: entrada.opcionesHerraje,
-      preciosManuales: entrada.configuracion.preciosManuales }
+      preciosManuales: entrada.configuracion.preciosManuales,
+      plantillaPropia: g.tipo === 'MODULO' ? entrada.plantillasPropias?.get(g.id) : undefined }
     let ventaMotor: number | null = null
     let avisoMotor: string | null = null
     let piezas: Parameters<typeof completarCostesOrigen>[1] = []

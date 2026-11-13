@@ -122,7 +122,12 @@ export async function ejecutarServicio(cliente: ClienteEscritura, c: Caso, medid
       varianteAcristalamiento: base.vidrio ? variantes.get(`${base.serie ?? ''}|${base.vidrio}`)! : '1',
       opcionesHerraje: [...selecciones].filter(([, s]) => s.has(true)).map(([k]) => k), configuracion: g.configuracion,
       // Ningún elemento guarda selección: Productor usa las opciones por defecto.
-      opcionesPorDefecto: es.every(e => !e.opciones.length) })
+      opcionesPorDefecto: es.every(e => !e.opciones.length),
+      // Diseño específico: la plantilla que Productor guardó con el elemento.
+      plantillasPropias: new Map((c.geometria ?? []).flatMap(geo => {
+        const propia = c.plantillasPropias?.[texto(geo.nLinEstr)]
+        return propia && !si(geo.EsUnionSN) ? [[`modulo-${texto(geo.Orden)}`, propia] as const] : []
+      })) })
     const piezas = r.origenes.flatMap(o => {
       const partidas = o.partidasValoracion.filter(p => p.cantidadFacturable === null || Number(p.cantidadFacturable) !== 0)
       return o.piezas.map((p, i) => {

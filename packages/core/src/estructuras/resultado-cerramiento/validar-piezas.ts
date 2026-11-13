@@ -13,8 +13,10 @@ export function esPieza(v: unknown): v is PiezaSnapshotCerramiento {
     textoNullable(v.funcion) && textoNullable(v.posicionTrabajo) &&
     decimalNullable(v.costeUnitario) && decimalNullable(v.costeTotal)
 }
+/** Una ranura por cristal del diseño: un fijo con divisiones supera las cinco (9 en un caso real de 2026). */
+const MAXIMO_RANURAS = 99
 export function esRanura(v: unknown): v is RanuraSnapshotCerramiento {
-  return objeto(v) && entero(v.slot) && v.slot >= 1 && v.slot <= 5 &&
+  return objeto(v) && entero(v.slot) && v.slot >= 1 && v.slot <= MAXIMO_RANURAS &&
     textoNullable(v.vidrioHojas) && textoNullable(v.vidrioFijos) && variante(v.variante)
 }
 export function esHerraje(v: unknown): v is HerrajeSnapshotCerramiento {

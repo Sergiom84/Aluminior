@@ -12,6 +12,7 @@ import { minutosFabricacion } from '../mano-obra-fabricacion.ts'
 import type { VarianteAcristalamiento } from '../../series/resolver.ts'
 import { fila, parcialVacio, type DespieceParcial } from './parcial.ts'
 import { despiezarVidrios } from './vidrios.ts'
+import { COMPONENTE_BARROTILLO, despiezarBarrotillos } from './barrotillos.ts'
 import type { ArticuloCatalogo, CatalogoLinea, EntradaLineaCatalogo, FilaPlantillaCatalogo, SerieCatalogo } from './tipos.ts'
 
 const COMPONENTE_VIDRIO = '1'
@@ -79,7 +80,7 @@ export function despiezarDiseno(
   // Filas de plantilla con material
   for (const f of plantilla) {
     const articulo = articuloDe.get(f.id)
-    if (f.componente === COMPONENTE_VIDRIO || sinMaterial(f) || !articulo || articulo === '0') continue
+    if (f.componente === COMPONENTE_VIDRIO || f.componente === COMPONENTE_BARROTILLO || sinMaterial(f) || !articulo || articulo === '0') continue
     const medida = medidas.get(f.id)
     if (catalogo.articulo(articulo)?.tipoMetraje !== 'UD' && medida?.largoMm == null) {
       r.incidencias.push(`${articulo} (${f.funcion ?? f.componente}): ${medida?.incidencia ?? 'sin medida'}`)
@@ -87,6 +88,10 @@ export function despiezarDiseno(
     r.filas.push(fila({ origen: 'plantilla', articulo, acabado: entrada.acabado, cantidad: f.cantidad,
       largoMm: medida?.largoMm ?? null, funcion: f.funcion }))
   }
+
+  const barrotillos = despiezarBarrotillos(plantilla, medidas, entrada.acabado)
+  r.filas.push(...barrotillos.filas)
+  r.incidencias.push(...barrotillos.incidencias)
 
   // Asociaciones
   const elementos: ElementoPlantilla[] = plantilla.map(f => ({

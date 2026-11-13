@@ -4,7 +4,10 @@
  * Contrastado con las 21.195 hijas valoradas de las facturas 2026 (fase-7/06):
  * - UD: metraje = cantidad (100 %).
  * - ML: metraje = cantidad × metros de la pieza redondeados a 2 decimales
- *   (99,6 %; las diferencias son barrotillos de diseño).
+ *   (99,6 %; las diferencias eran barrotillos de diseño). Con múltiplo de largo
+ *   (`MetrajeMultiploLargo`, cm) cada pieza sube antes a su múltiplo: barrotillo
+ *   `BI` de 5 cm, 15 filas de 4 presupuestos de 2026 (3 × 784 mm = 2,40 m;
+ *   1 × 220 mm = 0,25 m). El mínimo por metro sigue sin contrastar.
  * - M2: cada lado al múltiplo en cm hacia arriba, superficie a 2 decimales,
  *   mínimo, y porcentaje de `ArticulosIncrPrecio`: MET por metraje unitario,
  *   MED por el lado mayor (96,2 %). El porcentaje se aplica al PVP, redondeado
@@ -72,10 +75,8 @@ export function importeFila(fila: FilaValorable, articulo: ArticuloTarifado | nu
       break
     case 'ML':
       if (fila.largoMm === null || !(fila.largoMm > 0)) return { metraje: null, precio: null, importe: null, incidencia: 'sin largo' }
-      if (articulo.minimo > 0 || articulo.multiploLargoCm > 0) {
-        return { metraje: null, precio: null, importe: null, incidencia: 'mínimo o múltiplo por metro sin contrastar' }
-      }
-      metraje = fila.cantidad * redondearCentimos(fila.largoMm / 1000)
+      if (articulo.minimo > 0) return { metraje: null, precio: null, importe: null, incidencia: 'mínimo por metro sin contrastar' }
+      metraje = redondearCentimos(fila.cantidad * redondearCentimos(alMultiplo(fila.largoMm, articulo.multiploLargoCm) / 1000))
       break
     case 'M2': {
       if (fila.largoMm === null || fila.anchoMm === null || !(fila.largoMm > 0) || !(fila.anchoMm > 0)) {

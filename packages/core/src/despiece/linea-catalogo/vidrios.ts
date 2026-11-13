@@ -25,14 +25,18 @@ export function despiezarVidrios(entrada: {
   contexto: Contexto
   claveDescuento: (tipoHoja: string | null) => string
 }): DespieceParcial {
-  const { catalogo, linea, serie, vidrio, medidas, contexto } = entrada
+  const { catalogo, linea, serie, medidas, contexto } = entrada
   const r = parcialVacio()
   for (const f of entrada.cristales) {
-    if (!linea.vidrio || !vidrio) { r.incidencias.push('estructura con vidrio sin vidrio elegido'); continue }
+    // El hueco con vidrio propio (diseño específico) no usa el de la línea.
+    const codigo = f.vidrioPropio || linea.vidrio
+    const vidrio = f.vidrioPropio ? catalogo.articulo(f.vidrioPropio) : entrada.vidrio
+    if (f.vidrioPropio && !vidrio) { r.incidencias.push(`vidrio ${f.vidrioPropio} ausente del catálogo`); continue }
+    if (!codigo || !vidrio) { r.incidencias.push('estructura con vidrio sin vidrio elegido'); continue }
     const m = medidas.get(f.id)
     if (m?.largoMm == null || m.anchoMm == null) { r.incidencias.push(`vidrio: ${m?.incidencia ?? 'sin medida'}`); continue }
     // Vidrio o panel con el acabado principal y genérico de reserva: PAN16 118/118 en EMP0016.
-    r.filas.push(fila({ origen: 'vidrio', articulo: linea.vidrio, acabado: linea.acabado, cantidad: f.cantidad,
+    r.filas.push(fila({ origen: 'vidrio', articulo: codigo, acabado: linea.acabado, cantidad: f.cantidad,
       largoMm: m.largoMm, anchoMm: m.anchoMm }))
     const tabla = esTipoHojaMarco(f.tipoHoja) ? serie.tablaFijos : serie.tablaHojas
     const moduloLargo = evaluarOnull(f.formulaLargo, contexto)

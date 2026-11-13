@@ -41,6 +41,11 @@ export interface FilaPlantillaCatalogo {
   perfilAdicional: number | null
   /** `OPCformulaSelec`: términos `G{grupo}O{opcion}` que deben estar marcados; vacío = siempre. */
   formulaSeleccion?: string | null
+  /**
+   * Vidrio propio del hueco en un diseño específico (`EstructurasDiseño.Vidrio` del nodo):
+   * sustituye al de la línea solo en esta fila de cristal, con su junquillo y juntas.
+   */
+  vidrioPropio?: string | null
 }
 
 export interface ArticuloCatalogo {

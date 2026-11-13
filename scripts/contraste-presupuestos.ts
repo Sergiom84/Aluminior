@@ -11,6 +11,7 @@ import { conectarLocal, URL_LOCAL } from './lib/banco-contraste/local.ts'
 import { clave, si, texto, type Caso } from './lib/banco-contraste/datos.ts'
 import { gruposDeExportacion } from './lib/contraste-presupuestos/exportacion.ts'
 import { clasificarGrupo } from './lib/contraste-presupuestos/clasificar.ts'
+import { leerPlantillasDocumento } from './lib/contraste-presupuestos/plantillas-documento.ts'
 import { resumirContraste } from './lib/contraste-presupuestos/resumen.ts'
 import type { ContrasteGrupo } from './lib/contraste-presupuestos/ejecutar.ts'
 
@@ -33,7 +34,7 @@ if (values.reclasificar) {
 } else {
   const { contrastarGrupos } = await import('./lib/contraste-presupuestos/ejecutar.ts')
   const { sql, db } = conectarLocal(values.url!)
-  try { resultados = await contrastarGrupos(db, grupos, nuevo) } finally { await sql.end({ timeout: 5 }) }
+  try { resultados = await contrastarGrupos(db, grupos, nuevo, leerPlantillasDocumento(salida)) } finally { await sql.end({ timeout: 5 }) }
 }
 const resumen = { ...resumirContraste(resultados), revisionGit: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
   ejecutado: new Date().toISOString(), conJulio: julio !== null, gruposEnJulio: julio?.size ?? null,
