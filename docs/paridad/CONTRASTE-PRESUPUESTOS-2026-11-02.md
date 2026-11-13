@@ -673,6 +673,36 @@ Sigue fuera: varias hojas (318), marco de puerta (136), travesaño que no es de 
 nodo `Tipo 9` (54), curva (38), marco `3C` (19), otros tipos de hoja (34), `VEN` (12), cortes distintos (4),
 fijo independiente (4), sin marco único (4), `SOL` (2) y apertura exterior (1).
 
+### DS4, tercer paso — varias hojas y pareja con oscilobatiente (13/11/2026)
+
+| Copia | Pares árbol/plantilla | En alcance | Idénticas | Distintas |
+|---|---:|---:|---:|---:|
+| 0016 del 13/11 y 260508 de la 0017 | 970 | 466 | 461 | 5 (solo catálogo) |
+
+Idénticas por origen: 45 de catálogo, 274 de presupuestos, 67 de albaranes, 66 de facturas y los 9 casos.
+Reglas añadidas (no repetir):
+1. **Varias hojas sueltas**, cada una en su hueco de un travesaño real: cada hoja lleva sus filas completas,
+   su zona de apertura y su mano de obra.
+2. **Pareja de dos hojas** (`TipoHoja` 8, oscilobatiente a la derecha; 9, a la izquierda): las separa un
+   travesaño invisible (`bInvisible`), que no es pieza ni cambia el perfil vecino (los horizontales apoyan
+   en `MV` a ambos lados). La hoja izquierda es la 1 (`DisNHoja`) con mano `I`; la derecha, la 2 con mano `D`.
+3. **Herraje de la pareja.** La oscilobatiente lleva `OBC`, `OBM` y `OBCR`; la pasiva, `OBP` y `OBPH`. La hoja
+   1 lleva además el batiente `B` (referido a su vertical) y el retenedor `52`, este con la mano de la pasiva.
+   Los horizontales (`26`, `51`, `OBC`, `OBPH`) llevan el grupo adicional `B`.
+4. **Zona de apertura y mano de obra, una vez por pareja,** tras la hoja 1: zona con la medida del hueco de
+   las dos; módulos `22` y `10` con el ancho de una hoja y `37` con el del conjunto. Al final de la plantilla,
+   tras la mano de obra de acristalar, el módulo `21`.
+5. Las filas informativas de una pareja llevan `1-1` en `DisVidrio` (hojas a cada lado); la hoja sola, `0-0`.
+
+**Catálogo frente a documentos.** Cinco plantillas de catálogo difieren (`1O+1F+1O`, `1O+2F+1O`, `3O`,
+`10101`, `2OFLFSFI`): juntan en una fila con cantidad sumada las filas idénticas de varias hojas (zona de
+apertura) o de varios vidrios iguales. Los documentos con esas mismas estructuras no las juntan (p. ej.
+`VPRES 833`, `1O+1F+1O`), así que el generador sigue a los documentos, que es lo que Productor escribe hoy.
+
+Sigue fuera (504): marco de puerta `PTA` (136), conjuntos de hojas sin regla (64), travesaño que no es de
+marco de ventana (55), nodo `Tipo 9` (54), marco con cortes distintos (53), curva (38), marco `3C` (19),
+hoja `21` (14), pareja abatible `7` (13), pareja corredera `10` (12), `VEN` (12) y otros 34.
+
 ### Resultado de la primera entrega (retirado; ver corrección)
 
 - **0016 (2026)**:

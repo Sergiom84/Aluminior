@@ -4,20 +4,20 @@
  *
  * Alcance demostrado contra el catálogo y los documentos reales: marco normal
  * recto con travesaños de marco (equidistantes o a cota fija, anidados),
- * vidrio por hueco, barrotillo interior y una hoja abatible u oscilobatiente
- * en el marco o en un hueco. Lo demás se devuelve como no soportado: nunca se
+ * vidrio por hueco, barrotillo interior, hojas abatibles u oscilobatientes
+ * sueltas y la pareja de dos hojas con una oscilobatiente. Lo demás se devuelve como no soportado: nunca se
  * inventa una plantilla.
  */
 import type { FilaPlantillaCatalogo } from '../linea-catalogo/tipos.ts'
 import { ARTICULO_ESCUADRA, REFERENCIA, SIN_APOYO, crearEmisor, sobreReferencia, type Emisor } from './emisor.ts'
-import { emitirHoja, type FilasHoja } from './hoja.ts'
+import { emitirHoja, emitirHojaDePareja, type FilasHoja } from './hoja.ts'
 import { DisenoNoSoportado, resolverRegiones, type Division, type Region } from './regiones.ts'
 import { TIPO_NODO, type EntradaDisenoPropio, type NodoDiseno, type PlantillaDisenoPropio } from './tipos.ts'
 
 /** Ranuras genéricas de la plantilla; la serie las resuelve a su artículo. */
 const ARTICULO = { marcoVertical: '1', marcoSuperior: '2', marcoInferior: '3', vidrio: '8', travesano: '11', final: '62' } as const
 /** Módulos de mano de obra de las filas `infMOmof` (`DisVidrio`). */
-const MODULO_MO = { marco: '1', acristalar: '18', hueco: '41' } as const
+const MODULO_MO = { marco: '1', acristalar: '18', pareja: '21', hueco: '41' } as const
 
 function comprobarAlcance(entrada: EntradaDisenoPropio): NodoDiseno {
   if (entrada.fijoIndependiente) throw new DisenoNoSoportado('fijo independiente de corredera')
@@ -29,9 +29,8 @@ function comprobarAlcance(entrada: EntradaDisenoPropio): NodoDiseno {
   for (const n of entrada.nodos) {
     if (!conocidos.has(n.tipo)) throw new DisenoNoSoportado(`nodo de tipo ${n.tipo}`)
     if (n.curva) throw new DisenoNoSoportado('diseño con curva')
-    if (n.tipo === TIPO_NODO.travesano && ((n.material ?? 'M') !== 'M' || (n.clase ?? 'V') !== 'V')) throw new DisenoNoSoportado('travesaño que no es de marco de ventana')
+    if (n.tipo === TIPO_NODO.travesano && !n.invisible && ((n.material ?? 'M') !== 'M' || (n.clase ?? 'V') !== 'V')) throw new DisenoNoSoportado('travesaño que no es de marco de ventana')
   }
-  if (entrada.nodos.filter(n => n.tipo === TIPO_NODO.hoja).length > 1) throw new DisenoNoSoportado('diseño con varias hojas')
   return raiz
 }
 
@@ -100,14 +99,22 @@ function generar(entrada: EntradaDisenoPropio): FilaPlantillaCatalogo[] {
   const e = crearEmisor()
   emitirMarco(e, raiz, !ocupadas.has(raiz.id))
 
-  const filaVidrio = new Map<number, number>(), filasHoja = new Map<number, FilasHoja>()
+  const filaVidrio = new Map<number, number>(), filasHoja = new Map<number, FilasHoja>(), parejas = new Set<number>()
   let vidrios = 0
   for (const n of nodos) {
     if (n.tipo === TIPO_NODO.travesano) {
-      emitirTravesano(e, n, divisiones.get(n.division ?? n.id)!, regiones, ocupadas)
+      const d = divisiones.get(n.division ?? n.id)!
+      if (!d.invisible) emitirTravesano(e, n, d, regiones, ocupadas)
     } else if (n.tipo === TIPO_NODO.hoja) {
       if (divididas.has(n.contenidoEn)) throw new DisenoNoSoportado('hoja en un hueco partido')
-      filasHoja.set(n.id, emitirHoja(e, n, region(n.contenidoEn), n.contenidoEn === raiz.id))
+      const pareja = [...divisiones.values()].find(d => d.invisible && d.huecos.some(h => h.id === n.contenidoEn))
+      if (!pareja) { filasHoja.set(n.id, emitirHoja(e, n, region(n.contenidoEn), n.contenidoEn === raiz.id)); continue }
+      // Pareja de hojas: una en cada hueco de la separación invisible, la izquierda primero.
+      const numero = pareja.huecos.findIndex(h => h.id === n.contenidoEn) + 1
+      const completa = pareja.huecos.length === 2 && !pareja.horizontal && pareja.huecos.every(h => hojas.some(o => o.contenidoEn === h.id && o.tipoHoja === n.tipoHoja))
+      if (!completa || numero !== parejas.size % 2 + 1) throw new DisenoNoSoportado('conjunto de hojas sin regla')
+      parejas.add(n.id)
+      filasHoja.set(n.id, emitirHojaDePareja(e, { nodo: n, region: region(n.contenidoEn) }, numero as 1 | 2, pareja.region, pareja.contenidaEn === raiz.id))
     } else if (n.tipo === TIPO_NODO.vidrio) {
       const hoja = filasHoja.get(n.contenidoEn), contenedor = nodos.find(c => c.id === n.contenidoEn)
       if (!hoja && contenedor?.tipo === TIPO_NODO.hoja) throw new DisenoNoSoportado('vidrio anterior a su hoja')
@@ -134,6 +141,7 @@ function generar(entrada: EntradaDisenoPropio): FilaPlantillaCatalogo[] {
     }
   }
   if (vidrios > 0) e.manoObra({ disVidrio: MODULO_MO.acristalar, cantidad: vidrios, formulaLargo: MODULO_MO.acristalar, ...SIN_APOYO })
+  if (parejas.size > 0) e.manoObra({ disVidrio: MODULO_MO.pareja, formulaLargo: MODULO_MO.pareja, ...SIN_APOYO })
   // El artículo de cierre solo acompaña a los diseños sin hoja.
   if (hojas.length === 0) e.fila({ articulo: ARTICULO.final, formulaLargo: '0', formulaAncho: '0', ...SIN_APOYO })
   return e.cerrar()

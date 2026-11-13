@@ -21,6 +21,8 @@ export interface Region {
 export interface Division {
   contenidaEn: number
   horizontal: boolean
+  /** Separación entre las hojas de un conjunto: no hay travesaño que cortar ni que apoyar. */
+  invisible: boolean
   travesanos: NodoDiseno[]
   huecos: NodoDiseno[]
   /** Región que parte; presente cuando la división está resuelta. */
@@ -58,7 +60,7 @@ export function resolverRegiones(nodos: readonly NodoDiseno[], raiz: NodoDiseno)
   for (const n of nodos) {
     if (n.tipo !== TIPO_NODO.travesano) continue
     if (!n.posicion) throw new DisenoNoSoportado('travesaño sin posición')
-    const d = pendientes.get(n.division ?? n.id) ?? { contenidaEn: n.contenidoEn, horizontal: esHorizontal(n.posicion), travesanos: [], huecos: [] }
+    const d = pendientes.get(n.division ?? n.id) ?? { contenidaEn: n.contenidoEn, horizontal: esHorizontal(n.posicion), invisible: n.invisible === true, travesanos: [], huecos: [] }
     d.travesanos.push(n)
     pendientes.set(n.division ?? n.id, d)
   }
@@ -80,7 +82,8 @@ export function resolverRegiones(nodos: readonly NodoDiseno[], raiz: NodoDiseno)
       if (d.huecos.length !== d.travesanos.length + 1) throw new DisenoNoSoportado('división con huecos incompletos')
       const m = medidas(d.horizontal ? region.largo : region.ancho, d.travesanos, d.huecos.length)
       d.huecos.forEach((h, i) => {
-        const primero = i === 0, ultimo = i === d.huecos.length - 1
+        // Al otro lado de una separación invisible sigue estando el perfil del contenedor.
+        const primero = d.invisible || i === 0, ultimo = d.invisible || i === d.huecos.length - 1
         regiones.set(h.id, d.horizontal
           ? { ...region, largo: m[i]!, superior: primero ? region.superior : 'TMP', inferior: ultimo ? region.inferior : 'TMP' }
           : { ...region, ancho: m[i]!, izquierda: primero ? region.izquierda : 'TMP', derecha: ultimo ? region.derecha : 'TMP' })

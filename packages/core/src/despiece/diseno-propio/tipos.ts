@@ -37,6 +37,8 @@ export interface NodoDiseno {
   simbolo?: string | null
   material?: string | null
   clase?: string | null
+  /** Travesaño invisible (`bInvisible`): separa las hojas de un conjunto y no es una pieza. */
+  invisible?: boolean
   /** Hoja: `TipoHoja` de `SeriesAsocV2TiposHoja`, vierteaguas (`bVAG`), accesorios de diseño (`lstAccDis`),
    *  apertura exterior (`bApertExt`) y hoja inferior (`CompHojaInf`). Su clase es `moVP`; sus cortes, como el marco. */
   tipoHoja?: number
