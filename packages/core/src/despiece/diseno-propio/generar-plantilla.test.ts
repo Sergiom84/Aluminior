@@ -7,6 +7,8 @@ const marco = (extra: Partial<NodoDiseno> = {}): NodoDiseno => ({ id: 0, tipo: T
 const travesano = (id: number, posicion: PosicionTravesano, extra: Partial<NodoDiseno> = {}): NodoDiseno =>
   ({ id, tipo: TIPO_NODO.travesano, contenidoEn: 0, posicion, division: id, orden: 1, tipoCota: 0, material: 'M', clase: 'V', ...extra })
 const hueco = (id: number, division: number, orden: number, contenidoEn = 0): NodoDiseno => ({ id, tipo: TIPO_NODO.hueco, contenidoEn, division, orden })
+const hoja = (id: number, contenidoEn: number, tipoHoja: number, extra: Partial<NodoDiseno> = {}): NodoDiseno =>
+  ({ id, tipo: TIPO_NODO.hoja, contenidoEn, tipoHoja, clase: 'V', vierteaguas: true, accesorios: ['MI'], cortes: [1, 1, 1, 1], ...extra })
 const vidrio = (id: number, contenidoEn: number, articulo: string | null = null): NodoDiseno => ({ id, tipo: TIPO_NODO.vidrio, contenidoEn, vidrio: articulo })
 
 function filas(nodos: NodoDiseno[]): FilaPlantillaCatalogo[] {
@@ -139,12 +141,21 @@ describe('plantilla de un diseño propio de fijo', () => {
   })
 
   it.each<[string, NodoDiseno[], boolean]>([
-    ['nodo de tipo 3', [marco(), { id: 1, tipo: 3, contenidoEn: 0 }], false],
+    ['nodo de tipo 9', [marco(), { id: 1, tipo: 9, contenidoEn: 0 }], false],
+    ['hoja de tipo 10', [marco(), hoja(1, 0, 10)], false],
+    ['hoja que no es de ventana', [marco(), hoja(1, 0, 1, { clase: 'P' })], false],
+    ['hoja de apertura exterior', [marco(), hoja(1, 0, 1, { aperturaExterior: true })], false],
+    ['hoja con hoja inferior', [marco(), hoja(1, 0, 1, { hojaInferior: true })], false],
+    ['hoja que no va a inglete', [marco(), hoja(1, 0, 1, { cortes: [3, 3, 3, 3] })], false],
+    ['accesorio de diseño CE', [marco(), hoja(1, 0, 1, { accesorios: ['CE'] })], false],
+    ['diseño con varias hojas', [marco(), travesano(1, 'VI'), hueco(2, 1, 1), hueco(3, 1, 2), hoja(4, 2, 1), hoja(5, 3, 2)], false],
+    ['hoja en un hueco partido', [marco(), travesano(1, 'VI'), hueco(2, 1, 1), hueco(3, 1, 2), hoja(4, 0, 1)], false],
+    ['travesaño fuera de un hueco del diseño', [marco(), hoja(1, 0, 1), travesano(2, 'VI', { contenidoEn: 1 }), hueco(3, 2, 1, 1), hueco(4, 2, 2, 1)], false],
     ['diseño con curva', [marco({ curva: 8 }), vidrio(1, 0)], false],
     ['marco PTA', [marco({ tipoMarco: 'PTA' }), vidrio(1, 0)], false],
     ['marco con cortes distintos en sus esquinas', [marco({ cortes: [1, 2, 1, 2] }), vidrio(1, 0)], false],
-    ['travesaño con cota variable', [marco(), travesano(1, 'HB', { tipoCota: 1, cota: 300 }), hueco(2, 1, 1), hueco(3, 1, 2)], false],
-    ['varios travesaños a cota fija en la misma división', [marco(), travesano(1, 'HB', { tipoCota: 2, cota: 300 }), travesano(2, 'HB', { division: 1, orden: 2, tipoCota: 2, cota: 300 }), hueco(3, 1, 1), hueco(4, 1, 2), hueco(5, 1, 3)], false],
+    ['cota variable sin símbolo', [marco(), travesano(1, 'HB', { tipoCota: 1, cota: 300 }), hueco(2, 1, 1), hueco(3, 1, 2)], false],
+    ['varios travesaños acotados en la misma división', [marco(), travesano(1, 'HB', { tipoCota: 2, cota: 300 }), travesano(2, 'HB', { division: 1, orden: 2, tipoCota: 2, cota: 300 }), hueco(3, 1, 1), hueco(4, 1, 2), hueco(5, 1, 3)], false],
     ['travesaño que no es de marco de ventana', [marco(), travesano(1, 'VI', { material: 'H' }), hueco(2, 1, 1), hueco(3, 1, 2)], false],
     ['división con huecos incompletos', [marco(), travesano(1, 'VI'), hueco(2, 1, 1)], false],
     ['travesaño fuera de un hueco del diseño', [marco(), travesano(1, 'VI', { contenidoEn: 9 }), hueco(2, 1, 1, 9), hueco(3, 1, 2, 9)], false],

@@ -17,7 +17,9 @@ export function nodoDisenoDeProductor(f: Fila): NodoDiseno {
     tipoMarco: txt(f.TipoMarco), cortes: [f.TipoCorte1, f.TipoCorte2, f.TipoCorte3, f.TipoCorte4].map(num), curva: num(f.TipoCurva),
     posicion: posicion && POSICIONES.has(posicion) ? posicion as PosicionTravesano : null,
     division: num(f.idTrav), orden: tipo === 6 ? num(f.nTrav) : num(f.posHueco),
-    tipoCota: num(f.TipoCota), cota: num(f.Cota), material: txt(f.travMH), clase: txt(f.TravVP),
+    tipoCota: num(f.TipoCota), cota: num(f.Cota), simbolo: txt(f.Simbolo), material: txt(f.travMH), clase: tipo === 3 ? txt(f.moVP) : txt(f.TravVP),
+    tipoHoja: num(f.TipoHoja), vierteaguas: f.bVAG === 'True', accesorios: (txt(f.lstAccDis) ?? '').split(';').filter(Boolean),
+    aperturaExterior: f.bApertExt === 'True', hojaInferior: num(f.CompHojaInf) !== 0,
     vidrio: txt(f.Vidrio), articulo: txt(f.barrArtic), horizontales: num(f.barrHoriz), verticales: num(f.barrVert),
   }
 }

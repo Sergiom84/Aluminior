@@ -645,6 +645,34 @@ fijo independiente de corredera (`Estructuras.DisFIsn`, 4), `Tipo 9` (4), sin ma
 La cota variable y varios travesaños a cota fija en una división no aparecen en los pares en alcance y
 también se rechazan.
 
+### DS4, segundo paso — una hoja y cota variable (13/11/2026)
+
+| Copia | Pares árbol/plantilla | En alcance | Idénticas | Distintas |
+|---|---:|---:|---:|---:|
+| 0016 del 13/11 y 260508 de la 0017 | 970 | 289 | 289 | 0 |
+
+Entran los 9 casos del 260508. Reglas añadidas (no repetir):
+1. **Una hoja de ventana** (`TipoHoja` 1 y 2 abatible, 5 y 6 oscilobatiente), en el marco entero o en un
+   hueco: dos verticales (`25`), dos horizontales (`26`), `51`, vierteaguas `29` si el nodo lo marca (referido a
+   la fila del horizontal superior de la hoja), cierre `PRC` u `OBC`, `50`, `OBM` y `OBCR` en la
+   oscilobatiente, escuadras `58`, `52` y `56` en la abatible, dos filas de zona de apertura `71` y dos de mano
+   de obra (módulos `10` y `29`, u oscilobatiente `22` y `37`). Miden el hueco que ocupa la hoja.
+2. **Mano.** `DisManoID` es la contraria a la del nombre del tipo: «izquierdas» guarda `D`.
+3. **Vidrio de la hoja:** se refiere a las filas del vertical y del horizontal superior de la hoja, con
+   fórmula de referencia `REF` y grupos `HP` en sus cuatro lados.
+4. **El hueco que lleva una hoja no tiene mano de obra de hueco** (módulo `41`), igual que el partido por
+   otro travesaño.
+5. **Manilla** (`lstAccDis = MI;`): fila sin número (`id` 0) al final de la plantilla, con el largo del hueco.
+6. **El artículo `62` de cierre solo acompaña a los diseños sin hoja.**
+7. **Cota variable** (`TipoCota` 1): la fórmula lleva el símbolo (`FI`, `L-FI`), no la medida. La plantilla
+   del caso 10 (`FI` de 300 a 500) es idéntica a la de catálogo; el valor viaja en las variables de la
+   línea, que el motor ya recibe como `cotas`.
+8. **Barrotillo en el vidrio de una hoja:** como en un fijo, con el tipo de hoja en sus filas.
+
+Sigue fuera: varias hojas (318), marco de puerta (136), travesaño que no es de marco de ventana (55),
+nodo `Tipo 9` (54), curva (38), marco `3C` (19), otros tipos de hoja (34), `VEN` (12), cortes distintos (4),
+fijo independiente (4), sin marco único (4), `SOL` (2) y apertura exterior (1).
+
 ### Resultado de la primera entrega (retirado; ver corrección)
 
 - **0016 (2026)**:

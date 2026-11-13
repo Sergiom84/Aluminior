@@ -28,7 +28,16 @@ test('el árbol leído de Productor entra en el generador: fijo con cota fija a 
   if (r.ok) assert.deepEqual(r.filas.filter(f => f.componente === '1').map(f => [f.formulaLargo, f.formulaAncho]), [['L-400', 'A'], ['400', 'A']])
 })
 
-test('un nodo con curva o de hoja queda fuera del alcance en vez de generar una plantilla', () => {
+test('un nodo con curva o de un tipo sin regla queda fuera del alcance en vez de generar una plantilla', () => {
   assert.deepEqual(generarPlantillaDisenoPropio({ nodos: [nodoDisenoDeProductor({ ...marco, TipoCurva: '8' })] }), { ok: false, motivo: 'diseño con curva' })
-  assert.deepEqual(generarPlantillaDisenoPropio({ nodos: [marco, { Id: '1', Tipo: '3', ContenidoEn: '0' }].map(nodoDisenoDeProductor) }), { ok: false, motivo: 'nodo de tipo 3' })
+  assert.deepEqual(generarPlantillaDisenoPropio({ nodos: [marco, { Id: '1', Tipo: '9', ContenidoEn: '0' }].map(nodoDisenoDeProductor) }), { ok: false, motivo: 'nodo de tipo 9' })
+})
+
+test('la hoja conserva tipo, clase, vierteaguas y accesorios de diseño; la cota variable, su símbolo', () => {
+  const h = nodoDisenoDeProductor({ Id: '4', Tipo: '3', ContenidoEn: '2', TipoHoja: '6', moVP: 'V', TravVP: '', bVAG: 'True', lstAccDis: 'MI;', bApertExt: 'False', CompHojaInf: '0', TipoCorte1: '1', TipoCorte2: '1', TipoCorte3: '1', TipoCorte4: '1' })
+  assert.deepEqual({ tipoHoja: h.tipoHoja, clase: h.clase, vierteaguas: h.vierteaguas, accesorios: h.accesorios, aperturaExterior: h.aperturaExterior, hojaInferior: h.hojaInferior, cortes: h.cortes },
+    { tipoHoja: 6, clase: 'V', vierteaguas: true, accesorios: ['MI'], aperturaExterior: false, hojaInferior: false, cortes: [1, 1, 1, 1] })
+  assert.equal(nodoDisenoDeProductor({ Id: '1', Tipo: '6', TipoCota: '1', Cota: '500', Simbolo: 'FI' }).simbolo, 'FI')
+  const r = generarPlantillaDisenoPropio({ nodos: [marco, { Id: '1', Tipo: '3', ContenidoEn: '0', TipoHoja: '5', moVP: 'V', bVAG: 'True', lstAccDis: 'MI;', TipoCorte1: '1', TipoCorte2: '1', TipoCorte3: '1', TipoCorte4: '1' }].map(nodoDisenoDeProductor) })
+  assert.equal(r.ok && r.filas.filter(f => f.componente === 'OBC').length, 1)
 })

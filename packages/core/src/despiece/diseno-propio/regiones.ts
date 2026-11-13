@@ -35,9 +35,11 @@ const esHorizontal = (p: PosicionTravesano) => p === 'HA' || p === 'HB'
 function medidas(eje: string, travesanos: readonly NodoDiseno[], huecos: number): string[] {
   const primero = travesanos[0]!
   if ((primero.tipoCota ?? 0) === TIPO_COTA.equidistante) return Array.from({ length: huecos }, () => `(${eje})/${huecos}`)
-  if (primero.tipoCota !== TIPO_COTA.fija) throw new DisenoNoSoportado('travesaño con cota variable')
-  if (travesanos.length !== 1) throw new DisenoNoSoportado('varios travesaños a cota fija en la misma división')
-  const cota = String(primero.cota ?? 0), resto = `${eje}-${cota}`
+  if (travesanos.length !== 1) throw new DisenoNoSoportado('varios travesaños acotados en la misma división')
+  // La cota variable entra en la fórmula con su símbolo; la fija, con su medida.
+  const variable = primero.tipoCota === TIPO_COTA.variable
+  if (variable && !primero.simbolo?.trim()) throw new DisenoNoSoportado('cota variable sin símbolo')
+  const cota = variable ? primero.simbolo!.trim() : String(primero.cota ?? 0), resto = `${eje}-${cota}`
   // `HA` y `VI` fijan el primer hueco (arriba, izquierda); `HB` y `VD`, el último.
   return primero.posicion === 'HA' || primero.posicion === 'VI' ? [cota, resto] : [resto, cota]
 }
