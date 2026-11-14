@@ -264,7 +264,7 @@ export function cambiarEstructuraModuloCerramiento(
 
 export function configuracionTieneFiExplicito(configuracion: ConfiguracionCerramiento): boolean {
   return configuracion.modulos.some((modulo) => modulo.estructuraCodigo.trim().toUpperCase() === '1OFI' &&
-    Object.hasOwn(modulo, 'fiMm'))
+    Object.hasOwn(modulo, 'fiMm') && !modulo.disenoPropio)
 }
 
 /**

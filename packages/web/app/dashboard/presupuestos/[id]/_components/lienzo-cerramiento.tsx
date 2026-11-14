@@ -2,7 +2,7 @@
 
 import { useRef } from 'react'
 import {
-  geometriaAperturaVisual, geometriaCerramiento, opcionMarcadaCompacto, plantillaDiseno,
+  geometriaAperturaVisual, geometriaCerramiento, lineasBarrotilloVisual, opcionMarcadaCompacto, plantillaDiseno,
   type AnclajeLibre, type ConfiguracionCerramiento, type ElementoColocado, type RectVisual,
 } from '@aluminior/core/estructuras'
 import { AnclajesLienzo, useSoltarEnLienzo } from './disenador/anclajes-lienzo.tsx'
@@ -131,6 +131,8 @@ function ElementoModulo({ elemento, moduloId, seleccion, onSeleccion }: {
             evento.preventDefault(); evento.stopPropagation(); onSeleccion({ moduloId, elemento: elemento.id, parte: 'vidrio' })
           }
         }} />
+      {lineasBarrotilloVisual(interior, elemento.barrotillo).map((l, indice) =>
+        <line key={indice} x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2} className="al-muntin" />)}
       <Simbolo elemento={elemento} rect={interior} />
     </g>
   )

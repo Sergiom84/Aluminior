@@ -1,6 +1,9 @@
 import { afterEach, expect, it, vi } from 'vitest'
 import { generarPlantillaDisenoPropio, TIPO_COTA, TIPO_NODO, type NodoDiseno } from '@aluminior/core/despiece'
-import { actualizarDisenoPropioModuloCerramiento, crearConfiguracionCerramiento, plantillaDiseno } from '@aluminior/core/estructuras'
+import {
+  actualizarDisenoPropioModuloCerramiento, actualizarFiModuloCerramiento,
+  crearConfiguracionCerramiento, plantillaDiseno,
+} from '@aluminior/core/estructuras'
 import type { ClienteEscritura } from '../cliente-db.ts'
 import { valorarEstructura } from '../estructuras/valorar-estructura.ts'
 import { valorarCerramiento } from './valorar-cerramiento.ts'
@@ -55,13 +58,19 @@ it('deriva `plantillaPropia` desde `modulo.disenoPropio` cuando no se inyecta `p
   expect(vi.mocked(valorarEstructura).mock.calls[0]?.[1]?.plantillaPropia).toEqual(esperada.filas)
 })
 
-it('transmite las cotas variables de `disenoPropio` al motor de valoración de la estructura', async () => {
-  const base = {
-    ...crearConfiguracionCerramiento(plantillaDiseno('0')!),
-    modulos: [{ id: 'modulo-1', estructuraCodigo: '0', anchoMm: 800, altoMm: 2000 }],
-  }
-  const configuracion = actualizarDisenoPropioModuloCerramiento(base, 'modulo-1', { nodos: nodosCotaVariable })
-  await valorarCerramiento({} as ClienteEscritura, { ...entrada, configuracion })
+it('en `1OFI` escribe la cota variable en la línea (`fiMm`) y al valorar manda la línea sobre el árbol', async () => {
+  const nacida = crearConfiguracionCerramiento(plantillaDiseno('1OFI')!)
+  expect(nacida.modulos[0]?.fiMm).toBe(300)
 
+  const guardada = actualizarDisenoPropioModuloCerramiento(nacida, 'modulo-1', { nodos: nodosCotaVariable })
+  expect(guardada.modulos[0]?.fiMm).toBe(500)
+  await valorarCerramiento({} as ClienteEscritura, { ...entrada, configuracion: guardada })
   expect(vi.mocked(valorarEstructura).mock.calls[0]?.[1]?.cotas).toEqual({ FI: 500 })
+
+  vi.clearAllMocks()
+  const lineaEn300 = actualizarFiModuloCerramiento(guardada, 'modulo-1', 300)
+  expect(lineaEn300.modulos[0]?.disenoPropio?.nodos.some(n => n.simbolo === 'FI' && n.cota === 500)).toBe(true)
+  await valorarCerramiento({} as ClienteEscritura, { ...entrada, configuracion: lineaEn300 })
+  expect(vi.mocked(valorarEstructura).mock.calls[0]?.[1]?.cotas).toEqual({ FI: 300 })
 })
+

@@ -2,7 +2,7 @@
 
 import React from 'react'
 import {
-  distribuirComposicionAcotada, distribuirModuloCerramiento, geometriaAperturaVisual,
+  distribuirComposicionAcotada, distribuirModuloCerramiento, geometriaAperturaVisual, lineasBarrotilloVisual,
   type AperturaVisual, type ClaseSeparador, type ModuloCerramiento, type PlantillaDiseno,
 } from '@aluminior/core/estructuras'
 
@@ -62,6 +62,10 @@ export function DibujoEstructura({
               w={Math.max(3, w - relleno * 2)} h={Math.max(3, h - relleno * 2)}
               seleccionado={seleccion?.elemento === hueco.id && seleccion.parte === 'vidrio'}
               onClick={() => onSeleccion?.({ elemento: hueco.id, parte: 'vidrio' })} />
+            {lineasBarrotilloVisual(
+              { x: x + relleno, y: y + relleno, ancho: Math.max(3, w - relleno * 2), alto: Math.max(3, h - relleno * 2) },
+              hueco.barrotillo,
+            ).map((l, indice) => <line key={indice} x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2} className="al-muntin" />)}
             <SimboloApertura apertura={hueco.apertura} x={x + marco} y={y + marco}
               w={Math.max(3, w - marco * 2)} h={Math.max(3, h - marco * 2)} />
             {!esFijo && !compacto && (

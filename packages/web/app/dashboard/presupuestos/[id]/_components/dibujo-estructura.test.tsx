@@ -94,4 +94,19 @@ describe('SVG real de manos y manillas', () => {
   ])('sitúa el eje 1OFI compartido para alto %s y FI %s', (altoMm, fiMm, eje) => {
     expect(ejeTravesano(altoMm, fiMm)).toBeCloseTo(eje)
   })
+
+  it('renderiza las barras del barrotillo interior cuando el módulo lleva diseño propio con `BI`', () => {
+    const plantilla = plantillaDiseno('0')!
+    const html = renderToStaticMarkup(<DibujoEstructura plantilla={plantilla} modulo={{
+      id: 'modulo-1', estructuraCodigo: '0', anchoMm: 1200, altoMm: 1200,
+      disenoPropio: {
+        nodos: [
+          { id: 0, tipo: 1, contenidoEn: -1, tipoMarco: 'NOR', cortes: [1, 1, 1, 1] },
+          { id: 1, tipo: 5, contenidoEn: 0, vidrio: 'VGS616AL33I' },
+          { id: 2, tipo: 7, contenidoEn: 1, articulo: 'BI', horizontales: 2, verticales: 1 },
+        ],
+      },
+    }} />)
+    expect(contar(html, 'class="al-muntin"')).toBe(3)
+  })
 })

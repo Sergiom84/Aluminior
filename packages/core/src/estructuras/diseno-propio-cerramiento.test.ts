@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest'
+import { calcularDespiece, type ComponentePlantilla } from '../despiece/calcular.ts'
 import { generarPlantillaDisenoPropio, TIPO_COTA, TIPO_NODO, type NodoDiseno } from '../despiece/diseno-propio/index.ts'
+import { valorarDespiece, type DatosArticuloPrecio } from '../precios/calcular.ts'
 import {
-  actualizarCotasModuloCerramiento, actualizarDisenoPropioModuloCerramiento,
+  actualizarDisenoPropioModuloCerramiento, actualizarFiModuloCerramiento,
   cambiarEstructuraModuloCerramiento, composicionVisualDisenoPropio,
   cotasEfectivasModulo, crearConfiguracionCerramiento, disenoPropioModuloValido,
   distribuirModuloCerramiento, esConfiguracionCerramiento,
-  plantillaDiseno, plantillaDisenoPropioModulo,
+  plantillaDiseno, plantillaDisenoPropioModulo, type ModuloCerramiento,
 } from './index.ts'
 
 const marco = (): NodoDiseno => ({
@@ -59,6 +61,34 @@ const diseno1OfiCota500: readonly NodoDiseno[] = [
   { id: 6, tipo: TIPO_NODO.vidrio, contenidoEn: 5, vidrio: null },
 ]
 
+/** Precio de las piezas cuya fórmula es FI, con el calculador real y 10 €/m. */
+function precioSegunLinea(modulo: ModuloCerramiento): number {
+  const filas = plantillaDisenoPropioModulo(modulo)
+  if (!filas) throw new Error('sin lista de corte')
+  const dependientes = filas.filter(f => f.formulaLargo === 'FI')
+  if (dependientes.length === 0) throw new Error('la lista no tiene FI')
+  const plantilla: ComponentePlantilla[] = dependientes.map(f => ({
+    articuloCodigo: f.articulo, cantidad: f.cantidad, formulaLargo: f.formulaLargo,
+    tipoCorte: null, anguloIzquierdo: null, anguloDerecho: null, funcion: f.funcion,
+  }))
+  const despiece = calcularDespiece(
+    plantilla, { anchoMm: modulo.anchoMm, altoMm: modulo.altoMm }, cotasEfectivasModulo(modulo) ?? {},
+  )
+  if (despiece.incalculables !== 0) throw new Error(`sin medida: ${despiece.variablesFaltantes.join(',')}`)
+  const articulos = new Map<string, DatosArticuloPrecio>()
+  for (const pieza of despiece.piezas) {
+    if (!articulos.has(pieza.articuloCodigo)) {
+      articulos.set(pieza.articuloCodigo, {
+        codigo: pieza.articuloCodigo, tipoMetraje: 'ML', precio: 10,
+        metrajeMinimo: null, metrajeMultiploLargo: null,
+      })
+    }
+  }
+  const valorado = valorarDespiece(despiece.piezas, articulos)
+  if (!valorado.completa) throw new Error('precio incompleto')
+  return valorado.importe
+}
+
 describe('diseño propio guardado en el módulo del cerramiento (DS4)', () => {
   it('promueve a v3 al guardar, conserva el árbol tras JSON round-trip y genera la misma plantilla que en memoria', () => {
     const base = crearConfiguracionCerramiento(plantillaDiseno('0')!)
@@ -91,22 +121,81 @@ describe('diseño propio guardado en el módulo del cerramiento (DS4)', () => {
     expect(huecos.map(h => h.apertura)).toEqual(['oscilobatiente-derecha', 'fijo'])
   })
 
-  it('transmite la cota variable por defecto del diseño propio (`Cota por` = 500 en `FI`) y permite sobreescribirla con `cotas`', () => {
-    const base = {
-      ...crearConfiguracionCerramiento(plantillaDiseno('0')!),
-      modulos: [{ id: 'modulo-1', estructuraCodigo: '0', anchoMm: 800, altoMm: 2000 }],
-    }
-    const conCota500 = actualizarDisenoPropioModuloCerramiento(base, 'modulo-1', { nodos: diseno1OfiCota500 })
-    expect(cotasEfectivasModulo(conCota500.modulos[0]!)).toEqual({ FI: 500 })
+  it('proyecta barrotillos interiores, travesaños anidados y parejas de hojas desde la misma lectura que el despiece', () => {
+    const base = crearConfiguracionCerramiento(plantillaDiseno('0')!)
+    // Caso 8 del 260508: barrotillo BI con 2 horizontales y 1 vertical sobre vidrio propio.
+    const conBarrotillo = actualizarDisenoPropioModuloCerramiento(base, 'modulo-1', {
+      nodos: [
+        marco(),
+        { id: 1, tipo: TIPO_NODO.vidrio, contenidoEn: 0, vidrio: 'VGS616AL33I' },
+        { id: 2, tipo: TIPO_NODO.barrotillo, contenidoEn: 1, articulo: 'BI', horizontales: 2, verticales: 1 },
+      ],
+    })
+    const colocado = distribuirModuloCerramiento(conBarrotillo.modulos[0]!, { x: 0, y: 0, ancho: 1200, alto: 1200 })
+    expect(colocado).toMatchObject([{ tipo: 'hueco', apertura: 'fijo', barrotillo: { horizontales: 2, verticales: 1 } }])
 
-    const elementos500 = distribuirModuloCerramiento(
-      conCota500.modulos[0]!, { x: 0, y: 0, ancho: 800, alto: 2000 }, 12,
+    // Pareja tipo 9 (oscilobatiente a la izquierda, pasiva sin manilla a la derecha).
+    const conPareja9 = actualizarDisenoPropioModuloCerramiento(base, 'modulo-1', {
+      nodos: [
+        marco(),
+        { id: 1, tipo: TIPO_NODO.travesano, contenidoEn: 0, posicion: 'VI', division: 1, orden: 1, material: 'M', invisible: true },
+        { id: 2, tipo: TIPO_NODO.hueco, contenidoEn: 0, division: 1, orden: 1 },
+        { id: 3, tipo: TIPO_NODO.hueco, contenidoEn: 0, division: 1, orden: 2 },
+        { id: 4, tipo: TIPO_NODO.hoja, contenidoEn: 2, tipoHoja: 9, clase: 'V', cortes: [1, 1, 1, 1], accesorios: ['MI'] },
+        { id: 5, tipo: TIPO_NODO.hoja, contenidoEn: 3, tipoHoja: 9, clase: 'V', cortes: [1, 1, 1, 1], accesorios: [] },
+        { id: 6, tipo: TIPO_NODO.vidrio, contenidoEn: 4, vidrio: null },
+        { id: 7, tipo: TIPO_NODO.vidrio, contenidoEn: 5, vidrio: null },
+      ],
+    })
+    const hojasPareja = distribuirModuloCerramiento(conPareja9.modulos[0]!, { x: 0, y: 0, ancho: 1200, alto: 1200 })
+      .filter(e => e.tipo === 'hueco')
+    expect(hojasPareja.map(h => ({ apertura: h.apertura, manilla: h.manilla }))).toEqual([
+      { apertura: 'oscilobatiente-izquierda', manilla: true },
+      { apertura: 'abatible-derecha', manilla: false },
+    ])
+
+    // Una cota variable no puede vivir solo en el árbol si la línea no la define (p. ej. fijo '0').
+    expect(composicionVisualDisenoPropio({ nodos: diseno1OfiCota500 }, null)).toBeNull()
+    expect(actualizarDisenoPropioModuloCerramiento(base, 'modulo-1', { nodos: diseno1OfiCota500 })).toBe(base)
+  })
+
+  it('en la 1OFI que nace a 300, guardar el fijo de abajo a 500 deja 500 en la línea y el precio usa 500', () => {
+    const nacida = crearConfiguracionCerramiento(plantillaDiseno('1OFI')!)
+    expect(nacida.modulos[0]).toMatchObject({ estructuraCodigo: '1OFI', fiMm: 300 })
+
+    const guardada = actualizarDisenoPropioModuloCerramiento(nacida, 'modulo-1', { nodos: diseno1OfiCota500 })
+    const modulo = guardada.modulos[0]!
+    expect(modulo.fiMm).toBe(500)
+    expect(modulo.cotas).toBeUndefined()
+    expect(cotasEfectivasModulo(modulo)).toEqual({ FI: 500 })
+
+    const filas = plantillaDisenoPropioModulo(modulo)
+    expect(filas?.some(f => f.formulaLargo === 'FI')).toBe(true)
+    expect(filas?.some(f => f.formulaLargo === 'L-FI')).toBe(true)
+    expect(JSON.stringify(filas)).not.toContain('500')
+
+    const conLineaEn300 = actualizarFiModuloCerramiento(guardada, 'modulo-1', 300)
+    expect(conLineaEn300.modulos[0]?.fiMm).toBe(300)
+    expect(conLineaEn300.modulos[0]?.disenoPropio?.nodos.some(n => n.cota === 500)).toBe(true)
+    expect(precioSegunLinea(modulo)).not.toBe(precioSegunLinea(conLineaEn300.modulos[0]!))
+    expect(precioSegunLinea(modulo)).toBeGreaterThan(0)
+  })
+
+  it('si la línea sigue a 300, el precio usa 300 aunque el diseño guarde 500', () => {
+    const nacida = crearConfiguracionCerramiento(plantillaDiseno('1OFI')!)
+    const guardada = actualizarDisenoPropioModuloCerramiento(nacida, 'modulo-1', { nodos: diseno1OfiCota500 })
+    const lineaEn300 = actualizarFiModuloCerramiento(guardada, 'modulo-1', 300).modulos[0]!
+    expect(lineaEn300.fiMm).toBe(300)
+    expect(lineaEn300.disenoPropio?.nodos.some(n => n.simbolo === 'FI' && n.cota === 500)).toBe(true)
+
+    const despiece = calcularDespiece(
+      [{ articuloCodigo: 'FIJO', cantidad: 1, formulaLargo: 'FI', tipoCorte: null, anguloIzquierdo: null, anguloDerecho: null, funcion: null }],
+      { anchoMm: lineaEn300.anchoMm, altoMm: lineaEn300.altoMm },
+      cotasEfectivasModulo(lineaEn300) ?? {},
     )
-    const sep500 = elementos500.find(e => e.tipo === 'separador')!
-    expect(sep500.y + sep500.alto / 2).toBe(1500)
-
-    const conCotaInstancia = actualizarCotasModuloCerramiento(conCota500, 'modulo-1', { FI: 350 })
-    expect(cotasEfectivasModulo(conCotaInstancia.modulos[0]!)).toEqual({ FI: 350 })
+    expect(despiece.piezas[0]?.largoMm).toBe(300)
+    expect(precioSegunLinea(lineaEn300)).toBeLessThan(precioSegunLinea(guardada.modulos[0]!))
+    expect(precioSegunLinea(guardada.modulos[0]!)).toBe(precioSegunLinea({ ...lineaEn300, fiMm: 500 }))
   })
 
   it('quita `disenoPropio` al pasar `null` o al cambiar la estructura de catálogo del módulo', () => {

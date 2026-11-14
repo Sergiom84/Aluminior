@@ -25,6 +25,8 @@ import { useMoverElemento } from './disenador/use-mover-elemento.ts'
 import { useHistorialCerramiento } from './disenador/use-historial-cerramiento.ts'
 import { accionDeTeclado } from './disenador/historial.ts'
 import { SelectorVentana, PreguntaMedidas, OpcionesMedidas } from './disenador/dialogos-insercion.tsx'
+import { configuracionTrasAceptarDiseno } from './disenador/diseno-propio/aplicar-diseno.ts'
+import { DialogoDisenoPropio } from './disenador/diseno-propio/dialogo-diseno-propio.tsx'
 import styles from '../presupuesto-movil.module.css'
 
 function seleccionModulo(configuracion: ConfiguracionCerramiento, id: string): ParteSeleccionada {
@@ -93,6 +95,7 @@ export function DisenadorEstructura({
   const [preparada, setPreparada] = useState<PlantillaDiseno | null>(null)
   const [arrastrada, setArrastrada] = useState<PlantillaDiseno | null>(null)
   const [aviso, setAviso] = useState<string | null>(null)
+  const [editandoDisenoId, setEditandoDisenoId] = useState<string | null>(null)
   const insertando = arrastrada ?? preparada
   const historialLibre = !edicion.pendientes && !insertando
 
@@ -287,6 +290,7 @@ export function DisenadorEstructura({
                 invisible={esModuloInvisible(modulo)}
                 materialesPropios={configuracion.modulos.length > 1 || Boolean(modulo.materiales)}
                 onInvisible={() => setConfiguracion(cambiarInvisibleModulo(configuracion, modulo.id, !esModuloInvisible(modulo)))}
+                onDisenoPropio={() => { setAviso(null); setEditandoDisenoId(modulo.id) }}
                 onMover={() => mover.moviendo === modulo.id ? mover.cancelar() : mover.iniciar(modulo.id)} />
             : union && <div className="al-designer-union-editor">
                 <EditorUnion catalogoUniones={catalogoUniones} serieCodigo={serieEfectivaUnion(configuracion, union, generales)}
@@ -313,6 +317,30 @@ export function DisenadorEstructura({
         error={insercion.preferencia.error} onElegir={async opcion => {
           if (await insercion.preferencia.cambiar(opcion)) insercion.cerrarOpciones()
         }} />}
+      {configuracion && editandoDisenoId && (() => {
+        const moduloDiseno = configuracion.modulos.find(m => m.id === editandoDisenoId)
+        if (!moduloDiseno) return null
+        return (
+          <DialogoDisenoPropio
+            modulo={moduloDiseno}
+            vidrioGeneral={generales.vidrioCodigo}
+            onCerrar={() => setEditandoDisenoId(null)}
+            onAceptar={diseno => {
+              const siguiente = configuracionTrasAceptarDiseno(configuracion, moduloDiseno.id, diseno, catalogoUniones)
+              if (!siguiente) return false
+              setConfiguracion(siguiente)
+              setEditandoDisenoId(null)
+              return true
+            }}
+            onRestablecer={() => {
+              const siguiente = configuracionTrasAceptarDiseno(configuracion, moduloDiseno.id, null, catalogoUniones)
+              if (!siguiente) return false
+              setConfiguracion(siguiente)
+              setEditandoDisenoId(null)
+              return true
+            }} />
+        )
+      })()}
     </section>
   )
 }

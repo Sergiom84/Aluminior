@@ -1,6 +1,6 @@
 import React from 'react'
 import {
-  geometriaAperturaVisual, geometriaCerramiento, proyectarCerramiento,
+  geometriaAperturaVisual, geometriaCerramiento, lineasBarrotilloVisual, proyectarCerramiento,
   type ConfiguracionCerramiento, type ElementoColocado, type RectVisual,
 } from '@aluminior/core/estructuras'
 
@@ -25,6 +25,8 @@ function ElementoMiniatura({ elemento }: { elemento: ElementoColocado }) {
   return <g>
     {elemento.apertura !== 'fijo' && <Rectangulo rect={elemento} clase="al-sash" />}
     <Rectangulo rect={vidrio} clase="al-glass" />
+    {lineasBarrotilloVisual(vidrio, elemento.barrotillo).map((l, indice) =>
+      <line key={indice} x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2} className="al-muntin" />)}
     {apertura?.trazos.map((trazo, indice) => <path key={indice}
       d={trazo.map((punto, posicion) => `${posicion === 0 ? 'M' : 'L'} ${punto.x} ${punto.y}`).join(' ')}
       className={`al-opening-line${esOscilobatiente && indice === 1 ? ' al-opening-tilt' : ''}`} />)}

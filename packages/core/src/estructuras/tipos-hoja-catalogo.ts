@@ -26,7 +26,8 @@ const POR_TIPO: Readonly<Record<number, AperturaVisual>> = {
 /** Parejas de dos hojas: índice 1 izquierda, 2 derecha. */
 const POR_PAREJA: Readonly<Record<number, readonly [AperturaVisual, AperturaVisual]>> = {
   7: ['abatible-izquierda', 'abatible-derecha'], // 2: VENTANA ABATIBLE DE DOS HOJAS
-  8: ['abatible-izquierda', 'oscilobatiente-derecha'], // 2O: UNA OSCILOBATIENTE
+  8: ['abatible-izquierda', 'oscilobatiente-derecha'], // 2O: UNA OSCILOBATIENTE (derecha)
+  9: ['oscilobatiente-izquierda', 'abatible-derecha'], // Pareja con oscilobatiente a la izquierda (DS4)
   15: ['abatible-izquierda', 'abatible-derecha'], // 2P: PUERTA BALCONERA DE DOS HOJAS
   26: ['abatible-izquierda', 'oscilobatiente-derecha'], // 2OP: PUERTA ... UNA OSCILOBATIENTE
 }

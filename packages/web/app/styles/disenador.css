@@ -1,3 +1,5 @@
+@import './disenador-propio.css';
+
 /* Diseñador de cerramientos: disposición de Productor (lienzo, lista de
    elementos y barra inferior que alterna catálogo y propiedades) con una capa
    visual contemporánea. El dibujo es técnico y deliberadamente plano. */
@@ -275,6 +277,7 @@
 .al-union[data-sin-configurar] { fill: #fde2e2; stroke: #b42318; stroke-dasharray: 6 4; }
 .al-invisible-divider { fill: #526168; opacity: .65; }
 .al-glass { fill: #73e2e4; stroke: #317b84; stroke-width: 2; cursor: pointer; }
+.al-muntin { stroke: #536168; stroke-width: 1.5; vector-effect: non-scaling-stroke; pointer-events: none; }
 .al-opening-line { fill: none; stroke: #65767b; stroke-width: 1.5; }
 .al-opening-tilt { stroke-dasharray: 7 5; }
 .al-handle rect { fill: #f8faf9; stroke: #3f4c52; stroke-width: 1.5; }

@@ -17,7 +17,7 @@ import { MaterialesElemento } from './materiales-elemento.tsx'
 export function PanelElemento({
   modulo, borrador, indice, rect, pendiente, bloqueado, preparada, eliminable, generales, series, modelos,
   cotasCatalogo = [], complementosCatalogo, moviendo, movible, invisible = false, materialesPropios = true,
-  onChange, onActualizar, onActualizarModelos, onDescartar, onSustituir, onEliminar, onMover, onInvisible,
+  onChange, onActualizar, onActualizarModelos, onDescartar, onSustituir, onEliminar, onMover, onInvisible, onDisenoPropio,
 }: {
   modulo: ModuloCerramiento
   borrador: BorradorModulo
@@ -46,6 +46,8 @@ export function PanelElemento({
   /** Hueco que no se instala (viga, pared): precio 0 y sin despiece (DS3). */
   invisible?: boolean
   onInvisible?: () => void
+  /** Abre el editor `Diseño V3` del elemento seleccionado (DS4). */
+  onDisenoPropio?: () => void
   /**
    * Con un único elemento sin excepciones, sus Perfiles/Vidrio repetirían la
    * Serie y el Vidrio de la línea: se omiten.
@@ -95,6 +97,13 @@ export function PanelElemento({
         {preparada && preparada.codigo !== modulo.estructuraCodigo && (
           <button type="button" className="al-command" disabled={bloqueado} onClick={onSustituir}>
             Sustituir por {preparada.codigo}
+          </button>
+        )}
+        {!invisible && onDisenoPropio && (
+          <button type="button" className="al-command"
+            data-excepcion={Boolean(modulo.disenoPropio) || undefined}
+            disabled={bloqueado} onClick={onDisenoPropio}>
+            {modulo.disenoPropio ? 'Diseño específico (activo)' : 'Diseño específico'}
           </button>
         )}
         <button type="button" className="al-command" aria-pressed={moviendo}

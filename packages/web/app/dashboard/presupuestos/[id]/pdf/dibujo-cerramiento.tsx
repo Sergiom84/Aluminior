@@ -1,6 +1,7 @@
 import React from 'react'
 import { G, Path, Rect, Svg, Text, View } from '@react-pdf/renderer'
 import {
+  lineasBarrotilloVisual,
   type AperturaVisual, type ConfiguracionCerramiento, type RectVisual,
 } from '@aluminior/core/estructuras'
 import {
@@ -46,6 +47,8 @@ export function DibujoCerramientoPdf({ configuracion, ancho = 240, alto = 150 }:
             ancho: elemento.ancho - 2 * margen, alto: elemento.alto - 2 * margen }
           return <G key={elemento.id}>
             <Rectangulo rect={vidrio} fill="#f8fafc" />
+            {lineasBarrotilloVisual(vidrio, elemento.barrotillo).map((l, indice) =>
+              <Path key={`bi-${indice}`} d={`M ${l.x1} ${l.y1} L ${l.x2} ${l.y2}`} fill="none" stroke="#536168" strokeWidth={0.5} />)}
             {trazosAperturaPdf(elemento.apertura, vidrio).map((d, indice) =>
               <Path key={indice} d={d} fill="none" stroke="#475569" strokeWidth={0.55}
                 strokeDasharray={indice === 1 ? '2 2' : undefined} />)}

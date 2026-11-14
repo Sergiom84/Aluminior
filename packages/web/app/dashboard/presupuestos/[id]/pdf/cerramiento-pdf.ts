@@ -18,7 +18,8 @@ export interface EntradaCerramientoPdf {
 function identidad(configuracion: ConfiguracionCerramiento) {
   return JSON.stringify([configuracion.version,
     configuracion.modulos.map(m => [m.id, m.estructuraCodigo, m.anchoMm, m.altoMm,
-      Object.hasOwn(m, 'fiMm') ? m.fiMm : 'FI_AUSENTE']),
+      Object.hasOwn(m, 'fiMm') ? m.fiMm : 'FI_AUSENTE',
+      m.cotas ?? null, m.disenoPropio ?? null]),
     configuracion.uniones.map(u => [u.id, u.codigo, u.grosorMm, u.longitudMm])])
 }
 

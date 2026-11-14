@@ -1,0 +1,150 @@
+/* Editor Diseño V3 (DS4 paso 3): disposición densa, foco visible, móvil y zoom 200%. */
+.al-diseno-v3 {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) minmax(280px, 360px);
+  gap: 12px;
+  align-items: start;
+  min-width: 0;
+}
+
+.al-diseno-v3-lienzo {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.al-diseno-v3-svg {
+  display: grid;
+  place-items: center;
+  padding: 8px;
+  border: 1px solid var(--al-border);
+  border-radius: var(--al-radius);
+  background: var(--al-surface-muted);
+  min-height: 240px;
+}
+
+.al-diseno-v3-svg .al-window-drawing {
+  width: 100%;
+  max-height: 300px;
+}
+
+.al-diseno-v3-nodos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.al-diseno-v3-nodo {
+  padding: 4px 8px;
+  border: 1px solid var(--al-border-strong);
+  border-radius: var(--al-radius-sm);
+  background: var(--al-surface);
+  color: var(--al-text);
+  font-size: 11.5px;
+  cursor: pointer;
+}
+
+.al-diseno-v3-nodo[aria-pressed='true'] {
+  border-color: var(--al-accent);
+  background: var(--al-accent-soft);
+  color: var(--al-accent-strong);
+  font-weight: 600;
+}
+
+.al-diseno-v3-nodo:focus-visible {
+  outline: 2px solid var(--al-accent);
+  outline-offset: 2px;
+}
+
+.al-diseno-v3-panel {
+  display: grid;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid var(--al-border);
+  border-radius: var(--al-radius);
+  background: var(--al-surface);
+  min-width: 0;
+}
+
+.al-diseno-v3-bloque {
+  display: grid;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px solid var(--al-border);
+}
+
+.al-diseno-v3-bloque:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.al-diseno-v3-cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.al-diseno-v3-titulo {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--al-text);
+}
+
+.al-diseno-v3-fila {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.al-diseno-v3-checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 12px;
+}
+
+.al-diseno-v3-checks label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.al-diseno-v3-pasos {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.al-diseno-v3-pasos input {
+  width: 64px;
+  text-align: center;
+}
+
+.al-diseno-v3-pie {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--al-border);
+}
+
+.al-diseno-v3-pie-derecha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-left: auto;
+}
+
+@media (max-width: 860px) {
+  .al-diseno-v3 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

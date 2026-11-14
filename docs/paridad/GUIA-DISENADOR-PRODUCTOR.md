@@ -522,7 +522,13 @@ Visto por primera vez en esta sesión:
 - **Cota Variable** solo existe si el travesaño viene del catálogo: en la
   `1OFI` el travesaño `Trav. Marco ( de abajo)` trae `Cota Variable` marcada
   (gris) con `Nombre FIJO INFERIOR`, `Símbolo FI`, `Cota por 300`, y se puede
-  cambiar `Cota por`. En un travesaño añadido a mano la opción está gris y no
+  cambiar `Cota por`. En el caso 10 (`497453`), cambiar `Cota por` a `500`
+  guardó `Cota = 500` en `EstructurasDiseño`, pero en `VPresupuestosLin`
+  Productor mantuvo la variable ya instanciada en la línea (`FIJO INFERIOR:
+  300,0`, cortes `300` y `1700`, `460,24 €`). En Aluminior, guardar el diseño
+  sobre `1OFI` propaga `500` a `fiMm` (`449,30 €`, desviación documentada para
+  evitar esa discrepancia silenciosa) y con `fiMm = 300` coincide al céntimo
+  (`460,24 €`). En un travesaño añadido a mano la opción está gris y no
   se puede elegir.
 - **Cota fija:** el campo valida cada cambio; si queda un valor imposible
   sale «Cota para travesaño no válida.» y se pone a 0. Borrar con
@@ -624,7 +630,7 @@ hipótesis.
 | Unión | Sí: artículos de unión | Parcial; sin «siguiente unión», tipo fija/variable ni escaparate |
 | Insertar tapajuntas cerramientos | Sí: 24 tapajuntas (familia 102) | No; función pendiente de explicar |
 | Insertar compacto | Sí: 17 compactos y guías 051 | Parcial (09/11/2026): bloque en el panel, cajón dibujado y valoración con opciones predeterminadas; sin registro ni medidas manuales; guías valoradas y ventana estrechada por `DescuentoGuia`, contrastado al céntimo el 12/11/2026 |
-| Cartabón / Diseño V3 y elemento invisible | — | Invisible sí, como «Convertir en hueco» (DS3, 07/11/2026). Diseño V3: el motor valora un módulo con plantilla propia, vidrio por hueco y barrotillos (13/11/2026), pero no hay editor ni generador de la plantilla: el operador aún no puede crear esos diseños (DS4) |
+| Cartabón / Diseño V3 y elemento invisible | — | Invisible sí, como «Convertir en hueco» (DS3, 07/11/2026). Diseño V3: botón `Diseño específico` en `Elemento seleccionado` con diálogo (travesaños y cotas, hojas 1/2/5/6 y parejas 8/9, vidrio por hueco, barrotillo `BI`, `Restablecer catálogo`) y generador (461/466 pares). Contraste local del 14/11/2026: casos 1 a 4 y 6 a 9 del 260508 al céntimo; el caso 10, al guardar, cobra `449,30 €` y no los `460,24 €` que Productor dejó con la línea en 300. Faltan familias fuera de alcance (`PTA`, correderas, curva) y QA en el navegador publicado |
 
 ## Pendiente de explicar
 

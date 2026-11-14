@@ -64,7 +64,7 @@ export function esResultadoCerramiento(v: unknown): v is ResultadoCerramientoV1 
     !Array.isArray(v.configuracion.uniones) || !v.configuracion.uniones.every(objeto)) return false
   if (v.version !== 1 || (v.redondeoVenta !== 'ESTRUCTURA_NUMBER_V1' && v.redondeoVenta !== 'FILA_CENTIMOS') ||
     !esConfiguracionCerramiento(v.configuracion, CATALOGO_SNAPSHOT) ||
-    configuracionTieneFiExplicito(v.configuracion) ||
+    (v.redondeoVenta === 'ESTRUCTURA_NUMBER_V1' && configuracionTieneFiExplicito(v.configuracion)) ||
     !objeto(v.motor) || !texto(v.motor.codigo) || !texto(v.motor.version) || !tarifa(v.tarifa) ||
     v.unidadMateriales !== 'COMPOSICION' || v.ambitoManoObraManual !== 'LINEA' ||
     !Array.isArray(v.origenes) || !v.origenes.every(o => esResultadoOrigen(o, v.redondeoVenta as RedondeoVentaCerramiento)) ||

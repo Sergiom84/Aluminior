@@ -17,12 +17,19 @@ export type EjeDivision = 'horizontal' | 'vertical'
 
 export type ClaseSeparador = 'travesano' | 'division-invisible' | 'union'
 
+export interface BarrotilloVisual {
+  readonly horizontales: number
+  readonly verticales: number
+}
+
 export interface HuecoVisual {
   tipo: 'hueco'
   id: string
   apertura: AperturaVisual
   /** Por defecto, toda hoja móvil conserva manilla y un fijo no la tiene. */
   manilla?: boolean
+  /** Barrotillo interior del cristal (`BI` en Diseño V3). */
+  barrotillo?: BarrotilloVisual
 }
 
 export interface HijoVisual {
@@ -85,6 +92,7 @@ export interface HuecoColocado extends RectVisual {
   id: string
   apertura: AperturaVisual
   manilla: boolean
+  barrotillo?: BarrotilloVisual
 }
 
 export interface SeparadorColocado extends RectVisual {
