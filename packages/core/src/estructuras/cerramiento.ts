@@ -23,6 +23,7 @@ import {
 } from './cotas-cerramiento.ts'
 import type { MaterialesModulo, MaterialesUnion } from './materiales-cerramiento.ts'
 import type { CompactoModulo, TapajuntasModulo } from './compacto-cerramiento.ts'
+import type { DisenoPropioModulo } from './diseno-propio-cerramiento.ts'
 import type { PrecioManual } from '../precios/precio-manual.ts'
 
 export { VERSION_CONFIGURACION_CERRAMIENTO }
@@ -46,6 +47,8 @@ export interface ModuloCerramiento {
   tapajuntas?: TapajuntasModulo
   /** Solo en v3: espacio que no se instala (viga, pared); precio 0 y sin despiece (DS3). */
   invisible?: true
+  /** Solo en v3: árbol de Diseño V3 modificado en el elemento (DS4). */
+  disenoPropio?: DisenoPropioModulo
 }
 
 export interface UnionCerramiento {
@@ -249,7 +252,7 @@ export function cambiarEstructuraModuloCerramiento(
   if (!existe) return configuracion
   const modulos = configuracion.modulos.map((modulo) => {
     if (modulo.id !== id) return modulo
-    const { fiMm: _fiAnterior, cotas: _cotasAnteriores, ...base } = modulo
+    const { fiMm: _fiAnterior, cotas: _cotasAnteriores, disenoPropio: _disenoAnterior, ...base } = modulo
     return {
       ...base,
       estructuraCodigo: plantilla.codigo,

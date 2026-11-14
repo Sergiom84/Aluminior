@@ -1,5 +1,5 @@
 import { CATALOGO_SNAPSHOT, accesoriosEfectivosModulo, diagnosticosSinPrecio, compactoEfectivoModulo, descuentoGuiasCompactoMm, modulosConPiezaALaIzquierda, esModuloInvisible, origenInvisible, cotasEfectivasModulo, esConfiguracionCerramiento, esResultadoCerramiento, etapasVentaCerramiento,
-  unionConfigurada, resolverOrigenSinUnion, medidasFabricacionCerramiento,
+  plantillaDisenoPropioModulo, unionConfigurada, resolverOrigenSinUnion, medidasFabricacionCerramiento,
   type ConfiguracionCerramiento, type RedondeoVentaCerramiento, type ResultadoCerramientoV1,
   type ResultadoOrigenCerramiento } from '@aluminior/core/estructuras'
 import { sumarDecimal } from '@aluminior/core/precios'
@@ -93,7 +93,9 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
       serieCodigo: origen.serieCodigo,
       vidrioCodigo: origen.vidrioCodigo, opcionesHerraje: entrada.opcionesHerraje,
       preciosManuales: entrada.configuracion.preciosManuales,
-      plantillaPropia: g.tipo === 'MODULO' ? entrada.plantillasPropias?.get(g.id) : undefined }
+      plantillaPropia: g.tipo === 'MODULO'
+        ? entrada.plantillasPropias?.get(g.id) ?? plantillaDisenoPropioModulo(porModulo.get(g.id)!) ?? undefined
+        : undefined }
     let ventaMotor: number | null = null
     let avisoMotor: string | null = null
     let piezas: Parameters<typeof completarCostesOrigen>[1] = []

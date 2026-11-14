@@ -1,7 +1,8 @@
 import { plantillaDiseno, UNIONES_VISUALES } from './diseno.ts'
 import { unionAdmitida, type CatalogoAdmision } from './catalogo-uniones.ts'
-import { cotasModuloValidas } from './cotas-cerramiento.ts'
+import { cotasEfectivasModulo, cotasModuloValidas } from './cotas-cerramiento.ts'
 import { compactoModuloValido, tapajuntasModuloValido } from './compacto-cerramiento.ts'
+import { disenoPropioModuloValido } from './diseno-propio-cerramiento.ts'
 import { preciosManualesValidos } from '../precios/precio-manual.ts'
 import { resolverGeometriaFi1Ofi } from './geometria-1ofi.ts'
 import { resolverGeometriaComposicion } from './geometria-composicion.ts'
@@ -33,12 +34,13 @@ export function esConfiguracionCerramiento(
       !Number.isFinite(modulo.anchoMm) || modulo.anchoMm <= 0 ||
       !Number.isFinite(modulo.altoMm) || modulo.altoMm <= 0) return false
     if (candidato.version !== VERSION_COMPOSICION_CERRAMIENTO &&
-      (Object.hasOwn(modulo, 'anclaje') || Object.hasOwn(modulo, 'materiales') || Object.hasOwn(modulo, 'cotas') || Object.hasOwn(modulo, 'compacto') || Object.hasOwn(modulo, 'tapajuntas') || Object.hasOwn(modulo, 'invisible'))) return false
+      (Object.hasOwn(modulo, 'anclaje') || Object.hasOwn(modulo, 'materiales') || Object.hasOwn(modulo, 'cotas') || Object.hasOwn(modulo, 'compacto') || Object.hasOwn(modulo, 'tapajuntas') || Object.hasOwn(modulo, 'invisible') || Object.hasOwn(modulo, 'disenoPropio'))) return false
     if (!invisibleValido(modulo.invisible)) return false
     if (!materialesModuloValidos(modulo.materiales) || !cotasModuloValidas(modulo.cotas, modulo.altoMm, modulo.anchoMm) || !compactoModuloValido(modulo.compacto) || !tapajuntasModuloValido(modulo.tapajuntas)) return false
+    if (!disenoPropioModuloValido(modulo.disenoPropio, modulo.anchoMm, modulo.altoMm, cotasEfectivasModulo(modulo))) return false
     const plantilla = plantillaDiseno(modulo.estructuraCodigo)
     if (!plantilla) return false
-    if (!resolverGeometriaComposicion(plantilla.composicion, modulo.anchoMm, modulo.altoMm).valido) return false
+    if (!modulo.disenoPropio && !resolverGeometriaComposicion(plantilla.composicion, modulo.anchoMm, modulo.altoMm).valido) return false
     const tieneFi = Object.hasOwn(modulo, 'fiMm')
     if (candidato.version === 1) return !tieneFi
     if (plantilla.codigo !== '1OFI') return !tieneFi

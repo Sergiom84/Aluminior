@@ -8,6 +8,7 @@
  * alterar los snapshots v1/v2/v3 ya guardados.
  */
 import type { ModuloCerramiento } from './cerramiento.ts'
+import { cotasDisenoPropioModulo } from './diseno-propio-cerramiento.ts'
 
 export const SIMBOLOS_COTA_ALTO = ['FI', 'FS', 'VS'] as const
 export const SIMBOLOS_COTA_ANCHO = ['TD', 'F', 'FD', 'FZ'] as const
@@ -38,13 +39,14 @@ export function cotasModuloValidas(valor: unknown, altoMm: number, anchoMm = alt
 }
 
 /**
- * Cotas que recibe el motor de despiece para el módulo: prioriza `cotas` y
- * conserva `fiMm` como `FI` cuando esté presente.
+ * Cotas que recibe el motor de despiece para el módulo: prioriza `cotas`,
+ * conserva `fiMm` como `FI` cuando esté presente y toma las cotas variables
+ * por defecto del diseño propio (`TipoCota = 1` en `disenoPropio`).
  */
 export function cotasEfectivasModulo(
-  modulo: Pick<ModuloCerramiento, 'fiMm' | 'cotas'>,
+  modulo: Pick<ModuloCerramiento, 'fiMm' | 'cotas' | 'disenoPropio'>,
 ): Readonly<Record<string, number>> | null {
-  const cotas: Record<string, number> = {}
+  const cotas: Record<string, number> = { ...cotasDisenoPropioModulo(modulo) }
   if (typeof modulo.fiMm === 'number' && Number.isFinite(modulo.fiMm)) cotas.FI = modulo.fiMm
   if (modulo.cotas) {
     for (const [simbolo, valor] of Object.entries(modulo.cotas)) {

@@ -1,6 +1,8 @@
 import { plantillaDiseno,
   type ElementoColocado, type RectVisual } from './diseno.ts'
 import type { ModuloCerramiento } from './cerramiento.ts'
+import { cotasEfectivasModulo } from './cotas-cerramiento.ts'
+import { composicionVisualDisenoPropio } from './diseno-propio-cerramiento.ts'
 import { resolverGeometriaFi1Ofi } from './geometria-1ofi.ts'
 import { distribuirComposicionAcotada } from './geometria-composicion.ts'
 
@@ -13,6 +15,11 @@ export function distribuirModuloCerramiento(
   rect: RectVisual,
   grosorSeparador = 12,
 ): ElementoColocado[] {
+  if (modulo.disenoPropio) {
+    const composicion = composicionVisualDisenoPropio(modulo.disenoPropio, cotasEfectivasModulo(modulo))
+    if (!composicion) return []
+    return distribuirComposicionAcotada(composicion, modulo, rect, grosorSeparador)
+  }
   const plantilla = plantillaDiseno(modulo.estructuraCodigo)
   if (!plantilla) return []
   if (plantilla.codigo !== '1OFI' || !Object.hasOwn(modulo, 'fiMm')) {
