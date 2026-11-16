@@ -14,6 +14,7 @@ import { AltaSinEdicionActiva, EdicionLineaActiva } from './_components/edicion-
 import { LineaPresupuesto } from './_components/linea-presupuesto.tsx'
 import type { DatosEdicionCerramiento } from './_components/editar-cerramiento.tsx'
 import { PestanasDocumento, PestanasFicha } from '../_components/pestanas-documento.tsx'
+import { EliminarPresupuestoBoton } from '../_components/eliminar-presupuesto-boton.tsx'
 import { referenciaPresupuesto } from '../_lib/identidad-documento.ts'
 import { asegurarCatalogoDiseno, leerEstructurasSinDibujo } from '../_lib/catalogo-diseno/index.ts'
 import { CatalogoDiseno } from './_components/catalogo-diseno.tsx'
@@ -128,6 +129,8 @@ export default async function DetallePresupuesto({ params, searchParams }: {
           <Link href="/dashboard/presupuestos" className="al-command">Cerrar</Link>
           <a href={`/dashboard/presupuestos/${id}/pdf`} target="_blank" rel="noopener"
             className={`${styles.pdfAction} al-command`}>Emitir</a>
+          <EliminarPresupuestoBoton presupuestoId={id} numero={p.numero} revision={p.revision}
+            estado={p.estado} origen="detalle" />
           <span className="al-status" data-status={presupuesto.estado}>{presupuesto.estado}</span>
         </div>
 

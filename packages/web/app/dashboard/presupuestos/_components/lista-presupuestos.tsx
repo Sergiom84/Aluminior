@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useState, type KeyboardEvent } from 'react'
 import Link from 'next/link'
 import { CopiarRevisionBoton } from './copiar-revision-boton.tsx'
+import { EliminarPresupuestoBoton } from './eliminar-presupuesto-boton.tsx'
 import { resolverDestinatarioPresupuesto } from '../_lib/destinatario'
 import { textoTotalListado } from '../_lib/listado-presupuestos.ts'
 
@@ -72,6 +73,12 @@ export function ListaPresupuestos({ filas }: { filas: FilaPresupuesto[] }) {
             revision={activo.revision} serie={activo.serie} />
         ) : (
           <span className="al-command" aria-disabled="true">Revisión</span>
+        )}
+        {activo ? (
+          <EliminarPresupuestoBoton presupuestoId={activo.id} numero={activo.numero}
+            revision={activo.revision} estado={activo.estado} origen="listado" />
+        ) : (
+          <span className="al-command al-command-danger" aria-disabled="true">Eliminar</span>
         )}
       </div>
 
