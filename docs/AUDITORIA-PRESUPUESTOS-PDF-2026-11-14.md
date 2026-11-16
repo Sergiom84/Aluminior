@@ -384,10 +384,12 @@ Presupuesto temporal `260029` («PRUEBA CLAUDE - BORRAR») en `https://aluminior
 
 Hallazgos de interfaz:
 
-- `PVP manual` y `Aca. Acc.` del alta de cerramiento se conservaban tras aceptar una línea, y la siguiente ventana heredaba el precio manual. Corregido en local el mismo día: los dos campos se reinician con cada alta aceptada; serie, vidrio, acabado y horas se conservan como antes. Sin verificar en navegador hasta publicar.
+- `PVP manual` y `Aca. Acc.` del alta de cerramiento se conservaban tras aceptar una línea, y la siguiente ventana heredaba el precio manual. Corregido en local el mismo día: los dos campos se reinician con cada alta aceptada; serie, vidrio, acabado y horas se conservan como antes. Publicado en `c6aabad` y verificado en Render el 16/11 (presupuesto temporal borrado): tras aceptar, los dos campos quedan vacíos; si el alta falla, se conservan.
 
 Sin corregir:
 
-- Al elegir `1PCMA` por código, el diálogo «Añadir ventana» sigue abierto con «Sin modelos con ese código» aunque el elemento se añade.
-- En el lienzo, la `2OFI` con `FI = 1000` sin diseño específico dibuja el fijo a la cota de plantilla (rótulo «FIJO INFERIOR 300»); el despiece sí usa 1000.
-- Los presupuestos `260023`–`260028` de producción se crearon antes de cargar el catálogo de despiece y conservan «sin valorar». No se recalculan solos; hay que reeditar o recrear sus líneas.
+- Al elegir `1PCMA` por código, el diálogo «Añadir ventana» seguía abierto con «Sin modelos con ese código». Corregido en `31add36`.
+- En el lienzo, la `2OFI` con `FI = 1000` sin diseño específico dibujaba el fijo a la cota de plantilla. Corregido en `31add36`: lienzo y PDF usan la FI/FS efectiva y la etiqueta muestra ese valor.
+- Los presupuestos `260023`–`260028` conservaban «sin valorar». El 16/11 el titular pidió borrar todos los presupuestos de producción: se borraron los 31 (sin copia, por decisión suya).
+
+Verificado en Render tras `b403334` (16/11, presupuesto temporal `260001` borrado con el nuevo botón): 1PCMA cierra el diálogo; 2OFI 1200×1500 con FI 1000 dibuja el fijo a 1000; el buscador por tipo encuentra por nombre, código, obra, fecha y precio (el precio compara el total con IVA, no la base).
