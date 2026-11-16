@@ -163,7 +163,7 @@ export function AnyadirLinea({
             ) : undefined}
             generales={{ serieCodigo: serie || null, vidrioCodigo: vidrio || null }} />
           <CamposCerramiento err={err} series={seriesValidas.grupo} acabados={acabados}
-            serie={serie} setSerie={setSerie} vidrio={vidrio} setVidrio={setVidrio} />
+            serie={serie} setSerie={setSerie} vidrio={vidrio} setVidrio={setVidrio} reinicio={edicion} />
         </>
       )}
 

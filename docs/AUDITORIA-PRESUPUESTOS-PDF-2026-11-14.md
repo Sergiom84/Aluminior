@@ -367,3 +367,27 @@ La medición de la sección 6 no se repite aquí. Con regla demostrada se ha cam
 - El cerramiento admite PVP manual en el alta.
 
 Sin regla, y por eso sin cambio: herraje del `2OFI` en un `GRUPO`, `GM487`/`GM492`, `+0,02 €` de `GM8787M`, línea 2 del `260595` y acabados distintos por elemento del `260289`. Render no se ha tocado.
+
+## 8. Verificación en Render tras `c171717` (16/11/2026, noche)
+
+Presupuesto temporal `260029` («PRUEBA CLAUDE - BORRAR») en `https://aluminior.onrender.com`, tecleado desde la web con las entradas de `banco.json` (copia del 13/11). Borrado después por SQL (una fila, cascada a líneas); la numeración vuelve a `260028`.
+
+| Línea | PDF €/ud | Render €/ud | Estado |
+|---|---|---|---|
+| `1O` 730×1080, `VM420AGS4`, Aca. Acc. `UNI` | 601,62 | 601,62 | coincide (antes 592,66) |
+| `2O` + `COM009` 1500×1255, Aca. Acc. `L` | 1.017,09 | 1.017,09 | coincide (antes 1.031,36) |
+| `2OFI` + `COM009` 1250×2295, `FI = 1000`, diseño específico con `VGS418AL33M` en el fijo | 1.432,36 | 1.432,36 | coincide (antes 1.441,35); sin diseño específico 1.343,77 |
+| `1PCMA` 980×2100 `PAN16` | 1.439,15 | 1.439,17 | +0,02, fila `GM8787M` ya conocida |
+| `1O` `GMA350` 830×460 con PVP manual | 446,41 | 446,41 | coincide |
+| `PSM001` 745×1095 ×3 + VARIOS 0,85 | 71,80 | 71,80 | coincide |
+| `PSM001` 1500×1130 + VARIOS 50 | 146,49 | 146,49 | coincide |
+
+Hallazgos de interfaz:
+
+- `PVP manual` y `Aca. Acc.` del alta de cerramiento se conservaban tras aceptar una línea, y la siguiente ventana heredaba el precio manual. Corregido en local el mismo día: los dos campos se reinician con cada alta aceptada; serie, vidrio, acabado y horas se conservan como antes. Sin verificar en navegador hasta publicar.
+
+Sin corregir:
+
+- Al elegir `1PCMA` por código, el diálogo «Añadir ventana» sigue abierto con «Sin modelos con ese código» aunque el elemento se añade.
+- En el lienzo, la `2OFI` con `FI = 1000` sin diseño específico dibuja el fijo a la cota de plantilla (rótulo «FIJO INFERIOR 300»); el despiece sí usa 1000.
+- Los presupuestos `260023`–`260028` de producción se crearon antes de cargar el catálogo de despiece y conservan «sin valorar». No se recalculan solos; hay que reeditar o recrear sus líneas.

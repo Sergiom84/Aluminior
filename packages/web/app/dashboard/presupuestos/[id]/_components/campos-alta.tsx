@@ -13,7 +13,7 @@ export function acabadoPorDefecto(acabados: { codigo: string }[]): string {
 }
 
 export function CamposCerramiento({
-  err, series, acabados, serie, setSerie, vidrio, setVidrio,
+  err, series, acabados, serie, setSerie, vidrio, setVidrio, reinicio = 0,
 }: {
   err: Record<string, string[] | undefined>
   series: string[]
@@ -22,6 +22,11 @@ export function CamposCerramiento({
   setSerie: (valor: string) => void
   vidrio: string
   setVidrio: (valor: string) => void
+  /**
+   * Cambia tras cada alta. PVP manual y Aca. Acc. son de la línea, no de la
+   * sesión: si sobrevivieran, la siguiente ventana heredaría un precio fijo.
+   */
+  reinicio?: number
 }) {
   return (
     <div className={`${styles.fields} ${styles.filaCerramiento}`}>
@@ -73,7 +78,7 @@ export function CamposCerramiento({
       </div>
       <div>
         <label htmlFor="acabadoAccesoriosCodigo">Aca. Acc.</label>
-        <select id="acabadoAccesoriosCodigo" name="acabadoAccesoriosCodigo" defaultValue=""
+        <select key={`acc-${reinicio}`} id="acabadoAccesoriosCodigo" name="acabadoAccesoriosCodigo" defaultValue=""
           className={entrada} style={estilo}>
           <option value="">Según acabado</option>
           {acabados.map((item) => (
@@ -83,7 +88,7 @@ export function CamposCerramiento({
       </div>
       <div>
         <label htmlFor="precioUnitarioManual">PVP manual (€)</label>
-        <input {...atributosCampo('precioUnitarioManual', err)} type="number" min={0} step="0.01"
+        <input key={`pvp-${reinicio}`} {...atributosCampo('precioUnitarioManual', err)} type="number" min={0} step="0.01"
           className={`cifra ${entrada}`} placeholder="Automático"
           style={{ ...estilo, borderColor: bordeCampo('precioUnitarioManual', err, estilo.borderColor) }} />
         <MensajeError campo="precioUnitarioManual" errores={err} />
