@@ -2,7 +2,8 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { and, eq, inArray } from 'drizzle-orm'
 import { crearDb, schema } from '@aluminior/db'
 import { urlDePruebasValidada } from '@aluminior/db/pruebas'
-import { filtroClienteSeleccionado, filtroListadoPresupuestos } from './busqueda-listado.ts'
+import { filtroClienteSeleccionado } from './busqueda-listado.ts'
+import { filtroPorPlan, planBusqueda, type TipoBusqueda } from './busqueda-tipo/index.ts'
 
 describe('listado comercial por fecha y precio', () => {
   const db = crearDb(urlDePruebasValidada(process.env.TEST_DATABASE_URL))
@@ -36,25 +37,27 @@ describe('listado comercial por fecha y precio', () => {
     await db.$client.end({ timeout: 5 })
   })
 
-  async function encontrados(consulta: string) {
+  async function encontrados(tipo: TipoBusqueda, consulta: string) {
+    const plan = planBusqueda(tipo, consulta)
+    if (!plan) throw new Error('consulta vacía')
     const filas = await db.select({ id: schema.presupuestos.id })
       .from(schema.presupuestos)
       .leftJoin(schema.clientes, eq(schema.clientes.codigo, schema.presupuestos.clienteCodigo))
-      .where(and(eq(schema.presupuestos.serie, serie), filtroListadoPresupuestos(consulta)))
+      .where(and(eq(schema.presupuestos.serie, serie), filtroPorPlan(plan)))
     return filas.map(f => f.id)
   }
 
   it('encuentra por la fecha visible y por el precio, y no trata como precio un documento sin valorar', async () => {
-    const porFecha = await encontrados('17/07/1991')
+    const porFecha = await encontrados('fecha', '17/07/1991')
     expect(porFecha).toEqual(expect.arrayContaining([ids[0], ids[2]]))
     expect(porFecha).not.toContain(ids[1])
 
-    const porPrecio = await encontrados('1.200,50')
+    const porPrecio = await encontrados('precio', '1.200,50')
     expect(porPrecio).toEqual([ids[0]])
 
-    expect(await encontrados('80')).toEqual([ids[1]])
-    expect(await encontrados('02/08/1991')).toEqual([ids[1]])
-    expect(await encontrados('1.200,51')).toEqual([])
+    expect(await encontrados('precio', '80')).toEqual([ids[1]])
+    expect(await encontrados('fecha', '02/08/1991')).toEqual([ids[1]])
+    expect(await encontrados('precio', '1.200,51')).toEqual([])
   })
 
   it('incluye el código canónico y el mismo nombre libre, y excluye el resto', async () => {

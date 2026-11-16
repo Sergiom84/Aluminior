@@ -1,4 +1,4 @@
-import { and, eq, ilike, or, sql, type SQL, type SQLWrapper } from 'drizzle-orm'
+import { and, eq, or, sql, type SQL, type SQLWrapper } from 'drizzle-orm'
 import { schema } from '@aluminior/db'
 
 /**
@@ -124,7 +124,7 @@ export function interpretarImporte(consulta: string): ImporteConsulta | null {
   return decimales ? { tipo: 'exacto', valor: normalizado } : { tipo: 'euros', euros: normalizado }
 }
 
-function condicionFecha(fecha: FechaConsulta | null): SQL | undefined {
+export function condicionFecha(fecha: FechaConsulta | null): SQL | undefined {
   if (!fecha) return undefined
   const columna = schema.presupuestos.fecha
   if (fecha.tipo === 'dia') return sql`${columna} = cast(${fecha.iso} as date)`
@@ -133,7 +133,7 @@ function condicionFecha(fecha: FechaConsulta | null): SQL | undefined {
   return sql`to_char(${columna}, 'YYYY') = ${fecha.anio}`
 }
 
-function condicionImporte(importe: ImporteConsulta | null): SQL | undefined {
+export function condicionImporte(importe: ImporteConsulta | null): SQL | undefined {
   if (!importe) return undefined
   const total = schema.presupuestos.total
   const comparado = importe.tipo === 'exacto'
@@ -164,21 +164,4 @@ export function filtroClienteSeleccionado(cliente: {
   if (cliente.nombre.trim()) partes.push(textoIgual(schema.presupuestos.nombreLibre, cliente.nombre))
   if (cliente.nombreComercial?.trim()) partes.push(textoIgual(schema.presupuestos.nombreLibre, cliente.nombreComercial))
   return or(...partes)!
-}
-
-/**
- * El llamador debe hacer left join de `clientes`: el texto sigue mirando su nombre.
- */
-export function filtroListadoPresupuestos(consulta: string): SQL | undefined {
-  const busqueda = consulta.trim().slice(0, 120)
-  if (!busqueda) return undefined
-  const patron = `%${busqueda.replace(/[%_]/g, '')}%`
-  const texto = or(
-    ilike(schema.presupuestos.nombreLibre, patron),
-    ilike(schema.presupuestos.obraTexto, patron),
-    ilike(schema.clientes.nombre, patron),
-    ilike(schema.presupuestos.clienteCodigo, patron),
-    sql`CAST(${schema.presupuestos.numero} AS TEXT) ILIKE ${patron}`,
-  )
-  return or(texto, condicionFecha(interpretarFecha(busqueda)), condicionImporte(interpretarImporte(busqueda)))
 }
