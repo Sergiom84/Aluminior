@@ -1,10 +1,36 @@
 import { plantillaDiseno,
-  type ElementoColocado, type RectVisual } from './diseno.ts'
+  type ElementoColocado, type NodoVisual, type RectVisual } from './diseno.ts'
 import type { ModuloCerramiento } from './cerramiento.ts'
 import { cotasEfectivasModulo } from './cotas-cerramiento.ts'
 import { composicionVisualDisenoPropio } from './diseno-propio-cerramiento.ts'
 import { resolverGeometriaFi1Ofi } from './geometria-1ofi.ts'
 import { distribuirComposicionAcotada } from './geometria-composicion.ts'
+
+/**
+ * Lleva FI/FS de la línea al travesaño horizontal acotado de la plantilla:
+ * `cotaFija` desde el fin es FI (desde abajo) y desde el inicio es FS (desde
+ * arriba), la misma regla con la que se siembra el diseño propio. Sin cota de
+ * línea se conserva la de plantilla.
+ */
+export function composicionConCotasModulo(
+  composicion: NodoVisual,
+  cotas: Readonly<Record<string, number>> | null,
+): NodoVisual {
+  if (!cotas || composicion.tipo !== 'division') return composicion
+  const simbolo = composicion.eje === 'horizontal' && composicion.cotaFija
+    ? (composicion.cotaFija.desde === 'fin' ? 'FI' : 'FS') : null
+  const mm = simbolo ? cotas[simbolo] : undefined
+  const hijos = composicion.hijos.map(hijo => {
+    const nodo = composicionConCotasModulo(hijo.nodo, cotas)
+    return nodo === hijo.nodo ? hijo : { ...hijo, nodo }
+  })
+  const cambiaCota = typeof mm === 'number' && Number.isFinite(mm) && mm !== composicion.cotaFija!.mm
+  if (!cambiaCota && hijos.every((hijo, indice) => hijo === composicion.hijos[indice])) return composicion
+  return {
+    ...composicion, hijos,
+    ...(cambiaCota ? { cotaFija: { ...composicion.cotaFija!, mm: mm! } } : {}),
+  }
+}
 
 /**
  * Adapta la geometría persistida a una caja de representación. El grosor del
@@ -23,7 +49,8 @@ export function distribuirModuloCerramiento(
   const plantilla = plantillaDiseno(modulo.estructuraCodigo)
   if (!plantilla) return []
   if (plantilla.codigo !== '1OFI' || !Object.hasOwn(modulo, 'fiMm')) {
-    return distribuirComposicionAcotada(plantilla.composicion, modulo, rect, grosorSeparador)
+    const composicion = composicionConCotasModulo(plantilla.composicion, cotasEfectivasModulo(modulo))
+    return distribuirComposicionAcotada(composicion, modulo, rect, grosorSeparador)
   }
 
   const geometria = resolverGeometriaFi1Ofi(modulo.anchoMm, modulo.altoMm, modulo.fiMm)

@@ -4,6 +4,7 @@ import type { EstructuraSinDibujo, PlantillaDiseno, PreferenciaMedidas } from '@
 import { CatalogoInferior } from './catalogo-inferior.tsx'
 import { DialogoDisenador } from './dialogo-disenador.tsx'
 
+/** Elegir cierra el diálogo, con dibujo o sin él; un código inexistente lo deja abierto con el aviso. */
 export function SelectorVentana({ onElegir, onElegirSinDibujo, onCerrar }: {
   onElegir: (plantilla: PlantillaDiseno) => void
   onElegirSinDibujo?: (estructura: EstructuraSinDibujo) => void
@@ -11,7 +12,8 @@ export function SelectorVentana({ onElegir, onElegirSinDibujo, onCerrar }: {
 }) {
   return <DialogoDisenador titulo="Añadir ventana" onCerrar={onCerrar}>
     <CatalogoInferior preparada={null} onPreparar={() => undefined} onArrastre={() => undefined}
-      onColocar={onElegir} onElegir={onElegir} onColocarSinDibujo={onElegirSinDibujo} />
+      onColocar={onElegir} onElegir={onElegir}
+      onColocarSinDibujo={onElegirSinDibujo && (estructura => { onElegirSinDibujo(estructura); onCerrar() })} />
   </DialogoDisenador>
 }
 

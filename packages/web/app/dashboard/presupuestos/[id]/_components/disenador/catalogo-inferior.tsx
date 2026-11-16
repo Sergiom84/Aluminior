@@ -3,9 +3,10 @@
 import React, { useId, useMemo, useState } from 'react'
 import {
   buscarVentanasPorCodigo, CATEGORIAS_ESCAPARATE, categoriaConCatalogo, categoriaInicialEscaparate,
-  estructuraSinDibujo, itemsEscaparate, paginaEscaparate, type EstructuraSinDibujo, type PlantillaDiseno,
+  itemsEscaparate, paginaEscaparate, type EstructuraSinDibujo, type PlantillaDiseno,
 } from '@aluminior/core/estructuras'
 import { DibujoEstructura } from '../dibujo-estructura.tsx'
+import { resolverCodigoCatalogo } from './codigo-catalogo.ts'
 
 export const TIPO_ARRASTRE_ESTRUCTURA = 'application/x-aluminior-estructura'
 const POR_PAGINA = 6
@@ -34,6 +35,9 @@ export function CatalogoInferior({ preparada, onPreparar, onArrastre, onColocar,
   const [aviso, setAviso] = useState<string | null>(null)
   const busqueda = useMemo(() => buscarVentanasPorCodigo(consulta), [consulta])
   const buscando = busqueda.consulta.length > 0
+  const resolucion = resolverCodigoCatalogo(busqueda, Boolean(onColocarSinDibujo))
+  const nombreCodigo = resolucion.tipo === 'plantilla' ? resolucion.plantilla.descripcion
+    : resolucion.tipo === 'sinDibujo' ? resolucion.estructura.descripcion : null
   const items = useMemo(
     () => buscando ? busqueda.coincidencias : itemsEscaparate(categoriaId),
     [buscando, busqueda.coincidencias, categoriaId],
@@ -51,14 +55,9 @@ export function CatalogoInferior({ preparada, onPreparar, onArrastre, onColocar,
     else onColocar(plantilla)
   }
   const confirmarCodigo = () => {
-    if (!busqueda.consulta) return
-    if (busqueda.exacta) {
-      elegir(busqueda.exacta)
-      return
-    }
-    const sinDibujo = onColocarSinDibujo ? estructuraSinDibujo(busqueda.consulta) : null
-    if (sinDibujo && onColocarSinDibujo) onColocarSinDibujo(sinDibujo)
-    else setAviso(`No hay una ventana con el código ${busqueda.consulta}.`)
+    if (resolucion.tipo === 'plantilla') elegir(resolucion.plantilla)
+    else if (resolucion.tipo === 'sinDibujo') onColocarSinDibujo?.(resolucion.estructura)
+    else if (resolucion.tipo === 'desconocido') setAviso(`No hay una ventana con el código ${resolucion.codigo}.`)
   }
 
   return (
@@ -87,14 +86,15 @@ export function CatalogoInferior({ preparada, onPreparar, onArrastre, onColocar,
               }} />
           </label>
           <button type="button" className="al-command" disabled={!busqueda.consulta} onClick={confirmarCodigo}>Elegir</button>
-          {busqueda.exacta && <span className="al-catalogo-codigo-nombre" title={busqueda.exacta.descripcion}>
-            {busqueda.exacta.descripcion}
+          {nombreCodigo && <span className="al-catalogo-codigo-nombre" title={nombreCodigo}>
+            {nombreCodigo}
           </span>}
           {aviso && <p id={avisoId} role="alert">{aviso}</p>}
         </div>
         {mosquiterasActivas ? panelMosquiteras : (
           <div className="al-catalogo-miniaturas">
-            {buscando && vista.totalItems === 0 ? <p className="al-catalogo-vacio">Sin modelos con ese código.</p>
+            {buscando && vista.totalItems === 0 && resolucion.tipo !== 'sinDibujo'
+              ? <p className="al-catalogo-vacio">Sin modelos con ese código.</p>
               : vista.items.map((plantilla) => (
                 <button key={plantilla.codigo} type="button" draggable={!onElegir}
                   className="al-designer-thumb" aria-pressed={preparada?.codigo === plantilla.codigo}

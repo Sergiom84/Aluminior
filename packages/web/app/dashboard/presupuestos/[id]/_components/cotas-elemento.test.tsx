@@ -54,7 +54,7 @@ describe('cotas del elemento en el panel', () => {
     const html = panel(modulo, [fi()])
     expect(html).toContain('Fijo inferior')
     expect(html).toContain('data-cota="FI"')
-    expect(html).toContain('data-cota-defecto="FI"')
+    expect(html).toContain('data-cota-valor="FI"')
     expect(html).toContain('>280<')
     expect(html).toContain('value="280"')
     expect(html).toContain('<span>mm</span>')
@@ -74,6 +74,14 @@ describe('cotas del elemento en el panel', () => {
     const aplicado = aplicarBorrador(config, borradores, 'modulos', 'modulo-1')!
     expect(aplicado.modulos[0].cotas).toEqual({ FI: 450 })
     expect(esConfiguracionCerramiento(aplicado)).toBe(true)
+  })
+
+  it('con FI tecleada, la etiqueta muestra el valor de la línea y no el defecto del catálogo', () => {
+    registrar2Ofi()
+    const html = panel(modulo2Ofi({ FI: 1000 }), [fi(300, 'FIJO INFERIOR')])
+    expect(html).toContain('<span class="cifra" data-cota-valor="FI">1000</span>')
+    expect(html).not.toContain('>300<')
+    expect(html).toContain('value="1000"')
   })
 
   it('una estructura sin cotas de catálogo no muestra ningún campo nuevo', () => {

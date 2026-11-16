@@ -2,7 +2,7 @@
 
 import React from 'react'
 import {
-  cotasModuloValidas, resolverGeometriaFi1Ofi, SIMBOLOS_COTA_ANCHO, SIMBOLOS_COTA_MODULO,
+  cotasEfectivasConDefecto, cotasModuloValidas, resolverGeometriaFi1Ofi, SIMBOLOS_COTA_ANCHO, SIMBOLOS_COTA_MODULO,
   type CambiosCotasModulo, type CotaCatalogo, type ModuloCerramiento, type SimboloCotaModulo,
 } from '@aluminior/core/estructuras'
 import type { BorradorModulo } from './use-borradores-cerramiento.ts'
@@ -95,10 +95,12 @@ export function MedidasElemento({
       const texto = textoCota(cota.simbolo, modulo, cotasBorrador, cota.valorPorDefecto)
       const error = errorCota(cota.simbolo, texto, modulo.altoMm, modulo.anchoMm)
       const errorId = `cota-error-${modulo.id}-${cota.simbolo}`
+      // Valor guardado de la línea (o defecto que cabe); nunca el 300 de catálogo si la línea dice otro.
+      const valorEtiqueta = cotasEfectivasConDefecto(modulo, [cota])?.[cota.simbolo]
       return <label key={cota.simbolo} className="al-designer-measure">
         <span className="al-designer-properties-label">
           {etiquetaCota(cota)}
-          {cota.valorPorDefecto !== null && <> <span className="cifra" data-cota-defecto={cota.simbolo}>{cota.valorPorDefecto}</span></>}
+          {valorEtiqueta !== undefined && <> <span className="cifra" data-cota-valor={cota.simbolo}>{valorEtiqueta}</span></>}
         </span>
         <input type="number" step="any" inputMode="decimal" data-cota={cota.simbolo} onKeyDown={alPulsarTecla}
           value={texto === '' ? '' : Number(texto)}
