@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { eq } from 'drizzle-orm'
+import { sumarDecimal } from '@aluminior/core/precios'
 import { crearDb, schema } from '@aluminior/db'
 import { esquemaLinea } from './esquema-linea.ts'
 import { valorarArticulo } from '../articulos/valorar-articulo.ts'
@@ -35,6 +36,7 @@ export async function altaLinea(db: ReturnType<typeof crearDb>, d: EntradaAltaLi
     let acristalamientoAPersistir: RanuraAcristalamiento[] = []
     let opcionesHerraje: OpcionHerrajeElegida[] = []
     let comisionPorc: string | null = null
+    let pvpManual = false
     if (d.tipo === 'ARTICULO') {
       // Los campos opcionales vacíos llegan como 0 por la coerción del esquema.
       // Una medida cero no identifica una pieza: se conserva como ausencia.
@@ -51,10 +53,17 @@ export async function altaLinea(db: ReturnType<typeof crearDb>, d: EntradaAltaLi
         return { ok: false, errores: { codigo: [valoracion.error] } }
       }
       descripcion = valoracion.descripcion
-      precioUnitario = valoracion.precioUnitario === null
-        ? null
-        : Number(valoracion.precioUnitario)
-      aviso = valoracion.aviso
+      if (d.precioUnitarioManual != null) {
+        precioUnitario = Number(d.precioUnitarioManual)
+        aviso = null
+        pvpManual = true
+      } else {
+        const conCargo = valoracion.precioUnitario !== null && d.cargoVarios != null
+          ? sumarDecimal(valoracion.precioUnitario, d.cargoVarios, 2)
+          : valoracion.precioUnitario
+        precioUnitario = conCargo === null ? null : Number(conCargo)
+        aviso = valoracion.aviso
+      }
     } else {
       comisionPorc = await comisionDeLineas(db, d.presupuestoId)
       const resultado = await valorarEstructura(db, {
@@ -66,7 +75,7 @@ export async function altaLinea(db: ReturnType<typeof crearDb>, d: EntradaAltaLi
         varianteAcristalamiento: d.varianteAcristalamiento,
         opcionAcristalamiento: d.opcionAcristalamiento,
         acabadoCodigo: d.acabadoCodigo,
-        acabadoAccesoriosCodigo: d.acabadoCodigo === 'L' ? 'L' : 'UNI',
+        acabadoAccesoriosCodigo: d.acabadoAccesoriosCodigo ?? (d.acabadoCodigo === 'L' ? 'L' : 'UNI'),
         // Por unidad, como Productor: MO y MOCOL dentro del despiece y del
         // precio unitario; el total es Cdad × Precio (banco, iteración 5).
         horasFabricacion: d.horasFabricacion,
@@ -77,8 +86,14 @@ export async function altaLinea(db: ReturnType<typeof crearDb>, d: EntradaAltaLi
       })
       if (!resultado.ok) return { ok: false, errores: resultado.errores }
       descripcion = resultado.descripcion
-      precioUnitario = resultado.precioUnitario
-      aviso = resultado.aviso
+      if (d.precioUnitarioManual != null) {
+        precioUnitario = Number(d.precioUnitarioManual)
+        aviso = null
+        pvpManual = true
+      } else {
+        precioUnitario = resultado.precioUnitario
+        aviso = resultado.aviso
+      }
       piezasAPersistir = resultado.piezas
       acristalamientoAPersistir = resultado.acristalamiento
       opcionesHerraje = resultado.opcionesHerraje
@@ -101,6 +116,7 @@ export async function altaLinea(db: ReturnType<typeof crearDb>, d: EntradaAltaLi
       total: total === null ? null : String(total),
       valoracionCompleta: precioUnitario !== null,
       avisoValoracion: aviso,
+      ...(pvpManual ? { pvpManual: true } : {}),
     }
 
     await guardarLinea(db, d.tipo === 'ESTRUCTURA'
@@ -113,6 +129,7 @@ export async function altaLinea(db: ReturnType<typeof crearDb>, d: EntradaAltaLi
               estructuraCodigo: d.codigo,
               opcionAcristalamiento: d.opcionAcristalamiento,
               acabadoCodigo: d.acabadoCodigo,
+              accesoriosAcabado: d.acabadoAccesoriosCodigo,
               piezas: piezasAPersistir,
               acristalamiento: acristalamientoAPersistir,
               opcionesHerraje,

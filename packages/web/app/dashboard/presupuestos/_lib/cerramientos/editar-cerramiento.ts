@@ -21,6 +21,7 @@ export interface EntradaEdicionCerramiento {
   serieCodigo: string | null
   vidrioCodigo: string | null
   acabadoCodigo: string | null
+  acabadoAccesoriosCodigo?: string | null
   varianteAcristalamiento: '1' | '2'
   referencia: string | null
   cantidad: number
@@ -53,6 +54,7 @@ export async function actualizarCerramiento(
     serieCodigo: entrada.serieCodigo,
     vidrioCodigo: entrada.vidrioCodigo,
     acabadoCodigo: entrada.acabadoCodigo,
+    acabadoAccesoriosCodigo: entrada.acabadoAccesoriosCodigo,
     varianteAcristalamiento: entrada.varianteAcristalamiento,
     catalogoUniones: entrada.catalogoUniones,
   })

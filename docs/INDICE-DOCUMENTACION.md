@@ -54,6 +54,7 @@ se conservan como fuentes inactivas, sin reactivar instrucciones ni permisos.
 
 | Documento | Uso |
 |---|---|
+| [AUDITORIA-PRESUPUESTOS-PDF-2026-11-14.md](AUDITORIA-PRESUPUESTOS-PDF-2026-11-14.md) | Prueba a ciegas de 6 PDF reales frente al contraste de `aluminio.mdb` (14/11/2026) y las 4 unidades resueltas |
 | [AUDITORIA-FASE-0-CORRECCIONES-TERRA.md](paridad/AUDITORIA-FASE-0-CORRECCIONES-TERRA.md) | Evidencia o verificación fechada; conservar sus límites |
 | [BANCO-COMPARACION-PRECIOS.md](paridad/BANCO-COMPARACION-PRECIOS.md) | Banco diagnóstico; contexto económico pendiente |
 | [BANCO-CONTRASTE-2026-10-03.md](paridad/BANCO-CONTRASTE-2026-10-03.md) | Medición local de presupuestos reales, exclusiones, causas y propuestas |

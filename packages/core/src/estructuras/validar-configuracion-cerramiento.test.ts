@@ -1,11 +1,15 @@
 import { afterEach, describe, expect, it } from 'vitest'
-import { crearConfiguracionCerramiento } from './cerramiento.ts'
+import { crearConfiguracionCerramiento, crearConfiguracionSinDibujo } from './cerramiento.ts'
+import { registrarEstructurasSinDibujo } from './sin-dibujo.ts'
 import { generarPlantillaCatalogo } from './diseno-catalogo.ts'
 import { plantillaDiseno, registrarCatalogoDiseno } from './diseno.ts'
 import { esConfiguracionCerramiento } from './validar-configuracion-cerramiento.ts'
 
 describe('medidas económicas del cerramiento', () => {
-  afterEach(() => registrarCatalogoDiseno([]))
+  afterEach(() => {
+    registrarCatalogoDiseno([])
+    registrarEstructurasSinDibujo([])
+  })
 
   it.each([1, 2, 3] as const)('conserva medidas fraccionarias sin redondear en v%s', version => {
     const inicial = crearConfiguracionCerramiento(plantillaDiseno('0')!)
@@ -53,4 +57,20 @@ describe('medidas económicas del cerramiento', () => {
       }
     },
   )
+
+  it('admite un código de catálogo sin dibujo y rechaza inventarlo en una ventana dibujable', () => {
+    registrarEstructurasSinDibujo([{ codigo: '1PCMA', descripcion: 'Puerta calle', anchoMm: 800, altoMm: 2100 }])
+    const puerta = crearConfiguracionSinDibujo({ codigo: '1PCMA', anchoMm: 980, altoMm: 2100 })
+    expect(esConfiguracionCerramiento(puerta)).toBe(true)
+    expect(puerta.modulos[0]?.sinDibujo).toBe(true)
+
+    const dibujable = crearConfiguracionCerramiento(plantillaDiseno('0')!)
+    expect(esConfiguracionCerramiento({
+      ...dibujable,
+      modulos: [{ ...dibujable.modulos[0], sinDibujo: true }],
+    })).toBe(false)
+    expect(esConfiguracionCerramiento(crearConfiguracionSinDibujo({
+      codigo: 'NO-EXISTE', anchoMm: 800, altoMm: 2100,
+    }))).toBe(false)
+  })
 })

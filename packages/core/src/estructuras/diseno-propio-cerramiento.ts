@@ -29,7 +29,9 @@ import {
   dividirHuecoDisenoPropio, eliminarDivisionDisenoPropio,
   type SeleccionHojaHueco,
 } from './diseno-propio/operaciones.ts'
-import { normalizarArbolDiseno, sembrarDisenoPropioModulo } from './diseno-propio/sembrar.ts'
+import {
+  cotasHorizontalesDelDiseno, normalizarArbolDiseno, sembrarDisenoPropioModulo,
+} from './diseno-propio/sembrar.ts'
 import { disenoPropioModuloValido } from './diseno-propio/validar.ts'
 import {
   VERSION_COMPOSICION_CERRAMIENTO, VERSION_CONFIGURACION_CERRAMIENTO,
@@ -41,7 +43,7 @@ export {
   composicionVisualDisenoPropio, disenoPropioModuloValido,
   dividirHuecoDisenoPropio, eliminarDivisionDisenoPropio,
   inspeccionarDisenoPropio, lineasBarrotilloVisual,
-  normalizarArbolDiseno, sembrarDisenoPropioModulo,
+  cotasHorizontalesDelDiseno, normalizarArbolDiseno, sembrarDisenoPropioModulo,
   type DisenoPropioModulo, type DivisionEditableDiseno, type HuecoEditableDiseno,
   type InspeccionDisenoPropio, type ModoHuecoEditable,
   type SegmentoBarrotillo, type SeleccionHojaHueco,

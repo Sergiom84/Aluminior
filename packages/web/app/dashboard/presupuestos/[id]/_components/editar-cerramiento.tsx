@@ -17,6 +17,7 @@ export interface DatosEdicionCerramiento {
   serieCodigo: string | null
   vidrioCodigo: string | null
   acabadoCodigo: string | null
+  acabadoAccesoriosCodigo?: string | null
   varianteAcristalamiento: '1' | '2'
   referencia: string | null
   cantidad: string
@@ -128,6 +129,18 @@ export function EditarCerramiento({
           <label htmlFor={identificador('acabadoCodigo')} className="mb-1 block text-sm">Acabado</label>
           <select {...campo('acabadoCodigo')} defaultValue={datos.acabadoCodigo ?? ''} className={entrada} style={estilo}>
             <option value="">— sin acabado —</option>
+            {acabados.map((acabado) => (
+              <option key={acabado.codigo} value={acabado.codigo}>
+                {acabado.codigo} · {acabado.descripcion}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label htmlFor={identificador('acabadoAccesoriosCodigo')} className="mb-1 block text-sm">Aca. Acc.</label>
+          <select {...campo('acabadoAccesoriosCodigo')} defaultValue={datos.acabadoAccesoriosCodigo ?? ''}
+            className={entrada} style={estilo}>
+            <option value="">Según acabado</option>
             {acabados.map((acabado) => (
               <option key={acabado.codigo} value={acabado.codigo}>
                 {acabado.codigo} · {acabado.descripcion}

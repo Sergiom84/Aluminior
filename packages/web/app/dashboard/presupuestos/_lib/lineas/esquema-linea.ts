@@ -115,9 +115,21 @@ export const esquemaLinea = z.object({
   cantidad: decimalTecleado('Cantidad', {
     maximo: String(MAXIMO_NUMERIC_10_2), porDefecto: '1', mayorQueCero: true,
   }).transform(Number),
+  precioUnitarioManual: decimalTecleado('Precio manual', {
+    maximo: String(MAXIMO_NUMERIC_10_2), porDefecto: '0',
+  }).optional().transform((v) => (!v || signoDecimal(v) === 0 ? null : v)).optional(),
+  /**
+   * Cargo `VARIOS` de una mosquitera. No tiene tarifa única: 0,85 € es el PVP
+   * de catálogo y 50 € lo teclea el operador. Vacío no añade nada.
+   */
+  cargoVarios: decimalTecleado('Cargo VARIOS', {
+    maximo: String(MAXIMO_NUMERIC_10_2), porDefecto: '0',
+  }).optional().transform((v) => (!v || signoDecimal(v) === 0 ? null : v)).optional(),
   anchoMm: z.coerce.number().min(0).max(MAXIMO_INT4).optional(),
   altoMm: z.coerce.number().min(0).max(MAXIMO_INT4).optional(),
   acabadoCodigo: z.string().trim().optional().transform((v) => v || null),
+  /** Vacío: se deduce. Si el operador lo elige, ese código manda. */
+  acabadoAccesoriosCodigo: z.string().trim().max(20).optional().transform((v) => v || null).optional(),
   configuracionCerramiento: z.string().trim().optional().transform((v) => v || null),
   /**
    * Mano de obra adicional, en HORAS. Sustituyen a `ajusteFabricacion` y

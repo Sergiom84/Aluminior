@@ -72,6 +72,23 @@ export function CamposCerramiento({
         </select>
       </div>
       <div>
+        <label htmlFor="acabadoAccesoriosCodigo">Aca. Acc.</label>
+        <select id="acabadoAccesoriosCodigo" name="acabadoAccesoriosCodigo" defaultValue=""
+          className={entrada} style={estilo}>
+          <option value="">Según acabado</option>
+          {acabados.map((item) => (
+            <option key={item.codigo} value={item.codigo}>{item.codigo} · {item.descripcion}</option>
+          ))}
+        </select>
+      </div>
+      <div>
+        <label htmlFor="precioUnitarioManual">PVP manual (€)</label>
+        <input {...atributosCampo('precioUnitarioManual', err)} type="number" min={0} step="0.01"
+          className={`cifra ${entrada}`} placeholder="Automático"
+          style={{ ...estilo, borderColor: bordeCampo('precioUnitarioManual', err, estilo.borderColor) }} />
+        <MensajeError campo="precioUnitarioManual" errores={err} />
+      </div>
+      <div>
         <label htmlFor="cantidad">Cdad.</label>
         <input {...atributosCampo('cantidad', err)} type="number" defaultValue={1} min={1} step={1}
           className={`cifra ${entrada}`}
@@ -140,6 +157,13 @@ export function CamposArticulo({
           className={`cifra ${entrada}`}
           style={{ ...estilo, borderColor: bordeCampo('altoMm', err, estilo.borderColor) }} />
         <MensajeError campo="altoMm" errores={err} />
+      </div>
+      <div className="col-span-3">
+        <label htmlFor="precioUnitarioManual">PVP manual (€)</label>
+        <input {...atributosCampo('precioUnitarioManual', err)} type="number" min={0} step="0.01"
+          className={`cifra ${entrada}`} placeholder="Automático"
+          style={{ ...estilo, borderColor: bordeCampo('precioUnitarioManual', err, estilo.borderColor) }} />
+        <MensajeError campo="precioUnitarioManual" errores={err} />
       </div>
       <div className="col-span-3">
         <label htmlFor="cantidad">Cdad.</label>

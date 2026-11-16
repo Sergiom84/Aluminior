@@ -45,6 +45,16 @@ export type ResultadoAltaCerramiento =
   | { ok: true; alta: AltaCerramiento }
   | { ok: false; errores: Record<string, string[]> }
 
+/** El código elegido sustituye al anterior. Vacío vuelve a la deducción. */
+export function conAcabadoAccesorios(
+  configuracion: ConfiguracionCerramiento,
+  codigo: string | null | undefined,
+): ConfiguracionCerramiento {
+  const { acabadoAccesoriosCodigo: _quitar, ...resto } = configuracion
+  const limpio = codigo?.trim()
+  return limpio ? { ...resto, acabadoAccesoriosCodigo: limpio } : resto
+}
+
 /**
  * Resuelve el cerramiento antes de tocar la base de datos: valida la
  * composición recibida del configurador y deriva de ella descripción y medidas.
@@ -58,7 +68,7 @@ export function prepararAltaCerramiento(datos: DatosAltaCerramiento): ResultadoA
   if (!validacion.ok) {
     return { ok: false, errores: { configuracionCerramiento: [validacion.mensaje] } }
   }
-  const { configuracion } = validacion
+  const configuracion = conAcabadoAccesorios(validacion.configuracion, datos.acabadoAccesoriosCodigo)
   const faltas = faltasParaAceptar(configuracion, {
     serieCodigo: datos.serieCodigo, vidrioCodigo: datos.vidrioCodigo, acabadoCodigo: datos.acabadoCodigo,
   })

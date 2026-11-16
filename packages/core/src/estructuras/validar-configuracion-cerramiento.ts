@@ -10,7 +10,13 @@ import { materialesModuloValidos, materialesUnionValidos } from './materiales-ce
 import { invisibleValido } from './elemento-invisible.ts'
 import { anclajesV3Validos, VERSION_COMPOSICION_CERRAMIENTO } from './composicion-cerramiento.ts'
 import type { ConfiguracionCerramiento } from './cerramiento.ts'
+import { estructuraSinDibujo } from './sin-dibujo.ts'
 import { VERSION_CONFIGURACION_CERRAMIENTO } from './versiones-cerramiento.ts'
+
+function acabadoAccesoriosValido(valor: unknown): boolean {
+  if (valor === undefined) return true
+  return typeof valor === 'string' && valor.trim().length > 0 && valor.length <= 20 && valor === valor.trim()
+}
 
 /**
  * Guarda de datos recibidos del navegador o leídos de la base. Al escribir se
@@ -28,7 +34,8 @@ export function esConfiguracionCerramiento(
       candidato.modulos.length === 0 ||
       candidato.uniones.length !== candidato.modulos.length - 1 ||
       (Object.hasOwn(candidato, 'repartoUniones') && candidato.repartoUniones !== 'PIEZAS') ||
-      !preciosManualesValidos(candidato.preciosManuales)) return false
+      !preciosManualesValidos(candidato.preciosManuales) ||
+      !acabadoAccesoriosValido(candidato.acabadoAccesoriosCodigo)) return false
   const modulosValidos = candidato.modulos.every((modulo) => {
     if (!modulo || typeof modulo.id !== 'string' || typeof modulo.estructuraCodigo !== 'string' ||
       !Number.isFinite(modulo.anchoMm) || modulo.anchoMm <= 0 ||
@@ -38,6 +45,12 @@ export function esConfiguracionCerramiento(
     if (!invisibleValido(modulo.invisible)) return false
     if (!materialesModuloValidos(modulo.materiales) || !cotasModuloValidas(modulo.cotas, modulo.altoMm, modulo.anchoMm) || !compactoModuloValido(modulo.compacto) || !tapajuntasModuloValido(modulo.tapajuntas)) return false
     if (!disenoPropioModuloValido(modulo.disenoPropio, modulo.anchoMm, modulo.altoMm, cotasEfectivasModulo(modulo))) return false
+    if (modulo.sinDibujo === true) {
+      if (plantillaDiseno(modulo.estructuraCodigo) || !estructuraSinDibujo(modulo.estructuraCodigo)) return false
+      if (modulo.disenoPropio || Object.hasOwn(modulo, 'fiMm')) return false
+      return true
+    }
+    if (modulo.sinDibujo !== undefined) return false
     const plantilla = plantillaDiseno(modulo.estructuraCodigo)
     if (!plantilla) return false
     if (!modulo.disenoPropio && !resolverGeometriaComposicion(plantilla.composicion, modulo.anchoMm, modulo.altoMm).valido) return false

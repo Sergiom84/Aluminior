@@ -1,5 +1,7 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
 import { generarPlantillaDisenoPropio, TIPO_COTA, TIPO_NODO } from '../../despiece/diseno-propio/index.ts'
+import { generarPlantillaCatalogo, type NodoCatalogo } from '../diseno-catalogo.ts'
+import { registrarCatalogoDiseno } from '../diseno.ts'
 import {
   actualizarDisenoPropioModuloCerramiento, actualizarDivisionDisenoPropio,
   cambiarBarrotilloHuecoDisenoPropio, cambiarHojaHuecoDisenoPropio,
@@ -85,5 +87,48 @@ describe('operaciones del editor `Diseño V3` (DS4 paso 3)', () => {
     // Volver a fijo desde cualquiera de las dos hojas de la pareja usa `regionId` del contenedor.
     const deVuelta = cambiarHojaHuecoDisenoPropio(enPareja, inspPareja.huecos[0]!.regionId, { modo: 'fijo' })
     expect(inspeccionarDisenoPropio(deVuelta, 1200, 1200).huecos).toHaveLength(1)
+  })
+})
+
+const nodoCatalogo = (id: number, tipo: number, padre: number, cambios: Partial<NodoCatalogo> = {}): NodoCatalogo => ({
+  id, tipo, padre, division: 0, posicion: 0, travesano: '', invisible: false,
+  hoja: 0, numeroHoja: 0, tipoCota: 0, cota: 0, equidistantes: 0,
+  marco: tipo === 1 ? 'NOR' : '', variantes: [], ...cambios,
+})
+
+describe('siembra de cota variable fuera de 1OFI', () => {
+  afterEach(() => registrarCatalogoDiseno([]))
+
+  it('un 2OFI con FI 1000 no congela el travesaño a la cota fija 300 del catálogo', () => {
+    const generada = generarPlantillaCatalogo({
+      codigo: '2OFI', descripcion: 'Dos hojas con fijo inferior', familiaCodigo: '020',
+      anchoMm: 1250, altoMm: 2295, nodos: [
+        nodoCatalogo(0, 1, -1),
+        nodoCatalogo(1, 6, 0, { division: 1, travesano: 'HB', tipoCota: 1, cota: 300 }),
+        nodoCatalogo(2, 2, 0, { division: 1, posicion: 1 }),
+        nodoCatalogo(3, 2, 0, { division: 1, posicion: 2 }),
+        nodoCatalogo(4, 3, 2, { hoja: 6 }),
+        nodoCatalogo(5, 5, 4),
+        nodoCatalogo(6, 5, 3),
+      ],
+    })
+    expect(generada.estado).toBe('dibujable')
+    if (generada.estado !== 'dibujable') return
+    registrarCatalogoDiseno([generada.plantilla])
+
+    const base = crearConfiguracionCerramiento(generada.plantilla)
+    const modulo = { ...base.modulos[0]!, anchoMm: 1250, altoMm: 2295, cotas: { FI: 1000 } }
+    const sembrado = sembrarDisenoPropioModulo(modulo)
+    expect(sembrado?.nodos.find(n => n.tipo === TIPO_NODO.travesano)).toMatchObject({
+      posicion: 'HB', tipoCota: TIPO_COTA.variable, simbolo: 'FI', cota: 1000,
+    })
+
+    const guardada = actualizarDisenoPropioModuloCerramiento(
+      { ...base, modulos: [modulo] }, modulo.id, sembrado!,
+    )
+    expect(guardada.modulos[0]?.disenoPropio?.nodos.find(n => n.tipo === TIPO_NODO.travesano)).toMatchObject({
+      tipoCota: TIPO_COTA.variable, simbolo: 'FI',
+    })
+    expect(guardada.modulos[0]?.cotas).toEqual({ FI: 1000 })
   })
 })

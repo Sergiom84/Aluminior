@@ -10,6 +10,7 @@
 
 import { eq, inArray } from 'drizzle-orm'
 import { schema } from '@aluminior/db'
+import { cotasDespieceDeLinea } from '../cotas-catalogo.ts'
 import {
   clavesTipoHoja, despiezarLineaCatalogo, esTipoHojaMarco, opcionesMarcadas, type CatalogoLinea,
   type FilaDespieceCatalogo, type SeleccionGuardada,
@@ -96,10 +97,13 @@ export async function valorarConCatalogo(
     piezas: [], acristalamiento, opcionesHerraje, partidas: [], materialCompleto: false, motor: 'catalogo',
   }
   const acabado = entrada.acabadoCodigo ?? 'UNI'
+  const cotas = await cotasDespieceDeLinea(cliente, {
+    codigo: entrada.codigo, anchoMm: entrada.anchoMm, altoMm: entrada.altoMm, cotas: entrada.cotas,
+  })
   const resultado = despiezarLineaCatalogo(catalogo, {
     estructura: entrada.codigo, serie: entrada.serieCodigo, anchoMm: entrada.anchoMm, altoMm: entrada.altoMm,
     vidrio: entrada.vidrioCodigo, acabado, acabadoAccesorios: entrada.acabadoAccesoriosCodigo || 'UNI', opcionesGuardadas: guardadas,
-    compacto: entrada.compacto ?? null, accesorios: entrada.accesorios ?? [], cotas: entrada.cotas ?? undefined,
+    compacto: entrada.compacto ?? null, accesorios: entrada.accesorios ?? [], cotas,
     minutosFabricacionAdicionales: minutosDeHoras(entrada.horasFabricacion), minutosColocacion: minutosDeHoras(entrada.horasColocacion),
     preciosManuales: entrada.preciosManuales,
   })

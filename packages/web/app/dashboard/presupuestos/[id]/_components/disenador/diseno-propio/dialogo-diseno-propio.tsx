@@ -19,12 +19,14 @@ type FocoDiseno =
   | { readonly tipo: 'division'; readonly divisionId: number }
 
 function cotasParaVistaPrevia(modulo: ModuloCerramiento, diseno: DisenoPropioModulo) {
-  const base = cotasEfectivasModulo(modulo) ?? {}
-  if (plantillaDiseno(modulo.estructuraCodigo)?.codigo !== '1OFI') return Object.keys(base).length ? base : null
-  const fiNodo = diseno.nodos.find(
-    n => n.tipo === TIPO_NODO.travesano && n.tipoCota === TIPO_COTA.variable && n.simbolo?.trim() === 'FI',
-  )?.cota
-  return { ...base, ...(typeof fiNodo === 'number' && fiNodo > 0 ? { FI: fiNodo } : {}) }
+  const base: Record<string, number> = { ...(cotasEfectivasModulo(modulo) ?? {}) }
+  for (const nodo of diseno.nodos) {
+    if (nodo.tipo !== TIPO_NODO.travesano || nodo.tipoCota !== TIPO_COTA.variable) continue
+    const simbolo = nodo.simbolo?.trim()
+    if (!simbolo || typeof nodo.cota !== 'number' || !(nodo.cota > 0)) continue
+    base[simbolo] = nodo.cota
+  }
+  return Object.keys(base).length ? base : null
 }
 
 export function DialogoDisenoPropio({
@@ -57,9 +59,13 @@ export function DialogoDisenoPropio({
   const moduloVista: ModuloCerramiento = useMemo(() => {
     if (!diseno) return modulo
     const fi = cotasVista?.FI
+    const cotas = { ...modulo.cotas }
+    if (typeof cotasVista?.FI === 'number') cotas.FI = cotasVista.FI
+    if (typeof cotasVista?.FS === 'number') cotas.FS = cotasVista.FS
     return {
       ...modulo,
       ...(plantilla?.codigo === '1OFI' && typeof fi === 'number' ? { fiMm: fi } : {}),
+      ...(Object.keys(cotas).length ? { cotas } : {}),
       disenoPropio: diseno,
     }
   }, [modulo, diseno, cotasVista, plantilla?.codigo])

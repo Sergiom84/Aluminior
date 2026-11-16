@@ -1,8 +1,8 @@
-import { inArray } from 'drizzle-orm'
+import { eq, inArray } from 'drizzle-orm'
 import { schema, type crearDb } from '@aluminior/db'
 import {
-  PLANTILLAS_DISENO, SIMBOLOS_COTA_MODULO, type CotaCatalogo, type CotasCatalogoPorEstructura,
-  type PlantillaDiseno, type SimboloCotaModulo,
+  cotasEfectivasConDefecto, PLANTILLAS_DISENO, SIMBOLOS_COTA_MODULO, type CotaCatalogo,
+  type CotasCatalogoPorEstructura, type PlantillaDiseno, type SimboloCotaModulo,
 } from '@aluminior/core/estructuras'
 
 type Db = Pick<ReturnType<typeof crearDb>, 'select'>
@@ -62,6 +62,31 @@ export function agruparCotasCatalogo(
  */
 export function codigosDibujables(importadas: readonly Pick<PlantillaDiseno, 'codigo'>[]): string[] {
   return [...new Set([...PLANTILLAS_DISENO, ...importadas].map((plantilla) => plantilla.codigo))]
+}
+
+/**
+ * Cotas que ve el despiece de una línea. La escrita gana; si falta, el defecto
+ * de catálogo que quepa en el hueco. Sin fila no se inventa un número.
+ */
+export async function cotasDespieceDeLinea(
+  db: Db,
+  entrada: { codigo: string; anchoMm: number; altoMm: number; cotas?: Readonly<Record<string, number>> | null },
+): Promise<Record<string, number> | undefined> {
+  const codigo = entrada.codigo.trim()
+  if (!codigo || !Number.isFinite(entrada.anchoMm) || !Number.isFinite(entrada.altoMm)) return entrada.cotas ? { ...entrada.cotas } : undefined
+  const filas = await db.select({
+    estructuraCodigo: schema.estructuraCotas.estructuraCodigo,
+    simbolo: schema.estructuraCotas.simbolo,
+    valorPorDefecto: schema.estructuraCotas.valorPorDefecto,
+    nombre: schema.estructuraCotas.nombre,
+    orientacion: schema.estructuraCotas.orientacion,
+  }).from(schema.estructuraCotas)
+    .where(eq(schema.estructuraCotas.estructuraCodigo, codigo))
+  const efectivas = cotasEfectivasConDefecto({
+    estructuraCodigo: codigo, anchoMm: entrada.anchoMm, altoMm: entrada.altoMm,
+    cotas: entrada.cotas ?? undefined,
+  }, agruparCotasCatalogo(filas, [codigo])[codigo])
+  return efectivas ?? undefined
 }
 
 /** Una consulta para todas las estructuras dibujables, no una por elemento. */

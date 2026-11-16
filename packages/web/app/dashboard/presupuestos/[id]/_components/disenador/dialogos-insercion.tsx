@@ -1,15 +1,17 @@
 'use client'
 
-import type { PlantillaDiseno, PreferenciaMedidas } from '@aluminior/core/estructuras'
+import type { EstructuraSinDibujo, PlantillaDiseno, PreferenciaMedidas } from '@aluminior/core/estructuras'
 import { CatalogoInferior } from './catalogo-inferior.tsx'
 import { DialogoDisenador } from './dialogo-disenador.tsx'
 
-export function SelectorVentana({ onElegir, onCerrar }: {
-  onElegir: (plantilla: PlantillaDiseno) => void; onCerrar: () => void
+export function SelectorVentana({ onElegir, onElegirSinDibujo, onCerrar }: {
+  onElegir: (plantilla: PlantillaDiseno) => void
+  onElegirSinDibujo?: (estructura: EstructuraSinDibujo) => void
+  onCerrar: () => void
 }) {
   return <DialogoDisenador titulo="Añadir ventana" onCerrar={onCerrar}>
     <CatalogoInferior preparada={null} onPreparar={() => undefined} onArrastre={() => undefined}
-      onColocar={onElegir} onElegir={onElegir} />
+      onColocar={onElegir} onElegir={onElegir} onColocarSinDibujo={onElegirSinDibujo} />
   </DialogoDisenador>
 }
 

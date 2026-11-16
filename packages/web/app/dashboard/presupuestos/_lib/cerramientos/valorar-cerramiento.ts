@@ -11,6 +11,7 @@ import { partidasValoracion } from '../estructuras/partidas-valoracion.ts'
 import { completarCostesOrigen } from './origen-valorado.ts'
 import { origenesGeometriaCerramiento } from './origenes-geometria.ts'
 import { catalogoDespieceCargado } from '../estructuras/catalogo-despiece/cargado.ts'
+import { activarCacheCatalogo, desactivarCacheCatalogo } from '../estructuras/catalogo-despiece/leer-catalogo.ts'
 import { valorarConCatalogo } from '../estructuras/catalogo-despiece/valorar-con-catalogo.ts'
 
 export interface EntradaValoracionCerramiento {
@@ -69,6 +70,8 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
     }
     return { ...origen, altoMm: fabricacion.uniones.get(origen.id)!.longitudMm, cotas: null, compacto: null, accesorios: null }
   })
+  activarCacheCatalogo(cliente)
+  try {
   for (const g of geometria) {
     const origen: ResultadoOrigenCerramiento = {
       origen: { tipo: g.tipo, id: g.id }, codigo: g.codigo,
@@ -192,4 +195,7 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
   }
   if (!esResultadoCerramiento(resultado)) throw new Error('El motor produjo un snapshot incompatible')
   return resultado
+  } finally {
+    desactivarCacheCatalogo(cliente)
+  }
 }

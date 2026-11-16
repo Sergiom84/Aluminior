@@ -23,6 +23,7 @@ export interface SatelitesEstructura {
   serieCodigo: string
   estructuraCodigo: string
   acabadoCodigo: string | null
+  accesoriosAcabado?: string | null
   piezas: PiezaDespiece[]
   acristalamiento: RanuraAcristalamiento[]
   opcionesHerraje: OpcionHerrajeElegida[]
@@ -197,6 +198,7 @@ async function escribirEstructura(
     opcionAcristalamiento: estructura.opcionAcristalamiento ?? 1,
     estructuraCodigo: estructura.estructuraCodigo,
     acabadoCodigo: estructura.acabadoCodigo,
+    accesoriosAcabado: estructura.accesoriosAcabado ?? null,
   })
   if (estructura.piezas.length) {
     await cliente.insert(schema.lineasDespiece)

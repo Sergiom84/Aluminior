@@ -30,6 +30,8 @@ export function MosquiterasCatalogo({ presupuestoId, modelos, acabados }: {
   const [alto, setAlto] = useState('')
   const [cantidad, setCantidad] = useState('1')
   const [ubicacion, setUbicacion] = useState('')
+  const [precioManual, setPrecioManual] = useState('')
+  const [cargoVarios, setCargoVarios] = useState('')
   const [acabado, setAcabado] = useState(() => acabadoPorDefecto([...acabados]))
   const [estado, setEstado] = useState<Estado>(null)
   const [enviando, setEnviando] = useState(false)
@@ -48,12 +50,16 @@ export function MosquiterasCatalogo({ presupuestoId, modelos, acabados }: {
     datos.set('anchoMm', ancho)
     datos.set('altoMm', alto)
     datos.set('cantidad', cantidad)
+    if (precioManual !== '') datos.set('precioUnitarioManual', precioManual)
+    if (cargoVarios !== '') datos.set('cargoVarios', cargoVarios)
     setEnviando(true)
     try {
       const resultado = await enviar(estado, datos)
       if (resultado === undefined) return
       setEstado(resultado)
-      if (resultado?.ok) { setAncho(''); setAlto(''); setCantidad('1'); setUbicacion('') }
+      if (resultado?.ok) {
+        setAncho(''); setAlto(''); setCantidad('1'); setUbicacion(''); setPrecioManual(''); setCargoVarios('')
+      }
     } finally {
       setEnviando(false)
     }
@@ -103,6 +109,18 @@ export function MosquiterasCatalogo({ presupuestoId, modelos, acabados }: {
         </label>
         <label>Ubicación
           <input value={ubicacion} onChange={(e) => setUbicacion(e.target.value)} placeholder="SALÓN" />
+        </label>
+        <label>Cargo VARIOS (€)
+          <input type="number" min={0} step="0.01" value={cargoVarios} placeholder="Sin cargo"
+            aria-invalid={errores.cargoVarios ? true : undefined}
+            onChange={(e) => setCargoVarios(e.target.value)} className="cifra" />
+          {campo('cargoVarios')}
+        </label>
+        <label>PVP manual (€)
+          <input type="number" min={0} step="0.01" value={precioManual} placeholder="Automático"
+            aria-invalid={errores.precioUnitarioManual ? true : undefined}
+            onChange={(e) => setPrecioManual(e.target.value)} className="cifra" />
+          {campo('precioUnitarioManual')}
         </label>
         <button type="button" className="al-command-primary" disabled={enviando} onClick={() => void anyadir()}>
           {enviando ? 'Añadiendo…' : 'Añadir mosquitera'}

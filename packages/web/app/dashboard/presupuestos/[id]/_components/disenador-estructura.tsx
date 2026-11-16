@@ -3,12 +3,12 @@
 import React from 'react'
 import { useEffect, useRef, useState } from 'react'
 import {
-  cambiarEstructuraModuloCerramiento, cambiarInvisibleModulo, crearConfiguracionCerramiento, esModuloInvisible, dependientesModulo,
+  cambiarEstructuraModuloCerramiento, cambiarInvisibleModulo, crearConfiguracionCerramiento, crearConfiguracionSinDibujo, esModuloInvisible, dependientesModulo,
   eliminarModuloConDependientes, esConfiguracionCerramiento, esModuloRaiz, insertarModuloEnAnclaje,
   medidasCerramiento, moduloDesdePlantilla, plantillaDiseno, PLANTILLAS_DISENO, posicionesCerramiento,
   unionConfigurada, serieEfectivaUnion, UNIONES_VISUALES, type UnionVisual,
   anclajeInferior, anclajeLateral, asignarComplementosModulos, medidasPrimeraVentana, modelosIguales, primerHueco, type AnclajeLibre, type ConfiguracionCerramiento,
-  type CotasCatalogoPorEstructura, type MaterialesGenerales, type PlantillaDiseno,
+  type CotasCatalogoPorEstructura, type EstructuraSinDibujo, type MaterialesGenerales, type PlantillaDiseno,
 } from '@aluminior/core/estructuras'
 import { LienzoCerramiento, type ParteSeleccionada } from './lienzo-cerramiento.tsx'
 import { aplicarComplementosAModelos, useBorradoresCerramiento } from './use-borradores-cerramiento.ts'
@@ -147,6 +147,32 @@ export function DisenadorEstructura({
   }
   const colocarLateral = (plantilla: PlantillaDiseno) =>
     colocarEn(plantilla, configuracion ? anclajeLateral(configuracion) : null, 'a la derecha')
+  const colocarSinDibujo = (estructura: EstructuraSinDibujo, anclaje: AnclajeLibre | null = configuracion ? anclajeLateral(configuracion) : null) => {
+    if (edicion.pendientes) return
+    if (configuracion && !anclaje) {
+      setAviso(`${estructura.codigo} no cabe a la derecha sin solapar otro elemento.`)
+      return
+    }
+    const siguiente = !configuracion
+      ? crearConfiguracionSinDibujo(estructura)
+      : insertarModuloEnAnclaje(configuracion, {
+        estructuraCodigo: estructura.codigo, anchoMm: estructura.anchoMm, altoMm: estructura.altoMm, sinDibujo: true,
+      }, anclaje!)
+    if (configuracion && siguiente === configuracion) {
+      setAviso(`${estructura.codigo} no cabe en esa posición sin solapar otro elemento.`)
+      return
+    }
+    if (!esConfiguracionCerramiento(siguiente, catalogoUniones)) {
+      setAviso(`No se puede colocar ${estructura.codigo}.`)
+      return
+    }
+    setAviso(null)
+    enfocar.current = siguiente.modulos.at(-1)!.id
+    setConfiguracion(siguiente)
+    setVista('propiedades')
+    setSeleccion(seleccionModulo(siguiente, siguiente.modulos.at(-1)!.id))
+    terminarInsercion()
+  }
 
   const seleccionar = (parte: ParteSeleccionada) => { setSeleccion(parte); setVista('propiedades') }
   const seleccionarEntrada = (entrada: Entrada) => seleccionar(entrada.tipo === 'modulo'
@@ -262,7 +288,7 @@ export function DisenadorEstructura({
         {aviso && <p role="alert">{aviso}</p>}
         {vista === 'catalogo' || !configuracion
           ? <CatalogoInferior preparada={preparada} onPreparar={setPreparada} onArrastre={setArrastrada}
-              onColocar={colocarLateral} panelMosquiteras={panelMosquiteras} />
+              onColocar={colocarLateral} onColocarSinDibujo={colocarSinDibujo} panelMosquiteras={panelMosquiteras} />
           : vista === 'propiedades' && (modulo
             ? <PanelElemento modulo={modulo} borrador={edicion.borradores.modulos[modulo.id] ?? {}}
                 cotasCatalogo={cotasCatalogo[modulo.estructuraCodigo] ?? []}
@@ -308,7 +334,8 @@ export function DisenadorEstructura({
         )}
       </div>
       {insercion.selector && <SelectorVentana onCerrar={insercion.cerrarSelector}
-        onElegir={plantilla => insercion.solicitar(plantilla, insercion.selector!.destino)} />}
+        onElegir={plantilla => insercion.solicitar(plantilla, insercion.selector!.destino)}
+        onElegirSinDibujo={estructura => colocarSinDibujo(estructura, insercion.selector!.destino)} />}
       {insercion.pregunta && insercion.medidas && <PreguntaMedidas {...insercion.medidas}
         onCerrar={insercion.cerrarPregunta} onElegir={insercion.responder}
         guardando={insercion.preferencia.guardando} error={insercion.preferencia.error} />}

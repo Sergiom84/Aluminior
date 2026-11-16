@@ -7,6 +7,7 @@ import {
   type NodoDiseno, type PosicionTravesano,
 } from '../../despiece/diseno-propio/index.ts'
 import type { ModuloCerramiento } from '../cerramiento.ts'
+import { cotasEfectivasModulo } from '../cotas-cerramiento.ts'
 import { plantillaDiseno, type AperturaVisual, type NodoVisual } from '../diseno.ts'
 import type { DisenoPropioModulo } from './composicion-visual.ts'
 import { normalizarArbolDiseno } from './normalizar.ts'
@@ -26,7 +27,29 @@ function tipoParejaVisual(izquierda: AperturaVisual, derecha: AperturaVisual): 8
   return null
 }
 
-function sembrarDesdeNodoVisual(composicion: NodoVisual): DisenoPropioModulo | null {
+/**
+ * Un `cotaFija` horizontal del catálogo es `TipoCota = 1` (FI desde abajo, FS
+ * desde arriba), no una medida congelada. El valor lo da la línea si ya lo
+ * tiene; si no, el mm de la plantilla, que es el defecto de catálogo.
+ */
+function cotaHorizontalDeLinea(modulo: ModuloCerramiento, simbolo: 'FI' | 'FS'): number | null {
+  const valor = cotasEfectivasModulo(modulo)?.[simbolo]
+  return typeof valor === 'number' && Number.isFinite(valor) && valor > 0 ? valor : null
+}
+
+export function plantillaAdmiteCotaHorizontal(estructuraCodigo: string, simbolo: 'FI' | 'FS'): boolean {
+  const plantilla = plantillaDiseno(estructuraCodigo)
+  if (!plantilla) return false
+  const desde = simbolo === 'FI' ? 'fin' : 'inicio'
+  const visitar = (nodo: NodoVisual): boolean => {
+    if (nodo.tipo !== 'division') return false
+    if (nodo.eje === 'horizontal' && nodo.cotaFija?.desde === desde) return true
+    return nodo.hijos.some(hijo => visitar(hijo.nodo))
+  }
+  return visitar(plantilla.composicion)
+}
+
+function sembrarDesdeNodoVisual(composicion: NodoVisual, modulo: ModuloCerramiento): DisenoPropioModulo | null {
   const crudos: NodoDiseno[] = [
     { id: 0, tipo: TIPO_NODO.marco, contenidoEn: -1, tipoMarco: 'NOR', cortes: [1, 1, 1, 1] },
   ]
@@ -86,6 +109,9 @@ function sembrarDesdeNodoVisual(composicion: NodoVisual): DisenoPropioModulo | n
       if (nodo.hijos.some(h => h.proporcion !== primeraProp)) return false
     } else if (nodo.hijos.length !== 2) return false
 
+    const simbolo = tieneCota && nodo.eje === 'horizontal'
+      ? (nodo.cotaFija!.desde === 'fin' ? 'FI' as const : 'FS' as const)
+      : null
     const posicion: PosicionTravesano = nodo.eje === 'horizontal'
       ? (nodo.cotaFija?.desde === 'fin' ? 'HB' : 'HA')
       : (nodo.cotaFija?.desde === 'fin' ? 'VD' : 'VI')
@@ -95,8 +121,9 @@ function sembrarDesdeNodoVisual(composicion: NodoVisual): DisenoPropioModulo | n
       crudos.push({
         id: tId, tipo: TIPO_NODO.travesano, contenidoEn: contenedorId, posicion,
         division: divId, orden: i + 1,
-        tipoCota: tieneCota ? TIPO_COTA.fija : TIPO_COTA.equidistante,
-        cota: tieneCota ? nodo.cotaFija!.mm : 0,
+        tipoCota: simbolo ? TIPO_COTA.variable : (tieneCota ? TIPO_COTA.fija : TIPO_COTA.equidistante),
+        cota: simbolo ? (cotaHorizontalDeLinea(modulo, simbolo) ?? nodo.cotaFija!.mm) : (tieneCota ? nodo.cotaFija!.mm : 0),
+        ...(simbolo ? { simbolo } : {}),
         material: 'M', clase: 'V',
       })
     }
@@ -137,5 +164,21 @@ export function sembrarDisenoPropioModulo(modulo: ModuloCerramiento): DisenoProp
       { id: 6, tipo: TIPO_NODO.vidrio, contenidoEn: 3, vidrio: null },
     ])
   }
-  return sembrarDesdeNodoVisual(plantilla.composicion)
+  return sembrarDesdeNodoVisual(plantilla.composicion, modulo)
+}
+
+/** Cotas FI/FS del diseño que la plantilla visual admite. No inventa FI en un fijo sin esa cota. */
+export function cotasHorizontalesDelDiseno(
+  estructuraCodigo: string,
+  diseno: DisenoPropioModulo,
+): Partial<Record<'FI' | 'FS', number>> {
+  const salida: Partial<Record<'FI' | 'FS', number>> = {}
+  for (const nodo of diseno.nodos) {
+    if (nodo.tipo !== TIPO_NODO.travesano || nodo.tipoCota !== TIPO_COTA.variable) continue
+    const simbolo = nodo.simbolo?.trim()
+    if (simbolo !== 'FI' && simbolo !== 'FS') continue
+    if (!plantillaAdmiteCotaHorizontal(estructuraCodigo, simbolo)) continue
+    if (typeof nodo.cota === 'number' && Number.isFinite(nodo.cota) && nodo.cota > 0) salida[simbolo] = nodo.cota
+  }
+  return salida
 }

@@ -1,7 +1,7 @@
 import { and, eq } from 'drizzle-orm'
 import { crearDb, schema } from '@aluminior/db'
 import {
-  ESCALA_PVP_CATALOGO, normalizarAcabado, normalizarDecimal, resolverPorAcabado,
+  ESCALA_PVP_CATALOGO, metrajeSuperficie, multiplicarDecimal, normalizarAcabado, normalizarDecimal, resolverPorAcabado,
 } from '@aluminior/core/precios'
 import { leerPrecioTablaArticulo } from '../precios-tabla/index.ts'
 
@@ -122,6 +122,10 @@ export async function valorarArticulo(
   const [articulo] = await db.select({
     descripcion: schema.articulos.descripcion,
     tipoMetraje: schema.articulos.tipoMetraje,
+    familiaCodigo: schema.articulos.familiaCodigo,
+    metrajeMinimo: schema.articulos.metrajeMinimo,
+    metrajeMultiploAncho: schema.articulos.metrajeMultiploAncho,
+    metrajeMultiploLargo: schema.articulos.metrajeMultiploLargo,
   })
     .from(schema.articulos)
     .where(eq(schema.articulos.codigo, entrada.codigo))
@@ -130,15 +134,19 @@ export async function valorarArticulo(
   if (!articulo) return { ok: false, error: 'Artículo no encontrado' }
 
   // Cdad son unidades del documento. Capturar medidas no acredita todavía
-  // una regla de metraje; ML y M2 no se cobran como si fueran precios por UD.
-  if (articulo.tipoMetraje === 'ML' || articulo.tipoMetraje === 'M2') {
+  // una regla de metraje; ML y el M2 que no sea mosquitera de familia 053
+  // no se cobran como si fueran precios por UD.
+  const esMosquiteraM2 = articulo.tipoMetraje === 'M2' && articulo.familiaCodigo === '053'
+  const medidasEnterasPositivas = typeof entrada.anchoMm === 'number' && Number.isInteger(entrada.anchoMm) && entrada.anchoMm > 0
+    && typeof entrada.altoMm === 'number' && Number.isInteger(entrada.altoMm) && entrada.altoMm > 0
+  if ((articulo.tipoMetraje === 'ML' || articulo.tipoMetraje === 'M2') && !(esMosquiteraM2 && medidasEnterasPositivas)) {
     return {
       ok: true,
       descripcion: articulo.descripcion,
       precioUnitario: null,
-      aviso: entrada.anchoMm != null || entrada.altoMm != null
-        ? `Importe incompleto: la valoración del artículo ${articulo.tipoMetraje} por metraje no está disponible.`
-        : `Importe incompleto: el artículo ${articulo.tipoMetraje} necesita medidas para calcular el metraje.`,
+      aviso: entrada.anchoMm == null && entrada.altoMm == null
+        ? `Importe incompleto: el artículo ${articulo.tipoMetraje} necesita medidas para calcular el metraje.`
+        : `Importe incompleto: la valoración del artículo ${articulo.tipoMetraje} por metraje no está disponible.`,
       acabadoAplicado: null,
     }
   }
@@ -176,19 +184,34 @@ export async function valorarArticulo(
     ))
 
   const resuelta = resolverPrecioArticulo(filas, entrada.acabadoCodigo, entrada.tarifa)
-  return resuelta.precio === null
-    ? {
-        ok: true,
-        descripcion: articulo.descripcion,
-        precioUnitario: null,
-        aviso: resuelta.aviso,
-        acabadoAplicado: null,
-      }
-    : {
-        ok: true,
-        descripcion: articulo.descripcion,
-        precioUnitario: resuelta.precio,
-        aviso: null,
-        acabadoAplicado: resuelta.acabadoAplicado,
-      }
+  if (resuelta.precio === null) {
+    return {
+      ok: true,
+      descripcion: articulo.descripcion,
+      precioUnitario: null,
+      aviso: resuelta.aviso,
+      acabadoAplicado: null,
+    }
+  }
+  if (esMosquiteraM2) {
+    const metraje = metrajeSuperficie(entrada.anchoMm!, entrada.altoMm!, {
+      multiploAnchoCm: Number(articulo.metrajeMultiploAncho ?? 0),
+      multiploLargoCm: Number(articulo.metrajeMultiploLargo ?? 0),
+      minimo: articulo.metrajeMinimo,
+    })
+    return {
+      ok: true,
+      descripcion: articulo.descripcion,
+      precioUnitario: normalizarDecimal(multiplicarDecimal(metraje, resuelta.precio, 2), ESCALA_PVP_CATALOGO),
+      aviso: null,
+      acabadoAplicado: resuelta.acabadoAplicado,
+    }
+  }
+  return {
+    ok: true,
+    descripcion: articulo.descripcion,
+    precioUnitario: resuelta.precio,
+    aviso: null,
+    acabadoAplicado: resuelta.acabadoAplicado,
+  }
 }

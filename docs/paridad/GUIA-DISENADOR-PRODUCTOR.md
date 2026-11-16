@@ -86,7 +86,7 @@ seleccionado`, con los datos del elemento elegido en el lienzo o en el árbol:
 | PERFILES | Código + lupa | Serie de perfiles. La lupa abre la búsqueda de series |
 | VIDRIO | Icono junquillo + código + icono vidrio + lupa | Vidrio del elemento. La lupa abre la búsqueda de vidrios |
 | Acabado | Dos códigos con lupa | Acabado y tonalidad de perfiles (la 2.ª casilla se rellena con `*`) |
-| Aca. Acc. | Dos códigos con lupa | Acabado de accesorios |
+| Aca. Acc. | Dos códigos con lupa | Acabado de accesorios. En Aluminior, desde el 16/11/2026, el alta de la línea lo pregunta; vacío conserva la deducción |
 | Muestras de color y `HUECO` | Dos cuadros + rótulo rojo | Tipo de pieza seleccionada (Pendiente de explicar) |
 | Iconos a la derecha | `P` verde, puerta, escuadra (cartabón), lápiz, casillas | Cartabón: abre `Diseño V3` del elemento (ver «Diseño específico»); el resto, pendiente |
 | `Actualizar` / papelera | Botones | Aplica cambios al elemento / elimina el elemento (borra en cascada lo anclado) |

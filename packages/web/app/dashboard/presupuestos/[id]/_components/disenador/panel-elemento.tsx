@@ -99,7 +99,7 @@ export function PanelElemento({
             Sustituir por {preparada.codigo}
           </button>
         )}
-        {!invisible && onDisenoPropio && (
+        {!invisible && !modulo.sinDibujo && onDisenoPropio && (
           <button type="button" className="al-command"
             data-excepcion={Boolean(modulo.disenoPropio) || undefined}
             disabled={bloqueado} onClick={onDisenoPropio}>

@@ -7,6 +7,7 @@ import { valorarCerramiento } from './valorar-cerramiento.ts'
 import { importesLineaCerramiento } from './importes-linea.ts'
 import { comisionDeLineas } from '../gastos/index.ts'
 import { CODIGO_SIN_PRECIO, configuracionTieneFiExplicito } from '@aluminior/core/estructuras'
+import { catalogoDespieceCargado } from '../estructuras/catalogo-despiece/cargado.ts'
 
 export const AVISO_FI_SIN_VALORAR =
   'Configuración guardada sin valorar: la cota FI de 1OFI aún no dispone de despiece ni cálculo económico verificados.'
@@ -14,7 +15,7 @@ export const AVISO_FI_SIN_VALORAR =
 export async function prepararLineaValorada(tx: ClienteEscritura, alta: AltaCerramiento,
   entrada: { presupuestoId: string; tarifa: number; cantidad: number; horasFabricacion: string; horasColocacion: string },
 ) {
-  if (configuracionTieneFiExplicito(alta.configuracion)) {
+  if (configuracionTieneFiExplicito(alta.configuracion) && !(await catalogoDespieceCargado(tx))) {
     return {
       estado: 'FI_PENDIENTE' as const,
       manoObra: [],

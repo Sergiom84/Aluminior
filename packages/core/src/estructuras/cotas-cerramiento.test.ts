@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest'
 import {
   actualizarCotasModuloCerramiento, cambiarEstructuraModuloCerramiento, crearConfiguracionCerramiento,
 } from './cerramiento.ts'
-import { cotasEfectivasModulo } from './cotas-cerramiento.ts'
+import { cotasEfectivasConDefecto, cotasEfectivasModulo } from './cotas-cerramiento.ts'
 import { generarPlantillaCatalogo } from './diseno-catalogo.ts'
 import { plantillaDiseno, registrarCatalogoDiseno } from './diseno.ts'
 import { esConfiguracionCerramiento } from './validar-configuracion-cerramiento.ts'
@@ -36,6 +36,26 @@ describe('cotas FI/FS por módulo de cerramiento', () => {
     expect(cotasEfectivasModulo(conFi.modulos[0])).toEqual({ FI: 300 })
     expect(cotasEfectivasModulo(conFs.modulos[0])).toEqual({ FS: 400 })
     expect(cotasEfectivasModulo(conTd.modulos[0])).toEqual({ FI: 300, TD: 700 })
+  })
+
+  it('usa el defecto de catálogo solo si la línea no trae la cota y cabe en el hueco', () => {
+    const modulo = { estructuraCodigo: '1O1FL', anchoMm: 840, altoMm: 720 }
+    const catalogo = [
+      { simbolo: 'F' as const, nombre: 'Fijo lateral', valorPorDefecto: 300, orientacion: 'H' },
+      { simbolo: 'FS' as const, nombre: null, valorPorDefecto: null, orientacion: 'V' },
+    ]
+    expect(cotasEfectivasConDefecto(modulo, catalogo)).toEqual({ F: 300 })
+    expect(cotasEfectivasConDefecto({ ...modulo, cotas: { F: 540 } }, catalogo)).toEqual({ F: 540 })
+    expect(cotasEfectivasConDefecto({ ...modulo, anchoMm: 280 }, catalogo)).toBeNull()
+    expect(cotasEfectivasConDefecto(modulo, undefined)).toBeNull()
+    expect(cotasEfectivasConDefecto(
+      { estructuraCodigo: '1OFI', anchoMm: 800, altoMm: 1500, fiMm: 350 },
+      [{ simbolo: 'FI', nombre: null, valorPorDefecto: 999, orientacion: 'V' }],
+    )).toEqual({ FI: 350 })
+    expect(cotasEfectivasConDefecto(
+      { estructuraCodigo: '1OFI', anchoMm: 800, altoMm: 1500 },
+      [{ simbolo: 'FI', nombre: null, valorPorDefecto: 300, orientacion: 'V' }],
+    )).toBeNull()
   })
 
   it('expone fiMm de 1OFI como cota FI y limpia cotas al cambiar de estructura', () => {

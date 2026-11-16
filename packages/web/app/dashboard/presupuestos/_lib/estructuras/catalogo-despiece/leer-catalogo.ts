@@ -21,6 +21,25 @@ import { leerCatalogoPreciosTabla, seleccionarDesdeCatalogo } from '../../precio
 import { leerOpcionesPredeterminadas } from './opciones-accesorio.ts'
 import { leerPerfilesGuia } from './guias-compacto.ts'
 
+const cacheCatalogoLinea = new WeakMap<ClienteEscritura, Map<string, Promise<CatalogoLinea | null>>>()
+
+/** Activa la reutilización de `leerCatalogoLinea` durante una sola valoración. */
+export function activarCacheCatalogo(cliente: ClienteEscritura): void {
+  cacheCatalogoLinea.set(cliente, new Map())
+}
+
+/** Suelta la caché. No debe quedar estado fuera de `valorarCerramiento`. */
+export function desactivarCacheCatalogo(cliente: ClienteEscritura): void {
+  cacheCatalogoLinea.delete(cliente)
+}
+
+function claveCacheCatalogo(e: EntradaCatalogoLinea): string {
+  return JSON.stringify([
+    e.estructura, e.serie, e.vidrio ?? null, e.tarifa,
+    e.adicionales ?? [], e.guias ?? [], e.opcionAcristalamiento ?? 1,
+  ])
+}
+
 const n = (v: string | null | undefined) => v === null || v === undefined ? 0 : Number(v)
 const vacioANull = (v: string | null) => v && v.trim() ? v : null
 
@@ -39,6 +58,17 @@ export interface EntradaCatalogoLinea {
 }
 
 export async function leerCatalogoLinea(cliente: ClienteEscritura, e: EntradaCatalogoLinea): Promise<CatalogoLinea | null> {
+  const mapa = !e.plantillaPropia?.length ? cacheCatalogoLinea.get(cliente) : undefined
+  if (!mapa) return cargarCatalogoLinea(cliente, e)
+  const clave = claveCacheCatalogo(e)
+  const previa = mapa.get(clave)
+  if (previa) return previa
+  const promesa = cargarCatalogoLinea(cliente, e)
+  mapa.set(clave, promesa)
+  return promesa
+}
+
+async function cargarCatalogoLinea(cliente: ClienteEscritura, e: EntradaCatalogoLinea): Promise<CatalogoLinea | null> {
   if (!await tablasMotorCatalogo(cliente)) return null
   const [plantillaFilas, [parametros], [estructura], parametrosEstructura] = await Promise.all([
     cliente.select().from(schema.estructuraPlantillaCatalogo).where(inArray(schema.estructuraPlantillaCatalogo.estructuraCodigo,

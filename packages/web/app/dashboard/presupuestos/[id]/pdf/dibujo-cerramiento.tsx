@@ -37,6 +37,8 @@ export function DibujoCerramientoPdf({ configuracion, ancho = 240, alto = 150 }:
       {/* El elemento invisible (DS3) deja su hueco en blanco. */}
       {dibujo.modulos.filter((modulo) => !modulo.invisible).map((modulo) => <G key={modulo.id}>
         <Rectangulo rect={modulo.rect} fill="#e2e8f0" />
+        {modulo.elementos.length === 0 && <Text x={modulo.rect.x + 4} y={modulo.rect.y + 12}
+          style={{ fontSize: 8 }}>{configuracion.modulos.find((item) => item.id === modulo.id)?.estructuraCodigo}</Text>}
         {modulo.elementos.map((elemento) => {
           if (elemento.tipo === 'separador') {
             return <Rectangulo key={elemento.id} rect={elemento} fill="#cbd5e1" />

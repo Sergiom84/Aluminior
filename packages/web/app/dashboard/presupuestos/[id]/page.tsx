@@ -15,7 +15,7 @@ import { LineaPresupuesto } from './_components/linea-presupuesto.tsx'
 import type { DatosEdicionCerramiento } from './_components/editar-cerramiento.tsx'
 import { PestanasDocumento, PestanasFicha } from '../_components/pestanas-documento.tsx'
 import { referenciaPresupuesto } from '../_lib/identidad-documento.ts'
-import { asegurarCatalogoDiseno } from '../_lib/catalogo-diseno/index.ts'
+import { asegurarCatalogoDiseno, leerEstructurasSinDibujo } from '../_lib/catalogo-diseno/index.ts'
 import { CatalogoDiseno } from './_components/catalogo-diseno.tsx'
 import { leerGastos } from '../_lib/gastos/index.ts'
 import { PaginaGastos } from './_components/pagina-gastos.tsx'
@@ -40,6 +40,7 @@ export default async function DetallePresupuesto({ params, searchParams }: {
     .where(eq(schema.presupuestos.id, id)).limit(1)
   if (!presupuesto) notFound()
   const plantillas = await asegurarCatalogoDiseno(db)
+  const sinDibujo = await leerEstructurasSinDibujo(db)
   const catalogoUniones = (await leerCatalogoUniones()).uniones
   const cotasCatalogo = await leerCotasCatalogoDiseno(db, codigosDibujables(plantillas))
   const [cliente] = presupuesto.clienteCodigo
@@ -96,6 +97,7 @@ export default async function DetallePresupuesto({ params, searchParams }: {
       serieCodigo: cerramiento.serieCodigo,
       vidrioCodigo: cerramiento.vidrioCodigo,
       acabadoCodigo: cerramiento.acabadoCodigo,
+      acabadoAccesoriosCodigo: cerramiento.configuracion.acabadoAccesoriosCodigo ?? null,
       varianteAcristalamiento: cerramiento.varianteAcristalamiento,
       referencia: linea.referencia,
       cantidad: linea.cantidad,
@@ -147,7 +149,7 @@ export default async function DetallePresupuesto({ params, searchParams }: {
         {gastos ? <PaginaGastos datos={{ presupuestoId: id, ...gastos,
           editable: p.estado === 'PENDIENTE' }} /> :
         <PreferenciaMedidasPresupuesto presupuestoId={id} inicial={p.medidasNuevasVentanas}>
-        <CatalogoDiseno plantillas={plantillas}>
+        <CatalogoDiseno plantillas={plantillas} sinDibujo={sinDibujo}>
         <EdicionLineaActiva>
         {p.estado === 'PENDIENTE' && (
           <AltaSinEdicionActiva>

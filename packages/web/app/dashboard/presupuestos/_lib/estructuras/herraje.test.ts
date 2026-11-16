@@ -74,8 +74,8 @@ describe('opciones ofrecidas al configurar', () => {
     expect(llamadas.select).toBe(0)
   })
 
-  // Sin regla medida no se ofrece nada: no se adivina qué herraje lleva una
-  // combinación que la empresa nunca ha fabricado.
+  // Sin fila en herraje_conjuntos y sin parámetros de catálogo (el doble no
+  // configura una segunda respuesta) no se ofrece nada.
   it('devuelve null cuando no hay regla medida', async () => {
     const { cliente } = clienteFalso(null)
     expect(await opcionesHerrajeDe(cliente, 'ELEGANTPVC', '2O')).toBeNull()

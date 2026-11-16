@@ -54,3 +54,24 @@ export function cotasEfectivasModulo(
   }
   return Object.keys(cotas).length ? cotas : null
 }
+
+/**
+ * La línea manda. Si no trae el símbolo, entra el defecto de `estructura_cotas`
+ * solo cuando cabe en el hueco. Sin fila de catálogo no se inventa un número.
+ * El FI de `1OFI` solo sale de `fiMm`: el defecto de catálogo no lo sustituye.
+ */
+export function cotasEfectivasConDefecto(
+  modulo: Pick<ModuloCerramiento, 'fiMm' | 'cotas' | 'anchoMm' | 'altoMm' | 'estructuraCodigo'>,
+  catalogo: readonly CotaCatalogo[] | undefined,
+): Readonly<Record<string, number>> | null {
+  const cotas: Record<string, number> = { ...(cotasEfectivasModulo(modulo) ?? {}) }
+  const es1Ofi = modulo.estructuraCodigo.trim().toUpperCase() === '1OFI'
+  for (const fila of catalogo ?? []) {
+    if (cotas[fila.simbolo] !== undefined) continue
+    if (es1Ofi && fila.simbolo === 'FI') continue
+    if (fila.valorPorDefecto === null) continue
+    if (!cotasModuloValidas({ [fila.simbolo]: fila.valorPorDefecto }, modulo.altoMm, modulo.anchoMm)) continue
+    cotas[fila.simbolo] = fila.valorPorDefecto
+  }
+  return Object.keys(cotas).length ? cotas : null
+}

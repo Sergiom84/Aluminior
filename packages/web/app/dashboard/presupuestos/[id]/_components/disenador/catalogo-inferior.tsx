@@ -3,7 +3,7 @@
 import React, { useId, useMemo, useState } from 'react'
 import {
   buscarVentanasPorCodigo, CATEGORIAS_ESCAPARATE, categoriaConCatalogo, categoriaInicialEscaparate,
-  itemsEscaparate, paginaEscaparate, type PlantillaDiseno,
+  estructuraSinDibujo, itemsEscaparate, paginaEscaparate, type EstructuraSinDibujo, type PlantillaDiseno,
 } from '@aluminior/core/estructuras'
 import { DibujoEstructura } from '../dibujo-estructura.tsx'
 
@@ -15,7 +15,7 @@ const POR_PAGINA = 6
  * En Productor la miniatura se arrastra; aquí el clic la deja preparada, el
  * doble clic la coloca a la derecha y el código exacto más Intro la elige.
  */
-export function CatalogoInferior({ preparada, onPreparar, onArrastre, onColocar, onElegir, panelMosquiteras }: {
+export function CatalogoInferior({ preparada, onPreparar, onArrastre, onColocar, onElegir, onColocarSinDibujo, panelMosquiteras }: {
   /** Sustituye las miniaturas de la familia Mosquiteras (artículos con medidas, no módulos dibujables). */
   panelMosquiteras?: React.ReactNode
   onElegir?: (plantilla: PlantillaDiseno) => void
@@ -23,6 +23,8 @@ export function CatalogoInferior({ preparada, onPreparar, onArrastre, onColocar,
   onPreparar: (plantilla: PlantillaDiseno | null) => void
   onArrastre: (plantilla: PlantillaDiseno | null) => void
   onColocar: (plantilla: PlantillaDiseno) => void
+  /** Código de catálogo que aún no se dibuja. No inventa la hoja. */
+  onColocarSinDibujo?: (estructura: EstructuraSinDibujo) => void
 }) {
   const codigoId = useId()
   const avisoId = useId()
@@ -50,7 +52,12 @@ export function CatalogoInferior({ preparada, onPreparar, onArrastre, onColocar,
   }
   const confirmarCodigo = () => {
     if (!busqueda.consulta) return
-    if (busqueda.exacta) elegir(busqueda.exacta)
+    if (busqueda.exacta) {
+      elegir(busqueda.exacta)
+      return
+    }
+    const sinDibujo = onColocarSinDibujo ? estructuraSinDibujo(busqueda.consulta) : null
+    if (sinDibujo && onColocarSinDibujo) onColocarSinDibujo(sinDibujo)
     else setAviso(`No hay una ventana con el código ${busqueda.consulta}.`)
   }
 

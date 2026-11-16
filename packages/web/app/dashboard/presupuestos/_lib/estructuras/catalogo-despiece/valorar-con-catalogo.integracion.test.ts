@@ -153,6 +153,19 @@ describe('valoración con el catálogo de despiece completo', () => {
     expect(r.piezas.filter(p => p.articuloCodigo === 'QA-VIDRIO')).toHaveLength(2)
     expect(r.acristalamiento).toEqual([1, 2].map(slot => ({ slot, variante: '2', vidrioHojas: 'QA-VIDRIO', vidrioFijos: null })))
   }))
+  it('sin cota en la línea usa el defecto de catálogo y no pisa la cota escrita', () => caso(async tx => {
+    await tx.insert(schema.estructuraPlantillaCatalogo).values(fila(40, { articulo: 'QA-G', componente: '12', funcion: 'TM',
+      formulaLargo: 'A-FI', grupo: 'TM', grupoIzquierdo: 'MV', grupoDerecho: 'MV', posicionTrabajo: 'A' }))
+    await tx.insert(schema.conjuntoDescuentosCorte).values({ conjuntoCodigo: 'QA-SERIE', familia: '001',
+      grupoPrincipal: 'MV', grupo: 'TM', tipoHoja: 'G', descuentoMm: '0' })
+    await tx.insert(schema.estructuraCotas).values({ estructuraCodigo: 'QA-CORR', simbolo: 'FI', valorPorDefecto: '200.00', nombre: 'Fijo inferior' })
+    const porDefecto = await valorarEstructura(tx, entrada)
+    if (!porDefecto.ok) throw new Error('rechazada')
+    expect(porDefecto.piezas.filter(p => p.funcion === 'TM').map(p => Number(p.largoCorteMm))).toEqual([1000])
+    const escrita = await valorarEstructura(tx, { ...entrada, cotas: { FI: 100 } })
+    if (!escrita.ok) throw new Error('rechazada')
+    expect(escrita.piezas.filter(p => p.funcion === 'TM').map(p => Number(p.largoCorteMm))).toEqual([1100])
+  }))
   it('las cotas de la instancia llegan a las fórmulas de la plantilla', () => caso(async tx => {
     // Travesaño sintético con descuento cero entre montantes: el largo depende solo de A y FI.
     await tx.insert(schema.estructuraPlantillaCatalogo).values(fila(40, { articulo: 'QA-G', componente: '12', funcion: 'TM',

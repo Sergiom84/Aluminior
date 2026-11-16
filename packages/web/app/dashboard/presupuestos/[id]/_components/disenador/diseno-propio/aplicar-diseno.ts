@@ -1,5 +1,6 @@
 import {
-  actualizarDisenoPropioModuloCerramiento, esConfiguracionCerramiento,
+  actualizarCotasModuloCerramiento, actualizarDisenoPropioModuloCerramiento,
+  cotasHorizontalesDelDiseno, esConfiguracionCerramiento,
   type ConfiguracionCerramiento, type DisenoPropioModulo,
 } from '@aluminior/core/estructuras'
 
@@ -16,8 +17,13 @@ export function configuracionTrasAceptarDiseno(
   diseno: DisenoPropioModulo | null,
   catalogo: Catalogo,
 ): ConfiguracionCerramiento | null {
-  const siguiente = actualizarDisenoPropioModuloCerramiento(configuracion, id, diseno)
-  if (diseno !== null && siguiente === configuracion) return null
+  const guardado = actualizarDisenoPropioModuloCerramiento(configuracion, id, diseno)
+  if (diseno !== null && guardado === configuracion) return null
+  const modulo = guardado.modulos.find(actual => actual.id === id)
+  const cotas = diseno && modulo ? cotasHorizontalesDelDiseno(modulo.estructuraCodigo, diseno) : {}
+  const siguiente = Object.keys(cotas).length
+    ? actualizarCotasModuloCerramiento(guardado, id, cotas)
+    : guardado
   if (!esConfiguracionCerramiento(siguiente, catalogo)) return null
   return siguiente
 }

@@ -23,13 +23,20 @@ export async function altaCerramientoValorado(db: Pick<ReturnType<typeof crearDb
       vidrioCodigo: alta.alta.datos.vidrioCodigo,
       acabadoCodigo: alta.alta.datos.acabadoCodigo,
     }))
+    const manual = entrada.precioUnitarioManual
+    const importes = manual == null ? preparada.importes : {
+      precioUnitario: manual,
+      total: (Math.round(Number(manual) * entrada.cantidad * 100) / 100).toFixed(2),
+      valoracionCompleta: true,
+    }
     return { tipo: 'CERRAMIENTO', cerramiento: alta.alta,
       ...(preparada.estado === 'VALORADA' ? { resultado: preparada.resultado } : {}),
       manoObra: preparada.manoObra,
       valores: { presupuestoId: entrada.presupuestoId, descripcion,
         referencia: entrada.referencia, cantidad: String(entrada.cantidad),
         anchoMm: alta.alta.anchoMm, altoMm: alta.alta.altoMm,
-        ...preparada.importes, avisoValoracion: preparada.aviso } }
+        ...importes, avisoValoracion: manual == null ? preparada.aviso : null,
+        ...(manual == null ? {} : { pvpManual: true }) } }
   }, entrada.solicitudId ? { id: entrada.solicitudId, alRepetir: valor => { aviso = valor } } : undefined)
   return { ok: true, id: entrada.presupuestoId, mensaje: aviso ?? undefined }
 }

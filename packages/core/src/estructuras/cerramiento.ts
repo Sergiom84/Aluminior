@@ -49,6 +49,11 @@ export interface ModuloCerramiento {
   invisible?: true
   /** Solo en v3: árbol de Diseño V3 modificado en el elemento (DS4). */
   disenoPropio?: DisenoPropioModulo
+  /**
+   * Código de catálogo que aún no tiene dibujo. Ocupa su hueco y se valora
+   * por el despiece; no lleva hoja inventada.
+   */
+  sinDibujo?: true
 }
 
 export interface UnionCerramiento {
@@ -72,6 +77,12 @@ interface ConfiguracionCerramientoBase {
   repartoUniones?: 'PIEZAS'
   /** Precios puestos por el operador a piezas sin PVP, solo para esta línea. */
   preciosManuales?: readonly PrecioManual[]
+  /**
+   * Acabado de accesorios de la línea (`Acabado2`). Ausente: la valoración lo
+   * deduce. No es una cota del dibujo; viaja en el snapshot para no perderlo
+   * al reabrir.
+   */
+  acabadoAccesoriosCodigo?: string
 }
 
 export interface ConfiguracionCerramientoV1 extends ConfiguracionCerramientoBase {
@@ -105,6 +116,21 @@ export function moduloDesdePlantilla(plantilla: PlantillaDiseno, altoMm = planti
     estructuraCodigo: plantilla.codigo,
     anchoMm: plantilla.anchoMm, altoMm,
     ...(plantilla.codigo === '1OFI' ? { fiMm: FI_1OFI_NUEVA_ALTA_MM } : {}),
+  }
+}
+
+/** Primera pieza de un código de catálogo sin plantilla visual. */
+export function crearConfiguracionSinDibujo(estructura: {
+  codigo: string; anchoMm: number; altoMm: number
+}): ConfiguracionCerramiento {
+  return {
+    version: 1,
+    modulos: [{
+      id: 'modulo-1', estructuraCodigo: estructura.codigo,
+      anchoMm: estructura.anchoMm, altoMm: estructura.altoMm, sinDibujo: true,
+    }],
+    uniones: [],
+    repartoUniones: 'PIEZAS',
   }
 }
 

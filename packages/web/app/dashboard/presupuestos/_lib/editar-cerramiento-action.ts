@@ -38,6 +38,7 @@ export async function editarCerramiento(
       serieCodigo: p.data.serieCodigo,
       vidrioCodigo: p.data.vidrioCodigo,
       acabadoCodigo: p.data.acabadoCodigo,
+      acabadoAccesoriosCodigo: p.data.acabadoAccesoriosCodigo,
       varianteAcristalamiento: p.data.varianteAcristalamiento,
       referencia: p.data.referencia,
       cantidad: p.data.cantidad,

@@ -79,3 +79,24 @@ export function construirCatalogoDiseno(
   }
   return plantillas.sort((a, b) => porCodigo.compare(a.codigo, b.codigo))
 }
+
+/**
+ * Códigos con medida de diseño que el generador aún no dibuja. No son
+ * plantillas: el operador puede elegirlos y el motor los valora por despiece.
+ */
+export function estructurasSinDibujoDeCatalogo(
+  estructuras: readonly FilaEstructuraCatalogo[],
+  nodos: readonly FilaNodoCatalogo[],
+): { codigo: string; descripcion: string; anchoMm: number; altoMm: number }[] {
+  const dibujables = new Set(construirCatalogoDiseno(estructuras, nodos).map((p) => p.codigo))
+  return estructuras
+    .filter((estructura) => estructura.familia && estructura.disAnchoMm && estructura.disAltoMm
+      && !dibujables.has(estructura.codigo))
+    .map((estructura) => ({
+      codigo: estructura.codigo,
+      descripcion: estructura.descripcion,
+      anchoMm: estructura.disAnchoMm!,
+      altoMm: estructura.disAltoMm!,
+    }))
+    .sort((a, b) => porCodigo.compare(a.codigo, b.codigo))
+}

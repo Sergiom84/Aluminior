@@ -6,10 +6,11 @@
  * original oculta opciones que aun así se guardan con su default— y tenerlos
  * separados en dos sitios era la vía rápida a que dejaran de coincidir.
  *
- * El juego de conjuntos sale de `herraje_conjuntos`, MEDIDO del histórico
- * (≥3 muestras, ≥90% de consistencia). Sin regla medida no se ofrece ni se
- * guarda nada: no se adivina qué herraje lleva una combinación que la empresa
- * nunca ha fabricado.
+ * El juego de conjuntos sale primero de `herraje_conjuntos`, MEDIDO del histórico
+ * (≥3 muestras, ≥90% de consistencia). Si no hay fila, el respaldo es el catálogo
+ * de despiece: tipo de hoja de la plantilla y `conjunto_parametros_despiece.herrajes`
+ * (`1PCMA` → `ELEGANTPVC+HU536`, `1PMA` → `ELEGANTPVC+HU528`). Sin regla ni
+ * plantilla no se ofrece ni se guarda nada.
  *
  * Extraído de `acciones.ts` en T.69.1 SIN cambiar comportamiento. Las consultas,
  * el orden de los resultados y los casos límite son los que había; lo que
@@ -17,6 +18,7 @@
  * pruebas que fijan ese comportamiento.
  */
 
+import { clavesTipoHoja, esTipoHojaMarco } from '@aluminior/core/despiece'
 import { evaluarFormulaOpciones, parsearFormulaOpciones } from '@aluminior/core/estructuras'
 import { and, eq, inArray } from 'drizzle-orm'
 import { schema } from '@aluminior/db'
@@ -41,8 +43,8 @@ const clave = (fila: { conjuntoCodigo: string; opcionCodigo: string }) =>
 /**
  * Conjuntos medidos para esa combinación y sus opciones.
  *
- * Devuelve `null` cuando no hay regla: es la señal de «no hay nada medido», y
- * los dos usos la interpretan cada uno a su manera.
+ * Devuelve `null` cuando no hay regla medida ni respaldo de catálogo. Los dos
+ * usos interpretan esa ausencia cada uno a su manera.
  */
 async function leerCatalogo(
   cliente: ClienteEscritura,
@@ -55,13 +57,49 @@ async function leerCatalogo(
       eq(schema.herrajeConjuntos.serieCodigo, serieCodigo),
       eq(schema.herrajeConjuntos.estructuraCodigo, estructuraCodigo),
     )).limit(1)
-  if (!regla) return null
+  const codigos = regla
+    ? regla.conjuntos.split('+')
+    : await conjuntosDesdeCatalogo(cliente, serieCodigo, estructuraCodigo)
+  if (!codigos?.length) return null
 
-  const codigos = regla.conjuntos.split('+')
   const filas = await cliente.select()
     .from(schema.opcionesHerraje)
     .where(inArray(schema.opcionesHerraje.conjuntoCodigo, codigos))
   return { codigos, filas }
+}
+
+/**
+ * Conjuntos de herraje que el motor de despiece ya deriva para esa serie y
+ * estructura. Misma lectura que `leer-catalogo.ts`: hoja no marco, clave de
+ * `clavesTipoHoja` y código de `parametros.herrajes`.
+ */
+async function conjuntosDesdeCatalogo(
+  cliente: ClienteEscritura,
+  serieCodigo: string,
+  estructuraCodigo: string,
+): Promise<string[] | null> {
+  const [parametros] = await cliente.select()
+    .from(schema.conjuntoParametrosDespiece)
+    .where(eq(schema.conjuntoParametrosDespiece.conjuntoCodigo, serieCodigo))
+    .limit(1)
+  if (!parametros) return null
+  const plantilla = await cliente.select()
+    .from(schema.estructuraPlantillaCatalogo)
+    .where(eq(schema.estructuraPlantillaCatalogo.estructuraCodigo, estructuraCodigo))
+  if (!plantilla.length) return null
+  const filas = [...plantilla].sort((a, b) => a.lineaOrigen - b.lineaOrigen)
+  const idsHoja = [...new Set(filas.map(f => f.tipoHoja).filter((t): t is string => !esTipoHojaMarco(t)))]
+  if (!idsHoja.length) return null
+  const tiposFila = await cliente.select()
+    .from(schema.tiposHojaCatalogo)
+    .where(inArray(schema.tiposHojaCatalogo.id, idsHoja))
+  const tiposHoja = new Map(tiposFila.map(t => [t.id, t.tipo]))
+  const herrajes = parametros.herrajes as Record<string, string>
+  const conjuntosHerraje = [...new Set(idsHoja
+    .map(t => clavesTipoHoja(tiposHoja.get(t))?.herraje).filter((k): k is string => !!k)
+    .map(k => herrajes[k]).filter((c): c is string => !!c))]
+  if (!conjuntosHerraje.length) return null
+  return [serieCodigo, ...conjuntosHerraje]
 }
 
 /**

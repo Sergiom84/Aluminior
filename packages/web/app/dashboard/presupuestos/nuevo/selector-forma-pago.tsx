@@ -1,4 +1,4 @@
-const FORMAS_PAGO = ['Efectivo', 'Transferencia'] as const
+const FORMAS_PAGO = ['01-CONTADO', '02-TRANSFERENCIA'] as const
 
 /** Desplegable de forma de pago. Conserva un valor anterior distinto para no perderlo al editar. */
 export function SelectorFormaPago({ id, valor = null, className, style }: {

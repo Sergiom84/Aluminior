@@ -155,6 +155,18 @@ describe('artículo suelto con PVP dimensional: SQL y persistencia real', () => 
     }, { precio: '0.0000' })
   })
 
+  it('un precio manual persiste aunque la medida quede fuera de tabla', async () => {
+    await caso(async (tx, presupuestoId) => {
+      expect(await alta(tx, presupuestoId, {
+        anchoMm: '2245', altoMm: '1200', cantidad: '1', precioUnitarioManual: '333',
+      })).toEqual({ ok: true, id: presupuestoId, mensaje: undefined })
+      expect(await leer(tx, presupuestoId)).toMatchObject([{
+        anchoMm: 2245, altoMm: 1200, precioUnitario: '333.0000', total: '333.00',
+        pvpManual: true, valoracionCompleta: true, avisoValoracion: null,
+      }])
+    })
+  })
+
   it('un código desconocido no crea línea ni altera los totales', async () => {
     await caso(async (tx, presupuestoId) => {
       const cabeceraAntes = await tx.select().from(schema.presupuestos).where(eq(schema.presupuestos.id, presupuestoId))

@@ -38,12 +38,12 @@ export function LienzoCerramiento({ configuracion, moduloActivoId, seleccion, on
       preserveAspectRatio="xMidYMid meet" role="group" aria-label="Composición del cerramiento">
       {geometria.modulos.map((modulo, indice) => {
         const datos = configuracion.modulos[indice]!
-        const plantilla = plantillaDiseno(datos.estructuraCodigo)!
+        const plantilla = plantillaDiseno(datos.estructuraCodigo)
         const activa = modulo.id === moduloActivoId
         const compacto = datos.compacto
         return (
           <g key={modulo.id} data-modulo-id={modulo.id} role="button" tabIndex={0}
-            aria-label={`Elemento ${indice}: ${plantilla.descripcion}`}
+            aria-label={`Elemento ${indice}: ${plantilla?.descripcion ?? datos.estructuraCodigo}`}
             data-selected={activa} className="al-chain-module" data-invisible={modulo.invisible || undefined}
             data-movible={movimiento?.puedeMover(modulo.id) || undefined}
             data-en-movimiento={movimiento?.moduloId === modulo.id || undefined}
@@ -63,6 +63,10 @@ export function LienzoCerramiento({ configuracion, moduloActivoId, seleccion, on
               // Hueco (DS3): ocupa su sitio, sin marco ni vidrio; solo un contorno para poder seleccionarlo.
               ? <rect {...svgRect(modulo.rect)} className={activa ? 'al-hueco-invisible al-module-selected' : 'al-hueco-invisible'} />
               : <rect {...svgRect(modulo.rect)} className={activa ? 'al-frame al-module-selected' : 'al-frame'} />}
+            {!modulo.invisible && modulo.elementos.length === 0 && (
+              <text x={modulo.rect.x + modulo.rect.ancho / 2} y={modulo.rect.y + modulo.rect.alto / 2}
+                textAnchor="middle" className="cifra">{datos.estructuraCodigo}</text>
+            )}
             {!modulo.invisible && modulo.elementos.map((elemento) => <ElementoModulo key={`${modulo.id}-${elemento.id}`}
               elemento={elemento} moduloId={modulo.id} seleccion={seleccion} onSeleccion={onSeleccion} />)}
             {!modulo.invisible && compacto && (
