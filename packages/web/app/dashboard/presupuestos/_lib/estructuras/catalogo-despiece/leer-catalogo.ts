@@ -208,9 +208,10 @@ async function cargarCatalogoLinea(cliente: ClienteEscritura, e: EntradaCatalogo
       const a = articuloPor.get(codigo)
       if (!a) return null
       const r = resolverPvpCatalogo((pvpPor.get(codigo) ?? []).map(p => ({ acabadoCodigo: p.acabadoCodigo, precio: p.precio })), acabado)
+      const bloqueoTabla = incidenciaPrecioEnTabla(codigo, preciosTabla.get(codigo)?.precioEnTabla ?? null)
       return {
-        tipoMetraje: a.tipoMetraje, pvp: !incidenciaPrecioEnTabla(codigo, preciosTabla.get(codigo)?.precioEnTabla ?? null) &&
-          r.estado === 'RESUELTO' ? Number(r.precio) : null,
+        tipoMetraje: a.tipoMetraje, pvp: !bloqueoTabla && r.estado === 'RESUELTO' ? Number(r.precio) : null,
+        sinFilaPvp: !bloqueoTabla && r.estado === 'SIN_PRECIO',
         multiploLargoCm: n(a.metrajeMultiploLargo), multiploAnchoCm: n(a.metrajeMultiploAncho), minimo: n(a.metrajeMinimo),
         incrementos: despiecePor.get(codigo)?.incrementosPrecio
           ? (incrementosPor.get(codigo) ?? []).map(i => ({ tipo: i.tipo as 'MET' | 'MED', desde: n(i.desde), hasta: n(i.hasta), porcentaje: n(i.porcentaje) }))

@@ -2,6 +2,7 @@ import { afterAll, describe, expect, it } from 'vitest'
 import { schema } from '@aluminior/db'
 import { eq } from 'drizzle-orm'
 import { pendientesDePrecio } from '@aluminior/core/estructuras'
+import { AVISO_A_CERO } from '@aluminior/core/despiece'
 import { altaLinea } from '../../lineas/alta-linea.ts'
 import { valorarCerramiento } from '../../cerramientos/valorar-cerramiento.ts'
 import { leerResultadoCerramiento } from '../../cerramientos/resultado-persistido.ts'
@@ -11,14 +12,17 @@ import { caso, db, entrada } from './catalogo-qa-corr.fixture.ts'
 afterAll(() => db.$client.end({ timeout: 5 }))
 
 describe('piezas sin PVP y precio puesto por el operador', () => {
-  it('el GRUPO deja el felpudo sin PVP pendiente de precio y el precio manual lo valora', () => caso(async tx => {
+  it('el GRUPO valora a 0 el felpudo sin PVP, lo deja pendiente de precio y el precio manual lo valora', () => caso(async tx => {
     await tx.insert(schema.estructuras).values({ codigo: 'C2', descripcion: 'Corredera de prueba' })
     await tx.update(schema.estructuraPlantillaCatalogo).set({ estructuraCodigo: 'C2' })
       .where(eq(schema.estructuraPlantillaCatalogo.estructuraCodigo, 'QA-CORR'))
     await tx.delete(schema.articulosPvp).where(eq(schema.articulosPvp.articuloCodigo, 'QA-FELPUDO'))
     const base = { version: 1 as const, modulos: [{ id: 'sintetico', estructuraCodigo: 'C2', anchoMm: 1200, altoMm: 1300 }], uniones: [] }
     const pendiente = await valorarCerramiento(tx, { ...entrada, configuracion: base })
-    expect(pendiente.ventaMateriales.completo).toBe(false)
+    // Como Productor: el felpudo sin ninguna fila de PVP cuenta 0 (5 m a 1 €/m con precio = 5 €).
+    expect(pendiente.ventaMateriales).toEqual({ completo: true, importe: '134.56' })
+    expect(pendiente.origenes[0]!.diagnosticos.find(d => d.codigo === 'AVISO_VALORACION')?.detalle)
+      .toContain(`${AVISO_A_CERO}: QA-FELPUDO en`)
     const [felpudo, ...resto] = pendientesDePrecio(pendiente)
     expect(resto).toEqual([])
     expect(felpudo).toMatchObject({ articulo: 'QA-FELPUDO', tipoMetraje: 'ML' })
@@ -45,7 +49,8 @@ describe('piezas sin PVP y precio puesto por el operador', () => {
     }, ['QA-HERR|1'])
     expect(alta.ok).toBe(true)
     const [linea] = await tx.select().from(schema.lineas).where(eq(schema.lineas.presupuestoId, presupuesto!.id))
-    expect(linea!.valoracionCompleta).toBe(false)
+    expect(linea).toMatchObject({ valoracionCompleta: true, precioUnitario: '134.5600' })
+    expect(linea!.avisoValoracion).toContain(`${AVISO_A_CERO}: QA-FELPUDO en`)
     const resultado = await leerResultadoCerramiento(tx, linea!.id)
     const [felpudo] = pendientesDePrecio(resultado!)
     const [ficha] = await leerPendientesPrecio(tx, [linea!], new Map([[linea!.id, resultado]]))

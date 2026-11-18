@@ -189,6 +189,6 @@ export interface ResultadoLineaCatalogo {
   importe: number | null
   incidencias: string[]
   avisos: string[]
-  /** Piezas que bloquean el total por no tener PVP en la tarifa. */
+  /** Piezas sin PVP en la tarifa; el operador puede ponerles precio. Las de un artículo sin fila para su acabado ya cuentan 0. */
   sinPrecio?: PiezaSinPrecio[]
 }

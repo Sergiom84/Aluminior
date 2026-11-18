@@ -7,7 +7,9 @@
  * Compacto, mosquitera y tapajuntas de la línea añaden su plantilla condicionada.
  * Después, el ajuste manual de fabricación y el importe por fila. Cualquier
  * dato ausente o regla sin contrastar deja el importe en null: nunca un total
- * parcial. Contraste con facturas 2026: docs/paridad/fase-7/06.
+ * parcial. Excepción medida: la pieza de un artículo de catálogo sin fila de PVP
+ * para su acabado vale 0, con aviso, como en Productor (EMP0016, 48.336 de 48.359).
+ * Contraste con facturas 2026: docs/paridad/fase-7/06.
  */
 
 import { importeFila, redondearCentimos } from '../../precios/importe-fila.ts'
@@ -22,6 +24,8 @@ import type { CatalogoLinea, EntradaLineaCatalogo, ResultadoLineaCatalogo } from
 const ARTICULO_MANO_OBRA = 'MO'
 const ARTICULO_COLOCACION = 'MOCOL'
 const SIN_PVP = 'sin PVP en la tarifa'
+/** Prefijo del aviso de piezas valoradas a 0 por no tener fila de PVP en su acabado. */
+export const AVISO_A_CERO = 'sin PVP en su acabado, valorado a 0 € como en Productor'
 
 export function despiezarLineaCatalogo(catalogo: CatalogoLinea, entrada: EntradaLineaCatalogo): ResultadoLineaCatalogo {
   const serie = catalogo.serie(entrada.serie)
@@ -50,7 +54,7 @@ export function despiezarLineaCatalogo(catalogo: CatalogoLinea, entrada: Entrada
   }
 
   let total = 0
-  const sinPrecio: PiezaSinPrecio[] = [], conPrecioManual = new Set<string>()
+  const sinPrecio: PiezaSinPrecio[] = [], conPrecioManual = new Set<string>(), aCero = new Set<string>()
   for (const f of filas) {
     const articulo = catalogo.articulo(f.articulo)
     const bloqueo = incidenciaPrecioEnTabla(f.articulo, articulo?.precioEnTabla)
@@ -69,9 +73,15 @@ export function despiezarLineaCatalogo(catalogo: CatalogoLinea, entrada: Entrada
     f.importe = r.importe
     if (r.incidencia === SIN_PVP && tarifa) sinPrecio.push({ articulo: f.articulo, acabado: f.acabado,
       tipoMetraje: tarifa.tipoMetraje, cantidad: f.cantidad, largoMm: f.largoMm, anchoMm: f.anchoMm })
-    if (r.incidencia) incidencias.push(`${f.articulo}: ${r.incidencia}`)
+    if (r.incidencia === SIN_PVP && tarifa?.sinFilaPvp && r.metraje !== null) {
+      // Como Productor: sin fila de PVP para el acabado, la pieza vale 0 y se dice.
+      f.precio = 0
+      f.importe = 0
+      aCero.add(`${f.articulo} en ${f.acabado || 'sin acabado'}`)
+    } else if (r.incidencia) incidencias.push(`${f.articulo}: ${r.incidencia}`)
     else total += r.importe!
   }
+  if (aCero.size) avisos.push(`${AVISO_A_CERO}: ${[...aCero].join(', ')}`)
   if (conPrecioManual.size) avisos.push(`precio puesto a mano: ${[...conPrecioManual].join(', ')}`)
   const unicas = [...new Set(incidencias)]
   return { filas, importe: unicas.length ? null : redondearCentimos(total), incidencias: unicas,

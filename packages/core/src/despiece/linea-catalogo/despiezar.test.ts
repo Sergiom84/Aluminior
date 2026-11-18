@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { despiezarLineaCatalogo } from './despiezar.ts'
+import { AVISO_A_CERO, despiezarLineaCatalogo } from './despiezar.ts'
 import type { ArticuloCatalogo, CatalogoLinea, FilaPlantillaCatalogo } from './tipos.ts'
 import type { ReglaAsociacion } from '../asociaciones/tipos.ts'
 import type { ArticuloTarifado } from '../../precios/importe-fila.ts'
@@ -180,5 +180,23 @@ describe('despiezarLineaCatalogo', () => {
     const conTarifa = despiezarLineaCatalogo(catalogo(), { ...union, preciosManuales: [{ articulo: 'TUBO', acabado: 'L', unidad: 'ML', precio: 99 }] })
     expect(conTarifa.importe).toBe(8.5)
     expect(conTarifa.filas[0]!.precioManual).toBeUndefined()
+  })
+  it('sin fila de PVP para su acabado la pieza vale 0, como en Productor, y se avisa', () => {
+    // Mirador 260289 (nDoc 1083): PSESQCOM en VS sin fila de PVP; Productor guarda precio 0 e importe 0.
+    const sinFila = { tipoMetraje: 'ML', pvp: null, sinFilaPvp: true, multiploLargoCm: 0, multiploAnchoCm: 0, minimo: 0, incrementos: [] }
+    const cat = catalogo({ tarifa: (c, a) => c === 'TUBO' ? sinFila : catalogo().tarifa(c, a) })
+    const union = { ...entrada, estructura: 'UNION', anchoMm: 0, altoMm: 2000 }
+    const r = despiezarLineaCatalogo(cat, union)
+    expect(r.incidencias).toEqual([])
+    expect(r.importe).toBe(2.5)
+    expect(r.filas[0]).toMatchObject({ articulo: 'TUBO', metraje: 2, precio: 0, importe: 0 })
+    expect(r.avisos).toContain(`${AVISO_A_CERO}: TUBO en L`)
+    expect(r.sinPrecio).toEqual([{ articulo: 'TUBO', acabado: 'L', tipoMetraje: 'ML', cantidad: 1, largoMm: 2000, anchoMm: null }])
+    const conManual = despiezarLineaCatalogo(cat, { ...union, preciosManuales: [{ articulo: 'TUBO', acabado: 'L', unidad: 'ML', precio: 4 }] })
+    expect(conManual.importe).toBe(10.5)
+    expect(conManual.avisos.some(a => a.startsWith(AVISO_A_CERO))).toBe(false)
+    const ambiguo = despiezarLineaCatalogo(catalogo({ tarifa: (c, a) => c === 'TUBO' ? { ...sinFila, sinFilaPvp: false } : catalogo().tarifa(c, a) }), union)
+    expect(ambiguo.importe).toBeNull()
+    expect(ambiguo.incidencias).toContain('TUBO: sin PVP en la tarifa')
   })
 })

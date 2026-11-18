@@ -4,7 +4,7 @@ import { eq, sql } from 'drizzle-orm'
 import { valorarEstructura } from '../valorar-estructura.ts'
 import { altaLinea } from '../../lineas/alta-linea.ts'
 import { and } from 'drizzle-orm'
-import { despiezarLineaCatalogo } from '@aluminior/core/despiece'
+import { AVISO_A_CERO, despiezarLineaCatalogo } from '@aluminior/core/despiece'
 import { leerCatalogoLinea } from './leer-catalogo.ts'
 import { valorarCerramiento } from '../../cerramientos/valorar-cerramiento.ts'
 import { caso, db, entrada, fila, type Tx } from './catalogo-qa-corr.fixture.ts'
@@ -273,8 +273,22 @@ describe('valoración con el catálogo de despiece completo', () => {
     const r = await valorarEstructura(tx, { ...entrada, opcionesHerraje: [] })
     expect(r).toMatchObject({ ok: true, motor: 'catalogo', precioUnitario: 131.56, opcionesHerraje: [] })
   }))
-  it('sin precio de un asociado no da total y lo explica', () => caso(async tx => {
+  it('un asociado sin ninguna fila de PVP vale 0, como en Productor, y lo avisa', () => caso(async tx => {
+    const antes = await valorarEstructura(tx, entrada)
     await tx.delete(schema.articulosPvp).where(eq(schema.articulosPvp.articuloCodigo, 'QA-FELPUDO'))
+    const r = await valorarEstructura(tx, entrada)
+    expect(r).toMatchObject({ ok: true, motor: 'catalogo', precioUnitario: 134.56, materialCompleto: true })
+    if (!r.ok || !antes.ok) throw new Error('rechazada')
+    expect(antes.precioUnitario).toBeGreaterThan(134.56)
+    expect(r.aviso).toContain(`${AVISO_A_CERO}: QA-FELPUDO en`)
+    expect(r.sinPrecio?.map(p => p.articulo)).toContain('QA-FELPUDO')
+  }))
+  it('un asociado con PVP genérico ambiguo sigue sin total', () => caso(async tx => {
+    await tx.delete(schema.articulosPvp).where(eq(schema.articulosPvp.articuloCodigo, 'QA-FELPUDO'))
+    await tx.insert(schema.articulosPvp).values([
+      { articuloCodigo: 'QA-FELPUDO', acabadoCodigo: 'UNI', tarifa: entrada.tarifa, precio: '1.0000' },
+      { articuloCodigo: 'QA-FELPUDO', acabadoCodigo: '*', tarifa: entrada.tarifa, precio: '2.0000' },
+    ])
     const r = await valorarEstructura(tx, entrada)
     expect(r).toMatchObject({ ok: true, motor: 'catalogo', precioUnitario: null, materialCompleto: false })
     if (!r.ok) throw new Error('rechazada')

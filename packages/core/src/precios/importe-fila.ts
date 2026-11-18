@@ -33,6 +33,14 @@ export interface ArticuloTarifado {
   multiploAnchoCm: number
   minimo: number
   incrementos: readonly IncrementoPrecio[]
+  /**
+   * `pvp` es null porque el artículo está en el catálogo y la tarifa no tiene
+   * ninguna fila para su acabado (ni genérica). Productor valora esa pieza a 0:
+   * EMP0016, 48.336 de 48.359 piezas en ese caso (las 23 restantes, artículo
+   * `104`). Ausente o false: el null tiene otra causa (ambiguo, precio por tabla)
+   * y sigue bloqueando.
+   */
+  sinFilaPvp?: boolean
 }
 
 export interface FilaValorable {

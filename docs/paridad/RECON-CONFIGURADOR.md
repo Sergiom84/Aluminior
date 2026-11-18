@@ -291,6 +291,10 @@ construir facturación legal (VeriFactu).
 1. Mide toda hipótesis contra el oráculo **antes** de construir.
 2. Ejecuta lo que escribes; compilar no es funcionar.
 3. Nunca inventes un valor: falta → "sin valorar", nunca cero, nunca una cota supuesta.
+   Excepción medida (18/11/2026): la pieza de un artículo de catálogo sin fila de PVP para
+   su acabado (`SIN_PRECIO` del resolvedor) vale 0 con aviso, como en Productor: EMP0016,
+   48.336 de 48.359 piezas en ese caso a precio 0 (las 23 restantes, artículo `104`).
+   Ambiguo, precio por tabla y artículo ausente siguen bloqueando.
 4. Cero datos personales en el repo.
 6. Corrige los errores **explícitamente** en `PLAN.md` (§0.2 de este documento ya lo hace).
 7. Di lo que no sabes y **para**.

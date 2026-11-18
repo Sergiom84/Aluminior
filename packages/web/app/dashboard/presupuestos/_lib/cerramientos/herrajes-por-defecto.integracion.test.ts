@@ -6,6 +6,7 @@ import { altaCerramientoValorado } from './alta-valorada.ts'
 import { actualizarCerramiento } from './editar-cerramiento.ts'
 import { esquemaLinea } from '../lineas/esquema-linea.ts'
 import { leerDocumentoOrigen } from '../copia/leer-origen.ts'
+import { AVISO_A_CERO } from '@aluminior/core/despiece'
 
 const db = crearDb(urlDePruebasValidada(process.env.TEST_DATABASE_URL))
 type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0]
@@ -76,8 +77,17 @@ describe('el configurador sin selector de herraje conserva los defaults de catá
     expect(reabierto.resultadoCerramiento).toEqual(guardado.resultadoCerramiento)
   }))
 
-  it('un herraje predeterminado sin PVP deja toda la composición sin valorar', () => caso(async (tx, id) => {
+  it('un herraje predeterminado sin ninguna fila de PVP vale 0, como en Productor, y lo avisa', () => caso(async (tx, id) => {
     await tx.delete(schema.articulosPvp).where(eq(schema.articulosPvp.articuloCodigo, herraje))
+    expect((await altaCerramientoValorado(tx, entrada(id))).ok).toBe(true)
+    const guardado = (await leerDocumentoOrigen(tx, id))!.lineas[0]!
+    // Solo el perfil: 1,2 m a 10 = 12 por unidad; cantidad 2.
+    expect(guardado.linea).toMatchObject({ precioUnitario: '12.0000', total: '24.00', valoracionCompleta: true })
+    expect(guardado.linea.avisoValoracion).toContain(`${AVISO_A_CERO}: ${herraje} en`)
+    expect(guardado.despiece.map(p => p.articuloCodigo)).toContain(herraje)
+  }))
+  it('un herraje predeterminado con PVP genérico ambiguo deja toda la composición sin valorar', () => caso(async (tx, id) => {
+    await tx.insert(schema.articulosPvp).values({ articuloCodigo: herraje, acabadoCodigo: '*', tarifa: 1, precio: '5' })
     expect((await altaCerramientoValorado(tx, entrada(id))).ok).toBe(true)
     const guardado = (await leerDocumentoOrigen(tx, id))!.lineas[0]!
     expect(guardado.linea).toMatchObject({ precioUnitario: null, total: null, valoracionCompleta: false })

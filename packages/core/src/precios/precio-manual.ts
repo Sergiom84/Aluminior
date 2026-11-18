@@ -2,8 +2,8 @@
  * Precio que el operador pone a una pieza sin PVP en la tarifa.
  *
  * Solo rellena huecos: si la tarifa ya tiene precio para ese artículo y acabado,
- * manda la tarifa. Sin precio manual la pieza sigue bloqueando el total; nunca
- * se valora a cero.
+ * manda la tarifa. Sin precio manual, la pieza de un artículo sin fila de PVP
+ * para su acabado vale 0 como en Productor; cualquier otra ausencia bloquea.
  */
 import { importeFila, redondearCentimos, type ArticuloTarifado, type FilaValorable } from './importe-fila.ts'
 
