@@ -39,4 +39,14 @@ describe('acabado propio en el diseñador', () => {
     expect(html('L')).toContain('<option value="L" selected="">')
     expect(html(null)).toContain('<option value="" selected="">Según línea</option>')
   })
+
+  it('«Actualizar todas las uniones» solo aparece cuando hay a quién copiar', () => {
+    const union = { id: 'u1', codigo: 'GMU038', grosorMm: 60, longitudMm: 1200 }
+    const html = (onActualizarTodas: (() => void) | null) => renderToStaticMarkup(createElement(EditorUnion, {
+      union, indice: 1, pendiente: false, acabados, onActualizarTodas,
+      onChange: () => undefined, onActualizar: () => undefined, onDescartar: () => undefined,
+    }))
+    expect(html(() => undefined)).toContain('Actualizar todas las uniones')
+    expect(html(null)).not.toContain('Actualizar todas las uniones')
+  })
 })

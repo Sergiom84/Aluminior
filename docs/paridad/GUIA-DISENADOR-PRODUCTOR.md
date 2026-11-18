@@ -171,7 +171,7 @@ botón selecciona la unión siguiente y muestra su pestaña:
 | Longitud | mm | Por defecto la del lado común (ej. 400) |
 | Grosor | mm, bloqueado | 20 sin artículo; el del artículo si lo hay (GMU038 = 60) |
 | Tipo de Unión | Dos iconos | **Fija** o **variable** (ver abajo) |
-| `Actualizar todas las uniones` / `Actualizar` | Botones | A todas las uniones / solo a esta |
+| `Actualizar todas las uniones` / `Actualizar` | Botones | A todas las uniones / solo a esta. En Aluminior (18/11/2026), «Actualizar todas las uniones» aplica el borrador de la unión y copia su código (con el grosor de catálogo), `Acabado` y `Aca. Acc.` a las demás; cada una conserva su longitud y su serie. Observado: todas las juntas cambian de código (fase-4/01). Hipótesis: que copie los acabados y no la longitud |
 | Vista previa | Recuadro + casilla | Pendiente |
 
 **Tipo de unión.** Dos tipos según Sergio: fija y variable. Pendiente: qué
@@ -626,7 +626,7 @@ hipótesis.
 | Elemento seleccionado | — | Sí, en una fila: posición calculada, medidas (Intro actualiza), compacto y guías, perfiles, vidrio y acabados propios (solo con varios elementos o excepción ya guardada), mover, convertir en hueco, eliminar |
 | Perfiles (series) | Sí: 57 series | Desplegable de códigos; falta búsqueda con descripción y filtro |
 | Vidrio | Sí: familia 050 | Búsqueda por código y descripción |
-| Acabado | Sí: 18 acabados | Sí (18/11/2026, sin publicar): `Acabado` y `Aca. Acc.` propios en `Elemento seleccionado` y en la unión, por defecto «Según línea»; se aplican con `Actualizar` o a modelos iguales. Cada origen se valora con su acabado y su `Acabado2`, y la descripción del `GRUPO` dice el color de cada elemento (la unión no entra en ella). Caso real: 260289, `PSU006` en `L` dentro de un mirador en `VS` (2 de 231 `GRUPO` de la copia mezclan acabados). Sin mezcla en la línea, todo hereda como antes. Pendiente: «Actualizar todas las uniones», lupa y tonalidad (`*`) |
+| Acabado | Sí: 18 acabados | Sí (18/11/2026, publicado `d407051`): `Acabado` y `Aca. Acc.` propios en `Elemento seleccionado` y en la unión, por defecto «Según línea»; se aplican con `Actualizar` o a modelos iguales. Cada origen se valora con su acabado y su `Acabado2`, y la descripción del `GRUPO` dice el color de cada elemento (la unión no entra en ella: Productor escribe su color solo en la fila hija, `Lin 406280` «… EN COLOR L. BLANCO», y ninguna de las 176 descripciones de `GRUPO` de la copia nombra la unión). Caso real: 260289, `PSU006` en `L` dentro de un mirador en `VS` (2 de 231 `GRUPO` de la copia mezclan acabados). Sin mezcla en la línea, todo hereda como antes. «Actualizar todas las uniones» hecho el 18/11. Pendiente: lupa y tonalidad (`*`) |
 | Unión | Sí: artículos de unión | Parcial; sin «siguiente unión», tipo fija/variable ni escaparate |
 | Insertar tapajuntas cerramientos | Sí: 24 tapajuntas (familia 102) | No; función pendiente de explicar |
 | Insertar compacto | Sí: 17 compactos y guías 051 | Parcial (09/11/2026): bloque en el panel, cajón dibujado y valoración con opciones predeterminadas; sin registro ni medidas manuales; guías valoradas y ventana estrechada por `DescuentoGuia`, contrastado al céntimo el 12/11/2026 |

@@ -8,12 +8,14 @@ import type { BorradorUnion } from './use-borradores-cerramiento.ts'
 import { AcabadosElemento, type AcabadoCatalogo } from './disenador/acabados-elemento.tsx'
 
 export function EditorUnion({ union, indice, pendiente, onChange, onActualizar, onDescartar,
-  onSiguienteUnion = null, catalogoUniones = UNIONES_VISUALES, serieCodigo = null, acabados = [] }: {
+  onSiguienteUnion = null, onActualizarTodas = null, catalogoUniones = UNIONES_VISUALES, serieCodigo = null, acabados = [] }: {
   /** La unión guardada con su borrador encima; los acabados del borrador van en la raíz. */
   union: UnionCerramiento & BorradorUnion; indice: number; pendiente: boolean
   onChange: (cambios: BorradorUnion) => void
   onActualizar: () => void; onDescartar: () => void
   onSiguienteUnion?: (() => void) | null
+  /** Copia código y acabados de esta unión a todas; null con una sola unión. */
+  onActualizarTodas?: (() => void) | null
   catalogoUniones?: readonly UnionVisual[]
   serieCodigo?: string | null
   acabados?: readonly AcabadoCatalogo[]
@@ -61,6 +63,9 @@ export function EditorUnion({ union, indice, pendiente, onChange, onActualizar, 
       elemento={`unión ${indice}`} />}
     <button type="button" className="al-command-primary" disabled={!pendiente} onClick={onActualizar}
       aria-label={`Actualizar unión ${indice}`}>Actualizar</button>
+    {onActualizarTodas && <button type="button" className="al-command" onClick={onActualizarTodas}>
+      Actualizar todas las uniones
+    </button>}
     {pendiente && <button type="button" className="al-command" onClick={onDescartar}
       aria-label={`Descartar cambios unión ${indice}`}>Descartar cambios</button>}
     {onSiguienteUnion && <button type="button" className="al-command" onClick={onSiguienteUnion}>

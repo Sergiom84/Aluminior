@@ -329,6 +329,7 @@ export function DisenadorEstructura({
                   onSiguienteUnion={configuracion.uniones.length > 1 ? seleccionarSiguienteUnion : null}
                   onChange={(cambios) => edicion.editarUnion(union.id, cambios)}
                   onActualizar={() => edicion.aplicar('uniones', union.id)}
+                  onActualizarTodas={configuracion.uniones.length > 1 ? () => edicion.aplicarATodasLasUniones(union.id) : null}
                   onDescartar={() => edicion.descartar('uniones', union.id)} />
               </div>)}
         {configuracion && moduloOpciones && (

@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { anadirModuloCerramiento, crearConfiguracionCerramiento, generarPlantillaCatalogo, plantillaDiseno,
   registrarCatalogoDiseno, UNIONES_VISUALES, esConfiguracionCerramiento } from '@aluminior/core/estructuras'
-import { aplicarBorrador, aplicarComplementosAModelos, type Borradores } from './use-borradores-cerramiento.ts'
+import { aplicarBorrador, aplicarComplementosAModelos, aplicarUnionATodas, type Borradores } from './use-borradores-cerramiento.ts'
 
 const crear = () => anadirModuloCerramiento(
   crearConfiguracionCerramiento(plantillaDiseno('2O')!), plantillaDiseno('2O')!)
@@ -230,5 +230,19 @@ describe('cotas de instancia en el borrador', () => {
     borradores.uniones[union.id] = { acabadoCodigo: null }
     expect(aplicarBorrador(conUnion, borradores, 'uniones', union.id)!.uniones[0]).not.toHaveProperty('materiales')
     expect(original.modulos.every(m => m.materiales === undefined)).toBe(true)
+  })
+
+  it('«Actualizar todas las uniones» aplica antes el borrador y copia código y acabado a las demás', () => {
+    const tres = anadirModuloCerramiento(crear(), plantillaDiseno('2O')!)
+    const [primera, segunda] = tres.uniones as [typeof tres.uniones[0], typeof tres.uniones[0]]
+    const borradores = vacios()
+    borradores.uniones[primera.id] = { codigo: 'PSU006', grosorMm: 0, acabadoCodigo: 'L' }
+    const resultado = aplicarUnionATodas(tres, borradores, primera.id)!
+    expect(resultado.uniones.map(u => [u.codigo, u.longitudMm, u.materiales])).toEqual([
+      ['PSU006', primera.longitudMm, { acabadoCodigo: 'L' }],
+      ['PSU006', segunda.longitudMm, { acabadoCodigo: 'L' }],
+    ])
+    expect(tres.uniones[1]!.codigo).toBe(segunda.codigo)
+    expect(aplicarUnionATodas(tres, vacios(), 'no-existe')).toBeNull()
   })
 })
