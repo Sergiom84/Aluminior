@@ -13,6 +13,9 @@ describe('diagnóstico de valoraciones', () => {
     expect(c).toContain('Faltan costes o materiales necesarios para este origen')
     expect(causasDeAviso(MIRADOR)).toContain('PSESQCOM: sin PVP en la tarifa')
     expect(causasDeAviso(null)).toEqual([])
+    // Desde el 18/11 un mismo aviso de varios elementos se escribe una vez con todos ellos.
+    expect(causasDeAviso('UNION union-1, union-3: Valorado con avisos: sin PVP en su acabado, valorado a 0 € como en Productor: PSESQCOM en VS.'))
+      .toEqual(['sin PVP en su acabado, valorado a 0 € como en Productor: PSESQCOM en VS'])
   })
   it('agrupa solo líneas sin precio o con piezas a 0 €', () => {
     const grupos = agruparPorCausa([

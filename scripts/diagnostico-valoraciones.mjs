@@ -20,7 +20,7 @@ const A_CERO = 'sin PVP en su acabado, valorado a 0 € como en Productor'
 export function causasDeAviso(aviso) {
   if (!aviso) return []
   return [...new Set(aviso.split(/;\s*/)
-    .map(t => t.replace(/^(?:MODULO|UNION)\s+\S+:\s*/, '')
+    .map(t => t.replace(/^(?:MODULO|UNION)\s+[\w-]+(?:,\s*[\w-]+)*:\s*/, '')
       .replace(/^(?:Valorado con avisos|Importe incompleto):\s*/i, '')
       .replace(/\.$/, '').trim())
     .filter(Boolean)

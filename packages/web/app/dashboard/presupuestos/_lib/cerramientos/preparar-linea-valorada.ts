@@ -6,7 +6,8 @@ import type { AltaCerramiento } from './alta-cerramiento.ts'
 import { valorarCerramiento } from './valorar-cerramiento.ts'
 import { importesLineaCerramiento } from './importes-linea.ts'
 import { comisionDeLineas } from '../gastos/index.ts'
-import { CODIGO_SIN_PRECIO, configuracionTieneFiExplicito } from '@aluminior/core/estructuras'
+import { configuracionTieneFiExplicito } from '@aluminior/core/estructuras'
+import { avisoVisibleLinea } from './aviso-linea.ts'
 import { catalogoDespieceCargado } from '../estructuras/catalogo-despiece/cargado.ts'
 
 export const AVISO_FI_SIN_VALORAR =
@@ -35,12 +36,9 @@ export async function prepararLineaValorada(tx: ClienteEscritura, alta: AltaCerr
   const manoObra = await prepararManoObra(tx, { tarifa: entrada.tarifa,
     horas: { fabricacion: entrada.horasFabricacion, colocacion: entrada.horasColocacion } })
   if (manoObra.estado === 'MIGRACION_PENDIENTE') throw new ErrorOperacionCerramiento(manoObra.mensaje)
-  const notas = resultado.origenes.flatMap(o => o.diagnosticos.filter(d => d.codigo !== CODIGO_SIN_PRECIO).map(d =>
-    `${o.origen.tipo} ${o.origen.id}: ${d.detalle}`))
-  if (manoObra.estado === 'PREPARADA') notas.push(...manoObra.notas)
   return { estado: 'VALORADA' as const, resultado,
     manoObra: manoObra.estado === 'PREPARADA' ? manoObra.filas : [],
     importes: importesLineaCerramiento(resultado, String(entrada.cantidad), manoObra,
       await comisionDeLineas(tx, entrada.presupuestoId)),
-    aviso: notas.length ? [...new Set(notas)].join('; ') : null }
+    aviso: avisoVisibleLinea(resultado.origenes, manoObra.estado === 'PREPARADA' ? manoObra.notas : []) }
 }

@@ -22,12 +22,14 @@ export interface PiezaPendientePrecio {
 export interface LineaPendientePrecio {
   lineaId: string
   articuloLinea: string
+  /** La línea tiene precio: sus piezas sin PVP se valoraron a 0 €, como en Productor. */
+  aCero: boolean
   piezas: PiezaPendientePrecio[]
 }
 
 export async function leerPendientesPrecio(
   cliente: ClienteEscritura,
-  lineas: readonly { id: string; articuloCodigo: string | null }[],
+  lineas: readonly { id: string; articuloCodigo: string | null; valoracionCompleta?: boolean | null }[],
   resultados: ReadonlyMap<string, ResultadoCerramientoV1 | null>,
 ): Promise<LineaPendientePrecio[]> {
   const porLinea = lineas.flatMap((linea) => {
@@ -46,6 +48,7 @@ export async function leerPendientesPrecio(
   return porLinea.map(({ linea, pendientes, nombre }) => ({
     lineaId: linea.id,
     articuloLinea: nombre,
+    aCero: linea.valoracionCompleta === true,
     piezas: pendientes.map((p) => ({
       articulo: p.articulo, descripcion: descripcion.get(p.articulo) ?? p.articulo, acabado: p.acabado,
       unidadCatalogo: p.tipoMetraje, unidades: unidadesPosibles(p.filas), filas: p.filas,
