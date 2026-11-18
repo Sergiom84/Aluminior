@@ -17,6 +17,7 @@ import { CatalogoInferior } from './disenador/catalogo-inferior.tsx'
 import { ListaElementos, entradasCerramiento, type Entrada } from './disenador/lista-elementos.tsx'
 import { PanelElemento } from './disenador/panel-elemento.tsx'
 import type { CatalogoComplementosDisenador } from './disenador/complementos-elemento.tsx'
+import type { AcabadoCatalogo } from './disenador/acabados-elemento.tsx'
 import { BarraDisenador, type VistaDisenador } from './disenador/barra-disenador.tsx'
 import { OpcionesCerramiento, siguienteUnionId, type PropsOpcionesCerramiento } from './disenador/opciones-cerramiento.tsx'
 import { useInsercionVentanas } from './disenador/use-insercion-ventanas.ts'
@@ -43,7 +44,7 @@ function seleccionModulo(configuracion: ConfiguracionCerramiento, id: string): P
 export function DisenadorEstructura({
   codigo, anchoMm, altoMm, configuracionInicial, vacio = false, series = [], seriesPorEstructura, panelMosquiteras,
   catalogoUniones = UNIONES_VISUALES, cotasCatalogo = {}, complementosCatalogo, opcionesCatalogo, onElementoOpcionesChange,
-  generales = { serieCodigo: null, vidrioCodigo: null }, onConfiguracionChange,
+  generales = { serieCodigo: null, vidrioCodigo: null }, acabados = [], onConfiguracionChange,
   onDimensionesChange, onValidezChange,
 }: {
   codigo: string
@@ -66,6 +67,8 @@ export function DisenadorEstructura({
   onElementoOpcionesChange?: (elemento: { serie: string; estructura: string } | null) => void
   /** Materiales generales de la línea, para mostrar lo que heredan los elementos. */
   generales?: MaterialesGenerales
+  /** Acabados del catálogo para el acabado propio de módulos y uniones. */
+  acabados?: readonly AcabadoCatalogo[]
 }) {
   const historial = useHistorialCerramiento(() => {
     if (configuracionInicial) return configuracionInicial
@@ -293,7 +296,7 @@ export function DisenadorEstructura({
             ? <PanelElemento modulo={modulo} borrador={edicion.borradores.modulos[modulo.id] ?? {}}
                 cotasCatalogo={cotasCatalogo[modulo.estructuraCodigo] ?? []}
                 complementosCatalogo={complementosCatalogo}
-                generales={generales} series={seriesPorEstructura?.[modulo.estructuraCodigo] ?? series}
+                generales={generales} series={seriesPorEstructura?.[modulo.estructuraCodigo] ?? series} acabados={acabados}
                 modelos={modelosIguales(configuracion, modulo.id).length}
                 onActualizarModelos={() => aplicarAModelos(modulo.id)}
                 indice={entradasCerramiento(configuracion).find((e) => e.id === modulo.id)!.indice}
@@ -319,7 +322,7 @@ export function DisenadorEstructura({
                 onDisenoPropio={() => { setAviso(null); setEditandoDisenoId(modulo.id) }}
                 onMover={() => mover.moviendo === modulo.id ? mover.cancelar() : mover.iniciar(modulo.id)} />
             : union && <div className="al-designer-union-editor">
-                <EditorUnion catalogoUniones={catalogoUniones} serieCodigo={serieEfectivaUnion(configuracion, union, generales)}
+                <EditorUnion catalogoUniones={catalogoUniones} serieCodigo={serieEfectivaUnion(configuracion, union, generales)} acabados={acabados}
                   union={{ ...union, ...edicion.borradores.uniones[union.id] }}
                   indice={entradasCerramiento(configuracion).find((e) => e.id === union.id)!.indice}
                   pendiente={Boolean(edicion.borradores.uniones[union.id])}

@@ -3,7 +3,10 @@
  *
  * Evidencia (docs/paridad/fase-4/00-resumen.md): en 175
  * cerramientos reales de presupuesto con varios elementos, 64 mezclan series de
- * perfiles y 55 vidrios distintos; el acabado no varía nunca. El elemento
+ * perfiles y 55 vidrios distintos. El acabado también puede variar, aunque es
+ * raro: Productor guarda `Acabado` y `Acabado2` (accesorios) en cada fila hija
+ * del GRUPO, y en la copia de EMP0016 2 de 231 GRUPO los mezclan (260289,
+ * GRUPO 406272: una unión PSU006 en L dentro de un mirador en VS). El elemento
  * guarda solo sus excepciones: sin excepción hereda el valor general de la
  * línea, de modo que cambiar el general no pisa lo elegido para un elemento.
  */
@@ -13,23 +16,33 @@ import { anclajesCerramiento, composicionExplicita } from './composicion-cerrami
 export interface MaterialesModulo {
   serieCodigo?: string
   vidrioCodigo?: string
+  acabadoCodigo?: string
+  /** `Acabado2` de Productor: acabado de los accesorios del elemento. */
+  acabadoAccesoriosCodigo?: string
 }
 
 /**
  * La unión guarda su propia serie cuando difiere de la general: en EMP0016,
  * 39 GRUPO de presupuesto unen módulos con una unión cuya serie no es la del
- * primer módulo. La unión no tiene vidrio propio, así que solo admite serie.
+ * primer módulo. La unión no tiene vidrio propio: admite serie y acabados.
  */
 export interface MaterialesUnion {
   serieCodigo?: string
+  acabadoCodigo?: string
+  acabadoAccesoriosCodigo?: string
 }
 
 export type CampoMaterial = keyof MaterialesModulo
-export const CAMPOS_MATERIAL: readonly CampoMaterial[] = ['serieCodigo', 'vidrioCodigo']
+export const CAMPOS_MATERIAL: readonly CampoMaterial[] = ['serieCodigo', 'vidrioCodigo', 'acabadoCodigo', 'acabadoAccesoriosCodigo']
+export type CampoMaterialUnion = keyof MaterialesUnion
+export const CAMPOS_MATERIAL_UNION: readonly CampoMaterialUnion[] = ['serieCodigo', 'acabadoCodigo', 'acabadoAccesoriosCodigo']
 
+/** Valores de la línea. Los acabados son opcionales: ausentes, el elemento no tiene de dónde heredar. */
 export interface MaterialesGenerales {
   serieCodigo: string | null
   vidrioCodigo: string | null
+  acabadoCodigo?: string | null
+  acabadoAccesoriosCodigo?: string | null
 }
 
 export interface MaterialEfectivo {
@@ -45,7 +58,10 @@ export function materialesEfectivos(
     const propio = modulo.materiales?.[campo]
     return propio ? { valor: propio, origen: 'elemento' } : { valor: generales[campo] || null, origen: 'general' }
   }
-  return { serieCodigo: resolver('serieCodigo'), vidrioCodigo: resolver('vidrioCodigo') }
+  return {
+    serieCodigo: resolver('serieCodigo'), vidrioCodigo: resolver('vidrioCodigo'),
+    acabadoCodigo: resolver('acabadoCodigo'), acabadoAccesoriosCodigo: resolver('acabadoAccesoriosCodigo'),
+  }
 }
 
 export function serieEfectivaUnion(
@@ -78,17 +94,31 @@ export function serieEfectivaUnion(
  * no se tocan.
  */
 export type CambiosMaterial = Partial<Record<CampoMaterial, string | null>>
+export type CambiosMaterialUnion = Partial<Record<CampoMaterialUnion, string | null>>
 
-function aplicar(modulo: ModuloCerramiento, cambios: CambiosMaterial): ModuloCerramiento {
-  const materiales: MaterialesModulo = { ...modulo.materiales }
-  for (const campo of CAMPOS_MATERIAL) {
+function aplicar<T extends { materiales?: Partial<Record<C, string>> }, C extends string>(
+  elemento: T, cambios: Partial<Record<C, string | null>>, campos: readonly C[],
+): T {
+  const materiales: Partial<Record<C, string>> = { ...elemento.materiales }
+  for (const campo of campos) {
     if (!Object.hasOwn(cambios, campo)) continue
     const valor = cambios[campo]?.trim().toUpperCase()
     if (valor) materiales[campo] = valor
     else delete materiales[campo]
   }
-  const { materiales: _anterior, ...base } = modulo
-  return Object.keys(materiales).length ? { ...base, materiales } : base
+  const { materiales: _anterior, ...base } = elemento
+  return (Object.keys(materiales).length ? { ...base, materiales } : base) as T
+}
+
+/** Igual que en los módulos: un texto fija la excepción de la unión y `null` la quita. */
+export function asignarMaterialesUnion(
+  configuracion: ConfiguracionCerramiento,
+  id: string,
+  cambios: CambiosMaterialUnion,
+): ConfiguracionCerramiento {
+  if (!configuracion.uniones.some((union) => union.id === id)) return configuracion
+  const base = composicionExplicita(configuracion)
+  return { ...base, uniones: base.uniones.map((union) => union.id === id ? aplicar(union, cambios, CAMPOS_MATERIAL_UNION) : union) }
 }
 
 export function asignarMaterialesModulos(
@@ -99,7 +129,7 @@ export function asignarMaterialesModulos(
   const destino = new Set(ids)
   if (!configuracion.modulos.some((modulo) => destino.has(modulo.id))) return configuracion
   const base = composicionExplicita(configuracion)
-  return { ...base, modulos: base.modulos.map((modulo) => destino.has(modulo.id) ? aplicar(modulo, cambios) : modulo) }
+  return { ...base, modulos: base.modulos.map((modulo) => destino.has(modulo.id) ? aplicar(modulo, cambios, CAMPOS_MATERIAL) : modulo) }
 }
 
 /**
@@ -129,5 +159,5 @@ export function materialesModuloValidos(valor: unknown): boolean {
 }
 
 export function materialesUnionValidos(valor: unknown): boolean {
-  return materialesValidos(valor, ['serieCodigo'])
+  return materialesValidos(valor, CAMPOS_MATERIAL_UNION)
 }

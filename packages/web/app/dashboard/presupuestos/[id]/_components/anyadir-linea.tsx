@@ -161,7 +161,7 @@ export function AnyadirLinea({
             panelMosquiteras={mosquiteras.length ? (
               <MosquiterasCatalogo presupuestoId={presupuestoId} modelos={mosquiteras} acabados={acabados} />
             ) : undefined}
-            generales={{ serieCodigo: serie || null, vidrioCodigo: vidrio || null }} />
+            generales={{ serieCodigo: serie || null, vidrioCodigo: vidrio || null }} acabados={acabados} />
           <CamposCerramiento err={err} series={seriesValidas.grupo} acabados={acabados}
             serie={serie} setSerie={setSerie} vidrio={vidrio} setVidrio={setVidrio} reinicio={edicion} />
         </>

@@ -86,7 +86,7 @@ export function EditarCerramiento({
         onValidezChange={setConfiguracionValida} series={seriesValidas.grupo}
         seriesPorEstructura={seriesValidas.porEstructura} catalogoUniones={catalogoUniones}
         cotasCatalogo={cotasCatalogo} complementosCatalogo={complementosCatalogo}
-        generales={{ serieCodigo: serie || null, vidrioCodigo: vidrio || null }} />
+        generales={{ serieCodigo: serie || null, vidrioCodigo: vidrio || null }} acabados={acabados} />
 
       {estado?.mensaje && (
         <div role={estado.ok ? 'status' : 'alert'} tabIndex={-1} className="mb-3 mt-4 rounded-md border p-3 text-sm"

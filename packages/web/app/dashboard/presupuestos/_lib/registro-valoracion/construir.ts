@@ -2,8 +2,9 @@
  * Registro de UNA valoración de línea, para diagnosticar fallos sin repetir el alta.
  *
  * Pensado para leerse en los logs de Render: qué se tecleó (estructura, serie,
- * vidrio, acabados, medidas, cotas, compacto, uniones), qué salió (precio,
- * completa o no) y por qué (diagnósticos bloqueantes y avisos de cada origen).
+ * vidrio, acabados, materiales propios de cada elemento, medidas, cotas,
+ * compacto, uniones), qué salió (precio, completa o no) y por qué
+ * (diagnósticos bloqueantes y avisos de cada origen).
  * Con eso se compara una línea contra Productor sin reabrirla.
  *
  * Sin datos de cliente: sólo identificadores internos del presupuesto y la línea.
@@ -61,8 +62,12 @@ function datosCerramiento(alta: AltaCerramiento) {
       ...(m.compacto ? { compacto: m.compacto.estructuraCodigo, altoCajonMm: m.compacto.altoCajonMm } : {}),
       ...(m.disenoPropio ? { disenoPropio: true } : {}),
       ...(m.invisible ? { invisible: true } : {}),
+      ...(m.materiales ? { materiales: m.materiales } : {}),
     })),
     uniones: c.uniones.map(u => u.codigo || 'SIN_CONFIGURAR'),
+    // Excepciones de la unión (serie, acabado, Acabado2), en el mismo orden que `uniones`.
+    ...(c.uniones.some(u => u.materiales)
+      ? { materialesUniones: c.uniones.map(u => u.materiales ?? null) } : {}),
     preciosManuales: c.preciosManuales?.length ?? 0,
   }
 }

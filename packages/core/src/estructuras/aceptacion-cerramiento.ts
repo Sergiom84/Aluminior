@@ -37,7 +37,7 @@ export interface FaltaUnion {
   unionId: string
 }
 
-/** Uniones ya configuradas cuyo acabado general no está informado. */
+/** Uniones ya configuradas sin acabado propio ni general. */
 export interface FaltaAcabadoUnion {
   tipo: 'acabado-union'
 }
@@ -79,17 +79,17 @@ export function faltasParaAceptar(
     const campos: CampoFaltaElemento[] = []
     if (!efectivo(modulo.materiales?.serieCodigo, generales.serieCodigo)) campos.push('serie')
     if (!efectivo(modulo.materiales?.vidrioCodigo, generales.vidrioCodigo)) campos.push('vidrio')
-    if (!textoPresente(generales.acabadoCodigo)) campos.push('acabado')
+    if (!efectivo(modulo.materiales?.acabadoCodigo, generales.acabadoCodigo)) campos.push('acabado')
     if (campos.length) faltas.push({
       tipo: 'elemento', moduloId: modulo.id, identificacion: identificacionElemento(modulo), campos,
     })
   }
-  let hayConfigurada = false
+  let hayUnionSinAcabado = false
   for (const union of configuracion.uniones) {
     if (!unionConfigurada(union)) faltas.push({ tipo: 'union', unionId: union.id })
-    else hayConfigurada = true
+    else if (!efectivo(union.materiales?.acabadoCodigo, generales.acabadoCodigo)) hayUnionSinAcabado = true
   }
-  if (hayConfigurada && !textoPresente(generales.acabadoCodigo)) faltas.push({ tipo: 'acabado-union' })
+  if (hayUnionSinAcabado) faltas.push({ tipo: 'acabado-union' })
   return faltas
 }
 

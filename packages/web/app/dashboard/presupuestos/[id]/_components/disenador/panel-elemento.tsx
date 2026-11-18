@@ -9,13 +9,14 @@ import { MedidasElemento } from '../medidas-elemento.tsx'
 import type { BorradorModulo } from '../use-borradores-cerramiento.ts'
 import { ComplementosElemento, type CatalogoComplementosDisenador } from './complementos-elemento.tsx'
 import { MaterialesElemento } from './materiales-elemento.tsx'
+import type { AcabadoCatalogo } from './acabados-elemento.tsx'
 
 /**
  * Pestaña Elemento seleccionado, en una fila de izquierda a derecha: qué es,
  * dónde está (calculado), medidas, materiales propios, complementos y acciones.
  */
 export function PanelElemento({
-  modulo, borrador, indice, rect, pendiente, bloqueado, preparada, eliminable, generales, series, modelos,
+  modulo, borrador, indice, rect, pendiente, bloqueado, preparada, eliminable, generales, series, acabados, modelos,
   cotasCatalogo = [], complementosCatalogo, moviendo, movible, invisible = false, materialesPropios = true,
   onChange, onActualizar, onActualizarModelos, onDescartar, onSustituir, onEliminar, onMover, onInvisible, onDisenoPropio,
 }: {
@@ -29,6 +30,7 @@ export function PanelElemento({
   eliminable: boolean
   generales: MaterialesGenerales
   series: readonly string[]
+  acabados?: readonly AcabadoCatalogo[]
   /** Elementos con la misma estructura, incluido este. */
   modelos: number
   cotasCatalogo?: readonly CotaCatalogo[]
@@ -55,7 +57,8 @@ export function PanelElemento({
   materialesPropios?: boolean
 }) {
   const plantilla = plantillaDiseno(modulo.estructuraCodigo)
-  const { serieCodigo: _s, vidrioCodigo: _v, compacto: _c, tapajuntas: _t, cotas: cotasBorrador, ...medidas } = borrador
+  const { serieCodigo: _s, vidrioCodigo: _v, acabadoCodigo: _a, acabadoAccesoriosCodigo: _aa,
+    compacto: _c, tapajuntas: _t, cotas: cotasBorrador, ...medidas } = borrador
   const hayComplementos = Boolean(complementosCatalogo &&
     (complementosCatalogo.compactos.length > 0 || complementosCatalogo.tapajuntas.length > 0))
   return (
@@ -82,7 +85,7 @@ export function PanelElemento({
       </div>
       {(materialesPropios || hayComplementos) && <div className="al-panel-grupo">
         {materialesPropios && <MaterialesElemento modulo={modulo} borrador={borrador as CambiosMaterial}
-          generales={generales} series={series} onChange={onChange} />}
+          generales={generales} series={series} acabados={acabados} onChange={onChange} />}
         {hayComplementos && complementosCatalogo && (
           <ComplementosElemento modulo={modulo} borrador={borrador as CambiosComplementosModulo}
             catalogo={complementosCatalogo} onChange={onChange} />

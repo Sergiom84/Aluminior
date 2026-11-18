@@ -48,6 +48,7 @@ export async function leerNombresDescripcion(
 ): Promise<DatosDescripcionGrupo> {
   const estructuras = new Set<string>()
   const articulos = new Set<string>()
+  const acabados = new Set<string>()
   const vidrioGeneral = texto(entrada.vidrioCodigo)
   for (const modulo of entrada.configuracion.modulos) {
     const estructura = modulo.invisible ? '0' : texto(modulo.estructuraCodigo)
@@ -58,18 +59,21 @@ export async function leerNombresDescripcion(
     if (tapajuntas) estructuras.add(tapajuntas)
     const vidrio = texto(modulo.materiales?.vidrioCodigo) ?? vidrioGeneral
     if (vidrio) articulos.add(vidrio)
+    const acabadoPropio = texto(modulo.materiales?.acabadoCodigo)
+    if (acabadoPropio) acabados.add(acabadoPropio)
   }
   const acabado = texto(entrada.acabadoCodigo)
+  if (acabado) acabados.add(acabado)
 
   const filasEstructura = estructuras.size
     ? await cliente.select({ codigo: schema.estructuras.codigo, descripcion: schema.estructuras.descripcion })
       .from(schema.estructuras)
       .where(inArray(schema.estructuras.codigo, variantes(estructuras)))
     : []
-  const filasAcabado = acabado
+  const filasAcabado = acabados.size
     ? await cliente.select({ codigo: schema.acabados.codigo, descripcion: schema.acabados.descripcion })
       .from(schema.acabados)
-      .where(inArray(schema.acabados.codigo, variantes([acabado])))
+      .where(inArray(schema.acabados.codigo, variantes(acabados)))
     : []
   const filasArticulo = articulos.size
     ? await cliente.select({ codigo: schema.articulos.codigo, descripcion: schema.articulos.descripcion })

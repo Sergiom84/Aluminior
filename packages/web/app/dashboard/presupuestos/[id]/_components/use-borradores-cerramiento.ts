@@ -3,16 +3,19 @@
 import { useState } from 'react'
 import {
   actualizarModuloCerramiento, actualizarFiModuloCerramiento, actualizarCotasModuloCerramiento,
-  asignarComplementosModulos, asignarMaterialesModulos,
-  CAMPOS_MATERIAL, esConfiguracionCerramiento, unionConGrosorCatalogo, UNIONES_VISUALES,
-  type CambiosComplementosModulo, type CambiosCotasModulo, type CambiosMaterial, type UnionVisual,
+  asignarComplementosModulos, asignarMaterialesModulos, asignarMaterialesUnion,
+  CAMPOS_MATERIAL, CAMPOS_MATERIAL_UNION, esConfiguracionCerramiento, unionConGrosorCatalogo, UNIONES_VISUALES,
+  type CambiosComplementosModulo, type CambiosCotasModulo, type CambiosMaterial, type CambiosMaterialUnion, type UnionVisual,
   type ConfiguracionCerramiento, type ModuloCerramiento, type UnionCerramiento,
 } from '@aluminior/core/estructuras'
 
 type Medidas = Partial<Pick<ModuloCerramiento, 'anchoMm' | 'altoMm' | 'fiMm'>>
 export type BorradorModulo = Medidas & CambiosMaterial & CambiosComplementosModulo & { cotas?: CambiosCotasModulo }
-type Union = Partial<Pick<UnionCerramiento, 'codigo' | 'longitudMm' | 'grosorMm'>>
-export type Borradores = { modulos: Record<string, BorradorModulo>; uniones: Record<string, Union> }
+export type BorradorUnion = Partial<Pick<UnionCerramiento, 'codigo' | 'longitudMm' | 'grosorMm'>> & CambiosMaterialUnion
+export type Borradores = { modulos: Record<string, BorradorModulo>; uniones: Record<string, BorradorUnion> }
+
+const esCampoMaterialUnion = (campo: string): campo is keyof CambiosMaterialUnion =>
+  (CAMPOS_MATERIAL_UNION as readonly string[]).includes(campo)
 
 /**
  * Aplica el borrador de un elemento a él mismo o a los destinos indicados
@@ -41,8 +44,12 @@ export function aplicarBorrador(configuracion: ConfiguracionCerramiento, borrado
     if (Object.keys(complementos).length) siguiente = asignarComplementosModulos(siguiente, destinos, complementos)
   } else {
     if (!configuracion.uniones.some(item => item.id === id)) return null
+    const entradas = Object.entries(borradores.uniones[id] ?? {})
+    const medidas = Object.fromEntries(entradas.filter(([campo]) => !esCampoMaterialUnion(campo)))
+    const materiales = Object.fromEntries(entradas.filter(([campo]) => esCampoMaterialUnion(campo))) as CambiosMaterialUnion
     siguiente = { ...configuracion, uniones: configuracion.uniones.map(item =>
-      item.id === id ? unionConGrosorCatalogo({ ...item, ...borradores.uniones[id] }, catalogo) : item) }
+      item.id === id ? unionConGrosorCatalogo({ ...item, ...medidas }, catalogo) : item) }
+    if (Object.keys(materiales).length) siguiente = asignarMaterialesUnion(siguiente, id, materiales)
   }
   return esConfiguracionCerramiento(siguiente, catalogo) ? siguiente : null
 }
@@ -84,7 +91,7 @@ export function useBorradoresCerramiento(configuracion: ConfiguracionCerramiento
       } }
     })
   }
-  const editarUnion = (id: string, cambios: Union) => {
+  const editarUnion = (id: string, cambios: BorradorUnion) => {
     setError(null)
     setBorradores(actual => ({ ...actual, uniones: {
       ...actual.uniones, [id]: { ...actual.uniones[id], ...cambios },

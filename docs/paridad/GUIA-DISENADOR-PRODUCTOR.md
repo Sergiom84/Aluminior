@@ -166,7 +166,7 @@ botón selecciona la unión siguiente y muestra su pestaña:
 | Campo | Control | Uso |
 |---|---|---|
 | Unión | Código + lupa + desplegable + ojo | Artículo de unión. El ojo abre el escaparate `UNIONES` con dibujos |
-| Acabado | Dos códigos con lupa | Acabado propio de la unión |
+| Acabado | Dos códigos con lupa | Acabado propio de la unión. Productor lo guarda en `Acabado` (y `Acabado2`) de la fila hija; en Aluminior, `materiales.acabadoCodigo` de la unión |
 | `Longitud de la unión Manual` | Casilla | Permite fijar la longitud a mano |
 | Longitud | mm | Por defecto la del lado común (ej. 400) |
 | Grosor | mm, bloqueado | 20 sin artículo; el del artículo si lo hay (GMU038 = 60) |
@@ -623,10 +623,10 @@ hipótesis.
 | Escaparate de ventanas | Sí: 541 estructuras, 160 dibujables | Sí, con paginación y elección por código (09/11/2026); faltan familias no dibujables |
 | Composición a la derecha / debajo | — | Sí: «+» lateral e inferior y botones de la barra (01/11/2026) |
 | Mover una pieza colocada | — | Sí: arrastre con ajuste a anclajes y botón «Mover elemento», también el primero; deshacer y rehacer (DS2) |
-| Elemento seleccionado | — | Sí, en una fila: posición calculada, medidas (Intro actualiza), compacto y guías, perfiles y vidrio propios (solo con varios elementos o excepción ya guardada), mover, convertir en hueco, eliminar |
+| Elemento seleccionado | — | Sí, en una fila: posición calculada, medidas (Intro actualiza), compacto y guías, perfiles, vidrio y acabados propios (solo con varios elementos o excepción ya guardada), mover, convertir en hueco, eliminar |
 | Perfiles (series) | Sí: 57 series | Desplegable de códigos; falta búsqueda con descripción y filtro |
 | Vidrio | Sí: familia 050 | Búsqueda por código y descripción |
-| Acabado | Sí: 18 acabados | No hay acabado por elemento en el panel del diseñador |
+| Acabado | Sí: 18 acabados | Sí (18/11/2026, sin publicar): `Acabado` y `Aca. Acc.` propios en `Elemento seleccionado` y en la unión, por defecto «Según línea»; se aplican con `Actualizar` o a modelos iguales. Cada origen se valora con su acabado y su `Acabado2`, y la descripción del `GRUPO` dice el color de cada elemento (la unión no entra en ella). Caso real: 260289, `PSU006` en `L` dentro de un mirador en `VS` (2 de 231 `GRUPO` de la copia mezclan acabados). Sin mezcla en la línea, todo hereda como antes. Pendiente: «Actualizar todas las uniones», lupa y tonalidad (`*`) |
 | Unión | Sí: artículos de unión | Parcial; sin «siguiente unión», tipo fija/variable ni escaparate |
 | Insertar tapajuntas cerramientos | Sí: 24 tapajuntas (familia 102) | No; función pendiente de explicar |
 | Insertar compacto | Sí: 17 compactos y guías 051 | Parcial (09/11/2026): bloque en el panel, cajón dibujado y valoración con opciones predeterminadas; sin registro ni medidas manuales; guías valoradas y ventana estrechada por `DescuentoGuia`, contrastado al céntimo el 12/11/2026 |

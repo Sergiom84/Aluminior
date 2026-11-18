@@ -3,16 +3,19 @@
 import React from 'react'
 import type { CambiosMaterial, MaterialesGenerales, ModuloCerramiento } from '@aluminior/core/estructuras'
 import { CampoVidrio } from '../vidrios/campo-vidrio.tsx'
+import { AcabadosElemento, type AcabadoCatalogo } from './acabados-elemento.tsx'
 
 /**
- * PERFILES y VIDRIO del elemento. Vacío significa heredar el valor general de
- * la línea; lo escrito es una excepción del elemento que se aplica con Actualizar.
+ * PERFILES, VIDRIO y acabados del elemento. Vacío significa heredar el valor
+ * general de la línea; lo escrito es una excepción del elemento que se aplica
+ * con Actualizar.
  */
-export function MaterialesElemento({ modulo, borrador, generales, series, onChange }: {
+export function MaterialesElemento({ modulo, borrador, generales, series, acabados = [], onChange }: {
   modulo: ModuloCerramiento
   borrador: CambiosMaterial
   generales: MaterialesGenerales
   series: readonly string[]
+  acabados?: readonly AcabadoCatalogo[]
   onChange: (cambios: CambiosMaterial) => void
 }) {
   const valor = (campo: keyof CambiosMaterial) => Object.hasOwn(borrador, campo)
@@ -35,5 +38,7 @@ export function MaterialesElemento({ modulo, borrador, generales, series, onChan
         data-excepcion={Boolean(valor('vidrioCodigo')) || undefined} className="cifra"
         onChange={codigo => onChange({ vidrioCodigo: codigo || null })} />
     </label>
+    {acabados.length > 0 && <AcabadosElemento acabados={acabados} valor={valor} onChange={onChange}
+      elemento="del elemento" claseCampo="al-designer-measure" />}
   </>
 }

@@ -75,7 +75,8 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
   for (const g of geometria) {
     const origen: ResultadoOrigenCerramiento = {
       origen: { tipo: g.tipo, id: g.id }, codigo: g.codigo,
-      serieCodigo: g.materiales?.serieCodigo.valor ?? entrada.serieCodigo, acabadoCodigo: entrada.acabadoCodigo,
+      serieCodigo: g.materiales?.serieCodigo.valor ?? entrada.serieCodigo,
+      acabadoCodigo: g.materiales.acabadoCodigo.valor ?? entrada.acabadoCodigo,
       vidrioCodigo: g.materiales?.vidrioCodigo.valor ?? null,
       varianteAcristalamiento: entrada.varianteAcristalamiento,
       reglaMaterial: null, venta: { completo: false, importe: null },
@@ -93,7 +94,9 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
     const parametros = { ...entrada, horasFabricacion: null, horasColocacion: null, compacto: g.compacto, accesorios: g.accesorios,
       comisionPorc: null, cotas: g.cotas ?? undefined,
       trazabilidad: true, codigo: g.codigo, anchoMm: g.anchoMm, altoMm: g.altoMm,
-      serieCodigo: origen.serieCodigo,
+      serieCodigo: origen.serieCodigo, acabadoCodigo: origen.acabadoCodigo,
+      // Acabado2: el del elemento o, sin él, el de la línea (ausente conserva UNI).
+      acabadoAccesoriosCodigo: g.materiales.acabadoAccesoriosCodigo.valor ?? entrada.acabadoAccesoriosCodigo,
       vidrioCodigo: origen.vidrioCodigo, opcionesHerraje: entrada.opcionesHerraje,
       preciosManuales: entrada.configuracion.preciosManuales,
       plantillaPropia: g.tipo === 'MODULO'
@@ -130,7 +133,7 @@ export async function valorarCerramiento(cliente: ClienteEscritura,
         piezas = material.piezas
         ventaMotor = material.valoracion.completa ? material.valoracion.importe : null
         origen.partidasValoracion = partidasValoracion(material.valoracion.lineas,
-          entrada, 'MATERIALES', material.filasPvp)
+          parametros, 'MATERIALES', material.filasPvp)
         if (!material.valoracion.completa || material.despiece.incalculables ||
           material.sinResolver.size || material.sinResolverAsoc.size) bloquear(
           `Unión ${g.id}: ${material.valoracion.lineas.filter(p => p.incidencia).map(p => `${p.articuloCodigo}: ${p.incidencia}`).join('; ') || 'Componentes sin resolver'}`,

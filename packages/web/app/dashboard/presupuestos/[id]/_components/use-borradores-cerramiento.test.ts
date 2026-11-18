@@ -216,4 +216,19 @@ describe('cotas de instancia en el borrador', () => {
     expect(copiado.modulos.map((modulo) => modulo.compacto?.estructuraCodigo)).toEqual(['COM001', 'COM001'])
     expect(original.modulos[1]).not.toHaveProperty('compacto')
   })
+
+  it('aplica el acabado propio a modelos iguales y a la unión sin tocar sus medidas', () => {
+    const original = crear()
+    const borradores = vacios()
+    borradores.modulos['modulo-1'] = { acabadoCodigo: 'L', acabadoAccesoriosCodigo: 'L' }
+    const modulos = aplicarBorrador(original, borradores, 'modulos', 'modulo-1', ['modulo-1', 'modulo-2'])!
+    expect(modulos.modulos.map(m => m.materiales)).toEqual(Array(2).fill({ acabadoCodigo: 'L', acabadoAccesoriosCodigo: 'L' }))
+    const union = modulos.uniones[0]!
+    borradores.uniones[union.id] = { acabadoCodigo: 'L', longitudMm: union.longitudMm }
+    const conUnion = aplicarBorrador(modulos, borradores, 'uniones', union.id)!
+    expect(conUnion.uniones[0]).toEqual({ ...union, materiales: { acabadoCodigo: 'L' } })
+    borradores.uniones[union.id] = { acabadoCodigo: null }
+    expect(aplicarBorrador(conUnion, borradores, 'uniones', union.id)!.uniones[0]).not.toHaveProperty('materiales')
+    expect(original.modulos.every(m => m.materiales === undefined)).toBe(true)
+  })
 })

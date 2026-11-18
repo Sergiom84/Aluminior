@@ -3,7 +3,8 @@
  *
  * Un bloque por elemento, en el orden de `configuracion.modulos`. Las medidas
  * son las nominales del elemento, no las de fabricación ni las del conjunto.
- * La unión no entra. Sin I/O: los nombres ya vienen resueltos.
+ * La unión no entra. Sin I/O: los nombres ya vienen resueltos. El color es el
+ * del elemento si tiene acabado propio y, si no, el de la línea.
  *
  * Evidencia: RECON-CERRAMIENTOS §4 ter y comparativa 01/11, casos 1–4.
  * La serie se muestra como código: la tabla de series no tiene descripción
@@ -57,7 +58,7 @@ function bloque(modulo: ModuloCerramiento, datos: DatosDescripcionGrupo): string
   const lineas = [
     `${descripcionElemento(modulo, datos)} DE MEDIDAS : ${formatoMedida(modulo.anchoMm)} x ${formatoMedida(modulo.altoMm)}`,
   ]
-  const color = resuelto(datos.acabados, datos.acabadoCodigo)
+  const color = resuelto(datos.acabados, modulo.materiales?.acabadoCodigo?.trim() || datos.acabadoCodigo)
   if (color) lineas.push(`EN COLOR ${color}`)
   const serie = serieDe(modulo, datos)
   if (serie) lineas.push(serie)

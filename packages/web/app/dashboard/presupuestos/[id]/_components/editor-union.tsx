@@ -4,16 +4,22 @@ import React from 'react'
 import {
   UNION_SIN_CONFIGURAR, UNIONES_VISUALES, unionesOfrecidas, type UnionCerramiento, type UnionVisual,
 } from '@aluminior/core/estructuras'
+import type { BorradorUnion } from './use-borradores-cerramiento.ts'
+import { AcabadosElemento, type AcabadoCatalogo } from './disenador/acabados-elemento.tsx'
 
 export function EditorUnion({ union, indice, pendiente, onChange, onActualizar, onDescartar,
-  onSiguienteUnion = null, catalogoUniones = UNIONES_VISUALES, serieCodigo = null }: {
-  union: UnionCerramiento; indice: number; pendiente: boolean
-  onChange: (cambios: Partial<UnionCerramiento>) => void
+  onSiguienteUnion = null, catalogoUniones = UNIONES_VISUALES, serieCodigo = null, acabados = [] }: {
+  /** La unión guardada con su borrador encima; los acabados del borrador van en la raíz. */
+  union: UnionCerramiento & BorradorUnion; indice: number; pendiente: boolean
+  onChange: (cambios: BorradorUnion) => void
   onActualizar: () => void; onDescartar: () => void
   onSiguienteUnion?: (() => void) | null
   catalogoUniones?: readonly UnionVisual[]
   serieCodigo?: string | null
+  acabados?: readonly AcabadoCatalogo[]
 }) {
+  const acabado = (campo: 'acabadoCodigo' | 'acabadoAccesoriosCodigo') =>
+    Object.hasOwn(union, campo) ? union[campo] ?? '' : union.materiales?.[campo] ?? ''
   const ofrecidas = unionesOfrecidas(catalogoUniones, serieCodigo)
   const opciones = ofrecidas.some(item => item.codigo === union.codigo) || !union.codigo
     ? ofrecidas
@@ -51,6 +57,8 @@ export function EditorUnion({ union, indice, pendiente, onChange, onActualizar, 
         readOnly value={Number.isFinite(union.grosorMm) ? union.grosorMm : ''} />
       <span>mm</span>
     </label>
+    {acabados.length > 0 && <AcabadosElemento acabados={acabados} valor={acabado} onChange={onChange}
+      elemento={`unión ${indice}`} />}
     <button type="button" className="al-command-primary" disabled={!pendiente} onClick={onActualizar}
       aria-label={`Actualizar unión ${indice}`}>Actualizar</button>
     {pendiente && <button type="button" className="al-command" onClick={onDescartar}

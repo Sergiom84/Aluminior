@@ -5,6 +5,8 @@
  * La unión no hereda el vidrio general porque no lleva vidrio propio; su serie
  * sí puede ser distinta de la del primer módulo, como en los GRUPO históricos
  * que unen dos series (docs/paridad/EVIDENCIA-E2-UNION-SERIE-2026-10-19.md).
+ * Módulos y uniones pueden llevar acabado propio (260289: PSU006 en L dentro
+ * de un GRUPO en VS); sin él heredan el de la línea.
  */
 import { materialesEfectivos, serieEfectivaUnion, type ConfiguracionCerramiento, type MaterialEfectivo,
   type MaterialesGenerales } from '@aluminior/core/estructuras'
@@ -15,7 +17,7 @@ export interface OrigenGeometria {
   codigo: string
   anchoMm: number
   altoMm: number
-  materiales: { serieCodigo: MaterialEfectivo; vidrioCodigo: MaterialEfectivo }
+  materiales: Record<'serieCodigo' | 'vidrioCodigo' | 'acabadoCodigo' | 'acabadoAccesoriosCodigo', MaterialEfectivo>
 }
 
 export function origenesGeometriaCerramiento(
@@ -31,12 +33,14 @@ export function origenesGeometriaCerramiento(
     ...configuracion.uniones.map((union): OrigenGeometria => {
       const propia = union.materiales?.serieCodigo?.trim()
       const valor = serieEfectivaUnion(configuracion, union, generales)
+      const { acabadoCodigo, acabadoAccesoriosCodigo } = materialesEfectivos(union, generales)
       return {
         tipo: 'UNION', id: union.id, codigo: union.codigo,
         anchoMm: union.grosorMm, altoMm: union.longitudMm,
         materiales: {
           serieCodigo: { valor, origen: propia ? 'elemento' : 'general' },
           vidrioCodigo: { valor: null, origen: 'elemento' },
+          acabadoCodigo, acabadoAccesoriosCodigo,
         },
       }
     }),

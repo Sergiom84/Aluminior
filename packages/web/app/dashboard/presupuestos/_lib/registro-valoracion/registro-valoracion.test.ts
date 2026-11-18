@@ -58,6 +58,17 @@ describe('registro de valoración', () => {
     expect(Object.keys(json)).not.toEqual(expect.arrayContaining(['cliente']))
     expect(Object.keys(json).some(k => /cliente|obra|nombre/i.test(k))).toBe(false)
   })
+  it('incluye el acabado propio de módulos y uniones solo cuando lo hay', () => {
+    const c = alta.configuracion
+    const conAcabados = { ...alta, configuracion: { ...c,
+      modulos: [{ ...c.modulos[0]!, materiales: { acabadoCodigo: 'L' } }],
+      uniones: [{ ...c.uniones[0]!, codigo: 'PSU006', materiales: { acabadoCodigo: 'L', acabadoAccesoriosCodigo: 'L' } }] } }
+    const r = construirRegistroValoracion({ ...entrada, cerramiento: conAcabados as AltaCerramiento })
+    expect(r.cerramiento?.modulos[0]).toMatchObject({ materiales: { acabadoCodigo: 'L' } })
+    expect(r.cerramiento).toMatchObject({ uniones: ['PSU006'],
+      materialesUniones: [{ acabadoCodigo: 'L', acabadoAccesoriosCodigo: 'L' }] })
+    expect(construirRegistroValoracion(entrada).cerramiento).not.toHaveProperty('materialesUniones')
+  })
   it('nunca lanza aunque falle la escritura o el resultado venga roto', () => {
     expect(() => registrarValoracion(entrada, () => { throw new Error('stdout cerrado') })).not.toThrow()
     expect(() => registrarValoracion({ ...entrada, resultado: { origenes: null } as unknown as ResultadoCerramientoV1 },
