@@ -29,6 +29,9 @@ Actualizado el 09/11/2026. Los secretos nunca van aquí: solo dónde están.
 
 ## Reglas que se repiten
 
+- Diagnóstico de valoraciones: cada línea guardada escribe en los logs de Render una
+  línea `[valoracion] {json}` con entradas, resultado y causas (sin datos de cliente).
+  Resumen por causa, en solo lectura: `node scripts/diagnostico-valoraciones.mjs [número]`.
 - Producción tiene datos de prueba y del tío: lectura libre; escribir solo como lo
   haría el operador desde la app y dejándolo dicho en el informe.
 - Una línea guardada conserva su valoración: si un arreglo cambia el cálculo, las

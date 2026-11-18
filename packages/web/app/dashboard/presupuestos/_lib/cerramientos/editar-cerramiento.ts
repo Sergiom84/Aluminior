@@ -11,6 +11,7 @@ import { persistirManoObra, type SnapshotManoObra } from '../mano-obra/index.ts'
 import { prepararAltaCerramiento, type AltaCerramiento } from './alta-cerramiento.ts'
 import { configuracionTieneFiExplicito, descripcionGrupo, type UnionVisual } from '@aluminior/core/estructuras'
 import { leerNombresDescripcion } from './nombres-descripcion.ts'
+import { registrarValoracion } from '../registro-valoracion/index.ts'
 
 type Db = Pick<ReturnType<typeof crearDb>, 'transaction'>
 
@@ -143,6 +144,11 @@ async function escribirEdicionPreparada(tx: ClienteEscritura,
       await persistirManoObra(tx, entrada.lineaId, entrada.manoObra)
     }
     await actualizarTotales(tx, entrada.presupuestoId)
+    const importes = 'resultado' in entrada ? entrada.importes : { precioUnitario: null, total: null, valoracionCompleta: false }
+    registrarValoracion({ operacion: 'edicion', presupuestoId: entrada.presupuestoId, lineaId: entrada.lineaId,
+      tipo: 'CERRAMIENTO', articulo: null, cantidad: entrada.cantidad, anchoMm: entrada.alta.anchoMm, altoMm: entrada.alta.altoMm,
+      ...importes, pvpManual: false, aviso: entrada.aviso || null, cerramiento: entrada.alta,
+      ...('resultado' in entrada ? { resultado: entrada.resultado } : {}) })
     return true
 }
 

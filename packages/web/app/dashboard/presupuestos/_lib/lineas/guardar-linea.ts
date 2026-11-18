@@ -11,6 +11,7 @@ import { eq, sql } from 'drizzle-orm'
 import { leerAltaRepetida } from './alta-repetida.ts'
 import { comisionDeLineas, mismaComision } from '../gastos/gastos-documento.ts'
 import { ErrorOperacionCerramiento } from '../cerramientos/error-operativo.ts'
+import { registrarValoracion, type EntradaRegistroValoracion } from '../registro-valoracion/index.ts'
 
 type Db = Pick<ReturnType<typeof crearDb>, 'transaction'>
 
@@ -153,7 +154,19 @@ async function escribirLineaPreparada(tx: ClienteEscritura, entrada: EscrituraLi
     }
 
     await actualizarTotales(tx, entrada.valores.presupuestoId)
+    registrarValoracion(() => registroDeEscritura(linea.id, entrada))
     return linea.id
+}
+
+function registroDeEscritura(lineaId: string, entrada: EscrituraLinea | EscrituraValorada): EntradaRegistroValoracion {
+  const v = entrada.valores
+  return { operacion: 'alta', presupuestoId: v.presupuestoId, lineaId, tipo: entrada.tipo,
+    articulo: v.articuloCodigo ?? (entrada.tipo === 'ESTRUCTURA' ? entrada.estructura.estructuraCodigo : null),
+    acabadoArticulo: v.acabadoArticuloCodigo ?? null, cantidad: v.cantidad ?? null, anchoMm: v.anchoMm ?? null, altoMm: v.altoMm ?? null,
+    precioUnitario: v.precioUnitario ?? null, total: v.total ?? null, valoracionCompleta: v.valoracionCompleta ?? false,
+    pvpManual: v.pvpManual === true, aviso: v.avisoValoracion ?? null,
+    ...(entrada.tipo === 'CERRAMIENTO' ? { cerramiento: entrada.cerramiento } : {}),
+    ...('resultado' in entrada ? { resultado: entrada.resultado } : {}) }
 }
 
 /** Camino de producción: no permite introducir pausas dentro de la transacción. */
