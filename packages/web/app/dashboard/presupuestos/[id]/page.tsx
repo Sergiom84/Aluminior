@@ -7,14 +7,17 @@ import Link from 'next/link'
 import { asc, eq, inArray } from 'drizzle-orm'
 import { crearDb, schema } from '@aluminior/db'
 import { CATALOGO_SNAPSHOT, esConfiguracionCerramiento } from '@aluminior/core/estructuras'
-import { presupuestoIncompleto } from '@aluminior/core/precios'
+import { dividirDecimal, presupuestoIncompleto } from '@aluminior/core/precios'
 import { Shell } from '../../_components/shell.tsx'
 import { AnyadirLinea } from './_components/anyadir-linea.tsx'
 import { AltaSinEdicionActiva, EdicionLineaActiva } from './_components/edicion-linea-activa.tsx'
 import { LineaPresupuesto } from './_components/linea-presupuesto.tsx'
 import type { DatosEdicionCerramiento } from './_components/editar-cerramiento.tsx'
-import { PestanasDocumento, PestanasFicha } from '../_components/pestanas-documento.tsx'
+import { PestanasFicha } from '../_components/pestanas-documento.tsx'
+import { AccionesPagoGuardado } from './_components/acciones-pago-guardado.tsx'
 import { EliminarPresupuestoBoton } from '../_components/eliminar-presupuesto-boton.tsx'
+import { usuarioActual } from '../_lib/usuario-actual.ts'
+import { leerPrecioHoraColocacion } from '../_lib/preferencias-usuario/preferencias.ts'
 import { referenciaPresupuesto } from '../_lib/identidad-documento.ts'
 import { asegurarCatalogoDiseno, leerEstructurasSinDibujo } from '../_lib/catalogo-diseno/index.ts'
 import { CatalogoDiseno } from './_components/catalogo-diseno.tsx'
@@ -93,6 +96,10 @@ export default async function DetallePresupuesto({ params, searchParams }: {
     if (!linea || !esConfiguracionCerramiento(cerramiento.configuracion, CATALOGO_SNAPSHOT)) continue
     if (cerramiento.varianteAcristalamiento !== '1' && cerramiento.varianteAcristalamiento !== '2') continue
     const horas = manoObra.filter((fila) => fila.lineaId === linea.id)
+    const colocacion = horas.find((fila) => fila.concepto === 'COLOCACION')
+    const precioHoraColocacion = colocacion?.horas && colocacion?.importe && Number(colocacion.horas) > 0
+      ? dividirDecimal(colocacion.importe, colocacion.horas, 2)
+      : null
     edicionPorLinea.set(linea.id, {
       configuracion: cerramiento.configuracion,
       serieCodigo: cerramiento.serieCodigo,
@@ -103,9 +110,11 @@ export default async function DetallePresupuesto({ params, searchParams }: {
       referencia: linea.referencia,
       cantidad: linea.cantidad,
       horasFabricacion: horas.find((fila) => fila.concepto === 'FABRICACION_ADICIONAL')?.horas ?? '0',
-      horasColocacion: horas.find((fila) => fila.concepto === 'COLOCACION')?.horas ?? '0',
+      horasColocacion: colocacion?.horas ?? '0',
+      precioHoraColocacion,
     })
   }
+  const precioColocacionDefecto = await leerPrecioHoraColocacion(db, await usuarioActual())
   const incompleto = presupuestoIncompleto(lineas)
   const gastos = pagina === 'gastos' ? await leerGastos(db, id) : null
   const p = presupuesto
@@ -129,6 +138,7 @@ export default async function DetallePresupuesto({ params, searchParams }: {
           <Link href="/dashboard/presupuestos" className="al-command">Cerrar</Link>
           <a href={`/dashboard/presupuestos/${id}/pdf`} target="_blank" rel="noopener"
             className={`${styles.pdfAction} al-command`}>Emitir</a>
+          <AccionesPagoGuardado presupuestoId={id} estado={p.estado} metodoPago={p.metodoPago} />
           <EliminarPresupuestoBoton presupuestoId={id} numero={p.numero} revision={p.revision}
             estado={p.estado} origen="detalle" />
           <span className="al-status" data-status={presupuesto.estado}>{presupuesto.estado}</span>
@@ -158,7 +168,7 @@ export default async function DetallePresupuesto({ params, searchParams }: {
           <AltaSinEdicionActiva>
             <AnyadirLinea presupuestoId={id} series={series.map((serie) => serie.codigo)} acabados={acabados}
               catalogoUniones={catalogoUniones} cotasCatalogo={cotasCatalogo} complementosCatalogo={complementosCatalogo}
-              mosquiteras={mosquiteras} />
+              mosquiteras={mosquiteras} precioColocacionDefecto={precioColocacionDefecto} />
           </AltaSinEdicionActiva>
         )}
 
@@ -185,7 +195,8 @@ export default async function DetallePresupuesto({ params, searchParams }: {
                 manoObra={manoObra.filter(f => f.lineaId === linea.id)}
                 despiece={piezasPorLinea.get(linea.id) ?? []} edicion={edicionPorLinea.get(linea.id) ?? null}
                 series={series.map((serie) => serie.codigo)} acabados={acabados} catalogoUniones={catalogoUniones}
-                cotasCatalogo={cotasCatalogo} complementosCatalogo={complementosCatalogo} />
+                cotasCatalogo={cotasCatalogo} complementosCatalogo={complementosCatalogo}
+                precioColocacionDefecto={precioColocacionDefecto} />
             ))}</tbody>
           </table>
         </div>
@@ -210,7 +221,6 @@ export default async function DetallePresupuesto({ params, searchParams }: {
           </dl>
         </div>
         <PestanasFicha activa={pagina} fichaHref={`/dashboard/presupuestos/${id}`} />
-        <PestanasDocumento vista="ficha" fichaHref={`/dashboard/presupuestos/${id}`} />
       </section>
     </Shell>
   )

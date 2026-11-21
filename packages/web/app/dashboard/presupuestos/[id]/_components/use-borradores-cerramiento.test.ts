@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest'
-import { anadirModuloCerramiento, crearConfiguracionCerramiento, generarPlantillaCatalogo, plantillaDiseno,
+import { anadirModuloCerramiento, composicionExplicita, crearConfiguracionCerramiento, generarPlantillaCatalogo, plantillaDiseno,
   registrarCatalogoDiseno, UNIONES_VISUALES, esConfiguracionCerramiento } from '@aluminior/core/estructuras'
-import { aplicarBorrador, aplicarComplementosAModelos, aplicarUnionATodas, type Borradores } from './use-borradores-cerramiento.ts'
+import { aplicarBorrador, aplicarElementoATodos, aplicarUnionATodas, type Borradores } from './use-borradores-cerramiento.ts'
 
 const crear = () => anadirModuloCerramiento(
   crearConfiguracionCerramiento(plantillaDiseno('2O')!), plantillaDiseno('2O')!)
@@ -203,18 +203,63 @@ describe('cotas de instancia en el borrador', () => {
     expect(JSON.stringify(v3)).toBe(guardado)
   })
 
-  it('copia el compacto ya aplicado a los modelos iguales sin exigir un borrador', () => {
-    const original = crear()
-    const conCompacto = {
-      ...original,
-      version: 3 as const,
-      modulos: original.modulos.map((modulo, indice) => indice === 0
-        ? { ...modulo, compacto: { estructuraCodigo: 'COM001', altoCajonMm: 155, descontarHueco: true, opciones: ['G1O0'] } }
-        : modulo),
+  it('actualiza automáticamente el cajón del compacto entre 155 y 185 al cruzar 1600 mm y respeta un cajón manual', () => {
+    const base = composicionExplicita(crear())
+    const original = {
+      ...base,
+      modulos: [
+        { ...base.modulos[0], altoMm: 1200, compacto: { estructuraCodigo: 'COM001', altoCajonMm: 155, descontarHueco: true } },
+        base.modulos[1],
+      ],
     }
-    const copiado = aplicarComplementosAModelos(conCompacto, vacios(), 'modulo-1', ['modulo-1', 'modulo-2'])!
-    expect(copiado.modulos.map((modulo) => modulo.compacto?.estructuraCodigo)).toEqual(['COM001', 'COM001'])
-    expect(original.modulos[1]).not.toHaveProperty('compacto')
+    const borradores = vacios()
+    borradores.modulos['modulo-1'] = { altoMm: 1800 }
+    const subido = aplicarBorrador(original, borradores, 'modulos', 'modulo-1')!
+    expect(subido.modulos[0].compacto?.altoCajonMm).toBe(185)
+
+    borradores.modulos['modulo-1'] = { altoMm: 1600 }
+    const bajado = aplicarBorrador(subido, borradores, 'modulos', 'modulo-1')!
+    expect(bajado.modulos[0].compacto?.altoCajonMm).toBe(155)
+
+    const manual = {
+      ...original,
+      modulos: [
+        { ...original.modulos[0], compacto: { estructuraCodigo: 'COM001', altoCajonMm: 200, descontarHueco: true } },
+        original.modulos[1],
+      ],
+    }
+    borradores.modulos['modulo-1'] = { altoMm: 1800 }
+    expect(aplicarBorrador(manual, borradores, 'modulos', 'modulo-1')!.modulos[0].compacto?.altoCajonMm).toBe(200)
+  })
+
+  it('«Actualizar a todos» aplica antes el borrador y copia medidas, materiales y complementos a todos los elementos aunque sean distintos', () => {
+    const tres = composicionExplicita(anadirModuloCerramiento(crear(), plantillaDiseno('0')!))
+    const preparado = {
+      ...tres,
+      modulos: [
+        { ...tres.modulos[0], compacto: { estructuraCodigo: 'COM001', altoCajonMm: 155, descontarHueco: true, opciones: ['G1O0'] } },
+        { ...tres.modulos[1], materiales: { serieCodigo: 'OTRA' } },
+        tres.modulos[2],
+      ],
+    }
+    // Sin borrador: copia el compacto y limpia materiales distintos del segundo elemento.
+    const sinBorrador = aplicarElementoATodos(preparado, vacios(), 'modulo-1')!
+    expect(sinBorrador.modulos.map(m => m.compacto?.estructuraCodigo)).toEqual(['COM001', 'COM001', 'COM001'])
+    expect(sinBorrador.modulos.every(m => m.materiales === undefined)).toBe(true)
+
+    // Con borrador pendiente (alto > 1600): primero actualiza el cajón a 185 y propaga todo a los tres.
+    const borradores = vacios()
+    borradores.modulos['modulo-1'] = { anchoMm: 1500, altoMm: 1800, acabadoCodigo: 'L' }
+    const conBorrador = aplicarElementoATodos(preparado, borradores, 'modulo-1')!
+    expect(conBorrador.modulos.map(m => [m.anchoMm, m.altoMm, m.compacto?.altoCajonMm, m.materiales])).toEqual([
+      [1500, 1800, 185, { acabadoCodigo: 'L' }],
+      [1500, 1800, 185, { acabadoCodigo: 'L' }],
+      [1500, 1800, 185, { acabadoCodigo: 'L' }],
+    ])
+
+    // Rechazo atómico si el cambio no es válido.
+    borradores.modulos['modulo-1'] = { anchoMm: 0 }
+    expect(aplicarElementoATodos(preparado, borradores, 'modulo-1')).toBeNull()
   })
 
   it('aplica el acabado propio a modelos iguales y a la unión sin tocar sus medidas', () => {

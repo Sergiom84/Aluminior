@@ -137,3 +137,12 @@ it('conserva medidas exteriores decimales y rechaza valores no finitos', () => {
    expect(datos({ anchoMm: '970.25', altoMm: '439.5' })).toMatchObject({ anchoMm: 970.25, altoMm: 439.5 })
    for (const valor of ['NaN', 'Infinity', '-1']) expect(errores({ anchoMm: valor }).anchoMm).toBeDefined()
  })
+
+it('valida precioHoraColocacion con hasta dos decimales y lo deja ausente si viene vacío', () => {
+  expect(datos({}).precioHoraColocacion).toBeUndefined()
+  expect(datos({ precioHoraColocacion: '' }).precioHoraColocacion).toBeNull()
+  expect(datos({ precioHoraColocacion: '40' }).precioHoraColocacion).toBe('40')
+  expect(datos({ precioHoraColocacion: '35.50' }).precioHoraColocacion).toBe('35.50')
+  expect(errores({ precioHoraColocacion: '-5' }).precioHoraColocacion).toEqual(['Precio colocación: no admite negativos'])
+  expect(errores({ precioHoraColocacion: '40.123' }).precioHoraColocacion).toEqual(['Precio colocación: máximo 2 decimales'])
+})

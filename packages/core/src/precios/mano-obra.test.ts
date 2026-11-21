@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
-  articuloDeConcepto, MAXIMO_IMPORTE, minutosDeHoras, valorarManoObra,
+  articuloDeConcepto, MAXIMO_IMPORTE, minutosDeHoras, PRECIO_HORA_COLOCACION_DEFECTO,
+  valorarManoObra, valorarManoObraPorHora,
 } from './mano-obra.ts'
 
 const base = { minutos: '90.00', precioMinuto: '0.5000', costeMinuto: '0.5000' }
@@ -210,5 +211,38 @@ describe('valoración del coste, independiente de la venta', () => {
     // La venta sigue completa: el coste no la decide.
     expect(resultado.valoracionCompleta).toBe(true)
     expect(resultado.importe).toBe('299999.70')
+  })
+})
+
+describe('valoración por precio por hora explícito', () => {
+  it('calcula 18 h × 30 € = 540,00 € y 18 h × 40 € = 720,00 € sin error de redondeo por minuto', () => {
+    expect(PRECIO_HORA_COLOCACION_DEFECTO).toBe('30.00')
+    expect(valorarManoObraPorHora({
+      horas: '18', minutos: minutosDeHoras('18'), precioHora: '30', costeMinuto: '0.5000',
+    })).toMatchObject({
+      precioMinuto: '0.5000', importe: '540.00', valoracionCompleta: true, motivoCodigo: null,
+    })
+    expect(valorarManoObraPorHora({
+      horas: '18', minutos: minutosDeHoras('18'), precioHora: '40', costeMinuto: '0.5000',
+    })).toMatchObject({
+      precioMinuto: '0.6667', importe: '720.00', valoracionCompleta: true, motivoCodigo: null,
+    })
+    expect(valorarManoObraPorHora({
+      horas: '1.5', minutos: minutosDeHoras('1.5'), precioHora: '40', costeMinuto: null,
+    })).toMatchObject({
+      importe: '60.00', valoracionCompleta: true, motivoCosteCodigo: 'SIN_COSTE',
+    })
+  })
+
+  it('rechaza precio cero, negativo o desbordado también por hora', () => {
+    expect(valorarManoObraPorHora({
+      horas: '18', minutos: '1080.00', precioHora: '0', costeMinuto: null,
+    })).toMatchObject({ valoracionCompleta: false, motivoCodigo: 'PVP_CERO', importe: null })
+    expect(valorarManoObraPorHora({
+      horas: '18', minutos: '1080.00', precioHora: '-10', costeMinuto: null,
+    })).toMatchObject({ valoracionCompleta: false, motivoCodigo: 'PVP_NEGATIVO', importe: null })
+    expect(valorarManoObraPorHora({
+      horas: '9999.99', minutos: '599999.40', precioHora: '999999999.00', costeMinuto: null,
+    })).toMatchObject({ valoracionCompleta: false, motivoCodigo: 'IMPORTE_FUERA_RANGO', importe: null })
   })
 })

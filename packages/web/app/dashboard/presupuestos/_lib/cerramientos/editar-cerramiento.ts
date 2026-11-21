@@ -28,6 +28,7 @@ export interface EntradaEdicionCerramiento {
   cantidad: number
   horasFabricacion: string
   horasColocacion: string
+  precioHoraColocacion?: string | null
   catalogoUniones?: readonly UnionVisual[]
 }
 

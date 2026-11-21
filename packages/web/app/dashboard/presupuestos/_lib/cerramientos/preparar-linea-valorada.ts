@@ -14,7 +14,10 @@ export const AVISO_FI_SIN_VALORAR =
   'Configuración guardada sin valorar: la cota FI de 1OFI aún no dispone de despiece ni cálculo económico verificados.'
 
 export async function prepararLineaValorada(tx: ClienteEscritura, alta: AltaCerramiento,
-  entrada: { presupuestoId: string; tarifa: number; cantidad: number; horasFabricacion: string; horasColocacion: string },
+  entrada: {
+    presupuestoId: string; tarifa: number; cantidad: number
+    horasFabricacion: string; horasColocacion: string; precioHoraColocacion?: string | null
+  },
 ) {
   if (configuracionTieneFiExplicito(alta.configuracion) && !(await catalogoDespieceCargado(tx))) {
     return {
@@ -33,8 +36,11 @@ export async function prepararLineaValorada(tx: ClienteEscritura, alta: AltaCerr
     // Sin selección explícita de herraje (p. ej. sin reglas herrajeConjuntos),
     // la ausencia de selección conserva SelecDefSN; no significa desmarcar todo.
     ...alta.datos, acabadoAccesoriosCodigo, tarifa: entrada.tarifa, opcionesPorDefecto: !alta.datos.opcionesHerraje?.length })
-  const manoObra = await prepararManoObra(tx, { tarifa: entrada.tarifa,
-    horas: { fabricacion: entrada.horasFabricacion, colocacion: entrada.horasColocacion } })
+  const manoObra = await prepararManoObra(tx, {
+    tarifa: entrada.tarifa,
+    horas: { fabricacion: entrada.horasFabricacion, colocacion: entrada.horasColocacion },
+    ...(entrada.precioHoraColocacion ? { precioHoraColocacion: entrada.precioHoraColocacion } : {}),
+  })
   if (manoObra.estado === 'MIGRACION_PENDIENTE') throw new ErrorOperacionCerramiento(manoObra.mensaje)
   return { estado: 'VALORADA' as const, resultado,
     manoObra: manoObra.estado === 'PREPARADA' ? manoObra.filas : [],

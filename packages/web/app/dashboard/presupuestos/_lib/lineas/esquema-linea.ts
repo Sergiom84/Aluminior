@@ -138,6 +138,10 @@ export const esquemaLinea = z.object({
    */
   horasFabricacion: horasManoObra('Fabricación'),
   horasColocacion: horasManoObra('Colocación'),
+  /** Precio/hora manual de colocación (€/h). Vacío usa el catálogo `MOCOL`. */
+  precioHoraColocacion: decimalTecleado('Precio colocación', {
+    maximo: String(MAXIMO_NUMERIC_10_2), porDefecto: '0',
+  }).optional().transform((v) => (!v || signoDecimal(v) === 0 ? null : v)).optional(),
 })
 
 export type EntradaLinea = z.infer<typeof esquemaLinea>

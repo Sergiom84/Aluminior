@@ -39,9 +39,9 @@ function panel(modulo: ModuloCerramiento, cotas: readonly CotaCatalogo[], borrad
     modulo={modulo} borrador={borrador} indice={1}
     rect={{ x: 0, y: 0, ancho: modulo.anchoMm, alto: modulo.altoMm }}
     pendiente={Object.keys(borrador).length > 0} bloqueado={false} preparada={null}
-    eliminable={false} generales={{ serieCodigo: null, vidrioCodigo: null }} series={[]} modelos={1}
+    eliminable={false} generales={{ serieCodigo: null, vidrioCodigo: null }} series={[]}
     cotasCatalogo={cotas} moviendo={false} movible onChange={vi.fn()} onActualizar={vi.fn()}
-    onActualizarModelos={vi.fn()} onDescartar={vi.fn()} onSustituir={vi.fn()}
+    onDescartar={vi.fn()} onSustituir={vi.fn()}
     onEliminar={vi.fn()} onMover={vi.fn()} />)
 }
 

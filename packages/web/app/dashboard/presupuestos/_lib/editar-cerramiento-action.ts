@@ -44,6 +44,7 @@ export async function editarCerramiento(
       cantidad: p.data.cantidad,
       horasFabricacion: p.data.horasFabricacion,
       horasColocacion: p.data.horasColocacion,
+      precioHoraColocacion: p.data.precioHoraColocacion,
       catalogoUniones: (await leerCatalogoUniones()).uniones,
     })
     if (!resultado.ok) return resultado

@@ -10,6 +10,7 @@ import type { CatalogoComplementosDisenador } from './disenador/complementos-ele
 import styles from '../presupuesto-movil.module.css'
 import { useSeriesValidas } from './use-series-validas.ts'
 import { CampoVidrio } from './vidrios/campo-vidrio.tsx'
+import { CampoPrecioColocacion } from './campo-precio-colocacion.tsx'
 import { usarResultadoEdicion } from './campo-edicion.tsx'
 
 export interface DatosEdicionCerramiento {
@@ -23,6 +24,7 @@ export interface DatosEdicionCerramiento {
   cantidad: string
   horasFabricacion: string
   horasColocacion: string
+  precioHoraColocacion?: string | null
 }
 
 const entrada = 'w-full rounded-md border px-3 py-2 text-sm'
@@ -30,6 +32,7 @@ const estilo = { background: 'var(--al-surface)', borderColor: 'var(--al-border-
 
 export function EditarCerramiento({
   presupuestoId, lineaId, datos, series, acabados, onCancelar, catalogoUniones, cotasCatalogo, complementosCatalogo,
+  precioColocacionDefecto = '30.00',
 }: {
   presupuestoId: string
   lineaId: string
@@ -40,6 +43,7 @@ export function EditarCerramiento({
   catalogoUniones?: readonly import('@aluminior/core/estructuras').UnionVisual[]
   cotasCatalogo?: import('@aluminior/core/estructuras').CotasCatalogoPorEstructura
   complementosCatalogo?: CatalogoComplementosDisenador
+  precioColocacionDefecto?: string
 }) {
   const { estado, enviar, enviando: guardando } = useEnvioFormulario<EstadoEdicionCerramiento>(editarCerramiento)
   const formulario = useRef<HTMLFormElement>(null)
@@ -165,6 +169,15 @@ export function EditarCerramiento({
             <ErrorCampo nombre={nombre} />
           </div>
         ))}
+        <CampoPrecioColocacion
+          presupuestoId={presupuestoId}
+          precioInicial={datos.precioHoraColocacion ?? precioColocacionDefecto}
+          precioDefecto={precioColocacionDefecto}
+          err={errores}
+          inputId={identificador('precioHoraColocacion')}
+          claseEntrada={entrada}
+          estiloEntrada={estilo}
+          claseEtiqueta="mb-1 block text-sm" />
       </div>
 
 

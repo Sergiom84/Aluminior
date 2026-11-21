@@ -241,4 +241,24 @@ describe('coste, que no invalida la venta', () => {
       costeMinuto: '9999999.0000', costeTotal: null, motivoCosteCodigo: 'COSTE_FUERA_RANGO',
     })
   })
+
+  it('usa precioHoraColocacion cuando se indica (18 h × 40 €/h = 720,00 €)', () => {
+    const { filas } = resolverManoObra({
+      conceptos: conceptosConHoras({ fabricacion: '1', colocacion: '18' }),
+      catalogo: catalogo({
+        MO: articulo({ precio: '0.5000' }),
+        MOCOL: articulo({ precio: '0.5000' }),
+      }),
+      tarifa: 1,
+      precioHoraColocacion: '40',
+    })
+    expect(filas[0].importe).toBe('30.00')
+    expect(filas[1]).toMatchObject({
+      horas: '18.00',
+      minutos: '1080.00',
+      precioMinuto: '0.6667',
+      importe: '720.00',
+      valoracionCompleta: true,
+    })
+  })
 })

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { compactoModuloValido } from './compacto-cerramiento.ts'
 import {
-  compactoAlElegir, explicarIncidenciaCompacto, fusionarOpcionesPredeterminadas,
+  cajonPorDefectoCompacto, compactoAlElegir, explicarIncidenciaCompacto, fusionarOpcionesPredeterminadas,
   marcarOpcionCompacto, opcionesPredeterminadasCompacto, opcionMarcadaCompacto,
 } from './opciones-compacto.ts'
 
@@ -25,11 +25,14 @@ describe('opciones de compacto', () => {
     expect(explicarIncidenciaCompacto('artículo X ausente del catálogo')).toBe('artículo X ausente del catálogo')
   })
 
-  it('al elegir propone 155 y, por encima de 1600, 185, con las predeterminadas', () => {
+  it('al elegir propone 155 hasta 1600 mm y 185 por encima, con las predeterminadas', () => {
     expect(compactoAlElegir('COM001', 1200)).toMatchObject({
       estructuraCodigo: 'COM001', altoCajonMm: 155, descontarHueco: true, opciones: ['G1O0', 'G2O2', 'G3O2', 'G10O0'],
     })
+    expect(compactoAlElegir('COM001', 1600).altoCajonMm).toBe(155)
     expect(compactoAlElegir('COM001', 1601).altoCajonMm).toBe(185)
+    expect(cajonPorDefectoCompacto(1600)).toBe(155)
+    expect(cajonPorDefectoCompacto(1601)).toBe(185)
   })
 
   it('conserva cajón, guías y opciones si se vuelve a elegir el mismo compacto', () => {

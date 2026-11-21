@@ -45,17 +45,33 @@ describe('elemento convertido en hueco (DS3)', () => {
 })
 
 describe('panel del elemento en una fila', () => {
-  it('con un solo elemento no repite Perfiles y Vidrio de la línea', () => {
+  it('con un solo elemento no repite Perfiles y Vidrio de la línea ni ofrece Actualizar a todos', () => {
     const html = render(crearConfiguracionCerramiento(plantillaDiseno('2')!))
+    expect(html).not.toContain('Materiales propios del elemento')
     expect(html).not.toContain('>Perfiles del elemento<')
     expect(html).not.toContain('Aplicar a modelos iguales')
+    expect(html).not.toContain('Actualizar a todos')
   })
 
-  it('con varios elementos ofrece Perfiles y Vidrio propios', () => {
-    expect(render(dosElementos())).toContain('>Perfiles del elemento<')
+  it('con varios elementos oculta materiales propios en un desplegable cerrado salvo excepción y ofrece Actualizar a todos', () => {
+    const html = render(dosElementos())
+    expect(html).toContain('Materiales propios del elemento')
+    expect(html).toContain('>Perfiles del elemento<')
+    expect(html).not.toMatch(/<details[^>]*open(?:=""|>|\s)/)
+    expect(html).toContain('Actualizar a todos')
+    expect(html).not.toContain('Aplicar a modelos iguales')
+
+    const base = dosElementos()
+    const conExcepcion: ConfiguracionCerramiento = {
+      ...base,
+      version: 3,
+      modulos: base.modulos.map((m, i) => i === 0 ? { ...m, materiales: { serieCodigo: 'GMA350' } } : m),
+    }
+    expect(render(conExcepcion)).toMatch(/<details[^>]*class="al-materiales-propios"[^>]*open=""/)
   })
 
-  it('Actualizar es un botón principal visible', () => {
-    expect(render(dosElementos())).toMatch(/<button type="button" class="al-command-primary" disabled="" aria-label="Actualizar elemento">Actualizar<\/button>/)
+  it('Actualizar y Actualizar a todos son visibles junto a las medidas', () => {
+    const html = render(dosElementos())
+    expect(html).toMatch(/<button type="button" class="al-command-primary" disabled="" aria-label="Actualizar elemento">Actualizar<\/button><button type="button" class="al-command" aria-label="Actualizar a todos los elementos">Actualizar a todos<\/button>/)
   })
 })

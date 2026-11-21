@@ -14,7 +14,7 @@
 import type { schema } from '@aluminior/db'
 import {
   articuloDeConcepto, minutosDeHoras, normalizarDecimal, resolverCosteCatalogo,
-  valorarManoObra,
+  valorarManoObra, valorarManoObraPorHora,
   type ConceptoManoObra, type Decimal, type ManoObraEnGuarda,
 } from '@aluminior/core/precios'
 
@@ -38,6 +38,8 @@ export interface EntradaResolucion {
   conceptos: readonly ConceptoConHoras[]
   catalogo: CatalogoManoObra
   tarifa: number
+  /** Precio por hora explícito para COLOCACION (€/h). Ausente usa `MOCOL` de tarifa. */
+  precioHoraColocacion?: Decimal | null
 }
 
 export function resolverManoObra(entrada: EntradaResolucion): ResolucionManoObra {
@@ -45,7 +47,7 @@ export function resolverManoObra(entrada: EntradaResolucion): ResolucionManoObra
   const guarda: ManoObraEnGuarda[] = []
 
   for (const { concepto, horas } of entrada.conceptos) {
-    const fila = resolverConcepto(concepto, horas, entrada.catalogo, entrada.tarifa)
+    const fila = resolverConcepto(concepto, horas, entrada.catalogo, entrada.tarifa, entrada.precioHoraColocacion)
     filas.push(fila)
     guarda.push({
       concepto,
@@ -61,6 +63,7 @@ function resolverConcepto(
   horasBrutas: Decimal,
   catalogo: CatalogoManoObra,
   tarifa: number,
+  precioHoraColocacion?: Decimal | null,
 ): SnapshotManoObra {
   const articuloCodigo = articuloDeConcepto(concepto)
   const articulo = catalogo.get(articuloCodigo)
@@ -75,15 +78,23 @@ function resolverConcepto(
   const minutos = minutosDeHoras(horas)
 
   const coste = resolverCosteCatalogo(articulo?.costes ?? [], ACABADO_MANO_OBRA)
-  const valoracion = valorarManoObra({
-    minutos,
-    // Sin artículo en el catálogo no hay precio: se trata como `SIN_PVP`, que
-    // es exactamente lo que ocurre. El snapshot conserva el código aplicado
-    // para poder investigar por qué ese artículo no existe.
-    precioMinuto: articulo?.precio ?? null,
-    costeMinuto: coste.estado === 'RESUELTO' ? coste.coste : null,
-    costeAmbiguo: coste.estado === 'AMBIGUO',
-  })
+  const valoracion = concepto === 'COLOCACION' && precioHoraColocacion
+    ? valorarManoObraPorHora({
+        horas,
+        minutos,
+        precioHora: precioHoraColocacion,
+        costeMinuto: coste.estado === 'RESUELTO' ? coste.coste : null,
+        costeAmbiguo: coste.estado === 'AMBIGUO',
+      })
+    : valorarManoObra({
+        minutos,
+        // Sin artículo en el catálogo no hay precio: se trata como `SIN_PVP`, que
+        // es exactamente lo que ocurre. El snapshot conserva el código aplicado
+        // para poder investigar por qué ese artículo no existe.
+        precioMinuto: articulo?.precio ?? null,
+        costeMinuto: coste.estado === 'RESUELTO' ? coste.coste : null,
+        costeAmbiguo: coste.estado === 'AMBIGUO',
+      })
 
   return {
     concepto,

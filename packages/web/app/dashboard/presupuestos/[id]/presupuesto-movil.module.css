@@ -151,6 +151,17 @@
     margin-left: 0;
   }
 
+  .designer :global(.al-materiales-propios) {
+    grid-column: 1 / -1;
+    min-width: 0;
+  }
+
+  .designer :global(.al-materiales-propios-campos) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .625rem;
+  }
+
   .designer :global(.al-designer-measure) {
     min-width: 0;
   }

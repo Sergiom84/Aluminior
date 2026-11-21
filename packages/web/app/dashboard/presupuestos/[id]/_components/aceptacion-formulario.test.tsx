@@ -41,7 +41,7 @@ describe('rechazo al aceptar', () => {
     expect(cancelar).not.toHaveBeenCalled()
   })
 
-  it('el alta anuncia el error sin sustituir el configurador', () => {
+  it('el alta anuncia el error sin sustituir el configurador ni duplicar IDs entre pestañas', () => {
     const html = renderToStaticMarkup(<AnyadirLinea
       presupuestoId="00000000-0000-4000-8000-000000000001" series={['QA-VA1-SERIE']}
       acabados={[{ codigo: 'QA-VA1-ACABADO', descripcion: 'Sintético' }]} />)
@@ -49,5 +49,7 @@ describe('rechazo al aceptar', () => {
     expect(html).toContain(mensaje)
     expect(html).toContain('aria-label="Introducir línea"')
     expect(html).toContain('CERRAMIENTO · 0 ELEMENTOS')
+    const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map(m => m[1])
+    expect(new Set(ids).size).toBe(ids.length)
   })
 })

@@ -3,7 +3,6 @@ import { and, desc, eq, sql } from 'drizzle-orm'
 import { crearDb, schema } from '@aluminior/db'
 import { Shell } from '../_components/shell.tsx'
 import { ListaPresupuestos } from './_components/lista-presupuestos.tsx'
-import { PestanasDocumento } from './_components/pestanas-documento.tsx'
 import { BuscadorPresupuestos } from './_components/buscador-presupuestos.tsx'
 import { filtroClienteSeleccionado } from './_lib/busqueda-listado.ts'
 import { etiquetaTipoBusqueda, filtroPorPlan, leerTipoBusqueda, planBusqueda } from './_lib/busqueda-tipo/index.ts'
@@ -107,7 +106,6 @@ export default async function Presupuestos({
             busqueda ? `${etiquetaTipoBusqueda(tipo)}: ${busqueda}` : null,
           ].filter(Boolean).join(' · ') || 'Últimos 100 presupuestos'}</span>
         </footer>
-        <PestanasDocumento vista="lista" />
       </section>
     </Shell>
   )

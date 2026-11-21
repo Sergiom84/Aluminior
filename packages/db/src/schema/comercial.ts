@@ -90,8 +90,11 @@ export const proveedores = pgTable('proveedores', {
 })
 
 export const ESTADOS_PRESUPUESTO = [
-  'PENDIENTE', 'ACEPTADO', 'RECHAZADO', 'ANULADO',
+  'PENDIENTE', 'ACEPTADO', 'ABONADO', 'RECHAZADO', 'ANULADO',
 ] as const
+
+export const METODOS_PAGO_PRESUPUESTO = ['METALICO', 'TRANSFERENCIA'] as const
+export type MetodoPagoPresupuesto = (typeof METODOS_PAGO_PRESUPUESTO)[number]
 
 /**
  * Presupuestos. Origen: VPresupuestos (439 filas, 51 de 156 columnas con datos).
@@ -140,6 +143,10 @@ export const presupuestos = pgTable('presupuestos', {
   divisa: text('divisa').notNull().default('EUR'),
 
   formaPago: text('forma_pago'),
+  metodoPago: text('metodo_pago'),
+  pagadoEn: timestamp('pagado_en', { withTimezone: true }),
+  pagadoPor: text('pagado_por'),
+  guardadoEn: timestamp('guardado_en', { withTimezone: true }),
   observaciones: text('observaciones'),
 
   creadoEn: timestamp('creado_en', { withTimezone: true }).notNull().defaultNow(),
@@ -155,6 +162,10 @@ export const presupuestos = pgTable('presupuestos', {
   destinatario: check(
     'presupuestos_destinatario_check',
     sql`${t.clienteCodigo} IS NOT NULL OR ${t.potencialCodigo} IS NOT NULL OR ${t.nombreLibre} IS NOT NULL`,
+  ),
+  metodoPagoValido: check(
+    'presupuestos_metodo_pago_check',
+    sql`${t.metodoPago} IS NULL OR ${t.metodoPago} IN ('METALICO', 'TRANSFERENCIA')`,
   ),
   // T.71: la identidad de un presupuesto es (serie, numero, revision). Última
   // defensa ante procesos externos o código que no respete el advisory lock

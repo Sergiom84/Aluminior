@@ -43,6 +43,8 @@ export interface EntradaPreparacion {
   horas: HorasTecleadas
   /** Tarifa del documento, no la del artículo. */
   tarifa: number
+  /** Precio/hora explícito de colocación (€/h). */
+  precioHoraColocacion?: string | null
 }
 
 export async function prepararManoObra(
@@ -64,7 +66,12 @@ export async function prepararManoObra(
     conceptos.map((c) => articuloDeConcepto(c.concepto)),
     entrada.tarifa,
   )
-  const { filas, guarda } = resolverManoObra({ conceptos, catalogo, tarifa: entrada.tarifa })
+  const { filas, guarda } = resolverManoObra({
+    conceptos,
+    catalogo,
+    tarifa: entrada.tarifa,
+    ...(entrada.precioHoraColocacion ? { precioHoraColocacion: entrada.precioHoraColocacion } : {}),
+  })
 
   // La regla del dinero, por la misma puerta que el despiece: un concepto sin
   // importe deja la línea sin valorar. Los problemas de COSTE no la tumban

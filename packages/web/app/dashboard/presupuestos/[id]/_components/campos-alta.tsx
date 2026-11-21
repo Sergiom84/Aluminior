@@ -4,6 +4,7 @@ import { atributosCampo, bordeCampo } from '../../_lib/campos.ts'
 import { MensajeError } from './mensaje-error.tsx'
 import styles from '../presupuesto-movil.module.css'
 import { CampoVidrio } from './vidrios/campo-vidrio.tsx'
+import { CampoPrecioColocacion } from './campo-precio-colocacion.tsx'
 
 const entrada = 'w-full rounded-md border px-3 py-2 text-sm'
 const estilo = { background: 'var(--al-surface)', borderColor: 'var(--al-border-strong)' }
@@ -14,6 +15,7 @@ export function acabadoPorDefecto(acabados: { codigo: string }[]): string {
 
 export function CamposCerramiento({
   err, series, acabados, serie, setSerie, vidrio, setVidrio, reinicio = 0,
+  presupuestoId = '', precioColocacionDefecto = '30.00', onDefectoGuardado,
 }: {
   err: Record<string, string[] | undefined>
   series: string[]
@@ -27,6 +29,9 @@ export function CamposCerramiento({
    * sesión: si sobrevivieran, la siguiente ventana heredaría un precio fijo.
    */
   reinicio?: number
+  presupuestoId?: string
+  precioColocacionDefecto?: string
+  onDefectoGuardado?: (nuevoPrecio: string) => void
 }) {
   return (
     <div className={`${styles.fields} ${styles.filaCerramiento}`}>
@@ -114,6 +119,15 @@ export function CamposCerramiento({
           style={{ ...estilo, borderColor: bordeCampo('horasColocacion', err, estilo.borderColor) }} />
         <MensajeError campo="horasColocacion" errores={err} />
       </div>
+      <CampoPrecioColocacion
+        key={`precio-col-${reinicio}-${precioColocacionDefecto}`}
+        presupuestoId={presupuestoId}
+        precioInicial={precioColocacionDefecto}
+        precioDefecto={precioColocacionDefecto}
+        err={err}
+        claseEntrada={entrada}
+        estiloEntrada={estilo}
+        onDefectoGuardado={onDefectoGuardado} />
     </div>
   )
 }
@@ -127,15 +141,15 @@ export function CamposArticulo({
   return (
     <div className={styles.fields}>
       <div className="col-span-3">
-        <label htmlFor="codigo">Artículo</label>
-        <input {...atributosCampo('codigo', err)} className={entrada}
+        <label htmlFor="articulo-codigo">Artículo</label>
+        <input {...atributosCampo('codigo', err, 'articulo')} className={entrada}
           style={{ ...estilo, borderColor: bordeCampo('codigo', err, estilo.borderColor) }}
           placeholder="PSM001" />
-        <MensajeError campo="codigo" errores={err} />
+        <MensajeError campo="codigo" errores={err} prefijo="articulo" />
       </div>
       <div className="col-span-3">
-        <label htmlFor="acabadoCodigo">Acabado</label>
-        <select id="acabadoCodigo" name="acabadoCodigo" defaultValue="" className={entrada} style={estilo}>
+        <label htmlFor="articulo-acabadoCodigo">Acabado</label>
+        <select id="articulo-acabadoCodigo" name="acabadoCodigo" defaultValue="" className={entrada} style={estilo}>
           <option value="">Genérico / no aplica</option>
           {acabados.map((item) => (
             <option key={item.codigo} value={item.codigo}>{item.codigo} · {item.descripcion}</option>
@@ -143,39 +157,39 @@ export function CamposArticulo({
         </select>
       </div>
       <div className="col-span-3">
-        <label htmlFor="referencia">Ubicación</label>
-        <input {...atributosCampo('referencia', err)} className={entrada}
+        <label htmlFor="articulo-referencia">Ubicación</label>
+        <input {...atributosCampo('referencia', err, 'articulo')} className={entrada}
           style={{ ...estilo, borderColor: bordeCampo('referencia', err, estilo.borderColor) }}
           placeholder="SALÓN" />
-        <MensajeError campo="referencia" errores={err} />
+        <MensajeError campo="referencia" errores={err} prefijo="articulo" />
       </div>
       <div className="col-span-3">
-        <label htmlFor="anchoMm">Ancho (mm)</label>
-        <input {...atributosCampo('anchoMm', err)} type="number" min={0} step="0.01"
+        <label htmlFor="articulo-anchoMm">Ancho (mm)</label>
+        <input {...atributosCampo('anchoMm', err, 'articulo')} type="number" min={0} step="0.01"
           className={`cifra ${entrada}`}
           style={{ ...estilo, borderColor: bordeCampo('anchoMm', err, estilo.borderColor) }} />
-        <MensajeError campo="anchoMm" errores={err} />
+        <MensajeError campo="anchoMm" errores={err} prefijo="articulo" />
       </div>
       <div className="col-span-3">
-        <label htmlFor="altoMm">Alto (mm)</label>
-        <input {...atributosCampo('altoMm', err)} type="number" min={0} step="0.01"
+        <label htmlFor="articulo-altoMm">Alto (mm)</label>
+        <input {...atributosCampo('altoMm', err, 'articulo')} type="number" min={0} step="0.01"
           className={`cifra ${entrada}`}
           style={{ ...estilo, borderColor: bordeCampo('altoMm', err, estilo.borderColor) }} />
-        <MensajeError campo="altoMm" errores={err} />
+        <MensajeError campo="altoMm" errores={err} prefijo="articulo" />
       </div>
       <div className="col-span-3">
-        <label htmlFor="precioUnitarioManual">PVP manual (€)</label>
-        <input {...atributosCampo('precioUnitarioManual', err)} type="number" min={0} step="0.01"
+        <label htmlFor="articulo-precioUnitarioManual">PVP manual (€)</label>
+        <input {...atributosCampo('precioUnitarioManual', err, 'articulo')} type="number" min={0} step="0.01"
           className={`cifra ${entrada}`} placeholder="Automático"
           style={{ ...estilo, borderColor: bordeCampo('precioUnitarioManual', err, estilo.borderColor) }} />
-        <MensajeError campo="precioUnitarioManual" errores={err} />
+        <MensajeError campo="precioUnitarioManual" errores={err} prefijo="articulo" />
       </div>
       <div className="col-span-3">
-        <label htmlFor="cantidad">Cdad.</label>
-        <input {...atributosCampo('cantidad', err)} type="number" defaultValue={1} min={1} step={1}
+        <label htmlFor="articulo-cantidad">Cdad.</label>
+        <input {...atributosCampo('cantidad', err, 'articulo')} type="number" defaultValue={1} min={1} step={1}
           className={`cifra ${entrada}`}
           style={{ ...estilo, borderColor: bordeCampo('cantidad', err, estilo.borderColor) }} />
-        <MensajeError campo="cantidad" errores={err} />
+        <MensajeError campo="cantidad" errores={err} prefijo="articulo" />
       </div>
     </div>
   )

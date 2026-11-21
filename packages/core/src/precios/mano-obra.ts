@@ -17,9 +17,12 @@
  */
 
 import {
-  compararDecimal, multiplicarDecimal, normalizarDecimal, signoDecimal,
+  compararDecimal, dividirDecimal, multiplicarDecimal, normalizarDecimal, signoDecimal,
   type Decimal,
 } from './decimal.ts'
+
+/** Precio por hora de colocación por defecto si el usuario no ha guardado otro. */
+export const PRECIO_HORA_COLOCACION_DEFECTO: Decimal = '30.00'
 
 /** Texto, no `60`: el factor entra en la misma aritmética que el resto. */
 export const MINUTOS_POR_HORA: Decimal = '60'
@@ -140,6 +143,15 @@ export interface ValoracionManoObra {
  * a `null` al no poder valorar borraría la evidencia de que ese artículo tiene
  * un precio imposible, que es justo lo que hay que poder investigar después.
  */
+export interface EntradaManoObraPorHora {
+  horas: Decimal
+  minutos: Decimal
+  /** Precio por hora en euros; la valoración calcula `horas × precioHora` exacto. */
+  precioHora: Decimal
+  costeMinuto: Decimal | null
+  costeAmbiguo?: boolean
+}
+
 export function valorarManoObra(entrada: EntradaManoObra): ValoracionManoObra {
   const minutos = normalizarDecimal(entrada.minutos, ESCALA_MINUTOS)
   if (signoDecimal(minutos) <= 0) {
@@ -149,6 +161,36 @@ export function valorarManoObra(entrada: EntradaManoObra): ValoracionManoObra {
     ...valorarVenta(minutos, entrada.precioMinuto),
     ...valorarCoste(minutos, entrada.costeMinuto, entrada.costeAmbiguo ?? false),
   }
+}
+
+export function valorarManoObraPorHora(entrada: EntradaManoObraPorHora): ValoracionManoObra {
+  const horas = normalizarDecimal(entrada.horas, 2)
+  const minutos = normalizarDecimal(entrada.minutos, ESCALA_MINUTOS)
+  if (signoDecimal(horas) <= 0 || signoDecimal(minutos) <= 0) {
+    throw new Error(`duración no válida: ${entrada.horas}`)
+  }
+  return {
+    ...valorarVentaPorHora(horas, entrada.precioHora),
+    ...valorarCoste(minutos, entrada.costeMinuto, entrada.costeAmbiguo ?? false),
+  }
+}
+
+function valorarVentaPorHora(horas: Decimal, precioBruto: Decimal) {
+  const precioHora = normalizarDecimal(precioBruto, ESCALA_IMPORTE)
+  const precioMinuto = dividirDecimal(precioHora, MINUTOS_POR_HORA, ESCALA_PRECIO)
+  const signo = signoDecimal(precioHora)
+  if (signo < 0) return incompleta(precioMinuto, 'PVP_NEGATIVO')
+  if (signo === 0 || signoDecimal(precioMinuto) <= 0) return incompleta(precioMinuto, 'PVP_CERO')
+  const importe = multiplicarDecimal(horas, precioHora, ESCALA_IMPORTE)
+  if (compararDecimal(importe, MAXIMO_IMPORTE) > 0) {
+    return incompleta(precioMinuto, 'IMPORTE_FUERA_RANGO')
+  }
+  return {
+    precioMinuto,
+    importe,
+    valoracionCompleta: true,
+    motivoCodigo: null,
+  } as const
 }
 
 function valorarVenta(minutos: Decimal, precioBruto: Decimal | null) {

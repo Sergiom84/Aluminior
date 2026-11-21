@@ -7,11 +7,11 @@ import {
   eliminarModuloConDependientes, esConfiguracionCerramiento, esModuloRaiz, insertarModuloEnAnclaje,
   medidasCerramiento, moduloDesdePlantilla, plantillaDiseno, PLANTILLAS_DISENO, posicionesCerramiento,
   unionConfigurada, serieEfectivaUnion, UNIONES_VISUALES, type UnionVisual,
-  anclajeInferior, anclajeLateral, asignarComplementosModulos, medidasPrimeraVentana, modelosIguales, primerHueco, type AnclajeLibre, type ConfiguracionCerramiento,
+  anclajeInferior, anclajeLateral, asignarComplementosModulos, medidasPrimeraVentana, primerHueco, type AnclajeLibre, type ConfiguracionCerramiento,
   type CotasCatalogoPorEstructura, type EstructuraSinDibujo, type MaterialesGenerales, type PlantillaDiseno,
 } from '@aluminior/core/estructuras'
 import { LienzoCerramiento, type ParteSeleccionada } from './lienzo-cerramiento.tsx'
-import { aplicarComplementosAModelos, useBorradoresCerramiento } from './use-borradores-cerramiento.ts'
+import { useBorradoresCerramiento } from './use-borradores-cerramiento.ts'
 import { EditorUnion } from './editor-union.tsx'
 import { CatalogoInferior } from './disenador/catalogo-inferior.tsx'
 import { ListaElementos, entradasCerramiento, type Entrada } from './disenador/lista-elementos.tsx'
@@ -199,22 +199,6 @@ export function DisenadorEstructura({
   const medidas = configuracion ? medidasCerramiento(configuracion) : { anchoMm: 0, altoMm: 0 }
   const inferior = configuracion ? anclajeInferior(configuracion, modulo?.id ?? null) : null
 
-  /** Mejora autorizada (fase 4): aplicar el borrador a los modelos iguales, anunciando cuántos. */
-  const aplicarAModelos = (id: string) => {
-    if (!configuracion) return
-    const ids = modelosIguales(configuracion, id)
-    const indices = entradasCerramiento(configuracion).filter((e) => ids.includes(e.id)).map((e) => e.indice)
-    const codigo = configuracion.modulos.find((m) => m.id === id)?.estructuraCodigo
-    if (!window.confirm(`¿Aplicar los cambios a los ${ids.length} elementos ${codigo} (${indices.join(', ')})?`)) return
-    const siguiente = aplicarComplementosAModelos(configuracion, edicion.borradores, id, ids, catalogoUniones)
-    if (!siguiente) {
-      edicion.aplicar('modulos', id, ids)
-      return
-    }
-    setConfiguracion(siguiente)
-    edicion.descartar('modulos', id)
-  }
-
   const eliminar = () => {
     if (!configuracion || !modulo) return
     const dependientes = dependientesModulo(configuracion, modulo.id).length
@@ -297,8 +281,9 @@ export function DisenadorEstructura({
                 cotasCatalogo={cotasCatalogo[modulo.estructuraCodigo] ?? []}
                 complementosCatalogo={complementosCatalogo}
                 generales={generales} series={seriesPorEstructura?.[modulo.estructuraCodigo] ?? series} acabados={acabados}
-                modelos={modelosIguales(configuracion, modulo.id).length}
-                onActualizarModelos={() => aplicarAModelos(modulo.id)}
+                onActualizarTodos={configuracion.modulos.length > 1
+                  ? () => { setAviso(null); edicion.aplicarATodosLosElementos(modulo.id) }
+                  : null}
                 indice={entradasCerramiento(configuracion).find((e) => e.id === modulo.id)!.indice}
                 rect={posicionesCerramiento(configuracion).modulos.get(modulo.id)!}
                 pendiente={Boolean(edicion.borradores.modulos[modulo.id])} bloqueado={edicion.pendientes}

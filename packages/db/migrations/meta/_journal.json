@@ -274,6 +274,13 @@
       "when": 1794236647716,
       "tag": "0038_agenda_notas_dia",
       "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "7",
+      "when": 1795288000000,
+      "tag": "0039_preferencias_usuario_y_pago",
+      "breakpoints": true
     }
   ]
 }

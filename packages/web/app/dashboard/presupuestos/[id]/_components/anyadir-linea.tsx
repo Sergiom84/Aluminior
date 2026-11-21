@@ -26,6 +26,7 @@ type TipoLinea = 'CERRAMIENTO' | 'ARTICULO'
  */
 export function AnyadirLinea({
   presupuestoId, series, acabados, catalogoUniones, cotasCatalogo, complementosCatalogo, mosquiteras = [],
+  precioColocacionDefecto = '30.00',
 }: {
   mosquiteras?: readonly ModeloMosquitera[]
   presupuestoId: string
@@ -34,8 +35,11 @@ export function AnyadirLinea({
   catalogoUniones?: readonly import('@aluminior/core/estructuras').UnionVisual[]
   cotasCatalogo?: import('@aluminior/core/estructuras').CotasCatalogoPorEstructura
   complementosCatalogo?: CatalogoComplementosDisenador
+  precioColocacionDefecto?: string
 }) {
   const [tipo, setTipo] = useState<TipoLinea>('CERRAMIENTO')
+  const [precioColocacionActual, setPrecioColocacionActual] = useState(precioColocacionDefecto)
+  useEffect(() => { setPrecioColocacionActual(precioColocacionDefecto) }, [precioColocacionDefecto])
   const { estado, enviar, enviando } = useEnvioFormulario<Estado>(anyadirLinea, true)
   const formulario = useRef<HTMLFormElement>(null)
   const focoTrasAlta = useRef(false)
@@ -81,12 +85,9 @@ export function AnyadirLinea({
 
   const elegirTipo = (siguiente: TipoLinea) => {
     setTipo(siguiente)
-    if (siguiente === 'CERRAMIENTO') resetTrasAlta()
   }
 
-  const estructurasEnPantalla = tipo === 'CERRAMIENTO'
-    ? configuracion?.modulos.map((modulo) => modulo.estructuraCodigo) ?? []
-    : []
+  const estructurasEnPantalla = configuracion?.modulos.map((modulo) => modulo.estructuraCodigo) ?? []
   const seriesValidas = useSeriesValidas(series, estructurasEnPantalla, vidrio)
 
   const err = estado && !estado.ok ? estado.errores : {}
@@ -142,32 +143,36 @@ export function AnyadirLinea({
         </div>
       )}
 
-      {tipo === 'CERRAMIENTO' && (
-        <>
-          <MensajeError campo="codigo" errores={err} />
-          <MensajeError campo="configuracionCerramiento" errores={err} />
-          <DisenadorEstructura key={edicion} codigo="2O" anchoMm={anchoMm} altoMm={altoMm} vacio
-            onConfiguracionChange={setConfiguracion}
-            onDimensionesChange={actualizarDimensiones}
-            onValidezChange={setConfiguracionValida} series={seriesValidas.grupo}
-            seriesPorEstructura={seriesValidas.porEstructura} catalogoUniones={catalogoUniones}
-            cotasCatalogo={cotasCatalogo} complementosCatalogo={complementosCatalogo}
-            opcionesCatalogo={{
-              onHerrajeChange: setHerraje,
-              onAcristalamientoChange: setAcristalamiento,
-              errores: err,
-            }}
-            onElementoOpcionesChange={setElementoOpciones}
-            panelMosquiteras={mosquiteras.length ? (
-              <MosquiterasCatalogo presupuestoId={presupuestoId} modelos={mosquiteras} acabados={acabados} />
-            ) : undefined}
-            generales={{ serieCodigo: serie || null, vidrioCodigo: vidrio || null }} acabados={acabados} />
-          <CamposCerramiento err={err} series={seriesValidas.grupo} acabados={acabados}
-            serie={serie} setSerie={setSerie} vidrio={vidrio} setVidrio={setVidrio} reinicio={edicion} />
-        </>
-      )}
+      <fieldset disabled={tipo !== 'CERRAMIENTO'} hidden={tipo !== 'CERRAMIENTO'}
+        style={tipo !== 'CERRAMIENTO' ? { display: 'none' } : { border: 0, padding: 0, margin: 0, minWidth: 0 }}>
+        <MensajeError campo="codigo" errores={tipo === 'CERRAMIENTO' ? err : {}} />
+        <MensajeError campo="configuracionCerramiento" errores={tipo === 'CERRAMIENTO' ? err : {}} />
+        <DisenadorEstructura key={edicion} codigo="2O" anchoMm={anchoMm} altoMm={altoMm} vacio
+          onConfiguracionChange={setConfiguracion}
+          onDimensionesChange={actualizarDimensiones}
+          onValidezChange={setConfiguracionValida} series={seriesValidas.grupo}
+          seriesPorEstructura={seriesValidas.porEstructura} catalogoUniones={catalogoUniones}
+          cotasCatalogo={cotasCatalogo} complementosCatalogo={complementosCatalogo}
+          opcionesCatalogo={{
+            onHerrajeChange: setHerraje,
+            onAcristalamientoChange: setAcristalamiento,
+            errores: tipo === 'CERRAMIENTO' ? err : {},
+          }}
+          onElementoOpcionesChange={setElementoOpciones}
+          panelMosquiteras={mosquiteras.length ? (
+            <MosquiterasCatalogo presupuestoId={presupuestoId} modelos={mosquiteras} acabados={acabados} />
+          ) : undefined}
+          generales={{ serieCodigo: serie || null, vidrioCodigo: vidrio || null }} acabados={acabados} />
+        <CamposCerramiento err={tipo === 'CERRAMIENTO' ? err : {}} series={seriesValidas.grupo} acabados={acabados}
+          serie={serie} setSerie={setSerie} vidrio={vidrio} setVidrio={setVidrio} reinicio={edicion}
+          presupuestoId={presupuestoId} precioColocacionDefecto={precioColocacionActual}
+          onDefectoGuardado={setPrecioColocacionActual} />
+      </fieldset>
 
-      {tipo === 'ARTICULO' && <CamposArticulo key={edicion} err={err} acabados={acabados} />}
+      <fieldset disabled={tipo !== 'ARTICULO'} hidden={tipo !== 'ARTICULO'}
+        style={tipo !== 'ARTICULO' ? { display: 'none' } : { border: 0, padding: 0, margin: 0, minWidth: 0 }}>
+        <CamposArticulo key={edicion} err={tipo === 'ARTICULO' ? err : {}} acabados={acabados} />
+      </fieldset>
 
       <div className={`${styles.formActions} mt-4`}>
         {tipo === 'CERRAMIENTO' && Boolean(configuracion) && !opcionesListas && (

@@ -12,19 +12,20 @@ export interface AtributosCampo {
   'aria-describedby'?: string
 }
 
-export const idMensajeError = (nombre: string) => `${nombre}-error`
+export const idMensajeError = (nombre: string, prefijo = '') =>
+  prefijo ? `${prefijo}-${nombre}-error` : `${nombre}-error`
 
 export function mensajesDe(nombre: string, errores: ErroresCampo): string[] {
   return errores[nombre]?.filter(Boolean) ?? []
 }
 
-export function atributosCampo(nombre: string, errores: ErroresCampo): AtributosCampo {
+export function atributosCampo(nombre: string, errores: ErroresCampo, prefijo = ''): AtributosCampo {
   const conError = mensajesDe(nombre, errores).length > 0
   return {
-    id: nombre,
+    id: prefijo ? `${prefijo}-${nombre}` : nombre,
     name: nombre,
     ...(conError
-      ? { 'aria-invalid': true as const, 'aria-describedby': idMensajeError(nombre) }
+      ? { 'aria-invalid': true as const, 'aria-describedby': idMensajeError(nombre, prefijo) }
       : {}),
   }
 }

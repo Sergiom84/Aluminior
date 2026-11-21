@@ -4,7 +4,8 @@ import { useState } from 'react'
 import {
   actualizarModuloCerramiento, actualizarFiModuloCerramiento, actualizarCotasModuloCerramiento,
   actualizarTodasLasUniones, asignarComplementosModulos, asignarMaterialesModulos, asignarMaterialesUnion,
-  CAMPOS_MATERIAL, CAMPOS_MATERIAL_UNION, esConfiguracionCerramiento, unionConGrosorCatalogo, UNIONES_VISUALES,
+  cajonPorDefectoCompacto, CAMPOS_MATERIAL, CAMPOS_MATERIAL_UNION, esConfiguracionCerramiento,
+  unionConGrosorCatalogo, UNIONES_VISUALES,
   type CambiosComplementosModulo, type CambiosCotasModulo, type CambiosMaterial, type CambiosMaterialUnion, type UnionVisual,
   type ConfiguracionCerramiento, type ModuloCerramiento, type UnionCerramiento,
 } from '@aluminior/core/estructuras'
@@ -36,9 +37,23 @@ export function aplicarBorrador(configuracion: ConfiguracionCerramiento, borrado
     if (Object.hasOwn(borrador, 'compacto')) complementos.compacto = borrador.compacto
     if (Object.hasOwn(borrador, 'tapajuntas')) complementos.tapajuntas = borrador.tapajuntas
     for (const destino of destinos) {
+      const previo = siguiente.modulos.find(item => item.id === destino)
       siguiente = actualizarModuloCerramiento(siguiente, destino, medidas)
       if (Object.hasOwn(borrador, 'fiMm')) siguiente = actualizarFiModuloCerramiento(siguiente, destino, fiMm!)
       if (cotas && Object.keys(cotas).length) siguiente = actualizarCotasModuloCerramiento(siguiente, destino, cotas)
+      if (
+        altoMm !== undefined && Number.isFinite(altoMm) && altoMm > 0 &&
+        !Object.hasOwn(borrador, 'compacto') &&
+        previo?.compacto &&
+        previo.compacto.altoCajonMm === cajonPorDefectoCompacto(previo.altoMm)
+      ) {
+        const nuevoCajon = cajonPorDefectoCompacto(altoMm)
+        if (nuevoCajon !== previo.compacto.altoCajonMm) {
+          siguiente = asignarComplementosModulos(siguiente, [destino], {
+            compacto: { ...previo.compacto, altoCajonMm: nuevoCajon },
+          })
+        }
+      }
     }
     if (Object.keys(materiales).length) siguiente = asignarMaterialesModulos(siguiente, destinos, materiales)
     if (Object.keys(complementos).length) siguiente = asignarComplementosModulos(siguiente, destinos, complementos)
@@ -55,23 +70,40 @@ export function aplicarBorrador(configuracion: ConfiguracionCerramiento, borrado
 }
 
 /**
- * Copia el compacto y el tapajuntas ya aplicados a los modelos iguales.
- * Si hay un borrador válido, lo aplica antes; si es inválido, no copia nada.
+ * «Actualizar a todos»: aplica antes el borrador del elemento origen, si lo
+ * hay, y copia sus medidas, `fiMm` (si es 1OFI), materiales propios y
+ * complementos a todos los elementos del cerramiento. Todo o nada.
  */
-export function aplicarComplementosAModelos(configuracion: ConfiguracionCerramiento, borradores: Borradores,
-  id: string, destinos: readonly string[], catalogo: readonly UnionVisual[] = UNIONES_VISUALES,
-): ConfiguracionCerramiento | null {
+export function aplicarElementoATodos(configuracion: ConfiguracionCerramiento, borradores: Borradores,
+  id: string, catalogo: readonly UnionVisual[] = UNIONES_VISUALES): ConfiguracionCerramiento | null {
   const hayBorrador = Boolean(borradores.modulos[id] && Object.keys(borradores.modulos[id]).length)
-  const base = hayBorrador
-    ? aplicarBorrador(configuracion, borradores, 'modulos', id, destinos, catalogo)
-    : configuracion
+  const base = hayBorrador ? aplicarBorrador(configuracion, borradores, 'modulos', id, [id], catalogo) : configuracion
   if (!base) return null
-  const origen = base.modulos.find((modulo) => modulo.id === id)
+  const origen = base.modulos.find(item => item.id === id)
   if (!origen) return null
-  return asignarComplementosModulos(base, destinos, {
+  let siguiente = base
+  const ids = base.modulos.map(item => item.id)
+  for (const destino of ids) {
+    if (destino === id) continue
+    siguiente = actualizarModuloCerramiento(siguiente, destino, {
+      anchoMm: origen.anchoMm,
+      altoMm: origen.altoMm,
+    })
+    if (origen.estructuraCodigo === '1OFI' && origen.fiMm !== undefined) {
+      siguiente = actualizarFiModuloCerramiento(siguiente, destino, origen.fiMm)
+    }
+  }
+  siguiente = asignarMaterialesModulos(siguiente, ids, {
+    serieCodigo: origen.materiales?.serieCodigo ?? null,
+    vidrioCodigo: origen.materiales?.vidrioCodigo ?? null,
+    acabadoCodigo: origen.materiales?.acabadoCodigo ?? null,
+    acabadoAccesoriosCodigo: origen.materiales?.acabadoAccesoriosCodigo ?? null,
+  })
+  siguiente = asignarComplementosModulos(siguiente, ids, {
     compacto: origen.compacto ?? null,
     tapajuntas: origen.tapajuntas ?? null,
   })
+  return esConfiguracionCerramiento(siguiente, catalogo) ? siguiente : null
 }
 
 /**
@@ -129,6 +161,15 @@ export function useBorradoresCerramiento(configuracion: ConfiguracionCerramiento
     onAplicar(siguiente)
     descartar(tipo, id)
   }
+  const aplicarATodosLosElementos = (id: string) => {
+    const siguiente = configuracion && aplicarElementoATodos(configuracion, borradores, id, catalogo)
+    if (!siguiente) {
+      setError('No se aplicó a ningún elemento: revisa las medidas antes de actualizar.')
+      return
+    }
+    onAplicar(siguiente)
+    descartar('modulos', id)
+  }
   const aplicarATodasLasUniones = (id: string) => {
     const siguiente = configuracion && aplicarUnionATodas(configuracion, borradores, id, catalogo)
     if (!siguiente) {
@@ -138,5 +179,8 @@ export function useBorradoresCerramiento(configuracion: ConfiguracionCerramiento
     onAplicar(siguiente)
     descartar('uniones', id)
   }
-  return { borradores, pendientes, error, editarModulo, editarUnion, aplicar, aplicarATodasLasUniones, descartar }
+  return {
+    borradores, pendientes, error, editarModulo, editarUnion, aplicar,
+    aplicarATodosLosElementos, aplicarATodasLasUniones, descartar,
+  }
 }

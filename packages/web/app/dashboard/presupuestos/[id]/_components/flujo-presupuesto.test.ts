@@ -35,11 +35,18 @@ describe('flujo de alta de presupuesto', () => {
     expect(alta).toContain('setConfiguracion(null)')
   })
 
-  it('mantiene lista y ficha como vistas del mismo documento', () => {
+  it('conserva el cerramiento al cambiar entre Cerramiento y Artículos sin duplicar IDs de formulario', () => {
+    const alta = leer('./anyadir-linea.tsx')
+    expect(alta).toMatch(/const elegirTipo = \(siguiente: TipoLinea\) => \{\r?\n\s*setTipo\(siguiente\)\r?\n\s*\}/)
+    expect(alta).toContain("disabled={tipo !== 'CERRAMIENTO'}")
+    expect(alta).toContain("disabled={tipo !== 'ARTICULO'}")
+  })
+
+  it('no muestra las pestañas redundantes Lista y Ficha', () => {
     const lista = leer('../../page.tsx')
     const ficha = leer('../page.tsx')
-    expect(lista).toContain('<PestanasDocumento vista="lista" />')
-    expect(ficha).toContain('<PestanasDocumento vista="ficha"')
+    expect(lista).not.toContain('PestanasDocumento')
+    expect(ficha).not.toContain('PestanasDocumento')
     expect(ficha).toContain('className="al-document-window"')
   })
 })

@@ -116,6 +116,7 @@
 
 .al-commandbar {
   display: flex;
+  flex-wrap: wrap;
   min-height: 46px;
   align-items: center;
   gap: 8px;

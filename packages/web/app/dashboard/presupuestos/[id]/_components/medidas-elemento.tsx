@@ -54,7 +54,7 @@ function errorCota(simbolo: SimboloCotaModulo, texto: string, altoMm: number, an
 }
 
 export function MedidasElemento({
-  modulo, pendiente, cotasCatalogo = [], cotasBorrador, onChange, onActualizar, onDescartar,
+  modulo, pendiente, cotasCatalogo = [], cotasBorrador, onChange, onActualizar, onActualizarTodos = null, onDescartar,
 }: {
   modulo: ModuloCerramiento
   pendiente: boolean
@@ -62,6 +62,7 @@ export function MedidasElemento({
   cotasBorrador?: CambiosCotasModulo
   onChange: (cambios: Medidas) => void
   onActualizar: () => void
+  onActualizarTodos?: (() => void) | null
   onDescartar: () => void
 }) {
   const geometriaFi = modulo.estructuraCodigo === '1OFI' && Object.hasOwn(modulo, 'fiMm')
@@ -113,6 +114,12 @@ export function MedidasElemento({
     })}
     <button type="button" className="al-command-primary" disabled={!pendiente} onClick={onActualizar}
       aria-label="Actualizar elemento">Actualizar</button>
+    {onActualizarTodos && (
+      <button type="button" className="al-command" onClick={onActualizarTodos}
+        aria-label="Actualizar a todos los elementos">
+        Actualizar a todos
+      </button>
+    )}
     {pendiente && <button type="button" className="al-command" onClick={onDescartar}>Descartar cambios</button>}
   </>
 }

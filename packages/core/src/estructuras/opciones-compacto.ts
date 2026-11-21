@@ -12,11 +12,15 @@ import {
   CATALOGO_OPCIONES_COMPACTO, type GrupoCatalogoCompacto,
 } from './opciones-compacto-catalogo.ts'
 
-/** 155 hasta 1.600 mm; 185 por encima. El tramo de 200 mm no está demostrado. */
+/** 155 hasta 1.600 mm; 185 por encima. */
 export const TRAMOS_CAJON_OBSERVADOS: readonly TramoAlturaCajon[] = [
   { altoCajonMm: 155, desdeMm: 0, hastaMm: 1600 },
   { altoCajonMm: 185, desdeMm: 1601, hastaMm: 100000 },
 ]
+
+export function cajonPorDefectoCompacto(altoHuecoMm: number): number {
+  return alturaCajonCompacto(TRAMOS_CAJON_OBSERVADOS, altoHuecoMm) ?? 155
+}
 
 const TERMINO = /^G(\d+)O(\d+)$/i
 
@@ -77,7 +81,7 @@ export function compactoAlElegir(
     estructuraCodigo: estructura,
     altoCajonMm: mismo
       ? previo!.altoCajonMm
-      : alturaCajonCompacto(TRAMOS_CAJON_OBSERVADOS, altoHuecoMm) ?? 155,
+      : cajonPorDefectoCompacto(altoHuecoMm),
     descontarHueco: mismo ? previo!.descontarHueco ?? true : true,
     opciones: mismo && previo!.opciones?.length
       ? [...previo!.opciones]

@@ -98,7 +98,8 @@
   text-transform: uppercase;
 }
 
-.al-status[data-status='ACEPTADO'] {
+.al-status[data-status='ACEPTADO'],
+.al-status[data-status='ABONADO'] {
   border-color: #9ecbb9;
   background: var(--al-ok-soft);
   color: #096445;
