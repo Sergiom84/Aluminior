@@ -48,14 +48,21 @@ export function conjuntosDeLinea(catalogo: CatalogoLinea, estructura: string, se
  * Selección que ve el motor: en los conjuntos con opciones visibles manda el
  * formulario (lo no marcado queda desmarcado) y las ocultas toman su valor por
  * defecto; los conjuntos sin opciones visibles usan el catálogo (`SelecDefSN`).
+ * Si el formulario marcó opciones de otros conjuntos pero de este ninguna, no se
+ * le ofreció (en un GRUPO la pestaña solo muestra los de una estructura): usa el
+ * catálogo, como Productor, que no guarda opciones por elemento (260472, `2OFI`
+ * con `HU532`). Una selección totalmente vacía sigue significando «nada marcado».
+ * Límite conocido: desmarcar todo un conjunto mientras otro conserva marcas es
+ * indistinguible de no haberlo ofrecido.
  */
 export function seleccionGuardada(conjuntos: readonly string[], elegidas: readonly string[] | undefined,
   opciones: readonly OpcionVisible[]): SeleccionGuardada[] {
   if (elegidas === undefined) return []
   const marcadas = new Set(elegidas.map(k => { const [c, o] = k.split('|'); return `${c}|${String(Number(o))}` }))
+  const ofrecidos = new Set([...marcadas].map(k => k.split('|')[0]))
   return conjuntos.flatMap(conjunto => {
     const propias = opciones.filter(o => o.conjunto === conjunto)
-    if (!propias.some(o => !o.oculta)) return []
+    if (!propias.some(o => !o.oculta) || (ofrecidos.size > 0 && !ofrecidos.has(conjunto))) return []
     return propias.map(o => ({ conjunto, opcion: o.opcion,
       marcada: o.oculta ? o.porDefecto : marcadas.has(`${conjunto}|${o.opcion}`) }))
   })
