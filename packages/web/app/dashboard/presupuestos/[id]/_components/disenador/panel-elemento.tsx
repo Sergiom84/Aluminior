@@ -122,7 +122,7 @@ export function PanelElemento({
           {invisible ? 'Volver a ventana' : 'Convertir en hueco'}
         </button>}
         <button type="button" className="al-command al-command-danger"
-          disabled={bloqueado || !eliminable} onClick={onEliminar}>
+          disabled={!eliminable} onClick={onEliminar}>
           Eliminar elemento
         </button>
       </div>

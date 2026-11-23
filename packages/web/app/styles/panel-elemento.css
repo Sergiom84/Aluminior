@@ -3,7 +3,7 @@
 .al-panel-grupo { display: flex; flex-wrap: wrap; align-items: end; gap: 8px 10px; padding: 0 14px; border-left: 1px solid var(--al-border); }
 .al-panel-grupo:first-child { padding-left: 0; border-left: 0; }
 .al-panel-estructura .al-designer-measure input { width: 56px; }
-.al-panel-estructura .al-panel-descripcion { max-width: 22ch; padding-bottom: 6px; }
+.al-panel-estructura .al-panel-descripcion { align-self: end; max-width: 30ch; min-height: 30px; display: flex; align-items: center; line-height: 1.25; text-align: left; }
 .al-panel-posicion input { width: 72px; }
 .al-panel-acciones { margin-left: auto; }
 .al-panel-descripcion { align-self: center; color: var(--al-accent-strong); font-size: 12px; }
@@ -35,3 +35,11 @@
 /* Hueco que no se instala (DS3): en blanco, con un contorno tenue para poder seleccionarlo. */
 .al-hueco-invisible { fill: transparent; stroke: #9aa5ab; stroke-width: 2; stroke-dasharray: 12 10; }
 .al-hueco-invisible.al-module-selected { stroke: #1d82e6; stroke-width: 5; }
+
+/* Fila de medidas: ocupa el ancho disponible; etiquetas en una línea y «mm» junto al campo, sin montarse. */
+.al-panel-elemento > .al-panel-grupo:has(.al-designer-measure-mm),
+.al-panel-elemento > .al-panel-grupo:has([aria-label='Actualizar elemento']) { flex: 1 1 auto; }
+.al-panel-grupo .al-designer-properties-label { white-space: nowrap; }
+.al-designer-measure-mm { grid-template-columns: auto auto; align-items: center; column-gap: 6px; }
+.al-designer-measure-mm > .al-designer-properties-label { grid-column: 1 / -1; }
+.al-designer-measure-mm > small { grid-column: 1 / -1; max-width: 22ch; }

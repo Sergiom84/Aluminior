@@ -81,7 +81,7 @@ export function MedidasElemento({
         value={Number.isFinite(modulo[campo]) ? modulo[campo] : ''}
         onChange={evento => onChange({ [campo]: evento.target.valueAsNumber })} />
     </label>)}
-    {modulo.estructuraCodigo === '1OFI' && <label className="al-designer-measure">
+    {modulo.estructuraCodigo === '1OFI' && <label className="al-designer-measure al-designer-measure-mm">
       <span className="al-designer-properties-label">FIJO INFERIOR</span>
       <input type="number" step="any" onKeyDown={alPulsarTecla} value={Number.isFinite(modulo.fiMm) ? modulo.fiMm : ''}
         aria-invalid={geometriaFi?.valido === false || undefined}
@@ -98,7 +98,7 @@ export function MedidasElemento({
       const errorId = `cota-error-${modulo.id}-${cota.simbolo}`
       // Valor guardado de la línea (o defecto que cabe); nunca el 300 de catálogo si la línea dice otro.
       const valorEtiqueta = cotasEfectivasConDefecto(modulo, [cota])?.[cota.simbolo]
-      return <label key={cota.simbolo} className="al-designer-measure">
+      return <label key={cota.simbolo} className="al-designer-measure al-designer-measure-mm">
         <span className="al-designer-properties-label">
           {etiquetaCota(cota)}
           {valorEtiqueta !== undefined && <> <span className="cifra" data-cota-valor={cota.simbolo}>{valorEtiqueta}</span></>}
