@@ -17,12 +17,12 @@ export function composicionConCotasModulo(
   cotas: Readonly<Record<string, number>> | null,
 ): NodoVisual {
   if (!cotas || composicion.tipo !== 'division') return composicion
-  // Horizontal: FI desde abajo, FS desde arriba. Vertical: FI (fijo izquierdo) desde
-  // la izquierda, FD (fijo derecho) desde la derecha (EVIDENCIA-COTAS-0017, 1O2FL).
+  // El símbolo lo fija el catálogo de la estructura (FZ, FI, FD…). Sin él, solo la
+  // regla histórica horizontal: FI desde abajo, FS desde arriba. Un travesaño
+  // vertical sin símbolo no se adivina: conserva su medida de plantilla.
   const simbolo = composicion.cotaFija
-    ? (composicion.eje === 'horizontal'
-      ? (composicion.cotaFija.desde === 'fin' ? 'FI' : 'FS')
-      : (composicion.cotaFija.desde === 'fin' ? 'FD' : 'FI'))
+    ? (composicion.cotaFija.simbolo
+      ?? (composicion.eje === 'horizontal' ? (composicion.cotaFija.desde === 'fin' ? 'FI' : 'FS') : null))
     : null
   const mm = simbolo ? cotas[simbolo] : undefined
   const hijos = composicion.hijos.map(hijo => {

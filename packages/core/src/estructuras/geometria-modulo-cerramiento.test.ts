@@ -114,15 +114,65 @@ describe('cotas verticales de fijo lateral', () => {
     ],
   })
 
-  it('FI mueve solo el fijo izquierdo y no toca la hoja', () => {
-    const c = composicionConCotasModulo(lateral('inicio'), { FI: 1100 })
-    expect(c.tipo === 'division' && c.cotaFija).toEqual({ desde: 'inicio', mm: 1100 })
-    const sinCota = composicionConCotasModulo(lateral('inicio'), { FD: 1100 })
-    expect(sinCota.tipo === 'division' && sinCota.cotaFija?.mm).toBe(300)
+  it('un travesaño vertical sin símbolo de catálogo no se adivina', () => {
+    const c = composicionConCotasModulo(lateral('inicio'), { FI: 1100, FD: 1100, FZ: 1100 })
+    expect(c.tipo === 'division' && c.cotaFija).toEqual({ desde: 'inicio', mm: 300 })
+  })
+})
+
+describe('símbolo de cota que gobierna cada travesaño del catálogo', () => {
+  afterEach(() => registrarCatalogoDiseno([]))
+  const nodosLateral = (ancho: number) => ({
+    codigo: '1FL', descripcion: 'Sintética 1FL', familiaCodigo: '001', anchoMm: ancho, altoMm: 1200,
+    nodos: [
+      nodo(0, 1, -1),
+      nodo(1, 6, 0, { division: 1, travesano: 'VI', tipoCota: 1, cota: 300 }),
+      nodo(2, 2, 0, { division: 1, posicion: 1 }), nodo(3, 2, 0, { division: 1, posicion: 2 }),
+      nodo(4, 5, 2), nodo(5, 3, 3, { hoja: 6 }), nodo(6, 5, 5),
+    ],
+  })
+  const eje = (cotasCatalogo: { simbolo: string; nombre: string | null }[], cotas: ModuloCerramiento['cotas']) => {
+    const g = generarPlantillaCatalogo({ ...nodosLateral(1200), cotas: cotasCatalogo })
+    if (g.estado !== 'dibujable') throw new Error('no dibujable')
+    registrarCatalogoDiseno([g.plantilla])
+    const el = distribuirModuloCerramiento({ id: 'm', estructuraCodigo: '1FL', anchoMm: 1200, altoMm: 1200, cotas },
+      { x: 0, y: 0, ancho: 1200, alto: 1200 }, 12)
+    const sep = el.find(e => e.tipo === 'separador' && e.eje === 'vertical')!
+    return sep.x + sep.ancho / 2
+  }
+
+  it('1FL: FIJO IZQUIERDO es FZ y mueve solo su travesaño', () => {
+    const fz = [{ simbolo: 'FZ', nombre: 'FIJO IZQUIERDO' }]
+    expect(eje(fz, { FZ: 1100 })).toBe(1100)
+    expect(eje(fz, { FI: 1100 })).toBe(300)
   })
 
-  it('FD mueve el fijo derecho, medido desde la derecha', () => {
-    const c = composicionConCotasModulo(lateral('fin'), { FD: 700, FI: 1100 })
-    expect(c.tipo === 'division' && c.cotaFija).toEqual({ desde: 'fin', mm: 700 })
+  it('12FL: FIJO IZQUIERDO es FI aunque otra estructura lo llame FZ', () => {
+    const fi = [{ simbolo: 'FI', nombre: 'FIJO IZQUIERDO' }, { simbolo: 'FD', nombre: 'FIJO DERECHO' }]
+    expect(eje(fi, { FI: 700 })).toBe(700)
+    expect(eje(fi, { FD: 700 })).toBe(300)
+  })
+
+  it('sin nombre reconocible no se adivina el símbolo', () => {
+    expect(eje([{ simbolo: 'TR', nombre: 'travesaño' }], { FZ: 1100, FI: 1100 })).toBe(300)
+  })
+})
+
+describe('fijo lateral sin lado en el nombre', () => {
+  afterEach(() => registrarCatalogoDiseno([]))
+  it('1O1FL: un único travesaño vertical con cota y una única cota «FIJO LATERAL» quedan enlazados', () => {
+    const g = generarPlantillaCatalogo({
+      codigo: '1O1FL', descripcion: 'Sintética', familiaCodigo: '001', anchoMm: 1200, altoMm: 1200,
+      cotas: [{ simbolo: 'F', nombre: 'FIJO LATERAL' }],
+      nodos: [
+        nodo(0, 1, -1),
+        nodo(1, 6, 0, { division: 1, travesano: 'VD', tipoCota: 1, cota: 300 }),
+        nodo(2, 2, 0, { division: 1, posicion: 1 }), nodo(3, 2, 0, { division: 1, posicion: 2 }),
+        nodo(4, 5, 3), nodo(5, 3, 2, { hoja: 6 }), nodo(6, 5, 5),
+      ],
+    })
+    if (g.estado !== 'dibujable') throw new Error('no dibujable')
+    const raiz = g.plantilla.composicion
+    expect(raiz.tipo === 'division' && raiz.cotaFija?.simbolo).toBe('F')
   })
 })

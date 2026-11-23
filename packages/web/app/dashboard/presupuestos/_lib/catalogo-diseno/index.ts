@@ -17,7 +17,7 @@ interface CatalogoLeido {
 let cache: { leido: number; datos: Promise<CatalogoLeido> } | null = null
 
 async function leer(db: Db): Promise<CatalogoLeido> {
-  const [estructuras, nodos] = await Promise.all([
+  const [estructuras, nodos, cotas] = await Promise.all([
     db.select({
       codigo: schema.estructuras.codigo,
       descripcion: schema.estructuras.descripcion,
@@ -26,10 +26,15 @@ async function leer(db: Db): Promise<CatalogoLeido> {
       disAltoMm: schema.estructuras.disAltoMm,
     }).from(schema.estructuras).where(isNotNull(schema.estructuras.disAnchoMm)),
     db.select().from(schema.estructuraDisenoNodos),
+    db.select({
+      estructuraCodigo: schema.estructuraCotas.estructuraCodigo,
+      simbolo: schema.estructuraCotas.simbolo,
+      nombre: schema.estructuraCotas.nombre,
+    }).from(schema.estructuraCotas),
   ])
   return {
-    plantillas: construirCatalogoDiseno(estructuras, nodos),
-    sinDibujo: estructurasSinDibujoDeCatalogo(estructuras, nodos),
+    plantillas: construirCatalogoDiseno(estructuras, nodos, cotas),
+    sinDibujo: estructurasSinDibujoDeCatalogo(estructuras, nodos, cotas),
   }
 }
 

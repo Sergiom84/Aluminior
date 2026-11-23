@@ -1,4 +1,5 @@
 import type { NodoVisual, PlantillaDiseno } from './diseno.ts'
+import { simboloCotaDivision } from './simbolo-cota-division.ts'
 import { aperturaTipoHoja, MARCOS_DIBUJABLES } from './tipos-hoja-catalogo.ts'
 
 /** Entrada de catálogo normalizada; nunca contiene instancias de documentos. */
@@ -28,6 +29,8 @@ export interface EstructuraCatalogo {
   anchoMm: number
   altoMm: number
   nodos: readonly NodoCatalogo[]
+  /** Cotas de línea de la estructura (`estructura_cotas`); sirven para saber qué símbolo gobierna cada travesaño. */
+  cotas?: readonly { simbolo: string; nombre: string | null }[]
 }
 
 export type ResultadoPlantilla =
@@ -64,6 +67,7 @@ export function generarPlantillaCatalogo(entrada: EstructuraCatalogo): Resultado
   if (raices.length !== 1) motivos.add('marco raíz no único')
   if (motivos.size) return { estado: 'pendiente', motivos: [...motivos].sort() }
   const vistos = new Set<number>()
+  const simbolos = simboloCotaDivision(nodos, entrada.cotas ?? [])
   const fallar = (motivo: string): never => { throw new Error(motivo) }
   const visitar = (nodo: NodoCatalogo, ancho: number, alto: number, profundidad = 0): NodoVisual => {
     if (profundidad > 64) return fallar('profundidad de diseño excesiva')
@@ -111,6 +115,7 @@ export function generarPlantillaCatalogo(entrada: EstructuraCatalogo): Resultado
       ...(trav.tipoCota === 1 ? { cotaFija: {
         desde: ['HB', 'VD'].includes(trav.travesano) ? 'fin' as const : 'inicio' as const,
         mm: trav.cota,
+        ...(simbolos.get(trav.division) ? { simbolo: simbolos.get(trav.division) } : {}),
       } } : {}),
       hijos: huecos.map((h, i) => ({ proporcion: medidas[i], nodo: visitar(h,
         eje === 'vertical' ? medidas[i] : ancho, eje === 'horizontal' ? medidas[i] : alto, profundidad + 1) })),

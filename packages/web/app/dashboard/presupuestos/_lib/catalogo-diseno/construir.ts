@@ -28,6 +28,12 @@ export interface FilaNodoCatalogo {
   tipoCurva: number | null
 }
 
+export interface FilaCotaDiseno {
+  estructuraCodigo: string
+  simbolo: string
+  nombre: string | null
+}
+
 const nodo = (fila: FilaNodoCatalogo): NodoCatalogo => ({
   id: fila.idItem,
   tipo: fila.tipo,
@@ -56,7 +62,13 @@ const porCodigo = new Intl.Collator('es', { numeric: true })
 export function construirCatalogoDiseno(
   estructuras: readonly FilaEstructuraCatalogo[],
   nodos: readonly FilaNodoCatalogo[],
+  cotas: readonly FilaCotaDiseno[] = [],
 ): PlantillaDiseno[] {
+  const cotasPorEstructura = new Map<string, FilaCotaDiseno[]>()
+  for (const fila of cotas) {
+    const clave = fila.estructuraCodigo.trim()
+    cotasPorEstructura.set(clave, [...(cotasPorEstructura.get(clave) ?? []), fila])
+  }
   const nodosPorEstructura = new Map<string, NodoCatalogo[]>()
   for (const fila of nodos) {
     const lista = nodosPorEstructura.get(fila.estructuraCodigo) ?? []
@@ -74,6 +86,7 @@ export function construirCatalogoDiseno(
       anchoMm: estructura.disAnchoMm,
       altoMm: estructura.disAltoMm,
       nodos: arbol,
+      cotas: cotasPorEstructura.get(estructura.codigo.trim()) ?? [],
     })
     if (resultado.estado === 'dibujable') plantillas.push(resultado.plantilla)
   }
@@ -87,8 +100,9 @@ export function construirCatalogoDiseno(
 export function estructurasSinDibujoDeCatalogo(
   estructuras: readonly FilaEstructuraCatalogo[],
   nodos: readonly FilaNodoCatalogo[],
+  cotas: readonly FilaCotaDiseno[] = [],
 ): { codigo: string; descripcion: string; anchoMm: number; altoMm: number }[] {
-  const dibujables = new Set(construirCatalogoDiseno(estructuras, nodos).map((p) => p.codigo))
+  const dibujables = new Set(construirCatalogoDiseno(estructuras, nodos, cotas).map((p) => p.codigo))
   return estructuras
     .filter((estructura) => estructura.familia && estructura.disAnchoMm && estructura.disAltoMm
       && !dibujables.has(estructura.codigo))
