@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest'
-import { distribuirModuloCerramiento } from './geometria-modulo-cerramiento.ts'
+import { composicionConCotasModulo, distribuirModuloCerramiento } from './geometria-modulo-cerramiento.ts'
 import { distribuirComposicion, plantillaDiseno, registrarCatalogoDiseno, type ElementoColocado } from './diseno.ts'
 import { generarPlantillaCatalogo, type NodoCatalogo } from './diseno-catalogo.ts'
 import { geometriaCerramiento } from './geometria-cerramiento.ts'
@@ -101,5 +101,28 @@ describe('fijo inferior de una plantilla de catálogo con cota FI de línea', ()
   it('FS no mueve un travesaño medido desde abajo', () => {
     registrar2Ofi()
     expect(2295 - ejeTravesanoInferior(distribuirModuloCerramiento(modulo2Ofi({ FS: 1000 }), rect, 18))).toBe(300)
+  })
+})
+
+describe('cotas verticales de fijo lateral', () => {
+  const lateral = (desde: 'inicio' | 'fin') => ({
+    tipo: 'division' as const, id: 'division-fl', eje: 'vertical' as const, separador: 'travesano' as const,
+    cotaFija: { desde, mm: 300 },
+    hijos: [
+      { proporcion: 1, nodo: { tipo: 'hueco' as const, id: 'a', apertura: 'fijo' as const } },
+      { proporcion: 1, nodo: { tipo: 'hueco' as const, id: 'b', apertura: 'oscilobatiente-derecha' as const } },
+    ],
+  })
+
+  it('FI mueve solo el fijo izquierdo y no toca la hoja', () => {
+    const c = composicionConCotasModulo(lateral('inicio'), { FI: 1100 })
+    expect(c.tipo === 'division' && c.cotaFija).toEqual({ desde: 'inicio', mm: 1100 })
+    const sinCota = composicionConCotasModulo(lateral('inicio'), { FD: 1100 })
+    expect(sinCota.tipo === 'division' && sinCota.cotaFija?.mm).toBe(300)
+  })
+
+  it('FD mueve el fijo derecho, medido desde la derecha', () => {
+    const c = composicionConCotasModulo(lateral('fin'), { FD: 700, FI: 1100 })
+    expect(c.tipo === 'division' && c.cotaFija).toEqual({ desde: 'fin', mm: 700 })
   })
 })

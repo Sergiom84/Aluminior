@@ -17,8 +17,13 @@ export function composicionConCotasModulo(
   cotas: Readonly<Record<string, number>> | null,
 ): NodoVisual {
   if (!cotas || composicion.tipo !== 'division') return composicion
-  const simbolo = composicion.eje === 'horizontal' && composicion.cotaFija
-    ? (composicion.cotaFija.desde === 'fin' ? 'FI' : 'FS') : null
+  // Horizontal: FI desde abajo, FS desde arriba. Vertical: FI (fijo izquierdo) desde
+  // la izquierda, FD (fijo derecho) desde la derecha (EVIDENCIA-COTAS-0017, 1O2FL).
+  const simbolo = composicion.cotaFija
+    ? (composicion.eje === 'horizontal'
+      ? (composicion.cotaFija.desde === 'fin' ? 'FI' : 'FS')
+      : (composicion.cotaFija.desde === 'fin' ? 'FD' : 'FI'))
+    : null
   const mm = simbolo ? cotas[simbolo] : undefined
   const hijos = composicion.hijos.map(hijo => {
     const nodo = composicionConCotasModulo(hijo.nodo, cotas)

@@ -129,6 +129,8 @@ export function DisenadorEstructura({
     setAviso(null)
     enfocar.current = siguiente.modulos.at(-1)!.id
     setConfiguracion(siguiente)
+    // Elemento añadido a un cerramiento existente: ancho y alto llegan vacíos para teclearlos sin borrar.
+    if (configuracion && !copiar) edicion.editarModulo(siguiente.modulos.at(-1)!.id, { anchoMm: NaN, altoMm: NaN })
     setVista('propiedades')
     setSeleccion(seleccionModulo(siguiente, siguiente.modulos.at(-1)!.id))
     terminarInsercion()
